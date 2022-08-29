@@ -1,3 +1,3 @@
-export { request, clearToken } from "./request";
+export { request } from "@/network/request";
 export { config } from "./config";
 export * from "./util";

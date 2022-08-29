@@ -119,7 +119,7 @@ const initData = async () => {
 	setWatermark(`admin`, '111111111111');
 };
 onMounted(() => {
-	initData();
+	// initData();
 });
 </script>
 <style lang="less">
