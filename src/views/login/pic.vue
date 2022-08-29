@@ -1,5 +1,5 @@
 <template>
-	<a-carousel class="pic-wrapper" arrows>
+	<a-carousel class="pic-wrapper" autoplay>
 		<div v-for="img in imgArr" :key="img">
 			<img :src="img" alt="pic" />
 		</div>
