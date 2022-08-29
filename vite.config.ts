@@ -39,10 +39,12 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
 		},
 		build: {
 			target: 'es2015',
+			minify: 'terser',
 			terserOptions: {
 				compress: {
 					keep_infinity: true,
 					drop_console: true,
+					// drop_console: VITE_DROP_CONSOLE,
 				},
 			},
 			rollupOptions: {

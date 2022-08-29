@@ -1,22 +1,20 @@
 <template>
 	<a-layout class="layer_container">
-		<a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible>
+		<a-layout-sider v-model:collapsed="collapsed" :trigger="null" theme="light" collapsible>
 			<!-- logo -->
 			<div class="my-sideMenu-sider_logo">
-				<!-- <img class="logo" src="https://workyd.com/image/source_plant/avatar.png" alt="" /> -->
+				<img class="logo" src="https://workyd.com/image/source_plant/avatar.png" alt="" />
 				<span v-if="!collapsed" class="title">丽江一卡通管理系统</span>
 			</div>
-			<a-menu v-model:selectedKeys="selectedKeys" v-model:openKeys="openKeys" theme="dark" mode="inline" @click="onSelect">
+			<a-menu v-model:selectedKeys="selectedKeys" v-model:openKeys="openKeys" mode="inline" @click="onSelect">
 				<SliderItem v-for="item in navs" :key="item.path" :item="item"></SliderItem>
 			</a-menu>
 		</a-layout-sider>
 		<a-layout>
-			<a-layout-header
-				style="background: #fff; padding: 0; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box"
-			>
+			<a-layout-header class="layout-header">
 				<div class="header_left">
-					<menu-unfold-outlined v-if="collapsed" class="trigger" @click="() => (collapsed = !collapsed)" />
-					<menu-fold-outlined v-else class="trigger" @click="() => (collapsed = !collapsed)" />
+					<!-- <menu-unfold-outlined v-if="collapsed" class="trigger" @click="() => (collapsed = !collapsed)" /> -->
+					<!-- <menu-fold-outlined v-else class="trigger" @click="() => (collapsed = !collapsed)" /> -->
 					<!-- 全屏切换 -->
 					<!-- <toggleScreen /> -->
 					<!-- <RollbackOutlined title="后退" @click="goBack" class="trigger" /> -->
@@ -24,6 +22,7 @@
 				<div class="header_right">
 					<a-dropdown>
 						<a class="ant-dropdown-link" @click.prevent>
+							<span>陈晓妮 &nbsp;</span>
 							<user-outlined />
 							<DownOutlined />
 						</a>
@@ -43,7 +42,7 @@
 			<a-card
 				class="navigation_wrapper"
 				:bordered="false"
-				:body-style="{ width: '480px', padding: '10px 5px', borderRadius: '5px', cursor: 'pointer' }"
+				:body-style="{ width: '480px', padding: '10px 16px', borderRadius: '5px', cursor: 'pointer' }"
 			>
 				<a-breadcrumb>
 					<a-breadcrumb-item v-for="title in state.routeList" :key="title">{{ title }}</a-breadcrumb-item>
@@ -149,11 +148,23 @@ onMounted(() => {
 	// initData();
 });
 </script>
-<style lang="less">
+<style lang="scss">
+@import '@/theme/index.scss';
+// @import '@/theme/common/color.scss';
+
 .layer_container {
 	height: 100vh;
 	overflow: hidden;
 	box-sizing: border-box;
+	.layout-header {
+		// background: #fff;
+		padding: 0;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		box-sizing: border-box;
+		background-color: $theme-color;
+	}
 	.my-sideMenu-sider_logo {
 		height: 50px;
 		color: white;
@@ -165,12 +176,21 @@ onMounted(() => {
 		justify-content: center;
 		box-sizing: border-box;
 		padding-top: 6px;
+		background-color: $theme-color;
 		.logo {
 			width: 34px;
 			height: 34px;
 		}
 		.title {
 			margin-left: 10px;
+			width: 144px;
+			height: 20px;
+			font-size: 16px;
+			font-family: Microsoft YaHei UI;
+			font-weight: 400;
+			line-height: 20px;
+			color: #ffffff;
+			opacity: 1;
 		}
 	}
 	.ant-layout-header {
@@ -178,6 +198,16 @@ onMounted(() => {
 	}
 	.header_right {
 		padding-right: 14px;
+		a {
+			width: 36px;
+			height: 15px;
+			font-size: 12px;
+			font-family: Microsoft YaHei UI;
+			font-weight: 400;
+			line-height: 15px;
+			color: #ffffff;
+			opacity: 1;
+		}
 	}
 }
 .layer_container .trigger {
@@ -192,7 +222,6 @@ onMounted(() => {
 }
 .navigation_wrapper {
 	background-color: #fff;
-	margin: 10px;
-	box-shadow: rgb(214, 210, 210) 0px 0px 4px 2px;
+	// margin: 10px;
 }
 </style>
