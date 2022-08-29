@@ -109,14 +109,10 @@ const state = reactive({
 });
 console.log(router.currentRoute.value.matched, 'router', state.routeList);
 const getRouteLIst = (): void => {
-	console.log('2');
 	state.url = router.currentRoute.value.matched[router.currentRoute.value.matched.length - 1].path;
 	state.routeList = router.currentRoute.value.matched.map((i) => {
-		console.log(i);
-
 		return i.meta.title;
 	});
-	console.log(state.routeList, 'routeList', state.url);
 };
 watch(
 	() => route.currentRoute.value.path,
@@ -135,7 +131,6 @@ watch(
 		if (!openKeys.value.includes(temp)) {
 			openKeys.value.push(temp);
 		}
-		console.log('change');
 
 		getRouteLIst();
 	},
