@@ -4,6 +4,7 @@ import { ConfigEnv, searchForWorkspaceRoot, UserConfig } from 'vite';
 
 import { createVitePlugins } from './config/vite/plugin/index';
 import { configManualChunk } from './config/vite/optimizer';
+import { config } from './readConfig';
 // https://vitejs.dev/config/
 
 export default ({ command, mode }: ConfigEnv): UserConfig => {
@@ -22,11 +23,11 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
 			},
 			proxy: {
 			  '/merchant': {
-				target: 'http://14.116.198.130:9090',
+				target: config.VITE_APP_BASE_URL_PROXY,
 				changeOrigin: true,
 			  },
 			  '/hotel': {
-				target: 'http://14.116.198.130:9090',
+				target: config.VITE_APP_BASE_URL_PROXY,
 				changeOrigin: true,
 			  }
 			}
