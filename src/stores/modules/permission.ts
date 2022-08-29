@@ -1,4 +1,5 @@
 import { accessRoutes, basicRouter, getAsyncRouter } from '@/router/router.config';
+import { cloneDeep } from 'lodash';
 import { defineStore } from 'pinia';
 
 import type { RouteRecordRaw } from 'vue-router';
@@ -90,7 +91,8 @@ export const usePermissioStore = defineStore({
 			this.role = role;
 		},
 		setMenuList(menus: MenuList[]) {
-			this.menuList = menus.filter((it) => it.children && it.children.length > 0);
+			// this.menuList = menus.filter((it) => it.children && it.children.length > 0);
+			this.menuList = cloneDeep(menus)
 		},
 		resetStata() {
 			this.isGetUser = false;

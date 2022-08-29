@@ -4,6 +4,7 @@ import { ConfigEnv, searchForWorkspaceRoot, UserConfig } from 'vite';
 
 import { createVitePlugins } from './config/vite/plugin/index';
 import { configManualChunk } from './config/vite/optimizer';
+import { config } from './readConfig';
 // https://vitejs.dev/config/
 
 export default ({ command, mode }: ConfigEnv): UserConfig => {
@@ -20,6 +21,16 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
 					// "/Users/xuyifei/Documents/study/npm/ant_vue3_ui_ts/lib/",
 				],
 			},
+			proxy: {
+			  '/merchant': {
+				target: config.VITE_APP_BASE_URL_PROXY,
+				changeOrigin: true,
+			  },
+			  '/hotel': {
+				target: config.VITE_APP_BASE_URL_PROXY,
+				changeOrigin: true,
+			  }
+			}
 		},
 		resolve: {
 			alias: {

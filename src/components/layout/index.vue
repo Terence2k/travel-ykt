@@ -145,7 +145,7 @@ const initData = async () => {
 };
 
 onMounted(() => {
-	initData();
+	// initData();
 });
 </script>
 <style lang="scss">

@@ -17,9 +17,17 @@
 	</div>
 </template>
 <script setup lang="ts">
-import { userList } from '@/api';
+import { userList, getInfo, getOrder } from '@/api';
 import { coloumns, searchDict } from './dict';
 console.log(coloumns);
+// getInfo({page: 1}).then(res => {
+// 	console.log(res)
+// })
+getOrder({pageIndex: 1, pageSize: 10}).then(res => {
+	console.log(res)
+}).catch(err => {
+	console.log(err)
+})
 </script>
 <style lang="less" scoped>
 .box {
