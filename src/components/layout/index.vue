@@ -18,8 +18,8 @@
 					<menu-unfold-outlined v-if="collapsed" class="trigger" @click="() => (collapsed = !collapsed)" />
 					<menu-fold-outlined v-else class="trigger" @click="() => (collapsed = !collapsed)" />
 					<!-- 全屏切换 -->
-					<toggleScreen />
-					<RollbackOutlined title="后退" @click="goBack" class="trigger" />
+					<!-- <toggleScreen /> -->
+					<!-- <RollbackOutlined title="后退" @click="goBack" class="trigger" /> -->
 				</div>
 				<div class="header_right">
 					<a-dropdown>
@@ -39,6 +39,16 @@
 					</a-dropdown>
 				</div>
 			</a-layout-header>
+			<!-- <navigationBar /> -->
+			<a-card
+				class="navigation_wrapper"
+				:bordered="false"
+				:body-style="{ width: '480px', padding: '10px 5px', borderRadius: '5px', cursor: 'pointer' }"
+			>
+				<a-breadcrumb>
+					<a-breadcrumb-item v-for="title in state.routeList" :key="title">{{ title }}</a-breadcrumb-item>
+				</a-breadcrumb>
+			</a-card>
 			<a-layout-content
 				:style="{
 					margin: '10px',
@@ -57,11 +67,14 @@
 <script lang="ts" setup>
 import { MenuUnfoldOutlined, MenuFoldOutlined, UserOutlined, DownOutlined, RollbackOutlined } from '@ant-design/icons-vue';
 import { usePermissioStore, MenuList } from '../../stores/modules/permission';
+import router from '@/router';
+
 import SliderItem from './SliderItem.vue';
 import toggleScreen from './toggleScreen.vue';
 import type { MenuProps } from 'ant-design-vue';
 import { to2 } from '@/utils/util';
 import { useWatermark } from '@/hooks/index';
+// import navigationBar from './navigationBar.vue';
 import packageJson from '../../../package.json';
 const route = useRouter();
 const { setWatermark } = useWatermark();
@@ -83,13 +96,28 @@ const dropClick: MenuProps['onClick'] = ({ key }) => {
 const goBack = () => {
 	route.back();
 };
+
 watchEffect(() => {
 	const modules = permissioStore.getMenuList;
 	if (modules.length > 0) {
 		navs.value = modules;
 	}
 });
+const state = reactive({
+	routeList: [],
+	url: '',
+});
+console.log(router.currentRoute.value.matched, 'router', state.routeList);
+const getRouteLIst = (): void => {
+	console.log('2');
+	state.url = router.currentRoute.value.matched[router.currentRoute.value.matched.length - 1].path;
+	state.routeList = router.currentRoute.value.matched.map((i) => {
+		console.log(i);
 
+		return i.meta.title;
+	});
+	console.log(state.routeList, 'routeList', state.url);
+};
 watch(
 	() => route.currentRoute.value.path,
 	(nv) => {
@@ -107,6 +135,9 @@ watch(
 		if (!openKeys.value.includes(temp)) {
 			openKeys.value.push(temp);
 		}
+		console.log('change');
+
+		getRouteLIst();
 	},
 	{
 		immediate: true,
@@ -116,8 +147,9 @@ watch(
 const collapsed = ref<boolean>(false);
 
 const initData = async () => {
-	setWatermark(`admin`, '111111111111');
+	setWatermark(`丽江一卡通`, '佰赢科技');
 };
+
 onMounted(() => {
 	initData();
 });
@@ -162,5 +194,10 @@ onMounted(() => {
 
 .layer_container .trigger:hover {
 	color: #1890ff;
+}
+.navigation_wrapper {
+	background-color: #fff;
+	margin: 10px;
+	box-shadow: rgb(214, 210, 210) 0px 0px 4px 2px;
 }
 </style>

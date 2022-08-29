@@ -45,7 +45,7 @@ export const accessRoutes: RouteRecordRaw[] = [
 					title: '用户详情',
 					icon: 'liulanqi',
 					// auth: ["admin"],
-					isDetail: true, // 在左侧的导航栏不会展示
+					isDetail: false, // 在左侧的导航栏不会展示
 				},
 			},
 		],
