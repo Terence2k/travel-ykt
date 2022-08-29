@@ -1,0 +1,41 @@
+@import "./color.scss";
+
+//侧边导航栏
+.ant-menu-title-content {
+    // color: red;
+}
+.ant-menu-item.ant-menu-item-selected {
+    color: $white;
+    background-color: $theme-color !important;
+    .ant-menu-title-content {
+    }
+    &.ant-menu-item-active {
+        color: $white;
+    }
+    &::after {
+        border-right: 3px solid $theme-color;
+    }
+}
+.ant-menu-item.ant-menu-item-active {
+    color: $white;
+}
+.ant-menu-submenu,
+.ant-menu-submenu-inline .ant-menu-submenu-selected {
+    color: $layout-text;
+    // background-color: red;
+  
+    &.ant-menu-submenu-active {
+        &:hover {
+            color: $layout-text;
+        }
+        .ant-menu-submenu-title {
+            &:hover {
+                color: $layout-text;
+            }
+            .ant-menu-title-content {
+                // background-color: red;
+                color: $layout-text;
+            }
+        }
+    }
+}

@@ -8,12 +8,16 @@
 
 ### 使用说明
 需要node 12.18.0 版本及以上
-`npm install `
+
+`pnpm install `
 
 `npm run dev`
 
 
 ### antdv:
 https://www.antdv.com/components/overview
+
+### vue3:
+https://cn.vuejs.org/guide/introduction.html
 
 
