@@ -6,6 +6,14 @@
 
 ### 功能包含
 
-### mode 说明
+### 使用说明
+需要node 12.18.0 版本及以上
+`npm install `
 
-https://cn.vitejs.dev/guide/env-and-mode.html#env-files
+`npm run dev`
+
+
+### antdv:
+https://www.antdv.com/components/overview
+
+
