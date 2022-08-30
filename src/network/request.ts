@@ -2,7 +2,7 @@ import { Method, ResponseType } from "axios";
 import axios from './axios'
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 // import { loading } from "/Users/xuyifei/Documents/study/npm/ant_vue3_ui_ts/lib/index"; // 这种引入不能打包之后不能使用s
-import { loading } from "ant3-ui";
+import loading from "@/components/Loading/index";
 import { cloneDeep } from "lodash";
 
 interface OptionsProp {
