@@ -112,7 +112,7 @@ const state = reactive({
 });
 console.log(router.currentRoute.value.matched, 'router', state.routeList);
 const getRouteLIst = (): void => {
-	state.url = router.currentRoute.value.matched[router.currentRoute.value.matched.length - 1].path;
+	// state.url = router.currentRoute.value.matched[router.currentRoute.value.matched.length - 1]?.path;
 	state.routeList = router.currentRoute.value.matched.map((i) => {
 		return i.meta.title;
 	});
