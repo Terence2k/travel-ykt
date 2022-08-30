@@ -5,18 +5,26 @@
     // color: red;
 }
 .ant-menu-item {
+  span {
+    color: $sub-title;
+  }
   &:hover {
-    color: #71747A !important;
-    background: rgba(54,179,116,0.04) !important;
+    color: unset !important;
+    background: rgba(54,179,116,0.1) !important;
   }
   &:active {
-    background: #fff;
+    background: $white;
   }
 }
 .ant-menu-item.ant-menu-item-selected {
-    color: $white;
+    span {
+      color: $white;
+    }
     background-color: $theme-color !important;
     .ant-menu-title-content {
+      &:hover {
+        color: $white !important;
+      }
     }
     &.ant-menu-item-active {
         color: $white;
@@ -29,7 +37,7 @@
     color: $white;
 }
 .ant-menu-sub,.ant-menu-inline {
-  background: #fff !important;
+  background: $white !important;
 }
 
 .ant-menu-submenu-selected {
@@ -54,8 +62,11 @@
       color: $layout-text !important;
   }
   .ant-menu-title-content {
+    span {
+      font-weight: bold !important;
       // background-color: red;
-      color: $layout-text;
+      color: $layout-text !important;
+    }
   }
 }
 .ant-menu-submenu-arrow {
