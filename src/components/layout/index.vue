@@ -1,6 +1,6 @@
 <template>
 	<a-layout class="layer_container">
-		<a-layout-sider v-model:collapsed="collapsed" :trigger="null" theme="light" collapsible class="menu-wrapper">
+		<a-layout-sider v-model:collapsed="collapsed" :trigger="null" theme="light" collapsible class="menu-wrapper" style="max-width: 300px">
 			<!-- logo -->
 			<div class="my-sideMenu-sider_logo">
 				<img class="logo" src="https://workyd.com/image/source_plant/avatar.png" alt="" />
@@ -225,5 +225,10 @@ onMounted(() => {
 .navigation_wrapper {
 	background-color: #fff;
 	// margin: 10px;
+}
+.menu-wrapper {
+	// width: 256px !important;
+	// max-width: 256px !important;
+	min-width: 256px !important;
 }
 </style>
