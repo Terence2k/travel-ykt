@@ -1,13 +1,13 @@
 <template>
 	<a-layout class="layer_container">
-		<a-layout-sider v-model:collapsed="collapsed" :trigger="null" theme="light" collapsible>
+		<a-layout-sider v-model:collapsed="collapsed" :trigger="null" theme="light" collapsible class="menu-wrapper">
 			<!-- logo -->
 			<div class="my-sideMenu-sider_logo">
 				<img class="logo" src="https://workyd.com/image/source_plant/avatar.png" alt="" />
 				<span v-if="!collapsed" class="title">丽江一卡通管理系统</span>
 			</div>
 			<a-menu v-model:selectedKeys="selectedKeys" v-model:openKeys="openKeys" mode="inline" @click="onSelect">
-				<SliderItem v-for="item in navs" :key="item.path" :item="item"></SliderItem>
+				<SliderItem v-for="item in navs" :key="item.path" :item="item" :openKeys="openKeys"></SliderItem>
 			</a-menu>
 		</a-layout-sider>
 		<a-layout>
@@ -45,6 +45,9 @@
 				:body-style="{ width: '480px', padding: '10px 16px', borderRadius: '5px', cursor: 'pointer' }"
 			>
 				<a-breadcrumb>
+					<template #separator>
+						<img class="file-dir" style="margin-top: -4px" src="@/assets/svg/navigation_icon.svg" alt="" />
+					</template>
 					<a-breadcrumb-item v-for="title in state.routeList" :key="title">{{ title }}</a-breadcrumb-item>
 				</a-breadcrumb>
 			</a-card>
@@ -118,7 +121,7 @@ watch(
 	(nv) => {
 		if (!selectedKeys.value.includes(nv)) {
 			const matchPath = route.currentRoute.value.matched;
-			// console.log(matchPath);
+			console.log(matchPath);
 			if (matchPath[1] && matchPath[1].path.indexOf(':id') > -1) {
 				selectedKeys.value = [matchPath[1].path.replace('/:id', '')];
 			} else {
@@ -164,9 +167,10 @@ onMounted(() => {
 		align-items: center;
 		box-sizing: border-box;
 		background-color: $theme-color;
+		height: 64px !important;
 	}
 	.my-sideMenu-sider_logo {
-		height: 50px;
+		height: 64px;
 		color: white;
 		font-size: 20px;
 		text-align: center;
@@ -177,6 +181,7 @@ onMounted(() => {
 		box-sizing: border-box;
 		padding-top: 6px;
 		background-color: $theme-color;
+
 		.logo {
 			width: 34px;
 			height: 34px;
@@ -217,9 +222,6 @@ onMounted(() => {
 	transition: color 0.3s;
 }
 
-.layer_container .trigger:hover {
-	color: #1890ff;
-}
 .navigation_wrapper {
 	background-color: #fff;
 	// margin: 10px;
