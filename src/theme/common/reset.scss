@@ -4,6 +4,15 @@
 .ant-menu-title-content {
     // color: red;
 }
+.ant-menu-item {
+  &:hover {
+    color: #71747A !important;
+    background: rgba(54,179,116,0.04) !important;
+  }
+  &:active {
+    background: #fff;
+  }
+}
 .ant-menu-item.ant-menu-item-selected {
     color: $white;
     background-color: $theme-color !important;
@@ -19,23 +28,41 @@
 .ant-menu-item.ant-menu-item-active {
     color: $white;
 }
-.ant-menu-submenu,
-.ant-menu-submenu-inline .ant-menu-submenu-selected {
-    color: $layout-text;
-    // background-color: red;
-  
-    &.ant-menu-submenu-active {
-        &:hover {
-            color: $layout-text;
-        }
-        .ant-menu-submenu-title {
-            &:hover {
-                color: $layout-text;
-            }
-            .ant-menu-title-content {
-                // background-color: red;
-                color: $layout-text;
-            }
-        }
-    }
+.ant-menu-sub,.ant-menu-inline {
+  background: #fff !important;
+}
+
+.ant-menu-submenu-selected {
+  color: $layout-text;
+  // background-color: red;
+
+  &.ant-menu-submenu-active {
+      &:hover {
+          color: $layout-text;
+      }
+  }
+}
+.ant-menu-submenu-active {
+  color: unset !important;
+  &:hover {
+      color: unset;
+  }
+}
+
+.ant-menu-submenu-title {
+  &:hover {
+      color: $layout-text !important;
+  }
+  .ant-menu-title-content {
+      // background-color: red;
+      color: $layout-text;
+  }
+}
+.ant-menu-submenu-arrow {
+  color: unset !important;
+}
+.ant-menu-submenu:hover {
+  .ant-menu-submenu-arrow {
+    color: unset !important;
+  }
 }
