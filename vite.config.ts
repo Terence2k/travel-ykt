@@ -12,6 +12,17 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
 	return {
 		base: './',
 		plugins: createVitePlugins(isBuild),
+		css: {
+			preprocessorOptions: {
+				less: {
+					javascriptEnabled: true,
+					modifyVars: {
+						'primary-color': '#36B374',
+			           	'link-color': '#36B374'
+					}
+				}
+			}
+		},
 		server: {
 			host: '0.0.0.0',
 			fs: {

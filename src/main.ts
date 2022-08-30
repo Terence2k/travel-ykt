@@ -8,7 +8,7 @@ import Ant3uI from 'ant3-ui';
 import App from './App.vue';
 import './styles/index.less';
 import router from './router';
-import 'ant-design-vue/dist/antd.css';
+import 'ant-design-vue/dist/antd.less';
 import './router/permission';
 
 const app = createApp(App);

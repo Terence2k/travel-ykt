@@ -1,6 +1,7 @@
 <template>
 	<div class="user_list con">
-		<x-table :req="userList" :filterDict="searchDict">
+		<Button type="primary">12</Button>
+		<!-- <x-table :req="userList" :filterDict="searchDict">
 			<template v-slot:myTable="table">
 				<a-table
 					:data-source="table.data"
@@ -13,12 +14,13 @@
 				>
 				</a-table>
 			</template>
-		</x-table>
+		</x-table> -->
 	</div>
 </template>
 <script setup lang="ts">
 import { userList, getInfo, getOrder } from '@/api';
 import { coloumns, searchDict } from './dict';
+import { Button } from 'ant-design-vue'
 console.log(coloumns);
 // getInfo({page: 1}).then(res => {
 // 	console.log(res)
