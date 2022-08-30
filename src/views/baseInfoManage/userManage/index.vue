@@ -60,7 +60,7 @@
   const dataSource = [
     {
       key: '1',
-      name: '胡彦斌',
+      name: '王某某',
       age: 32,
       address: '西湖区湖底公园1号',
       address1: '西湖区湖底公园1号',
@@ -69,7 +69,7 @@
     },
     {
       key: '2',
-      name: '胡彦祖',
+      name: '张某某',
       age: 42,
       address: '西湖区湖底公园1号',
       address1: '西湖区湖底公园1号',
@@ -78,7 +78,7 @@
     },
     {
       key: '3',
-      name: '胡彦祖',
+      name: '张某某',
       age: 42,
       address: '西湖区湖底公园1号',
       address1: '西湖区湖底公园1号',
@@ -120,6 +120,7 @@
     {
       title: '操作',
       key: 'action',
+      fixed: 'right',
       width: 208
     },
   ]

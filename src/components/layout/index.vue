@@ -51,17 +51,7 @@
 					<a-breadcrumb-item v-for="title in state.routeList" :key="title">{{ title }}</a-breadcrumb-item>
 				</a-breadcrumb>
 			</a-card>
-			<a-layout-content
-				:style="{
-					margin: '12px',
-					background: '#fff',
-					height: 'calc(100vh - 70px)',
-					minWidth: '500px',
-					boxSizing: 'border-box',
-					overflow: 'hidden',
-          borderRadius: '4px'
-				}"
-			>
+			<a-layout-content class="box">
 				<RouterView></RouterView>
 			</a-layout-content>
 		</a-layout>
@@ -112,7 +102,7 @@ const state = reactive({
 });
 console.log(router.currentRoute.value.matched, 'router', state.routeList);
 const getRouteLIst = (): void => {
-	state.url = router.currentRoute.value.matched[router.currentRoute.value.matched.length - 1].path;
+	// state.url = router.currentRoute.value.matched[router.currentRoute.value.matched.length - 1]?.path;
 	state.routeList = router.currentRoute.value.matched.map((i) => {
 		return i.meta.title;
 	});
@@ -231,5 +221,28 @@ onMounted(() => {
 	// width: 256px !important;
 	// max-width: 256px !important;
 	min-width: 256px !important;
+}
+.box {
+	// overflow-y: scroll;
+  margin: 12px;
+	height: calc(100vh - 59px) !important; //控制子路由页高度，59px是顶部navbar的高度
+	overflow-y: scroll !important; //添加并更改子路由页滚动条样式
+	&::-webkit-scrollbar {
+		width: 7px;
+	}
+	&::-webkit-scrollbar-thumb {
+		background: #d8d8d8;
+		border-radius: 10px;
+	}
+	&::-webkit-scrollbar-track-piece {
+		background: transparent;
+	}
+	// margin: 10px;
+	background: #fff;
+	height: calc(100vh - 70px);
+	min-width: 500px;
+	box-sizing: border-box;
+	overflow: hidden;
+	box-shadow: rgb(214 210 210) 0px 0px 4px 2px;
 }
 </style>

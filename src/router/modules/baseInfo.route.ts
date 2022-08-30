@@ -41,6 +41,18 @@ export default [
 					isDetail: false, // 在左侧的导航栏不会展示
 				},
 			},
+
+			{
+				path: 'businessAdministration',
+				component: () => import('@/views/baseInfoManage/businessAdministration/index.vue'),
+				name: 'travel',
+				meta: {
+					title: '菜单管理',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					// isDetail: true, // 在左侧的导航栏不会展示
+				},
+			},
 		],
 	},
 ];
