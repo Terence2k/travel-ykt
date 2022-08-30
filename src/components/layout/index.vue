@@ -56,6 +56,7 @@
 					margin: '10px',
 					background: '#fff',
 					height: 'calc(100vh - 70px)',
+					minWidth: '500px',
 					boxSizing: 'border-box',
 					overflow: 'hidden',
 					boxShadow: 'rgb(214 210 210) 0px 0px 4px 2px',
@@ -121,7 +122,6 @@ watch(
 	(nv) => {
 		if (!selectedKeys.value.includes(nv)) {
 			const matchPath = route.currentRoute.value.matched;
-			console.log(matchPath);
 			if (matchPath[1] && matchPath[1].path.indexOf(':id') > -1) {
 				selectedKeys.value = [matchPath[1].path.replace('/:id', '')];
 			} else {
@@ -130,6 +130,7 @@ watch(
 		}
 		let opens = nv.split('/');
 		let temp = `/${opens[1]}`;
+
 		if (!openKeys.value.includes(temp)) {
 			openKeys.value.push(temp);
 		}

@@ -1,6 +1,6 @@
 <template>
 	<a-menu-item :key="item.path" v-if="!item.children || item.children.length == 0" class="">
-		<span>{{ item.title }}</span>
+		<span :class="openKeys?.includes(item.path) ? 'bold' : ''"> {{ item.title }}</span>
 	</a-menu-item>
 	<a-sub-menu :key="item.keys" v-else>
 		<template #title>
@@ -27,12 +27,12 @@ const props = defineProps({
 	},
 	openKeys: {
 		type: Array,
-		required: true,
+		// required: true,
 	},
 });
-console.log(props.item);
 </script>
 <style lang="scss" scoped>
+@import '@/theme/common/color.scss';
 .box {
 	color: #60d659;
 }
@@ -43,5 +43,9 @@ console.log(props.item);
 .menu-open {
 	transform: rotate(90deg);
 	transition: all 0.4s;
+}
+.bold {
+	font-weight: bold;
+	color: $layout-text !important;
 }
 </style>
