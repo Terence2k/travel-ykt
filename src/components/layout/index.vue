@@ -53,13 +53,13 @@
 			</a-card>
 			<a-layout-content
 				:style="{
-					margin: '10px',
+					margin: '12px',
 					background: '#fff',
 					height: 'calc(100vh - 70px)',
 					minWidth: '500px',
 					boxSizing: 'border-box',
 					overflow: 'hidden',
-					boxShadow: 'rgb(214 210 210) 0px 0px 4px 2px',
+          borderRadius: '4px'
 				}"
 			>
 				<RouterView></RouterView>
