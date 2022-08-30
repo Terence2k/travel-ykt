@@ -87,7 +87,7 @@ const handleFinish = async (values: any) => {
 	loading.value = true;
 	window.localStorage.setItem('token', 'true');
 	router.replace({
-		path: state.redirect || '/operation/list',
+		path: state.redirect || '/',
 		query: state.otherQuery,
 	});
 	loading.value = false;

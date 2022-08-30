@@ -11,7 +11,7 @@ export default [
 			{
 				path: 'index',
 				component: () => import('@/views/touristAgency/index.vue'),
-				name: '',
+				name: 'travel',
 				meta: {
 					title: '旅行社管理',
 					// icon: 'liulanqi',

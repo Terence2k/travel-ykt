@@ -11,7 +11,7 @@ export default [
 			{
 				path: 'menu',
 				component: () => import('@/views/baseInfoManage/menu/index.vue'),
-				name: '',
+				name: 'menu',
 				meta: {
 					title: '菜单管理',
 					// icon: 'liulanqi',
@@ -22,7 +22,7 @@ export default [
 				path: 'role_power',
 				component: () => import('@/views/baseInfoManage/rolePower/index.vue'),
 				// component: () => import('@/views/touristAgency/index.vue'),
-				name: '',
+				name: 'role_power',
 				meta: {
 					title: '角色权限管理',
 					// icon: 'liulanqi',
@@ -33,7 +33,7 @@ export default [
 			{
 				path: 'user_manage',
 				component: () => import('@/views/baseInfoManage/userManage/index.vue'),
-				name: '',
+				name: 'user_manage',
 				meta: {
 					title: '用户管理',
 					// icon: 'liulanqi',

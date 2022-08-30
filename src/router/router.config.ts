@@ -5,11 +5,11 @@ import travelGroupRoute from './modules/travelGroup.route';
 
 export const basicRouter = [
 	{
-		path: '/:pathMatch(.*)',
-		redirect: '/404',
+		path: '/',
+		redirect: '/travel/index',
 	},
 	{
-		path: '/',
+		path: '/404',
 		component: () => import('../components/layout/index.vue'),
 		children: [
 			{
