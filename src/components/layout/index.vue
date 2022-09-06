@@ -227,22 +227,20 @@ onMounted(() => {
 	// overflow-y: scroll;
 	margin: 12px;
 	// height: calc(100vh - 59px) !important; //控制子路由页高度，59px是顶部navbar的高度
-	overflow-y: scroll !important; //添加并更改子路由页滚动条样式
+	overflow-y: auto !important; //添加并更改子路由页滚动条样式
 	&::-webkit-scrollbar {
 		width: 7px;
-		// background: red;
-		background: #fff;
+		// background: #fff;
 	}
 	&::-webkit-scrollbar-thumb {
 		background: #d8d8d8;
 		border-radius: 10px;
 		// background-color: #fff;
-		// background: red;
-		//
+		// background: transparent;
 	}
 	&::-webkit-scrollbar-track-piece {
-		// background: transparent;
-		background: #fff;
+		background: transparent;
+		// background: #fff;
 	}
 	// margin: 10px;
 	background: #fff;
