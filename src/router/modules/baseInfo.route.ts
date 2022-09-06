@@ -20,15 +20,48 @@ export default [
 			},
 			{
 				path: 'role_power',
-				component: () => import('@/views/baseInfoManage/rolePower/index.vue'),
-				// component: () => import('@/views/touristAgency/index.vue'),
+				redirect: '/baseInfo/role_power/index',
+
+				// component: () => import('@/views/baseInfoManage/rolePower/index.vue'),
 				name: 'role_power',
 				meta: {
 					title: '角色权限管理',
-					// icon: 'liulanqi',
-					// auth: ["admin"],
-					isDetail: false, // 在左侧的导航栏不会展示
 				},
+				children: [
+					{
+						path: 'index',
+						component: () => import('@/views/baseInfoManage/rolePower/index.vue'),
+						name: 'index',
+						meta: {
+							title: 'index',
+							isDetail: true, // 在左侧的导航栏不会展示
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+						},
+					},
+					{
+						path: '1menu',
+						component: () => import('@/views/baseInfoManage/menu/index.vue'),
+						name: '1menu',
+						meta: {
+							title: '菜单管111理',
+							isDetail: true, // 在左侧的导航栏不会展示
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+						},
+					},
+					{
+						path: '1travel',
+						component: () => import('@/views/baseInfoManage/businessAdministration/index.vue'),
+						name: '1travel',
+						meta: {
+							title: '菜单管理',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
 			},
 			{
 				path: 'user_manage',

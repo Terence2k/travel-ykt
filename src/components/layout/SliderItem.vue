@@ -4,12 +4,12 @@
 	</a-menu-item>
 	<a-sub-menu :key="item.keys" v-else>
 		<template #title>
-			<span>{{ item.title }}</span>
+			<span>{{ item.title }} </span>
 		</template>
 		<template #expandIcon>
-			<img :class="openKeys.includes(item.path) ? 'menu-open' : 'menu-close'" src="@/assets/svg/menu-open.svg" alt="" />
+			<img :class="openKeys?.includes(item.path) ? 'menu-open' : 'menu-close'" src="@/assets/svg/menu-open.svg" alt="" />
 		</template>
-		<SliderItem :item="elm" v-for="elm in item.children" :key="elm.path" />
+		<SliderItem :item="elm" v-for="elm in item.children" :key="elm.path" :openKeys="openKeys" />
 	</a-sub-menu>
 </template>
 <script lang="ts">

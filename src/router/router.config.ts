@@ -9,8 +9,19 @@ export const basicRouter = [
 		redirect: '/baseInfo/menu',
 	},
 	{
-		path: '/404',
+		path: '/',
 		component: () => import('../components/layout/index.vue'),
+		children: [
+			{
+				path: '404',
+				component: () => import('../views/404.vue'),
+			},
+		],
+	},
+	//vue3新写法 vue2原来写法不兼容
+	{
+		path: '/:pathMatch(.*)',
+		component: () => import('@/views/404.vue'),
 		children: [
 			{
 				path: '404',
@@ -29,6 +40,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 		component: () => import('../views/login/index.vue'),
 	},
 ];
+console.log(accessRoutes);
 
 export const getAsyncRouter = async (): Promise<RouteRecordRaw[]> => {
 	return accessRoutes;

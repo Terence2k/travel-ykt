@@ -4,14 +4,14 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import { ref } from 'vue';
 
-dayjs.locale("zh-cn");
+dayjs.locale('zh-cn');
 const locale = ref(zhCN);
 </script>
 
 <template>
 	<!-- {{ title }} -->
 	<a-config-provider :locale="locale">
-		<RouterView />
+		<RouterView key="appWrapper" />
 	</a-config-provider>
 </template>
 

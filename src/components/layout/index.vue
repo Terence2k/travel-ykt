@@ -52,7 +52,7 @@
 				</a-breadcrumb>
 			</a-card>
 			<a-layout-content class="box">
-				<RouterView></RouterView>
+				<RouterView key="layoutWrapper"></RouterView>
 			</a-layout-content>
 		</a-layout>
 	</a-layout>
@@ -120,6 +120,7 @@ watch(
 		}
 		let opens = nv.split('/');
 		let temp = `/${opens[1]}`;
+		// console.log(temp, 'temp', opens, openKeys.value);
 
 		if (!openKeys.value.includes(temp)) {
 			openKeys.value.push(temp);
@@ -224,22 +225,29 @@ onMounted(() => {
 }
 .box {
 	// overflow-y: scroll;
-  margin: 12px;
-	height: calc(100vh - 59px) !important; //控制子路由页高度，59px是顶部navbar的高度
+	margin: 12px;
+	// height: calc(100vh - 59px) !important; //控制子路由页高度，59px是顶部navbar的高度
 	overflow-y: scroll !important; //添加并更改子路由页滚动条样式
 	&::-webkit-scrollbar {
 		width: 7px;
+		// background: red;
+		background: #fff;
 	}
 	&::-webkit-scrollbar-thumb {
 		background: #d8d8d8;
 		border-radius: 10px;
+		// background-color: #fff;
+		// background: red;
+		//
 	}
 	&::-webkit-scrollbar-track-piece {
-		background: transparent;
+		// background: transparent;
+		background: #fff;
 	}
 	// margin: 10px;
 	background: #fff;
-	height: calc(100vh - 70px);
+	// height: calc(100vh - 70px);
+	// height: 300px !important;
 	min-width: 500px;
 	box-sizing: border-box;
 	overflow: hidden;
