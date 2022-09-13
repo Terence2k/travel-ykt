@@ -42,21 +42,24 @@
     <div class="list-btn">
       <a-button type="primary" class="success">新增</a-button>
     </div>
-    <a-table :dataSource="dataSource" :columns="columns" :scroll="{ x: '100vw', y: `100vh` }">
-      <template #bodyCell="{ column }">
-        <template v-if="column.key === 'action'">
-          <div class="action-btns">
-            <a>编辑</a>
-            <a>禁用</a>
-            <a>查看</a>
-          </div>
-        </template>
-    </template>
-    </a-table>
+    <CommonTable :dataSource="dataSource" :columns="columns">
+        <template #bodyCell="{ column }">
+          <template v-if="column.key === 'action'">
+            <div class="action-btns">
+              <a>编辑</a>
+              <a>禁用</a>
+              <a>查看</a>
+            </div>
+          </template>
+      </template>
+    </CommonTable>
+    <CommonPagination :current="1" :page-size="10" :total="400"/>
   </div>
 </template>
 
 <script setup lang="ts">
+  import CommonTable from '@/components/common/CommonTable.vue'
+  import CommonPagination from '@/components/common/CommonPagination.vue'
   const dataSource = [
     {
       key: '1',
@@ -151,7 +154,6 @@
     }
   }
   .table-area {
-    height: 100%;
     overflow: hidden;
     .list-btn {
       display: flex;
