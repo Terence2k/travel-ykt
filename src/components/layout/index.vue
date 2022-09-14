@@ -48,7 +48,10 @@
 					<template #separator>
 						<img class="file-dir" style="margin-top: -4px" src="@/assets/svg/navigation_icon.svg" alt="" />
 					</template>
-					<a-breadcrumb-item v-for="title in state.routeList" :key="title">{{ title }}</a-breadcrumb-item>
+					<!-- {{ state.routeList }} -->
+					<a-breadcrumb-item v-for="title in state.routeList" :key="title">
+						<span v-if="title">{{ title }}</span>
+					</a-breadcrumb-item>
 				</a-breadcrumb>
 			</a-card>
 			<a-layout-content class="box">
@@ -103,9 +106,12 @@ const state = reactive({
 console.log(router.currentRoute.value.matched, 'router', state.routeList);
 const getRouteLIst = (): void => {
 	// state.url = router.currentRoute.value.matched[router.currentRoute.value.matched.length - 1]?.path;
-	state.routeList = router.currentRoute.value.matched.map((i) => {
-		return i.meta.title;
+	let arr = router.currentRoute.value.matched.map((i) => {
+		if (!i.meta.isDetail) {
+			return i.meta.title;
+		}
 	});
+	state.routeList = arr.filter((i) => i);
 };
 watch(
 	() => route.currentRoute.value.path,

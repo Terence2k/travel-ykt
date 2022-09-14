@@ -6,7 +6,7 @@ import travelGroupRoute from './modules/travelGroup.route';
 export const basicRouter = [
 	{
 		path: '/',
-		redirect: '/baseInfo/menu',
+		redirect: '/baseInfo/user_manage',
 	},
 	{
 		path: '/',
