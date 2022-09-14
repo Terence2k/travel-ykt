@@ -6,7 +6,7 @@
     v-model:visible = "visible"
     :maskClosable = "false"
     :width="width"
-    :wrapClassName="!full ? $style['full-modal'] : undefined"
+    :wrapClassName="full ? $style['full-modal'] : undefined"
   >
     <slot></slot>
     <template #footer>
@@ -42,7 +42,7 @@ import { useSlots } from "vue";
     },
     full: {
       type: Boolean,
-      default: false
+      default: true
     },
     text: {
       type: Object,
@@ -50,10 +50,6 @@ import { useSlots } from "vue";
         confirm: '保存',
         cancel: '取消'
       }
-    },
-    footer: {
-      type: Boolean,
-      default: true
     }
   })
   const visible = ref(false);
