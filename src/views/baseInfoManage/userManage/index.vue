@@ -53,7 +53,13 @@
           </template>
       </template>
     </CommonTable>
-    <CommonPagination :current="1" :page-size="10" :total="400"/>
+    <CommonPagination
+      :current="state.tableData.param.pageNumber"
+      :page-size="state.tableData.param.pageSize"
+      :total="state.tableData.total"
+      @change="onHandleCurrentChange"
+      @showSizeChange="pageSideChange"
+    />
   </div>
 </template>
 
@@ -127,6 +133,30 @@
       width: 208
     },
   ]
+
+  const state = reactive({
+    tableData: {
+      data: [],
+      total: 400,
+      loading: false,
+      param: {
+        pageNumber: 1,
+        pageSize: 10,
+      },
+    },
+  });
+
+  const onHandleCurrentChange = (val: number) => {
+    console.log('change:', val);
+    state.tableData.param.pageNumber = val;
+    // onSearch();
+  }
+  
+  const pageSideChange = (current: number, size: number) => {
+    console.log('changePageSize:', size);
+    state.tableData.param.pageSize = size;
+    // onSearch();
+  }
 </script>
 
 <style lang="less">
