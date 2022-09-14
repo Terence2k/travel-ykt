@@ -31,29 +31,27 @@
       <a-button>查询</a-button>
     </template>
   </CommonSearch>
-  <div class="table-area">
-    <div class="list-btn">
-      <a-button type="primary" class="success">新增</a-button>
-    </div>
-    <CommonTable :dataSource="dataSource" :columns="columns">
-        <template #bodyCell="{ column }">
-          <template v-if="column.key === 'action'">
-            <div class="action-btns">
-              <a>编辑</a>
-              <a>禁用</a>
-              <a>查看</a>
-            </div>
-          </template>
+  <CommonTable :dataSource="dataSource" :columns="columns">
+      <template #button>
+        <a-button type="primary" class="success">新增</a-button>
       </template>
-    </CommonTable>
-    <CommonPagination
-      :current="state.tableData.param.pageNo"
-      :page-size="state.tableData.param.pageSize"
-      :total="state.tableData.total"
-      @change="onHandleCurrentChange"
-      @showSizeChange="pageSideChange"
-    />
-  </div>
+      <template #bodyCell="{ column }">
+        <template v-if="column.key === 'action'">
+          <div class="action-btns">
+            <a>编辑</a>
+            <a>禁用</a>
+            <a>查看</a>
+          </div>
+        </template>
+    </template>
+  </CommonTable>
+  <CommonPagination
+    :current="state.tableData.param.pageNo"
+    :page-size="state.tableData.param.pageSize"
+    :total="state.tableData.total"
+    @change="onHandleCurrentChange"
+    @showSizeChange="pageSideChange"
+  />
 </template>
 
 <script setup lang="ts">
@@ -162,49 +160,6 @@
 </script>
 
 <style lang="less">
-  .search-area {
-    display: flex;
-    flex-wrap: wrap;
-    padding: 24px 52px 24px 20px;
-    border-bottom: 1px #f1f2f5 solid;
-    .search-items {
-      display: flex;
-      align-items: center;
-      margin-right: 32px;
-      .title {
-        color: #1E2226;
-        font-weight: bold;
-        margin-right: 16px;
-      }
-    }
-    .search-button {
-      display: inline-flex;
-      justify-content: flex-end;
-      float: right;
-      text-align: right;
-      flex: 1;
-    }
-  }
-  .table-area {
-    overflow: hidden;
-    .list-btn {
-      display: flex;
-      justify-content: flex-end;
-      padding: 24px 52px 16px;
-    }
-    .success {
-      background-color: #36B374;
-      color: #fff;
-    }
-    .action-btns {
-      a {
-        margin: 0 6px;
-        &:first-of-type {
-          margin-left: 0;
-        }
-      }
-    }
-  }
 
   // table style
   .ant-table-thead > tr > th {
