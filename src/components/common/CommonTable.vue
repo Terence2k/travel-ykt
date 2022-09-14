@@ -1,5 +1,5 @@
 <template>
-	<a-table v-bind="$attrs" :scroll="{ x: '100vw' }" :pagination="false">
+	<a-table v-bind="$attrs" :scroll="{ x: '100vw' }" :pagination="false" class="common-table">
     <template #bodyCell="data">
       <slot name="bodyCell" v-bind="data || {}"></slot>
     </template>
@@ -11,16 +11,17 @@
 </script>
 
 <style lang="scss">
+.common-table {
+  // 调整antable内容高度
+  .ant-table-content {
+    height: calc(100vh - 350px);
+  }
 
-// 调整antable内容高度
-.ant-table-content {
-  height: calc(100vh - 350px);
-}
-
-// 调整antable表头字体
-.ant-table-thead > tr > th {
-  color: #1E2226;
-  font-weight: bold;
-  margin-right: 16px;
+  // 调整antable表头字体
+  .ant-table-thead > tr > th {
+    color: #1E2226;
+    font-weight: bold;
+    margin-right: 16px;
+  }
 }
 </style>
