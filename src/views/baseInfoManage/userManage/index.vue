@@ -1,7 +1,6 @@
 <template>
-  <div class="search-area">
-    <div class="search-items">
-      <div class="title">单位类型</div>
+  <CommonSearch>
+    <search-item label="单位类型">
       <a-select
         ref="select"
         style="width: 200px;"
@@ -9,9 +8,8 @@
       >
         <a-select-option value="all">all</a-select-option>
       </a-select>
-    </div>
-    <div class="search-items">
-      <div class="title">角色名称</div>
+    </search-item>
+    <search-item label="角色名称">
       <a-select
         ref="select"
         style="width: 200px;"
@@ -19,9 +17,8 @@
       >
         <a-select-option value="all">all</a-select-option>
       </a-select>
-    </div>
-    <div class="search-items">
-      <div class="title">状态</div>
+    </search-item>
+    <search-item label="状态">
       <a-select
         ref="select"
         style="width: 200px;"
@@ -29,15 +26,14 @@
       >
         <a-select-option value="all">all</a-select-option>
       </a-select>
-    </div>
-    <div class="search-items">
-      <div class="title">查询</div>
+    </search-item>
+    <search-item label="查询">
       <a-input placeholder="请输入用户姓名/手机号" style="width: 200px;"/>
-    </div>
-    <div class="search-button">
+    </search-item>
+    <template #button>
       <a-button>查询</a-button>
-    </div>
-  </div>
+    </template>
+  </CommonSearch>
   <div class="table-area">
     <div class="list-btn">
       <a-button type="primary" class="success">新增</a-button>
@@ -54,7 +50,7 @@
       </template>
     </CommonTable>
     <CommonPagination
-      :current="state.tableData.param.pageNumber"
+      :current="state.tableData.param.pageNo"
       :page-size="state.tableData.param.pageSize"
       :total="state.tableData.total"
       @change="onHandleCurrentChange"
@@ -66,6 +62,9 @@
 <script setup lang="ts">
   import CommonTable from '@/components/common/CommonTable.vue'
   import CommonPagination from '@/components/common/CommonPagination.vue'
+  import CommonSearch from '@/components/common/CommonSearch.vue'
+  import SearchItem from '@/components/common/CommonSearchItem.vue'
+  import { userList } from '@/api';
   const dataSource = [
     {
       key: '1',
@@ -140,7 +139,7 @@
       total: 400,
       loading: false,
       param: {
-        pageNumber: 1,
+        pageNo: 1,
         pageSize: 10,
       },
     },
@@ -148,14 +147,20 @@
 
   const onHandleCurrentChange = (val: number) => {
     console.log('change:', val);
-    state.tableData.param.pageNumber = val;
-    // onSearch();
+    state.tableData.param.pageNo = val;
+    onSearch();
   }
   
   const pageSideChange = (current: number, size: number) => {
     console.log('changePageSize:', size);
     state.tableData.param.pageSize = size;
     // onSearch();
+  }
+
+  const onSearch = () => {
+    userList(state.tableData.param).then(res => {
+      console.log(res)
+    })
   }
 </script>
 

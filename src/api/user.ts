@@ -2,9 +2,10 @@ import { request, config } from '@/utils/index';
 
 export async function userList(data: any) {
 	return request({
-		url: config.api.user.list,
+		url: '/ykt/customer-service/public/api/sys-user/list',
 		method: 'get',
 		data,
+		showLoading: true
 	});
 }
 export async function getInfo(data: any) {
