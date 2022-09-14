@@ -9,19 +9,19 @@ export default [
 		component: () => import('@/components/layout/index.vue'),
 		children: [
 			{
-				path: 'menu',
+				path: 'menuManage',
 				component: () => import('@/views/baseInfoManage/menu/index.vue'),
-				name: 'menu',
+				name: 'menuManage',
 				meta: {
 					title: '菜单管理',
 					// icon: 'liulanqi',
 					// auth: ["admin"],
+					isDetail: false, // 在左侧的导航栏不会展示
 				},
 			},
 			{
 				path: 'role_power',
 				redirect: '/baseInfo/role_power/index',
-
 				// component: () => import('@/views/baseInfoManage/rolePower/index.vue'),
 				name: 'role_power',
 				meta: {
@@ -40,24 +40,22 @@ export default [
 						},
 					},
 					{
-						path: '1menu',
+						path: 'menu',
 						component: () => import('@/views/baseInfoManage/menu/index.vue'),
-						name: '1menu',
+						name: 'menu',
 						meta: {
-							title: '菜单管111理',
+							title: '菜单管理',
 							isDetail: true, // 在左侧的导航栏不会展示
 							// icon: 'liulanqi',
 							// auth: ["admin"],
 						},
 					},
 					{
-						path: '1travel',
+						path: 'travel',
 						component: () => import('@/views/baseInfoManage/businessAdministration/index.vue'),
-						name: '1travel',
+						name: 'travel',
 						meta: {
 							title: '菜单管理',
-							// icon: 'liulanqi',
-							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
@@ -80,7 +78,7 @@ export default [
 				component: () => import('@/views/baseInfoManage/businessAdministration/index.vue'),
 				name: 'travel',
 				meta: {
-					title: '菜单管理',
+					title: '企业管理',
 					// icon: 'liulanqi',
 					// auth: ["admin"],
 					// isDetail: true, // 在左侧的导航栏不会展示
