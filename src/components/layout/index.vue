@@ -249,6 +249,6 @@ onMounted(() => {
 	min-width: 500px;
 	box-sizing: border-box;
 	overflow: hidden;
-	box-shadow: rgb(214 210 210) 0px 0px 4px 2px;
+	// box-shadow: rgb(214 210 210) 0px 0px 4px 2px;
 }
 </style>
