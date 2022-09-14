@@ -24,7 +24,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
 			}
 		},
 		server: {
-			host: '0.0.0.0',
+			host: '0.0.0.0', // wz提交测试
 			fs: {
 				allow: [
 					// 搜索工作区的根目录
