@@ -33,7 +33,7 @@
   </CommonSearch>
   <CommonTable :dataSource="dataSource" :columns="columns">
       <template #button>
-        <a-button type="primary" class="success">新增</a-button>
+        <a-button type="primary">新增</a-button>
       </template>
       <template #bodyCell="{ column }">
         <template v-if="column.key === 'action'">

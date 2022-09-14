@@ -17,23 +17,20 @@
 
 <style lang="scss">
 .table-area {
-  overflow: hidden;
   .list-btn {
     display: flex;
     justify-content: flex-end;
     padding: 24px 52px 16px;
   }
+  // 操作列按钮
   .action-btns {
     a {
+      display: inline-block;
       margin: 0 6px;
       &:first-of-type {
         margin-left: 0;
       }
     }
-  }
-  .success {
-    background-color: #36B374;
-    color: #fff;
   }
 }
 .common-table {
