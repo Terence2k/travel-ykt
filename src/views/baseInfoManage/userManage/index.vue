@@ -3,7 +3,6 @@
     <search-item label="单位类型">
       <a-select
         ref="select"
-        style="width: 200px;"
         placeholder="请选择单位类型"
       >
         <a-select-option value="all">all</a-select-option>
@@ -12,7 +11,6 @@
     <search-item label="角色名称">
       <a-select
         ref="select"
-        style="width: 200px;"
         placeholder="请选择角色"
       >
         <a-select-option value="all">all</a-select-option>
@@ -21,14 +19,13 @@
     <search-item label="状态">
       <a-select
         ref="select"
-        style="width: 200px;"
         placeholder="请选择状态"
       >
         <a-select-option value="all">all</a-select-option>
       </a-select>
     </search-item>
     <search-item label="查询">
-      <a-input placeholder="请输入用户姓名/手机号" style="width: 200px;"/>
+      <a-input placeholder="请输入用户姓名/手机号"/>
     </search-item>
     <template #button>
       <a-button>查询</a-button>

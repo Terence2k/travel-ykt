@@ -36,4 +36,10 @@
   text-align: right;
   flex: 1;
 }
+:deep(.ant-input) {
+  width: 200px;
+}
+:deep(.ant-select) {
+  width: 200px;
+}
 </style>
