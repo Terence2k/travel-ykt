@@ -106,6 +106,8 @@ import { useSlots } from "vue";
 <style lang="less" module>
   .full-modal {
     :global {
+      top: 50%;
+      transform: translateY(-50%);
       .ant-modal-header {
         border-bottom: none;
         padding: 22px 24px 19px;
