@@ -52,6 +52,7 @@ import type { TableColumnsType } from 'ant-design-vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 
+const status = ref([]);
 let statusOptionsData = [
 	{
 		value: 'jack',
@@ -186,7 +187,7 @@ const columns: TableColumnsType = [
 		dataIndex: 'actions',
 		key: 'actions',
 		fixed: 'right',
-		width: 200,
+		width: 160,
 	},
 ];
 
