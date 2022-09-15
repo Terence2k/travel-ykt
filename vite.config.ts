@@ -33,13 +33,9 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
 				],
 			},
 			proxy: {
-			  '/merchant': {
-				target: config.VITE_APP_BASE_URL_PROXY,
-				changeOrigin: true,
-			  },
-			  '/hotel': {
-				target: config.VITE_APP_BASE_URL_PROXY,
-				changeOrigin: true,
+			  '/ykt': {
+          target: config.VITE_APP_BASE_URL_PROXY,
+          changeOrigin: true,
 			  }
 			}
 		},

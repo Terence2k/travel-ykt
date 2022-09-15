@@ -15,6 +15,7 @@ const app = createApp(App);
 
 app.use(createPinia());
 app.use(Antd);
+
 // app.use(Ant3uI, {
 //   uploadUrl: "https://s.youdi.net/router/upload/save/file", // 初始化上传路径
 //   dealTableRes: (res: any) => {
