@@ -1,0 +1,63 @@
+.wrapper{
+  //padding:20px;
+  .content-container{
+    //padding:20px;
+  }
+  .search-bar{
+    width:100%;
+    height: 80px;
+    padding: 0 20px;
+    display:flex;
+    border-radius: 5px;
+    background-color:#ffffff;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: nowrap;
+    >.item{
+      margin-right: 20px;
+      display: flex;
+      align-items: center;
+      flex-wrap: nowrap;
+      .select{
+        min-width:150px;
+      }
+      .field-select,.field-input{
+        padding: 10px 20px;
+        display:inline-block;
+        white-space: nowrap;
+      }
+    }
+
+    .button-search{
+      background-color:white;
+      color:black;
+      border-radius:5px;
+      font-size: 13px;
+    }
+  }
+
+  .table-bar{
+    padding:0px 20px;
+    border-radius:5px;
+    background-color:#ffffff;
+    margin-top: 15px;
+    .button-create-item{
+      float: right;
+      background-color:#5db179;
+      padding: 0px 30px;
+      color:white;
+      border-radius:5px;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+
+    .cell-actions{
+      .item{
+        display: inline-block;
+        margin-right: 20px;
+        color:#5db179;
+        font-size: 13px;
+      }
+    }
+  }
+}
