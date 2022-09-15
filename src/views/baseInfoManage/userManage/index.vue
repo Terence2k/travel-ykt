@@ -33,12 +33,12 @@
   </CommonSearch>
   <CommonTable :dataSource="state.tableData.data" :columns="columns">
       <template #button>
-        <a-button type="primary">新增</a-button>
+        <a-button type="primary" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
       </template>
-      <template #bodyCell="{ column }">
+      <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
           <div class="action-btns">
-            <a>编辑</a>
+            <a @click="addOrUpdate({  row: record,  handle: 'update'})">编辑</a>
             <a>禁用</a>
             <a>查看</a>
           </div>
@@ -52,6 +52,7 @@
     @change="onHandleCurrentChange"
     @showSizeChange="pageSideChange"
   />
+  <AddUpdate v-model="state.operationModal.isAddOrUpdate" :params="state.params"/>
 </template>
 
 <script setup lang="ts">
@@ -59,7 +60,9 @@
   import CommonPagination from '@/components/common/CommonPagination.vue'
   import CommonSearch from '@/components/common/CommonSearch.vue'
   import SearchItem from '@/components/common/CommonSearchItem.vue'
+  import AddUpdate from './AddUpdate.vue';
   import { userList } from '@/api';
+  
   const columns = [
     {
       title: '用户姓名',
@@ -113,6 +116,10 @@
         uniType: ''
       },
     },
+    params: {},
+    operationModal: {
+      isAddOrUpdate: false
+    }
   });
 
   const onHandleCurrentChange = (val: number) => {
@@ -134,6 +141,21 @@
       state.tableData.total = res.total;
     })
   }
+
+  const addOrUpdate = (param: any) => {
+    console.log('state.operationModal.isAddOrUpdate:', state.operationModal.isAddOrUpdate);
+    
+    const { row, handle } = param;
+    console.log(row);
+    console.log(handle);
+
+    state.params = {};
+    if (handle === 'update') {
+      state.params = row;
+    }
+    state.operationModal.isAddOrUpdate = true;
+  };
+
   onMounted(() => {
     onSearch();
   })
