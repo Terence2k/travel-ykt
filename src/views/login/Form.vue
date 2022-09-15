@@ -3,7 +3,7 @@
 		<a-form :model="formModel" :rules="rules" @finish="handleFinish">
 			<p class="text">请输入手机号登录</p>
 			<a-form-item name="account">
-				<a-input class="reset-input" v-model:value="formModel.account" placeholder="管理员：admin，普通：test">
+				<a-input class="reset-input" v-model:value="formModel.account" placeholder="请输入账号">
 					<template #prefix>
 						<!-- <user-outlined class="icon" type="user" /> -->
 						<Icon size="24px" type="shoujihaodenglu" class="icon" />
@@ -12,7 +12,7 @@
 			</a-form-item>
 			<p class="text">请输入密码</p>
 			<a-form-item name="password">
-				<a-input class="reset-input" v-model:value="formModel.password" type="password" placeholder="密码为 123456">
+				<a-input class="reset-input" v-model:value="formModel.password" type="password" placeholder="请输入密码">
 					<template #prefix>
 						<!-- <lock-outlined class="icon" /> -->
 						<Icon size="24px" type="shurumimadenglu" class="icon" />
@@ -89,7 +89,7 @@ const handleFinish = async (values: any) => {
   
   login(formModel).then(res => {
     console.log(res)
-    window.localStorage.setItem('authorization', JSON.stringify(res));
+    window.localStorage.setItem('authorization', `${res}`);
     router.replace({
       path: state.redirect || '/',
       query: state.otherQuery,

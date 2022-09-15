@@ -5,9 +5,18 @@ export const to2 = async () => {
   location.reload();
 };
 export const getToken = () => {
+  const authorization = localStorage.getItem('authorization');
+  const refreshToken = localStorage.getItem('refreshToken');
+  const expiresIn = localStorage.getItem('expiresIn');
+  const smallTown = localStorage.getItem('smallTown');
+  const permissions = localStorage.getItem('ENUM_PERMISSIONS');
   return {
-    authorization: JSON.parse(localStorage.getItem('authorization') || '')
-  }
+    authorization,
+    refreshToken,
+    expiresIn,
+    smallTown,
+    permissions: permissions ? JSON.parse(permissions) : []
+  };
 }
 
 export const saveToken = (token: any) => {
