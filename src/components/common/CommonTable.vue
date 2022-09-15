@@ -3,7 +3,7 @@
     <div class="list-btn">
       <slot name="button"></slot>
     </div>
-    <a-table v-bind="$attrs" :scroll="{ x: '100vw' }" :pagination="false" class="common-table">
+    <a-table v-bind="$attrs" :scroll="{ x: '100vw', y: '100vh' }" :pagination="false" class="common-table">
       <template #bodyCell="data">
         <slot name="bodyCell" v-bind="data || {}"></slot>
       </template>
@@ -35,8 +35,8 @@
 }
 .common-table {
   // 调整antable内容高度
-  .ant-table-content {
-    height: calc(100vh - 350px);
+  .ant-table-body {
+    height: calc(100vh - 450px);
   }
 
   // 调整antable表头字体
