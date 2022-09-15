@@ -52,8 +52,8 @@
 						<template #bodyCell="{ column }">
 							<template v-if="column.dataIndex === 'actions'">
 								<div class="cell-actions">
-									<span class="item">编辑</span>
-									<span class="item">审核</span>
+									<span @click="openEditPage" class="item">编辑</span>
+									<span @click="openEditPage" class="item">审核</span>
 								</div>
 							</template>
 						</template>
@@ -75,7 +75,7 @@
 
 <script lang="ts" setup>
 import { SelectProps, TableColumnsType } from 'ant-design-vue';
-import { defineComponent, ref } from 'vue';
+import { ref } from 'vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 
@@ -89,7 +89,7 @@ interface DataSourceItem {
 	auditStatus: string;
 	discount: string;
 }
-
+const router = useRouter();
 const status = ref([]);
 const star = ref([]);
 let statusOptionsData = [
@@ -240,6 +240,11 @@ const pageSideChange = (current: number, size: number) => {
 	console.log('changePageSize:', size);
 	tableState.tableData.param.pageSize = size;
 	// onSearch();
+};
+
+const openEditPage = () => {
+	router.push({ path: '/hotelManagement/baseInfo/edit', query: { id: '1' } });
+	console.log('open edit page');
 };
 </script>
 
