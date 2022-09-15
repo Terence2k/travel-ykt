@@ -19,3 +19,13 @@ export async function roleList(data: any) {
 		showLoading: true
 	});
 }
+
+// 新增用户
+export async function addUser(data: any) {
+	return request({
+		url: '/ykt/customer-service/public/api/sys-user/save',
+		method: 'post',
+		data,
+		showLoading: true
+	});
+}

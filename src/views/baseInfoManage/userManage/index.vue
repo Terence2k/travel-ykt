@@ -11,9 +11,12 @@
     <search-item label="角色名称">
       <a-select
         ref="select"
+        mode="multiple"
         placeholder="请选择角色"
       >
-        <a-select-option value="all">all</a-select-option>
+        <a-select-option v-for="item in state.optionRoleList" :value="item.roleId">
+          {{ item.roleName }}
+        </a-select-option>
       </a-select>
     </search-item>
     <search-item label="状态">
@@ -52,7 +55,7 @@
     @change="onHandleCurrentChange"
     @showSizeChange="pageSideChange"
   />
-  <AddUpdate v-model="state.operationModal.isAddOrUpdate" :params="state.params"/>
+  <AddUpdate v-model="state.operationModal.isAddOrUpdate" :params="state.params" :roleList="state.optionRoleList"/>
 </template>
 
 <script setup lang="ts">
@@ -61,7 +64,7 @@
   import CommonSearch from '@/components/common/CommonSearch.vue'
   import SearchItem from '@/components/common/CommonSearchItem.vue'
   import AddUpdate from './AddUpdate.vue';
-  import { userList } from '@/api';
+  import { userList, roleList } from '@/api';
   
   const columns = [
     {
@@ -112,14 +115,15 @@
         pageSize: 10,
         keyWord: '',
         roleName: '',
-        status: 1,
+        status: null,
         uniType: ''
       },
     },
     params: {},
     operationModal: {
       isAddOrUpdate: false
-    }
+    },
+    optionRoleList: []
   });
 
   const onHandleCurrentChange = (val: number) => {
@@ -142,6 +146,23 @@
     })
   }
 
+  const getRoleList = () => {
+    roleList(
+      {
+        pageNo: 1,
+        pageSize: 100000,
+      }
+    ).then((res: any) => {
+      console.log('角色列表:', res);
+      state.optionRoleList = res.content.map((item: any) => {
+        return {
+          roleName: item.roleName,
+          roleId: item.oid
+        }
+      });
+    })
+  }
+
   const addOrUpdate = (param: any) => {
     console.log('state.operationModal.isAddOrUpdate:', state.operationModal.isAddOrUpdate);
     
@@ -157,6 +178,7 @@
   };
 
   onMounted(() => {
+    getRoleList();
     onSearch();
   })
 </script>
