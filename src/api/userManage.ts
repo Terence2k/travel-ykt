@@ -9,3 +9,13 @@ export async function userList(data: any) {
 		showLoading: true
 	});
 }
+
+// 角色列表
+export async function roleList(data: any) {
+	return request({
+		url: '/ykt/customer-service/public/api/sys-role/list',
+		method: 'post',
+		data,
+		showLoading: true
+	});
+}
