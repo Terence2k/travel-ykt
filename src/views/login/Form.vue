@@ -2,8 +2,8 @@
 	<div class="form_box">
 		<a-form :model="formModel" :rules="rules" @finish="handleFinish">
 			<p class="text">请输入手机号登录</p>
-			<a-form-item name="username">
-				<a-input class="reset-input" v-model:value="formModel.username" placeholder="管理员：admin，普通：test">
+			<a-form-item name="account">
+				<a-input class="reset-input" v-model:value="formModel.account" placeholder="管理员：admin，普通：test">
 					<template #prefix>
 						<!-- <user-outlined class="icon" type="user" /> -->
 						<Icon size="24px" type="shoujihaodenglu" class="icon" />
@@ -38,6 +38,7 @@
 </template>
 <script setup lang="ts">
 import { Icon } from '@/components/index';
+import { login } from '@/api';
 
 const loading = ref(false);
 
@@ -71,25 +72,31 @@ watch(
 );
 
 const rules: any = {
-	username: [{ required: true, trigger: 'blur', message: '请输入手机号' }],
+	account: [{ required: true, trigger: 'blur', message: '请输入手机号' }],
 	password: [{ required: true, trigger: 'blur', message: '请输入密码' }],
 };
 
 const checked = ref(true);
 const formModel = reactive({
-	username: 'admin',
-	password: '123456',
+	account: '',
+	password: '',
 });
 
 const handleFinish = async (values: any) => {
 	// console.log(checked, values);
 	console.log(values);
 	loading.value = true;
-	window.localStorage.setItem('token', 'true');
-	router.replace({
-		path: state.redirect || '/',
-		query: state.otherQuery,
-	});
+  
+  login(formModel).then(res => {
+    console.log(res)
+    window.localStorage.setItem('authorization', JSON.stringify(res));
+    router.replace({
+      path: state.redirect || '/',
+      query: state.otherQuery,
+    });
+  }).catch(err => {
+    console.log(err)
+  })
 	loading.value = false;
 	// if (res) {
 	//   message.success("成功");

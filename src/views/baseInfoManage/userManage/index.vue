@@ -28,7 +28,7 @@
       <a-input placeholder="请输入用户姓名/手机号"/>
     </search-item>
     <template #button>
-      <a-button>查询</a-button>
+      <a-button @click="onSearch">查询</a-button>
     </template>
   </CommonSearch>
   <CommonTable :dataSource="dataSource" :columns="columns">
@@ -136,6 +136,10 @@
       param: {
         pageNo: 1,
         pageSize: 10,
+        keyWord: '',
+        roleName: '',
+        status: 1,
+        uniType: ''
       },
     },
   });
@@ -149,7 +153,7 @@
   const pageSideChange = (current: number, size: number) => {
     console.log('changePageSize:', size);
     state.tableData.param.pageSize = size;
-    // onSearch();
+    onSearch();
   }
 
   const onSearch = () => {

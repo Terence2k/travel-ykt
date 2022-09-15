@@ -34,8 +34,8 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
 			},
 			proxy: {
 			  '/ykt': {
-				target: config.VITE_APP_BASE_URL_PROXY,
-				changeOrigin: true,
+          target: config.VITE_APP_BASE_URL_PROXY,
+          changeOrigin: true,
 			  }
 			}
 		},

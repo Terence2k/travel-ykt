@@ -24,3 +24,12 @@ export function getOrder(data: any) {
 		showLoading: true
 	});
 }
+
+export function login(data: any) {
+	return request({
+		url: '/ykt/customer-service/public/api/sys-user/login',
+		method: 'post',
+		data,
+		showLoading: true
+	});
+}
