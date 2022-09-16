@@ -63,7 +63,7 @@
 <script lang="ts" setup>
   import { ref, Ref, computed, watch, toRefs, reactive } from 'vue';
 	import BaseModal from '@/components/common/BaseModal.vue';
-  import { addUser } from '@/api';
+  import api from '@/api';
 import { message } from 'ant-design-vue';
 
   const props = defineProps({
@@ -93,7 +93,7 @@ import { message } from 'ant-design-vue';
   const save = () => {
     formValidate.value.companyId = null;
     console.log('formValidate:', formValidate.value);
-    addUser({...formValidate.value}).then((res: any) => {
+    api.addUser({...formValidate.value}).then((res: any) => {
       // console.log('res:', res);
       message.success('新增成功')
     }).catch((err: any) => {

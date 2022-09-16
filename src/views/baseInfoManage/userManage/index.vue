@@ -64,7 +64,7 @@
   import CommonSearch from '@/components/common/CommonSearch.vue'
   import SearchItem from '@/components/common/CommonSearchItem.vue'
   import AddUpdate from './AddUpdate.vue';
-  import { userList, roleList } from '@/api';
+  import api from '@/api';
   
   const columns = [
     {
@@ -139,7 +139,7 @@
   }
 
   const onSearch = () => {
-    userList(state.tableData.param).then((res: any) => {
+    api.userList(state.tableData.param).then((res: any) => {
       console.log('res:', res);
       state.tableData.data = res.content;
       state.tableData.total = res.total;
@@ -147,7 +147,7 @@
   }
 
   const getRoleList = () => {
-    roleList(
+    api.roleList(
       {
         pageNo: 1,
         pageSize: 100000,

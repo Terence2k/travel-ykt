@@ -35,7 +35,7 @@
 </template>
 <script setup lang="ts">
 import { Icon } from '@/components/index';
-import { login } from '@/api';
+import api from '@/api';
 
 const loading = ref(false);
 
@@ -85,7 +85,7 @@ const handleFinish = async (values: any) => {
 	console.log(values);
 	loading.value = true;
   
-  login(formModel).then(res => {
+	api.login(formModel).then(res => {
     console.log(res)
     window.localStorage.setItem('authorization', `${res}`);
     router.replace({
