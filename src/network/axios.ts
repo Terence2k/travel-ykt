@@ -123,7 +123,6 @@ import axios, {
               break;
           }
           if (err.status === 403 || err.status === 401) {
-            // store.dispatch('redirectLogin')
             to2();
           }
           console.log('err:', err);

@@ -18,7 +18,7 @@
   display: flex;
   flex-wrap: wrap;
   padding: 24px 52px 24px 20px;
-  border-bottom: 1px #f1f2f5 solid;
+  border-bottom: 12px #f1f2f5 solid;
 }
 
 .search-condition {
