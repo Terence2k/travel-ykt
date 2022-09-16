@@ -1,13 +1,13 @@
 <template>
   <CommonSearch>
-    <search-item label="单位类型">
+    <!-- <search-item label="单位类型">
       <a-select
         ref="select"
         placeholder="请选择单位类型"
       >
-        <a-select-option value="all">all</a-select-option>
+        <a-select-option value="">all</a-select-option>
       </a-select>
-    </search-item>
+    </search-item> -->
     <search-item label="角色名称">
       <a-select
         ref="select"
@@ -23,12 +23,15 @@
       <a-select
         ref="select"
         placeholder="请选择状态"
+        v-model:value="state.tableData.param.status"
+        allowClear
       >
-        <a-select-option value="all">all</a-select-option>
+        <a-select-option :value="1">启用</a-select-option>
+        <a-select-option :value="0">停用</a-select-option>
       </a-select>
     </search-item>
     <search-item label="查询">
-      <a-input placeholder="请输入用户姓名/手机号"/>
+      <a-input v-model:value="state.tableData.param.keyWord" placeholder="请输入用户姓名/手机号"/>
     </search-item>
     <template #button>
       <a-button @click="onSearch">查询</a-button>
@@ -42,7 +45,8 @@
         <template v-if="column.key === 'action'">
           <div class="action-btns">
             <a @click="addOrUpdate({  row: record,  handle: 'update'})">编辑</a>
-            <a>禁用</a>
+            <a @click="editStatus(record.oid, 0)" v-if="record.userStatus === 1">停用</a>
+            <a @click="editStatus(record.oid, 1)" v-if="record.userStatus === 0">启用</a>
             <a>查看</a>
           </div>
         </template>
@@ -59,6 +63,7 @@
     v-model="state.operationModal.isAddOrUpdate"
     :params="state.params"
     :roleList="state.optionRoleList"
+    @onSearch="onSearch"
     @cancel="cancel"/>
 </template>
 
@@ -69,6 +74,7 @@
   import SearchItem from '@/components/common/CommonSearchItem.vue'
   import AddUpdate from './AddUpdate.vue';
   import api from '@/api';
+import { message } from 'ant-design-vue';
   
   const columns = [
     {
@@ -120,7 +126,6 @@
         keyWord: '',
         roleName: '',
         status: null,
-        uniType: ''
       },
     },
     params: {},
@@ -172,8 +177,6 @@
   }
 
   const addOrUpdate = (param: any) => {
-    console.log('state.operationModal.isAddOrUpdate:', state.operationModal.isAddOrUpdate);
-    
     const { row, handle } = param;
     console.log(row);
     console.log(handle);
@@ -184,6 +187,17 @@
     }
     state.operationModal.isAddOrUpdate = true;
   };
+
+  const editStatus = (id: any, status: any) => {
+    let formData = new FormData();
+    formData.append('oid', id);
+    formData.append('status', status);
+    api.editStatus(formData).then((res: any) => {
+      message.success('操作成功');
+      state.operationModal.isAddOrUpdate = false;
+      onSearch();
+    })
+  }
 
   onMounted(() => {
     getRoleList();
