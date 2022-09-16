@@ -1,5 +1,8 @@
 <template>
 	<div>
+		<div class="import-btn">
+			<a-button type="primary">导入模板</a-button>
+		</div>
 		<a-form
 			:model="formState"
 			name="basic"
@@ -87,6 +90,10 @@
 			<a-button type="primary" html-type="submit">Submit</a-button>
 			</a-form-item> -->
 		</a-form>
+		<div class="footer">
+			<a-button type="primary">保存</a-button>
+			<a-button type="primary">发团</a-button>
+		</div>
 	</div>
 </template>
 
@@ -124,3 +131,21 @@ const onFinishFailed = (errorInfo: any) => {
 	console.log('Failed:', errorInfo);
 };
 </script>
+<style lang="less" scoped>
+	.import-btn {
+		display: flex;
+		justify-content: end;
+		margin-bottom: 10px;
+	}
+	.footer {
+		position: fixed;
+		bottom: 16px;
+		background-color: #fff;
+		line-height: 64px;
+		width: 100%;
+		border-top: 1px solid #F1F2F5;
+		button:first-of-type {
+			margin-right: 16px;
+		}
+	}
+</style>
