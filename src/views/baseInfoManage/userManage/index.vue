@@ -59,7 +59,7 @@
   import CommonPagination from '@/components/common/CommonPagination.vue'
   import CommonSearch from '@/components/common/CommonSearch.vue'
   import SearchItem from '@/components/common/CommonSearchItem.vue'
-  import { userList } from '@/api';
+  import api from '@/api';
   const dataSource = [
     {
       key: '1',
@@ -153,10 +153,11 @@
   }
 
   const onSearch = () => {
-    userList(state.tableData.param).then(res => {
+    api.userList(state.tableData.param).then(res => {
       console.log(res)
     })
   }
+  onSearch()
 </script>
 
 <style lang="less">

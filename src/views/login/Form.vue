@@ -1,37 +1,38 @@
 <template>
 	<div class="form_box">
 		<a-form :model="formModel" :rules="rules" @finish="handleFinish">
-			<p class="text">请输入手机号登录</p>
+			<a-tabs v-model:activeKey="state.activeKey">
+				<a-tab-pane key="1" tab="密码登录"></a-tab-pane>
+				<a-tab-pane key="2" tab="验证码登录" force-render></a-tab-pane>
+			</a-tabs>
+			<!-- <p class="text">请输入手机号登录</p> -->
 			<a-form-item name="username">
-				<a-input class="reset-input" v-model:value="formModel.username" placeholder="管理员：admin，普通：test">
+				<a-input class="reset-input" v-model:value="formModel.username" placeholder="请输入手机号">
 					<template #prefix>
-						<!-- <user-outlined class="icon" type="user" /> -->
-						<Icon size="24px" type="shoujihaodenglu" class="icon" />
+						<span class="reset-prefix">手机号</span>
 					</template>
 				</a-input>
 			</a-form-item>
-			<p class="text">请输入密码</p>
+			<!-- <p class="text">请输入密码</p> -->
 			<a-form-item name="password">
-				<a-input class="reset-input" v-model:value="formModel.password" type="password" placeholder="密码为 123456">
+				<a-input class="reset-input" v-model:value="formModel.password" type="password" placeholder="请输入密码">
 					<template #prefix>
-						<!-- <lock-outlined class="icon" /> -->
-						<Icon size="24px" type="shurumimadenglu" class="icon" />
+						<span class="reset-prefix">密码</span>
 					</template>
 				</a-input>
 			</a-form-item>
-			<a-form-item>
-				<a-row>
-					<a-col :span="12">
-						<a-checkbox class="reset_checkbox" v-model:checked="checked">自动登录</a-checkbox>
-					</a-col>
-					<a-col :span="12" class="text-right">
-						<!-- <span class="gray_text">忘记密码?</span> -->
-					</a-col>
-				</a-row>
-			</a-form-item>
-			<a-form-item>
-				<a-button html-type="submit" class="btn" :loading="loading">立即登录</a-button>
-			</a-form-item>
+			<div class="register">
+				<span class="register-text">企业注册</span>
+			</div>
+			<a-button html-type="submit" class="btn" type="primary" :loading="loading">登录</a-button>
+			<a-row style="margin-top: 16px">
+				<a-col :span="12">
+					<a-checkbox class="gray_text" v-model:checked="checked">自动登录</a-checkbox>
+				</a-col>
+				<a-col :span="12" class="text-right">
+					<span class="gray_text">忘记密码?</span>
+				</a-col>
+			</a-row>
 		</a-form>
 		<!-- <p class="copyright">@copyright JS-banana</p> -->
 	</div>
@@ -41,9 +42,10 @@ import { Icon } from '@/components/index';
 
 const loading = ref(false);
 
-let state: any = reactive({
+let state = reactive<{[k:string]:any}>({
 	otherQuery: {},
 	redirect: undefined,
+	activeKey: '1'
 });
 
 /* listen router change  */
@@ -98,20 +100,33 @@ const handleFinish = async (values: any) => {
 	// }
 };
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .form_box {
-	margin-top: 30px;
+	margin-top: 24px;
+	padding: 28px 37px 32px;
+	background-color: #fff;
+	border-radius: 4px;
 	.btn {
 		width: 100%;
-		height: 54px;
-		background: linear-gradient(90deg, #00c3fd 0%, #3662f4 100%);
+		height: 48px;
 		border-radius: 6px;
 		color: #ffffff;
-		font-size: 20px;
+		font-size: 16px;
 		&:hover {
 			opacity: 0.85;
 			border: none;
 		}
+	}
+	::v-deep(.ant-tabs-tab) {
+		padding: 10px 2px;
+	}
+	::v-deep(.ant-tabs-nav) {
+		&::before {
+			border-bottom: none;
+		}
+	}
+	::v-deep(.ant-input-affix-wrapper-focused) {
+		box-shadow: none !important;
 	}
 	.icon {
 		color: #666666;
@@ -124,29 +139,36 @@ const handleFinish = async (values: any) => {
 		margin-bottom: 10px;
 	}
 	.gray_text {
-		font-size: 12px;
-		color: #666666;
-	}
-	.reset_checkbox {
-		.ant-checkbox-inner {
-			border-radius: 50%;
-		}
-		& > span:last-child {
-			font-size: 12px;
-			color: #666666;
-		}
+		font-size: 16px;
+		color: #9DA0A4;
 	}
 	.reset-input {
-		height: 50px;
-		line-height: 50px;
-		border: 1px solid #707070;
-		border-radius: 6px;
+		height: 48px;
+		line-height: 48px;
+		border: none;
+		border-bottom: 1px solid #E7E7E7;
+		padding: 0;
+		.reset-prefix {
+			width: 81px;
+			font-size: 16px;
+			color: #000;
+			padding-right: 12px;
+		}
 	}
 	.copyright {
 		margin-top: 20px;
 		font-size: 12px;
 		color: #999999;
 		opacity: 0.85;
+	}
+	.register {
+		text-align: right;
+		padding-top: 16px;
+		margin-bottom: 12px;
+		.register-text {
+			color: #5EC28F;
+			cursor: pointer;
+		}
 	}
 }
 </style>
