@@ -28,7 +28,8 @@
         label="所属角色"
         name="roleIds"
       >
-      {{ formValidate.roleIds }}
+      <span v-for="item, index in formValidate.roleList">
+      {{`${item.roleName}${index == formValidate.roleList.length - 1? '' : '，' }`}}</span>
       </a-form-item>
       <a-form-item
         label="状态"

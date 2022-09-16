@@ -129,6 +129,7 @@
     formValidate.value = {};
     if (props.params?.oid) {
       formValidate.value = { ...props.params };
+      formValidate.value.roleIds = formValidate.value.roleList.map((item: any) => item.oid)
       options.title = '编辑用户';
     } else {
       options.title = '新增用户';
