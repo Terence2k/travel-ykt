@@ -47,7 +47,7 @@
             <a @click="addOrUpdate({  row: record,  handle: 'update'})">编辑</a>
             <a @click="editStatus(record.oid, 0)" v-if="record.userStatus === 1">停用</a>
             <a @click="editStatus(record.oid, 1)" v-if="record.userStatus === 0">启用</a>
-            <a>查看</a>
+            <a @click="showDetails(record)">查看</a>
           </div>
         </template>
     </template>
@@ -65,6 +65,11 @@
     :roleList="state.optionRoleList"
     @onSearch="onSearch"
     @cancel="cancel"/>
+  <Detail
+    v-model="state.operationModal.showDetails"
+    :params="state.params"
+    :roleList="state.optionRoleList"
+    @cancel="cancel"/>
 </template>
 
 <script setup lang="ts">
@@ -73,6 +78,7 @@
   import CommonSearch from '@/components/common/CommonSearch.vue'
   import SearchItem from '@/components/common/CommonSearchItem.vue'
   import AddUpdate from './AddUpdate.vue';
+  import Detail from './Detail.vue';
   import api from '@/api';
 import { message } from 'ant-design-vue';
   
@@ -130,7 +136,8 @@ import { message } from 'ant-design-vue';
     },
     params: {},
     operationModal: {
-      isAddOrUpdate: false
+      isAddOrUpdate: false,
+      showDetails: false
     },
     optionRoleList: []
   });
@@ -157,6 +164,7 @@ import { message } from 'ant-design-vue';
 
   const cancel = (): any => {
     state.operationModal.isAddOrUpdate = false;
+    state.operationModal.showDetails = false;
   };
 
   const getRoleList = () => {
@@ -197,6 +205,12 @@ import { message } from 'ant-design-vue';
       state.operationModal.isAddOrUpdate = false;
       onSearch();
     })
+  }
+
+  const showDetails = (row: any) => {
+    state.params = {};
+    state.params = row;
+    state.operationModal.showDetails = true;
   }
 
   onMounted(() => {
