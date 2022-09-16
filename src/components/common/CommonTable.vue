@@ -34,7 +34,7 @@
 .common-table {
 	// 调整antable内容高度
 	.ant-table-body {
-		height: calc(100vh - 450px);
+		height: calc(100vh - 420px);
 	}
 
 	// 调整antable表头字体

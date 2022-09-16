@@ -29,3 +29,35 @@ export async function addUser(data: any) {
 		showLoading: true
 	});
 }
+
+// 编辑用户
+export async function editUser(data: any) {
+	return request({
+		url: `${commonPath}/customer-service/public/api/sys-user/edit`,
+		method: 'post',
+		data,
+		showLoading: true
+	});
+}
+
+// 用户详情
+export async function userInfo(id: any) {
+	return request({
+		url: `${commonPath}/customer-service/public/api/sys-user/detail/${id}`,
+		method: 'get',
+		showLoading: true
+	});
+}
+
+// 编辑用户状态
+export async function editStatus(data: any) {
+	return request({
+		url: `${commonPath}/customer-service/public/api/sys-user/editStatus`,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+		method: 'post',
+    data,
+		showLoading: true
+	});
+}

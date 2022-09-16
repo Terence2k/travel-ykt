@@ -76,7 +76,7 @@
       params: Object,
       roleList: Array
   })
-  const emit = defineEmits(['update:modelValue', 'cancel']);
+  const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
   const dialogVisible = ref(false);
   const formRef = ref<FormInstance>();
   const formValidate: Ref<Record<string, any>> = ref({});
@@ -92,27 +92,36 @@
 	const handleOk = async (callback:Function) => {
 
   };
-
+  
   const save = () => {
     formRef.value
-      .validateFields()
-      .then((values: any) => {
-        formValidate.value.companyId = null;
-        formValidate.value.password = '123456';
-        console.log('formValidate:', formValidate.value);
-        api.addUser({...formValidate.value}).then((res: any) => {
-          // console.log('res:', res);
-          message.success('新增成功');
-          formRef.value.resetFields();
-          console.log('reset formValidate: ', toRaw(formValidate));
-          emit('cancel');
-        }).catch((err: any) => {
-          console.error(err);
-        })
-      })
-      .catch((info: any) => {
-        console.log('Validate Failed:', info);
-      });
+    .validateFields()
+    .then((values: any) => {
+      if (formValidate.value.oid) {
+        addOrUpdateAPI('editUser');
+      } else {
+        addOrUpdateAPI('addUser');
+      }
+    })
+    .catch((info: any) => {
+      console.log('Validate Failed:', info);
+    });
+  }
+
+  const addOrUpdateAPI = (apiName: string) => {
+    formValidate.value.companyId = null;
+    formValidate.value.password = '123456';
+    console.log('formValidate:', formValidate.value);
+    api[apiName]({...formValidate.value}).then((res: any) => {
+      // console.log('res:', res);
+      message.success('保存成功');
+      formRef.value.resetFields();
+      console.log('reset formValidate: ', toRaw(formValidate));
+      emit('cancel');
+      emit('onSearch');
+    }).catch((err: any) => {
+      console.error(err);
+    })
   }
 
   const init = async () => {
@@ -120,6 +129,7 @@
     formValidate.value = {};
     if (props.params?.oid) {
       formValidate.value = { ...props.params };
+      formValidate.value.roleIds = formValidate.value.roleList.map((item: any) => item.oid)
       options.title = '编辑用户';
     } else {
       options.title = '新增用户';
@@ -127,7 +137,6 @@
   }
 
   watch(() => props.modelValue, async (nVal) => {
-    console.log('nval:', nVal);
     dialogVisible.value = nVal;
     if (dialogVisible.value) {
       await init();
@@ -135,7 +144,6 @@
 	})
   
   watch(dialogVisible, nVal => {
-    console.log('dialogVisible:', nVal);
     emit('update:modelValue', nVal);
   });
 </script>
