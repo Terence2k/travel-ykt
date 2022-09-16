@@ -9,6 +9,7 @@ import axios, {
 //   import qs from 'qs'
   import { cloneDeep } from 'lodash';
   import { message } from 'ant-design-vue';
+  import { to2 } from '@/utils/util';
   
   const apiBaseUrl: string = <string>import.meta.env.VITE_APP_BASE_URL;
   const apiBaseUrlAuthor: string = <string>import.meta.env.VITE_APP_BASE_URL_AUTHOR
@@ -84,6 +85,12 @@ import axios, {
           }
           let err: Record<string, unknown> = {};
           switch (error.response.status) {
+            case 401:
+              err = {
+                msg: error.response.data.message || '登录信息已过期，请您重新登录～',
+                status: 401
+              };
+              break;
             case 403:
               err = {
                 msg: error.response.data.message || '登录信息已过期，请您重新登录～',
@@ -115,8 +122,9 @@ import axios, {
               };
               break;
           }
-          if (err.status === 403) {
+          if (err.status === 403 || err.status === 401) {
             // store.dispatch('redirectLogin')
+            to2();
           }
           console.log('err:', err);
           message.error(err.msg as any);

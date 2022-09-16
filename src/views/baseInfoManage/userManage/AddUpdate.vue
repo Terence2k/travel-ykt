@@ -37,12 +37,10 @@
       >
         <a-select
           ref="select"
+          mode="multiple"
           v-model:value="formValidate.roleIds"
         >
-          <a-select-option value="jack">Jack</a-select-option>
-          <a-select-option value="lucy">Lucy</a-select-option>
-          <a-select-option value="disabled" disabled>Disabled</a-select-option>
-          <a-select-option value="Yiminghe">yiminghe</a-select-option>
+          <a-select-option v-for="item in roleList" :value="item.roleId">{{ item.roleName }}</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item
@@ -51,7 +49,7 @@
       >
         <a-radio-group v-model:value="formValidate.userStatus">
           <a-radio :value="1">启用</a-radio>
-          <a-radio :value="2">禁用</a-radio>
+          <a-radio :value="0">禁用</a-radio>
         </a-radio-group>
       </a-form-item>
     </a-form>
@@ -65,7 +63,8 @@
 <script lang="ts" setup>
   import { ref, Ref, computed, watch, toRefs, reactive } from 'vue';
 	import BaseModal from '@/components/common/BaseModal.vue';
-  import { roleList } from '@/api';
+  import api from '@/api';
+import { message } from 'ant-design-vue';
 
   const props = defineProps({
       modelValue: {
@@ -73,6 +72,7 @@
         default: false
       },
       params: Object,
+      roleList: Array
   })
   const emit = defineEmits(['update:modelValue']);
   const dialogVisible = ref(false);
@@ -92,27 +92,17 @@
 
   const save = () => {
     formValidate.value.companyId = null;
-    formValidate.value.password = '123456';
     console.log('formValidate:', formValidate.value);
-    
-  }
-
-  const getRoleList = () => {
-    roleList(
-      {
-        status: null,
-        roleName: '',
-        pageNo: 1,
-        pageSize: 10,
-        availableRange: ''
-      }
-    ).then((res: any) => {
-      console.log('res:', res);
+    api.addUser({...formValidate.value}).then((res: any) => {
+      // console.log('res:', res);
+      message.success('新增成功')
+    }).catch((err: any) => {
+      console.error(err);
+      
     })
   }
 
   const init = async () => {
-    getRoleList();
     console.log('params', props.params);
     formValidate.value = {};
     if (props.params?.oid) {

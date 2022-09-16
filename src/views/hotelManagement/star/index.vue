@@ -47,8 +47,7 @@ import type { SelectProps } from 'ant-design-vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
-import HotelStarAddUpdate from './components/hotelStar-add-update/hotelStar-add-update.vue';
-import { getHotelStarTableInfo } from '@/api';
+import api from '@/api';
 
 const status = ref('');
 let statusOptionsData = [
@@ -126,7 +125,7 @@ const pageSideChange = (current: number, size: number) => {
 };
 
 const onSearch = () => {
-	getHotelStarTableInfo(tableState.tableData.param).then((res: any) => {
+	api.getHotelStarTableInfo(tableState.tableData.param).then((res: any) => {
 		console.log('res:', res);
 		tableState.tableData.data = res.content;
 		tableState.tableData.total = res.total;

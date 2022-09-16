@@ -1,4 +1,4 @@
-import { request, config } from '@/utils/index';
+import { request, commonPath } from '@/utils/index';
 
 export async function getInfo(data: any) {
 	return request({
@@ -19,7 +19,7 @@ export function getOrder(data: any) {
 
 export function login(data: any) {
 	return request({
-		url: '/ykt/customer-service/public/api/sys-user/login',
+		url: `${commonPath}/customer-service/public/api/sys-user/login`,
 		method: 'post',
 		data,
 		showLoading: true
