@@ -1,6 +1,7 @@
 <template>
 	<BaseModal :title="options.title" v-model="modelValue" :onOk="handleOk">
 		<a-form
+      ref="formRef"
       :model="formValidate"
       :rules="rules"
       :label-col="{ span: 5 }"
@@ -63,8 +64,9 @@
 <script lang="ts" setup>
   import { ref, Ref, computed, watch, toRefs, reactive } from 'vue';
 	import BaseModal from '@/components/common/BaseModal.vue';
+  import type { FormInstance } from 'ant-design-vue';
   import api from '@/api';
-import { message } from 'ant-design-vue';
+  import { message } from 'ant-design-vue';
 
   const props = defineProps({
       modelValue: {
@@ -74,8 +76,9 @@ import { message } from 'ant-design-vue';
       params: Object,
       roleList: Array
   })
-  const emit = defineEmits(['update:modelValue']);
+  const emit = defineEmits(['update:modelValue', 'cancel']);
   const dialogVisible = ref(false);
+  const formRef = ref<FormInstance>();
   const formValidate: Ref<Record<string, any>> = ref({});
   const options = reactive({ title: '新增用户' });
   const rules: any = {
@@ -91,15 +94,25 @@ import { message } from 'ant-design-vue';
   };
 
   const save = () => {
-    formValidate.value.companyId = null;
-    console.log('formValidate:', formValidate.value);
-    api.addUser({...formValidate.value}).then((res: any) => {
-      // console.log('res:', res);
-      message.success('新增成功')
-    }).catch((err: any) => {
-      console.error(err);
-      
-    })
+    formRef.value
+      .validateFields()
+      .then((values: any) => {
+        formValidate.value.companyId = null;
+        formValidate.value.password = '123456';
+        console.log('formValidate:', formValidate.value);
+        api.addUser({...formValidate.value}).then((res: any) => {
+          // console.log('res:', res);
+          message.success('新增成功');
+          formRef.value.resetFields();
+          console.log('reset formValidate: ', toRaw(formValidate));
+          emit('cancel');
+        }).catch((err: any) => {
+          console.error(err);
+        })
+      })
+      .catch((info: any) => {
+        console.log('Validate Failed:', info);
+      });
   }
 
   const init = async () => {

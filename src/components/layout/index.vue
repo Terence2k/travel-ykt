@@ -249,7 +249,7 @@ onMounted(() => {
 		// background: #fff;
 	}
 	// margin: 10px;
-	//background: #eeedf0;
+	background: #fff;
 	// height: calc(100vh - 70px);
 	// height: 300px !important;
 	min-width: 500px;
