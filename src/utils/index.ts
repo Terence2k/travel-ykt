@@ -1,3 +1,3 @@
 export { request } from "@/network/request";
-export { config } from "./config";
+export { commonPath } from "./config";
 export * from "./util";
