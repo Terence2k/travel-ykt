@@ -13,6 +13,7 @@
         ref="select"
         mode="multiple"
         placeholder="请选择角色"
+        v-model:value="state.tableData.param.roleIds"
       >
         <a-select-option v-for="item in state.optionRoleList" :value="item.roleId">
           {{ item.roleName }}
@@ -130,7 +131,7 @@ import { message } from 'ant-design-vue';
         pageNo: 1,
         pageSize: 10,
         keyWord: '',
-        roleName: '',
+        roleIds: [],
         status: null,
       },
     },
