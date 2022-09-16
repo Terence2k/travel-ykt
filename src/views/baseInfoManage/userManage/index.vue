@@ -55,7 +55,11 @@
     @change="onHandleCurrentChange"
     @showSizeChange="pageSideChange"
   />
-  <AddUpdate v-model="state.operationModal.isAddOrUpdate" :params="state.params" :roleList="state.optionRoleList"/>
+  <AddUpdate 
+    v-model="state.operationModal.isAddOrUpdate"
+    :params="state.params"
+    :roleList="state.optionRoleList"
+    @cancel="cancel"/>
 </template>
 
 <script setup lang="ts">
@@ -145,6 +149,10 @@
       state.tableData.total = res.total;
     })
   }
+
+  const cancel = (): any => {
+    state.operationModal.isAddOrUpdate = false;
+  };
 
   const getRoleList = () => {
     api.roleList(
