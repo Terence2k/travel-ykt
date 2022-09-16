@@ -1,9 +1,9 @@
-import { request } from '@/utils/index';
+import { request, commonPath } from '@/utils/index';
 
 // 用户列表
 export async function userList(data: any) {
 	return request({
-		url: '/ykt/customer-service/public/api/sys-user/list',
+		url: `${commonPath}/customer-service/public/api/sys-user/list`,
 		method: 'post',
 		data,
 		showLoading: true
@@ -13,7 +13,7 @@ export async function userList(data: any) {
 // 角色列表
 export async function roleList(data: any) {
 	return request({
-		url: '/ykt/customer-service/public/api/sys-role/list',
+		url: `${commonPath}/customer-service/public/api/sys-role/list`,
 		method: 'post',
 		data,
 		showLoading: true
@@ -23,7 +23,7 @@ export async function roleList(data: any) {
 // 新增用户
 export async function addUser(data: any) {
 	return request({
-		url: '/ykt/customer-service/public/api/sys-user/save',
+		url: `${commonPath}/customer-service/public/api/sys-user/save`,
 		method: 'post',
 		data,
 		showLoading: true
