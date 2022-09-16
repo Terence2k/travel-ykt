@@ -92,7 +92,6 @@ import { message } from 'ant-design-vue';
 
   const save = () => {
     formValidate.value.companyId = null;
-    formValidate.value.password = '123456';
     console.log('formValidate:', formValidate.value);
     addUser({...formValidate.value}).then((res: any) => {
       // console.log('res:', res);
