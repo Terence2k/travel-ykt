@@ -11,9 +11,12 @@
     <search-item label="角色名称">
       <a-select
         ref="select"
+        mode="multiple"
         placeholder="请选择角色"
       >
-        <a-select-option value="all">all</a-select-option>
+        <a-select-option v-for="item in state.optionRoleList" :value="item.roleId">
+          {{ item.roleName }}
+        </a-select-option>
       </a-select>
     </search-item>
     <search-item label="状态">
@@ -28,17 +31,17 @@
       <a-input placeholder="请输入用户姓名/手机号"/>
     </search-item>
     <template #button>
-      <a-button>查询</a-button>
+      <a-button @click="onSearch">查询</a-button>
     </template>
   </CommonSearch>
-  <CommonTable :dataSource="dataSource" :columns="columns">
+  <CommonTable :dataSource="state.tableData.data" :columns="columns">
       <template #button>
-        <a-button type="primary">新增</a-button>
+        <a-button type="primary" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
       </template>
-      <template #bodyCell="{ column }">
+      <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
           <div class="action-btns">
-            <a>编辑</a>
+            <a @click="addOrUpdate({  row: record,  handle: 'update'})">编辑</a>
             <a>禁用</a>
             <a>查看</a>
           </div>
@@ -52,6 +55,7 @@
     @change="onHandleCurrentChange"
     @showSizeChange="pageSideChange"
   />
+  <AddUpdate v-model="state.operationModal.isAddOrUpdate" :params="state.params" :roleList="state.optionRoleList"/>
 </template>
 
 <script setup lang="ts">
@@ -59,66 +63,39 @@
   import CommonPagination from '@/components/common/CommonPagination.vue'
   import CommonSearch from '@/components/common/CommonSearch.vue'
   import SearchItem from '@/components/common/CommonSearchItem.vue'
-  import api from '@/api';
-  const dataSource = [
-    {
-      key: '1',
-      name: '王某某',
-      age: 32,
-      address: '西湖区湖底公园1号',
-      address1: '西湖区湖底公园1号',
-      address2: '西湖区湖底公园1号',
-      address3: '西湖区湖底公园1号',
-    },
-    {
-      key: '2',
-      name: '张某某',
-      age: 42,
-      address: '西湖区湖底公园1号',
-      address1: '西湖区湖底公园1号',
-      address2: '西湖区湖底公园1号',
-      address3: '西湖区湖底公园1号',
-    },
-    {
-      key: '3',
-      name: '张某某',
-      age: 42,
-      address: '西湖区湖底公园1号',
-      address1: '西湖区湖底公园1号',
-      address2: '西湖区湖底公园1号',
-      address3: '西湖区湖底公园1号',
-    },
-  ];
+  import AddUpdate from './AddUpdate.vue';
+  import { userList, roleList } from '@/api';
+  
   const columns = [
     {
       title: '用户姓名',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'username',
+      key: 'username',
     },
     {
       title: '手机号',
-      dataIndex: 'age',
-      key: 'age',
+      dataIndex: 'mobile',
+      key: 'mobile',
     },
     {
       title: '所属单位类型',
-      dataIndex: 'address',
-      key: 'address',
+      dataIndex: 'unitTypeName',
+      key: 'unitTypeName',
     },
     {
       title: '所属单位',
-      dataIndex: 'address1',
-      key: 'address1',
+      dataIndex: 'unitName',
+      key: 'unitName',
     },
     {
       title: '所属角色',
-      dataIndex: 'address2',
-      key: 'address2',
+      dataIndex: 'roleList',
+      key: 'roleList',
     },
     {
       title: '状态',
-      dataIndex: 'address3',
-      key: 'address3',
+      dataIndex: 'userStatusName',
+      key: 'userStatusName',
     },
     {
       title: '操作',
@@ -131,13 +108,22 @@
   const state = reactive({
     tableData: {
       data: [],
-      total: 400,
+      total: 0,
       loading: false,
       param: {
         pageNo: 1,
         pageSize: 10,
+        keyWord: '',
+        roleName: '',
+        status: null,
+        uniType: ''
       },
     },
+    params: {},
+    operationModal: {
+      isAddOrUpdate: false
+    },
+    optionRoleList: []
   });
 
   const onHandleCurrentChange = (val: number) => {
@@ -149,15 +135,52 @@
   const pageSideChange = (current: number, size: number) => {
     console.log('changePageSize:', size);
     state.tableData.param.pageSize = size;
-    // onSearch();
+    onSearch();
   }
 
   const onSearch = () => {
-    api.userList(state.tableData.param).then(res => {
-      console.log(res)
+    userList(state.tableData.param).then((res: any) => {
+      console.log('res:', res);
+      state.tableData.data = res.content;
+      state.tableData.total = res.total;
     })
   }
-  onSearch()
+
+  const getRoleList = () => {
+    roleList(
+      {
+        pageNo: 1,
+        pageSize: 100000,
+      }
+    ).then((res: any) => {
+      console.log('角色列表:', res);
+      state.optionRoleList = res.content.map((item: any) => {
+        return {
+          roleName: item.roleName,
+          roleId: item.oid
+        }
+      });
+    })
+  }
+
+  const addOrUpdate = (param: any) => {
+    console.log('state.operationModal.isAddOrUpdate:', state.operationModal.isAddOrUpdate);
+    
+    const { row, handle } = param;
+    console.log(row);
+    console.log(handle);
+
+    state.params = {};
+    if (handle === 'update') {
+      state.params = row;
+    }
+    state.operationModal.isAddOrUpdate = true;
+  };
+
+  onMounted(() => {
+    getRoleList();
+    onSearch();
+  })
 </script>
 
 <style lang="less">

@@ -11,7 +11,7 @@ const whiteList = ['/login']; // no redirect whitelist
 let first = true;
 // const modules = import.meta.glob("../views/**/index.vue");
 router.beforeEach(async (to: RouteLocationNormalized, _, next) => {
-	const hasTokne = window.localStorage.getItem('token');
+	const hasTokne = window.localStorage.getItem('authorization');
 	if (hasTokne) {
 		// 已经登录
 		if (to.path === '/login') {

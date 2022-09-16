@@ -1,13 +1,9 @@
 <template>
 	<div class="form_box">
 		<a-form :model="formModel" :rules="rules" @finish="handleFinish">
-			<a-tabs v-model:activeKey="state.activeKey">
-				<a-tab-pane key="1" tab="密码登录"></a-tab-pane>
-				<a-tab-pane key="2" tab="验证码登录" force-render></a-tab-pane>
-			</a-tabs>
-			<!-- <p class="text">请输入手机号登录</p> -->
-			<a-form-item name="username">
-				<a-input class="reset-input" v-model:value="formModel.username" placeholder="请输入手机号">
+			<p class="text">请输入手机号登录</p>
+			<a-form-item name="account">
+				<a-input class="reset-input" v-model:value="formModel.account" placeholder="请输入账号">
 					<template #prefix>
 						<span class="reset-prefix">手机号</span>
 					</template>
@@ -39,6 +35,7 @@
 </template>
 <script setup lang="ts">
 import { Icon } from '@/components/index';
+import { login } from '@/api';
 
 const loading = ref(false);
 
@@ -73,25 +70,31 @@ watch(
 );
 
 const rules: any = {
-	username: [{ required: true, trigger: 'blur', message: '请输入手机号' }],
+	account: [{ required: true, trigger: 'blur', message: '请输入手机号' }],
 	password: [{ required: true, trigger: 'blur', message: '请输入密码' }],
 };
 
 const checked = ref(true);
 const formModel = reactive({
-	username: 'admin',
-	password: '123456',
+	account: '',
+	password: '',
 });
 
 const handleFinish = async (values: any) => {
 	// console.log(checked, values);
 	console.log(values);
 	loading.value = true;
-	window.localStorage.setItem('token', 'true');
-	router.replace({
-		path: state.redirect || '/',
-		query: state.otherQuery,
-	});
+  
+  login(formModel).then(res => {
+    console.log(res)
+    window.localStorage.setItem('authorization', `${res}`);
+    router.replace({
+      path: state.redirect || '/',
+      query: state.otherQuery,
+    });
+  }).catch(err => {
+    console.log(err)
+  })
 	loading.value = false;
 	// if (res) {
 	//   message.success("成功");
@@ -139,8 +142,8 @@ const handleFinish = async (values: any) => {
 		margin-bottom: 10px;
 	}
 	.gray_text {
-		font-size: 16px;
-		color: #9DA0A4;
+		font-size: 12px;
+		color: #666666;
 	}
 	.reset-input {
 		height: 48px;
