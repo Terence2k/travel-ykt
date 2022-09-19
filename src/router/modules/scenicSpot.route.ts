@@ -10,11 +10,33 @@ export default [
 		children: [
 			{
 				path: 'information',
-				component: () => import('@/views/scenicSpot/scenicSpotInformation/index.vue'),
 				name: 'information',
+				redirect: '/scenic-spot/information/list',
 				meta: {
 					title: '景区管理信息',
 				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/scenicSpot/scenicSpotInformation/index.vue'),
+						name: 'list',
+						meta: {
+							title: '首页',
+							activeMeun: 'information',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'edit',
+						component: () => import('@/views/scenicSpot/scenicSpotInformation/components/edit.vue'),
+						name: 'edit',
+						meta: {
+							title: '编辑',
+							activeMeun: 'information',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
 			},
 			{
 				path: 'order-manage',

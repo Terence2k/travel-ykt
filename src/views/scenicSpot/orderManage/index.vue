@@ -156,8 +156,7 @@ const onSearch = () => {
 onMounted(() => {
 	// navigatorBar
 	navigatorBar.clearNavigator();
-	navigatorBar.setNavigator(['1', '2']);
-	console.log('onMounted--orderManage  订单管理');
+	navigatorBar.setNavigator(['订单管理']);
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();

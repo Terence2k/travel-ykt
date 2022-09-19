@@ -56,11 +56,11 @@
 
 <style lang="scss">
 .table-area {
-		padding: 0 20px;
+	padding: 0 20px;
 	.list-btn {
 		display: flex;
 		justify-content: flex-end;
-		padding: 16px 0;
+		padding: 8px 0;
 	}
 	// 操作列按钮
 	.action-btns {
@@ -84,14 +84,14 @@
 		color: #1e2226;
 		font-weight: bold;
 		margin-right: 16px;
-    background-color: #F5F7FA;
-    // 去掉表头列右border
-    &::before {
-      display: none;
-    }
+		background-color: #f5f7fa;
+		// 去掉表头列右border
+		&::before {
+			display: none;
+		}
 	}
-  .ant-table-cell {
-    font-size: 12px;
-  }
+	.ant-table-cell {
+		font-size: 12px;
+	}
 }
 </style>
