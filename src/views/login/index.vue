@@ -4,14 +4,15 @@
 			<LoginPic />
 		</div>
 		<div class="rowCC login-box">
-			<a-card class="login" :bordered="false" :body-style="{ width: '480px', padding: '30px 0' }">
+			<!-- <a-card class="login" :bordered="false" :body-style="{ width: '480px', padding: '30px 0' }"> -->
 				<div class="login_right_container">
 					<div class="title_box">
-						<h2 class="title">丽江一卡通管理系统</h2>
+						<div class="logo">logo</div>
+						<h2 class="title">丽江一卡结算平台</h2>
 					</div>
 					<login-form />
 				</div>
-			</a-card>
+			<!-- </a-card> -->
 		</div>
 	</div>
 </template>
@@ -38,7 +39,7 @@ import LoginPic from './pic.vue';
 	// background-image: linear-gradient(to right, #74ebd5 0%, #9face6 100%);
 	.login {
 		border-radius: 10px;
-		box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+		// box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
 		// background-image: linear-gradient(to top, #9795f0 0%, #fbc8d4 100%);
 		&_right {
 			// padding-top: 80px;
@@ -48,12 +49,28 @@ import LoginPic from './pic.vue';
 			}
 		}
 	}
+	.login_right_container {
+		width: 456px;
+	}
 }
 .title_box {
 	display: flex;
+	align-items: center;
+	.logo {
+		width: 44px;
+		line-height: 44px;
+		background-color: #36B374;
+		text-align: center;
+		border-radius: 7px;
+		color: #fff;
+		margin-right: 20px;
+	}
 	.title {
-		font-size: 22px;
+		font-size: 24px;
 		color: #000000;
+		font-weight: 400;
+		color: #36B374;
+		margin: 0;
 	}
 }
 </style>

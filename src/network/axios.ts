@@ -9,6 +9,7 @@ import axios, {
 //   import qs from 'qs'
   import { cloneDeep } from 'lodash';
   import { message } from 'ant-design-vue';
+  import { to2 } from '@/utils/util';
   
   const apiBaseUrl: string = <string>import.meta.env.VITE_APP_BASE_URL;
   const apiBaseUrlAuthor: string = <string>import.meta.env.VITE_APP_BASE_URL_AUTHOR
@@ -63,58 +64,70 @@ import axios, {
         (res: AxiosResponse) => {
           console.log(res);
           const { data, headers } = res;
+          console.log('data:', data);
           if (data instanceof Blob) return res;
-          const { ret = 1, success = false, msg } = data;
-          if (ret !== 0 && !success) {
+          const { status = 1, success = false, msg } = data;
+          if (status !== 200 && !success) {
             message.error(msg)
             return Promise.reject(msg);
           }
           if (data.data?.authenticated) saveToken(headers);
+          
           return data.data;
         },
         (error: any) => {
+          console.log(error);
           if (!error.response || !error.response.status) {
+            message.error(error.message);
             return Promise.reject({
-              ret: 1,
+              status: 1,
               msg: error.message || '网络异常，请查网络再试试～'
             });
           }
           let err: Record<string, unknown> = {};
           switch (error.response.status) {
+            case 401:
+              err = {
+                msg: error.response.data.message || '登录信息已过期，请您重新登录～',
+                status: 401
+              };
+              break;
             case 403:
               err = {
-                msg: error.response.data.msg || '登录信息已过期，请您重新登录～',
-                ret: 403
+                msg: error.response.data.message || '登录信息已过期，请您重新登录～',
+                status: 403
               };
               break;
             case 500:
               err = {
-                msg: error.response.data.msg || '服务器出错了～',
-                ret: 500
+                msg: error.response.data.message || '服务器出错了～',
+                status: 500
               };
               break;
             case 502:
               err = {
-                msg: error.response.data.msg || '服务器出错了～',
-                ret: 502
+                msg: error.response.data.message || '服务器出错了～',
+                status: 502
               };
               break;
             case 503:
               err = {
-                msg: error.response.data.msg || '服务器出错了～',
-                ret: 503
+                msg: error.response.data.message || '服务器出错了～',
+                status: 503
               };
               break;
             default:
               err = {
-                msg: error.response.data.msg || '服务器出错了～',
-                ret: 1
+                msg: error.response.data.message || '服务器出错了～',
+                status: 1
               };
               break;
           }
-          if (err.ret === 403) {
-            // store.dispatch('redirectLogin')
+          if (err.status === 403 || err.status === 401) {
+            to2();
           }
+          console.log('err:', err);
+          message.error(err.msg as any);
           return Promise.reject(err);
         }
       );
