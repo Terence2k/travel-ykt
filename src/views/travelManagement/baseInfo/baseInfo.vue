@@ -1,18 +1,15 @@
 <template>
-	<div>
+	<div class="base-info-container">
 		<div class="import-btn">
 			<a-button type="primary">导入模板</a-button>
 		</div>
 		<a-form
+			ref="formRef"
 			:model="formState"
-			name="basic"
 			:rules="rulesRef"
 			labelAlign="left"
 			:label-col="{ span: 2 }"
 			:wrapper-col="{ span: 6 }"
-			autocomplete="off"
-			@finish="onFinish"
-			@finishFailed="onFinishFailed"
 		>
 			<a-form-item
 			label="行程类型"
@@ -90,10 +87,6 @@
 			<a-button type="primary" html-type="submit">Submit</a-button>
 			</a-form-item> -->
 		</a-form>
-		<div class="footer">
-			<a-button type="primary">保存</a-button>
-			<a-button type="primary">发团</a-button>
-		</div>
 	</div>
 </template>
 
@@ -104,6 +97,28 @@ interface FormState {
   remember: boolean;
 	[k:string]:any
 }
+
+const formRef = ref();
+
+const props = defineProps({
+	onCheck: {
+		type: Boolean
+	}
+})
+
+const onSubmit = async () => {
+	try {
+		const values = await formRef.value.validateFields()
+		console.log('Success:', values);
+	} catch (errorInfo) {
+		console.log('Failed:', errorInfo);
+	}
+};
+
+watch(() => props.onCheck, (newVal) => {
+	console.log(newVal)
+	onSubmit()
+})
 
 const rulesRef = {
 	f: [{ required: true, message: '请选择行程类型' }],
@@ -122,6 +137,7 @@ const formState = reactive<FormState>({
 	username: '1',
 	password: '',
 	remember: true,
+	e: '2'
 });
 const onFinish = (values: any) => {
 	console.log('Success:', values);
@@ -136,16 +152,5 @@ const onFinishFailed = (errorInfo: any) => {
 		display: flex;
 		justify-content: end;
 		margin-bottom: 10px;
-	}
-	.footer {
-		position: fixed;
-		bottom: 16px;
-		background-color: #fff;
-		line-height: 64px;
-		width: 100%;
-		border-top: 1px solid #F1F2F5;
-		button:first-of-type {
-			margin-right: 16px;
-		}
 	}
 </style>
