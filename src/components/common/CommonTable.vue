@@ -1,6 +1,6 @@
 <template>
 	<div class="table-area">
-		<div class="list-btn">
+		<div class="list-btn" v-if="slotButton">
 			<slot name="button"></slot>
 		</div>
 		<a-table v-bind="$attrs" :scroll="{ x: '100vw', y: '100vh' }" :pagination="false" class="common-table">
@@ -12,8 +12,9 @@
 </template>
 
 <script setup lang="ts">
+  import { useSlots } from "vue";
   const attrs = useAttrs() as any;
-
+  const slotButton = !!useSlots().button;
 
   const computeTableHeight = () => {
     nextTick(() => {
