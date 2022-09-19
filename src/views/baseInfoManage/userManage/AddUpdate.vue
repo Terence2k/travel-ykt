@@ -1,6 +1,7 @@
 <template>
 	<BaseModal :title="options.title" v-model="modelValue" :onOk="handleOk">
 		<a-form
+      ref="formRef"
       :model="formValidate"
       :rules="rules"
       :label-col="{ span: 5 }"
@@ -63,8 +64,9 @@
 <script lang="ts" setup>
   import { ref, Ref, computed, watch, toRefs, reactive } from 'vue';
 	import BaseModal from '@/components/common/BaseModal.vue';
+  import type { FormInstance } from 'ant-design-vue';
   import api from '@/api';
-import { message } from 'ant-design-vue';
+  import { message } from 'ant-design-vue';
 
   const props = defineProps({
       modelValue: {
@@ -74,8 +76,9 @@ import { message } from 'ant-design-vue';
       params: Object,
       roleList: Array
   })
-  const emit = defineEmits(['update:modelValue']);
+  const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
   const dialogVisible = ref(false);
+  const formRef = ref<FormInstance>();
   const formValidate: Ref<Record<string, any>> = ref({});
   const options = reactive({ title: '新增用户' });
   const rules: any = {
@@ -89,16 +92,35 @@ import { message } from 'ant-design-vue';
 	const handleOk = async (callback:Function) => {
 
   };
-
+  
   const save = () => {
+    formRef.value
+    .validateFields()
+    .then((values: any) => {
+      if (formValidate.value.oid) {
+        addOrUpdateAPI('editUser');
+      } else {
+        addOrUpdateAPI('addUser');
+      }
+    })
+    .catch((info: any) => {
+      console.log('Validate Failed:', info);
+    });
+  }
+
+  const addOrUpdateAPI = (apiName: string) => {
     formValidate.value.companyId = null;
+    formValidate.value.password = '123456';
     console.log('formValidate:', formValidate.value);
-    api.addUser({...formValidate.value}).then((res: any) => {
+    api[apiName]({...formValidate.value}).then((res: any) => {
       // console.log('res:', res);
-      message.success('新增成功')
+      message.success('保存成功');
+      formRef.value.resetFields();
+      console.log('reset formValidate: ', toRaw(formValidate));
+      emit('cancel');
+      emit('onSearch');
     }).catch((err: any) => {
       console.error(err);
-      
     })
   }
 
@@ -107,6 +129,7 @@ import { message } from 'ant-design-vue';
     formValidate.value = {};
     if (props.params?.oid) {
       formValidate.value = { ...props.params };
+      formValidate.value.roleIds = formValidate.value.roleList.map((item: any) => item.oid)
       options.title = '编辑用户';
     } else {
       options.title = '新增用户';
@@ -114,7 +137,6 @@ import { message } from 'ant-design-vue';
   }
 
   watch(() => props.modelValue, async (nVal) => {
-    console.log('nval:', nVal);
     dialogVisible.value = nVal;
     if (dialogVisible.value) {
       await init();
@@ -122,7 +144,6 @@ import { message } from 'ant-design-vue';
 	})
   
   watch(dialogVisible, nVal => {
-    console.log('dialogVisible:', nVal);
     emit('update:modelValue', nVal);
   });
 </script>

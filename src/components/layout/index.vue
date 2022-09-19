@@ -164,7 +164,7 @@ onMounted(() => {
 		justify-content: space-between;
 		align-items: center;
 		box-sizing: border-box;
-		background-color: $theme-color;
+		background-color: $layout-header;
 		height: 64px !important;
 	}
 	.my-sideMenu-sider_logo {
@@ -178,7 +178,7 @@ onMounted(() => {
 		justify-content: center;
 		box-sizing: border-box;
 		padding-top: 6px;
-		background-color: $theme-color;
+		background-color: $layout-header;
 
 		.logo {
 			width: 34px;
@@ -249,7 +249,7 @@ onMounted(() => {
 		// background: #fff;
 	}
 	// margin: 10px;
-	//background: #eeedf0;
+	background: #fff;
 	// height: calc(100vh - 70px);
 	// height: 300px !important;
 	min-width: 500px;
