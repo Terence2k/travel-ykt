@@ -13,7 +13,7 @@ export const useNavigatorBar = defineStore('navigatorBar', {
 		},
 	},
 	actions: {
-		setNavigator(arr: []) {
+		setNavigator(arr: any) {
 			this.title = arr;
 		},
 		clearNavigator() {

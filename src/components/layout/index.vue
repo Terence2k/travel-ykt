@@ -49,7 +49,7 @@
 						<img class="file-dir" style="margin-top: -4px" src="@/assets/svg/navigation_icon.svg" alt="" />
 					</template>
 					<!-- {{ state.routeList }} -->
-					<a-breadcrumb-item v-for="title in state.routeList" :key="title">
+					<a-breadcrumb-item v-for="title in titleLength" :key="title">
 						<span v-if="title">{{ title }}</span>
 					</a-breadcrumb-item>
 				</a-breadcrumb>
@@ -113,18 +113,21 @@ const state = reactive({
 });
 
 const navigatorBar = useNavigatorBar();
-console.log(router.currentRoute.value.matched, 'router', state.routeList);
-//自定义面包屑 不设置默认路由
-const getRouteLIst = (): void => {
-	console.log(navigatorBar.title, 'title');
-	let len = navigatorBar.title.length;
+
+/**
+ * 自定义面包屑 不设置默认路由
+ */
+const titleLength = computed(() => {
+	let len = navigatorBar.title.length,
+		titleArr = [];
+
 	if (len !== 0) {
-		state.routeList = navigatorBar.title;
+		titleArr = navigatorBar.title;
 	} else {
-		state.routeList = router.currentRoute.value.matched.map((i) => i.meta.title);
+		titleArr = router.currentRoute.value.matched.map((i) => i.meta.title);
 	}
-	// state.url = router.currentRoute.value.matched[router.currentRoute.value.matched.length - 1]?.path;
-};
+	return titleArr;
+});
 
 watch(
 	() => route.currentRoute.value.path,
@@ -151,8 +154,6 @@ watch(
 		if (!openKeys.value.includes(temp)) {
 			openKeys.value.push(temp);
 		}
-
-		getRouteLIst();
 	},
 	{
 		immediate: true,

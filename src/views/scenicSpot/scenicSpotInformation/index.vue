@@ -52,6 +52,9 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
+import { useNavigatorBar } from '@/stores/modules/navigatorBar';
+
+const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 const dataSource = [
 	{
@@ -145,11 +148,20 @@ const pageSideChange = (current: number, size: number) => {
 	// onSearch();
 };
 
-const onSearch = () => {
-	userList(state.tableData.param).then((res) => {
-		console.log(res);
-	});
-};
+// const onSearch = () => {
+// 	userList(state.tableData.param).then((res) => {
+// 		console.log(res);
+// 	});
+// };
+onMounted(() => {
+	// navigatorBar
+
+	navigatorBar.setNavigator(['景区信息管理', '新增']);
+	console.log('onMounted---scenicSpotInformation');
+});
+onBeforeUnmount(() => {
+	navigatorBar.clearNavigator();
+});
 </script>
 
 <style lang="less">

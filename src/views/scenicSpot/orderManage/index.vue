@@ -1,23 +1,23 @@
 <template>
 	<CommonSearch>
-		<search-item label="入园日期">
+		<SearchItem label="入园日期">
 			<a-select ref="select" style="width: 200px" placeholder="请选择审核状态">
 				<a-select-option value="all">all</a-select-option>
 			</a-select>
-		</search-item>
-		<search-item label="核销日期">
+		</SearchItem>
+		<SearchItem label="核销日期">
 			<a-select ref="select" style="width: 200px" placeholder="请选择景区等级">
 				<a-select-option value="all">all</a-select-option>
 			</a-select>
-		</search-item>
-		<search-item label="行程单号">
+		</SearchItem>
+		<SearchItem label="行程单号">
 			<a-select ref="select" style="width: 200px" placeholder="请选择景区名称">
 				<a-select-option value="all">all</a-select-option>
 			</a-select>
-		</search-item>
-		<search-item label="旅行社名称">
+		</SearchItem>
+		<SearchItem label="旅行社名称">
 			<a-input placeholder="请输入用户姓名/手机号" style="width: 200px" />
-		</search-item>
+		</SearchItem>
 		<template #button>
 			<a-button>查询</a-button>
 		</template>
@@ -52,6 +52,9 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
+import { useNavigatorBar } from '@/stores/modules/navigatorBar';
+
+const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 const dataSource = [
 	{
@@ -146,10 +149,19 @@ const pageSideChange = (current: number, size: number) => {
 };
 
 const onSearch = () => {
-	userList(state.tableData.param).then((res) => {
-		console.log(res);
-	});
+	// userList(state.tableData.param).then((res) => {
+	// 	console.log(res);
+	// });
 };
+onMounted(() => {
+	// navigatorBar
+	navigatorBar.clearNavigator();
+	navigatorBar.setNavigator(['1', '2']);
+	console.log('onMounted--orderManage  订单管理');
+});
+onBeforeUnmount(() => {
+	navigatorBar.clearNavigator();
+});
 </script>
 
 <style lang="less">
