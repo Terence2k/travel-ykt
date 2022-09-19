@@ -15,24 +15,20 @@
 				<a-select-option value="all">all</a-select-option>
 			</a-select>
 		</search-item>
-		<search-item label="查询">
-			<a-input placeholder="请输入用户姓名/手机号" style="width: 200px" />
-		</search-item>
 		<template #button>
 			<a-button>查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
 		<div class="list-btn">
-			<a-button type="primary" class="success">新增</a-button>
+			<a-button type="primary" class="success">导出</a-button>
 		</div>
 		<CommonTable :dataSource="dataSource" :columns="columns">
-			<template #bodyCell="{ column }">
+			<template #bodyCell="{ column, record }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a>编辑</a>
-						<a>禁用</a>
-						<a>查看</a>
+						<a href="javascript:;" @click="toEditPage(record, column)">查看</a>
+						<a href="javascript:;">审核</a>
 					</div>
 				</template>
 			</template>
@@ -56,65 +52,74 @@ import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
+const route = useRouter();
 const dataSource = [
 	{
 		key: '1',
 		name: '王某某',
 		age: 32,
 		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
+		address1: '13199090090',
 		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
+		address3: '等待',
+		address4: '是',
 	},
 	{
 		key: '2',
 		name: '张某某',
 		age: 42,
 		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
+		address1: '13199090090',
 		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
+		address3: '是等待',
+		address4: '是',
 	},
 	{
 		key: '3',
 		name: '张某某',
 		age: 42,
 		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
+		address1: '13199090090',
 		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
+		address3: '等待',
+		address4: '是',
 	},
 ];
 const columns = [
 	{
-		title: '用户姓名',
+		title: '景区等级',
 		dataIndex: 'name',
 		key: 'name',
 	},
 	{
-		title: '手机号',
+		title: '景区名称',
 		dataIndex: 'age',
 		key: 'age',
 	},
 	{
-		title: '所属单位类型',
+		title: '企业信用代码',
 		dataIndex: 'address',
 		key: 'address',
 	},
 	{
-		title: '所属单位',
+		title: '联系电话',
 		dataIndex: 'address1',
 		key: 'address1',
 	},
 	{
-		title: '所属角色',
+		title: '所在地址',
 		dataIndex: 'address2',
 		key: 'address2',
 	},
 	{
-		title: '状态',
+		title: '审核状态',
 		dataIndex: 'address3',
 		key: 'address3',
+	},
+	{
+		title: '提供减免',
+		dataIndex: 'address4',
+		key: 'address',
 	},
 	{
 		title: '操作',
@@ -136,88 +141,34 @@ const state = reactive({
 	},
 });
 
+//搜索
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
 	state.tableData.param.pageNo = val;
-	onSearch();
+	// onSearch();
 };
-
+//翻页
 const pageSideChange = (current: number, size: number) => {
 	console.log('changePageSize:', size);
 	state.tableData.param.pageSize = size;
 	// onSearch();
 };
-
+//编辑
+const toEditPage = (record: any, column: any) => {
+	console.log(record, column);
+	route.push('/scenic-spot/information/edit');
+};
 // const onSearch = () => {
 // 	userList(state.tableData.param).then((res) => {
 // 		console.log(res);
 // 	});
 // };
 onMounted(() => {
-	// navigatorBar
-
-	navigatorBar.setNavigator(['景区信息管理', '新增']);
-	console.log('onMounted---scenicSpotInformation');
+	navigatorBar.setNavigator(['景区信息管理']);
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
 });
 </script>
 
-<style lang="less">
-.search-area {
-	display: flex;
-	flex-wrap: wrap;
-	padding: 24px 52px 24px 20px;
-	border-bottom: 1px #f1f2f5 solid;
-	.search-items {
-		display: flex;
-		align-items: center;
-		margin-right: 32px;
-		.title {
-			color: #1e2226;
-			font-weight: bold;
-			margin-right: 16px;
-		}
-	}
-	.search-button {
-		display: inline-flex;
-		justify-content: flex-end;
-		float: right;
-		text-align: right;
-		flex: 1;
-	}
-}
-.table-area {
-	overflow: hidden;
-	.list-btn {
-		display: flex;
-		justify-content: flex-end;
-		padding: 24px 52px 16px;
-	}
-	.success {
-		background-color: #36b374;
-		color: #fff;
-	}
-	.action-btns {
-		a {
-			margin: 0 6px;
-			&:first-of-type {
-				margin-left: 0;
-			}
-		}
-	}
-}
-
-// table style
-.ant-table-thead > tr > th {
-	border-top: 1px solid #f0f0f0;
-	background-color: #fcfcfc;
-	&::before {
-		height: 100% !important;
-	}
-}
-.ant-table-body {
-	height: 500px;
-}
-</style>
+<style lang="less"></style>
