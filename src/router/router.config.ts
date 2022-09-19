@@ -3,6 +3,7 @@ import type { RouteRecordRaw } from 'vue-router';
 import baseInfoRoute from './modules/baseInfo.route';
 import hotelManagementRoute from './modules/hotelManagement.route';
 import travelGroupRoute from './modules/travelGroup.route';
+import cateringManageRoute from './modules/catering.route';
 
 export const basicRouter = [
 	{
@@ -32,7 +33,7 @@ export const basicRouter = [
 	},
 ];
 
-export const accessRoutes: RouteRecordRaw[] = [...travelGroupRoute, ...hotelManagementRoute, ...baseInfoRoute];
+export const accessRoutes: RouteRecordRaw[] = [...travelGroupRoute, ...hotelManagementRoute, ...baseInfoRoute, ...cateringManageRoute];
 
 export const constantRoutes: RouteRecordRaw[] = [
 	{
