@@ -1,5 +1,5 @@
 <template>
-	<a-menu-item :key="item.path" v-if="!item.children || item.children.length == 0" class="">
+	<a-menu-item :key="item.keys" v-if="!item.children || item.children.length == 0" class="">
 		<span :class="openKeys?.includes(item.path) ? 'bold' : ''"> {{ item.title }}</span>
 	</a-menu-item>
 	<a-sub-menu :key="item.keys" v-else>

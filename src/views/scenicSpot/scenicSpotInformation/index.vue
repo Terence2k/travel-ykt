@@ -52,7 +52,7 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
-import { userList } from '@/api';
+// import { userList } from '@/api';
 const dataSource = [
 	{
 		key: '1',

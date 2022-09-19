@@ -64,7 +64,7 @@
 import { MenuUnfoldOutlined, MenuFoldOutlined, UserOutlined, DownOutlined, RollbackOutlined } from '@ant-design/icons-vue';
 import { usePermissioStore, MenuList } from '../../stores/modules/permission';
 import router from '@/router';
-
+import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import SliderItem from './SliderItem.vue';
 import toggleScreen from './toggleScreen.vue';
 import type { MenuProps } from 'ant-design-vue';
@@ -78,10 +78,18 @@ const permissioStore = usePermissioStore();
 const navs = ref<MenuList[]>();
 const selectedKeys = ref<string[]>([]);
 const openKeys = ref<string[]>([]);
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const onSelect = (e: any) => {
 	const { key } = e;
 	route.push(key);
+	setCurrentRouterHighlight(key);
+};
+// 高亮选中路由
+const setCurrentRouterHighlight = (route: string) => {
+	setTimeout(() => {
+		selectedKeys.value = [`${route}`];
+	}, 1);
 };
 const dropClick: MenuProps['onClick'] = ({ key }) => {
 	switch (key) {
@@ -103,26 +111,38 @@ const state = reactive({
 	routeList: [],
 	url: '',
 });
+
+const navigatorBar = useNavigatorBar();
 console.log(router.currentRoute.value.matched, 'router', state.routeList);
+//自定义面包屑 不设置默认路由
 const getRouteLIst = (): void => {
+	console.log(navigatorBar.title, 'title');
+	let len = navigatorBar.title.length;
+	if (len !== 0) {
+		state.routeList = navigatorBar.title;
+	} else {
+		state.routeList = router.currentRoute.value.matched.map((i) => i.meta.title);
+	}
 	// state.url = router.currentRoute.value.matched[router.currentRoute.value.matched.length - 1]?.path;
-	let arr = router.currentRoute.value.matched.map((i) => {
-		if (!i.meta.isDetail) {
-			return i.meta.title;
-		}
-	});
-	state.routeList = arr.filter((i) => i);
 };
+
 watch(
 	() => route.currentRoute.value.path,
 	(nv) => {
 		if (!selectedKeys.value.includes(nv)) {
-			const matchPath = route.currentRoute.value.matched;
+			let matchPath = route.currentRoute.value.matched;
+			let urlArr = nv.split('/');
+
 			if (matchPath[1] && matchPath[1].path.indexOf(':id') > -1) {
 				selectedKeys.value = [matchPath[1].path.replace('/:id', '')];
 			} else {
-				selectedKeys.value = [nv];
+				if (urlArr.length > 3) {
+					selectedKeys.value = [urlArr.splice(0, 3).join('/')];
+				} else {
+					selectedKeys.value = [nv];
+				}
 			}
+			// console.log(matchPath, 'matchPath', nv, urlArr.splice(0, 3).join('/'));
 		}
 		let opens = nv.split('/');
 		let temp = `/${opens[1]}`;
