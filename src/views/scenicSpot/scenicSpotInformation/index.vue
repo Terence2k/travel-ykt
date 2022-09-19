@@ -1,29 +1,30 @@
 <template>
 	<CommonSearch>
 		<search-item label="审核状态">
-			<a-select ref="select" style="width: 200px" placeholder="请选择审核状态">
-				<a-select-option value="all">all</a-select-option>
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.auditStatus" style="width: 200px" placeholder="请选择景区等级">
+				<a-select-option :value="-1">未提交</a-select-option>
+				<a-select-option :value="0">待审核 </a-select-option>
+				<a-select-option :value="1"> 审核通过</a-select-option>
+				<a-select-option :value="2"> 审核未通过</a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="景区等级">
-			<a-select ref="select" style="width: 200px" placeholder="请选择景区等级">
-				<a-select-option value="all">all</a-select-option>
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.scenicLevel" style="width: 200px" placeholder="请选择景区等级">
+				<a-select-option :value="num" v-for="num in 10" :key="num">{{ num }}</a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="景区名称">
-			<a-select ref="select" style="width: 200px" placeholder="请选择景区名称">
-				<a-select-option value="all">all</a-select-option>
-			</a-select>
+			<a-input v-model:value="state.tableData.param.name" placeholder="请选择审核状态" />
 		</search-item>
 		<template #button>
-			<a-button>查询</a-button>
+			<a-button @click="initList">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
 		<div class="list-btn">
 			<a-button type="primary" class="success">导出</a-button>
 		</div>
-		<CommonTable :dataSource="dataSource" :columns="columns">
+		<CommonTable :dataSource="state.tableData.data" :columns="columns">
 			<template #bodyCell="{ column, record }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
@@ -49,77 +50,46 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
-
+import api from '@/api';
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 const route = useRouter();
-const dataSource = [
-	{
-		key: '1',
-		name: '王某某',
-		age: 32,
-		address: '西湖区湖底公园1号',
-		address1: '13199090090',
-		address2: '西湖区湖底公园1号',
-		address3: '等待',
-		address4: '是',
-	},
-	{
-		key: '2',
-		name: '张某某',
-		age: 42,
-		address: '西湖区湖底公园1号',
-		address1: '13199090090',
-		address2: '西湖区湖底公园1号',
-		address3: '是等待',
-		address4: '是',
-	},
-	{
-		key: '3',
-		name: '张某某',
-		age: 42,
-		address: '西湖区湖底公园1号',
-		address1: '13199090090',
-		address2: '西湖区湖底公园1号',
-		address3: '等待',
-		address4: '是',
-	},
-];
+
 const columns = [
 	{
 		title: '景区等级',
+		dataIndex: 'scenicLevel',
+		key: 'scenicLevel',
+	},
+	{
+		title: '景区名称',
 		dataIndex: 'name',
 		key: 'name',
 	},
 	{
-		title: '景区名称',
-		dataIndex: 'age',
-		key: 'age',
-	},
-	{
 		title: '企业信用代码',
-		dataIndex: 'address',
-		key: 'address',
+		dataIndex: 'creditCode',
+		key: 'creditCode',
 	},
 	{
 		title: '联系电话',
-		dataIndex: 'address1',
-		key: 'address1',
+		dataIndex: 'phone',
+		key: 'phone',
 	},
 	{
 		title: '所在地址',
-		dataIndex: 'address2',
-		key: 'address2',
+		dataIndex: 'addressDetail',
+		key: 'addressDetail',
 	},
 	{
 		title: '审核状态',
-		dataIndex: 'address3',
-		key: 'address3',
+		dataIndex: 'auditStatus',
+		key: 'auditStatus',
 	},
 	{
 		title: '提供减免',
-		dataIndex: 'address4',
-		key: 'address',
+		dataIndex: 'derate',
+		key: 'derate',
 	},
 	{
 		title: '操作',
@@ -137,6 +107,9 @@ const state = reactive({
 		param: {
 			pageNo: 1,
 			pageSize: 10,
+			scenicLevel: null, //景区等级(字典序号)
+			auditStatus: null, //审核状态（-1未提交  0待审核  1审核通过  2审核未通过）
+			name: '',
 		},
 	},
 });
@@ -163,7 +136,31 @@ const toEditPage = (record: any, column: any) => {
 // 		console.log(res);
 // 	});
 // };
+const initList = async () => {
+	let res = await api.getScenicSpotInformationList(state.tableData.param);
+	const { total, content } = res;
+	state.tableData.total = total;
+	const list: [any] = dealData(content);
+	state.tableData.data = list;
+};
+const status = {
+	'-1': '未提交',
+	0: '待审核',
+	1: '审核通过',
+	2: '审核未通过',
+};
+const dealData = (params: [any]) => {
+	params.map((i: any) => {
+		i.derate = i.derate ? '支持' : '不支持';
+		i.scenicLevel = i.scenicLevel ? i.scenicLevel : 0;
+		i.auditStatus = status[i.auditStatus];
+		return i;
+	});
+
+	return params;
+};
 onMounted(() => {
+	initList();
 	navigatorBar.setNavigator(['景区信息管理']);
 });
 onBeforeUnmount(() => {
