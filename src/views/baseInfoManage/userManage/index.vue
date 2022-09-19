@@ -229,7 +229,4 @@ import { message } from 'ant-design-vue';
       height: 100% !important;
     }
   }
-  .ant-table-body{
-    height: 500px;
-  }
 </style>
