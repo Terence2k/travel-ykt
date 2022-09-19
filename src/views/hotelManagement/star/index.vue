@@ -20,7 +20,7 @@
 							<template v-if="column.dataIndex === 'actions'">
 								<div class="cell-actions">
 									<span class="item" @click="addOrUpdate({ row: record, handle: 'update' })">编辑</span>
-									<span class="item" @click="disabledHotelStar">禁用</span>
+									<span class="item" @click="toggleHotelStarStatus(record)">{{ record?.ratedStatus === 0 ? '启用' : '禁用' }}</span>
 								</div>
 							</template>
 						</template>
@@ -34,7 +34,7 @@
 						@showSizeChange="pageSideChange"
 					>
 					</CommonPagination>
-					<HotelStarAddUpdate v-model="tableState.operationModal.isAddOrUpdate" :params="tableState.params"> </HotelStarAddUpdate>
+					<HotelStarAddUpdate v-model="tableState.operationModal.isAddOrUpdate" :params="tableState.params" :methods="methods"> </HotelStarAddUpdate>
 				</div>
 			</div>
 		</div>
@@ -47,6 +47,7 @@ import type { SelectProps } from 'ant-design-vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
+import HotelStarAddUpdate from './components/hotelStar-add-update/hotelStar-add-update.vue';
 import api from '@/api';
 
 const status = ref('');
@@ -125,11 +126,16 @@ const pageSideChange = (current: number, size: number) => {
 };
 
 const onSearch = () => {
-	api.getHotelStarTableInfo(tableState.tableData.param).then((res: any) => {
-		console.log('res:', res);
-		tableState.tableData.data = res.content;
-		tableState.tableData.total = res.total;
-	});
+	api
+		.getHotelStarTableInfo(tableState.tableData.param)
+		.then((res: any) => {
+			console.log('res:', res);
+			tableState.tableData.data = res.content;
+			tableState.tableData.total = res.total;
+		})
+		.catch((err: any) => {
+			console.log(err);
+		});
 };
 
 const searchByFilter = () => {
@@ -148,6 +154,35 @@ const addOrUpdate = (param: any) => {
 	}
 	tableState.operationModal.isAddOrUpdate = true;
 };
+
+const toggleHotelStarStatus = (param: any) => {
+	console.info(param);
+	if (param.ratedStatus === 0) {
+		api
+			.enableHotelStar({}, param.oid)
+			.then((res) => {
+				console.log(res);
+				onSearch();
+			})
+			.catch((err: any) => {
+				console.log(err);
+			});
+	} else {
+		api
+			.disableHotelStar({}, param.oid)
+			.then((res) => {
+				console.log(res);
+				onSearch();
+			})
+			.catch((err: any) => {
+				console.log(err);
+			});
+	}
+};
+
+const methods = reactive({
+	success: searchByFilter,
+});
 
 onMounted(() => {
 	onSearch();
