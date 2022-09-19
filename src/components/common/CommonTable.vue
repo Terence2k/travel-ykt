@@ -23,6 +23,7 @@
       const btnListhHeight = document.getElementsByClassName('list-btn')[0]?.offsetHeight || 0;
       const tableHeader = document.getElementsByClassName('ant-table-header')[0]?.offsetHeight || 0;
       const paginationHeight = document.getElementsByClassName('ant-pagination')[0]?.offsetHeight || 0;
+      const tabsHeight = document.getElementsByClassName('ant-tabs-nav')[0]?.offsetHeight || 0;
 
       // 计算总高度vh-除表格内容外高度
       let num = headerHeight
@@ -30,11 +31,12 @@
       + layoutHeight
       + btnListhHeight
       + tableHeader
-      + paginationHeight;
+      + paginationHeight
+      + tabsHeight;
       console.log('a-table-height:', num);
       
       const antTableBody = document.getElementsByClassName('ant-table-body')[0];
-      antTableBody.style.height = `calc(100vh - ${num + 36}px)`;
+      antTableBody.style.height = `calc(100vh - ${num + 40}px)`;
 
     })
   }
