@@ -19,11 +19,17 @@
     @change="onHandleCurrentChange"
     @showSizeChange="pageSideChange"
   />
+  <AddUpdate 
+    v-model="state.operationModal.isAddOrUpdate"
+    :params="state.params"
+    @onSearch="onSearch"
+    @cancel="cancel"/>
 </template>
 
 <script setup lang="ts">
   import CommonTable from '@/components/common/CommonTable.vue'
   import CommonPagination from '@/components/common/CommonPagination.vue'
+  import AddUpdate from './AddUpdate.vue';
   import api from '@/api';
   import { message } from 'ant-design-vue';
   
@@ -88,9 +94,19 @@
     onSearch();
   }
 
+  const handleMenuTree = (menuList: any) => {
+    menuList.forEach((item: any) => {
+      if (item.children?.length) {
+        handleMenuTree(item.children);
+      } else {
+        delete item.children;
+      }
+    });
+  }
+
   const onSearch = () => {
     api.menuList(state.tableData.param).then((res: any) => {
-      console.log('res:', res);
+      handleMenuTree(res);
       state.tableData.data = res;
       state.tableData.total = res.total;
     })
