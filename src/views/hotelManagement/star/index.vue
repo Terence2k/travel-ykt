@@ -9,16 +9,18 @@
 			</div>
 
 			<div class="table-bar">
-				<div class="flex-container">
-					<a-button class="button-create-item">新增</a-button>
-				</div>
 				<div class="table-container">
 					<CommonTable :dataSource="dataSource" :columns="columns">
-						<template #bodyCell="{ column }">
+						<template #button>
+							<div class="flex-container">
+								<a-button class="button-create-item" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
+							</div>
+						</template>
+						<template #bodyCell="{ column, record }">
 							<template v-if="column.dataIndex === 'actions'">
 								<div class="cell-actions">
-									<span class="item">编辑</span>
-									<span class="item">禁用</span>
+									<span class="item" @click="addOrUpdate({ row: record, handle: 'update' })">编辑</span>
+									<span class="item" @click="toggleHotelStarStatus(record)">{{ record?.ratedStatus === 0 ? '启用' : '禁用' }}</span>
 								</div>
 							</template>
 						</template>
@@ -30,7 +32,9 @@
 						:total="tableState.tableData.total"
 						@change="onHandleCurrentChange"
 						@showSizeChange="pageSideChange"
-					/>
+					>
+					</CommonPagination>
+					<HotelStarAddUpdate v-model="tableState.operationModal.isAddOrUpdate" :params="tableState.params" :methods="methods"> </HotelStarAddUpdate>
 				</div>
 			</div>
 		</div>
@@ -43,6 +47,7 @@ import type { SelectProps } from 'ant-design-vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
+import HotelStarAddUpdate from './components/hotelStar-add-update/hotelStar-add-update.vue';
 import api from '@/api';
 
 const status = ref('');
@@ -100,6 +105,10 @@ const tableState = reactive({
 			ratedStatus: status,
 		},
 	},
+	params: {},
+	operationModal: {
+		isAddOrUpdate: false,
+	},
 });
 
 const dataSource = computed(() => tableState.tableData.data);
@@ -117,17 +126,63 @@ const pageSideChange = (current: number, size: number) => {
 };
 
 const onSearch = () => {
-	api.getHotelStarTableInfo(tableState.tableData.param).then((res: any) => {
-		console.log('res:', res);
-		tableState.tableData.data = res.content;
-		tableState.tableData.total = res.total;
-	});
+	api
+		.getHotelStarTableInfo(tableState.tableData.param)
+		.then((res: any) => {
+			console.log('res:', res);
+			tableState.tableData.data = res.content;
+			tableState.tableData.total = res.total;
+		})
+		.catch((err: any) => {
+			console.log(err);
+		});
 };
 
 const searchByFilter = () => {
 	tableState.tableData.param.pageNo = 1;
 	onSearch();
 };
+
+const addOrUpdate = (param: any) => {
+	const { row, handle } = param;
+	console.log('数据：', row);
+	console.log('操作：', handle);
+
+	tableState.params = {};
+	if (handle === 'update') {
+		tableState.params = row;
+	}
+	tableState.operationModal.isAddOrUpdate = true;
+};
+
+const toggleHotelStarStatus = (param: any) => {
+	console.info(param);
+	if (param.ratedStatus === 0) {
+		api
+			.enableHotelStar({}, param.oid)
+			.then((res) => {
+				console.log(res);
+				onSearch();
+			})
+			.catch((err: any) => {
+				console.log(err);
+			});
+	} else {
+		api
+			.disableHotelStar({}, param.oid)
+			.then((res) => {
+				console.log(res);
+				onSearch();
+			})
+			.catch((err: any) => {
+				console.log(err);
+			});
+	}
+};
+
+const methods = reactive({
+	success: searchByFilter,
+});
 
 onMounted(() => {
 	onSearch();

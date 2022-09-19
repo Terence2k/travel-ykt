@@ -78,6 +78,7 @@ import axios, {
         (error: any) => {
           console.log(error);
           if (!error.response || !error.response.status) {
+            message.error(error.message);
             return Promise.reject({
               status: 1,
               msg: error.message || '网络异常，请查网络再试试～'

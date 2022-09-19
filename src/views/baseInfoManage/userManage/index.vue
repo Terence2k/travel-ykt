@@ -134,13 +134,17 @@ import { message } from 'ant-design-vue';
         roleIds: [],
         status: null,
       },
+      roleParam: {
+        pageNo: 1,
+        pageSize: 100000,
+      }
     },
     params: {},
     operationModal: {
       isAddOrUpdate: false,
       showDetails: false
     },
-    optionRoleList: []
+    optionRoleList: [] as any
   });
 
   const onHandleCurrentChange = (val: number) => {
@@ -169,12 +173,7 @@ import { message } from 'ant-design-vue';
   };
 
   const getRoleList = () => {
-    api.roleList(
-      {
-        pageNo: 1,
-        pageSize: 100000,
-      }
-    ).then((res: any) => {
+    api.roleList(state.tableData.roleParam).then((res: any) => {
       console.log('角色列表:', res);
       state.optionRoleList = res.content.map((item: any) => {
         return {

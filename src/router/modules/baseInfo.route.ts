@@ -33,7 +33,8 @@ export default [
 						component: () => import('@/views/baseInfoManage/rolePower/index.vue'),
 						name: 'index',
 						meta: {
-							title: 'index',
+							title: '首页',
+							activeMeun: 'role_power',
 							isDetail: true, // 在左侧的导航栏不会展示
 							// icon: 'liulanqi',
 							// auth: ["admin"],
@@ -45,6 +46,7 @@ export default [
 						name: 'menu',
 						meta: {
 							title: '菜单管理',
+							activeMeun: 'role_power',
 							isDetail: true, // 在左侧的导航栏不会展示
 							// icon: 'liulanqi',
 							// auth: ["admin"],
@@ -55,7 +57,8 @@ export default [
 						component: () => import('@/views/baseInfoManage/businessAdministration/index.vue'),
 						name: 'travel',
 						meta: {
-							title: '菜单管理',
+							title: '名字',
+							activeMeun: 'role_power',
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},

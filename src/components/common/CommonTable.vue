@@ -15,10 +15,11 @@
 
 <style lang="scss">
 .table-area {
+		padding: 0 20px;
 	.list-btn {
 		display: flex;
 		justify-content: flex-end;
-		padding: 24px 52px 16px;
+		padding: 16px 0;
 	}
 	// 操作列按钮
 	.action-btns {
@@ -34,14 +35,22 @@
 .common-table {
 	// 调整antable内容高度
 	.ant-table-body {
-		height: calc(100vh - 420px);
+		height: calc(100vh - 394px);
 	}
 
-	// 调整antable表头字体
+	// 调整antable表头
 	.ant-table-thead > tr > th {
 		color: #1e2226;
 		font-weight: bold;
 		margin-right: 16px;
+    background-color: #F5F7FA;
+    // 去掉表头列右border
+    &::before {
+      display: none;
+    }
 	}
+  .ant-table-cell {
+    font-size: 12px;
+  }
 }
 </style>
