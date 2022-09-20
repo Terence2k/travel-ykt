@@ -1,6 +1,7 @@
 <template>
 	<div class="warp">
 		<div class="form_pad">
+			<header>基本信息</header>
 			<a-form
 				:model="formState"
 				name="basic"
@@ -12,37 +13,34 @@
 				@finish="onFinish"
 				@finishFailed="onFinishFailed"
 			>
-				<a-card title="基本信息"  style="width: 100%" :bordered="false">
 					<a-form-item label="所属门店" name="name">
 						<a-input v-model:value="formState.name" />
 					</a-form-item>
-					<a-form-item label="餐饮名称" >
+					<a-form-item label="餐饮名称">
 						<a-input placeholder="请输入餐饮名称" />
 					</a-form-item>
-					<a-form-item label="可预订数量" >
-						<a-input  placeholder="请输入可预订数量，单位：人"/>
+					<a-form-item label="可预订数量">
+						<a-input placeholder="请输入可预订数量，单位：人" />
 					</a-form-item>
-					<a-form-item label="单价" >
+					<a-form-item label="单价">
 						<a-input placeholder="请输入单价，单位：元/人" />
 					</a-form-item>
-					<a-form-item label="图片" >
+					<a-form-item label="图片">
 						<img :width="200" src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" />
 					</a-form-item>
-					<a-form-item label="状态" >
+					<a-form-item label="状态">
 						<a-radio value="1">启用</a-radio>
-						<a-radio  value="2">禁用</a-radio>
+						<a-radio value="2">禁用</a-radio>
 					</a-form-item>
-				</a-card>
-				<a-card title="其他信息"  style="width: 100%" :bordered="false">
-					<a-form-item label="供餐时间" >
+					<div class="title">其他信息</div>
+					<a-form-item label="供餐时间">
 						<a-space direction="vertical">
-							<a-date-picker style="width: 334px" :showToday="false" placeholder="请选择供餐时间"/>
+							<a-date-picker style="width: 357px" v-model:value="value1" :showToday="false" />
 						</a-space>
 					</a-form-item>
-					<a-form-item label="其他" >
+					<a-form-item label="其他">
 						<a-input placeholder="请输入" />
 					</a-form-item>
-				</a-card>
 			</a-form>
 		</div>
 		<div class="footer">
@@ -84,6 +82,26 @@ const onFinishFailed = (errorInfo: any) => {
 .warp {
 	width: 100%;
 	box-sizing: border-box;
+	header {
+		// width: 64px;
+		// margin-bottom: 8px;
+		height: 56px;
+		line-height: 56px;
+		font-weight: bold;
+		color: #1e2226;
+		// margin: 0 8px 16px;
+		margin-bottom: 16px;
+		border-bottom: 1px solid #f1f2f5;
+	}
+	.title {
+		height: 56px;
+		line-height: 56px;
+		font-weight: bold;
+		color: #1e2226;
+		// margin: 0 8px 16px;
+		margin-bottom: 16px;
+		border-bottom: 1px solid #f1f2f5;
+	}
 	.edit_btn {
 		background-color: #5db179;
 		color: white;
@@ -91,7 +109,7 @@ const onFinishFailed = (errorInfo: any) => {
 	}
 
 	.form_pad {
-		padding: 20px 40px 60px;
+		padding: 0 16px 60px;
 	}
 	.footer {
 		position: fixed;

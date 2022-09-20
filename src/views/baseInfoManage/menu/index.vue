@@ -22,6 +22,7 @@
   <AddUpdate 
     v-model="state.operationModal.isAddOrUpdate"
     :params="state.params"
+    :menuList="state.tableData.data"
     @onSearch="onSearch"
     @cancel="cancel"/>
 </template>
@@ -32,6 +33,7 @@
   import AddUpdate from './AddUpdate.vue';
   import api from '@/api';
   import { message } from 'ant-design-vue';
+  import { useMenuManage } from '@/stores/modules/menuManage';
   
   const columns = [
     {
