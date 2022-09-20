@@ -1,5 +1,5 @@
 <template>
-	<div class="wrapper">
+	<div class="baseInfo-wrapper">
 		<div class="content-container">
 			<div class="search-bar">
 				<div class="item">

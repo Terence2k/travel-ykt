@@ -1,14 +1,26 @@
-.wrapper{
+.hotelStar-wrapper{
   //padding:20px;
+
+  .table-area {
+    padding: 0px !important;
+  }
+  :deep{
+
+    .ant-table-body{
+      height: calc(100vh - 390px) !important;
+    }
+  }
+
   .content-container{
     //padding:20px;
+    background-color: #f0f2f5
   }
   .search-bar{
     width:100%;
     height: 80px;
     padding: 0 20px;
     display:flex;
-    border-radius: 5px;
+    //border-radius: 5px;
     align-items: center;
     background-color:#ffffff;
     .item{
@@ -33,10 +45,9 @@
 
   .table-bar{
     padding:0px 20px;
-    border-radius:5px;
+    //border-radius:5px;
     background-color:#ffffff;
-    //margin-top: 15px;
-    //height:calc(100vh - 260px);
+    margin-top: 15px;
     .pagination-custom{
       padding:10px;
     }

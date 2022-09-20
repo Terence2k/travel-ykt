@@ -1,5 +1,5 @@
 <template>
-	<div class="wrapper">
+	<div class="hotelStar-wrapper">
 		<!-- <div class="title">星级管理</div> -->
 		<div class="content-container">
 			<div class="search-bar">
