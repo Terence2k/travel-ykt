@@ -12,7 +12,7 @@
         label="菜单名称"
         name="menuName"
       >
-        <a-input v-model:value="formValidate.menuName" />
+        <a-input v-model:value="formValidate.menuName" placeholder="请输入菜单名称"/>
       </a-form-item>
       <a-form-item
         label="菜单类型"
@@ -21,6 +21,7 @@
         <a-select
           ref="select"
           v-model:value="formValidate.menuType"
+          placeholder="请选择菜单类型"
         >
           <a-select-option :value="0">菜单夹</a-select-option>
           <a-select-option :value="1">功能模块</a-select-option>
@@ -36,7 +37,7 @@
           v-model:value="formValidate.parentId"
           show-search
           :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-          placeholder="Please select"
+          placeholder="请选择上级菜单"
           allow-clear
           tree-default-expand-all
           :tree-data="menuTreeDate"
@@ -47,7 +48,7 @@
         label="跳转路径"
         name="url"
       >
-        <a-input v-model:value="formValidate.url" />
+        <a-input v-model:value="formValidate.url" placeholder="请输入跳转路径"/>
       </a-form-item>
       <a-form-item
         label="操作按钮"
@@ -57,6 +58,7 @@
           ref="select"
           mode="multiple"
           v-model:value="formValidate.buttonCode"
+          placeholder="请选择操作按钮"
         >
           <a-select-option v-for="item in btnGroupData" :value="item.oid">{{item.name}}</a-select-option>
         </a-select>
