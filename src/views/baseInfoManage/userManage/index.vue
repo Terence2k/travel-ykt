@@ -43,6 +43,11 @@
         <a-button type="primary" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
       </template>
       <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'roleList'">
+          <span v-for="item, index in record.roleList">
+            {{`${item.roleName}${index == record.roleList.length - 1? '' : '，' }`}}
+          </span>
+        </template>
         <template v-if="column.key === 'action'">
           <div class="action-btns">
             <a @click="addOrUpdate({  row: record,  handle: 'update'})">编辑</a>
@@ -134,13 +139,17 @@ import { message } from 'ant-design-vue';
         roleIds: [],
         status: null,
       },
+      roleParam: {
+        pageNo: 1,
+        pageSize: 100000,
+      }
     },
     params: {},
     operationModal: {
       isAddOrUpdate: false,
       showDetails: false
     },
-    optionRoleList: []
+    optionRoleList: [] as any
   });
 
   const onHandleCurrentChange = (val: number) => {
@@ -169,12 +178,7 @@ import { message } from 'ant-design-vue';
   };
 
   const getRoleList = () => {
-    api.roleList(
-      {
-        pageNo: 1,
-        pageSize: 100000,
-      }
-    ).then((res: any) => {
+    api.roleList(state.tableData.roleParam).then((res: any) => {
       console.log('角色列表:', res);
       state.optionRoleList = res.content.map((item: any) => {
         return {
@@ -229,8 +233,5 @@ import { message } from 'ant-design-vue';
     &::before {
       height: 100% !important;
     }
-  }
-  .ant-table-body{
-    height: 500px;
   }
 </style>

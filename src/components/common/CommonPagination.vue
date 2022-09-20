@@ -10,7 +10,7 @@
   .ant-pagination {
     display: flex;
     justify-content: right;
-    padding: 20px 20px 0 0;
+    padding: 12px 20px 0 0;
   }
 
 </style>

@@ -1,30 +1,16 @@
 <template>
-	<div class="wrapper">
+	<div class="baseInfo-wrapper">
 		<div class="content-container">
 			<div class="search-bar">
 				<div class="item">
 					<span class="field-select item">审核状态</span>
-					<a-select
-						class="select-status select item"
-						mode="multiple"
-						:showArrow="true"
-						:options="statusOptions"
-						v-model:value="status"
-						placeholder="请选择状态"
-					>
+					<a-select class="select-status select item" :showArrow="true" :options="statusOptions" v-model:value="status" placeholder="请选择状态">
 					</a-select>
 				</div>
 
 				<div class="item">
 					<span class="field-select item">星级星标</span>
-					<a-select
-						class="select-star select item"
-						mode="multiple"
-						:showArrow="true"
-						:options="starOptions"
-						v-model:value="star"
-						placeholder="请选择星级星标"
-					>
+					<a-select class="select-star select item" :showArrow="true" :options="starOptions" v-model:value="star" placeholder="请选择星级星标">
 					</a-select>
 				</div>
 
@@ -39,7 +25,7 @@
 				</div>
 
 				<div class="item button-search-wrapper">
-					<a-button class="button-search item">查询</a-button>
+					<a-button @click="searchByFilter" class="button-search item">查询</a-button>
 				</div>
 			</div>
 
@@ -49,7 +35,12 @@
 				</div>
 				<div class="table-container">
 					<CommonTable :columns="columns" :dataSource="dataSource" :row-selection="rowSelection">
-						<template #bodyCell="{ column }">
+						<template #bodyCell="{ column, record }">
+							<template v-if="column.dataIndex === 'auditStatus'">
+								<div class="cell-auditStatus">
+									<span class="item">{{ getAuditStatusName(parseInt(record?.auditStatus)) }}</span>
+								</div>
+							</template>
 							<template v-if="column.dataIndex === 'actions'">
 								<div class="cell-actions">
 									<span @click="openEditPage" class="item">编辑</span>
@@ -60,7 +51,7 @@
 					</CommonTable>
 					<CommonPagination
 						class="pagination-custom"
-						:current="tableState.tableData.param.pageNumber"
+						:current="tableState.tableData.param.pageNo"
 						:page-size="tableState.tableData.param.pageSize"
 						:total="tableState.tableData.total"
 						@change="onHandleCurrentChange"
@@ -78,64 +69,47 @@ import { SelectProps, TableColumnsType } from 'ant-design-vue';
 import { ref } from 'vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
-
+import api from '@/api';
 interface DataSourceItem {
-	key: string;
+	oid: string | number;
 	hotelName: string;
-	hotelStar: string;
-	cci: string;
-	phoneNumber: string;
+	hotelStarId: string | number;
+	hotelStarCode: string;
+	creditCode: string;
+	phone: string;
 	address: string;
 	auditStatus: string;
-	discount: string;
+	reduceRule: string;
 }
 const router = useRouter();
-const status = ref([]);
-const star = ref([]);
+const status = ref<string>('');
+const star = ref<string>('');
+const hotelName = ref<string>('');
+const phoneNumber = ref<string>('');
+
 let statusOptionsData = [
 	{
-		value: 'jack',
-		label: 'Jack',
+		value: 0,
+		label: '未提交',
 	},
 	{
-		value: 'lucy',
-		label: 'Lucy',
+		value: 1,
+		label: '待审核',
 	},
 	{
-		value: 'disabled',
-		label: 'Disabled',
-		disabled: true,
+		value: 2,
+		label: '审核通过',
 	},
 	{
-		value: 'yiminghe',
-		label: 'Yiminghe',
+		value: 3,
+		label: '审核不通过',
 	},
 ];
 const statusOptions = ref<SelectProps['options']>(statusOptionsData);
 
-let starOptionsData = [
-	{
-		value: 'jack',
-		label: 'Jack',
-	},
-	{
-		value: 'lucy',
-		label: 'Lucy',
-	},
-	{
-		value: 'disabled',
-		label: 'Disabled',
-		disabled: true,
-	},
-	{
-		value: 'yiminghe',
-		label: 'Yiminghe',
-	},
-];
-const starOptions = ref<SelectProps['options']>(starOptionsData);
+const starOptionsData = ref([]);
 
-const hotelName = ref<string>('');
-const phoneNumber = ref<string>('');
+const starOptions = ref<SelectProps['options']>(starOptionsData);
 
 const columns: TableColumnsType = [
 	{
@@ -145,18 +119,18 @@ const columns: TableColumnsType = [
 	},
 	{
 		title: '酒店星级',
-		dataIndex: 'hotelStar',
-		key: 'hotelStar',
+		dataIndex: 'hotelStarCode',
+		key: 'hotelStarCode',
 	},
 	{
 		title: '企业信用代码',
-		dataIndex: 'cci',
-		key: 'cci',
+		dataIndex: 'creditCode',
+		key: 'creditCode',
 	},
 	{
 		title: '联系电话',
-		dataIndex: 'phoneNumber',
-		key: 'phoneNumber',
+		dataIndex: 'phone',
+		key: 'phone',
 	},
 	{
 		title: '所在地址',
@@ -170,8 +144,8 @@ const columns: TableColumnsType = [
 	},
 	{
 		title: '提供减免',
-		dataIndex: 'discount',
-		key: 'discount',
+		dataIndex: 'reduceRule',
+		key: 'reduceRule',
 	},
 	{
 		title: '操作',
@@ -182,28 +156,52 @@ const columns: TableColumnsType = [
 	},
 ];
 
-let dataSource: DataSourceItem[] = [
-	{
-		key: '1',
-		hotelName: '阳光商务一百酒店',
-		hotelStar: '1星A级',
-		cci: 'LJ32323EWC',
-		phoneNumber: '8291829',
-		address: '丽江市古城区雪山路778',
-		auditStatus: '待审核',
-		discount: '16免1',
-	},
-	{
-		key: '2',
-		hotelName: '香格里拉酒店',
-		hotelStar: '5星A级',
-		cci: 'WK323232EWC',
-		phoneNumber: '323291843',
-		address: '丽江市古城区雪山路338',
-		auditStatus: '通过审核',
-		discount: '10免1',
-	},
-];
+const getAuditStatusName = (auditStatus: number) => {
+	let statusName = '';
+	switch (auditStatus) {
+		case 0:
+			statusName = '未提交';
+			break;
+		case 1:
+			statusName = '待审核';
+			break;
+		case 2:
+			statusName = '审核通过';
+			break;
+		case 3:
+			statusName = '审核未通过';
+			break;
+	}
+
+	return statusName;
+};
+
+// let dataSource: DataSourceItem[] = [
+// 	{
+// 		oid: 1,
+// 		hotelName: '阳光商务一百酒店',
+// 		hotelStarId: 1,
+// 		hotelStarCode: '1星A级',
+// 		creditCode: 'LJ32323EWC',
+// 		phone: '8291829',
+// 		address: '丽江市古城区雪山路778',
+// 		auditStatus: '待审核',
+// 		reduceRule: '16免1',
+// 	},
+// 	{
+// 		oid: 2,
+// 		hotelName: '世纪天宸酒店',
+// 		hotelStarId: 2,
+// 		hotelStarCode: '6星A级',
+// 		creditCode: 'QJ5523ETY',
+// 		phone: '855529',
+// 		address: '丽江市古城区雪山路779',
+// 		auditStatus: '审核通过',
+// 		reduceRule: '10免1',
+// 	},
+// ];
+
+const dataSource = computed(() => tableState.tableData.data);
 
 const rowSelection = ref({
 	checkStrictly: false,
@@ -224,28 +222,73 @@ const tableState = reactive({
 		total: 400,
 		loading: false,
 		param: {
-			pageNumber: 1,
+			pageNo: 1,
 			pageSize: 10,
+			auditStatus: status,
+			hotelStarId: star,
+			hotelName: hotelName,
+			phone: phoneNumber,
 		},
 	},
 });
 
+const onSearch = () => {
+	api
+		.getHotelTableInfo(tableState.tableData.param)
+		.then((res: any) => {
+			console.log('res:', res);
+			tableState.tableData.data = res.content;
+			tableState.tableData.total = res.total;
+		})
+		.catch((err: any) => {
+			console.log(err);
+		});
+};
+
+const searchByFilter = () => {
+	tableState.tableData.param.pageNo = 1;
+	onSearch();
+};
+
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
-	tableState.tableData.param.pageNumber = val;
-	// onSearch();
+	tableState.tableData.param.pageNo = val;
+	onSearch();
 };
 
 const pageSideChange = (current: number, size: number) => {
 	console.log('changePageSize:', size);
 	tableState.tableData.param.pageSize = size;
-	// onSearch();
+	onSearch();
 };
 
 const openEditPage = () => {
-	router.push({ path: '/hotelManagement/baseInfo/edit', query: { id: '1' } });
+	router.push({ path: '/hotelManagement/baseInfo/hotelStarEdit', query: { id: '1' } });
 	console.log('open edit page');
 };
+
+const getHotelStarList = () => {
+	api
+		.getHotelStarList({})
+		.then((res: any) => {
+			if (Array.isArray(res) && res.length > 0) {
+				starOptionsData.value = res.map((item) => {
+					return {
+						value: item.oid,
+						label: item.starCode,
+					};
+				});
+			}
+		})
+		.catch((err: any) => {
+			console.log(err);
+		});
+};
+
+onMounted(() => {
+	onSearch();
+	getHotelStarList();
+});
 </script>
 
 <style lang="less" scoped>

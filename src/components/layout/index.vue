@@ -1,14 +1,18 @@
 <template>
 	<a-layout class="layer_container">
-		<a-layout-sider v-model:collapsed="collapsed" :trigger="null" theme="light" collapsible class="menu-wrapper" style="max-width: 300px">
+		<a-layout-sider v-model:collapsed="collapsed" :trigger="null" theme="light" class="menu-wrapper" collapsible>
 			<!-- logo -->
 			<div class="my-sideMenu-sider_logo">
 				<img class="logo" src="https://workyd.com/image/source_plant/avatar.png" alt="" />
 				<span v-if="!collapsed" class="title">丽江一卡通管理系统</span>
 			</div>
-			<a-menu v-model:selectedKeys="selectedKeys" v-model:openKeys="openKeys" mode="inline" @click="onSelect">
-				<SliderItem v-for="item in navs" :key="item.path" :item="item" :openKeys="openKeys"></SliderItem>
-			</a-menu>
+			<div class="menu-wrapper-inner">
+				<div class="hidden_wrapper">
+					<a-menu class="menu-wrapper" v-model:selectedKeys="selectedKeys" v-model:openKeys="openKeys" mode="inline" @click="onSelect">
+						<SliderItem v-for="item in navs" :key="item.path" :item="item" :openKeys="openKeys"></SliderItem>
+					</a-menu>
+				</div>
+			</div>
 		</a-layout-sider>
 		<a-layout>
 			<a-layout-header class="layout-header">
@@ -49,11 +53,12 @@
 						<img class="file-dir" style="margin-top: -4px" src="@/assets/svg/navigation_icon.svg" alt="" />
 					</template>
 					<!-- {{ state.routeList }} -->
-					<a-breadcrumb-item v-for="title in state.routeList" :key="title">
+					<a-breadcrumb-item v-for="title in titleLength" :key="title">
 						<span v-if="title">{{ title }}</span>
 					</a-breadcrumb-item>
 				</a-breadcrumb>
 			</a-card>
+
 			<a-layout-content class="box">
 				<RouterView key="layoutWrapper"></RouterView>
 			</a-layout-content>
@@ -64,7 +69,7 @@
 import { MenuUnfoldOutlined, MenuFoldOutlined, UserOutlined, DownOutlined, RollbackOutlined } from '@ant-design/icons-vue';
 import { usePermissioStore, MenuList } from '../../stores/modules/permission';
 import router from '@/router';
-
+import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import SliderItem from './SliderItem.vue';
 import toggleScreen from './toggleScreen.vue';
 import type { MenuProps } from 'ant-design-vue';
@@ -78,10 +83,18 @@ const permissioStore = usePermissioStore();
 const navs = ref<MenuList[]>();
 const selectedKeys = ref<string[]>([]);
 const openKeys = ref<string[]>([]);
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const onSelect = (e: any) => {
 	const { key } = e;
 	route.push(key);
+	setCurrentRouterHighlight(key);
+};
+// 高亮选中路由
+const setCurrentRouterHighlight = (route: string) => {
+	setTimeout(() => {
+		selectedKeys.value = [`${route}`];
+	}, 1);
 };
 const dropClick: MenuProps['onClick'] = ({ key }) => {
 	switch (key) {
@@ -103,26 +116,41 @@ const state = reactive({
 	routeList: [],
 	url: '',
 });
-console.log(router.currentRoute.value.matched, 'router', state.routeList);
-const getRouteLIst = (): void => {
-	// state.url = router.currentRoute.value.matched[router.currentRoute.value.matched.length - 1]?.path;
-	let arr = router.currentRoute.value.matched.map((i) => {
-		if (!i.meta.isDetail) {
-			return i.meta.title;
-		}
-	});
-	state.routeList = arr.filter((i) => i);
-};
+
+const navigatorBar = useNavigatorBar();
+
+/**
+ * 自定义面包屑 不设置默认路由
+ */
+const titleLength = computed(() => {
+	let len = navigatorBar.title.length,
+		titleArr = [];
+
+	if (len !== 0) {
+		titleArr = navigatorBar.title;
+	} else {
+		titleArr = router.currentRoute.value.matched.map((i) => i.meta.title);
+	}
+	return titleArr;
+});
+
 watch(
 	() => route.currentRoute.value.path,
 	(nv) => {
 		if (!selectedKeys.value.includes(nv)) {
-			const matchPath = route.currentRoute.value.matched;
+			let matchPath = route.currentRoute.value.matched;
+			let urlArr = nv.split('/');
+
 			if (matchPath[1] && matchPath[1].path.indexOf(':id') > -1) {
 				selectedKeys.value = [matchPath[1].path.replace('/:id', '')];
 			} else {
-				selectedKeys.value = [nv];
+				if (urlArr.length > 3) {
+					selectedKeys.value = [urlArr.splice(0, 3).join('/')];
+				} else {
+					selectedKeys.value = [nv];
+				}
 			}
+			// console.log(matchPath, 'matchPath', nv, urlArr.splice(0, 3).join('/'));
 		}
 		let opens = nv.split('/');
 		let temp = `/${opens[1]}`;
@@ -131,8 +159,6 @@ watch(
 		if (!openKeys.value.includes(temp)) {
 			openKeys.value.push(temp);
 		}
-
-		getRouteLIst();
 	},
 	{
 		immediate: true,
@@ -159,6 +185,9 @@ onMounted(() => {
 	box-sizing: border-box;
 	.layout-header {
 		// background: #fff;
+		position: relative;
+		top: 0;
+		left: 0;
 		padding: 0;
 		display: flex;
 		justify-content: space-between;
@@ -222,11 +251,23 @@ onMounted(() => {
 
 .navigation_wrapper {
 	background-color: #fff;
-	// margin: 10px;
+	position: relative;
+}
+.hidden_wrapper {
+	overflow-y: auto;
+	height: 100vh;
+	width: 256px;
+	overflow-x: hidden;
+	padding-bottom: 16px;
+}
+.menu-wrapper-inner {
+	overflow-y: auto;
+	height: 100vh;
+	width: 255px;
+	overflow-x: hidden;
+	// background-color: red;
 }
 .menu-wrapper {
-	// width: 256px !important;
-	// max-width: 256px !important;
 	min-width: 256px !important;
 }
 .box {

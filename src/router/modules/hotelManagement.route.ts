@@ -20,15 +20,22 @@ export default [
 			},
 			{
 				path: 'baseInfo',
-				component: () => import('@/views/hotelManagement/baseInfo/index.vue'),
 				name: 'baseInfo',
 				meta: {
 					title: '基础信息管理',
 				},
 				children: [
 					{
-						path: 'edit',
-						name: 'edit',
+						path: '',
+						component: () => import('@/views/hotelManagement/baseInfo/index.vue'),
+						meta: {
+							title: '',
+							isDetail: true,
+						},
+					},
+					{
+						path: 'hotelStarEdit',
+						name: 'hotelStarEdit',
 						component: () => import('@/views/hotelManagement/baseInfo/pages/hotelStar-edit/hotelStar-edit.vue'),
 						meta: {
 							title: '编辑',
