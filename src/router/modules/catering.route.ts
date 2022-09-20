@@ -16,7 +16,7 @@ export default [
 				},
 				children: [
 					{
-						path: '',
+						path: '/index',
 						component: () => import('@/views/cateringManage/basicInformation/index.vue'),
 						meta: {
 							title: '基础信息',

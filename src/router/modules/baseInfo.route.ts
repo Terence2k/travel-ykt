@@ -2,7 +2,7 @@ export default [
 	{
 		path: '/baseInfo',
 		name: 'baseInfos',
-		redirect: '/baseInfo/menu',
+		// redirect: '/baseInfo/menuManage',
 		meta: {
 			title: '基础信息管理',
 		},
@@ -42,7 +42,7 @@ export default [
 			{
 				path: 'businessAdministration',
 				component: () => import('@/views/baseInfoManage/businessAdministration/index.vue'),
-				name: 'travel',
+				name: 'businessAdministration',
 				meta: {
 					title: '企业管理',
 					// icon: 'liulanqi',
