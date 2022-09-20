@@ -24,16 +24,18 @@
 		<div class="list-btn">
 			<a-button type="primary" class="success">导出</a-button>
 		</div>
-		<CommonTable :dataSource="state.tableData.data" :columns="columns">
-			<template #bodyCell="{ column, record }">
-				<template v-if="column.key === 'action'">
-					<div class="action-btns">
-						<a href="javascript:;" @click="toEditPage(record, column)">查看</a>
-						<a href="javascript:;">审核</a>
-					</div>
+		<a-spin size="large" :spinning="state.tableData.loading">
+			<CommonTable :dataSource="state.tableData.data" :columns="columns">
+				<template #bodyCell="{ column, record }">
+					<template v-if="column.key === 'action'">
+						<div class="action-btns">
+							<a href="javascript:;" @click="toCheck(record)">查看</a>
+							<a href="javascript:;" @click="toEditPage(record)">审核</a>
+						</div>
+					</template>
 				</template>
-			</template>
-		</CommonTable>
+			</CommonTable>
+		</a-spin>
 		<CommonPagination
 			:current="state.tableData.param.pageNo"
 			:page-size="state.tableData.param.pageSize"
@@ -88,8 +90,8 @@ const columns = [
 	},
 	{
 		title: '提供减免',
-		dataIndex: 'derate',
-		key: 'derate',
+		dataIndex: 'derateRule',
+		key: 'derateRule',
 	},
 	{
 		title: '操作',
@@ -127,9 +129,13 @@ const pageSideChange = (current: number, size: number) => {
 	// onSearch();
 };
 //编辑
-const toEditPage = (record: any, column: any) => {
-	console.log(record, column);
-	route.push('/scenic-spot/information/edit');
+const toEditPage = (record: any) => {
+	console.log(record.oid, encodeURIComponent(record.oid));
+	route.push({ path: '/scenic-spot/information/edit', query: { oid: encodeURIComponent(record.oid) } });
+};
+//查看
+const toCheck = (record: any) => {
+	route.push({ path: '/scenic-spot/information/info', query: { oid: encodeURIComponent(record.oid) } });
 };
 // const onSearch = () => {
 // 	userList(state.tableData.param).then((res) => {
@@ -137,11 +143,13 @@ const toEditPage = (record: any, column: any) => {
 // 	});
 // };
 const initList = async () => {
+	state.tableData.loading = true;
 	let res = await api.getScenicSpotInformationList(state.tableData.param);
 	const { total, content } = res;
 	state.tableData.total = total;
 	const list: [any] = dealData(content);
 	state.tableData.data = list;
+	state.tableData.loading = false;
 };
 const status = {
 	'-1': '未提交',
@@ -151,9 +159,17 @@ const status = {
 };
 const dealData = (params: [any]) => {
 	params.map((i: any) => {
-		i.derate = i.derate ? '支持' : '不支持';
+		// i.derate = i.derate ? '支持' : '不支持';
 		i.scenicLevel = i.scenicLevel ? i.scenicLevel : 0;
 		i.auditStatus = status[i.auditStatus];
+		let all = i.derateRule?.split(',');
+		//减免规则
+		if (all?.length > 1) {
+			i.derateRule = '满' + all[0] + '减' + all[1];
+		} else {
+			i.derateRule = '无';
+		}
+
 		return i;
 	});
 
@@ -168,4 +184,9 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="less"></style>
+<style lang="less" scoped>
+.table-area {
+	position: relative;
+	overflow: hidden;
+}
+</style>
