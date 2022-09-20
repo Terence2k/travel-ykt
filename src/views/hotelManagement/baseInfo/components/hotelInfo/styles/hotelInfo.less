@@ -1,8 +1,83 @@
 .wrapper-tab-hotelInfo{
   background-color: white;
+  :deep{
+    .ant-form-item-explain-error {
+      z-index: 9999;
+    }
+    .ant-upload {
+      width:100px;
+      height:100px;
+    }
+    .ant-form-item-label > label {
+      font-size:12.5px !important;
+    }
+    .ant-tabs-top > .ant-tabs-nav{
+      margin-bottom: 12px !important;
+    }
+
+    .ant-upload-list-picture-card .ant-upload-list-item{
+      height:100px !important;
+    }
+  }
+
+  .scroll-container{
+    max-height: calc(100vh - 255px);
+    overflow-y:auto;
+  }
+
+  .footer-container{
+    margin-top: 11px;
+    border-top: 1px #f6f5f8 solid;
+  }
+  .form-item{
+    margin-bottom: 28px !important;
+    // margin-bottom: 16px !important;
+    height:25px;
+    &.bottom-item{
+      margin-bottom: 20px !important;
+    }
+    &.item-businessLicense{
+      height: 80px;
+    }
+
+    &.footer-item{
+      display:flex;
+      align-items:center;
+      padding: 10px 0px;
+      overflow:hidden;
+      height:auto;
+      margin-bottom: 0px !important;
+      
+      .button{
+        background-color:#5eb27c;
+        color:white;
+        border-radius:2px;
+        margin-right: 20px;
+        font-size:13px;
+      }
+
+    }
+  }
+
+
+  
+
+  .container{
+
+    .title{
+      padding-bottom:6px;
+      border-bottom: 1px #f6f5f8 solid;
+      margin-bottom:10px;
+      span{
+        color:black;
+        font-weight:bold;
+      }
+    }
+  }
   .flex-container {
     display: flex;
-    width: 200%;
+    width: 180%;
+    height:32px;
     justify-content: flex-start;
   }
 
