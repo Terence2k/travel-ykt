@@ -36,6 +36,16 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
+					{
+						path: 'info',
+						component: () => import('@/views/scenicSpot/scenicSpotInformation/components/info.vue'),
+						name: 'info',
+						meta: {
+							title: '查看',
+							activeMeun: 'information',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
 				],
 			},
 			{

@@ -1,7 +1,7 @@
 <template>
-	<div>
+	<div class="warp">
+		<header>行程信息</header>
 		<a-form labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
-			<a-card title="行程信息" :headStyle="tstyle" style="width: 100%; font-weight: 700" :bordered="false">
 				<a-form-item label="行程类型">
 					<span>标准团</span>
 				</a-form-item>
@@ -20,9 +20,8 @@
 				<a-form-item label="行程人数">
 					<span>行程人数</span>
 				</a-form-item>
-			</a-card>
-			<a-card title="订单信息" style="width: 100%" :bordered="false">
-                <a-form-item label="产品名称">
+			<div class="title">订单信息</div>
+				<a-form-item label="产品名称">
 					<span>产品名称</span>
 				</a-form-item>
 				<a-form-item label="单价">
@@ -40,13 +39,12 @@
 				<a-form-item label="预定时间">
 					<span>预定时间</span>
 				</a-form-item>
-                <a-form-item label="核销人数">
+				<a-form-item label="核销人数">
 					<span>核销人数</span>
 				</a-form-item>
-                <a-form-item label="核销时间">
+				<a-form-item label="核销时间">
 					<span>核销时间</span>
 				</a-form-item>
-            </a-card>
 		</a-form>
 	</div>
 </template>
@@ -55,4 +53,28 @@
 const tstyle = { 'font-weight': '700' };
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.warp {
+	padding: 0 16px;
+	header {
+		// width: 64px;
+		// margin-bottom: 8px;
+		height: 56px;
+		line-height: 56px;
+		font-weight: bold;
+		color: #1e2226;
+		// margin: 0 8px 16px;
+		margin-bottom: 16px;
+		border-bottom: 1px solid #f1f2f5;
+	}
+	.title {
+		height: 56px;
+		line-height: 56px;
+		font-weight: bold;
+		color: #1e2226;
+		// margin: 0 8px 16px;
+		margin-bottom: 16px;
+		border-bottom: 1px solid #f1f2f5;
+	}
+}
+</style>

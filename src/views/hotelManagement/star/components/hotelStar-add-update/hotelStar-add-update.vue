@@ -55,7 +55,7 @@ const save = () => {
 		api
 			.editHotelStarData({
 				oid: formValidate.value.oid,
-				price: formValidate.value.price,
+				price: formValidate.value.price * 100,
 				starCode: formValidate.value.starCode,
 				ratedStatus: formValidate.value.ratedStatus,
 			})
@@ -87,7 +87,7 @@ const init = async () => {
 	console.log('params', props.params);
 	formValidate.value = {};
 	if (props.params?.oid) {
-		formValidate.value = { ...props.params };
+		formValidate.value = { ...props.params, price: props.params.price / 100 };
 		options.title = '编辑酒店星级';
 	} else {
 		options.title = '新增酒店星级';
