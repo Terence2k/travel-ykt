@@ -263,7 +263,7 @@ const pageSideChange = (current: number, size: number) => {
 };
 
 const openEditPage = () => {
-	router.push({ path: '/hotelManagement/baseInfo/edit', query: { id: '1' } });
+	router.push({ path: '/hotelManagement/baseInfo/hotelStarEdit', query: { id: '1' } });
 	console.log('open edit page');
 };
 

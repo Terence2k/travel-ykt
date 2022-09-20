@@ -382,7 +382,6 @@ const handleCancel = () => {
 };
 
 const handlePreview = async (file: FileItem) => {
-	console.log('wwwwwwwwwww');
 	if (!file.url && !file.preview) {
 		file.preview = (await getBase64(file.originFileObj)) as string;
 	}

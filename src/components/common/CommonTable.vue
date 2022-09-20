@@ -12,46 +12,41 @@
 </template>
 
 <script setup lang="ts">
-  import { useSlots } from "vue";
-  const attrs = useAttrs() as any;
-  const slotButton = !!useSlots().button;
+import { useSlots } from 'vue';
+const attrs = useAttrs() as any;
+const slotButton = !!useSlots().button;
 
-  const computeTableHeight = () => {
-    nextTick(() => {
-      const headerHeight = document.getElementsByClassName('layout-header')[0]?.offsetHeight || 0;
-      const navigationHeight = document.getElementsByClassName('navigation_wrapper')[0]?.offsetHeight || 0;
-      const layoutHeight = document.getElementsByClassName('layout-main-search')[0]?.offsetHeight || 0;
-      const btnListhHeight = document.getElementsByClassName('list-btn')[0]?.offsetHeight || 0;
-      const tableHeader = document.getElementsByClassName('ant-table-header')[0]?.offsetHeight || 0;
-      const paginationHeight = document.getElementsByClassName('ant-pagination')[0]?.offsetHeight || 0;
-      const tooterHeight = document.getElementsByClassName('tooter-btn')[0]?.offsetHeight + 10 || 0;
-      const tabsHeight = document.getElementsByClassName('ant-tabs-nav')[0]?.offsetHeight || 0;
+const computeTableHeight = () => {
+	nextTick(() => {
+		const headerHeight = document.getElementsByClassName('layout-header')[0]?.offsetHeight || 0;
+		const navigationHeight = document.getElementsByClassName('navigation_wrapper')[0]?.offsetHeight || 0;
+		const layoutHeight = document.getElementsByClassName('layout-main-search')[0]?.offsetHeight || 0;
+		const btnListhHeight = document.getElementsByClassName('list-btn')[0]?.offsetHeight || 0;
+		const tableHeader = document.getElementsByClassName('ant-table-header')[0]?.offsetHeight || 0;
+		const paginationHeight = document.getElementsByClassName('ant-pagination')[0]?.offsetHeight || 0;
+		const tooterHeight = document.getElementsByClassName('tooter-btn')[0]?.offsetHeight + 10 || 0;
+		const tabsHeight = document.getElementsByClassName('ant-tabs-nav')[0]?.offsetHeight || 0;
 
-      // 计算总高度vh-除表格内容外高度
-      let num = headerHeight
-      + navigationHeight
-      + layoutHeight
-      + btnListhHeight
-      + tableHeader
-      + paginationHeight
-      + tooterHeight
-      + tabsHeight;
-      console.log('a-table-height:', num);
-      
-      const antTableBody = document.getElementsByClassName('ant-table-body')[0];
-      antTableBody.style.height = `calc(100vh - ${num + 40}px)`;
+		// 计算总高度vh-除表格内容外高度
+		let num = headerHeight + navigationHeight + layoutHeight + btnListhHeight + tableHeader + paginationHeight + tooterHeight + tabsHeight;
+		console.log('a-table-height:', num);
 
-    })
-  }
+		const antTableBody = document.getElementsByClassName('ant-table-body')[0];
+		antTableBody.style.height = `calc(100vh - ${num + 40}px)`;
+	});
+};
 
-  onMounted(() => {
-    computeTableHeight()
-  });
+onMounted(() => {
+	computeTableHeight();
+});
 
-  watch(() => attrs.dataSource.length, (nVal) => {
-    console.log('更新:', nVal);
-    computeTableHeight()
-  })
+watch(
+	() => attrs.dataSource?.length,
+	(nVal) => {
+		console.log('更新:', nVal);
+		computeTableHeight();
+	}
+);
 </script>
 
 <style lang="scss">

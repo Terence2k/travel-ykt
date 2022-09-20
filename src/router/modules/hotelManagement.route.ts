@@ -29,13 +29,13 @@ export default [
 						path: '',
 						component: () => import('@/views/hotelManagement/baseInfo/index.vue'),
 						meta: {
-							title: '基础信息管理',
+							title: '',
 							isDetail: true,
 						},
 					},
 					{
-						path: 'edit',
-						name: 'edit',
+						path: 'hotelStarEdit',
+						name: 'hotelStarEdit',
 						component: () => import('@/views/hotelManagement/baseInfo/pages/hotelStar-edit/hotelStar-edit.vue'),
 						meta: {
 							title: '编辑',
