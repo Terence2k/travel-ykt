@@ -1,5 +1,5 @@
 <template>
-	<div class="wrapper">
+	<div class="hotelStar-wrapper">
 		<!-- <div class="title">星级管理</div> -->
 		<div class="content-container">
 			<div class="search-bar">
@@ -9,14 +9,22 @@
 			</div>
 
 			<div class="table-bar">
+				<div class="flex-container">
+					<a-button class="button-create-item" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
+				</div>
 				<div class="table-container">
 					<CommonTable :dataSource="dataSource" :columns="columns">
-						<template #button>
+						<!-- <template #button>
 							<div class="flex-container">
-								<a-button class="button-create-item" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
+								<a-button class="button-create-item" >新增</a-button>
 							</div>
-						</template>
+						</template> -->
 						<template #bodyCell="{ column, record }">
+							<template v-if="column.dataIndex === 'price'">
+								<div class="cell-price">
+									<span class="item">{{ record.price / 100 }}</span>
+								</div>
+							</template>
 							<template v-if="column.dataIndex === 'actions'">
 								<div class="cell-actions">
 									<span class="item" @click="addOrUpdate({ row: record, handle: 'update' })">编辑</span>

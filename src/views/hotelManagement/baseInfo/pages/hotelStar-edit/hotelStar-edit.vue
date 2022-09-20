@@ -1,5 +1,5 @@
 <template>
-	<div class="wrapper">
+	<div class="hotelStar-edit-wrapper">
 		<a-tabs v-model:activeKey="activeTabKey">
 			<a-tab-pane key="1" tab="酒店信息">
 				<HotelInfo> </HotelInfo>
