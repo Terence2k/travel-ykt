@@ -87,10 +87,8 @@
 import CommonTable from './components/CommonTable.vue'
 import CommonPagination from '@/components/common/CommonPagination.vue'
 import CommonModal from './components/CommonModal.vue'
-// import { startCase } from 'lodash';
 import { Form, message } from 'ant-design-vue';
 import api from '@/api';
-import { type } from 'os';
 const columns = [
 	{
 		title: '字典名称',
@@ -203,6 +201,7 @@ let {
 	isDetailsAdd,
 	sortList
 } = toRefs(state)
+
 interface addInterface {
 	row?: any
 	handle: 'update' | 'add'
@@ -219,9 +218,7 @@ const addOrUpdate = ({ row, handle }: addInterface) => {
 	}
 }
 
-const deleteRow = () => { }
-
-type viewDetailsParams = {
+interface viewDetailsParams {
 	oid: string
 	name: string
 }
@@ -318,10 +315,12 @@ const cancel = () => {
 	state.modalVisible = false;
 	resetFields()
 }
+
 const detailsCancel = () => {
 	state.detailsModalVisible = false;
 	detailsForm.resetFields()
 }
+
 const save = () => {
 	validate()
 		.then(async (res) => {
@@ -348,6 +347,7 @@ const save = () => {
 			console.log('error', err);
 		});
 }
+
 const detailsSave = () => {
 	detailsForm.validate()
 		.then(async (res) => {
@@ -374,6 +374,7 @@ const detailsSave = () => {
 			console.log('error', err);
 		});
 }
+
 const confirmDelete = async (row: any) => {
 	const res = await api.updateDictionary({ oid: row.oid, deleted: 1 });
 	if (res) {
@@ -383,6 +384,7 @@ const confirmDelete = async (row: any) => {
 		message.error('删除数据字典失败！');
 	}
 }
+
 const deleteDetailsRow = async (row: any) => {
 	const res = await api.updateDictionary({ oid: row.oid, deleted: 1 });
 	if (res) {
@@ -392,6 +394,7 @@ const deleteDetailsRow = async (row: any) => {
 		message.error('删除字典详情失败！');
 	}
 }
+
 let timer: NodeJS.Timeout
 const queryList = () => {
 	if (timer) {
