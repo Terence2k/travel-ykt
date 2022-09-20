@@ -22,7 +22,9 @@
           ref="select"
           v-model:value="formValidate.menuType"
         >
-          <a-select-option value="">all</a-select-option>
+          <a-select-option :value="0">菜单夹</a-select-option>
+          <a-select-option :value="1">功能模块</a-select-option>
+          <a-select-option :value="2">tab页</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item
@@ -33,7 +35,7 @@
           ref="select"
           v-model:value="formValidate.parentId"
         >
-          <a-select-option value="">all</a-select-option>
+          <a-select-option v-for="item in menuList" :value="item.oid">{{item.menuName}}</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item
@@ -101,7 +103,7 @@
         default: false
       },
       params: Object,
-      roleList: Array
+      menuList: Array
   })
   const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
   const dialogVisible = ref(false);
@@ -121,11 +123,22 @@
     formRef.value
     .validateFields()
     .then((values: any) => {
-      // if (formValidate.value.oid) {
-      //   addOrUpdateAPI('editUser');
-      // } else {
-      //   addOrUpdateAPI('addUser');
-      // }
+      console.log('formValidate:', formValidate.value);
+      if (formValidate.value.oid) {
+        formValidate.value = {
+          menuDescribe: formValidate.value.menuDescribe,
+          menuName: formValidate.value.menuName,
+          menuStatus: formValidate.value.menuStatus,
+          menuType: formValidate.value.menuType,
+          oid: formValidate.value.oid,
+          parentId: formValidate.value.parentId,
+          sort: formValidate.value.sort,
+          url: formValidate.value.url,
+        }
+        addOrUpdateAPI('editMenu');
+      } else {
+        addOrUpdateAPI('addMenu');
+      }
     })
     .catch((info: any) => {
       console.log('Validate Failed:', info);
@@ -133,9 +146,6 @@
   }
 
   const addOrUpdateAPI = (apiName: string) => {
-    formValidate.value.companyId = null;
-    formValidate.value.password = '123456';
-    console.log('formValidate:', formValidate.value);
     api[apiName]({...formValidate.value}).then((res: any) => {
       // console.log('res:', res);
       message.success('保存成功');
@@ -150,11 +160,11 @@
 
   const init = async () => {
     console.log('params', props.params);
+    console.log('menuList', props.menuList);
     formValidate.value = {};
     if (props.params?.oid) {
       formValidate.value = { ...props.params };
-      formValidate.value.roleIds = formValidate.value.roleList.map((item: any) => item.oid)
-      options.title = '编辑用户';
+      options.title = '编辑菜单';
     } else {
       options.title = '新增菜单';
     }
