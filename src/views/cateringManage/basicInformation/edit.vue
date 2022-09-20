@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="warp">
 		<div class="form_pad">
 			<a-form
 				:model="formState"
@@ -12,7 +12,7 @@
 				@finish="onFinish"
 				@finishFailed="onFinishFailed"
 			>
-				<a-card title="基本信息"  style="width: 100%" :bordered="false">
+				<a-card title="基本信息" style="width: 100%" :bordered="false">
 					<a-form-item label="门店名称" name="ac">
 						<a-input v-model:value="formState.name" />
 					</a-form-item>
@@ -21,9 +21,9 @@
 					</a-form-item>
 					<a-form-item label="门店地址" :wrapperCol="{ span: 10 }" name="ac">
 						<a-space>
-							<a-select v-model:value="province" style="width: 120px" :options="provinceData.map((pro) => ({ value: pro }))"> </a-select>
-							<a-select v-model:value="secondCity" style="width: 120px" :options="cities.map((city) => ({ value: city }))"> </a-select>
-							<a-select v-model:value="secondCity" style="width: 120px" :options="cities.map((city) => ({ value: city }))"> </a-select>
+							<a-select style="width: 120px"> 啊</a-select>
+							<a-select style="width: 120px"> 啊</a-select>
+							<a-select style="width: 120px"> 啊</a-select>
 							<a-input v-model:value="formState.name" placeholder="请输入详细地址" />
 						</a-space>
 					</a-form-item>
@@ -40,16 +40,16 @@
 						<a-input v-model:value="formState.name" placeholder="请输入联系人电话" />
 					</a-form-item>
 					<a-form-item label="企业状态" name="ac">
-						<a-radio v-model:checked="checked">开通</a-radio>
-						<a-radio v-model:checked="checke">关闭</a-radio>
+						<a-radio>开通</a-radio>
+						<a-radio>关闭</a-radio>
 					</a-form-item>
 
 					<a-form-item label="企业状态" name="ac">
-						<a-radio v-model:checked="checked">对公账号</a-radio>
-						<a-radio v-model:checked="checke">个人账号</a-radio>
+						<a-radio>对公账号</a-radio>
+						<a-radio>个人账号</a-radio>
 					</a-form-item>
 				</a-card>
-				<a-card title="结算（收款）账户信息"  style="width: 100%" :bordered="false">
+				<a-card title="结算（收款）账户信息" style="width: 100%" :bordered="false">
 					<a-form-item label="收款账号" name="ac">
 						<a-input v-model:value="formState.name" placeholder="请输入收款银行卡号" />
 					</a-form-item>
@@ -63,7 +63,7 @@
 						<a-input v-model:value="formState.name" placeholder="请输入收款行" />
 					</a-form-item>
 				</a-card>
-				<a-card title="补充说明"  style="width: 100%" :bordered="false">
+				<a-card title="补充说明" style="width: 100%" :bordered="false">
 					<a-form-item label="营业时间" name="ac">
 						<a-space direction="vertical">
 							<a-date-picker style="width: 334px" v-model:value="value1" :showToday="false" />
@@ -87,7 +87,6 @@
 
 <script setup lang="ts">
 import CommonSearch from '@/components/common/CommonSearch.vue';
-import { Moment } from 'moment';
 import { computed, reactive, toRaw, UnwrapRef, watch } from 'vue';
 interface FormState {
 	name: string;
@@ -100,29 +99,6 @@ const rulesRef = {
 const formState: UnwrapRef<FormState> = reactive({
 	name: '',
 });
-
-// 模拟地址
-const provinceData = ['Zhejiang', 'Jiangsu'];
-const cityData = {
-	Zhejiang: ['Hangzhou', 'Ningbo', 'Wenzhou'],
-	Jiangsu: ['Nanjing', 'Suzhou', 'Zhenjiang'],
-};
-const province = provinceData[0];
-const state: any = reactive({
-	province,
-	provinceData,
-	cityData,
-	secondCity: cityData[province][0],
-});
-const cities = computed(() => {
-	return cityData[state.province];
-});
-watch(
-	() => state.province,
-	(val) => {
-		state.secondCity = state.cityData[val][0];
-	}
-);
 
 const onSubmit = () => {
 	console.log('submit!', toRaw(formState));
@@ -137,29 +113,25 @@ const onFinishFailed = (errorInfo: any) => {
 </script>
 
 <style lang="less">
-.edit_btn {
-	background-color: #5db179;
-	color: white;
-	border-radius: 5px;
-}
-
-.form_pad {
-	padding: 20px 40px;
-}
-.footer {
-	position: fixed;
-	bottom: 16px;
-	background-color: #fff;
-	line-height: 64px;
+.warp {
 	width: 100%;
-	border-top: 1px solid #f1f2f5;
-		.footer {
+	box-sizing: border-box;
+	.edit_btn {
+		background-color: #5db179;
+		color: white;
+		border-radius: 5px;
+	}
+
+	.form_pad {
+		padding: 20px 40px 60px;
+	}
+	.footer {
 		position: fixed;
-		bottom: 16px;
+		bottom: 11px;
 		background-color: #fff;
 		line-height: 64px;
-		width: 100%;
-		border-top: 1px solid #F1F2F5;
+		width: 83.5%;
+		border-top: 1px solid #f1f2f5;
 		button {
 			margin-left: 20px;
 		}

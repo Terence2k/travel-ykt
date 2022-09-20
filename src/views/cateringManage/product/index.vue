@@ -27,7 +27,7 @@
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a>查看</a>
-						<a>编辑</a>
+						<a @click="openEditPage">编辑</a>
 					</div>
 				</template>
 			</template>
@@ -50,6 +50,7 @@ import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { ref, reactive,onMounted } from 'vue';
 import api from '@/api';
 
+const router = useRouter();
 const columns = [
 	{ title: '序号',dataIndex: 'oid',  width: 70, key: 'arrange' },
 	{
@@ -164,6 +165,10 @@ const addOrUpdate = (param: any) => {
 		state.params = row;
 	}
 	state.operationModal.isAddOrUpdate = true;
+};
+
+const openEditPage = () => {
+	router.push({ path: '/catering/product_Management/product_edit'});
 };
 
 onMounted(() => {

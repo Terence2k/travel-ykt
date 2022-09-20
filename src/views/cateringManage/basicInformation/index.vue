@@ -24,7 +24,7 @@
 				<template v-if="column.dataIndex === 'actions'">
 					<div class="action-btns">
 						<a>查看</a>
-						<a>审核</a>
+						<a @click="openEditPage">审核</a>
 					</div>
 				</template>
 			</template>
@@ -49,6 +49,7 @@ import api from '@/api';
 import { SelectProps, TableColumnsType } from 'ant-design-vue';
 import { ref, reactive } from 'vue';
 
+const router = useRouter();
 interface DataSourceItem {
 	key: string;
 	Name: string;
@@ -147,6 +148,9 @@ const rowSelection = ref({
 		console.log(selected, selectedRows, changeRows);
 	},
 });
+const openEditPage = () => {
+	router.push({ path: '/catering/basic_Information/basic_edit'});
+};
 </script>
 
 <style lang="less">

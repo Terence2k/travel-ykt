@@ -10,12 +10,19 @@ export default [
 		children: [
 			{
 				path: 'basic_Information',
-				component: () => import('@/views/cateringManage/basicInformation/index.vue'),
 				name: 'basicInformation',
 				meta: {
 					title: '基础信息管理',
 				},
 				children: [
+					{
+						path: '',
+						component: () => import('@/views/cateringManage/basicInformation/index.vue'),
+						meta: {
+							title: '基础信息',
+							isDetail: true,
+						},
+					},
 					{
 						path: 'basic_edit',
 						component: () => import('@/views/cateringManage/basicInformation/edit.vue'),
@@ -29,7 +36,6 @@ export default [
 			},
 			{
 				path: 'product_Management',
-				component: () => import('@/views/cateringManage/product/index.vue'),
 				name: 'productManagement',
 				meta: {
 					title: '产品管理',
@@ -41,6 +47,14 @@ export default [
 						name: 'product_edit',
 						meta: {
 							title: '编辑',
+							isDetail: true,
+						},
+					},
+					{
+						path: '',
+						component: () => import('@/views/cateringManage/product/index.vue'),
+						meta: {
+							title: '产品信息',
 							isDetail: true,
 						},
 					},

@@ -1,6 +1,9 @@
 <template>
 	<div>
 		<CommonTable :dataSource="state.tableData.data" rowKey="id" :columns="columns">
+			<template #button>
+				<a-button type="primary" >导出</a-button>
+			</template>
 			<template #bodyCell="{ column }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
