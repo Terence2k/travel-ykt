@@ -1,14 +1,18 @@
 <template>
 	<a-layout class="layer_container">
-		<a-layout-sider v-model:collapsed="collapsed" :trigger="null" theme="light" collapsible class="menu-wrapper" style="max-width: 300px">
+		<a-layout-sider v-model:collapsed="collapsed" :trigger="null" theme="light" class="menu-wrapper" collapsible>
 			<!-- logo -->
 			<div class="my-sideMenu-sider_logo">
 				<img class="logo" src="https://workyd.com/image/source_plant/avatar.png" alt="" />
 				<span v-if="!collapsed" class="title">丽江一卡通管理系统</span>
 			</div>
-			<a-menu v-model:selectedKeys="selectedKeys" v-model:openKeys="openKeys" mode="inline" @click="onSelect">
-				<SliderItem v-for="item in navs" :key="item.path" :item="item" :openKeys="openKeys"></SliderItem>
-			</a-menu>
+			<div class="menu-wrapper-inner">
+				<div class="hidden_wrapper">
+					<a-menu class="menu-wrapper" v-model:selectedKeys="selectedKeys" v-model:openKeys="openKeys" mode="inline" @click="onSelect">
+						<SliderItem v-for="item in navs" :key="item.path" :item="item" :openKeys="openKeys"></SliderItem>
+					</a-menu>
+				</div>
+			</div>
 		</a-layout-sider>
 		<a-layout>
 			<a-layout-header class="layout-header">
@@ -54,6 +58,7 @@
 					</a-breadcrumb-item>
 				</a-breadcrumb>
 			</a-card>
+
 			<a-layout-content class="box">
 				<RouterView key="layoutWrapper"></RouterView>
 			</a-layout-content>
@@ -180,6 +185,9 @@ onMounted(() => {
 	box-sizing: border-box;
 	.layout-header {
 		// background: #fff;
+		position: relative;
+		top: 0;
+		left: 0;
 		padding: 0;
 		display: flex;
 		justify-content: space-between;
@@ -243,11 +251,23 @@ onMounted(() => {
 
 .navigation_wrapper {
 	background-color: #fff;
-	// margin: 10px;
+	position: relative;
+}
+.hidden_wrapper {
+	overflow-y: auto;
+	height: 100vh;
+	width: 256px;
+	overflow-x: hidden;
+	padding-bottom: 16px;
+}
+.menu-wrapper-inner {
+	overflow-y: auto;
+	height: 100vh;
+	width: 255px;
+	overflow-x: hidden;
+	// background-color: red;
 }
 .menu-wrapper {
-	// width: 256px !important;
-	// max-width: 256px !important;
 	min-width: 256px !important;
 }
 .box {
