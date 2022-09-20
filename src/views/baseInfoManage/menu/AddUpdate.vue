@@ -1,5 +1,5 @@
 <template>
-	<BaseModal :title="options.title" v-model="modelValue" :onOk="handleOk">
+	<BaseModal :title="options.title" v-model="modelValue">
 		<a-form
       ref="formRef"
       :model="formValidate"
@@ -31,12 +31,17 @@
         label="上级菜单"
         name="parentId"
       >
-        <a-select
-          ref="select"
+      
+        <a-tree-select
           v-model:value="formValidate.parentId"
+          show-search
+          :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+          placeholder="Please select"
+          allow-clear
+          tree-default-expand-all
+          :tree-data="menuTreeDate"
         >
-          <a-select-option v-for="item in menuList" :value="item.oid">{{item.menuName}}</a-select-option>
-        </a-select>
+        </a-tree-select>
       </a-form-item>
       <a-form-item
         label="跳转路径"
@@ -50,9 +55,10 @@
       >
         <a-select
           ref="select"
+          mode="multiple"
           v-model:value="formValidate.buttonCode"
         >
-          <a-select-option value="">all</a-select-option>
+          <a-select-option v-for="item in btnGroupData" :value="item.oid">{{item.name}}</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item
@@ -96,6 +102,8 @@
   import type { FormInstance } from 'ant-design-vue';
   import api from '@/api';
   import { message } from 'ant-design-vue';
+  import { convertTree } from '@/utils/util';
+import { cloneDeep } from 'lodash';
 
   const props = defineProps({
       modelValue: {
@@ -107,23 +115,21 @@
   })
   const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
   const dialogVisible = ref(false);
-  const formRef = ref<FormInstance>();
+  const formRef = ref<FormInstance>() as any;
   const formValidate: Ref<Record<string, any>> = ref({});
   const options = reactive({ title: '新增菜单' });
+  const menuTreeDate: Ref<Array<any>> = ref([]);
+  const btnGroupData: Ref<Array<any>> = ref([]);
   const rules: any = {
     menuName: [{ required: true, trigger: 'blur', message: '请输入菜单名称' }],
     menuType: [{ required: true, trigger: 'change', message: '请选择菜单类型' }],
+    menuStatus: [{ required: true, trigger: 'change', message: '请选择菜单状态' }],
   };
 
-	const handleOk = async (callback:Function) => {
-
-  };
-  
   const save = () => {
     formRef.value
     .validateFields()
     .then((values: any) => {
-      console.log('formValidate:', formValidate.value);
       if (formValidate.value.oid) {
         formValidate.value = {
           menuDescribe: formValidate.value.menuDescribe,
@@ -134,6 +140,7 @@
           parentId: formValidate.value.parentId,
           sort: formValidate.value.sort,
           url: formValidate.value.url,
+          buttonCode: formValidate.value.buttonCode,
         }
         addOrUpdateAPI('editMenu');
       } else {
@@ -145,12 +152,21 @@
     });
   }
 
+  const getBtnCode = () => {
+    api.getBtnCode().then((res: any) => {
+      btnGroupData.value = res;
+    }).catch(() => {
+      message.error('获取按钮失败')
+    })
+  }
+
   const addOrUpdateAPI = (apiName: string) => {
-    api[apiName]({...formValidate.value}).then((res: any) => {
-      // console.log('res:', res);
+    const queryData = cloneDeep(formValidate.value);
+    if (queryData.buttonCode) queryData.buttonCode = formValidate.value.buttonCode.join(',');
+    console.log('queryData:', queryData);
+    api[apiName](queryData).then((res: any) => {
       message.success('保存成功');
       formRef.value.resetFields();
-      console.log('reset formValidate: ', toRaw(formValidate));
       emit('cancel');
       emit('onSearch');
     }).catch((err: any) => {
@@ -160,10 +176,17 @@
 
   const init = async () => {
     console.log('params', props.params);
-    console.log('menuList', props.menuList);
+    ///转换树
+    menuTreeDate.value = convertTree(props.menuList, {
+      value: 'oid',
+      label: 'menuName',
+      children: 'children'
+    });
+    getBtnCode();
     formValidate.value = {};
     if (props.params?.oid) {
       formValidate.value = { ...props.params };
+      formValidate.value.buttonCode = props.params.buttonCode.split(',').map((item: any) => Number(item));
       options.title = '编辑菜单';
     } else {
       options.title = '新增菜单';
