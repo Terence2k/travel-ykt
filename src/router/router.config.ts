@@ -5,6 +5,8 @@ import hotelManagementRoute from './modules/hotelManagement.route';
 import travelGroupRoute from './modules/travelGroup.route';
 import gouvyRoute from './modules/gouvy.route';
 import settlementRoute from './modules/settlement.route';
+import cateringManageRoute from './modules/catering.route';
+import scenicSpot from './modules/scenicSpot.route';
 export const basicRouter = [
 	{
 		path: '/',
@@ -33,7 +35,8 @@ export const basicRouter = [
 	},
 ];
 
-export const accessRoutes: RouteRecordRaw[] = [...travelGroupRoute, ...hotelManagementRoute, ...baseInfoRoute,...gouvyRoute,...settlementRoute];
+export const accessRoutes: RouteRecordRaw[] = [...travelGroupRoute, ...hotelManagementRoute, ...baseInfoRoute,...gouvyRoute,...settlementRoute, ...scenicSpot, ...cateringManageRoute];
+
 
 export const constantRoutes: RouteRecordRaw[] = [
 	{

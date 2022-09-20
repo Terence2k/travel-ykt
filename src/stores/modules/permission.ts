@@ -10,6 +10,7 @@ export interface MenuList {
 	path: string;
 	icon?: string;
 	keys?: string;
+	activeMenu?: unknown;
 	children?: MenuList[];
 }
 
@@ -52,6 +53,7 @@ const filterMenuRoute = (list: RouteRecordRaw[], path = '') => {
 			title: it.meta?.title as string,
 			path: keys,
 			keys,
+			activeMenu: it?.meta?.activeMenu,
 		};
 		if (it.children && it.children.length > 0) {
 			temp.children = filterMenuRoute(it.children, temp.path);
@@ -92,7 +94,7 @@ export const usePermissioStore = defineStore({
 		},
 		setMenuList(menus: MenuList[]) {
 			// this.menuList = menus.filter((it) => it.children && it.children.length > 0);
-			this.menuList = cloneDeep(menus)
+			this.menuList = cloneDeep(menus);
 		},
 		resetStata() {
 			this.isGetUser = false;

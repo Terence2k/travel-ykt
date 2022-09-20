@@ -5,9 +5,15 @@
         v-for="(item, index) in pages" 
         :key="index" 
         :tab="item.label">
-        <component :is="item.name" v-if="index == activeKey"></component>
+        <component :onCheck="check" :is="item.name"></component>
       </a-tab-pane>
     </a-tabs>
+		<div class="footer">
+			<div class="tooter-btn">
+        <a-button type="primary" @click="check = !check">保存</a-button>
+			  <a-button type="primary">发团</a-button>
+      </div>
+		</div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -18,6 +24,7 @@ import traveInfo from './traveInfo/traveInfo.vue';
 import trafficInfo from './trafficInfo/trafficInfo.vue';
 import fileInfo from './fileInfo/fileInfo.vue';
   const activeKey = ref(0);
+  const check = ref(false)
   const pages = [
     {
       name: baseInfo,
@@ -47,6 +54,7 @@ import fileInfo from './fileInfo/fileInfo.vue';
 </script>
 <style lang="less" scoped>
   .trave-contaner {
+    height: 100%;
     ::v-deep(.ant-tabs-nav) {
       padding: 16px 20px;
     }
@@ -55,4 +63,20 @@ import fileInfo from './fileInfo/fileInfo.vue';
     }
     
   }
+  
+	.footer {
+		position: fixed;
+		bottom: 16px;
+		line-height: 64px;
+		width: 100%;
+		border-top: 1px solid #F1F2F5;
+    .tooter-btn {
+      width: 60%;
+      background-color: #fff;
+      margin-left: 16px;
+    }
+		button:first-of-type {
+			margin-right: 16px;
+		}
+	}
 </style>
