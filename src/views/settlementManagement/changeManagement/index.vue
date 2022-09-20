@@ -1,3 +1,3 @@
 <template>
-    <h1>这是改刷管理</h1>
+    <h1>改刷管理</h1>
 </template>

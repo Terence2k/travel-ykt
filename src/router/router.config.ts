@@ -35,7 +35,7 @@ export const basicRouter = [
 	},
 ];
 
-export const accessRoutes: RouteRecordRaw[] = [...travelGroupRoute, ...hotelManagementRoute, ...baseInfoRoute,...gouvyRoute,...settlementRoute, ...scenicSpot, ...cateringManageRoute];
+export const accessRoutes: RouteRecordRaw[] = [...travelGroupRoute, ...hotelManagementRoute, ...baseInfoRoute, ...scenicSpot, ...cateringManageRoute,...gouvyRoute,...settlementRoute,];
 
 
 export const constantRoutes: RouteRecordRaw[] = [
