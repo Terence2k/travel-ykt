@@ -62,12 +62,19 @@ export default [
 			},
 			{
 				path: 'order_Management',
-				component: () => import('@/views/cateringManage/order/index.vue'),
 				name: 'orderManagement',
 				meta: {
 					title: '订单管理',
 				},
 				children: [
+					{
+						path: '',
+						component: () => import('@/views/cateringManage/order/index.vue'),
+						meta: {
+							title: '订单信息',
+							isDetail: true,
+						},
+					},
 					{
 						path: 'order_detail',
 						component: () => import('@/views/cateringManage/order/detail.vue'),
