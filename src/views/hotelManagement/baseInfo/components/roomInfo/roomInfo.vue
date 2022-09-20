@@ -2,7 +2,7 @@
 	<div class="wrapper-tab-roomInfo">
 		<CommonTable :columns="columns" :data-source="dataSource">
 			<template #bodyCell="{ column, text, record }">
-				<template v-if="['customRoomType', 'price', 'roomTotal', 'roomCapacity'].includes(column.dataIndex)">
+				<template v-if="['customRoomType', 'price', 'roomTotal'].includes(column.dataIndex)">
 					<div>
 						<a-input v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]" />
 						<template v-else>
@@ -20,9 +20,17 @@
 						</template>
 					</div>
 				</template>
+				<template v-if="['roomCapacity'].includes(column.dataIndex)">
+					<div>
+						<a-input style="width: 16%" v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]" />
+						<template v-else>
+							<a-input style="width: 16%" :disabled="true" :defaultValue="text" />
+						</template>
+					</div>
+				</template>
 				<template v-else-if="column.dataIndex === 'actions'">
 					<div class="cell-actions">
-						<span class="item" @click="edit(record.key)"> 编辑 </span>
+						<span class="item" @click="edit(record.key)">{{ editableData[record.key] ? '取消' : '编辑' }}</span>
 					</div>
 				</template>
 			</template>
@@ -131,8 +139,14 @@ const systemRoomTypeOptions = ref<SelectProps['options']>([
 ]);
 
 const edit = (key: string) => {
-	editableData[key] = cloneDeep(dataSource.value.filter((item) => key === item.key)[0]);
+	if (editableData[key]) {
+		delete editableData[key];
+	} else {
+		editableData[key] = cloneDeep(dataSource.value.filter((item) => key === item.key)[0]);
+	}
 };
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+@import './styles/roomInfo.less';
+</style>
