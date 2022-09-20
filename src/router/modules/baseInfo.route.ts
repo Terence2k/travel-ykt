@@ -20,6 +20,15 @@ export default [
 				},
 			},
 			{
+				path: 'dictionaryManage',
+				component: () => import('@/views/baseInfoManage/dictionary/index.vue'),
+				name: 'dictionaryManage',
+				meta: {
+					title: '数据字典管理',
+					// isDetail: false, // 在左侧的导航栏不会展示
+				},
+			},
+			{
 				path: 'role_power',
 				redirect: '/baseInfo/role_power/index',
 				// component: () => import('@/views/baseInfoManage/rolePower/index.vue'),
