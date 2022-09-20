@@ -53,7 +53,6 @@
 
 <script setup lang="ts">
 import CommonSearch from '@/components/common/CommonSearch.vue';
-import { Moment } from 'moment';
 import { computed, reactive, toRaw, UnwrapRef, watch } from 'vue';
 interface FormState {
 	name: string;
