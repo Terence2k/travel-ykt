@@ -7,6 +7,9 @@
 			<template #bodyCell="data">
 				<slot name="bodyCell" v-bind="data || {}"></slot>
 			</template>
+			<template #summary="data">
+				<slot name="summary" v-bind="data || {}"></slot>
+			</template>
 		</a-table>
 	</div>
 </template>
