@@ -2,7 +2,7 @@ import router from "@/router/index";
 export const to2 = async () => {
   window.localStorage.setItem("authorization", "");
   await router.push("/login");
-  location.reload();
+  // location.reload();
 };
 export const getToken = () => {
   const authorization = localStorage.getItem('authorization');

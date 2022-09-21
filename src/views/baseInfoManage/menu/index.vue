@@ -114,7 +114,7 @@
   }
 
   const onSearch = () => {
-    api.menuList(state.tableData.param).then((res: any) => {
+    api.menuList().then((res: any) => {
       handleMenuTree(res);
       state.tableData.data = res;
       state.tableData.total = res.total;
