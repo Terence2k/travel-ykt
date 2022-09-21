@@ -194,6 +194,11 @@ const initArea = async () => {
 		res3 = await api.getArea();
 	console.log(res, res2, res3, 'www');
 };
+//初始化下拉列表
+const initOpeion = async () => {
+	let res = await api.selectByOid(route.currentRoute.value?.query?.oid);
+	console.log('initOption', res);
+};
 // 提交
 const onSubmit = async () => {
 	validate()
@@ -229,6 +234,7 @@ const initPage = async (): Promise<void> => {
 
 // 自定义面包屑
 onMounted(() => {
+	initOpeion();
 	initPage();
 	initArea();
 	navigatorBar.setNavigator(['景区信息管理', '编辑']);

@@ -56,6 +56,22 @@ export default [
 					title: '订单管理',
 				},
 			},
+			{
+				path: 'sold-out-history',
+				component: () => import('@/views/scenicSpot/soldOutHistory/index.vue'),
+				name: 'sold-out-history',
+				meta: {
+					title: '下架历史',
+				},
+			},
+			{
+				path: 'singleVote',
+				component: () => import('@/views/scenicSpot/singleVote/index.vue'),
+				name: 'singleVote',
+				meta: {
+					title: '单票',
+				},
+			},
 		],
 	},
 ];
