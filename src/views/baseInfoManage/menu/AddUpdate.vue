@@ -9,6 +9,7 @@
 					<a-select-option :value="0">菜单夹</a-select-option>
 					<a-select-option :value="1">功能模块</a-select-option>
 					<a-select-option :value="2">tab页</a-select-option>
+					<a-select-option :value="3">按钮</a-select-option>
 				</a-select>
 			</a-form-item>
 			<a-form-item label="上级菜单" name="parentId">
@@ -26,13 +27,16 @@
 			<a-form-item label="跳转路径" name="url">
 				<a-input v-model:value="formValidate.url" placeholder="请输入跳转路径" />
 			</a-form-item>
-			<a-form-item label="操作按钮" name="buttonCode">
-				<a-select ref="select" mode="multiple" v-model:value="formValidate.buttonCode" placeholder="请选择操作按钮">
+			<a-form-item label="操作按钮" name="buttonId" v-if="formValidate.menuType === 3">
+				<a-select ref="select" v-model:value="formValidate.buttonId" placeholder="请选择操作按钮">
 					<a-select-option v-for="item in btnGroupData" :value="item.oid">{{ item.name }}</a-select-option>
 				</a-select>
-			</a-form-item>
+			</a-form-item> 
 			<a-form-item label="菜单编码" name="menuCode">
 				<a-input v-model:value="formValidate.menuCode" placeholder="无需填写，保存自动生成" disabled />
+			</a-form-item>
+			<a-form-item label="接口地址" name="interfaceUrl">
+				<a-input v-model:value="formValidate.interfaceUrl" placeholder="请输入接口地址"/>
 			</a-form-item>
 			<a-form-item label="顺序" name="sort">
 				<a-input v-model:value="formValidate.sort" placeholder="请填写顺序" />
@@ -82,6 +86,7 @@ const rules: any = {
 	menuName: [{ required: true, trigger: 'blur', message: '请输入菜单名称' }],
 	menuType: [{ required: true, trigger: 'change', message: '请选择菜单类型' }],
 	menuStatus: [{ required: true, trigger: 'change', message: '请选择菜单状态' }],
+	buttonId: [{ required: true, trigger: 'change', message: '请选择操作按钮' }],
 };
 
 const save = () => {
@@ -98,7 +103,7 @@ const save = () => {
 					parentId: formValidate.value.parentId,
 					sort: formValidate.value.sort,
 					url: formValidate.value.url,
-					buttonCode: formValidate.value.buttonCode,
+					buttonId: formValidate.value.buttonId,
 				};
 				addOrUpdateAPI('editMenu');
 			} else {
@@ -123,18 +128,17 @@ const getBtnCode = () => {
 
 const addOrUpdateAPI = (apiName: string) => {
 	const queryData = cloneDeep(formValidate.value);
-	if (queryData.buttonCode) queryData.buttonCode = formValidate.value.buttonCode.join(',');
 	console.log('queryData:', queryData);
-	api[apiName](queryData)
-		.then((res: any) => {
-			message.success('保存成功');
-			formRef.value.resetFields();
-			emit('cancel');
-			emit('onSearch');
-		})
-		.catch((err: any) => {
-			console.error(err);
-		});
+	// api[apiName](queryData)
+	// 	.then((res: any) => {
+	// 		message.success('保存成功');
+	// 		formRef.value.resetFields();
+	// 		emit('cancel');
+	// 		emit('onSearch');
+	// 	})
+	// 	.catch((err: any) => {
+	// 		console.error(err);
+	// 	});
 };
 
 const init = async () => {
@@ -149,7 +153,6 @@ const init = async () => {
 	formValidate.value = {};
 	if (props.params?.oid) {
 		formValidate.value = { ...props.params };
-		if (props.params.buttonCode) formValidate.value.buttonCode = props.params.buttonCode.split(',').map((item: any) => Number(item));
 		options.title = '编辑菜单';
 	} else {
 		options.title = '新增菜单';
