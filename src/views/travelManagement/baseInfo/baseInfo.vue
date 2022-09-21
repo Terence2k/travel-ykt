@@ -149,6 +149,9 @@ const onFinishFailed = (errorInfo: any) => {
 };
 </script>
 <style lang="less" scoped>
+	.base-info-container {
+		padding: 0 20px;
+	}
 	.import-btn {
 		display: flex;
 		justify-content: end;

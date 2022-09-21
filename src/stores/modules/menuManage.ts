@@ -8,6 +8,10 @@ export const useMenuManage = defineStore('menuManage', {
       1: '功能模块',
       2: 'tab页'
     },
+    menuStatus: {
+      0: '关闭',
+      1: '开启',
+    }
 	}),
 	getters: {
 	},

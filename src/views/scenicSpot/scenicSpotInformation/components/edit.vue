@@ -55,7 +55,10 @@
 			</a-form-item>
 			<div class="title">结算（收款）账户信息</div>
 			<a-form-item label="账户类型" v-bind="validateInfos[`data.accountType`]">
-				<a-select allowClear v-model:value="formData.data.accountType" :options="options" placeholder="请选择账户类型"></a-select>
+				<a-radio-group v-model:value="formData.data.accountType">
+					<a-radio :value="1">对公账号</a-radio>
+					<a-radio :value="2">个人账号</a-radio>
+				</a-radio-group>
 			</a-form-item>
 			<a-form-item label="收款账号" v-bind="validateInfos[`data.bankAccount`]">
 				<a-input v-model:value="formData.data.bankAccount" placeholder="银行账号" />
@@ -70,10 +73,16 @@
 				<a-input v-model:value="formData.data.bank" />
 			</a-form-item>
 
-			<footer>
+			<!-- <footer>
 				<a-button type="primary" htmlType="{submit}" @click.prevent="onSubmit">保存</a-button>
 				<a-button style="margin-left: 10px" @click="reset">提交审核</a-button>
-			</footer>
+			</footer> -->
+			<div class="footer">
+				<div class="tooter-btn">
+					<a-button type="primary" @click.prevent="onSubmit">保存</a-button>
+					<a-button type="primary" @click="reset">提交审核</a-button>
+				</div>
+			</div>
 			<!-- <a-form-item :wrapper-col="{ span: 14, offset: 4 }"> </a-form-item> -->
 		</a-form>
 	</div>
@@ -85,6 +94,7 @@ import { Form } from 'ant-design-vue';
 import { RadioGroupProps } from 'ant-design-vue';
 import { toArray } from 'lodash-es';
 import api from '@/api';
+import { log } from 'console';
 const route = useRouter();
 
 const useForm = Form.useForm;
@@ -103,57 +113,53 @@ const formData = reactive({
 	data: {
 		oid: 1, //oid
 
-		name: '测试景点编辑', //景区名称
-		scenicLevel: 1, //景区等级(字典序号)
+		// name: '测试景点编辑', //景区名称
+		// scenicLevel: 1, //景区等级(字典序号)
 
-		creditCode: 'abc123', //统一社会行用代码
-		phone: '18756235566', //手机号
-		contactName: '张三', //联系人姓名
-		provinceId: 1, //省id
-		cityId: 2, //市id
-		areaId: 3, //县区id
-		addressDetail: '昆明市官渡区', //详细地址
-		businessLicenseUrl: '/jpg/img.jpg', //营业执照图片地址
+		// creditCode: 'abc123', //统一社会行用代码
+		// phone: '18756235566', //手机号
+		// contactName: '张三', //联系人姓名
+		// provinceId: 1, //省id
+		// cityId: 2, //市id
+		// areaId: 3, //县区id
+		// addressDetail: '昆明市官渡区', //详细地址
+		// businessLicenseUrl: '/jpg/img.jpg', //营业执照图片地址
 
-		derate: true, //是否支持减免: true支持，false不支持
-		derateRule: '16,9', //减免规则详情，逗号隔开满16-9 ：16,9
+		// derate: true, //是否支持减免: true支持，false不支持
+		// derateRule: '16,9', //减免规则详情，逗号隔开满16-9 ：16,9
 
-		accountType: 1, //账户类型，具体类型未确定
-		bankAccount: 12312124124, //银行账号
-		accountAddress: '广东省', //开户地址
-		businessType: 117, //企业业态（注册时，根据字典配置，景区、酒店、旅行社等）
-		bankAccountName: 'zhangdawei', //银行账户名
-		unitStatus: true, //企业状态 true-开业 false-停业
+		// accountType: 1, //账户类型，具体类型未确定
+		// bankAccount: 12312124124, //银行账号
+		// accountAddress: '广东省', //开户地址
+		// businessType: 117, //企业业态（注册时，根据字典配置，景区、酒店、旅行社等）
+		// bankAccountName: 'zhangdawei', //银行账户名
+		// unitStatus: true, //企业状态 true-开业 false-停业
 
-		bank: null, //收款行
-		managementRange: null, //经营范围
-		legalPerson: null, //法人
-		establishTime: null, //成立时间
-		registeredCapital: null, //注册资本（单位：万）
-		// name: '',
-		// scenicLevel: '',
+		// bank: null, //收款行
+		name: '',
+		scenicLevel: '',
 
-		// creditCode: '',
-		// phone: '',
-		// contactName: '',
-		// provinceId: '',
-		// cityId: '',
-		// areaId: '',
-		// addressDetail: '',
-		// businessLicenseUrl: '',
-		// derate: '',
-		// derateRule: '',
-		// accountType: '',
-		// bankAccount: '',
-		// accountAddress: '',
-		// businessType: '',
-		// bankAccountName: '',
-		// unitStatus: '',
-		// bank: '',
-		// managementRange: '',
-		// legalPerson: '',
-		// establishTime: '',
-		// registeredCapital: '',
+		creditCode: '',
+		phone: '',
+		contactName: '',
+		provinceId: '',
+		cityId: '',
+		areaId: '',
+		addressDetail: '',
+		businessLicenseUrl: '',
+		derate: '',
+		derateRule: '',
+		accountType: '',
+		bankAccount: '',
+		accountAddress: '',
+		businessType: '',
+		bankAccountName: '',
+		unitStatus: '',
+		bank: '',
+		managementRange: '',
+		legalPerson: '',
+		establishTime: '',
+		registeredCapital: '',
 	},
 });
 // 表单
@@ -178,9 +184,21 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 		'data.businessType': [{ required: true, message: '请选择企业业态' }],
 		'data.bankAccountName': [{ required: true, message: '请填写银行账户名' }],
 		'data.unitStatus': [{ required: true, message: '请选择企业状态' }],
+		'data.bank': [{ required: true, message: '请填写还款行' }],
 	})
 );
-const formRef = ref();
+//下拉选项
+const initArea = async () => {
+	let res = await api.getArea(),
+		res2 = await api.getPrivatelyArea(),
+		res3 = await api.getArea();
+	console.log(res, res2, res3, 'www');
+};
+//初始化下拉列表
+const initOpeion = async () => {
+	let res = await api.selectByOid(route.currentRoute.value?.query?.oid);
+	console.log('initOption', res);
+};
 // 提交
 const onSubmit = async () => {
 	validate()
@@ -216,7 +234,9 @@ const initPage = async (): Promise<void> => {
 
 // 自定义面包屑
 onMounted(() => {
+	initOpeion();
 	initPage();
+	initArea();
 	navigatorBar.setNavigator(['景区信息管理', '编辑']);
 });
 onBeforeUnmount(() => {
@@ -227,6 +247,7 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 .editWrapper {
 	padding: 0 16px;
+	padding-bottom: 64px;
 }
 header {
 	// width: 64px;
@@ -251,14 +272,35 @@ header {
 .area {
 	margin-bottom: 20px;
 }
-footer {
+// footer {
+// 	border-top: 1px solid #f1f2f5;
+// 	padding: 16px;
+// 	margin: -16px;
+// 	// position: fixed;
+// 	// bottom: 16px;
+// 	// width: 500%;
+// 	// background-color: #fff;
+// 	// background-color: red;
+// }
+.footer {
+	position: fixed;
+	bottom: 12px;
+	line-height: 64px;
+	height: 64px;
+	width: calc(100% - 288px);
 	border-top: 1px solid #f1f2f5;
-	padding: 16px;
-	margin: -16px;
-	// position: fixed;
-	// bottom: 16px;
-	// width: 500%;
-	// background-color: #fff;
-	// background-color: red;
+	margin-left: -16px;
+	margin-right: 24px;
+	background-color: #fff;
+	z-index: 99;
+
+	.tooter-btn {
+		width: 60%;
+		// background-color: #fff;
+		margin-left: 16px;
+	}
+	button:first-of-type {
+		margin-right: 16px;
+	}
 }
 </style>

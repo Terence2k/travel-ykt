@@ -26,3 +26,13 @@ export async function getScenicById(id: any) {
 		// showLoading: true,
 	});
 }
+
+//根据oid查询字典
+
+export async function selectByOid(id: any) {
+	return request({
+		url: commonPath + `/customer-service/public/api/dictionary/selectByOidList?oid=${id}`,
+		method: 'get',
+		// showLoading: true,
+	});
+}
