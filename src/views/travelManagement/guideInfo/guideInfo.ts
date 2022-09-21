@@ -1,4 +1,5 @@
 import { cloneDeep } from 'lodash';
+import dayjs from 'dayjs';
 import type { UnwrapRef } from 'vue';
 interface DataItem {
 	name: string;
@@ -15,7 +16,8 @@ export function useGuideInfo(): Record<string, any> {
 		tableKey: ['name', 'name1', 'name2', 'name3', 'name4', 'name5', 'name6'],
 		tableData: [
 			{
-				name: '123',
+				key: '1',
+				name: '2022-09-21 09:59:14',
 				name1: '123',
 				name2: '123',
 				name3: '123',
@@ -41,7 +43,7 @@ export function useGuideInfo(): Record<string, any> {
 			},
 			{
 				title: '已选导游',
-				dataIndex: 'name6',
+				dataIndex: 'name5',
 				key: 'name5',
 			},
 			{
@@ -74,9 +76,13 @@ export function useGuideInfo(): Record<string, any> {
 
 	const methods = {
 		edit: (key: string) => {
-			state.editableData[key] = cloneDeep(state.tableData.filter((item:any) => key === item.key)[0]);
+			const cur = cloneDeep(state.tableData.filter((item:any) => key === item.key)[0])
+			cur.name = dayjs(cur.name, 'YYYY-MM-DD HH:mm');
+			state.editableData[key] = cur;
 		},
 		save: (key: string) => {
+			const cur = state.editableData[key]
+			cur.name = dayjs(cur.name).format('YYYY-MM-DD HH:mm');
 			Object.assign(state.tableData.filter((item:any) => key === item.key)[0], state.editableData[key]);
 			delete state.editableData[key];
 		}
