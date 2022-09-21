@@ -48,14 +48,14 @@ export default [
 					},
 				],
 			},
-			{
-				path: 'order-manage',
-				component: () => import('@/views/scenicSpot/orderManage/index.vue'),
-				name: 'order-manage',
-				meta: {
-					title: '订单管理',
-				},
-			},
+			// {
+			// 	path: 'order-manage',
+			// 	component: () => import('@/views/scenicSpot/orderManage/index.vue'),
+			// 	name: 'order-manage',
+			// 	meta: {
+			// 		title: '订单管理',
+			// 	},
+			// },
 			{
 				path: 'sold-out-history',
 				component: () => import('@/views/scenicSpot/soldOutHistory/index.vue'),
