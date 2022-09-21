@@ -40,6 +40,7 @@
   import api from '@/api';
   import { message } from 'ant-design-vue';
   import { useMenuManage } from '@/stores/modules/menuManage';
+  import { Modal } from 'ant-design-vue';
   
   const columns = [
     {
@@ -139,7 +140,18 @@
 
   const deleteRow = (row: any) => {
     console.log('row: ', row);
-    
+    Modal.confirm({
+      title: '是否删除该菜单?',
+      onOk() {
+        api.deleteMenu(row.oid).then((res: any) => {
+          message.success('删除成功');
+          onSearch();
+        }).catch((err: any) => {
+          message.error(err || '删除失败')
+        })
+      },
+      onCancel() {},
+    });
   }
 
   onMounted(() => {

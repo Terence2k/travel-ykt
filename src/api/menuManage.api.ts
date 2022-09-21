@@ -30,6 +30,15 @@ export async function editMenu(data: any) {
 	});
 }
 
+// 删除菜单
+export async function deleteMenu(id: number) {
+	return request({
+		url: `${commonPath}/customer-service/public/api/menu/delete/${id}`,
+		method: 'delete',
+		showLoading: true
+	});
+}
+
 // 获取按钮编码
 export async function getBtnCode() {
 	return request({
