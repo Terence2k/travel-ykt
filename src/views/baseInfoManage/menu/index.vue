@@ -4,6 +4,12 @@
         <a-button type="primary" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
       </template>
       <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'menuType'">
+          <span>{{menuManage.menuType[record.menuType]}}</span>
+        </template>
+        <template v-if="column.key === 'menuStatus'">
+          <span>{{menuManage.menuStatus[record.menuStatus]}}</span>
+        </template>
         <template v-if="column.key === 'action'">
           <div class="action-btns">
             <a @click="addOrUpdate({  row: record,  handle: 'update'})">编辑</a>
@@ -48,8 +54,8 @@
     },
     {
       title: '页面按钮',
-      dataIndex: 'buttonCode',
-      key: 'buttonCode',
+      dataIndex: 'buttonName',
+      key: 'buttonName',
     },
     {
       title: '排序',
@@ -83,6 +89,7 @@
       isAddOrUpdate: false,
     },
   });
+  const menuManage = useMenuManage();
 
   const onHandleCurrentChange = (val: number) => {
     console.log('change:', val);
@@ -107,7 +114,7 @@
   }
 
   const onSearch = () => {
-    api.menuList(state.tableData.param).then((res: any) => {
+    api.menuList().then((res: any) => {
       handleMenuTree(res);
       state.tableData.data = res;
       state.tableData.total = res.total;
