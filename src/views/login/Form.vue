@@ -87,7 +87,7 @@ const handleFinish = async (values: any) => {
   
 	api.login(formModel).then(res => {
     console.log(res)
-    window.localStorage.setItem('authorization', `${res}`);
+    window.localStorage.setItem('authorization', `${res.authorization}`);
     router.replace({
       path: state.redirect || '/',
       query: state.otherQuery,
