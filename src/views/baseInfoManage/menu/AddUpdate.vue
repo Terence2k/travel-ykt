@@ -188,7 +188,7 @@ import { cloneDeep } from 'lodash';
     formValidate.value = {};
     if (props.params?.oid) {
       formValidate.value = { ...props.params };
-      formValidate.value.buttonCode = props.params.buttonCode.split(',').map((item: any) => Number(item));
+      if (props.params.buttonCode) formValidate.value.buttonCode = props.params.buttonCode.split(',').map((item: any) => Number(item));
       options.title = '编辑菜单';
     } else {
       options.title = '新增菜单';
