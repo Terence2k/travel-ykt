@@ -18,7 +18,7 @@
 				</a-input>
 			</a-form-item>
 			<div class="register">
-				<span class="register-text">企业注册</span>
+				<span class="register-text" @click="goTo">企业注册</span>
 			</div>
 			<a-button html-type="submit" class="btn" type="primary" :loading="loading">登录</a-button>
 			<a-row style="margin-top: 16px">
@@ -88,6 +88,7 @@ const handleFinish = async (values: any) => {
 	api.login(formModel).then(res => {
     console.log(res)
     window.localStorage.setItem('authorization', `${res.authorization}`);
+    window.localStorage.setItem('userInfo', JSON.stringify(res));
     router.replace({
       path: state.redirect || '/',
       query: state.otherQuery,
@@ -102,6 +103,11 @@ const handleFinish = async (values: any) => {
 	//   router.replace("/");
 	// }
 };
+const goTo = () => {
+	router.push({
+		path: '/login/businessLogin'
+	})
+}
 </script>
 <style lang="less" scoped>
 .form_box {

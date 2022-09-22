@@ -44,7 +44,7 @@
 							<template v-if="column.dataIndex === 'actions'">
 								<div class="cell-actions">
 									<span @click="openEditPage" class="item">编辑</span>
-									<span @click="openEditPage" class="item">审核</span>
+									<span @click="openDisplayPage" class="item">审核</span>
 								</div>
 							</template>
 						</template>
@@ -265,6 +265,11 @@ const pageSideChange = (current: number, size: number) => {
 const openEditPage = () => {
 	router.push({ path: '/hotelManagement/baseInfo/hotelStarEdit', query: { id: '1' } });
 	console.log('open edit page');
+};
+
+const openDisplayPage = () => {
+	router.push({ path: '/hotelManagement/baseInfo/hotelStarDisplay', query: { id: '1' } });
+	console.log('open display page');
 };
 
 const getHotelStarList = () => {

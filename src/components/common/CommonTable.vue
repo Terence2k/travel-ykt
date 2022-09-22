@@ -7,12 +7,17 @@
 			<template #bodyCell="data">
 				<slot name="bodyCell" v-bind="data || {}"></slot>
 			</template>
+			<template #summary="data">
+				<slot name="summary" v-bind="data || {}"></slot>
+			</template>
 		</a-table>
 	</div>
 </template>
 
 <script setup lang="ts">
 import { useSlots } from 'vue';
+import { getElementPos } from '@/utils/util';
+
 const props = defineProps({
   // 如果不需要表格自适应高度为false
   scrollY: {
@@ -26,21 +31,19 @@ const slotButton = !!useSlots().button;
 const computeTableHeight = () => {
   if (props.scrollY) {
     nextTick(() => {
-      const headerHeight = document.getElementsByClassName('layout-header')[0]?.offsetHeight || 0;
-      const navigationHeight = document.getElementsByClassName('navigation_wrapper')[0]?.offsetHeight || 0;
-      const layoutHeight = document.getElementsByClassName('layout-main-search')[0]?.offsetHeight || 0;
-      const btnListhHeight = document.getElementsByClassName('list-btn')[0]?.offsetHeight || 0;
+      // table-header
       const tableHeader = document.getElementsByClassName('ant-table-header')[0]?.offsetHeight || 0;
+      // 分页
       const paginationHeight = document.getElementsByClassName('ant-pagination')[0]?.offsetHeight || 0;
-      const tooterHeight = document.getElementsByClassName('tooter-btn')[0]?.offsetHeight + 10 || 0;
-      const tabsHeight = document.getElementsByClassName('ant-tabs-nav')[0]?.offsetHeight || 0;
-
+      // common-table
+      const commonTableHeight = document.getElementsByClassName('common-table')[0];
       // 计算总高度vh-除表格内容外高度
-      let num = headerHeight + navigationHeight + layoutHeight + btnListhHeight + tableHeader + paginationHeight + tooterHeight + tabsHeight;
-      console.log('a-table-height:', num);
-
+      let num = getElementPos(commonTableHeight).y + tableHeader + paginationHeight;
       const antTableBody = document.getElementsByClassName('ant-table-body')[0];
-      antTableBody.style.height = `calc(100vh - ${num + 40}px)`;
+      // console.log('a-table-height:', num);
+      // console.log('antheight:', antTableBody.offsetTop);
+      // console.log('getElementPos:', getElementPos(commonTableHeight).y);
+      antTableBody.style.height = `calc(100vh - ${num + 25}px)`;// num + 微调
     });
   }
 };

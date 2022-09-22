@@ -1,7 +1,8 @@
 import router from "@/router/index";
-export const to2 = async () => {
+export const to2 = () => {
   window.localStorage.setItem("authorization", "");
-  await router.push("/login");
+  window.localStorage.setItem("userInfo", "");
+  router.push("/login");
   // location.reload();
 };
 export const getToken = () => {
@@ -17,6 +18,9 @@ export const getToken = () => {
     smallTown,
     permissions: permissions ? JSON.parse(permissions) : []
   };
+}
+export const getUserInfo = () => {
+  return JSON.parse(<string>localStorage.getItem('userInfo'));
 }
 
 export const saveToken = (token: any) => {
@@ -68,4 +72,29 @@ export const saveToken = (token: any) => {
     });
   });
   return result;
+}
+
+// 计算元素相对页面位置position
+export const getElementPos = (el: any) => {
+  if(el.parentNode === null || el.style.display == 'none') { return false;}     
+  let parent = null;
+  let pos = [];
+  let box;
+  if(el.getBoundingClientRect) {//IE
+      box = el.getBoundingClientRect();
+      let scrollTop = Math.max(document.documentElement.scrollTop, document.body.scrollTop);
+      let scrollLeft = Math.max(document.documentElement.scrollLeft, document.body.scrollLeft);
+      return {x:box.left + scrollLeft, y:box.top + scrollTop};
+  } else {
+    pos = [el.offsetLeft, el.offsetTop]; 
+    parent = el.offsetParent;    
+    if (parent != el) {
+      while (parent) { 
+        pos[0] += parent.offsetLeft;
+        pos[1] += parent.offsetTop;
+        parent = parent.offsetParent;
+      } 
+    }  
+  }  
+  return {x:pos[0], y:pos[1]};
 }

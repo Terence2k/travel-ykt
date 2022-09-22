@@ -10,9 +10,24 @@ interface DataItem {
 	name5: string,
 	name6: string
 }
-export function useGuideInfo(): Record<string, any> {
+export function useTouristInfo(): Record<string, any> {
+    // const rowSelection = ref({
+    //     checkStrictly: false,
+    //     onChange: (selectedRowKeys: (string | number)[], selectedRows: DataItem[]) => {
+    //       console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+    //     },
+    //     onSelect: (record: DataItem, selected: boolean, selectedRows: DataItem[]) => {
+    //       console.log(record, selected, selectedRows);
+    //     },
+    //     onSelectAll: (selected: boolean, selectedRows: DataItem[], changeRows: DataItem[]) => {
+    //       console.log(selected, selectedRows, changeRows);
+    //     },
+    // });
 	const state = reactive<{editableData: UnwrapRef<Record<string, DataItem>>, [k:string]: any}>({
 		editableData: {},
+        onSelect: (record: DataItem, selected: boolean, selectedRows: DataItem[]) => {
+            console.log(record, selected, selectedRows);
+        },
 		tableData: [
 			{
 				key: '1',
@@ -36,32 +51,37 @@ export function useGuideInfo(): Record<string, any> {
 				//当前页数减1乘以每一页页数再加当前页序号+1
 			},
 			{
-				title: '已选带团时间',
+				title: '证件类型',
 				dataIndex: 'name',
 				key: 'name',
 			},
 			{
-				title: '已选导游',
+				title: '证件号码',
 				dataIndex: 'name5',
 				key: 'name5',
 			},
 			{
-				title: '导游电话',
+				title: '姓名',
 				dataIndex: 'name4',
 				key: 'name4',
 			},
 			{
-				title: '导游编号',
+				title: '性别',
 				dataIndex: 'name3',
 				key: 'name3',
 			},
 			{
-				title: '导游类型',
+				title: '客源地',
 				dataIndex: 'name2',
 				key: 'name2',
 			},
 			{
-				title: '签约旅行社',
+				title: '健康状态',
+				dataIndex: 'name1',
+				key: 'name1',
+			},
+            {
+				title: '证件图片',
 				dataIndex: 'name1',
 				key: 'name1',
 			},

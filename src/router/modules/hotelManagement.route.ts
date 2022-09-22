@@ -42,6 +42,15 @@ export default [
 							isDetail: true,
 						},
 					},
+					{
+						path: 'hotelStarDisplay',
+						name: 'hotelStarDisplay',
+						component: () => import('@/views/hotelManagement/baseInfo/pages/hotelStar-display/hotelStar-display.vue'),
+						meta: {
+							title: '审核',
+							isDetail: true,
+						},
+					},
 				],
 			},
 			{
@@ -49,7 +58,7 @@ export default [
 				component: () => import('@/views/hotelManagement/roomStatus/index.vue'),
 				name: 'roomStatus',
 				meta: {
-					title: '用户管理',
+					title: '房态上报管理',
 					// icon: 'liulanqi',
 					// auth: ["admin"],
 					isDetail: false, // 在左侧的导航栏不会展示
@@ -57,9 +66,9 @@ export default [
 			},
 
 			{
-				path: 'order',
+				path: 'hotelOrder',
 				component: () => import('@/views/hotelManagement/order/index.vue'),
-				name: 'order',
+				name: 'hotelOrder',
 				meta: {
 					title: '订单管理',
 					// icon: 'liulanqi',

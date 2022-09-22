@@ -48,12 +48,28 @@ export default [
 					},
 				],
 			},
+			// {
+			// 	path: 'order-manage',
+			// 	component: () => import('@/views/scenicSpot/orderManage/index.vue'),
+			// 	name: 'order-manage',
+			// 	meta: {
+			// 		title: '订单管理',
+			// 	},
+			// },
 			{
-				path: 'order-manage',
-				component: () => import('@/views/scenicSpot/orderManage/index.vue'),
-				name: 'order-manage',
+				path: 'sold-out-history',
+				component: () => import('@/views/scenicSpot/soldOutHistory/index.vue'),
+				name: 'sold-out-history',
 				meta: {
-					title: '订单管理',
+					title: '下架历史',
+				},
+			},
+			{
+				path: 'singleVote',
+				component: () => import('@/views/scenicSpot/singleVote/index.vue'),
+				name: 'singleVote',
+				meta: {
+					title: '单票',
 				},
 			},
 			{
