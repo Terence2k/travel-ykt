@@ -3,11 +3,13 @@
 	<div>
 		<CommonSearch>
 			<search-item label="输入搜索">
-				<a-input v-model:value="state.tableData.param.name" placeholder="请输入" />
+				<a-input v-model:value="state.tableData.param.ticketName" placeholder="门票名称/关键词" />
 			</search-item>
 			<search-item label="门票分类">
-				<a-select allowClear ref="select" v-model:value="state.tableData.param.auditStatus" style="width: 200px" placeholder="请选择门票分类">
-					<a-select-option :value="-1">option1</a-select-option>
+				<a-select allowClear ref="select" v-model:value="state.tableData.param.ticketType" style="width: 200px" placeholder="请选择">
+					<a-select-option :value="0">儿童</a-select-option>
+					<a-select-option :value="1">成人</a-select-option>
+					<a-select-option :value="2">老人</a-select-option>
 				</a-select>
 			</search-item>
 			<template #button>
@@ -16,6 +18,9 @@
 		</CommonSearch>
 		<div class="table-area">
 			<a-spin size="large" :spinning="state.tableData.loading">
+				<div class="list-btn">
+					<a-button type="primary" class="success">新增门票</a-button>
+				</div>
 				<CommonTable :dataSource="state.tableData.data" :columns="columns">
 					<template #bodyCell="{ column }">
 						<template v-if="column.key === 'action'">
@@ -36,8 +41,6 @@
 				@showSizeChange="pageSideChange"
 			/>
 		</div>
-		<!-- <AddPopup /> -->
-		{{ modelValue }}
 	</div>
 </template>
 
@@ -60,13 +63,13 @@ const modelValue = ref<boolean>(false);
 const columns = [
 	{
 		title: '门票名称',
-		dataIndex: 'scenicLevel',
-		key: 'scenicLevel',
+		dataIndex: 'ticketName',
+		key: 'ticketName',
 	},
 	{
 		title: '票种',
-		dataIndex: 'name',
-		key: 'name',
+		dataIndex: 'ticketType',
+		key: 'ticketType',
 	},
 	{
 		title: '归属景区',
@@ -91,6 +94,7 @@ const columns = [
 	{
 		title: '操作 ',
 		key: 'action',
+		fixed: 'right',
 		width: 208,
 	},
 ];
@@ -115,9 +119,8 @@ const state = reactive({
 		param: {
 			pageNo: 1,
 			pageSize: 10,
-			scenicLevel: null, //景区等级(字典序号)
-			auditStatus: null, //审核状态（-1未提交  0待审核  1审核通过  2审核未通过）
-			name: '',
+			ticketName: '',
+			ticketType: '',
 		},
 	},
 });
@@ -150,7 +153,7 @@ const toCheck = (record: any) => {
 // };
 const initList = async () => {
 	state.tableData.loading = true;
-	let res = await api.getScenicSpotInformationList(state.tableData.param);
+	let res = await api.getSingleVoteList(state.tableData.param);
 	const { total, content } = res;
 	state.tableData.total = total;
 	const list: [any] = dealData(content);
