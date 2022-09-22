@@ -34,9 +34,7 @@
 			<a-form-item label="统一社会信用代码" v-bind="validateInfos[`data.creditCode`]">
 				<a-input v-model:value="formData.data.creditCode" placeholder="请填写" />
 			</a-form-item>
-			<a-form-item label="营业执照" v-bind="validateInfos[`data.businessLicenseUrl`]">
-				<Pic />
-			</a-form-item>
+			<a-form-item label="营业执照" v-bind="validateInfos[`data.businessLicenseUrl`]"> </a-form-item>
 			<a-form-item label="联系人姓名" v-bind="validateInfos[`data.contactName`]">
 				<a-input v-model:value="formData.data.contactName" placeholder="请填写" />
 			</a-form-item>
@@ -101,7 +99,7 @@ import { RadioGroupProps } from 'ant-design-vue';
 import { toArray } from 'lodash';
 import api from '@/api';
 import { message } from 'ant-design-vue';
-import Pic from '../../singleVote/pictureWrapper.vue';
+
 const route = useRouter();
 
 const useForm = Form.useForm;
@@ -191,6 +189,7 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 		'data.bank': [{ required: true, message: '请填写还款行' }],
 	})
 );
+
 //初始化下拉列表
 const initOpeion = async () => {
 	await scenicSpotOptions.getBusinessTypeOption();
