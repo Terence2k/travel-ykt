@@ -17,7 +17,7 @@
 		<div class="table-area">
 			<a-spin size="large" :spinning="state.tableData.loading">
 				<div class="list-btn">
-					<a-button type="primary" class="success">新增门票</a-button>
+					<a-button type="primary" class="success" @click="createNewProject">新增门票</a-button>
 				</div>
 				<CommonTable :dataSource="state.tableData.data" :columns="columns">
 					<template #bodyCell="{ column, record }">
@@ -39,6 +39,7 @@
 				@showSizeChange="pageSideChange"
 			/>
 		</div>
+		<Create ref="createModelRef" />
 	</div>
 </template>
 
@@ -52,7 +53,7 @@ import api from '@/api';
 import AddPopup from './addPopup.vue';
 import Modal from '@/components/common/BaseModal.vue';
 import Audit from './aduit.vue';
-
+import Create from './create.vue';
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 const route = useRouter();
@@ -175,6 +176,12 @@ const dealData = (params: [any]) => {
 	});
 
 	return params;
+};
+
+// 新增
+const createModelRef = ref();
+const createNewProject = () => {
+	createModelRef.value.open();
 };
 onMounted(() => {
 	initList();
