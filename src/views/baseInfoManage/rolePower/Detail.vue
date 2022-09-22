@@ -7,35 +7,52 @@
       labelAlign="left"
     >
       <a-form-item
-        label="用户名称"
-        name="username"
+        label="角色名称"
+        name="roleName"
       >
-      {{ formValidate.username }}
+      {{ formValidate.roleName }}
       </a-form-item>
       <a-form-item
-        label="账号"
-        name="account"
+        label="可用范围"
+        name="availableRange"
       >
-      {{ formValidate.account }}
-      </a-form-item>
-      <a-form-item
-        label="手机号码"
-        name="mobile"
-      >
-      {{ formValidate.mobile }}
-      </a-form-item>
-      <a-form-item
-        label="所属角色"
-        name="roleIds"
-      >
-      <span v-for="item, index in formValidate.roleList">
-      {{`${item.roleName}${index == formValidate.roleList.length - 1? '' : '，' }`}}</span>
+      {{ formValidate.availableRange }}
       </a-form-item>
       <a-form-item
         label="状态"
-        name="userStatus"
+        name="roleStatus"
       >
-      {{ formValidate.userStatus }}
+      {{ formValidate.roleStatus }}
+      </a-form-item>
+      <a-form-item
+        label="角色权限"
+        name="menuIds"
+      >
+      {{ formValidate.menuIds }}
+      </a-form-item>
+      <a-form-item
+        label="角色编码"
+        name="roleCode"
+      >
+      {{ formValidate.roleCode }}
+      </a-form-item>
+      <a-form-item
+        label="角色描述"
+        name="roleDescribe"
+      >
+      {{ formValidate.roleDescribe }}
+      </a-form-item>
+      <a-form-item
+        label="编辑人"
+        name="lastUpdaterName"
+      >
+      {{ formValidate.lastUpdaterName }}
+      </a-form-item>
+      <a-form-item
+        label="编辑时间"
+        name="lastUpdateTime"
+      >
+      {{ formValidate.lastUpdateTime }}
       </a-form-item>
     </a-form>
 		<template v-slot:footer>
@@ -59,7 +76,7 @@
   const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
   const dialogVisible = ref(false);
   const formValidate: Ref<Record<string, any>> = ref({});
-  const options = reactive({ title: '查看用户' });
+  const options = reactive({ title: '查看角色' });
 
 	const handleOk = async (callback:Function) => {
 

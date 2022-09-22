@@ -42,10 +42,16 @@
         </a-tree>
       </a-form-item>
       <a-form-item
+        label="角色编码"
+        name="roleCode"
+      >
+        <a-input v-model:value="formValidate.roleCode" placeholder="请输入角色编码"/>
+      </a-form-item>
+      <a-form-item
         label="角色描述"
         name="roleDescribe"
       >
-        <a-input v-model:value="formValidate.roleDescribe" />
+        <a-input v-model:value="formValidate.roleDescribe" placeholder="请输入角色描述"/>
       </a-form-item>
       <a-form-item
         label="编辑人"
