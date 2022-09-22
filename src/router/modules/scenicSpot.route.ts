@@ -1,7 +1,7 @@
 export default [
 	{
 		path: '/scenic-spot',
-		name: '',
+		name: 'scenic-spot',
 		redirect: '/scenic-spot/information',
 		meta: {
 			title: '景区管理',
@@ -19,7 +19,7 @@ export default [
 					{
 						path: 'list',
 						component: () => import('@/views/scenicSpot/scenicSpotInformation/index.vue'),
-						name: 'list',
+						name: 'information-list',
 						meta: {
 							title: '首页',
 							activeMeun: 'information',
@@ -29,7 +29,7 @@ export default [
 					{
 						path: 'edit',
 						component: () => import('@/views/scenicSpot/scenicSpotInformation/components/edit.vue'),
-						name: 'edit',
+						name: 'information-edit',
 						meta: {
 							title: '编辑',
 							activeMeun: 'information',
@@ -39,7 +39,7 @@ export default [
 					{
 						path: 'info',
 						component: () => import('@/views/scenicSpot/scenicSpotInformation/components/info.vue'),
-						name: 'info',
+						name: 'information-info',
 						meta: {
 							title: '查看',
 							activeMeun: 'information',
@@ -66,11 +66,62 @@ export default [
 			},
 			{
 				path: 'singleVote',
-				component: () => import('@/views/scenicSpot/singleVote/index.vue'),
+				redirect: '/scenic-spot/singleVote/list',
 				name: 'singleVote',
 				meta: {
 					title: '单票',
 				},
+				children: [
+					{
+						path: 'edit',
+						component: () => import('@/views/scenicSpot/singleVote/edit.vue'),
+						name: 'singleVote-edit',
+						meta: {
+							title: '编辑',
+							activeMeun: 'singleVote',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'list',
+						component: () => import('@/views/scenicSpot/singleVote/index.vue'),
+						name: 'singleVote-list',
+						meta: {
+							title: '列表',
+							activeMeun: 'singleVote',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
+			{
+				path: 'showTickets',
+				name: 'showTickets',
+				redirect: '/scenic-spot/showTickets/index',
+				meta: {
+					title: '演出票',
+				},
+				children: [
+					{
+						path: 'index',
+						component: () => import('@/views/scenicSpot/showTickets/index.vue'),
+						name: 'index',
+						meta: {
+							title: '首页',
+							activeMeun: 'information',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'show_edit',
+						component: () => import('@/views/scenicSpot/showTickets/components/showEdit.vue'),
+						name: 'show_edit',
+						meta: {
+							title: '编辑',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
 			},
 		],
 	},
