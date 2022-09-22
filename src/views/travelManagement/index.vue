@@ -9,10 +9,8 @@
       </a-tab-pane>
     </a-tabs>
 		<div class="footer">
-			<div class="tooter-btn">
-        <a-button type="primary" @click="check = !check">保存</a-button>
-			  <a-button type="primary">发团</a-button>
-      </div>
+      <a-button type="primary" @click="check = !check">保存</a-button>
+      <a-button type="primary">发团</a-button>
 		</div>
   </div>
 </template>
@@ -65,16 +63,14 @@ import fileInfo from './fileInfo/fileInfo.vue';
   }
   
 	.footer {
-		position: fixed;
-		bottom: 16px;
+		position: sticky;
+		bottom: 0;
 		line-height: 64px;
 		width: 100%;
 		border-top: 1px solid #F1F2F5;
-    .tooter-btn {
-      width: 60%;
-      background-color: #fff;
-      margin-left: 16px;
-    }
+    background-color: #fff;
+    padding-left: 16px;
+    z-index: 9999;
 		button:first-of-type {
 			margin-right: 16px;
 		}
