@@ -7,9 +7,7 @@
 			</search-item>
 			<search-item label="门票分类">
 				<a-select allowClear ref="select" v-model:value="state.tableData.param.ticketType" style="width: 200px" placeholder="请选择">
-					<a-select-option :value="0">儿童</a-select-option>
-					<a-select-option :value="1">成人</a-select-option>
-					<a-select-option :value="2">老人</a-select-option>
+					<a-select-option :value="index" v-for="(item, index) in ticketType" :key="item">{{ item }}</a-select-option>
 				</a-select>
 			</search-item>
 			<template #button>
@@ -22,12 +20,12 @@
 					<a-button type="primary" class="success">新增门票</a-button>
 				</div>
 				<CommonTable :dataSource="state.tableData.data" :columns="columns">
-					<template #bodyCell="{ column }">
+					<template #bodyCell="{ column, record }">
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a href="javascript:;">编辑</a>
+								<a href="javascript:;" @click="toEdit(record)">编辑</a>
 								<a href="javascript:;">删除</a>
-								<a href="javascript:;" @click="open"> 下架申请</a>
+								<a href="javascript:;" v-if="record.putaway === '上架'" @click="open"> 下架申请</a>
 							</div>
 						</template>
 					</template>
@@ -54,6 +52,7 @@ import api from '@/api';
 import AddPopup from './addPopup.vue';
 import Modal from '@/components/common/BaseModal.vue';
 import Audit from './aduit.vue';
+
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 const route = useRouter();
@@ -68,8 +67,8 @@ const columns = [
 	},
 	{
 		title: '票种',
-		dataIndex: 'ticketType',
-		key: 'ticketType',
+		dataIndex: 'verificationType',
+		key: 'verificationType',
 	},
 	{
 		title: '归属景区',
@@ -78,18 +77,18 @@ const columns = [
 	},
 	{
 		title: '门票分类',
-		dataIndex: 'phone',
-		key: 'phone',
+		dataIndex: 'ticketType',
+		key: 'ticketType',
 	},
 	{
 		title: '审核状态',
-		dataIndex: 'addressDetail',
-		key: 'addressDetail',
+		dataIndex: 'auditStatus',
+		key: 'auditStatus',
 	},
 	{
 		title: '平台上架状态',
-		dataIndex: 'auditStatus',
-		key: 'auditStatus',
+		dataIndex: 'putaway',
+		key: 'putaway',
 	},
 	{
 		title: '操作 ',
@@ -102,8 +101,13 @@ const columns = [
 const auditRef = ref();
 const open = () => {
 	console.log(auditRef.value.open);
-
 	auditRef.value.open();
+};
+
+const toEdit = (record: any) => {
+	console.log(record);
+
+	route.push({ path: '/scenic-spot/singleVote/edit', query: { oid: encodeURIComponent(record.oid) } });
 };
 const cancel = () => {
 	modelValue.value = false;
@@ -120,7 +124,7 @@ const state = reactive({
 			pageNo: 1,
 			pageSize: 10,
 			ticketName: '',
-			ticketType: '',
+			ticketType: null,
 		},
 	},
 });
@@ -137,20 +141,7 @@ const pageSideChange = (current: number, size: number) => {
 	state.tableData.param.pageSize = size;
 	// onSearch();
 };
-//编辑
-const toEditPage = (record: any) => {
-	console.log(record.oid, encodeURIComponent(record.oid));
-	route.push({ path: '/scenic-spot/information/edit', query: { oid: encodeURIComponent(record.oid) } });
-};
-//查看
-const toCheck = (record: any) => {
-	route.push({ path: '/scenic-spot/information/info', query: { oid: encodeURIComponent(record.oid) } });
-};
-// const onSearch = () => {
-// 	userList(state.tableData.param).then((res) => {
-// 		console.log(res);
-// 	});
-// };
+
 const initList = async () => {
 	state.tableData.loading = true;
 	let res = await api.getSingleVoteList(state.tableData.param);
@@ -160,25 +151,26 @@ const initList = async () => {
 	state.tableData.data = list;
 	state.tableData.loading = false;
 };
-const status = {
-	'-1': '未提交',
-	0: '待审核',
-	1: '审核通过',
-	2: '审核未通过',
+
+const status: any = {
+	TO_AUDIT: '待审核',
+	PASS: '审核通过',
+	AUDITING: '审核中',
+	NO_PASS: '审核不通过',
 };
+
+const ticketType: any = {
+	0: '儿童',
+	1: '成人',
+	2: '老人',
+};
+
 const dealData = (params: [any]) => {
 	params.map((i: any) => {
-		// i.derate = i.derate ? '支持' : '不支持';
-		i.scenicLevel = i.scenicLevel ? i.scenicLevel : 0;
+		i.ticketType = ticketType[i.ticketType];
 		i.auditStatus = status[i.auditStatus];
-		let all = i.derateRule?.split(',');
-		//减免规则
-		if (all?.length > 1) {
-			i.derateRule = '满' + all[0] + '减' + all[1];
-		} else {
-			i.derateRule = '无';
-		}
-
+		i.putaway = i.putaway ? '上架' : '下架';
+		i.verificationType = i.verificationType === 'MANY' ? '多点核销' : i.verificationType === 'ONE' ? '单点核销' : '';
 		return i;
 	});
 
