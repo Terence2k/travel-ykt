@@ -147,6 +147,7 @@
       width: 560,
       closable: true,
       centered: true,
+      icon: false,
       content: `您即将删除菜单“${row.menuName}”，删除后该页面将不再可见，是否确定删除？`,
       onOk() {
         api.deleteMenu(row.oid).then((res: any) => {
