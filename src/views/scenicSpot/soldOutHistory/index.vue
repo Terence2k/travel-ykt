@@ -16,6 +16,9 @@
 		</CommonSearch>
 		<div class="table-area">
 			<a-spin size="large" :spinning="state.tableData.loading">
+				<div class="list-btn">
+					<!-- <a-button type="primary" class="success">导出</a-button> -->
+				</div>
 				<CommonTable :dataSource="state.tableData.data" :columns="columns"> </CommonTable>
 			</a-spin>
 			<CommonPagination
@@ -26,8 +29,6 @@
 				@showSizeChange="pageSideChange"
 			/>
 		</div>
-		<!-- <AddPopup /> -->
-		{{ modelValue }}
 	</div>
 </template>
 
@@ -98,11 +99,6 @@ const columns = [
 	{
 		title: '审核结果',
 		key: 'derateRule',
-		width: 208,
-	},
-	{
-		title: '操作 ',
-		key: 'action',
 		width: 208,
 	},
 ];

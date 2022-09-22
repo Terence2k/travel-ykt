@@ -49,15 +49,40 @@ export default [
 			},
 
 			{
-				path: 'businessAdministration',
-				component: () => import('@/views/baseInfoManage/businessAdministration/index.vue'),
-				name: 'businessAdministration',
+				path: 'businessManagement',
+				component: () => import('@/views/baseInfoManage/businessManagement/index.vue'),
+				name: 'businessManagement',
+				redirect: '/baseInfo/businessManagement/apply',
 				meta: {
 					title: '企业管理',
 					// icon: 'liulanqi',
 					// auth: ["admin"],
 					// isDetail: true, // 在左侧的导航栏不会展示
 				},
+				children: [
+					{
+						path: 'apply',
+						component: () => import('@/views/baseInfoManage/businessManagement/apply.vue'),
+						name: 'apply',
+						meta: {
+							title: '企业申请',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'check',
+						component: () => import('@/views/baseInfoManage/businessManagement/check.vue'),
+						name: 'check',
+						meta: {
+							title: '审核',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					}
+				]
 			},
 		],
 	},
