@@ -7,7 +7,7 @@ import type { RouteLocationNormalized } from 'vue-router';
 import { usePermissioStore } from '@/stores/modules/permission';
 import router from './index';
 
-const whiteList = ['/login']; // no redirect whitelist
+const whiteList = ['/login', "/login/userLogin", "/login/businessLogin"]; // no redirect whitelist
 let first = true;
 // const modules = import.meta.glob("../views/**/index.vue");
 router.beforeEach(async (to: RouteLocationNormalized, _, next) => {

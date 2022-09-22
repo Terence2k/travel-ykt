@@ -10,7 +10,8 @@
 						<div class="logo">logo</div>
 						<h2 class="title">丽江一卡结算平台</h2>
 					</div>
-					<login-form />
+					<!-- <login-form /> -->
+					<RouterView key="loginWrapper"></RouterView>
 				</div>
 			<!-- </a-card> -->
 		</div>

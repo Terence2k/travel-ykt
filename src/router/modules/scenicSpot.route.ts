@@ -94,6 +94,35 @@ export default [
 					},
 				],
 			},
+			{
+				path: 'showTickets',
+				name: 'showTickets',
+				redirect: '/scenic-spot/showTickets/index',
+				meta: {
+					title: '演出票',
+				},
+				children: [
+					{
+						path: 'index',
+						component: () => import('@/views/scenicSpot/showTickets/index.vue'),
+						name: 'index',
+						meta: {
+							title: '首页',
+							activeMeun: 'information',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'show_edit',
+						component: () => import('@/views/scenicSpot/showTickets/components/showEdit.vue'),
+						name: 'show_edit',
+						meta: {
+							title: '编辑',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
 		],
 	},
 ];
