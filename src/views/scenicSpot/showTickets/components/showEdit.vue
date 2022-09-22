@@ -34,11 +34,8 @@
 			</a-form>
 		</div>
 		<BaseModal title="审核" v-model="dialogVisible" :onOk="handleOk">
-			<CommonTable :dataSource="state.tableDate.data" :columns="columns" :scrollY="false" :scroll="{ x: '0' }">
-				<template #footer>
-					<a-button type="primary" @click="save">保存</a-button>
-					<a-button @click="dialogVisible = false">消</a-button>
-				</template>
+			<CommonTable :dataSource="state.tableDate.data" :columns="columns" :scrollY="false">
+
 			</CommonTable>
 			<template v-slot:footer>
 				<a-button type="primary" @click="save">保存</a-button>
