@@ -12,7 +12,16 @@
       </a-select>
     </search-item>
     <search-item label="可用范围">
-      <a-input v-model:value="state.tableData.param.availableRange" placeholder="请输入可用范围"/>
+      <a-select
+        ref="select"
+        mode="multiple"
+        placeholder="请输入可用范围"
+        v-model:value="state.tableData.param.availableRange"
+      >
+        <a-select-option v-for="item in state.optionTypeList" :value="item.oid">
+          {{ item.name }}
+        </a-select-option>
+      </a-select>
     </search-item>
     <search-item label="角色名称">
       <a-input v-model:value="state.tableData.param.roleName" placeholder="请输入角色名称"/>
@@ -46,13 +55,13 @@
   <AddUpdate 
     v-model="state.operationModal.isAddOrUpdate"
     :params="state.params"
-    :roleList="state.optionRoleList"
+    :optionTypeList="state.optionTypeList"
     @onSearch="onSearch"
     @cancel="cancel"/>
   <Detail
     v-model="state.operationModal.showDetails"
     :params="state.params"
-    :roleList="state.optionRoleList"
+    :optionTypeList="state.optionTypeList"
     @cancel="cancel"/>
 </template>
 
@@ -113,7 +122,7 @@
       param: {
         pageNo: 1,
         pageSize: 10,
-        availableRange: '',
+        availableRange: [],
         roleName: '',
         status: null,
       },
@@ -127,7 +136,7 @@
       isAddOrUpdate: false,
       showDetails: false
     },
-    optionRoleList: [] as any
+    optionTypeList: [] as any
   });
 
   const onHandleCurrentChange = (val: number) => {
@@ -147,12 +156,12 @@
       console.log('res:', res);
       state.tableData.data = res.content;
       state.tableData.total = res.total;
-      state.optionRoleList = res.content.map((item: any) => {
-        return {
-          roleName: item.roleName,
-          roleId: item.oid
-        }
-      });
+    })
+  }
+
+  const getBusinessType = () => {
+    api.businessType().then((res: any) => {
+      state.optionTypeList = res;
     })
   }
 
@@ -191,6 +200,7 @@
   }
 
   onMounted(() => {
+    getBusinessType();
     onSearch();
   })
 </script>

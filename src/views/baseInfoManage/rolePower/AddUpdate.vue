@@ -18,7 +18,16 @@
         label="可用范围"
         name="availableRange"
       >
-        <a-input v-model:value="formValidate.availableRange" placeholder="请选择可用范围"/>
+        <a-select
+          ref="select"
+          mode="multiple"
+          placeholder="请选择可用范围"
+          v-model:value="formValidate.availableRange"
+        >
+          <a-select-option v-for="item in optionTypeList" :value="item.oid">
+            {{ item.name }}
+          </a-select-option>
+        </a-select>
       </a-form-item>
       <a-form-item
         label="状态"
@@ -95,6 +104,7 @@
         default: false
       },
       params: Object,
+      optionTypeList: Array
   })
   const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
   const dialogVisible = ref(false);
