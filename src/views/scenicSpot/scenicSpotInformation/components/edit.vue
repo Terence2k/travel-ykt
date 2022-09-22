@@ -101,7 +101,7 @@ import { RadioGroupProps } from 'ant-design-vue';
 import { toArray } from 'lodash';
 import api from '@/api';
 import { message } from 'ant-design-vue';
-import Pic from '../../singleVote/pictureWrapper.vue';
+import Pic from '@/components/common/imageWrapper.vue';
 const route = useRouter();
 
 const useForm = Form.useForm;
