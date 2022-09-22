@@ -35,11 +35,7 @@
         </a-input>
       </a-form-item>
       <a-form-item name="region" label="所属地区">
-        <a-select placeholder="请选择所属地区" v-model:value="form.region">
-          <a-select-option value="sd">
-            sd
-          </a-select-option>
-        </a-select>
+        <address-selector placeholder="请选择所属地区" v-model:value="form.region"></address-selector>
       </a-form-item>
       <a-form-item name="businessLicenseUrl" label="营业执照">
         <img-upload v-model:uploadedFile="form.businessLicenseUrl"></img-upload>
@@ -56,7 +52,7 @@ import {
 import imgUpload from '@/views/baseInfoManage/businessManagement/components/imgUpload.vue';
 import api from '@/api';
 import { useScenicSpotOption } from '@/stores/modules/scenicSpot';
-import { any } from '_vue-types@3.0.2@vue-types';
+import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
 const scenicSpotOptions = useScenicSpotOption();
 const formRules: any = {
   unitType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
