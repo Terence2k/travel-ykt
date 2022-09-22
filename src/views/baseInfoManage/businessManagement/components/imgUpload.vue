@@ -23,8 +23,9 @@ import type { UploadChangeParam, UploadProps } from 'ant-design-vue';
 export interface Props {
   imgNum?: number,
   action?: string,
+  uploadedFile?: string | []
 }
-const emits = defineEmits(['uploaded'])
+const emits = defineEmits(['update:uploadedFile', 'uploaded'])
 const props = withDefaults(defineProps<Props>(), {
   imgNum: 1,
   action: "https://www.mocky.io/v2/5cc8019d300000980a055e76"
@@ -49,7 +50,17 @@ const handleChange = (info: UploadChangeParam) => {
   if (info.file.status === 'done') {
     // Get this url from response in real world.
     loading.value = false;
-    emits('uploaded', fileList)
+    // emits('uploaded', fileList)
+    if (info.fileList.length != 0) {
+      let arr: string[] = []
+      info.fileList.forEach((item: any) => {
+        arr.push(item.response.url)
+      })
+      emits('update:uploadedFile', arr)
+      emits('uploaded')
+    } else {
+      emits('update:uploadedFile', '')
+    }
   }
   if (info.file.status === 'error') {
     loading.value = false;
