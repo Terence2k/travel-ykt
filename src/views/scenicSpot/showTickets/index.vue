@@ -143,8 +143,7 @@ const onSearch = () => {
 };
 onMounted(() => {
 	// navigatorBar
-	navigatorBar.clearNavigator();
-	navigatorBar.setNavigator(['订单管理']);
+	
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
