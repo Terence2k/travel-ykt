@@ -1,7 +1,8 @@
 import router from "@/router/index";
-export const to2 = async () => {
+export const to2 = () => {
   window.localStorage.setItem("authorization", "");
-  await router.push("/login");
+  window.localStorage.setItem("userInfo", "");
+  router.push("/login");
   // location.reload();
 };
 export const getToken = () => {
@@ -17,6 +18,9 @@ export const getToken = () => {
     smallTown,
     permissions: permissions ? JSON.parse(permissions) : []
   };
+}
+export const getUserInfo = () => {
+  return JSON.parse(<string>localStorage.getItem('userInfo'));
 }
 
 export const saveToken = (token: any) => {

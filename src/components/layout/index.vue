@@ -26,7 +26,7 @@
 				<div class="header_right">
 					<a-dropdown>
 						<a class="ant-dropdown-link" @click.prevent>
-							<span>陈晓妮 &nbsp;</span>
+							<span>{{userInfo.username}} &nbsp;</span>
 							<user-outlined />
 							<DownOutlined />
 						</a>
@@ -73,7 +73,7 @@ import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import SliderItem from './SliderItem.vue';
 import toggleScreen from './toggleScreen.vue';
 import type { MenuProps } from 'ant-design-vue';
-import { to2 } from '@/utils/util';
+import { to2, getUserInfo } from '@/utils/util';
 import { useWatermark } from '@/hooks/index';
 // import navigationBar from './navigationBar.vue';
 import packageJson from '../../../package.json';
@@ -83,6 +83,7 @@ const permissioStore = usePermissioStore();
 const navs = ref<MenuList[]>();
 const selectedKeys = ref<string[]>([]);
 const openKeys = ref<string[]>([]);
+const userInfo = getUserInfo();
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const onSelect = (e: any) => {
