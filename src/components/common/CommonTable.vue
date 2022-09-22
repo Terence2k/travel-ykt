@@ -55,11 +55,14 @@ const computeTableHeight = () => {
   }
 };
 
-onMounted(() => {
+onBeforeMount(() => {
   // 如果没有操作列取消设置scrollx
   if (!attrs.columns.some((it: any) => it.fixed)) {
     props.scroll.x = '0';
   }
+})
+
+onMounted(() => {
 	computeTableHeight();
 });
 
