@@ -3,7 +3,7 @@
 		<div class="list-btn" v-if="slotButton">
 			<slot name="button"></slot>
 		</div>
-		<a-table v-bind="$attrs" :scroll="{ x: '100vw', y: '100vh' }" :pagination="false" class="common-table">
+		<a-table v-bind="$attrs" :scroll="{ x: scroll.x, y: scroll.y }" :pagination="false" class="common-table">
 			<template #bodyCell="data">
 				<slot name="bodyCell" v-bind="data || {}"></slot>
 			</template>
@@ -24,6 +24,13 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
+  scroll: {
+    type: Object,
+    default: {
+      x: '100vw',
+      y: '100vh'
+    }
+  }
 })
 const attrs = useAttrs() as any;
 const slotButton = !!useSlots().button;
