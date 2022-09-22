@@ -11,15 +11,17 @@ export default [
 			{
 				path: 'basic_Information',
 				name: 'basicInformation',
+				redirect: '/catering/basic_Information/index',
 				meta: {
 					title: '基础信息管理',
 				},
 				children: [
 					{
-						path: '/index',
+						path: 'index',
+						name: 'index',
 						component: () => import('@/views/cateringManage/basicInformation/index.vue'),
 						meta: {
-							title: '基础信息',
+							title: '',
 							isDetail: true,
 						},
 					},
@@ -32,11 +34,22 @@ export default [
 							isDetail: true,
 						},
 					},
+					{
+						path: 'basic_info',
+						component: () => import('@/views/cateringManage/basicInformation/info.vue'),
+						name: 'basic_info',
+						meta: {
+							title: '查看',
+							isDetail: true,
+						},
+					},
 				],
 			},
 			{
 				path: 'product_Management',
 				name: 'productManagement',
+				redirect: '/catering/product_Management/index',
+
 				meta: {
 					title: '产品管理',
 				},
@@ -51,10 +64,19 @@ export default [
 						},
 					},
 					{
-						path: '',
+						path: 'index',
 						component: () => import('@/views/cateringManage/product/index.vue'),
 						meta: {
 							title: '产品信息',
+							isDetail: true,
+						},
+					},
+					{
+						path: 'product_info',
+						component: () => import('@/views/cateringManage/product/info.vue'),
+						name: 'product_info',
+						meta: {
+							title: '查看',
 							isDetail: true,
 						},
 					},

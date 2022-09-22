@@ -2,20 +2,21 @@
 	<div>
 		<CommonSearch>
 			<search-item label="状态">
-				<a-select ref="select" placeholder="请选择状态">
-					<a-select-option value="all">all</a-select-option>
+				<a-select ref="select" placeholder="请选择状态" v-model:value="state.tableData.param.status">
+					<a-select-option :value="1">启用</a-select-option>
+					<a-select-option :value="0">停用</a-select-option>
 				</a-select>
 			</search-item>
 			<search-item label="所属门店">
 				<a-select ref="select" placeholder="请选择所属门店">
-					<a-select-option value="all">all</a-select-option>
+					<a-select-option value="p">all</a-select-option>
 				</a-select>
 			</search-item>
 			<search-item label="联系电话">
-				<a-input placeholder="请输入联系电话" />
+				<a-input placeholder="请输入联系电话" v-model:value="state.tableData.param.shopPhone" />
 			</search-item>
 			<template #button>
-				<a-button @click="onSearch">查询</a-button>
+				<a-button @click="getList">查询</a-button>
 			</template>
 		</CommonSearch>
 		<CommonTable :dataSource="state.tableData.data" rowKey="id" :columns="columns">
@@ -23,10 +24,9 @@
 				<a-button type="primary">导出</a-button>
 			</template>
 			<template #bodyCell="{ column }">
-				
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a>查看</a>
+						<a @click="openInfoPage(record)">查看</a>
 						<a @click="openEditPage">编辑</a>
 					</div>
 				</template>
@@ -46,42 +46,39 @@
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
+import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
-import { ref, reactive,onMounted } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import api from '@/api';
+const navigatorBar = useNavigatorBar();
 
 const router = useRouter();
 const columns = [
-	{ title: '序号',dataIndex: 'oid',  width: 70, key: 'arrange' },
+	{ title: '序号', dataIndex: 'oid', width: 70, key: 'arrange' },
 	{
-		title: '用户姓名',
-		dataIndex: 'username',
-		key: 'username',
+		title: '餐饮名称',
+		dataIndex: 'cateringName',
+		key: 'cateringName',
 	},
 	{
-		title: '手机号',
-		dataIndex: 'mobile',
-		key: 'mobile',
+		title: '可预订数量',
+		dataIndex: 'orderNum',
+		key: 'orderNum',
 	},
 	{
-		title: '所属单位类型',
-		dataIndex: 'unitTypeName',
-		key: 'unitTypeName',
-	},
-	{
-		title: '所属单位',
-		dataIndex: 'unitName',
-		key: 'unitName',
-	},
-	{
-		title: '所属角色',
-		dataIndex: 'roleList',
-		key: 'roleList',
+		title: '单价(元/人)',
+		dataIndex: 'price',
+		key: 'price',
 	},
 	{
 		title: '状态',
-		dataIndex: 'userStatusName',
-		key: 'userStatusName',
+		dataIndex: 'status',
+		key: 'status',
+	},
+	{
+		title: '所属部门',
+		dataIndex: 'companyName',
+		key: 'companyName',
 	},
 	{
 		title: '操作',
@@ -99,81 +96,58 @@ const state = reactive({
 		param: {
 			pageNo: 1,
 			pageSize: 10,
-			keyWord: '',
-			roleName: '',
+			shopPhone: null,
+			companyId: null,
 			status: null,
-			uniType: '',
 		},
 	},
 	params: {},
-	operationModal: {
-		isAddOrUpdate: false,
-	},
-	optionRoleList: [],
+	showDetail:false
 });
 
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
 	state.tableData.param.pageNo = val;
-	onSearch();
 };
 
 const pageSideChange = (current: number, size: number) => {
 	console.log('changePageSize:', size);
 	state.tableData.param.pageSize = size;
-	onSearch();
 };
 
-const onSearch = () => {
-	api.userList(state.tableData.param).then((res: any) => {
-		console.log('res:', res);
-		state.tableData.data = res.content;
+const getList = () => {
+	api.getProductPage(state.tableData.param).then((res: any) => {
 		state.tableData.total = res.total;
+		const list: [any] = dealData(res.content);
+		state.tableData.data = list;
 	});
 };
-
-const cancel = (): any => {
-	state.operationModal.isAddOrUpdate = false;
+const status = {
+	0: '停用',
+	1: '启用',
 };
-
-const getRoleList = () => {
-	api
-		.roleList({
-			pageNo: 1,
-			pageSize: 100000,
-		})
-		.then((res: any) => {
-			console.log('角色列表:', res);
-			state.optionRoleList = res.content.map((item: any) => {
-				return {
-					roleName: item.roleName,
-					roleId: item.oid,
-				};
-			});
-		});
-};
-
-const addOrUpdate = (param: any) => {
-	console.log('state.operationModal.isAddOrUpdate:', state.operationModal.isAddOrUpdate);
-
-	const { row, handle } = param;
-	console.log(row);
-	console.log(handle);
-
-	state.params = {};
-	if (handle === 'update') {
-		state.params = row;
-	}
-	state.operationModal.isAddOrUpdate = true;
+const dealData = (params: [any]) => {
+	params.map((i: any) => {
+		i.status = status[i.status];
+		return i;
+	});
+	return params;
 };
 
 const openEditPage = () => {
-	router.push({ path: '/catering/product_Management/product_edit'});
+	router.push({ path: '/catering/product_Management/product_edit' });
+};
+const openInfoPage = (record:any) => {
+    state.params = record;
+	router.push({ path: '/catering/product_Management/product_info',params:{record: record} });
 };
 
 onMounted(() => {
-	getRoleList();
-	onSearch();
+	navigatorBar.setNavigator(['产品管理']);
+	getList();
+});
+onBeforeUnmount(() => {
+	navigatorBar.clearNavigator();
 });
 </script>
 
