@@ -31,10 +31,26 @@
 				<template v-else-if="column.dataIndex === 'actions'">
 					<div class="cell-actions">
 						<span class="item" @click="edit(record.key)">{{ editableData[record.key] ? '取消' : '编辑' }}</span>
+						<span class="item" @click="remove(record.key)">删除</span>
 					</div>
 				</template>
 			</template>
+			<template #summary>
+				<a-table-summary-row class="row-summary">
+					<a-table-summary-cell></a-table-summary-cell>
+					<a-table-summary-cell></a-table-summary-cell>
+					<a-table-summary-cell></a-table-summary-cell>
+					<a-table-summary-cell></a-table-summary-cell>
+					<a-table-summary-cell class="cell-actions">
+						<a-button class="button-add">添加</a-button>
+					</a-table-summary-cell>
+				</a-table-summary-row>
+			</template>
 		</CommonTable>
+		<div class="footer">
+			<a-button class="button-save button">保存</a-button>
+			<a-button class="button-submit button">提交审核</a-button>
+		</div>
 		<!-- <CommonPagination
 			class="pagination-custom"
 			:current="tableState.tableData.param.pageNo"

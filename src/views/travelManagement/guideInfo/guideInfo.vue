@@ -1,7 +1,7 @@
 <template>
 	<div class="table-container">
 		<p class="tips">选择导游（提交后系统会自动联系导游接单）</p>
-		<CommonTable :columns="columns" :dataSource="tableData">
+		<CommonTable :columns="columns" :dataSource="tableData" :scrollY="false">
 			<template #bodyCell="{ column, text, index, record }">
 				<template v-if="column.key === 'index'">
 					<div>
@@ -35,14 +35,15 @@
 
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a class="item" @click="edit(record.key  )">编辑</a>
+						<a class="item" v-if="!editableData[record.key]"  @click="edit(record.key)">编辑</a>
+						<a class="item" v-else @click="save(record.key)">确定</a>
 						<a class="item">删除</a>
 					</div>
 				</template>
 			</template>
 		</CommonTable>
-		<div>
-			<!-- <a-button>添加</a-button> -->
+		<div class="footer-btn">
+			<a-button type="primary">添加</a-button>
 		</div>
 	</div> 
 </template>
@@ -50,7 +51,7 @@
 import { CaretDownOutlined } from '@ant-design/icons-vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import { useGuideInfo } from './guideInfo';
-const { columns, tableData, tableKey, editableData, edit, save } = useGuideInfo()
+const { columns, tableData, editableData, edit, save } = useGuideInfo()
 </script>
 <style lang="less" scoped>
 	.tips {
@@ -64,5 +65,10 @@ const { columns, tableData, tableKey, editableData, edit, save } = useGuideInfo(
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+	}
+	.footer-btn {
+		display: flex;
+		justify-content: flex-end;
+		margin: 16px 20px;
 	}
 </style>
