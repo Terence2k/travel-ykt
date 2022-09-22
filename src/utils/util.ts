@@ -74,6 +74,7 @@ export const saveToken = (token: any) => {
   return result;
 }
 
+// 计算元素相对页面位置position
 export const getElementPos = (el: any) => {
   if(el.parentNode === null || el.style.display == 'none') { return false;}     
   let parent = null;
