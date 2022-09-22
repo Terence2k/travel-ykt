@@ -18,7 +18,7 @@
 				</a-input>
 			</a-form-item>
 			<div class="register">
-				<span class="register-text">企业注册</span>
+				<span class="register-text" @click="goTo">企业注册</span>
 			</div>
 			<a-button html-type="submit" class="btn" type="primary" :loading="loading">登录</a-button>
 			<a-row style="margin-top: 16px">
@@ -103,6 +103,11 @@ const handleFinish = async (values: any) => {
 	//   router.replace("/");
 	// }
 };
+const goTo = () => {
+	router.push({
+		path: '/login/businessLogin'
+	})
+}
 </script>
 <style lang="less" scoped>
 .form_box {

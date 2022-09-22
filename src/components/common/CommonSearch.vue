@@ -25,7 +25,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px 16px;
-  flex: 3;
+  flex: 22;
   align-items: center;
 }
 
@@ -34,7 +34,7 @@
   justify-content: flex-end;
   float: right;
   text-align: right;
-  flex: 1;
+  flex: 2;
 }
 :deep(.ant-input) {
   width: 200px;
