@@ -68,7 +68,7 @@ export default [
 
 			{
 				path: 'hotelOrder',
-				component: () => import('@/views/hotelManagement/order/index.vue'),
+				redirect: '/hotelManagement/hotelOrder/index',
 				name: 'hotelOrder',
 				meta: {
 					title: '订单管理',
@@ -76,6 +76,25 @@ export default [
 					// auth: ["admin"],
 					// isDetail: true, // 在左侧的导航栏不会展示
 				},
+				children: [
+					{
+						path: 'index',
+						component: () => import('@/views/hotelManagement/order/index.vue'),
+						meta: {
+							title: '订单管理',
+							isDetail: true,
+						},
+					},
+					{
+						path: 'orderEdit',
+						name:'orderEdit',
+						component: () => import('@/views/hotelManagement/order/Edit/index.vue'),
+						meta: {
+							title: '编辑',
+							isDetail: true,
+						},
+					},
+				],
 			},
 		],
 	},
