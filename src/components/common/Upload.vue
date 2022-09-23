@@ -1,5 +1,5 @@
 <template>
-	<a-upload
+	<a-upload-dragger
 		v-model:file-list="fileList"
 		name="avatar"
 		list-type="picture-card"
@@ -12,9 +12,13 @@
 		<img v-if="imageUrl" :src="imageUrl" alt="avatar" />
 		<div v-else>
 			<loading-outlined v-if="loading"></loading-outlined>
-			<plus-outlined v-else></plus-outlined>
+			
+			<div v-else>
+				<plus-outlined v-if="!slotDefalut"></plus-outlined>
+				<slot></slot>
+			</div>
 		</div>
-  </a-upload>
+  </a-upload-dragger>
 </template>
 <script lang="ts" setup>
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons-vue';
@@ -27,6 +31,7 @@ import type { UploadChangeParam, UploadProps } from 'ant-design-vue';
 		reader.readAsDataURL(img);
 		console.log(reader)
 	}
+	const slotDefalut = !!useSlots().default;
 	const fileList = ref([]);
 	const loading = ref<boolean>(false);
 	const imageUrl = ref<string>('');
@@ -59,3 +64,19 @@ import type { UploadChangeParam, UploadProps } from 'ant-design-vue';
 		return isJpgOrPng && isLt2M;
 	};
 </script>
+<style lang="less" scoped>
+	::v-deep(.ant-upload-drag) {
+		width: 318px;
+		height: 190px;
+		border: 1px solid #D5D5D5;
+	}
+	::v-deep(.ant-upload-btn) {
+		& > div {
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+	}
+	
+</style>
