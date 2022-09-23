@@ -73,8 +73,8 @@ const columns = [
 	},
 	{
 		title: '归属景区',
-		dataIndex: 'creditCode',
-		key: 'creditCode',
+		dataIndex: 'scenicName',
+		key: 'scenicName',
 	},
 	{
 		title: '门票分类',
