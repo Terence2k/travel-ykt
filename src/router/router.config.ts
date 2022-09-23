@@ -58,7 +58,6 @@ export const constantRoutes: RouteRecordRaw[] = [
 		]
 	},
 ];
-console.log(accessRoutes);
 
 export const getAsyncRouter = async (): Promise<RouteRecordRaw[]> => {
 	return accessRoutes;

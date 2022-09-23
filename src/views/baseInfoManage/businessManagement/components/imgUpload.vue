@@ -23,8 +23,9 @@ import type { UploadChangeParam, UploadProps } from 'ant-design-vue';
 export interface Props {
   imgNum?: number,
   action?: string,
+  uploadedFile?: string | [] | undefined
 }
-const emits = defineEmits(['uploaded'])
+const emits = defineEmits(['update:uploadedFile', 'done'])
 const props = withDefaults(defineProps<Props>(), {
   imgNum: 1,
   action: "https://www.mocky.io/v2/5cc8019d300000980a055e76"
@@ -45,13 +46,20 @@ const handleChange = (info: UploadChangeParam) => {
   if (info.file.status === 'uploading') {
     loading.value = true;
     return;
-  }
-  if (info.file.status === 'done') {
+  } else if (info.file.status === 'done' || info.file.status === 'removed') {
     // Get this url from response in real world.
     loading.value = false;
-    emits('uploaded', fileList)
-  }
-  if (info.file.status === 'error') {
+    if (info.fileList.length != 0) {
+      let arr: string[] = []
+      info.fileList.forEach((item: any) => {
+        arr.push(item.response.url)
+      })
+      emits('update:uploadedFile', arr)
+    } else {
+      emits('update:uploadedFile', undefined)
+    }
+    emits('done')
+  } else if (info.file.status === 'error') {
     loading.value = false;
     message.error('上传失败！');
   }
@@ -89,6 +97,12 @@ const handleCancel = () => {
   previewTitle.value = '';
   previewImage.value = '';
 };
+const clear = () => {
+  fileList.value = []
+}
+defineExpose({
+  clear,
+})
 </script>
 <style scoped lang="scss">
 .image {

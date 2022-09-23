@@ -34,7 +34,13 @@
 			</a-form>
 		</div>
 		<BaseModal title="审核" v-model="dialogVisible" :onOk="handleOk">
-			<CommonTable :dataSource="state.tableDate.data" :columns="columns" :scrollY="false"> </CommonTable>
+			<CommonTable :dataSource="state.tableDate.data" :columns="columns" :scrollY="false">
+
+			</CommonTable>
+			<template v-slot:footer>
+				<a-button type="primary" @click="save">保存</a-button>
+				<a-button @click="dialogVisible = false">取消</a-button>
+			</template>
 		</BaseModal>
 	</div>
 </template>
@@ -71,12 +77,18 @@ const state = reactive({
 		data: [
 			{
 				username: '普通座',
-			},	
-      {
-				username: 'VIP座',
+				mobile: '1',
+				unitTypeName: '1',
 			},
-      {
+			{
+				username: 'VIP座',
+				mobile: '1',
+				unitTypeName: '1',
+			},
+			{
 				username: 'SVIP座',
+				mobile: '1',
+				unitTypeName: '1',
 			},
 		],
 	},

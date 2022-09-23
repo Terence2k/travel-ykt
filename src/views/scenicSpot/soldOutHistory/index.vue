@@ -48,13 +48,13 @@ const modelValue = ref<boolean>(false);
 const columns = [
 	{
 		title: '门票名称',
-		dataIndex: 'scenicLevel',
-		key: 'scenicLevel',
+		dataIndex: 'ticketName',
+		key: 'ticketName',
 	},
 	{
 		title: '票种',
-		dataIndex: 'name',
-		key: 'name',
+		dataIndex: 'verificationType',
+		key: 'verificationType',
 	},
 	{
 		title: '归属景区',
@@ -62,9 +62,14 @@ const columns = [
 		key: 'creditCode',
 	},
 	{
+		title: '平台上架状态',
+		dataIndex: 'putaway',
+		key: 'putaway',
+	},
+	{
 		title: '门票管理',
-		dataIndex: 'phone',
-		key: 'phone',
+		dataIndex: 'ticketType',
+		key: 'ticketType',
 	},
 	{
 		title: '下架开始时间',
@@ -151,44 +156,44 @@ const toEditPage = (record: any) => {
 const toCheck = (record: any) => {
 	route.push({ path: '/scenic-spot/information/info', query: { oid: encodeURIComponent(record.oid) } });
 };
-// const onSearch = () => {
-// 	userList(state.tableData.param).then((res) => {
-// 		console.log(res);
-// 	});
-// };
+
 const initList = async () => {
 	state.tableData.loading = true;
-	let res = await api.getScenicSpotInformationList(state.tableData.param);
+	let res = await api.getSingleVoteList(state.tableData.param);
 	const { total, content } = res;
 	state.tableData.total = total;
-	const list: [any] = dealData(content);
+	const list: any = dealData(content);
 	state.tableData.data = list;
 	state.tableData.loading = false;
 };
-const status = {
-	'-1': '未提交',
-	0: '待审核',
-	1: '审核通过',
-	2: '审核未通过',
+const status: any = {
+	TO_AUDIT: '待审核',
+	PASS: '审核通过',
+	AUDITING: '审核中',
+	NO_PASS: '审核不通过',
 };
-const dealData = (params: [any]) => {
-	params.map((i: any) => {
-		// i.derate = i.derate ? '支持' : '不支持';
-		i.scenicLevel = i.scenicLevel ? i.scenicLevel : 0;
-		i.auditStatus = status[i.auditStatus];
-		let all = i.derateRule?.split(',');
-		//减免规则
-		if (all?.length > 1) {
-			i.derateRule = '满' + all[0] + '减' + all[1];
-		} else {
-			i.derateRule = '无';
-		}
 
+const ticketType: any = {
+	0: '儿童',
+	1: '成人',
+	2: '老人',
+};
+
+const dealData = (params: [any]) => {
+	let res = params.filter((i: any) => {
+		return !i.putaway;
+	});
+	res.map((i: any) => {
+		i.ticketType = ticketType[i.ticketType];
+		i.auditStatus = status[i.auditStatus];
+		i.putaway = i.putaway ? '上架' : '下架';
+		i.verificationType = i.verificationType === 'MANY' ? '多点核销' : i.verificationType === 'ONE' ? '单点核销' : '';
 		return i;
 	});
 
-	return params;
+	return res;
 };
+
 onMounted(() => {
 	initList();
 	// navigatorBar.setNavigator(['景区信息管理']);

@@ -2,41 +2,29 @@
 	<div class="editWrapper">
 		<header>基本信息</header>
 		<a-form class="" ref="formRef" :label-col="{ span: 3 }" labelAlign="left" :wrapper-col="{ span: 6 }" :scrollToFirstError="true">
-			<a-form-item label="企业名称" v-bind="validateInfos[`data.name`]">
+			<a-form-item label="归属景区">
 				<a-input v-model:value="formData.data.name" placeholder="请填写景区名字" />
 			</a-form-item>
-			<a-form-item label="企业类型" v-bind="validateInfos[`data.businessType`]">
+			<a-form-item label="票种分类" v-bind="validateInfos[`data.businessType`]">
 				<a-select allowClear v-model:value="formData.data.businessType" placeholder="请选择企业类型">
 					<a-select-option v-for="o in businessTypeOption" :key="o.name" :value="o.oid">{{ o.name }}</a-select-option>
 				</a-select>
 			</a-form-item>
 
-			<a-form-item label="景区等级" v-bind="validateInfos[`data.scenicLevel`]">
-				<a-select allowClear v-model:value="formData.data.scenicLevel" placeholder="请选择景区名字">
-					<a-select-option v-for="o in 10" :key="o.name" :value="o">{{ o }}A</a-select-option>
-				</a-select>
+			<a-form-item label="门票名称" v-bind="validateInfos[`data.scenicLevel`]">
+				<a-input v-model:value="formData.data.name" placeholder="请填写门票名称" />
 			</a-form-item>
-			<a-form-item label="所属地区" class="area" v-bind="errorInfos" :wrapper-col="{ span: 18 }">
-				<a-select allowClear v-model:value="formData.data.provinceId" placeholder="请选择省" style="width: 120px" @change="selectCity">
-					<a-select-option v-for="item in proviceList" :key="item.oid" :value="item.oid">{{ item.name }}</a-select-option>
-				</a-select>
-				&nbsp;
-				<a-select allowClear v-model:value="formData.data.cityId" placeholder="请选择市" style="width: 120px" @change="selectArea">
-					<a-select-option v-for="item in cityList" :key="item.oid" :value="item.oid">{{ item.name }}</a-select-option>
-				</a-select>
-				&nbsp;
-				<a-select allowClear v-model:value="formData.data.areaId" placeholder="请选择辖区" style="width: 120px">
-					<a-select-option v-for="item in areaList" :key="item.oid" :value="item.oid">{{ item.name }}</a-select-option>
-				</a-select>
-				&nbsp;
-				<a-input v-model:value="formData.data.addressDetail" placeholder="请输入详细地址" style="width: 150px" />
+			<a-form-item label="门票分类" v-bind="validateInfos[`data.scenicLevel`]">
+				<a-input v-model:value="formData.data.name" placeholder="请填写门票名称" />
 			</a-form-item>
-			<a-form-item label="统一社会信用代码" v-bind="validateInfos[`data.creditCode`]">
+			<a-form-item label="可预定时间" v-bind="validateInfos[`data.unitStatus`]"> </a-form-item>
+			<a-form-item label="当日最晚可定票时间" v-bind="validateInfos[`data.unitStatus`]"> </a-form-item>
+
+			<a-form-item label=" 有效期" v-bind="validateInfos[`data.creditCode`]">
 				<a-input v-model:value="formData.data.creditCode" placeholder="请填写" />
 			</a-form-item>
-			<a-form-item label="营业执照" v-bind="validateInfos[`data.businessLicenseUrl`]">
-				<Pic />
-			</a-form-item>
+			<div class="title">核销规则</div>
+			<a-form-item label="营业执照" v-bind="validateInfos[`data.businessLicenseUrl`]"> </a-form-item>
 			<a-form-item label="联系人姓名" v-bind="validateInfos[`data.contactName`]">
 				<a-input v-model:value="formData.data.contactName" placeholder="请填写" />
 			</a-form-item>
@@ -50,7 +38,7 @@
 				</a-radio-group>
 			</a-form-item>
 
-			<div class="title">减免属性</div>
+			<div class="title">票价</div>
 			<a-form-item label="是否支持减免" v-bind="validateInfos[`data.derate`]">
 				<a-radio-group v-model:value="formData.data.derate">
 					<a-radio :value="true">是</a-radio>
@@ -64,7 +52,7 @@
 					placeholder="减免规则详情，逗号隔开满16-9 ：16,9"
 				/>
 			</a-form-item>
-			<div class="title">结算（收款）账户信息</div>
+			<div class="title">减免规则</div>
 			<a-form-item label="账户类型" v-bind="validateInfos[`data.accountType`]">
 				<a-radio-group v-model:value="formData.data.accountType">
 					<a-radio :value="1">对公账号</a-radio>
@@ -101,7 +89,7 @@ import { RadioGroupProps } from 'ant-design-vue';
 import { toArray } from 'lodash';
 import api from '@/api';
 import { message } from 'ant-design-vue';
-import Pic from '@/components/common/imageWrapper.vue';
+
 const route = useRouter();
 
 const useForm = Form.useForm;
@@ -191,6 +179,7 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 		'data.bank': [{ required: true, message: '请填写还款行' }],
 	})
 );
+
 //初始化下拉列表
 const initOpeion = async () => {
 	await scenicSpotOptions.getBusinessTypeOption();
@@ -207,7 +196,7 @@ const proviceList = computed(() => scenicSpotOptions.proviceList);
 const cityList = computed(() => scenicSpotOptions.cityList);
 const areaList = computed(() => scenicSpotOptions.areaList);
 
-const selectCity = async (id: any) => {
+const selectCity = async (id: number) => {
 	if (id) {
 		await scenicSpotOptions.getAllAreaCity(id);
 	} else {
@@ -217,8 +206,9 @@ const selectCity = async (id: any) => {
 	}
 };
 const selectArea = async (id: any) => {
+	await scenicSpotOptions.getAllArea(id);
 	if (id) {
-		await scenicSpotOptions.getAllArea(id);
+		await scenicSpotOptions.getAllAreaCity(id);
 	} else {
 		scenicSpotOptions.cleanArae();
 		formData.data.areaId = null;
@@ -269,12 +259,10 @@ const initPage = async (): Promise<void> => {
 };
 
 // 自定义面包屑
-onMounted(async () => {
+onMounted(() => {
+	initOpeion();
+	initPage();
 	navigatorBar.setNavigator(['景区信息管理', '编辑']);
-	await initOpeion();
-	await initPage();
-	await selectCity(formData.data.provinceId);
-	await selectArea(formData.data.cityId);
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();

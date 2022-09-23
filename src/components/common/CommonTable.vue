@@ -3,7 +3,7 @@
 		<div class="list-btn" v-if="slotButton">
 			<slot name="button"></slot>
 		</div>
-		<a-table v-bind="$attrs" :scroll="{ x: scroll.x, y: scroll.y }" :pagination="false" class="common-table">
+		<a-table v-bind="$attrs" :scroll="scroll" :pagination="false" class="common-table">
 			<template #bodyCell="data">
 				<slot name="bodyCell" v-bind="data || {}"></slot>
 			</template>
@@ -48,12 +48,24 @@ const computeTableHeight = () => {
       let num = getElementPos(commonTableHeight).y + tableHeader + paginationHeight;
       const antTableBody = document.getElementsByClassName('ant-table-body')[0];
       // console.log('a-table-height:', num);
-      // console.log('antheight:', antTableBody.offsetTop);
+      // console.log('antheight:', antTableBody.offsetTop);`
       // console.log('getElementPos:', getElementPos(commonTableHeight).y);
       antTableBody.style.height = `calc(100vh - ${num + 25}px)`;// num + 微调
     });
   }
 };
+
+onBeforeMount(() => {
+  // 如果没有操作列取消设置scrollx
+  if (!attrs.columns.some((it: any) => it.fixed)) {
+    props.scroll.x = '0';
+  }
+  if (!props.scrollY) {
+    props.scroll.y = null
+  } else {
+    props.scroll.y = props.scroll.y ? props.scroll.y : '100vh';
+  };
+})
 
 onMounted(() => {
 	computeTableHeight();
