@@ -14,8 +14,8 @@
     <search-item label="可用范围">
       <a-select
         ref="select"
-        mode="multiple"
         placeholder="请输入可用范围"
+        allowClear
         v-model:value="state.tableData.param.availableRange"
       >
         <a-select-option v-for="item in state.optionTypeList" :value="item.oid">
@@ -83,8 +83,8 @@
     },
     {
       title: '可用范围',
-      dataIndex: 'availableRange',
-      key: 'availableRange',
+      dataIndex: 'availableRangeName',
+      key: 'availableRangeName',
     },
     {
       title: '状态',
@@ -122,7 +122,7 @@
       param: {
         pageNo: 1,
         pageSize: 10,
-        availableRange: [],
+        availableRange: null,
         roleName: '',
         status: null,
       },
@@ -186,7 +186,7 @@
     let formData = new FormData();
     formData.append('oid', id);
     formData.append('status', status);
-    api.editStatus(formData).then((res: any) => {
+    api.editRoleStatus(formData).then((res: any) => {
       message.success('操作成功');
       state.operationModal.isAddOrUpdate = false;
       onSearch();

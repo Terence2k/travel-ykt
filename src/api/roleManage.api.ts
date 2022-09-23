@@ -10,6 +10,38 @@ export async function roleList(data: any) {
 	});
 }
 
+// 新增角色
+export async function addRole(data: any) {
+	return request({
+		url: `${commonPath}/customer-service/public/api/sys-role/save`,
+		method: 'post',
+		data,
+		showLoading: true
+	});
+}
+
+// 编辑角色
+export async function editRole(data: any) {
+	return request({
+		url: `${commonPath}/customer-service/public/api/sys-role/edit`,
+		method: 'post',
+		data,
+		showLoading: true
+	});
+}
+
+// 角色详情
+export async function roleDetail(id: number) {
+	return request({
+		url: `${commonPath}/customer-service/public/api/sys-role/detail/${id}`,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+		method: 'get',
+		showLoading: false
+	});
+}
+
 // 业态范围
 export async function businessType() {
 	return request({
@@ -19,5 +51,18 @@ export async function businessType() {
     },
 		method: 'post',
 		showLoading: false
+	});
+}
+
+// 编辑角色状态
+export async function editRoleStatus(data: any) {
+	return request({
+		url: `${commonPath}/customer-service/public/api/sys-role/editStatus`,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+		method: 'post',
+    data,
+		showLoading: true
 	});
 }

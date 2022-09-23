@@ -20,12 +20,11 @@
       >
         <a-select
           ref="select"
-          mode="multiple"
           placeholder="请选择可用范围"
           v-model:value="formValidate.availableRange"
         >
-          <a-select-option v-for="item in optionTypeList" :value="item.oid">
-            {{ item.name }}
+          <a-select-option v-for="item in roleManage.businessType" :value="item.value">
+            {{ item.title }}
           </a-select-option>
         </a-select>
       </a-form-item>
@@ -90,9 +89,12 @@
   import api from '@/api';
   import { message } from 'ant-design-vue';
   import type { TreeProps } from 'ant-design-vue';
+  import { useRoleManage } from '@/stores/modules/roleManage';
 
   const checkedKeys = ref<string[]>(['0-0-0', '0-0-1']);
   const menuTreeDate: Ref<Array<any>> = ref([]);
+  const roleManage = useRoleManage();
+  const menuIdsInfo: Ref<Array<any>> = ref([]);
 
   watch(checkedKeys, () => {
     formValidate.value.menuIds = Object.values(checkedKeys.value);
@@ -115,7 +117,7 @@
     roleName: [{ required: true, trigger: 'blur', message: '请输入角色名称' }],
     mobile: [{ required: true, trigger: 'blur', message: '请输入可用范围' }],
     roleStatus: [{ required: true, trigger: 'change', message: '请选择角色状态' }],
-    availableRange: [{ required: true, trigger: 'blur', message: '请选择可用范围' }],
+    availableRange: [{ required: true, trigger: 'change', message: '请选择可用范围' }],
     menuIds: [{ required: true, trigger: 'change', message: '请选择角色权限' }],
   };
   
@@ -130,21 +132,49 @@
     .validateFields()
     .then((values: any) => {
       console.log('formValidate.value:', formValidate.value);
-      
-      // if (formValidate.value.oid) {
-      //   addOrUpdateAPI('editUser');
-      // } else {
-      //   addOrUpdateAPI('addUser');
-      // }
+      if (formValidate.value.oid) {
+        formValidate.value = {
+          oid: formValidate.value.oid,
+          availableRange: formValidate.value.availableRange,
+          menuIds: formValidate.value.menuIds,
+          roleCode: formValidate.value.roleCode,
+          roleDescribe: formValidate.value.roleDescribe,
+          roleName: formValidate.value.roleName,
+          roleStatus: formValidate.value.roleStatus,
+        };
+        addOrUpdateAPI('editRole');
+      } else {
+        addOrUpdateAPI('addRole');
+      }
     })
     .catch((info: any) => {
       console.log('Validate Failed:', info);
     });
   }
 
+  const getDetailMenuIds = (data: any) => {
+    data.forEach((item: any) => {
+      menuIdsInfo.value.push(item.oid);
+      if (item.childMenuList?.length) {
+        getDetailMenuIds(item.childMenuList);
+      }
+    })
+  }
+
+  const getDetail = (id: number) => {
+    checkedKeys.value = [];
+    menuIdsInfo.value = [];
+    api.roleDetail(id).then((res: any) => {
+      formValidate.value = res;
+      getDetailMenuIds(res.roleMenu);
+      console.log('menuIdsInfo:', menuIdsInfo.value);
+      checkedKeys.value = menuIdsInfo.value;
+    }).catch((err: any) => {
+      console.error(err);
+    })
+  }
+
   const addOrUpdateAPI = (apiName: string) => {
-    formValidate.value.companyId = null;
-    formValidate.value.password = '123456';
     console.log('formValidate:', formValidate.value);
     api[apiName]({...formValidate.value}).then((res: any) => {
       // console.log('res:', res);
@@ -172,15 +202,12 @@
 
   const getMenuList = () => {
     api.menuList().then((res: any) => {
-      console.log('res:', res);
-      
       ///转换树
       menuTreeDate.value = convertTree(res, {
         value: 'oid',
         label: 'menuName',
         children: 'children',
       });
-      console.log('menuTreeDate:', menuTreeDate.value);
     })
   }
 
@@ -188,7 +215,7 @@
     console.log('params', props.params);
     formValidate.value = {};
     if (props.params?.oid) {
-      formValidate.value = { ...props.params };
+      getDetail(props.params.oid);
       options.title = '编辑角色';
     } else {
       options.title = '新增角色';

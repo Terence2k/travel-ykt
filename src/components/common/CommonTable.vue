@@ -61,7 +61,7 @@ onBeforeMount(() => {
     props.scroll.x = '0';
   }
   if (!props.scrollY) {
-    props.scroll.y = null
+    props.scroll.y = null;
   } else {
     props.scroll.y = props.scroll.y ? props.scroll.y : '100vh';
   };
