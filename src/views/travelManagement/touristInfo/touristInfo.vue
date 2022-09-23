@@ -129,14 +129,18 @@ const {
             margin-left: 16px;
         }
     }
-	::v-deep(.ant-upload-select-picture-card) {
+	::v-deep(.ant-upload-drag) {
 		width: 64px;
 		height: 34px;
 		border: 1px solid #D5D5D5;
 		background-color: #fff;
 	}
-	::v-deep(.anticon-plus) {
+	::v-deep(.ant-upload-drag .ant-upload) {
+		padding: 5px 0;
+	}
+	::v-deep(.ant-upload-drag .anticon-plus) {
 		color: #777;
+		font-size: 16px;
 	}
 	.footer-btn {
 		display: flex;

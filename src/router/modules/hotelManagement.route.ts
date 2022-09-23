@@ -27,6 +27,7 @@ export default [
 				children: [
 					{
 						path: '',
+						name: '/',
 						component: () => import('@/views/hotelManagement/baseInfo/index.vue'),
 						meta: {
 							title: '',
