@@ -1,5 +1,5 @@
 <template>
-	<CommonTable :dataSource="tableList" :columns="type === '2' ? columns : column" :scrollY="false" bordered>
+	<CommonTable :dataSource="tableList" :columns="columnsCount" :scrollY="false" bordered>
 		<template #bodyCell="{ column, record }">
 			<template v-if="column.key === 'action'">
 				<div class="action-btns">
@@ -10,7 +10,6 @@
 			</template>
 		</template>
 	</CommonTable>
-	<span style="color: #c8c9cc"> <span style="color: red">*</span>其中，非必核销项目数量为3项，可核销总数（不包括必核销项）不超过（） 次</span>
 </template>
 
 <script setup lang="ts">
@@ -38,44 +37,29 @@ const props = defineProps({
 	// tableList: Array,
 });
 
-const column = ref([
+const columnsCount = ref([
 	{
-		title: '核销项目',
+		title: '减免规则',
 		dataIndex: 'ticketName',
-		width: 200,
 		key: 'ticketName',
-	},
-	{
-		title: '可核销次数',
-		dataIndex: 'verificationType',
 		width: 200,
-		key: 'verificationType',
 	},
-]);
-const columns = ref([
 	{
-		title: '核销项目',
+		title: '证件类型',
 		dataIndex: 'ticketName',
-		width: 200,
 		key: 'ticketName',
+		width: 200,
 	},
 	{
-		title: '可核销次数',
-		dataIndex: 'verificationType',
+		title: '折扣',
+		dataIndex: 'ticketName',
+		key: 'ticketName',
 		width: 200,
-		key: 'verificationType',
-	},
-	{
-		title: '是否为必核销项',
-		dataIndex: 'scenicName',
-		width: 200,
-		key: 'scenicName',
 	},
 	{
 		title: '操作',
-		dataIndex: 'action',
-		width: 200,
 		key: 'action',
+		width: 200,
 	},
 ]);
 

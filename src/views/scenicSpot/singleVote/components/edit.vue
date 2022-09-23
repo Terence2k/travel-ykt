@@ -1,6 +1,6 @@
 <template>
 	<div class="editWrapper">
-		<header>基本信息</header>
+		<header class="title">基本信息</header>
 		<a-form class="" ref="formRef" :label-col="{ span: 3 }" labelAlign="left" :wrapper-col="{ span: 7 }" :scrollToFirstError="true">
 			<a-form-item label="归属景区">
 				<a-input v-model:value="formData.data.scenicName" placeholder="请填写景区名字" />
@@ -36,35 +36,13 @@
 
 			<div class="title">核销规则</div>
 			<a-form-item label="核销项目" :wrapper-col="{ span: 12 }">
-				<div class="table-wrapper-long">
+				<div :class="type === '2' ? 'table-wrapper-long' : 'table-wrapper'">
 					<EditProjectTable :tableList="formData.data.data" />
-					<!-- <CommonTable :dataSource="formData.data.data" :columns="columns" :scrollY="false" bordered :scroll="{ x: '10vw' }">
-						<template #bodyCell="{ column, record }">
-							<template v-if="column.key === 'action'">
-								<div class="action-btns">
-									<a href="javascript:;" @click="toEdit(record)">编辑</a>
-									<a href="javascript:;">删除</a>
-									<a href="javascript:;" v-if="record.putaway === '上架'" @click="open"> 下架申请</a>
-								</div>
-							</template>
-						</template>
-					</CommonTable> -->
 				</div>
-				<span class="tips"> <span style="color: red">*</span>其中，非必核销项目数量为3项，可核销总数（不包括必核销项）不超过（） 次</span>
 			</a-form-item>
 			<a-form-item label="可核销账号" :wrapper-col="{ span: 12 }">
 				<div class="table-wrapper">
-					<CommonTable :dataSource="formData.data.data" :columns="columnsCount" :scrollY="false" bordered>
-						<template #bodyCell="{ column, record }">
-							<template v-if="column.key === 'action'">
-								<div class="action-btns">
-									<a href="javascript:;" @click="toEdit(record)">编辑</a>
-									<a href="javascript:;">删除</a>
-									<a href="javascript:;" v-if="record.putaway === '上架'" @click="open"> 下架申请</a>
-								</div>
-							</template>
-						</template>
-					</CommonTable>
+					<EditCountTable :tableList="formData.data.data" />
 				</div>
 			</a-form-item>
 
@@ -74,17 +52,7 @@
 			</a-form-item>
 			<a-form-item label="票价" :wrapper-col="{ span: 12 }">
 				<div class="table-wrapper">
-					<CommonTable :dataSource="formData.data.data" :columns="columnsCount" :scrollY="false" bordered>
-						<template #bodyCell="{ column, record }">
-							<template v-if="column.key === 'action'">
-								<div class="action-btns">
-									<a href="javascript:;" @click="toEdit(record)">编辑</a>
-									<a href="javascript:;">删除</a>
-									<a href="javascript:;" v-if="record.putaway === '上架'" @click="open"> 下架申请</a>
-								</div>
-							</template>
-						</template>
-					</CommonTable>
+					<EditPriceTable :tableList="formData.data.data" />
 				</div>
 			</a-form-item>
 			<a-form-item label="费用包含">
@@ -96,17 +64,7 @@
 			<div class="title">减免规则</div>
 			<a-form-item label="减免规则" :wrapper-col="{ span: 12 }">
 				<div class="table-wrapper-long">
-					<CommonTable :dataSource="formData.data.data" :columns="columns" :scrollY="false" bordered style-maxWidth="400">
-						<template #bodyCell="{ column, record }">
-							<template v-if="column.key === 'action'">
-								<div class="action-btns">
-									<a href="javascript:;" @click="toEdit(record)">编辑</a>
-									<a href="javascript:;">删除</a>
-									<a href="javascript:;" v-if="record.putaway === '上架'" @click="open"> 下架申请</a>
-								</div>
-							</template>
-						</template>
-					</CommonTable>
+					<EditRuleTable :tableList="formData.data.data" />
 				</div>
 			</a-form-item>
 
@@ -129,6 +87,9 @@ import { Form } from 'ant-design-vue';
 import { RadioGroupProps } from 'ant-design-vue';
 import { toArray } from 'lodash';
 import EditProjectTable from './editProjectTable.vue';
+import EditCountTable from './editCountTable.vue';
+import EditPriceTable from './editPriceTable.vue';
+import EditRuleTable from './editRuleTable.vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 
@@ -137,76 +98,12 @@ const route = useRouter();
 const useForm = Form.useForm;
 const navigatorBar = useNavigatorBar();
 const scenicSpotOptions = useScenicSpotOption();
-const columnsCount = ref([
-	{
-		title: '核销账号',
-		dataIndex: 'ticketName',
-		key: 'ticketName',
-		width: 200,
-	},
-	{
-		title: '姓名',
-		dataIndex: 'verificationType',
-		key: 'verificationType',
-		width: 200,
-	},
-]);
-const columns = ref([
-	{
-		title: '核销项目',
-		dataIndex: 'ticketName',
-		width: 200,
-		key: 'ticketName',
-	},
-	{
-		title: '可核销次数',
-		dataIndex: 'verificationType',
-		width: 200,
-		key: 'verificationType',
-	},
-	{
-		title: '是否为必核销项',
-		dataIndex: 'scenicName',
-		width: 200,
-		key: 'scenicName',
-	},
-	{
-		title: '操作',
-		dataIndex: 'action',
-		width: 200,
-		key: 'action',
-	},
-]);
 
 // 数据
 const formData = reactive({
 	data: {
 		data: [{ scenicName: '1' }],
 		oid: 1, //oid
-
-		// name: '测试景点编辑', //景区名称
-		// scenicLevel: 1, //景区等级(字典序号)
-
-		// creditCode: 'abc123', //统一社会行用代码
-		// phone: '18756235566', //手机号
-		// contactName: '张三', //联系人姓名
-		// provinceId: 1, //省id
-		// cityId: 2, //市id
-		// areaId: 3, //县区id
-		// addressDetail: '昆明市官渡区', //详细地址
-		// businessLicenseUrl: '/jpg/img.jpg', //营业执照图片地址
-
-		// derate: true, //是否支持减免: true支持，false不支持
-		// derateRule: '16,9', //减免规则详情，逗号隔开满16-9 ：16,9
-
-		// accountType: 1, //账户类型，具体类型未确定
-		// bankAccount: 12312124124, //银行账号
-		// accountAddress: '广东省', //开户地址
-		// businessType: 117, //企业业态（注册时，根据字典配置，景区、酒店、旅行社等）
-		// bankAccountName: 'zhangdawei', //银行账户名
-		// unitStatus: true, //企业状态 true-开业 false-停业
-
-		// bank: null, //收款行
 		name: null,
 		scenicLevel: null,
 
@@ -247,7 +144,10 @@ const initOpeion = async () => {
 	await scenicSpotOptions.getBusinessTypeOption();
 	await scenicSpotOptions.getAllAreaProvice(0);
 };
-
+//类型
+const type = computed(() => {
+	return route.currentRoute.value?.query?.t;
+});
 //下拉列表
 const businessTypeOption = computed(() => scenicSpotOptions.businessTypeOption);
 const proviceList = computed(() => scenicSpotOptions.proviceList);
@@ -300,12 +200,6 @@ const reset = (): void => {
 //初始化页面
 const initPage = async (): Promise<void> => {
 	route.currentRoute.value?.query?.s ? navigatorBar.setNavigator(['景区信息管理', '新增']) : navigatorBar.setNavigator(['景区信息管理', '编辑']);
-
-	// let res = await api.getScenicById(route.currentRoute.value?.query?.oid);
-	// formData.data = res;
-	// formData.data.oid = parseInt(route.currentRoute.value?.query?.oid);
-	// formData.data.cityId && selectCity(formData.data.cityId);
-	// formData.data.areaId && selectArea(formData.data.areaId);
 };
 //创建
 const createInfo = () => {};
@@ -326,56 +220,42 @@ onBeforeUnmount(() => {
 .editWrapper {
 	padding: 0 16px;
 	padding-bottom: 64px;
-}
-header {
-	// width: 64px;
-	// margin-bottom: 8px;
-	height: 56px;
-	line-height: 56px;
-	font-weight: bold;
-	color: #1e2226;
-	// margin: 0 8px 16px;
-	margin-bottom: 16px;
-	border-bottom: 1px solid #f1f2f5;
-}
-.title {
-	height: 56px;
-	line-height: 56px;
-	font-weight: bold;
-	color: #1e2226;
-	// margin: 0 8px 16px;
-	margin-bottom: 16px;
-	border-bottom: 1px solid #f1f2f5;
-}
-.area {
-	margin-bottom: 20px;
-}
 
-.footer {
-	position: fixed;
-	bottom: 12px;
-	line-height: 64px;
-	height: 64px;
-	width: calc(100% - 288px);
-	border-top: 1px solid #f1f2f5;
-	margin-left: -16px;
-	margin-right: 24px;
-	background-color: #fff;
-	z-index: 99;
-
-	.tooter-btn {
-		width: 60%;
-		// background-color: #fff;
-		margin-left: 16px;
+	.title {
+		height: 56px;
+		line-height: 56px;
+		font-weight: bold;
+		color: #1e2226;
+		margin-bottom: 16px;
+		border-bottom: 1px solid #f1f2f5;
 	}
-	button:first-of-type {
-		margin-right: 16px;
+	.tips {
+		margin-left: 10px;
+		color: #c8c9cc;
+	}
+
+	.footer {
+		position: fixed;
+		bottom: 12px;
+		line-height: 64px;
+		height: 64px;
+		width: calc(100% - 288px);
+		border-top: 1px solid #f1f2f5;
+		margin-left: -16px;
+		margin-right: 24px;
+		background-color: #fff;
+		z-index: 99;
+
+		.tooter-btn {
+			width: 60%;
+			margin-left: 16px;
+		}
+		button:first-of-type {
+			margin-right: 16px;
+		}
 	}
 }
-.tips {
-	margin-left: 10px;
-	color: #c8c9cc;
-}
+
 .table-area {
 	margin: 0;
 	padding: 0;
