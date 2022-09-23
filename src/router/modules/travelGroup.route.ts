@@ -32,6 +32,18 @@ export default [
 					// isDetail: true, // 在左侧的导航栏不会展示
 				},
 			},
+			{
+				path: 'travel_list',
+				component: () => import('@/views/travelList/index.vue'),
+
+				name: 'travel_list',
+				meta: {
+					title: '接团行程管理',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					// isDetail: true, // 在左侧的导航栏不会展示
+				},
+			},
 		],
 	},
 ];
