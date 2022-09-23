@@ -264,8 +264,8 @@ const initPage = async (): Promise<void> => {
 	let res = await api.getScenicById(route.currentRoute.value?.query?.oid);
 	formData.data = res;
 	formData.data.oid = parseInt(route.currentRoute.value?.query?.oid);
-	formData.data.cityId && selectCity(formData.data.cityId);
-	formData.data.areaId && selectArea(formData.data.areaId);
+	// formData.data.cityId && selectCity(formData.data.cityId);
+	// formData.data.areaId && selectArea(formData.data.areaId);
 };
 
 // 自定义面包屑

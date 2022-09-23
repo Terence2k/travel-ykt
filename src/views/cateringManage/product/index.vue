@@ -23,11 +23,11 @@
 			<template #button>
 				<a-button type="primary">导出</a-button>
 			</template>
-			<template #bodyCell="{ column }">
+			<template #bodyCell="{ column, record }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a @click="openInfoPage(record)">查看</a>
-						<a @click="openEditPage">编辑</a>
+						<a @click="openEditPage(record)">编辑</a>
 					</div>
 				</template>
 			</template>
@@ -102,7 +102,7 @@ const state = reactive({
 		},
 	},
 	params: {},
-	showDetail:false
+	showDetail: false,
 });
 
 const onHandleCurrentChange = (val: number) => {
@@ -123,8 +123,8 @@ const getList = () => {
 	});
 };
 const status = {
-	0: '停用',
-	1: '启用',
+	false: '停用',
+	true: '启用',
 };
 const dealData = (params: [any]) => {
 	params.map((i: any) => {
@@ -134,12 +134,11 @@ const dealData = (params: [any]) => {
 	return params;
 };
 
-const openEditPage = () => {
-	router.push({ path: '/catering/product_Management/product_edit' });
+const openEditPage = (record: any) => {
+	router.push({ path: '/catering/product_Management/product_edit', query: { id: record.oid } });
 };
-const openInfoPage = (record:any) => {
-    state.params = record;
-	router.push({ path: '/catering/product_Management/product_info',params:{record: record} });
+const openInfoPage = (record: any) => {
+	router.push({ path: '/catering/product_Management/product_info', query: { id: record.oid } });
 };
 
 onMounted(() => {

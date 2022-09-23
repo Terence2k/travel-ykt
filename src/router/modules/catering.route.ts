@@ -91,6 +91,7 @@ export default [
 				children: [
 					{
 						path: '',
+						name: '/',
 						component: () => import('@/views/cateringManage/order/index.vue'),
 						meta: {
 							title: '订单信息',

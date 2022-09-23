@@ -2,97 +2,56 @@
 	<div class="warp">
 		<div class="form_pad">
 			<header>基本信息</header>
-			<a-form
-				:model="formState"
-				name="basic"
-				:rules="rulesRef"
-				labelAlign="left"
-				:label-col="{ span: 3 }"
-				:wrapper-col="{ span: 6 }"
-				autocomplete="off"
-				@finish="onFinish"
-				@finishFailed="onFinishFailed"
-			>
-					<a-form-item label="所属门店" name="name">
-						<a-input v-model:value="formState.name" />
-					</a-form-item>
-					<a-form-item label="餐饮名称">
-						<a-input placeholder="请输入餐饮名称" />
-					</a-form-item>
-					<a-form-item label="可预订数量">
-						<a-input placeholder="请输入可预订数量，单位：人" />
-					</a-form-item>
-					<a-form-item label="单价">
-						<a-input placeholder="请输入单价，单位：元/人" />
-					</a-form-item>
-					<a-form-item label="图片">
-						<img :width="200" src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" />
-					</a-form-item>
-					<a-form-item label="状态">
-						<a-radio value="1">启用</a-radio>
-						<a-radio value="2">禁用</a-radio>
-					</a-form-item>
-					<div class="title">其他信息</div>
-					<a-form-item label="供餐时间">
-						<a-space direction="vertical">
-							<a-date-picker style="width: 357px" v-model:value="value1" :showToday="false" />
-						</a-space>
-					</a-form-item>
-					<a-form-item label="其他">
-						<a-input placeholder="请输入" />
-					</a-form-item>
+			<a-form labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
+				<a-form-item label="所属门店" name="name"> {{ formData.data.companyName }} </a-form-item>
+				<a-form-item label="餐饮名称"> {{ formData.data.cateringName }} </a-form-item>
+				<a-form-item label="可预订数量"> {{ formData.data.orderNum }} </a-form-item>
+				<a-form-item label="单价"> {{ formData.data.price }} </a-form-item>
+				<a-form-item label="图片">
+					<img :width="200" :src="formData.data.imgUrl" />
+				</a-form-item>
+				<a-form-item label="状态">
+					{{ formData.data.status == 1 ? '启用' :'禁用'  }}
+				</a-form-item>
+				<div class="title">其他信息</div>
+				<a-form-item label="供餐时间">
+					{{ formData.data.provideStart }} 至 {{ formData.data.provideEnd }}
+				</a-form-item>
+				<a-form-item label="其他"> {{ formData.data.cateringDesc }} </a-form-item>
 			</a-form>
 		</div>
-		<div class="footer">
+		<!-- <div class="footer">
 			<a-button type="primary">保存</a-button>
-		</div>
+		</div> -->
 	</div>
 </template>
 
 <script setup lang="ts">
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import CommonSearch from '@/components/common/CommonSearch.vue';
+import api from '@/api';
 import { computed, reactive, toRaw, UnwrapRef, watch } from 'vue';
-const props = defineProps({
-      params: Object,
-  })
-interface FormState {
-	name: string;
-}
+
 const navigatorBar = useNavigatorBar();
 const route = useRouter();
 
-const rulesRef = {
-	name: [{ required: true, message: '请输入' }],
-};
-
-const formState: UnwrapRef<FormState> = reactive({
-	name: '',
+const formData = reactive({
+	data: [],
 });
 
 const initPage = async (): Promise<void> => {
-	console.log('123',route);
-	
+	api.getProductInfo(route.currentRoute.value?.query?.id).then((res: any) => {
+		formData.data = res;
+	});
 };
 
-const onSubmit = () => {
-	console.log('submit!', toRaw(formState));
-};
-const onFinish = (values: any) => {
-	console.log('Success:', values);
-};
-
-const onFinishFailed = (errorInfo: any) => {
-	console.log('Failed:', errorInfo);
-};
 onMounted(() => {
-	navigatorBar.setNavigator(['产品管理','查看']);
-    initPage()
+	navigatorBar.setNavigator(['产品管理', '查看']);
+	initPage();
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
 });
-
 </script>
 
 <style lang="less">
