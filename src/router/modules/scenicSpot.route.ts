@@ -97,15 +97,15 @@ export default [
 			{
 				path: 'showTickets',
 				name: 'showTickets',
-				redirect: '/scenic-spot/showTickets/index',
+				redirect: '/scenic-spot/showTickets/list',
 				meta: {
 					title: '演出票',
 				},
 				children: [
 					{
-						path: 'index',
+						path: 'list',
 						component: () => import('@/views/scenicSpot/showTickets/index.vue'),
-						name: 'index',
+						name: 'showTickets-list',
 						meta: {
 							title: '首页',
 							activeMeun: 'information',
