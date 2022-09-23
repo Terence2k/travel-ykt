@@ -1,16 +1,11 @@
 <template>
-	<CommonTable :dataSource="tableList" :columns="type === '2' ? columns : column" :scrollY="false" bordered>
+	<CommonTable :dataSource="tableList" :columns="columnsCount" :scrollY="false" bordered>
 		<template #bodyCell="{ column, record }">
-			<template v-if="column.key === 'action'">
-				<div class="action-btns">
-					<a href="javascript:;" @click="toEdit(record)">编辑</a>
-					<a href="javascript:;">删除</a>
-					<a href="javascript:;" v-if="record.putaway === '上架'" @click="open"> 下架申请</a>
-				</div>
+			<template v-if="column.key === 'verificationType'">
+				<a-input v-model:value="formData.data.creditCode" placeholder="输入每日库存" />
 			</template>
 		</template>
 	</CommonTable>
-	<span style="color: #c8c9cc"> <span style="color: red">*</span>其中，非必核销项目数量为3项，可核销总数（不包括必核销项）不超过（） 次</span>
 </template>
 
 <script setup lang="ts">
@@ -38,44 +33,18 @@ const props = defineProps({
 	// tableList: Array,
 });
 
-const column = ref([
+const columnsCount = ref([
 	{
-		title: '核销项目',
+		title: '核销账号',
 		dataIndex: 'ticketName',
-		width: 200,
 		key: 'ticketName',
+		width: 200,
 	},
 	{
-		title: '可核销次数',
+		title: '姓名',
 		dataIndex: 'verificationType',
-		width: 200,
 		key: 'verificationType',
-	},
-]);
-const columns = ref([
-	{
-		title: '核销项目',
-		dataIndex: 'ticketName',
 		width: 200,
-		key: 'ticketName',
-	},
-	{
-		title: '可核销次数',
-		dataIndex: 'verificationType',
-		width: 200,
-		key: 'verificationType',
-	},
-	{
-		title: '是否为必核销项',
-		dataIndex: 'scenicName',
-		width: 200,
-		key: 'scenicName',
-	},
-	{
-		title: '操作',
-		dataIndex: 'action',
-		width: 200,
-		key: 'action',
 	},
 ]);
 
