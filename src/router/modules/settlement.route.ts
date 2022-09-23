@@ -20,15 +20,45 @@ export default [
 			},
 			{
 				path: 'currencySettlementRule',
-				component: () => import('@/views/settlementManagement/currencySettlementRule/index.vue'),
 				name: 'currencySettlementRule',
+				redirect: '/settlementManagement/currencySettlementRule/list',
 				meta: {
 					title: '通用结算规则',
+					isDetail: false, // 在左侧的导航栏不会展示
 				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/settlementManagement/currencySettlementRule/index.vue'),
+						name: 'currencySettlementRuleList',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'edit',
+						component: () => import('@/views/settlementManagement/currencySettlementRule/components/edit.vue'),
+						name: 'currencySettlementRuleEdit',
+						meta: {
+							title: '编辑',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'info',
+						component: () => import('@/views/scenicSpot/scenicSpotInformation/components/info.vue'),
+						name: 'info',
+						meta: {
+							title: '查看',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
 			},
 			{
 				path: 'productSettlementRule',
-				component: () => import('@/views/settlementManagement/productSettlementRule/index.vue'),
+				redirect: '/settlementManagement/productSettlementRule/list',
 				name: 'productSettlementRule',
 				meta: {
 					title: '产品结算规则',
@@ -36,6 +66,35 @@ export default [
 					// auth: ["admin"],
 					isDetail: false, // 在左侧的导航栏不会展示
 				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/settlementManagement/productSettlementRule/index.vue'),
+						name: 'productSettlementRuleList',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'configureRules',
+						component: () => import('@/views/settlementManagement/productSettlementRule/components/configureRules.vue'),
+						name: 'configureRules',
+						meta: {
+							title: '配置规则',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'edit',
+						component: () => import('@/views/settlementManagement/productSettlementRule/components/edit.vue'),
+						name: 'configureRulesEdit',
+						meta: {
+							title: '编辑',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
 			},
 			{
 				path: 'settlement',
@@ -59,7 +118,7 @@ export default [
 					isDetail: false, // 在左侧的导航栏不会展示
 				},
 			},
-            {
+			{
 				path: 'changeManagement',
 				component: () => import('@/views/settlementManagement/changeManagement/index.vue'),
 				name: 'changeManagement',
