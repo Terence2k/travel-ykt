@@ -80,7 +80,6 @@
         default: false
       },
       params: Object,
-      optionTypeList: Array
   })
   const fieldNames: TreeProps['fieldNames'] = {
     key: 'value',

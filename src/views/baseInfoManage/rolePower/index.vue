@@ -18,8 +18,8 @@
         allowClear
         v-model:value="state.tableData.param.availableRange"
       >
-        <a-select-option v-for="item in state.optionTypeList" :value="item.oid">
-          {{ item.name }}
+        <a-select-option v-for="item in roleManage.businessType" :value="item.value">
+          {{ item.title }}
         </a-select-option>
       </a-select>
     </search-item>
@@ -55,13 +55,12 @@
   <AddUpdate 
     v-model="state.operationModal.isAddOrUpdate"
     :params="state.params"
-    :optionTypeList="state.optionTypeList"
+    :optionTypeList="roleManage.businessType"
     @onSearch="onSearch"
     @cancel="cancel"/>
   <Detail
     v-model="state.operationModal.showDetails"
     :params="state.params"
-    :optionTypeList="state.optionTypeList"
     @cancel="cancel"/>
 </template>
 
@@ -74,6 +73,7 @@
   import Detail from './Detail.vue';
   import api from '@/api';
   import { message } from 'ant-design-vue';
+  import { useRoleManage } from '@/stores/modules/roleManage';
   
   const columns = [
     {
@@ -138,6 +138,7 @@
     },
     optionTypeList: [] as any
   });
+  const roleManage = useRoleManage();
 
   const onHandleCurrentChange = (val: number) => {
     console.log('change:', val);

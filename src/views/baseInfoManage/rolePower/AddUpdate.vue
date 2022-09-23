@@ -23,7 +23,7 @@
           placeholder="请选择可用范围"
           v-model:value="formValidate.availableRange"
         >
-          <a-select-option v-for="item in roleManage.businessType" :value="item.value">
+          <a-select-option v-for="item in optionTypeList" :value="item.value">
             {{ item.title }}
           </a-select-option>
         </a-select>
@@ -89,11 +89,9 @@
   import api from '@/api';
   import { message } from 'ant-design-vue';
   import type { TreeProps } from 'ant-design-vue';
-  import { useRoleManage } from '@/stores/modules/roleManage';
 
   const checkedKeys = ref<string[]>(['0-0-0', '0-0-1']);
   const menuTreeDate: Ref<Array<any>> = ref([]);
-  const roleManage = useRoleManage();
   const menuIdsInfo: Ref<Array<any>> = ref([]);
 
   watch(checkedKeys, () => {
