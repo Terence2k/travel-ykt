@@ -207,7 +207,7 @@ const proviceList = computed(() => scenicSpotOptions.proviceList);
 const cityList = computed(() => scenicSpotOptions.cityList);
 const areaList = computed(() => scenicSpotOptions.areaList);
 
-const selectCity = async (id: number) => {
+const selectCity = async (id: any) => {
 	if (id) {
 		await scenicSpotOptions.getAllAreaCity(id);
 	} else {
@@ -217,9 +217,8 @@ const selectCity = async (id: number) => {
 	}
 };
 const selectArea = async (id: any) => {
-	await scenicSpotOptions.getAllArea(id);
 	if (id) {
-		await scenicSpotOptions.getAllAreaCity(id);
+		await scenicSpotOptions.getAllArea(id);
 	} else {
 		scenicSpotOptions.cleanArae();
 		formData.data.areaId = null;
@@ -270,10 +269,12 @@ const initPage = async (): Promise<void> => {
 };
 
 // 自定义面包屑
-onMounted(() => {
-	initOpeion();
-	initPage();
+onMounted(async () => {
 	navigatorBar.setNavigator(['景区信息管理', '编辑']);
+	await initOpeion();
+	await initPage();
+	await selectCity(formData.data.provinceId);
+	await selectArea(formData.data.cityId);
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();

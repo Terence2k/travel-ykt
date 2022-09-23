@@ -70,7 +70,7 @@ import fileInfo from './fileInfo/fileInfo.vue';
 		border-top: 1px solid #F1F2F5;
     background-color: #fff;
     padding-left: 16px;
-    z-index: 9999;
+    z-index: 99;
 		button:first-of-type {
 			margin-right: 16px;
 		}

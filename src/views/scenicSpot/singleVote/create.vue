@@ -1,7 +1,7 @@
 <template>
 	<BaseModal :modelValue="modelValue" title="新增" width="600px" @cancel="cancel">
-		<a-form ref="formRef" :model="formValidate" :label-col="{ span: 6 }" :wrapper-col="{ span: 12, offset: 1 }" labelAlign="right">
-			<a-form-item label="单票类型" name="menuType">
+		<a-form ref="formRef" :model="formValidate" :label-col="{ span: 3 }" :wrapper-col="{ span: 10, offset: 1 }" labelAlign="left">
+			<a-form-item label="单票类型" class="fz14">
 				<a-radio-group v-model:value="formValidate.data.accountType">
 					<a-radio :value="1">单票：多选核销</a-radio>
 					<a-radio :value="2">单票：单点核销</a-radio>
@@ -60,5 +60,8 @@ defineExpose({
 	margin: 0;
 	padding: 0;
 	background-color: red;
+}
+.fz14 {
+	font-size: 14px;
 }
 </style>
