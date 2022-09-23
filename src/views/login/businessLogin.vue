@@ -6,44 +6,42 @@
       </span>
       <span>企业注册</span>
     </div>
-    <a-form name="businessLogin" autocomplete="off" labelAlign="left" :label-col="{ span: 6 }"
-      :wrapper-col="{ span: 18 }">
-      <a-form-item name="account" label="企业类型">
-        <a-select placeholder="请选择企业类型" v-model:value="formModel.account">
-          <a-select-option value="sd">
-            sd
+    <a-form :model="form" :rules="formRules" @finish="handleFinish" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }"
+      autocomplete="off">
+      <a-form-item name="unitType" label="企业类型">
+        <a-select ref="select" v-model:value="form.unitType" placeholder="请选择企业类型">
+          <a-select-option v-for="item in businessTypeOption" :key="item.name" :value="item.oid">{{ item.name }}
           </a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item name="account" label="企业名称">
-        <a-input class="reset-input" v-model:value="formModel.account" placeholder="请输入企业名称">
+      <a-form-item name="name" label="企业名称">
+        <a-input v-model:value="form.name" placeholder="请输入企业名称">
         </a-input>
       </a-form-item>
-      <a-form-item name="account" label="信用代码">
-        <a-input class="reset-input" v-model:value="formModel.account" placeholder="请输入信用代码">
+      <a-form-item name="creditCode" label="信用代码">
+        <a-input v-model:value="form.creditCode" placeholder="请输入信用代码">
         </a-input>
       </a-form-item>
-      <a-form-item name="account" label="手机号">
-        <a-input class="reset-input" v-model:value="formModel.account" placeholder="请输入手机号">
+      <a-form-item name="account" label="账号">
+        <a-input v-model:value="form.account" placeholder="请输入账号">
         </a-input>
       </a-form-item>
-      <a-form-item name="account" label="管理员">
-        <a-input class="reset-input" v-model:value="formModel.account" placeholder="请输入管理员姓名">
+      <a-form-item name="phone" label="手机号">
+        <a-input v-model:value="form.phone" placeholder="请输入手机号">
         </a-input>
       </a-form-item>
-      <a-form-item name="account" label="所属地区">
-        <a-select placeholder="请选择所属地区" v-model:value="formModel.account">
-          <a-select-option value="sd">
-            sd
-          </a-select-option>
-        </a-select>
+      <a-form-item name="contactName" label="管理员">
+        <a-input v-model:value="form.contactName" placeholder="请输入管理员姓名">
+        </a-input>
       </a-form-item>
-      <a-form-item name="account" label="营业执照">
-        <img-upload></img-upload>
+      <a-form-item name="region" label="所属地区">
+        <address-selector placeholder="请选择所属地区" v-model:value="form.region"></address-selector>
       </a-form-item>
+      <a-form-item name="businessLicenseUrl" label="营业执照">
+        <img-upload v-model:uploadedFile="form.businessLicenseUrl"></img-upload>
+      </a-form-item>
+      <a-button html-type="submit" class="btn" type="primary" :loading="loading">提交</a-button>
     </a-form>
-    <a-button html-type="submit" class="btn" type="primary" :loading="loading">提交</a-button>
-    <!-- <p class="copyright">@copyright JS-banana</p> -->
   </div>
 </template>
 
@@ -52,14 +50,33 @@ import {
   ArrowLeftOutlined
 } from '@ant-design/icons-vue';
 import imgUpload from '@/views/baseInfoManage/businessManagement/components/imgUpload.vue';
-const formrules: any = {
-  account: [{ required: true, trigger: 'blur', message: '请输入手机号' }],
-  password: [{ required: true, trigger: 'blur', message: '请输入密码' }],
+import api from '@/api';
+import { useScenicSpotOption } from '@/stores/modules/scenicSpot';
+import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
+const scenicSpotOptions = useScenicSpotOption();
+const formRules: any = {
+  unitType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
+  name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
+  creditCode: [{ required: true, trigger: 'blur', message: '请输入信用代码' }],
+  account: [{ required: true, trigger: 'blur', message: '请输入账号' }],
+  phone: [{ required: true, trigger: 'blur', message: '请输入手机号' }],
+  contactName: [{ required: true, trigger: 'blur', message: '请输入管理员姓名' }],
+  region: [{ required: true, trigger: 'blur', message: '请选择所属地区' }],
+  businessLicenseUrl: [{ required: true, trigger: 'blur', message: '请上传营业执照照片' }],
 };
 const loading = ref(false);
-const formModel = reactive({
+const form = reactive({
+  unitType: '',
+  name: '',
+  creditCode: '',
+  phone: '',
+  contactName: '',
+  provinceId: '',
+  cityId: '',
+  areaId: '',
+  businessLicenseUrl: undefined,
   account: '',
-  password: '',
+  region: '',
 });
 const router = useRouter();
 const goTo = () => {
@@ -67,6 +84,56 @@ const goTo = () => {
     path: '/login/userLogin'
   })
 }
+
+//初始化下拉列表
+const initOpeion = async () => {
+  // await scenicSpotOptions.getBusinessTypeOption();
+  await scenicSpotOptions.getAllAreaProvice(0);
+};
+// 下拉选择
+const popupScroll = () => {
+  console.log('popupScroll');
+};
+
+//下拉列表
+// const businessTypeOption = computed(() => scenicSpotOptions.businessTypeOption);
+const proviceList = computed(() => scenicSpotOptions.proviceList);
+// const cityList = computed(() => scenicSpotOptions.cityList);
+// const areaList = computed(() => scenicSpotOptions.areaList);
+
+const businessTypeOption = [
+  { oid: 116, name: '酒店' },
+  { oid: 117, name: '餐饮' },
+  { oid: 118, name: '景区' },
+  { oid: 119, name: '旅行社' },
+  { oid: 158, name: '一卡通' },
+  { oid: 159, name: '监理' },
+  { oid: 160, name: '协会' },
+  { oid: 161, name: '集团' },
+  { oid: 162, name: '文旅局' },
+];
+
+const handleFinish = async (values: any) => {
+  // console.log(checked, values);
+  console.log(values);
+  loading.value = true;
+
+  api.companyRegister(form).then((res: any) => {
+    console.log(res)
+  }).catch((err: string) => {
+    console.log(err)
+  })
+  loading.value = false;
+  // if (res) {
+  //   message.success("成功");
+  //   // router.replace({ path: state.redirect || '/', query: state.otherQuery });
+  //   router.replace("/");
+  // }
+};
+
+onMounted(() => {
+  initOpeion()
+})
 </script>
 
 <style scoped lang="less">
