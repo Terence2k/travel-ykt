@@ -52,8 +52,8 @@ import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import api from '@/api';
 import AddPopup from './addPopup.vue';
 import Modal from '@/components/common/BaseModal.vue';
-import Audit from './aduit.vue';
-import Create from './create.vue';
+import Audit from './components/aduit.vue';
+import Create from './components/create.vue';
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 const route = useRouter();
@@ -73,13 +73,13 @@ const columns = [
 	},
 	{
 		title: '归属景区',
-		dataIndex: 'creditCode',
-		key: 'creditCode',
+		dataIndex: 'scenicName',
+		key: 'scenicName',
 	},
 	{
 		title: '门票分类',
-		dataIndex: 'ticketType',
-		key: 'ticketType',
+		dataIndex: 'ticketTypes',
+		key: 'ticketTypes',
 	},
 	{
 		title: '审核状态',
@@ -108,7 +108,7 @@ const open = () => {
 const toEdit = (record: any) => {
 	console.log(record);
 
-	route.push({ path: '/scenic-spot/singleVote/edit', query: { oid: encodeURIComponent(record.oid) } });
+	route.push({ path: '/scenic-spot/singleVote/edit', query: { t: record.ticketType, oid: record.oid } });
 };
 const cancel = () => {
 	modelValue.value = false;
@@ -168,7 +168,7 @@ const ticketType: any = {
 
 const dealData = (params: [any]) => {
 	params.map((i: any) => {
-		i.ticketType = ticketType[i.ticketType];
+		i.ticketTypes = ticketType[i.ticketType];
 		i.auditStatus = status[i.auditStatus];
 		i.putaway = i.putaway ? '上架' : '下架';
 		i.verificationType = i.verificationType === 'MANY' ? '多点核销' : i.verificationType === 'ONE' ? '单点核销' : '';

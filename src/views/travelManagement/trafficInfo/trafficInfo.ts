@@ -12,7 +12,7 @@ interface DataItem {
 	name5: string,
 	name6: string
 }
-export function useTouristInfo(props: any): Record<string, any> {
+export function useTrafficInfo(props: any): Record<string, any> {
     // const rowSelection = ref({
     //     checkStrictly: false,
     //     onChange: (selectedRowKeys: (string | number)[], selectedRows: DataItem[]) => {
@@ -48,8 +48,8 @@ export function useTouristInfo(props: any): Record<string, any> {
 			  ]
 			}
 		],
-		selectKey: ['name', 'name3',],
-		inputKey: ['name5', 'name4'],
+		selectKey: ['name', 'name4'],
+		inputKey: ['name5', 'name3', 'name2', 'name1'], 
 		rulesRef: {
 			1: {
 				name5: [{ required: true, message: '请选择行程类型' }]
@@ -67,7 +67,7 @@ export function useTouristInfo(props: any): Record<string, any> {
 				name3: '123',
 				name4: '123',
 				name5: '123',
-				name6: '123'
+				name6: []
 			}
 		],
 		columns: [
@@ -75,45 +75,41 @@ export function useTouristInfo(props: any): Record<string, any> {
 				title: ' 序号 ',
 				key: 'index',
 				width: '80px'
-				// render: (text: any, record: any, index: number) => `${index + 1}`,  //每一页都从1开始
-				// render:(text, record, index) => 
-				// `${(pagination.current - 1) * (pagination.pageSize) + (index + 1)}`  
-				//当前页数减1乘以每一页页数再加当前页序号+1
 			},
 			{
-				title: '证件类型',
+				title: '交通类型',
 				dataIndex: 'name',
 				key: 'name',
 			},
 			{
-				title: '证件号码',
+				title: '车牌号',
 				dataIndex: 'name5',
 				key: 'name5',
 			},
 			{
-				title: '姓名',
+				title: '车牌颜色',
 				dataIndex: 'name4',
 				key: 'name4',
 			},
 			{
-				title: '性别',
+				title: '车企名称',
 				dataIndex: 'name3',
 				key: 'name3',
 			},
 			{
-				title: '客源地',
+				title: '核载人数（人）',
 				dataIndex: 'name2',
 				key: 'name2',
 			},
-			{
-				title: '健康状态',
-				dataIndex: 'name1',
-				key: 'name1',
-			},
             {
-				title: '证件图片',
+				title: '用车时段',
 				dataIndex: 'name6',
 				key: 'name6',
+			},
+			{
+				title: '驾驶员',
+				dataIndex: 'name1',
+				key: 'name1',
 			},
 			{
 				title: '操作',
@@ -127,11 +123,13 @@ export function useTouristInfo(props: any): Record<string, any> {
 		validateRules(key?:string) {
 			state.rulesRef = {}
 			let rules = {
-				name: [{ required: true, message: '请选择行证件类型' }],
-				name5: [{ required: true, message: '请输入证件号码' }],
-				name4: [{ required: true, message: '请输入姓名' }],
-				name3: [{ required: true, message: '请选择性别' }],
-				name2: [{ required: true, message: '请选择客源地' }]
+				name: [{ required: true, message: '请选择交通类型' }],
+				name5: [{ required: true, message: '请输入车牌号' }],
+				name4: [{ required: true, message: '请选择车牌颜色' }],
+				name3: [{ required: true, message: '请输入车企名称' }],
+				name2: [{ required: true, message: '请输入核载人数（人）' }],
+				name6: [{ required: true, message: '请选择用车时间段' }],
+				name1: [{ required: true, message: '请输入驾驶员' }]
 			}
 			if (key) {
 				state.rulesRef[key] = rules;

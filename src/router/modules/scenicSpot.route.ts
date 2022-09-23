@@ -74,7 +74,7 @@ export default [
 				children: [
 					{
 						path: 'edit',
-						component: () => import('@/views/scenicSpot/singleVote/edit.vue'),
+						component: () => import('@/views/scenicSpot/singleVote/components/edit.vue'),
 						name: 'singleVote-edit',
 						meta: {
 							title: '编辑',
@@ -115,7 +115,7 @@ export default [
 					{
 						path: 'show_edit',
 						component: () => import('@/views/scenicSpot/showTickets/components/showEdit.vue'),
-						name: 'show_edit',
+						name: 'showTickets-show_edit',
 						meta: {
 							title: '编辑',
 							isDetail: true, // 在左侧的导航栏不会展示

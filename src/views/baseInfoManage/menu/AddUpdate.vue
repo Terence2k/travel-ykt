@@ -129,16 +129,16 @@ const getBtnCode = () => {
 const addOrUpdateAPI = (apiName: string) => {
 	const queryData = cloneDeep(formValidate.value);
 	console.log('queryData:', queryData);
-	// api[apiName](queryData)
-	// 	.then((res: any) => {
-	// 		message.success('保存成功');
-	// 		formRef.value.resetFields();
-	// 		emit('cancel');
-	// 		emit('onSearch');
-	// 	})
-	// 	.catch((err: any) => {
-	// 		console.error(err);
-	// 	});
+	api[apiName](queryData)
+		.then((res: any) => {
+			message.success('保存成功');
+			formRef.value.resetFields();
+			emit('cancel');
+			emit('onSearch');
+		})
+		.catch((err: any) => {
+			console.error(err);
+		});
 };
 
 const init = async () => {

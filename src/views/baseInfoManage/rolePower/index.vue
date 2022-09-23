@@ -14,12 +14,12 @@
     <search-item label="可用范围">
       <a-select
         ref="select"
-        mode="multiple"
         placeholder="请输入可用范围"
+        allowClear
         v-model:value="state.tableData.param.availableRange"
       >
-        <a-select-option v-for="item in state.optionTypeList" :value="item.oid">
-          {{ item.name }}
+        <a-select-option v-for="item in roleManage.businessType" :value="item.value">
+          {{ item.title }}
         </a-select-option>
       </a-select>
     </search-item>
@@ -55,13 +55,12 @@
   <AddUpdate 
     v-model="state.operationModal.isAddOrUpdate"
     :params="state.params"
-    :optionTypeList="state.optionTypeList"
+    :optionTypeList="roleManage.businessType"
     @onSearch="onSearch"
     @cancel="cancel"/>
   <Detail
     v-model="state.operationModal.showDetails"
     :params="state.params"
-    :optionTypeList="state.optionTypeList"
     @cancel="cancel"/>
 </template>
 
@@ -74,6 +73,7 @@
   import Detail from './Detail.vue';
   import api from '@/api';
   import { message } from 'ant-design-vue';
+  import { useRoleManage } from '@/stores/modules/roleManage';
   
   const columns = [
     {
@@ -83,8 +83,8 @@
     },
     {
       title: '可用范围',
-      dataIndex: 'availableRange',
-      key: 'availableRange',
+      dataIndex: 'availableRangeName',
+      key: 'availableRangeName',
     },
     {
       title: '状态',
@@ -122,7 +122,7 @@
       param: {
         pageNo: 1,
         pageSize: 10,
-        availableRange: [],
+        availableRange: null,
         roleName: '',
         status: null,
       },
@@ -138,6 +138,7 @@
     },
     optionTypeList: [] as any
   });
+  const roleManage = useRoleManage();
 
   const onHandleCurrentChange = (val: number) => {
     console.log('change:', val);
@@ -186,7 +187,7 @@
     let formData = new FormData();
     formData.append('oid', id);
     formData.append('status', status);
-    api.editStatus(formData).then((res: any) => {
+    api.editRoleStatus(formData).then((res: any) => {
       message.success('操作成功');
       state.operationModal.isAddOrUpdate = false;
       onSearch();
