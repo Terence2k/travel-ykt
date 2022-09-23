@@ -1,5 +1,5 @@
 <template>
-    <a-cascader v-model="form.delivery" :options="list" :load-data="loadData" placeholder="请选择" @change="onChange" />
+    <a-cascader :options="list" :load-data="loadData" />
 </template>
 
 <script setup lang="ts">
@@ -41,11 +41,6 @@ function getAllArea(pid: any): any[] {
     });
 }
 
-
-const form = reactive({
-    delivery: ''
-})
-
 const loadData: CascaderProps['loadData'] = async (selectedOptions) => {
     const targetOption = selectedOptions[selectedOptions.length - 1]
     targetOption.loading = true
@@ -59,7 +54,6 @@ const loadData: CascaderProps['loadData'] = async (selectedOptions) => {
     targetOption.loading = false
     list.value = [...list.value]
 }
-const onChange = () => { }
 onMounted(async () => {
     list.value = await getAllAreaProvice(0)
 })

@@ -6,11 +6,11 @@
       </span>
       <span>企业注册</span>
     </div>
-    <a-form :model="form" :rules="formRules" @finish="handleFinish" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }"
-      autocomplete="off">
+    <a-form ref="businessLoginRef" :model="form" :rules="formRules" @finish="handleFinish" :label-col="{ span: 6 }"
+      :wrapper-col="{ span: 18 }" autocomplete="off">
       <a-form-item name="unitType" label="企业类型">
-        <a-select ref="select" v-model:value="form.unitType" placeholder="请选择企业类型">
-          <a-select-option v-for="item in businessTypeOption" :key="item.name" :value="item.oid">{{ item.name }}
+        <a-select v-model:value="form.unitType" placeholder="请选择企业类型">
+          <a-select-option v-for="item in businessTypeOption" :value="item.oid">{{ item.name }}
           </a-select-option>
         </a-select>
       </a-form-item>
@@ -35,10 +35,10 @@
         </a-input>
       </a-form-item>
       <a-form-item name="region" label="所属地区">
-        <address-selector placeholder="请选择所属地区" v-model:value="form.region"></address-selector>
+        <address-selector placeholder="请选择所属地区" v-model:value="form.region" @change="regionChange"></address-selector>
       </a-form-item>
       <a-form-item name="businessLicenseUrl" label="营业执照">
-        <img-upload v-model:uploadedFile="form.businessLicenseUrl"></img-upload>
+        <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl" @done="uploadDown"></img-upload>
       </a-form-item>
       <a-button html-type="submit" class="btn" type="primary" :loading="loading">提交</a-button>
     </a-form>
@@ -50,10 +50,9 @@ import {
   ArrowLeftOutlined
 } from '@ant-design/icons-vue';
 import imgUpload from '@/views/baseInfoManage/businessManagement/components/imgUpload.vue';
-import api from '@/api';
-import { useScenicSpotOption } from '@/stores/modules/scenicSpot';
 import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
-const scenicSpotOptions = useScenicSpotOption();
+import { Form, message } from 'ant-design-vue';
+import api from '@/api';
 const formRules: any = {
   unitType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
   name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
@@ -65,8 +64,10 @@ const formRules: any = {
   businessLicenseUrl: [{ required: true, trigger: 'blur', message: '请上传营业执照照片' }],
 };
 const loading = ref(false);
+const businessLoginRef = ref();
+const imgUploadRef = ref();
 const form = reactive({
-  unitType: '',
+  unitType: undefined,
   name: '',
   creditCode: '',
   phone: '',
@@ -76,30 +77,15 @@ const form = reactive({
   areaId: '',
   businessLicenseUrl: undefined,
   account: '',
-  region: '',
+  region: [],
 });
+
 const router = useRouter();
 const goTo = () => {
   router.push({
     path: '/login/userLogin'
   })
 }
-
-//初始化下拉列表
-const initOpeion = async () => {
-  // await scenicSpotOptions.getBusinessTypeOption();
-  await scenicSpotOptions.getAllAreaProvice(0);
-};
-// 下拉选择
-const popupScroll = () => {
-  console.log('popupScroll');
-};
-
-//下拉列表
-// const businessTypeOption = computed(() => scenicSpotOptions.businessTypeOption);
-const proviceList = computed(() => scenicSpotOptions.proviceList);
-// const cityList = computed(() => scenicSpotOptions.cityList);
-// const areaList = computed(() => scenicSpotOptions.areaList);
 
 const businessTypeOption = [
   { oid: 116, name: '酒店' },
@@ -113,27 +99,35 @@ const businessTypeOption = [
   { oid: 162, name: '文旅局' },
 ];
 
-const handleFinish = async (values: any) => {
-  // console.log(checked, values);
-  console.log(values);
-  loading.value = true;
+const restForm = () => {
+  businessLoginRef.value.resetFields()
+  imgUploadRef.value.clear()
+}
 
+const handleFinish = async (values: any) => {
+  loading.value = true;
   api.companyRegister(form).then((res: any) => {
-    console.log(res)
+    if (res == '提交成功，请耐心等待审核通过!') {
+      message.success(res);
+      restForm()
+    } else {
+      message.error(res);
+    }
   }).catch((err: string) => {
     console.log(err)
   })
   loading.value = false;
-  // if (res) {
-  //   message.success("成功");
-  //   // router.replace({ path: state.redirect || '/', query: state.otherQuery });
-  //   router.replace("/");
-  // }
 };
 
-onMounted(() => {
-  initOpeion()
-})
+const regionChange = () => {
+  form.provinceId = form.region ? form.region[0] : ''
+  form.cityId = form.region ? form.region[1] : ''
+  form.areaId = form.region ? form.region[2] : ''
+}
+
+const uploadDown = () => {
+  form.businessLicenseUrl = form.businessLicenseUrl ? form.businessLicenseUrl[0] : undefined
+}
 </script>
 
 <style scoped lang="less">
@@ -156,20 +150,6 @@ onMounted(() => {
     }
   }
 
-  /*   ::v-deep(.ant-tabs-tab) {
-    padding: 10px 2px;
-  }
-
-  ::v-deep(.ant-tabs-nav) {
-    &::before {
-      border-bottom: none;
-    }
-  }
-
-  ::v-deep(.ant-input-affix-wrapper-focused) {
-    box-shadow: none !important;
-  } */
-
   .icon {
     color: #666666;
   }
@@ -186,21 +166,6 @@ onMounted(() => {
     font-size: 12px;
     color: #666666;
   }
-
-  /*   .reset-input {
-    height: 48px;
-    line-height: 48px;
-    border: none;
-    border-bottom: 1px solid #E7E7E7;
-    padding: 0;
-
-    .reset-prefix {
-      width: 81px;
-      font-size: 16px;
-      color: #000;
-      padding-right: 12px;
-    }
-  } */
 
   .copyright {
     margin-top: 20px;
