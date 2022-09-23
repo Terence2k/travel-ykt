@@ -19,53 +19,53 @@ import { useSlots } from 'vue';
 import { getElementPos } from '@/utils/util';
 
 const props = defineProps({
-  // 如果不需要表格自适应高度为false
-  scrollY: {
-    type: Boolean,
-    default: true
-  },
-  scroll: {
-    type: Object,
-    default: {
-      x: '100vw',
-      y: '100vh'
-    }
-  }
-})
+	// 如果不需要表格自适应高度为false
+	scrollY: {
+		type: Boolean,
+		default: true,
+	},
+	scroll: {
+		type: Object,
+		default: {
+			x: '100vw',
+			y: '100vh',
+		},
+	},
+});
 const attrs = useAttrs() as any;
 const slotButton = !!useSlots().button;
 
 const computeTableHeight = () => {
-  if (props.scrollY) {
-    nextTick(() => {
-      // table-header
-      const tableHeader = document.getElementsByClassName('ant-table-header')[0]?.offsetHeight || 0;
-      // 分页
-      const paginationHeight = document.getElementsByClassName('ant-pagination')[0]?.offsetHeight || 0;
-      // common-table
-      const commonTableHeight = document.getElementsByClassName('common-table')[0];
-      // 计算总高度vh-除表格内容外高度
-      let num = getElementPos(commonTableHeight).y + tableHeader + paginationHeight;
-      const antTableBody = document.getElementsByClassName('ant-table-body')[0];
-      // console.log('a-table-height:', num);
-      // console.log('antheight:', antTableBody.offsetTop);`
-      // console.log('getElementPos:', getElementPos(commonTableHeight).y);
-      antTableBody.style.height = `calc(100vh - ${num + 25}px)`;// num + 微调
-    });
-  }
+	if (props.scrollY) {
+		nextTick(() => {
+			// table-header
+			const tableHeader = document.getElementsByClassName('ant-table-header')[0]?.offsetHeight || 0;
+			// 分页
+			const paginationHeight = document.getElementsByClassName('ant-pagination')[0]?.offsetHeight || 0;
+			// common-table
+			const commonTableHeight = document.getElementsByClassName('common-table')[0];
+			// 计算总高度vh-除表格内容外高度
+			let num = getElementPos(commonTableHeight).y + tableHeader + paginationHeight;
+			const antTableBody = document.getElementsByClassName('ant-table-body')[0];
+			// console.log('a-table-height:', num);
+			// console.log('antheight:', antTableBody.offsetTop);`
+			// console.log('getElementPos:', getElementPos(commonTableHeight).y);
+			antTableBody.style.height = `calc(100vh - ${num + 25}px)`; // num + 微调
+		});
+	}
 };
 
 onBeforeMount(() => {
-  // 如果没有操作列取消设置scrollx
-  if (!attrs.columns.some((it: any) => it.fixed)) {
-    props.scroll.x = '0';
-  }
-  if (!props.scrollY) {
-    props.scroll.y = null
-  } else {
-    props.scroll.y = props.scroll.y ? props.scroll.y : '100vh';
-  };
-})
+	// 如果没有操作列取消设置scrollx
+	if (!attrs.columns.some((it: any) => it.fixed)) {
+		props.scroll.x = '0';
+	}
+	if (!props.scrollY) {
+		props.scroll.y = null;
+	} else {
+		props.scroll.y = props.scroll.y ? props.scroll.y : '100vh';
+	}
+});
 
 onMounted(() => {
 	computeTableHeight();
