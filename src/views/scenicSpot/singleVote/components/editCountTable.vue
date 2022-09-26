@@ -1,8 +1,9 @@
 <template>
 	<CommonTable :dataSource="tableList" :columns="columnsCount" :scrollY="false" bordered>
 		<template #bodyCell="{ column, record }">
-			<template v-if="column.key === 'verificationType'">
-				<a-input v-model:value="formData.data.creditCode" placeholder="输入每日库存" />
+			<template v-if="column.key === 'name'">
+				{{ record.name }}
+				<!-- <a-input v-model:value="formData.data.creditCode" placeholder="输入每日库存" /> -->
 			</template>
 		</template>
 	</CommonTable>
@@ -36,14 +37,14 @@ const props = defineProps({
 const columnsCount = ref([
 	{
 		title: '核销账号',
-		dataIndex: 'ticketName',
-		key: 'ticketName',
+		dataIndex: 'assistId',
+		key: 'assistId',
 		width: 200,
 	},
 	{
 		title: '姓名',
-		dataIndex: 'verificationType',
-		key: 'verificationType',
+		dataIndex: 'name',
+		key: 'name',
 		width: 200,
 	},
 ]);
