@@ -105,7 +105,7 @@ const columns: TableColumnsType = [
 const tableState = reactive({
 	tableData: {
 		data: ref([]),
-		total: 400,
+		total: 1,
 		loading: false,
 		param: {
 			pageNo: 1,
