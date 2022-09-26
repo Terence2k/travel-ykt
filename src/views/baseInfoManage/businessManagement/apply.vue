@@ -1,26 +1,24 @@
 <template>
 	<CommonSearch>
 		<search-item label="企业类型">
-			<a-select ref="select" placeholder="请选企业类型" v-model:value="state.tableData.param.roleIds">
-				<a-select-option v-for="item in state.optionRoleList" :value="item.roleId">
-					{{ item.roleName }}
+			<a-select placeholder="请选企业类型" v-model:value="tableData.param.businessType" allowClear>
+				<a-select-option v-for="item in businessTypeOption" :value="item.oid">{{ item.name }}
 				</a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="所属地区">
-			<a-select ref="select" placeholder="请选所属地区" v-model:value="state.tableData.param.status" allowClear>
-				<a-select-option :value="1">启用</a-select-option>
-				<a-select-option :value="0">停用</a-select-option>
-			</a-select>
+			<address-selector placeholder="请选择所属地区" v-model:value="tableData.param.regionCode" @change="regionChange">
+			</address-selector>
 		</search-item>
 		<search-item label="状态">
-			<a-select ref="select" placeholder="请选择状态" v-model:value="state.tableData.param.status" allowClear>
-				<a-select-option :value="1">启用</a-select-option>
-				<a-select-option :value="0">停用</a-select-option>
+			<a-select ref="select" placeholder="请选择状态" v-model:value="tableData.param.auditStatus" allowClear>
+				<a-select-option :value="1">待审核</a-select-option>
+				<a-select-option :value="2">审核通过</a-select-option>
+				<a-select-option :value="3">审核不通过</a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="企业名称">
-			<a-input v-model:value="state.tableData.param.keyWord" placeholder="请输入企业名称" />
+			<a-input v-model:value="tableData.param.name" placeholder="请输入企业名称" />
 		</search-item>
 		<template #button>
 			<a-button @click="onSearch">查询</a-button>
@@ -29,89 +27,130 @@
 	<CommonTable :dataSource="state.tableData.data" :columns="columns">
 		<template #button>
 			<a-button type="primary" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
-			<a @click="goTo">审核</a>
-			<a>重置密码</a>
-			<a>查看</a>
 		</template>
 		<template #bodyCell="{ column, record }">
-			<template v-if="column.key === 'roleList'">
-				<span v-for="item, index in record.roleList">
-					{{`${item.roleName}${index == record.roleList.length - 1? '' : '，' }`}}
-				</span>
+			<template v-if="column.key === 'businessLicenseUrl'">
+				<a-image width="100%" :src="record.businessLicenseUrl" />
 			</template>
 			<template v-if="column.key === 'action'">
 				<div class="action-btns">
-					<a>审核</a>
-					<a>重置密码</a>
-					<a>查看</a>
+					<a @click="goTo(record)" v-show="checkVisible(record.auditStatus)">审核</a>
+					<a-popconfirm title="确认重制密码吗?重制后默认密码为：123456" ok-text="确认" cancel-text="取消"
+						@confirm="resetPassword(record.oid)">
+						<a v-show="restVisible(record.auditStatus)">重置密码</a>
+					</a-popconfirm>
+					<a @click="details(record)">查看</a>
 				</div>
 			</template>
 		</template>
 	</CommonTable>
 	<CommonPagination v-model:current="state.tableData.param.pageNo" v-model:page-size="state.tableData.param.pageSize"
 		:total="state.tableData.total" @change="onHandleCurrentChange" @showSizeChange="pageSideChange" />
+	<add-business-account v-model:modalVisible="modalVisible" @success="onSearch"></add-business-account>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" name="applyEle">
 import CommonTable from '@/components/common/CommonTable.vue'
 import CommonPagination from '@/components/common/CommonPagination.vue'
 import CommonSearch from '@/components/common/CommonSearch.vue'
 import SearchItem from '@/components/common/CommonSearchItem.vue'
+import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
+import addBusinessAccount from '@/views/baseInfoManage/businessManagement/components/addBusinessAccount.vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router';
+import { useScenicSpotOption } from '@/stores/modules/scenicSpot';
+const scenicSpotOptions = useScenicSpotOption();
 const router = useRouter();
-const goTo = () => {
+const goTo = (value: any) => {
 	router.push({
-		path: '/baseInfo/businessManagement/check'
+		path: '/baseInfo/businessManagement/check',
+		query: value
 	})
 }
+const details = (value: any) => {
+	router.push({
+		path: '/baseInfo/businessManagement/details',
+		query: value
+	})
+}
+const modalVisible = ref(false)
+const initOpeion = async () => {
+	await scenicSpotOptions.getBusinessTypeOption();
+};
+const businessTypeOption = computed(() => scenicSpotOptions.businessTypeOption);
+const checkVisible = computed(() => (val: number) => {
+	let a = false
+	switch (val) {
+		case 1:
+			a = true
+			break
+		case 2:
+		case 3:
+			a = false
+			break
+	}
+	return a
+})
+const restVisible = computed(() => (val: number) => {
+	let a = false
+	switch (val) {
+		case 2:
+			a = true
+			break
+		case 1:
+		case 3:
+			a = false
+			break
+	}
+	return a
+})
 const columns = [
 	{
 		title: '企业名称',
-		dataIndex: 'username',
-		key: 'username',
+		dataIndex: 'name',
+		key: 'name',
 	},
 	{
 		title: '企业类型',
-		dataIndex: 'mobile',
-		key: 'mobile',
+		dataIndex: 'businessTypeName',
+		key: 'businessTypeName',
 	},
 	{
 		title: '所属地区',
-		dataIndex: 'unitTypeName',
-		key: 'unitTypeName',
+		dataIndex: 'regionName',
+		key: 'regionName',
 	},
 	{
 		title: '信用代码',
-		dataIndex: 'unitName',
-		key: 'unitName',
+		dataIndex: 'creditCode',
+		key: 'creditCode',
 	},
 	{
 		title: '营业执照',
-		dataIndex: 'roleList',
-		key: 'roleList',
+		dataIndex: 'businessLicenseUrl',
+		key: 'businessLicenseUrl',
 	},
 	{
 		title: '状态',
-		dataIndex: 'userStatusName',
-		key: 'userStatusName',
+		dataIndex: 'auditStatusText',
+		key: 'auditStatusText',
 	},
 	{
 		title: '管理员',
-		dataIndex: 'userStatusName',
-		key: 'userStatusName',
+		dataIndex: 'contactName',
+		key: 'contactName',
 	},
 	{
 		title: '账号',
-		dataIndex: 'userStatusName',
-		key: 'userStatusName',
+		dataIndex: 'account',
+		key: 'account',
 	},
-	{
+	/* {
 		title: '佐证',
-		dataIndex: 'userStatusName',
-		key: 'userStatusName',
-	},
+		dataIndex: 'businessLicenseUrl',
+		key: 'businessLicenseUrl',
+	}, */
 	{
 		title: '操作',
 		key: 'action',
@@ -119,6 +158,10 @@ const columns = [
 		width: 208
 	},
 ]
+const visible = ref<boolean>(false);
+const setVisible = (value: boolean): void => {
+	visible.value = value;
+};
 
 const state = reactive({
 	tableData: {
@@ -128,57 +171,70 @@ const state = reactive({
 		param: {
 			pageNo: 1,
 			pageSize: 10,
-			keyWord: '',
-			roleIds: [],
-			status: null,
+			businessType: undefined,
+			regionCode: undefined,
+			auditStatus: undefined,
+			name: undefined,
+			provinceId: undefined,
+			cityId: undefined,
+			areaId: undefined
 		},
-		roleParam: {
-			pageNo: 1,
-			pageSize: 100000,
-		}
-	},
-	params: {},
-	operationModal: {
-		isAddOrUpdate: false,
-		showDetails: false
-	},
-	optionRoleList: [] as any
+	}
 });
+const { tableData } = toRefs(state)
+
+const regionChange = () => {
+	state.tableData.param.provinceId = state.tableData.param.regionCode ? state.tableData.param.regionCode[0] : undefined
+	state.tableData.param.cityId = state.tableData.param.regionCode ? state.tableData.param.regionCode[1] : undefined
+	state.tableData.param.areaId = state.tableData.param.regionCode ? state.tableData.param.regionCode[2] : undefined
+}
 
 const onHandleCurrentChange = (val: number) => {
-	console.log('change:', val);
 	state.tableData.param.pageNo = val;
 	onSearch();
 }
 
 const pageSideChange = (current: number, size: number) => {
-	console.log('changePageSize:', size);
 	state.tableData.param.pageSize = size;
 	onSearch();
 }
 
 const onSearch = () => {
-	/* api.userList(state.tableData.param).then((res: any) => {
-		console.log('res:', res);
+	api.findCompanyList(state.tableData.param).then((res: any) => {
+		res.content.forEach((item: any) => {
+			if (item.auditStatus === 1) {
+				item.auditStatusText = '待审核'
+			} else if (item.auditStatus === 2) {
+				item.auditStatusText = '审核通过'
+			} else if (item.auditStatus === 3) {
+				item.auditStatusText = '审核不通过'
+			}
+		})
 		state.tableData.data = res.content;
 		state.tableData.total = res.total;
-	}) */
+	})
 }
 interface addInterface {
 	row?: any
 	handle: 'update' | 'add'
 }
 const addOrUpdate = ({ row, handle }: addInterface) => {
-	/* 	state.modalVisible = true
-		if (handle === 'add') {
-			isAdd = true
-		} else {
-			isAdd = false
-			state.dictionaryForm.name = row?.name;
-			state.dictionaryForm.codeValue = row?.codeValue;
-			state.dictionaryForm.oid = row?.oid;
-		} */
+	modalVisible.value = true
 }
+const resetPassword = async (oid: string) => {
+	let res = await api.resetPassword({ oid })
+	if (res == '重置成功') {
+		message.success('重置密码成功！');
+	} else {
+		message.error(res);
+	}
+	console.log(res);
+
+}
+onMounted(() => {
+	initOpeion()
+	onSearch()
+})
 </script>
 
 <style scoped lang="scss">

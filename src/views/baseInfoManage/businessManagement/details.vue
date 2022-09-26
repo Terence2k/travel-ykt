@@ -12,7 +12,6 @@
       <div class="check_info">
         <div class="row_info">
           <div class="info_key">
-            <span style="color:#ff4d4f">*</span>
             企业名称
           </div>
           <div>
@@ -21,7 +20,6 @@
         </div>
         <div class="row_info">
           <div class="info_key">
-            <span style="color:#ff4d4f">*</span>
             企业类型
           </div>
           <div>
@@ -30,7 +28,6 @@
         </div>
         <div class="row_info">
           <div class="info_key">
-            <span style="color:#ff4d4f">*</span>
             所属地区
           </div>
           <div>
@@ -39,7 +36,6 @@
         </div>
         <div class="row_info">
           <div class="info_key">
-            <span style="color:#ff4d4f">*</span>
             信用代码
           </div>
           <div>
@@ -48,7 +44,6 @@
         </div>
         <div class="row_info">
           <div class="info_key">
-            <span style="color:#ff4d4f">*</span>
             营业执照
           </div>
           <div class="img_box">
@@ -57,7 +52,6 @@
         </div>
         <div class="row_info">
           <div class="info_key">
-            <span style="color:#ff4d4f">*</span>
             姓名
           </div>
           <div>
@@ -66,7 +60,6 @@
         </div>
         <div class="row_info">
           <div class="info_key">
-            <span style="color:#ff4d4f">*</span>
             手机号
           </div>
           <div>
@@ -75,7 +68,6 @@
         </div>
         <div class="row_info">
           <div class="info_key">
-            <span style="color:#ff4d4f">*</span>
             账号
           </div>
           <div>
@@ -83,60 +75,22 @@
           </div>
         </div>
       </div>
-      <div class="title">
-        审核意见
-      </div>
-      <div class="check_opetion">
-        <a-form ref="checkFormRef" :model="checkForm" :rules="formRules" name="basic" autocomplete="off"
-          labelAlign="left" :label-col="{ span: 4 }" :wrapper-col="{ span: 24 }">
-          <a-form-item label="审核意见" name="auditResult" :colon="false">
-            <a-radio-group name="auditResult" v-model:value="checkForm.auditResult">
-              <a-radio :value="2">通过</a-radio>
-              <a-radio :value="3">不通过</a-radio>
-            </a-radio-group>
-          </a-form-item>
-          <a-form-item label="用户角色" name="roldId" :colon="false">
-            <a-select name="roldId" v-model:value="checkForm.roldId" placeholder="请选择所属角色" style="width:390px">
-              <a-select-option v-for="item in rolesList" :value="item.oid">{{item.roleName}}</a-select-option>
-            </a-select>
-          </a-form-item>
-        </a-form>
-      </div>
-    </div>
-    <div class="btn_box">
-      <a-button type="primary" @click="submit" style="margin-right:20px" :loading="loading">提交</a-button>
-      <!-- <a-button @click="back">返回列表</a-button> -->
     </div>
   </div>
-  <CommonModal title="新增字典详情" v-model:visible="modalVisible" @close="modalVisible = false"
-    @conform="modalVisible=false">
-    企业注册使用的账号：as_123已成功开通系统账号。
-  </CommonModal>
 </template>
 
 <script setup lang="ts">
 import { useRouter, useRoute } from 'vue-router';
-import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue'
 import { CloseOutlined } from '@ant-design/icons-vue';
-import api from '@/api';
-import { message } from 'ant-design-vue';
-const checkFormRef = ref();
 const router = useRouter();
 const route = useRoute();
-const rolesList = ref([])
 const back = () => {
   router.push({
     path: '/baseInfo/businessManagement/apply'
   })
 }
-const state = reactive({
-  modalVisible: false
-})
-const { modalVisible } = toRefs(state)
-
 const form = reactive({
   name: undefined,
-  businessType: undefined,
   businessTypeName: undefined,
   regionName: undefined,
   creditCode: undefined,
@@ -145,23 +99,11 @@ const form = reactive({
   phone: undefined,
   account: undefined
 })
-const checkForm = reactive({
-  oid: undefined,
-  account: undefined,
-  roldId: undefined,
-  auditResult: 2
-})
-const getListByBusinessType = async () => {
-  let data = await api.listByBusinessType(form.businessType)
-  rolesList.value = data
-}
 watch(
   () => route.query,
   (val: any) => {
-    if (route.path !== '/baseInfo/businessManagement/check') return
     const {
       name,
-      businessType,
       businessTypeName,
       regionName,
       creditCode,
@@ -169,10 +111,8 @@ watch(
       contactName,
       phone,
       account,
-      oid
     } = val
     form.name = name
-    form.businessType = businessType
     form.businessTypeName = businessTypeName
     form.regionName = regionName
     form.creditCode = creditCode
@@ -180,35 +120,11 @@ watch(
     form.contactName = contactName
     form.phone = phone
     form.account = account
-    checkForm.account = account
-    checkForm.oid = oid
-    getListByBusinessType()
   },
   {
     immediate: true
   }
 )
-
-const formRules: any = {
-  auditResult: [{ required: true, trigger: 'blur', message: '请选择是否通过' }],
-  roldId: [{ required: true, trigger: 'blur', message: '请选择所属角色' }],
-};
-const loading = ref(false)
-const submit = () => {
-  checkFormRef.value.validateFields().then(async () => {
-    let res = await api.auditCompany(toRaw(checkForm))
-    if (res) {
-      message.success('审核成功！')
-      back()
-    } else {
-      message.success('审核失败！')
-    }
-  }).catch((err: any) => {
-    console.log(err);
-  })
-  // state.modalVisible = true
-}
-
 </script>
 
 <style scoped lang="scss">
