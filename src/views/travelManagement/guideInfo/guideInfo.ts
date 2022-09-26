@@ -21,7 +21,7 @@ export function useGuideInfo(): Record<string, any> {
 				name2: '123',
 				name3: '123',
 				name4: '123',
-				name5: '123',
+				name5: '',
 				name6: '123'
 			}
 		],
@@ -70,20 +70,62 @@ export function useGuideInfo(): Record<string, any> {
 				key: 'action',
 				fixed: 'right'
 			}
-		]
+		],
+		rulesRef: {
+			1: {
+				name5: [{ required: true, message: '请选择行程类型' }]
+			}
+		},
+		formRef: null
 	});
 
 	const methods = {
+		validateRules(key?:string) {
+			state.rulesRef = {}
+			let rules = {
+				name: [{ required: true, message: '请选择带团时间' }],
+				name5: [{ required: true, message: '请选择导游' }]
+			}
+			if (key) {
+				state.rulesRef[key] = rules;
+			} else {
+				for (let k in state.editableData) {
+					state.rulesRef[k] = rules;
+				}
+			}
+			
+		},
+		async validateFields() {
+			let flag = false
+			try {
+				const values = await state.formRef.validateFields()
+				// console.log('Success:', values);
+				flag = true
+			} catch (errorInfo) {
+				// console.log('Failed:', errorInfo);
+			}
+			return flag;
+		},
 		edit: (key: string) => {
 			const cur = cloneDeep(state.tableData.filter((item:any) => key === item.key)[0])
 			cur.name = dayjs(cur.name, 'YYYY-MM-DD HH:mm');
 			state.editableData[key] = cur;
 		},
-		save: (key: string) => {
-			const cur = state.editableData[key]
-			cur.name = dayjs(cur.name).format('YYYY-MM-DD HH:mm');
-			Object.assign(state.tableData.filter((item:any) => key === item.key)[0], state.editableData[key]);
-			delete state.editableData[key];
+		save: async (key: string) => {
+			await methods.validateRules(key);
+			const res = await methods.validateFields();
+			if (!res) return
+			if (key) {
+				state.editableData[key].name = dayjs(state.editableData[key].name).format('YYYY-MM-DD HH:mm');
+				Object.assign(state.tableData.filter((item:any) => key === item.key)[0], state.editableData[key]);
+				delete state.editableData[key];
+			} else {
+				for (let k in state.editableData) {
+					state.editableData[k].name = dayjs(state.editableData[k].name).format('YYYY-MM-DD HH:mm');
+					Object.assign(state.tableData.filter((item:any) => k === item.key)[0], state.editableData[k]);
+					delete state.editableData[k];
+				}
+			}
 		}
 	}
 	return {

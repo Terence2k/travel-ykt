@@ -99,6 +99,7 @@ export const getElementPos = (el: any) => {
   return {x:pos[0], y:pos[1]};
 }
 
+// 生成随机id
 export function generateGuid() {
   let guid = "";
   for (let i = 1; i <= 32; i++) {
