@@ -16,21 +16,34 @@
 		<search-item label="费用名称">
 			<a-input v-model:value="state.tableData.param.name" placeholder="请输入费用名称" />
 		</search-item>
+		<search-item label="状态启用">
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.scenicLevel" style="width: 200px" placeholder="请选择结算产品">
+				<a-select-option :value="1" :key="1">启用</a-select-option>
+				<a-select-option :value="2" :key="2">禁用</a-select-option>
+			</a-select>
+		</search-item>
 		<template #button>
 			<a-button @click="initList">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
 		<div class="list-btn">
-			<a-button type="primary" class="success">删除</a-button>
+			<a-button type="primary" class="success" @click="toAddPage()" style="margin-right: 10px">新增</a-button>
+			<a-button type="primary" class="success" @click="showTip('all', undefined)">删除</a-button>
 		</div>
 		<a-spin size="large" :spinning="state.tableData.loading">
-			<CommonTable :dataSource="state.tableData.data" :columns="columns">
-				<template #bodyCell="{ column, record }">
+			<CommonTable
+				:dataSource="state.tableData.data"
+				:columns="columns"
+				:row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
+			>
+				<template #bodyCell="{ column, record, index }">
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a href="javascript:;" @click="toCheck(record)">查看</a>
-							<a href="javascript:;" @click="toEditPage(record)">审核</a>
+							<a href="javascript:;" @click="toEditPage(record)">编辑</a>
+							<a href="javascript:;" @click="showTip('state', index)">启用</a>
+							<a href="javascript:;" @click="showTip('index', index)">删除</a>
 						</div>
 					</template>
 				</template>
@@ -44,13 +57,16 @@
 			@showSizeChange="pageSideChange"
 		/>
 	</div>
+	<DelModal :params="cacheData.delParams" v-model="cacheData.delShow" @submit="tipSubmit" @cancel="tipCancel" />
 </template>
 
 <script setup lang="ts">
+import { Ref } from 'vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
+import DelModal from '@/components/common/DelModal.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import api from '@/api';
 const navigatorBar = useNavigatorBar();
@@ -118,6 +134,7 @@ const state = reactive({
 			name: '',
 		},
 	},
+	selectedRowKeys: [],
 });
 
 //搜索
@@ -132,6 +149,10 @@ const pageSideChange = (current: number, size: number) => {
 	state.tableData.param.pageSize = size;
 	// onSearch();
 };
+//新增
+const toAddPage = () => {
+	route.push({ path: '/settlementManagement/currencySettlementRule/edit' });
+};
 //编辑
 const toEditPage = (record: any) => {
 	console.log(record.oid, encodeURIComponent(record.oid));
@@ -139,7 +160,7 @@ const toEditPage = (record: any) => {
 };
 //查看
 const toCheck = (record: any) => {
-	route.push({ path: '/scenic-spot/information/info', query: { oid: encodeURIComponent(record.oid) } });
+	route.push({ path: '/settlementManagement/currencySettlementRule/info', query: { oid: encodeURIComponent(record.oid) } });
 };
 // const onSearch = () => {
 // 	userList(state.tableData.param).then((res) => {
@@ -178,6 +199,58 @@ const dealData = (params: [any]) => {
 	});
 
 	return params;
+};
+interface cacheDataType {
+	delIndex: null | number | Array<any> | string;
+	delShow: boolean;
+	delParams?: delParamsType;
+	delState?: string;
+}
+interface delParamsType {
+	title?: string;
+	content?: string;
+}
+const cacheData: Ref<cacheDataType> = ref({
+	delIndex: null,
+	delShow: false,
+	delParams: {},
+	delState: '',
+});
+const showTip = (str: string, par: any) => {
+	if (str === 'index') {
+		cacheData.value.delParams = { title: '删除', content: '是否删除所选数据？' };
+		cacheData.value.delIndex = par;
+		cacheData.value.delState = 'del';
+	} else if (str === 'all') {
+		cacheData.value.delParams = { title: '删除', content: '是否删除所选数据？' };
+		cacheData.value.delIndex = state.selectedRowKeys;
+		cacheData.value.delState = 'del';
+	} else if (str === 'state') {
+		let parStr = '';
+		if (par === 1) {
+			parStr = '启用';
+		} else {
+			parStr = '禁用';
+		}
+		cacheData.value.delIndex = par;
+		cacheData.value.delState = 'state';
+		cacheData.value.delParams = { title: parStr, content: `确定是否${parStr}？` };
+	}
+	cacheData.value.delShow = true;
+};
+const tipSubmit = () => {
+	// 调用接口
+	initList();
+	tipCancel();
+};
+const tipCancel = () => {
+	cacheData.value.delState = '';
+	cacheData.value.delIndex = null;
+	cacheData.value.delShow = false;
+};
+const onSelectChange = (selectedRowKeys: []) => {
+	console.log('selectedRowKeys changed: ', selectedRowKeys);
+	state.selectedRowKeys = selectedRowKeys;
 };
 onMounted(() => {
 	initList();
