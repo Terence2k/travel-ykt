@@ -49,7 +49,7 @@
 	<add-business-account v-model:modalVisible="modalVisible" @success="onSearch"></add-business-account>
 </template>
 
-<script setup lang="ts" name="applyEle">
+<script setup lang="ts">
 import CommonTable from '@/components/common/CommonTable.vue'
 import CommonPagination from '@/components/common/CommonPagination.vue'
 import CommonSearch from '@/components/common/CommonSearch.vue'
@@ -62,6 +62,7 @@ import { useRouter } from 'vue-router';
 import { useScenicSpotOption } from '@/stores/modules/scenicSpot';
 const scenicSpotOptions = useScenicSpotOption();
 const router = useRouter();
+const route = useRoute();
 const goTo = (value: any) => {
 	router.push({
 		path: '/baseInfo/businessManagement/check',
@@ -231,6 +232,11 @@ const resetPassword = async (oid: string) => {
 	console.log(res);
 
 }
+onActivated(() => {
+	if (route.params?.isRefresh) {
+		onSearch()
+	}
+})
 onMounted(() => {
 	initOpeion()
 	onSearch()

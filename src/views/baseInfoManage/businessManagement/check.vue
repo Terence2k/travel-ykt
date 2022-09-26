@@ -199,14 +199,18 @@ const submit = () => {
     let res = await api.auditCompany(toRaw(checkForm))
     if (res) {
       message.success('审核成功！')
-      back()
+      router.push({
+        name: 'apply',
+        params: {
+          isRefresh: 1
+        }
+      })
     } else {
       message.success('审核失败！')
     }
   }).catch((err: any) => {
     console.log(err);
   })
-  // state.modalVisible = true
 }
 
 </script>
