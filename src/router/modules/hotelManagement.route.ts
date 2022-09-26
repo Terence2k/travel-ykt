@@ -56,14 +56,29 @@ export default [
 			},
 			{
 				path: 'roomStatus',
-				component: () => import('@/views/hotelManagement/roomStatus/index.vue'),
 				name: 'roomStatus',
 				meta: {
 					title: '房态上报管理',
-					// icon: 'liulanqi',
-					// auth: ["admin"],
-					isDetail: false, // 在左侧的导航栏不会展示
 				},
+				children: [
+					{
+						path: '',
+						component: () => import('@/views/hotelManagement/roomStatus/index.vue'),
+						meta: {
+							title: '',
+							isDetail: true,
+						},
+					},
+					{
+						path: 'roomStatusEdit',
+						name: 'roomStatusEdit',
+						component: () => import('@/views/hotelManagement/roomStatus/pages/roomStatus-edit/roomStatus-edit.vue'),
+						meta: {
+							title: '编辑',
+							isDetail: true,
+						},
+					},
+				],
 			},
 
 			{

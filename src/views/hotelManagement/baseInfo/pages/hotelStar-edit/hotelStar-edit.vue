@@ -14,7 +14,6 @@
 <script setup lang="ts">
 import HotelInfo from '../../components/hotelInfo/hotelInfo.vue';
 import RoomInfo from '../../components/roomInfo/roomInfo.vue';
-
 const activeTabKey = ref('1');
 </script>
 

@@ -43,7 +43,7 @@
 							</template>
 							<template v-if="column.dataIndex === 'actions'">
 								<div class="cell-actions">
-									<span @click="openEditPage" class="item">编辑</span>
+									<span @click="openEditPage(record?.oid)" class="item">编辑</span>
 									<span @click="openDisplayPage" class="item">审核</span>
 								</div>
 							</template>
@@ -72,6 +72,7 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import api from '@/api';
 interface DataSourceItem {
 	oid: string | number;
+	key: string | number;
 	hotelName: string;
 	hotelStarId: string | number;
 	hotelStarCode: string;
@@ -201,7 +202,16 @@ const getAuditStatusName = (auditStatus: number) => {
 // 	},
 // ];
 
-const dataSource = computed(() => tableState.tableData.data);
+const dataSource = computed(() => {
+	if (Array.isArray(tableState.tableData.data)) {
+		return tableState.tableData.data.map((item) => {
+			return {
+				...item,
+				key: item?.oid,
+			};
+		});
+	}
+});
 
 const rowSelection = ref({
 	checkStrictly: false,
@@ -219,7 +229,7 @@ const rowSelection = ref({
 const tableState = reactive({
 	tableData: {
 		data: [],
-		total: 400,
+		total: 1,
 		loading: false,
 		param: {
 			pageNo: 1,
@@ -262,9 +272,11 @@ const pageSideChange = (current: number, size: number) => {
 	onSearch();
 };
 
-const openEditPage = () => {
-	router.push({ path: '/hotelManagement/baseInfo/hotelStarEdit', query: { id: '1' } });
-	console.log('open edit page');
+const openEditPage = (oid: number) => {
+	if (oid) {
+		console.log('open edit page, id is:', oid);
+		router.push({ path: '/hotelManagement/baseInfo/hotelStarEdit', query: { id: oid } });
+	}
 };
 
 const openDisplayPage = () => {
