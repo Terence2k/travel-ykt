@@ -86,7 +86,7 @@
   import AddUpdate from './AddUpdate.vue';
   import Detail from './Detail.vue';
   import api from '@/api';
-import { message } from 'ant-design-vue';
+  import { message } from 'ant-design-vue';
   
   const columns = [
     {

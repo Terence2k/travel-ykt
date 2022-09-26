@@ -2,37 +2,40 @@
 	<div>
 		<CommonSearch>
 			<search-item label="审核状态">
-				<a-select ref="select" placeholder="请选择状态">
-					<a-select-option value="all">all</a-select-option>
+				<a-select ref="select"  placeholder="请选择状态" v-model:value="state.tableData.param.auditStatus">
+					<a-select-option :value="0">未提交</a-select-option>
+					<a-select-option :value="1">待审核</a-select-option>
+					<a-select-option :value="2">审核通过</a-select-option>
+					<a-select-option :value="3">审核未通过</a-select-option>
 				</a-select>
 			</search-item>
 			<search-item label="门店名称">
-				<a-input placeholder="请输入门店名称" />
+				<a-input placeholder="请输入门店名称" v-model:value="state.tableData.param.name"/>
 			</search-item>
 			<search-item label="联系电话">
-				<a-input placeholder="请输入联系电话" />
+				<a-input placeholder="请输入联系电话"  v-model:value="state.tableData.param.phone"/>
 			</search-item>
 			<template #button>
-				<a-button>查询</a-button>
+				<a-button @click="getCateringList">查询</a-button>
 			</template>
 		</CommonSearch>
-		<CommonTable :columns="columns" :dataSource="dataSource" :row-selection="rowSelection">
+		<CommonTable :columns="columns" :dataSource="state.tableData.data" >
 			<template #button>
-				<a-button type="primary" >导出</a-button>
+				<a-button type="primary">导出</a-button>
 			</template>
-			<template #bodyCell="{ column }">
+			<template #bodyCell="{ column,record }">
 				<template v-if="column.dataIndex === 'actions'">
 					<div class="action-btns">
-						<a>查看</a>
-						<a @click="openEditPage">审核</a>
+						<a @click="openInfoPage(record)">查看</a>
+						<a @click="openEditPage(record)">审核</a>
 					</div>
 				</template>
 			</template>
 		</CommonTable>
 		<CommonPagination
-			:current="tableState.tableData.param.pageNumber"
-			:page-size="tableState.tableData.param.pageSize"
-			:total="tableState.tableData.total"
+			:current="state.tableData.param.pageNo"
+			:page-size="state.tableData.param.pageSize"
+			:total="state.tableData.total"
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
 		>
@@ -45,39 +48,34 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
+import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import api from '@/api';
 import { SelectProps, TableColumnsType } from 'ant-design-vue';
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted,onBeforeUnmount } from 'vue';
 
 const router = useRouter();
-interface DataSourceItem {
-	key: string;
-	Name: string;
-	cci: string;
-	phoneNumber: string;
-	address: string;
-	auditStatus: string;
-}
-const columns: TableColumnsType = [
+const navigatorBar = useNavigatorBar();
+
+const columns = [
 	{
 		title: '门店名称',
-		dataIndex: 'Name',
-		key: 'Name',
+		dataIndex: 'name',
+		key: 'name',
 	},
 	{
 		title: '企业信用代码',
-		dataIndex: 'cci',
-		key: 'cci',
+		dataIndex: 'creditCode',
+		key: 'creditCode',
 	},
 	{
 		title: '联系电话',
-		dataIndex: 'phoneNumber',
-		key: 'phoneNumber',
+		dataIndex: 'phone',
+		key: 'phone',
 	},
 	{
 		title: '所在地址',
-		dataIndex: 'address',
-		key: 'address',
+		dataIndex: 'addressDetail',
+		key: 'addressDetail',
 	},
 	{
 		title: '审核状态',
@@ -93,64 +91,70 @@ const columns: TableColumnsType = [
 	},
 ];
 
-let dataSource: DataSourceItem[] = [
-	{
-		key: '1',
-		Name: '阳光商务一百酒店',
-		cci: 'LJ32323EWC',
-		phoneNumber: '8291829',
-		address: '丽江市古城区雪山路778',
-		auditStatus: '待审核',
-	},
-	{
-		key: '2',
-		Name: '香格里拉酒店',
-		cci: 'WK323232EWC',
-		phoneNumber: '323291843',
-		address: '丽江市古城区雪山路338',
-		auditStatus: '通过审核',
-	},
-];
-
-const tableState = reactive({
+const state = reactive({
 	tableData: {
 		data: [],
-		total: 20,
+		total: 0,
 		loading: false,
 		param: {
-			pageNumber: 1,
+			pageNo: 1,
 			pageSize: 10,
+			phone: null,
+			name: null,
+			auditStatus: null,
 		},
 	},
 });
 
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
-	tableState.tableData.param.pageNumber = val;
+	state.tableData.param.pageNo = val;
 	// onSearch();
 };
 
 const pageSideChange = (current: number, size: number) => {
 	console.log('changePageSize:', size);
-	tableState.tableData.param.pageSize = size;
+	state.tableData.param.pageSize = size;
 	// onSearch();
 };
 
-const rowSelection = ref({
-	checkStrictly: false,
-	onChange: (selectedRowKeys: (string | number)[], selectedRows: DataSourceItem[]) => {
-		console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-	},
-	onSelect: (record: DataSourceItem, selected: boolean, selectedRows: DataSourceItem[]) => {
-		console.log(record, selected, selectedRows);
-	},
-	onSelectAll: (selected: boolean, selectedRows: DataSourceItem[], changeRows: DataSourceItem[]) => {
-		console.log(selected, selectedRows, changeRows);
-	},
-});
-const openEditPage = () => {
-	router.push({ path: '/catering/basic_Information/basic_edit'});
+const getCateringList = () => {
+	api.getCateringPage(state.tableData.param).then((res: any) => {
+		state.tableData.total = res.total;
+		const list: [any] = dealData(res.content);
+		state.tableData.data = list;
+	});
 };
+
+const status = {
+	0: '未提交',
+	1: '待审核',
+	2: '审核通过',
+	3: '审核未通过',
+};
+const dealData = (params: [any]) => {
+	params.map((i: any) => {
+		i.auditStatus = status[i.auditStatus];
+		return i;
+	});
+	return params;
+};
+
+const openInfoPage = (record:any) => {
+	router.push({ path: '/catering/basic_Information/basic_info',query: { oid: record.oid } });
+
+};
+const openEditPage = (record:any) => {
+	router.push({ path: '/catering/basic_Information/basic_edit',query: { oid: record.oid } });
+};
+
+onMounted(() => {
+	navigatorBar.setNavigator(['基础信息管理']);
+	getCateringList();
+});
+onBeforeUnmount(() => {
+	navigatorBar.clearNavigator();
+});
 </script>
 
 <style lang="less">

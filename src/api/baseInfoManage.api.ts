@@ -9,15 +9,6 @@ export async function getPublicArea(data: any) {
 		// showLoading: true,
 	});
 }
-// 行政区划详情接口
-export async function getPrivatelyArea(data: any) {
-	return request({
-		url: `${commonPath}/customer-service/private/api/area/2`,
-		method: 'get',
-		data,
-		// showLoading: true,
-	});
-}
 
 // 行政区划详情接口
 export async function getArea(data: any) {

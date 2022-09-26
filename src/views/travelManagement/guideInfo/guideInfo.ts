@@ -13,7 +13,6 @@ interface DataItem {
 export function useGuideInfo(): Record<string, any> {
 	const state = reactive<{editableData: UnwrapRef<Record<string, DataItem>>, [k:string]: any}>({
 		editableData: {},
-		tableKey: ['name', 'name1', 'name2', 'name3', 'name4', 'name5', 'name6'],
 		tableData: [
 			{
 				key: '1',

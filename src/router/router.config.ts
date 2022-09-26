@@ -35,17 +35,29 @@ export const basicRouter = [
 	},
 ];
 
-export const accessRoutes: RouteRecordRaw[] = [...travelGroupRoute, ...hotelManagementRoute, ...baseInfoRoute, ...scenicSpot, ...cateringManageRoute,...gouvyRoute,...settlementRoute,];
+export const accessRoutes: RouteRecordRaw[] = [...travelGroupRoute, ...hotelManagementRoute, ...baseInfoRoute, ...scenicSpot, ...cateringManageRoute, ...gouvyRoute, ...settlementRoute,];
 
 
 export const constantRoutes: RouteRecordRaw[] = [
 	{
 		path: '/login',
 		name: 'login',
+		redirect: '/login/userLogin',
 		component: () => import('../views/login/index.vue'),
+		children: [
+			{
+				path: 'userLogin',
+				name: 'userLogin',
+				component: () => import('@/views/login/Form.vue'),
+			},
+			{
+				path: 'businessLogin',
+				name: 'businessLogin',
+				component: () => import('@/views/login/businessLogin.vue'),
+			}
+		]
 	},
 ];
-console.log(accessRoutes);
 
 export const getAsyncRouter = async (): Promise<RouteRecordRaw[]> => {
 	return accessRoutes;

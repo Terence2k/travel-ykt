@@ -33,9 +33,9 @@
       </a-form-item>
       <a-form-item
         label="状态"
-        name="userStatus"
+        name="userStatusName"
       >
-      {{ formValidate.userStatus }}
+      {{ formValidate.userStatusName }}
       </a-form-item>
     </a-form>
 		<template v-slot:footer>
