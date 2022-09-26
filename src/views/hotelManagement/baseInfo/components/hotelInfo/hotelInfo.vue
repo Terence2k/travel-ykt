@@ -75,8 +75,8 @@
 					</a-form-item>
 					<a-form-item class="form-item" label="企业状态" name="companyStatus">
 						<a-radio-group v-model:value="formValidate.companyStatus">
-							<a-radio :value="1">开业</a-radio>
-							<a-radio :value="0">停业</a-radio>
+							<a-radio :value="0">开业</a-radio>
+							<a-radio :value="1">停业</a-radio>
 						</a-radio-group>
 					</a-form-item>
 					<a-form-item class="form-item bottom-item" label="酒店星级" name="hotelStar">
@@ -100,7 +100,7 @@
 			</div>
 			<div class="footer-container">
 				<div class="form-item footer-item">
-					<a-button html-type="submit" class="button">保存</a-button>
+					<a-button html-type="submit" @click="saveHotelInfo" class="button">保存</a-button>
 					<a-button class="button">提交审核</a-button>
 				</div>
 			</div>
@@ -109,6 +109,8 @@
 </template>
 
 <script setup lang="ts">
+import api from '@/api';
+import { message } from 'ant-design-vue/es';
 interface FileItem {
 	uid: string;
 	name?: string;
@@ -294,6 +296,8 @@ let thirdLevelAreasGroup = [
 	},
 ];
 
+const route = useRoute();
+
 const formValidate: Ref<Record<string, any>> = ref({});
 
 let address1Validate = async (_rule: Rule, value: string) => {
@@ -368,6 +372,7 @@ const fileState = reactive({
 const previewVisible = ref<boolean>(false);
 const previewImage = ref<string | undefined>('');
 
+const hotelInfoResponse = ref({});
 const getBase64 = (file: File) => {
 	return new Promise((resolve, reject) => {
 		const reader = new FileReader();
@@ -421,6 +426,74 @@ watch(
 		console.info('areaState.currentThirdLevelAreasGroup', areaState.currentThirdLevelAreasGroup);
 	}
 );
+
+watch(
+	route,
+	(res) => {
+		const id = route?.query?.id;
+		if (id) {
+			api.getHotelDetailInfo({}, id).then((res) => {
+				console.info(`id${id}酒店信息:`, res);
+				hotelInfoResponse.value = res;
+				//localStorage.setItem('hotelTabInfo', JSON.stringify(res));
+				const resultRes = {
+					hotelName: res?.hotelName,
+					companyType: res?.businessTypeName,
+					detailAddress: res?.addressDetail,
+					businessLicense: res?.businessLicenseUrl,
+					usci: res?.creditCode,
+					personName: res?.contactName,
+					phoneNumber: res?.phone,
+					companyStatus: res?.unitStatus,
+					hotelStar: res?.hotelStarCode,
+					isDiscount: res?.isReduced,
+					discountRule: res?.reduceRule,
+				};
+				formValidate.value.hotelName = resultRes.hotelName;
+				formValidate.value.companyType = resultRes.companyType;
+				formValidate.value.detailAddress = resultRes.detailAddress;
+				formValidate.value.businessLicense = resultRes.businessLicense;
+				formValidate.value.usci = resultRes.usci;
+				formValidate.value.personName = resultRes.personName;
+				formValidate.value.phoneNumber = resultRes.phoneNumber;
+				formValidate.value.companyStatus = resultRes.companyStatus;
+				formValidate.value.hotelStar = resultRes.hotelStar;
+				formValidate.value.isDiscount = resultRes.isDiscount;
+				formValidate.value.discountRule = resultRes.discountRule;
+			});
+		}
+	},
+	{
+		immediate: true,
+	}
+);
+
+const saveHotelInfo = () => {
+	const result = {
+		...hotelInfoResponse.value,
+		hotelName: formValidate.value.hotelName,
+		businessTypeName: formValidate.value.companyType,
+		addressDetail: formValidate.value.detailAddress,
+		//businessLicenseUrl:formValidate.value.businessLicense,
+		creditCode: formValidate.value.usci,
+		contactName: formValidate.value.personName,
+		phone: formValidate.value.phoneNumber,
+		unitStatus: parseInt(formValidate.value.companyStatus),
+		isReduced: formValidate.value.isDiscount,
+		reduceRule: formValidate.value.discountRule,
+	};
+
+	console.info('要保存的酒店信息：', result);
+	api
+		.editHotelDetailInfo(result)
+		.then((res) => {
+			message.success('保存成功');
+			console.log('编辑酒店信息返回数据：', res);
+		})
+		.catch((err) => {
+			message.error(err?.message);
+		});
+};
 </script>
 
 <style lang="less" scoped>
