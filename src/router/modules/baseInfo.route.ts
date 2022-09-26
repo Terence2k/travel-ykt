@@ -47,7 +47,6 @@ export default [
 					isDetail: false, // 在左侧的导航栏不会展示
 				},
 			},
-
 			{
 				path: 'businessManagement',
 				component: () => import('@/views/baseInfoManage/businessManagement/index.vue'),
@@ -81,7 +80,19 @@ export default [
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
-					}
+					},
+					{
+						path: 'details',
+						component: () => import('@/views/baseInfoManage/businessManagement/details.vue'),
+						name: 'details',
+						meta: {
+							title: '详情',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+
 				]
 			},
 		],

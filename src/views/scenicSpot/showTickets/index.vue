@@ -49,31 +49,12 @@ const navigatorBar = useNavigatorBar();
 const dataSource = [
 	{
 		key: '1',
-		name: '王某某',
-		age: 32,
+		name: '1',
+		age: '千古情',
 		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
-		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
-	},
-	{
-		key: '2',
-		name: '张某某',
-		age: 42,
-		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
-		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
-	},
-	{
-		key: '3',
-		name: '张某某',
-		age: 42,
-		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
-		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
-	},
+		address2: '待审核',
+		address3: '上架',
+	}
 ];
 const columns = [
 	{
@@ -93,13 +74,13 @@ const columns = [
 	},
 	{
 		title: '审核状态',
-		dataIndex: 'address1',
-		key: 'address1',
+		dataIndex: 'address2',
+		key: 'address2',
 	},
 	{
 		title: '平台上下架状态',
-		dataIndex: 'address2',
-		key: 'address2',
+		dataIndex: 'address3',
+		key: 'address3',
 	},
 	{
 		title: '操作',
@@ -143,7 +124,9 @@ const onSearch = () => {
 };
 onMounted(() => {
 	// navigatorBar
-	
+	// 重新定义面包屑
+	// navigatorBar.clearNavigator();
+	// navigatorBar.setNavigator(['演出票']);
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();

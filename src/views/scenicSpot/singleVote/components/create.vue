@@ -3,8 +3,8 @@
 		<a-form :model="formValidate" :label-col="{ span: 3 }" :wrapper-col="{ span: 12, offset: 1 }" labelAlign="left">
 			<a-form-item label="单票类型" class="fz14" v-bind="validateInfos[`data.verificationType`]">
 				<a-radio-group v-model:value="formValidate.data.verificationType">
-					<a-radio :value="1">单票：多选核销</a-radio>
-					<a-radio :value="2">单票：单点核销</a-radio>
+					<a-radio :value="1">单票：单点核销</a-radio>
+					<a-radio :value="2">单票：多选核销</a-radio>
 				</a-radio-group>
 			</a-form-item>
 		</a-form>

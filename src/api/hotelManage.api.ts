@@ -68,3 +68,53 @@ export async function getHotelTableInfo(data: any) {
 		showLoading: true,
 	});
 }
+
+// 根据酒店id查询酒店信息
+export async function getHotelDetailInfo(data: any, id: number) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-information/getInfoById/${id}`,
+		method: 'get',
+		data,
+		showLoading: true,
+	});
+}
+
+//编辑保存酒店信息
+export async function editHotelDetailInfo(data: any) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-information/update`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
+
+//根据酒店id查询房型信息
+export async function getRoomDetailInfo(data: any, id: number) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-room-type/getRoomType/${id}`,
+		method: 'get',
+		data,
+		showLoading: true,
+	});
+}
+
+//编辑酒店房型信息
+export async function editRoomDetailInfo(data: any) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-room-type/updateRoomType`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
+
+//删除酒店房型信息
+export async function deleteRoomDetailInfo(data: any) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-room-type/deleteRoomType`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
