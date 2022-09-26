@@ -4,13 +4,18 @@
 			<div class="search-bar">
 				<div class="item">
 					<span class="field-select item">日期</span>
-					<a-select class="select-status select item" :showArrow="true" :options="statusOptions" v-model:value="status" placeholder="请选择状态">
-					</a-select>
+					<a-date-picker class="select-status select item" placeholder="请选择日期" v-model:value="date" value-format="YYYY-MM-DD" />
 				</div>
 
 				<div class="item">
 					<span class="field-select item">标记状态</span>
-					<a-select class="select-star select item" :showArrow="true" :options="starOptions" v-model:value="star" placeholder="请选择星级星标">
+					<a-select
+						class="select-star select item"
+						:showArrow="true"
+						:options="tickStatusOptions"
+						v-model:value="tickStatus"
+						placeholder="请选择星级星标"
+					>
 					</a-select>
 				</div>
 
@@ -53,6 +58,24 @@
 import RoomStatusTable from './components/roomStatusTable/roomStatusTable.vue';
 const activeTabKey = ref('1');
 const role = ref('hotel');
+const date = ref('');
+const tickStatus = ref('');
+let tickStatusOptionsData = [
+	{
+		value: 1,
+		label: '异常',
+	},
+	{
+		value: 0,
+		label: '无',
+	},
+];
+
+const tickStatusOptions = ref<SelectProps['options']>(tickStatusOptionsData);
+
+const searchByFilter = () => {
+	console.log('searchByFilter');
+};
 </script>
 
 <style lang="less" scoped>

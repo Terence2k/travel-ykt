@@ -14,59 +14,48 @@
 						<span>入住情况</span>
 					</div>
 					<a-form-item class="form-item" label="日期" name="date">
-						<a-input v-model:value="formValidate.date" />
+						<a-date-picker placeholder="请选择入住情况对应的日期" v-model:value="formValidate.date" value-format="YYYY-MM-DD" />
 					</a-form-item>
 					<a-form-item class="form-item" label="总房数" name="roomTotal">
-						<a-input v-model:value="formValidate.companyType" />
+						<a-input placeholder="请输入房间总数" v-model:value="formValidate.roomTotal" />
 					</a-form-item>
-					<a-form-item class="form-item" label="统一社会信用代码" name="usci">
-						<a-input v-model:value="formValidate.usci" />
+					<a-form-item class="form-item" label="散客" name="fit">
+						<a-input placeholder="请输入散客入住房间数量，单位：标" v-model:value="formValidate.fit" />
 					</a-form-item>
-					<a-form-item class="form-item item-businessLicense" label="营业执照">
-						<a-form-item name="businessLicense" no-style>
-							<a-upload
-								:maxCount="1"
-								action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-								list-type="picture-card"
-								@preview="handlePreview"
-								class="uploadArea"
-								v-model:fileList="fileState.businessLicense"
-							>
-								<p class="ant-upload-drag-icon">上传图片</p>
-								<a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-									<img alt="example" style="width: 100%" :src="previewImage" />
-								</a-modal>
-							</a-upload>
-						</a-form-item>
+					<a-form-item class="form-item" label="会议接待" name="cr">
+						<a-input placeholder="请输入会议接待入住房间数量，单位：标" v-model:value="formValidate.cr" />
 					</a-form-item>
-					<a-form-item class="form-item" label="联系人姓名" name="personName">
-						<a-input v-model:value="formValidate.personName" />
+					<a-form-item class="form-item" label="监理费" name="supervisionFee">
+						<a-input placeholder="无需填写，根据散客，会议接待情况计算" v-model:value="formValidate.supervisionFee" />
 					</a-form-item>
-					<a-form-item class="form-item" label="联系人电话" name="phoneNumber">
-						<a-input v-model:value="formValidate.phoneNumber" />
+					<a-form-item class="form-item" label="陪同" name="accompany">
+						<a-input placeholder="请输入陪同入住房间数量，单位：标" v-model:value="formValidate.accompany" />
 					</a-form-item>
-					<a-form-item class="form-item" label="企业状态" name="companyStatus">
-						<a-radio-group v-model:value="formValidate.companyStatus">
-							<a-radio :value="1">开业</a-radio>
-							<a-radio :value="0">停业</a-radio>
-						</a-radio-group>
+					<a-form-item class="form-item" label="免费" name="free">
+						<a-input placeholder="请输入免费房间数量，单位：标" v-model:value="formValidate.free" />
 					</a-form-item>
-					<a-form-item class="form-item bottom-item" label="酒店星级" name="hotelStar">
-						<a-input v-model:value="formValidate.hotelStar" />
+					<a-form-item class="form-item" label="团客" name="groupGuest">
+						<a-input placeholder="无需填写，系统自动计算" v-model:value="formValidate.groupGuest" />
+					</a-form-item>
+					<a-form-item class="form-item" label="团客（16免1）" name="groupGuest_ex">
+						<a-input placeholder="无需填写，系统自动计算" v-model:value="formValidate.groupGuest_ex" />
+					</a-form-item>
+					<a-form-item class="form-item" label="空房数" name="emptyRoomTotal">
+						<a-input v-model:value="formValidate.emptyRoomTotal" />
+					</a-form-item>
+					<a-form-item class="form-item" label="入住率" name="occupancyRate">
+						<a-input v-model:value="formValidate.occupancyRate" />
 					</a-form-item>
 				</div>
 				<div class="discount-container container">
 					<div class="title">
-						<span>减免属性</span>
+						<span>上报信息</span>
 					</div>
-					<a-form-item class="form-item" label="企业是否支持减免" name="isDiscount">
-						<a-radio-group v-model:value="formValidate.isDiscount">
-							<a-radio :value="1">是</a-radio>
-							<a-radio :value="0">否</a-radio>
-						</a-radio-group>
+					<a-form-item class="form-item" label="酒店名称" name="hotelName">
+						<a-input placeholder="请输入酒店名称" v-model:value="formValidate.hotelName" />
 					</a-form-item>
-					<a-form-item class="form-item" label="减免规则" name="discountRule">
-						<a-input placeholder="请输入减免规则,用,号分隔。如16，1表示16免1" v-model:value="formValidate.discountRule" />
+					<a-form-item class="form-item" label="提报人" name="filer">
+						<a-input placeholder="请输入减免规则,用,号分隔。如16，1表示16免1" v-model:value="formValidate.filer" />
 					</a-form-item>
 				</div>
 			</div>
@@ -82,90 +71,42 @@
 
 <script setup lang="ts">
 import api from '@/api';
-interface FileItem {
-	uid: string;
-	name?: string;
-	status?: string;
-	response?: string;
-	percent?: number;
-	url?: string;
-	preview?: string;
-	originFileObj?: any;
-}
 
-interface FileInfo {
-	file: FileItem;
-	fileList: FileItem[];
-}
-
-const route = useRouter();
+const route = useRoute();
 
 const formValidate: Ref<Record<string, any>> = ref({});
 
-let businessLicenseValidate = async (_rule: Rule, value: string) => {
-	if (fileState.businessLicense.length > 0) {
-		return Promise.resolve();
-	} else {
-		return Promise.reject('请上传营业执照');
-	}
-};
-
 const rules: any = {
+	date: [{ required: true, trigger: 'blur', message: '请输入日期' }],
+	roomTotal: [{ required: true, trigger: 'blur', message: '请输入房间总数' }],
+	fit: [{ required: true, trigger: 'blur', message: '请输入散客入住房间数量' }],
+	cr: [{ required: true, trigger: 'blur', message: '请输入会议接待入住房间数量' }],
+	supervisionFee: [{ required: true, trigger: 'blur', message: '请输入监理费' }],
+	accompany: [{ required: true, trigger: 'blur', message: '请输入陪同入住房间数量' }],
+	free: [{ required: true, trigger: 'blur', message: '请输入免费房间数量' }],
+	groupGuest: [{ required: true, trigger: 'blur', message: '请输入团客入住房间数量' }],
+	groupGuest_ex: [{ required: true, trigger: 'blur', message: '请输入团客(16免1)入住房间数量' }],
+	emptyRoomTotal: [{ required: true, trigger: 'blur', message: '请输入空房间数量' }],
+	occupancyRate: [{ required: true, trigger: 'blur', message: '请输入入住率' }],
 	hotelName: [{ required: true, trigger: 'blur', message: '请输入酒店名称' }],
-	companyType: [{ required: true, trigger: 'blur', message: '请输入企业类型' }],
-	businessLicense: [{ validator: businessLicenseValidate, trigger: 'change', message: '请上传营业执照' }],
-	usci: [{ required: true, trigger: 'blur', message: '请输入统一社会信用代码' }],
-	personName: [{ required: true, trigger: 'blur', message: '请输入联系人姓名' }],
-	phoneNumber: [{ required: true, trigger: 'blur', message: '请输入联系人电话' }],
-	companyStatus: [{ required: true, trigger: 'change', message: '请选择企业状态' }],
-	hotelStar: [{ required: true, trigger: 'blur', message: '请输入酒店星级' }],
-	isDiscount: [{ required: true, trigger: 'change', message: '请选择企业是否支持减免' }],
-	discountRule: [{ required: true, trigger: 'blur', message: '请输入减免规则' }],
-};
-
-const fileState = reactive({
-	businessLicense: [],
-});
-
-const previewVisible = ref<boolean>(false);
-const previewImage = ref<string | undefined>('');
-
-const getBase64 = (file: File) => {
-	return new Promise((resolve, reject) => {
-		const reader = new FileReader();
-		reader.readAsDataURL(file);
-		reader.onload = () => resolve(reader.result);
-		reader.onerror = (error) => reject(error);
-	});
+	filer: [{ required: true, trigger: 'blur', message: '请输入提报人' }],
 };
 
 const handleCancel = () => {
 	previewVisible.value = false;
 };
 
-const handlePreview = async (file: FileItem) => {
-	if (!file.url && !file.preview) {
-		file.preview = (await getBase64(file.originFileObj)) as string;
-	}
-	previewImage.value = file.url || file.preview;
-	previewVisible.value = true;
-};
-
-const handleChange = ({ fileList: newFileList }: FileInfo) => {
-	fileList.value = newFileList;
-};
-
 watch(
 	route,
 	(res) => {
-		const id = route.currentRoute.value?.query?.id;
+		const id = route?.query?.id;
 		if (id) {
-			api.getHotelDetailInfo({}, id).then((res) => {
-				console.info(`id${id}酒店信息:`, res);
-
-				// //表单初始化赋值
-				// formValidate.
-			});
+			console.info('房态上报id：', id);
+			// api.getHotelDetailInfo({}, id).then((res) => {
+			// 	console.info(`id${id}酒店信息:`, res);
+			// 	// //表单初始化赋值
+			// 	// formValidate.
+			// });
 		}
 	},
 	{

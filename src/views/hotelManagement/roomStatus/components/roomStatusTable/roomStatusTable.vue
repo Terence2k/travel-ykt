@@ -224,6 +224,19 @@ const tableState = reactive({
 		},
 	},
 });
+
+const onHandleCurrentChange = (val: number) => {
+	console.log('change:', val);
+	tableState.tableData.param.pageNo = val;
+	//onSearch();
+};
+
+const pageSideChange = (current: number, size: number) => {
+	console.log('changePageSize:', size);
+	tableState.tableData.param.pageSize = size;
+	//onSearch();
+};
+
 const openEditPage = () => {
 	//console.log('open edit page, id is:', oid);
 	router.push({ path: '/hotelManagement/roomStatus/roomStatusEdit', query: { id: 1 } });

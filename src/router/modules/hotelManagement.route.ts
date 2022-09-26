@@ -19,15 +19,14 @@ export default [
 				},
 			},
 			{
-				path: 'baseInfo',
-				name: 'baseInfo',
+				path: 'hotelBaseInfo',
+				name: 'hotelBaseInfo',
 				meta: {
 					title: '基础信息管理',
 				},
 				children: [
 					{
 						path: '',
-						name: '/',
 						component: () => import('@/views/hotelManagement/baseInfo/index.vue'),
 						meta: {
 							title: '',
@@ -102,7 +101,7 @@ export default [
 					},
 					{
 						path: 'orderEdit',
-						name:'orderEdit',
+						name: 'orderEdit',
 						component: () => import('@/views/hotelManagement/order/Edit/index.vue'),
 						meta: {
 							title: '编辑',

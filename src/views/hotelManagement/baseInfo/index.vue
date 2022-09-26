@@ -34,7 +34,7 @@
 					<a-button class="button-create-item">新增</a-button>
 				</div>
 				<div class="table-container">
-					<CommonTable :columns="columns" :dataSource="dataSource" :row-selection="rowSelection">
+					<CommonTable :columns="columns" :dataSource="dataSource">
 						<template #bodyCell="{ column, record }">
 							<template v-if="column.dataIndex === 'auditStatus'">
 								<div class="cell-auditStatus">
@@ -177,41 +177,41 @@ const getAuditStatusName = (auditStatus: number) => {
 	return statusName;
 };
 
-// let dataSource: DataSourceItem[] = [
-// 	{
-// 		oid: 1,
-// 		hotelName: '阳光商务一百酒店',
-// 		hotelStarId: 1,
-// 		hotelStarCode: '1星A级',
-// 		creditCode: 'LJ32323EWC',
-// 		phone: '8291829',
-// 		address: '丽江市古城区雪山路778',
-// 		auditStatus: '待审核',
-// 		reduceRule: '16免1',
-// 	},
-// 	{
-// 		oid: 2,
-// 		hotelName: '世纪天宸酒店',
-// 		hotelStarId: 2,
-// 		hotelStarCode: '6星A级',
-// 		creditCode: 'QJ5523ETY',
-// 		phone: '855529',
-// 		address: '丽江市古城区雪山路779',
-// 		auditStatus: '审核通过',
-// 		reduceRule: '10免1',
-// 	},
-// ];
+let dataSource: DataSourceItem[] = [
+	{
+		oid: 1,
+		hotelName: '阳光商务一百酒店',
+		hotelStarId: 1,
+		hotelStarCode: '1星A级',
+		creditCode: 'LJ32323EWC',
+		phone: '8291829',
+		address: '丽江市古城区雪山路778',
+		auditStatus: '待审核',
+		reduceRule: '16免1',
+	},
+	{
+		oid: 2,
+		hotelName: '世纪天宸酒店',
+		hotelStarId: 2,
+		hotelStarCode: '6星A级',
+		creditCode: 'QJ5523ETY',
+		phone: '855529',
+		address: '丽江市古城区雪山路779',
+		auditStatus: '审核通过',
+		reduceRule: '10免1',
+	},
+];
 
-const dataSource = computed(() => {
-	if (Array.isArray(tableState.tableData.data)) {
-		return tableState.tableData.data.map((item) => {
-			return {
-				...item,
-				key: item?.oid,
-			};
-		});
-	}
-});
+// const dataSource = computed(() => {
+// 	if (Array.isArray(tableState.tableData.data)) {
+// 		return tableState.tableData.data.map((item) => {
+// 			return {
+// 				...item,
+// 				key: item?.oid,
+// 			};
+// 		});
+// 	}
+// });
 
 const rowSelection = ref({
 	checkStrictly: false,
@@ -275,12 +275,12 @@ const pageSideChange = (current: number, size: number) => {
 const openEditPage = (oid: number) => {
 	if (oid) {
 		console.log('open edit page, id is:', oid);
-		router.push({ path: '/hotelManagement/baseInfo/hotelStarEdit', query: { id: oid } });
+		router.push({ path: '/hotelManagement/hotelBaseInfo/hotelStarEdit', query: { id: oid } });
 	}
 };
 
 const openDisplayPage = () => {
-	router.push({ path: '/hotelManagement/baseInfo/hotelStarDisplay', query: { id: '1' } });
+	router.push({ path: '/hotelManagement/hotelBaseInfo/hotelStarDisplay', query: { id: '1' } });
 	console.log('open display page');
 };
 
