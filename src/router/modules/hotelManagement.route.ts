@@ -10,8 +10,8 @@ export default [
 		children: [
 			{
 				path: 'star',
-				component: () => import('@/views/hotelManagement/star/index.vue'),
 				name: 'star',
+				component: () => import('@/views/hotelManagement/star/index.vue'),
 				meta: {
 					title: '星级管理',
 					// icon: 'liulanqi',
@@ -29,7 +29,7 @@ export default [
 						path: '',
 						component: () => import('@/views/hotelManagement/baseInfo/index.vue'),
 						meta: {
-							title: '',
+							title: '基础信息',
 							isDetail: true,
 						},
 					},
@@ -64,7 +64,7 @@ export default [
 						path: '',
 						component: () => import('@/views/hotelManagement/roomStatus/index.vue'),
 						meta: {
-							title: '',
+							title: '房态上报',
 							isDetail: true,
 						},
 					},
