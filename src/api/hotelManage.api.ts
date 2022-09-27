@@ -118,3 +118,31 @@ export async function deleteRoomDetailInfo(data: any) {
 		showLoading: true,
 	});
 }
+
+// 获取地区接口
+export async function getAllArea(pid: any, level: any) {
+	return request({
+		url: `${commonPath}/customer-service/public/api/area/list/${pid}/${level}`,
+		method: 'get',
+		// showLoading: true,
+	});
+}
+
+// 获取地区
+export async function getAreaById(id: any) {
+	return request({
+		url: `${commonPath}/customer-service/public/api/area/${id}`,
+		method: 'get',
+		// showLoading: true,
+	});
+}
+
+// 获取企业类型
+export async function getCompanyType() {
+	return request({
+		url: `${commonPath}/customer-service/public/api/dictionary/dropDownQueryListChild?pid=115`,
+
+		method: 'post',
+		showLoading: false,
+	});
+}
