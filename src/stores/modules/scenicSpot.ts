@@ -8,6 +8,7 @@ export const useScenicSpotOption = defineStore('scenicSpot', {
 		proviceList: [],
 		cityList: [],
 		areaList: [],
+		cateringStoreName: [],
 	}),
 	getters: {},
 	actions: {
@@ -19,6 +20,17 @@ export const useScenicSpotOption = defineStore('scenicSpot', {
 				});
 				this.businessTypeOption = options;
 			});
+		},
+
+		//餐饮获取门店名称data
+		getCateringStoreName(){
+			api.getCateringStore().then((res:any) => {
+				console.log('2323',res);
+				const data = res.map((i: any) => {
+					return { shopName: i.shopName, shopId: i.shopId };
+				});
+				this.cateringStoreName = data;
+			})
 		},
 
 		/**
