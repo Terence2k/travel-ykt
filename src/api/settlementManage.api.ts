@@ -8,3 +8,12 @@ export async function saveProductRule(data: any) {
 		showLoading: true,
 	});
 }
+// 产品结算规则 ---- 编辑产品结算
+export async function updateProductRule(data: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/product-rule/update`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
