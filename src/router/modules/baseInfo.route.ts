@@ -95,6 +95,17 @@ export default [
 
 				]
 			},
+			{
+				path: 'teamTypeManagement',
+				component: () => import('@/views/baseInfoManage/teamTypeManagement/index.vue'),
+				name: 'teamTypeManagement',
+				meta: {
+					title: '团队类型管理',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					isDetail: false, // 在左侧的导航栏不会展示
+				},
+			},
 		],
 	},
 ];
