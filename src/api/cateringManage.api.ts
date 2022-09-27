@@ -16,6 +16,14 @@ export function getCateringInfo(id: any) {
 	});
 }
 
+// 门店名称
+export function getCateringStore() {
+	return request({
+		url: `${commonPart}/catering-product/get-shop-list`,
+		method: 'get',
+	});
+}
+
 export function getCateringEdit(data: any) {
 	return request({
 		url: `${commonPart}/catering/edit`,

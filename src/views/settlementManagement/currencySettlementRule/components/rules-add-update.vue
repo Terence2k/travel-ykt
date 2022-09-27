@@ -1,6 +1,13 @@
 <template>
 	<BaseModal :title="options.title" v-model="modelValue">
-		<a-form :model="formValidate" :rules="rules" :label-col="{ span: 5 }" :wrapper-col="{ span: 16, offset: 1 }" placeholder="请选择分账单位">
+		<a-form
+			ref="formRef"
+			:model="formValidate"
+			:rules="rules"
+			:label-col="{ span: 5 }"
+			:wrapper-col="{ span: 16, offset: 1 }"
+			placeholder="请选择分账单位"
+		>
 			<a-form-item label="分账单位" name="unit">
 				<a-select ref="select" v-model:value="formValidate.unit" style="width: 100%">
 					<a-select-option value="旅行社">旅行社</a-select-option>
@@ -46,6 +53,7 @@ import BaseModal from '@/components/common/BaseModal.vue';
 import { isIntegerNotMust, isBtnZeroToHundred } from '@/utils/validator';
 import { Ref } from 'vue';
 import lodash from 'lodash';
+import { message } from 'ant-design-vue';
 const props = defineProps({
 	modelValue: {
 		type: Boolean,
@@ -62,15 +70,9 @@ const formValidate: Ref<Record<string, any>> = ref({});
 
 const rules: any = {
 	unit: [{ required: true, trigger: 'blur', message: '请输入分账单位' }],
-	price: [
-		{ required: true, trigger: 'blur', message: '请输入分账金额' },
-		{ validator: isIntegerNotMust, trigger: 'blur' },
-	],
-	priority: [
-		{ required: true, trigger: 'blur', message: '请输入优先级' },
-		{ validator: isIntegerNotMust, trigger: 'blur' },
-	],
-	percentage: [{ validator: isBtnZeroToHundred, trigger: 'blur' }],
+	price: [{ required: true, validator: isIntegerNotMust, trigger: 'blur' }],
+	priority: [{ required: true, validator: isIntegerNotMust, trigger: 'blur' }],
+	percentage: [{ required: true, validator: isBtnZeroToHundred, trigger: 'blur' }],
 };
 const init = async () => {
 	if (props.params.add) {
@@ -82,11 +84,20 @@ const init = async () => {
 	}
 	console.log('params', props.params);
 };
+const formRef = ref();
 const save = () => {
-	const params = { params: props.params, form: lodash.cloneDeep(formValidate.value) };
-	emit('submit', params);
-	formValidate.value = {};
-	dialogVisible.value = false;
+	formRef.value
+		.validate()
+		.then((result: any) => {
+			const params = { params: props.params, form: lodash.cloneDeep(formValidate.value) };
+			emit('submit', params);
+			formValidate.value = {};
+			dialogVisible.value = false;
+		})
+		.catch((err: any) => {
+			message.error('请填写完整数据');
+			console.log('error', err);
+		});
 };
 const dialogVisible = ref(false);
 watch(
