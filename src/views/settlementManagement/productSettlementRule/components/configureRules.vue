@@ -49,28 +49,28 @@ const route = useRouter();
 const columns = [
 	{
 		title: '团单类型',
-		dataIndex: 'scenicLevel',
-		key: 'scenicLevel',
+		dataIndex: 'teamTypeId',
+		key: 'teamTypeId',
 	},
 	{
 		title: '结算产品',
-		dataIndex: 'name',
-		key: 'name',
+		dataIndex: 'productId',
+		key: 'productId',
 	},
 	{
 		title: '费用名称',
-		dataIndex: 'creditCode',
-		key: 'creditCode',
+		dataIndex: 'costName',
+		key: 'costName',
 	},
 	{
 		title: '收费金额',
-		dataIndex: 'phone',
-		key: 'phone',
+		dataIndex: 'chargeCount',
+		key: 'chargeCount',
 	},
 	{
 		title: '费用说明',
-		dataIndex: 'addressDetail',
-		key: 'addressDetail',
+		dataIndex: 'costExplanation',
+		key: 'costExplanation',
 	},
 	{
 		title: '状态',
@@ -79,8 +79,8 @@ const columns = [
 	},
 	{
 		title: '优先级',
-		dataIndex: 'derateRule',
-		key: 'derateRule',
+		dataIndex: 'level',
+		key: 'level',
 	},
 	{
 		title: '操作',
@@ -94,7 +94,7 @@ const state = reactive({
 	tableData: {
 		data: [
 			{
-				name: 123456,
+				teamTypeId: 123456,
 			},
 		],
 		total: 400,

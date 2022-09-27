@@ -9,6 +9,46 @@ export default [
 		component: () => import('@/components/layout/index.vue'),
 		children: [
 			{
+				path: 'comprehensiveFee',
+				name: 'comprehensiveFee',
+				redirect: '/settlementManagement/comprehensiveFee/list',
+				meta: {
+					title: '综费产品',
+					isDetail: false, // 在左侧的导航栏不会展示
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/settlementManagement/comprehensiveFee/index.vue'),
+						name: 'comprehensiveFee',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'edit',
+						component: () => import('@/views/settlementManagement/comprehensiveFee/components/edit.vue'),
+						name: 'comprehensiveFeeEdit',
+						meta: {
+							title: '编辑',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'info',
+						component: () => import('@/views/settlementManagement/comprehensiveFee/components/info.vue'),
+						name: 'comprehensiveFeeInfo',
+						meta: {
+							title: '查看',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
+			{
 				path: 'settlementRule',
 				component: () => import('@/views/settlementManagement/settlementRule/index.vue'),
 				name: 'settlementRule',

@@ -22,7 +22,10 @@
 			<CommonTable :dataSource="tableList" :columns="type === '2' ? columns : column" :scrollY="false" bordered class="left">
 				<template #bodyCell="{ column, record, index }">
 					<template v-if="column.key === 'itemId'">
-						{{ itemNameCompute(record.itemId) }}
+						<div class="action-btns">
+							<span style="margin-right: 20px"> {{ itemNameCompute(record.itemId) }}</span>
+							<a href="javascript:;" @click="change(record)">更换</a>
+						</div>
 					</template>
 					<template v-if="column.key === 'verificationNumber'">
 						<a-input v-model:value="record.verificationNumber" placeholder="可核销次数" />
@@ -44,13 +47,14 @@
 			<span style="color: red">*</span>其中，非必核销项目数量为{{ ifVerificationNum }}项，可核销总数（不包括必核销项）不超过{{ times }} 次</span
 		>
 	</div>
+	<DelModal :params="{ title: '删除', content: '是否确定该条数据' }" v-model="delShow" @submit="delSubmit" @cancel="delCancel" />
 </template>
 
 <script setup lang="ts">
 import CommonTable from '@/components/common/CommonTable.vue';
 import BaseModal from '@/components/common/BaseModal.vue';
 import { Form } from 'ant-design-vue';
-
+import DelModal from '@/components/common/DelModal.vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 
@@ -125,9 +129,13 @@ const columns = ref([
 		key: 'action',
 	},
 ]);
-const itemNameCompute = (id) => {
+const itemNameCompute = (id: number) => {
 	let rN = formData.data.filter((i) => i.id === id);
 	return rN[0]?.itemName || '';
+};
+
+const change = (value: object) => {
+	console.log(value);
 };
 
 // 关联核销项目
@@ -135,8 +143,18 @@ const formValidate = reactive({
 	proj: [],
 });
 const emits = defineEmits(['del-verification-obj', 'add-verification-obj']);
-const del = (index: number) => {
-	emits('del-verification-obj', index);
+const del = (index: number | null) => {
+	delShow.value = true;
+	delIndex.value = index;
+	// emits('del-verification-obj', index);
+};
+const delSubmit = () => {
+	emits('del-verification-obj', toRaw(delIndex.value));
+	delCancel();
+};
+const delCancel = () => {
+	delShow.value = false;
+	delIndex.value = null;
 };
 const apply = () => {
 	validate()
@@ -195,6 +213,10 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 const getList = async () => {
 	formData.data = await api.getVariflist();
 };
+
+// 删除提示
+const delShow = ref(false);
+const delIndex = ref<null | number>();
 onMounted(() => {
 	getList();
 });

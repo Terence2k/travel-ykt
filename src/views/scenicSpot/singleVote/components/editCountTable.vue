@@ -22,6 +22,7 @@ const route = useRouter();
 const type = computed(() => {
 	return route.currentRoute.value?.query?.t;
 });
+
 const useForm = Form.useForm;
 
 const props = defineProps({
@@ -51,19 +52,17 @@ const columnsCount = ref([
 
 // 数据
 const formData = reactive({
-	data: [],
+	data: {},
 });
-// 表单
-const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
-	formData,
-	reactive({
-		'data.provinceId': [{ required: true, message: '请选择省份' }],
-		'data.cityId': [{ required: true, message: '请选择市' }],
-	})
-);
+
 //初始化数据
-const initTable = () => {};
-onMounted(() => {});
+const getList = async () => {
+	let res = await api.getVerifUser();
+	formData.data = res;
+};
+onMounted(() => {
+	getList();
+});
 </script>
 
 <style lang="scss" scoped>

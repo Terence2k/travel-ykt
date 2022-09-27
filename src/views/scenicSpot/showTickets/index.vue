@@ -14,14 +14,14 @@
 	</CommonSearch>
 	<div class="table-area">
 		<div class="list-btn">
-			<a-button type="primary" class="success">新增</a-button>
+			<a-button type="primary" class="success" @click="add()">新增</a-button>
 		</div>
 		<CommonTable :dataSource="dataSource" :columns="columns">
-			<template #bodyCell="{ column }">
+			<template #bodyCell="{ column,index }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a href="javascript:;" @click="toEditPage">编辑</a>
-						<a>删除</a>
+						<a href="javascript:;" @click="toEditPage()">编辑</a>
+						<a href="javascript:;" @click="del(index)">删除</a>
 						<a>下架申请</a>
 					</div>
 				</template>
@@ -117,6 +117,14 @@ const pageSideChange = (current: number, size: number) => {
 const toEditPage = () => {
 	route.push({ path: '/scenic-spot/showTickets/show_edit'});
 };
+//新增
+const add = () => {
+	route.push({ path: '/scenic-spot/showTickets/show_edit'});
+};
+//删除
+const del = (index) => {
+	console.log(index,'111111111')
+};
 const onSearch = () => {
 	// userList(state.tableData.param).then((res) => {
 	// 	console.log(res);
@@ -133,7 +141,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .search-area {
 	display: flex;
 	flex-wrap: wrap;
@@ -157,28 +165,32 @@ onBeforeUnmount(() => {
 		flex: 1;
 	}
 }
-.table-area {
-	overflow: hidden;
-	.list-btn {
-		display: flex;
-		justify-content: flex-end;
-		padding: 24px 52px 16px;
-	}
-	.success {
-		background-color: #36b374;
-		color: #fff;
-	}
-	.action-btns {
-		a {
-			margin: 0 6px;
-			&:first-of-type {
-				margin-left: 0;
-			}
-		}
-	}
-}
+// .table-area {
+// 	overflow: hidden;
+// 	.list-btn {
+// 		display: flex;
+// 		justify-content: flex-end;
+// 		padding: 24px 52px 16px;
+// 	}
+// 	.success {
+// 		background-color: #36b374;
+// 		color: #fff;
+// 	}
+// 	.action-btns {
+// 		a {
+// 			margin: 0 6px;
+// 			&:first-of-type {
+// 				margin-left: 0;
+// 			}
+// 		}
+// 	}
+// }
 
 // table style
+.list-btn{
+	margin-right: 20px;
+	margin-bottom: 10px;
+}
 .ant-table-thead > tr > th {
 	border-top: 1px solid #f0f0f0;
 	background-color: #fcfcfc;
