@@ -58,10 +58,16 @@ export async function getAreaByid(id: any) {
 export async function getCompandType() {
 	return request({
 		url: `${commonPath}/customer-service/public/api/dictionary/dropDownQueryListChild?pid=115`,
-		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded',
-		},
+
 		method: 'post',
 		showLoading: false,
+	});
+}
+// 获取核销项目列表  localhost:8003/ticket-service/public/api/scenic-one-ticket/varif-list?id=2
+export async function getVariflist() {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-one-ticket/varif-list?id=2`,
+
+		method: 'get',
 	});
 }

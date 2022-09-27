@@ -39,14 +39,14 @@ const props = defineProps({
 const columnsCount = ref([
 	{
 		title: '水牌价',
-		dataIndex: 'ticketName',
-		key: 'ticketName',
+		dataIndex: 'wateryPrice',
+		key: 'wateryPrice',
 		width: 200,
 	},
 	{
 		title: '售价',
-		dataIndex: 'verificationType',
-		key: 'verificationType',
+		dataIndex: 'price',
+		key: 'price',
 		width: 200,
 	},
 ]);

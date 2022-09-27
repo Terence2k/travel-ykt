@@ -47,8 +47,8 @@ export default [
 					},
 					{
 						path: 'info',
-						component: () => import('@/views/scenicSpot/scenicSpotInformation/components/info.vue'),
-						name: 'info',
+						component: () => import('@/views/settlementManagement/currencySettlementRule/components/info.vue'),
+						name: 'currencySettlementRuleInfo',
 						meta: {
 							title: '查看',
 							isDetail: true, // 在左侧的导航栏不会展示
@@ -91,6 +91,15 @@ export default [
 						name: 'configureRulesEdit',
 						meta: {
 							title: '编辑',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'info',
+						component: () => import('@/views/settlementManagement/productSettlementRule/components/info.vue'),
+						name: 'configureRulesInfo',
+						meta: {
+							title: '查看',
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},

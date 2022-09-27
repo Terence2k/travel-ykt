@@ -10,8 +10,8 @@ export default [
 		children: [
 			{
 				path: 'star',
-				component: () => import('@/views/hotelManagement/star/index.vue'),
 				name: 'star',
+				component: () => import('@/views/hotelManagement/star/index.vue'),
 				meta: {
 					title: '星级管理',
 					// icon: 'liulanqi',
@@ -19,18 +19,17 @@ export default [
 				},
 			},
 			{
-				path: 'baseInfo',
-				name: 'baseInfo',
+				path: 'hotelBaseInfo',
+				name: 'hotelBaseInfo',
 				meta: {
 					title: '基础信息管理',
 				},
 				children: [
 					{
 						path: '',
-						name: '/',
 						component: () => import('@/views/hotelManagement/baseInfo/index.vue'),
 						meta: {
-							title: '',
+							title: '基础信息',
 							isDetail: true,
 						},
 					},
@@ -56,14 +55,29 @@ export default [
 			},
 			{
 				path: 'roomStatus',
-				component: () => import('@/views/hotelManagement/roomStatus/index.vue'),
 				name: 'roomStatus',
 				meta: {
 					title: '房态上报管理',
-					// icon: 'liulanqi',
-					// auth: ["admin"],
-					isDetail: false, // 在左侧的导航栏不会展示
 				},
+				children: [
+					{
+						path: '',
+						component: () => import('@/views/hotelManagement/roomStatus/index.vue'),
+						meta: {
+							title: '房态上报',
+							isDetail: true,
+						},
+					},
+					{
+						path: 'roomStatusEdit',
+						name: 'roomStatusEdit',
+						component: () => import('@/views/hotelManagement/roomStatus/pages/roomStatus-edit/roomStatus-edit.vue'),
+						meta: {
+							title: '编辑',
+							isDetail: true,
+						},
+					},
+				],
 			},
 
 			{
@@ -87,7 +101,7 @@ export default [
 					},
 					{
 						path: 'orderEdit',
-						name:'orderEdit',
+						name: 'orderEdit',
 						component: () => import('@/views/hotelManagement/order/Edit/index.vue'),
 						meta: {
 							title: '编辑',
