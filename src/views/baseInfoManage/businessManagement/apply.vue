@@ -24,7 +24,7 @@
 			<a-button @click="onSearch">查询</a-button>
 		</template>
 	</CommonSearch>
-	<CommonTable :dataSource="state.tableData.data" :columns="columns">
+	<CommonTable :dataSource="tableData.data" :columns="columns">
 		<template #button>
 			<a-button type="primary" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
 		</template>
@@ -44,8 +44,8 @@
 			</template>
 		</template>
 	</CommonTable>
-	<CommonPagination v-model:current="state.tableData.param.pageNo" v-model:page-size="state.tableData.param.pageSize"
-		:total="state.tableData.total" @change="onHandleCurrentChange" @showSizeChange="pageSideChange" />
+	<CommonPagination v-model:current="tableData.param.pageNo" v-model:page-size="tableData.param.pageSize"
+		:total="tableData.total" @change="onHandleCurrentChange" @showSizeChange="pageSideChange" />
 	<add-business-account v-model:modalVisible="modalVisible" @success="onSearch"></add-business-account>
 </template>
 
@@ -159,10 +159,6 @@ const columns = [
 		width: 208
 	},
 ]
-const visible = ref<boolean>(false);
-const setVisible = (value: boolean): void => {
-	visible.value = value;
-};
 
 const state = reactive({
 	tableData: {

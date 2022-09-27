@@ -9,7 +9,7 @@
 import api from '@/api';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import businessLoginForm from '@/views/login/businessLoginForm.vue';
-import { message } from 'ant-design-vue'; import { string } from '_vue-types@3.0.2@vue-types';
+import { message } from 'ant-design-vue';
 export interface Props {
   modalVisible?: boolean
 }
