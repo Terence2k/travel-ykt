@@ -12,7 +12,9 @@
 				:scrollToFirstError="true"
 			>
 				<a-form-item label="门店名称" v-bind="validateInfos[`data.name`]">
-					<a-input v-model:value="formData.data.name" />
+					<a-select allowClear v-model:value="formData.data.name" placeholder="请选择门店名称">
+						<a-select-option v-for="i in cateringStoreName" :key="i.shopName" :value="i.shopId">{{ i.shopName }}</a-select-option>
+					</a-select>
 				</a-form-item>
 				<a-form-item label="企业类型" v-bind="validateInfos[`data.businessType`]">
 					<a-select allowClear v-model:value="formData.data.businessType" placeholder="请选择企业类型">
@@ -120,6 +122,7 @@ const businessTypeOption = computed(() => scenicSpotOptions.businessTypeOption);
 const proviceList = computed(() => scenicSpotOptions.proviceList);
 const cityList = computed(() => scenicSpotOptions.cityList);
 const areaList = computed(() => scenicSpotOptions.areaList);
+const cateringStoreName = computed(() => scenicSpotOptions.cateringStoreName);
 // 联动
 const selectCity = async (id: number) => {
 	if (id) {
@@ -219,6 +222,7 @@ const save = async (params: object) => {
 
 const initPage = async (): Promise<void> => {
 	await scenicSpotOptions.getBusinessTypeOption();
+	await scenicSpotOptions.getCateringStoreName();
 	await scenicSpotOptions.getAllAreaProvice(0);
 	api.getCateringInfo(route.currentRoute.value?.query?.oid).then((res: any) => {
 		formData.data = res;

@@ -15,7 +15,7 @@
 				<template #bodyCell="{ column, record }">
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a @click="addOrUpdate({  row: record,  handle: 'update'})">编辑</a>
+							<a @click="addOrUpdate({  row: record,  handle: 'update'})" v-if="record.isEdit">编辑</a>
 							<a-popconfirm title="确认删除这条数据吗？" ok-text="确认" cancel-text="取消" @confirm="confirmDelete(record)">
 								<a>删除</a>
 							</a-popconfirm>
@@ -86,7 +86,7 @@
 <script setup lang="ts">
 import CommonTable from './components/CommonTable.vue'
 import CommonPagination from '@/components/common/CommonPagination.vue'
-import CommonModal from './components/CommonModal.vue'
+import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import { Form, message } from 'ant-design-vue';
 import api from '@/api';
 const columns = [
