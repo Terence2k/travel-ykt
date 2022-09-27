@@ -3,6 +3,9 @@
  * @description 全局路由过滤、权限过滤
  */
 
+import NProgress from 'nprogress';
+import 'nprogress/nprogress.css';
+
 import type { RouteLocationNormalized } from 'vue-router';
 import { usePermissioStore } from '@/stores/modules/permission';
 import router from './index';
@@ -11,6 +14,7 @@ const whiteList = ['/login', "/login/userLogin", "/login/businessLogin"]; // no 
 let first = true;
 // const modules = import.meta.glob("../views/**/index.vue");
 router.beforeEach(async (to: RouteLocationNormalized, _, next) => {
+	NProgress.start()
 	const hasTokne = window.localStorage.getItem('authorization');
 	if (hasTokne) {
 		// 已经登录
@@ -44,3 +48,6 @@ router.beforeEach(async (to: RouteLocationNormalized, _, next) => {
 		}
 	}
 });
+router.afterEach(() => {
+	NProgress.done()
+})

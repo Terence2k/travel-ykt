@@ -34,6 +34,9 @@
 			</a-form>
 		</div>
 		<BaseModal title="审核" v-model="dialogVisible" :onOk="handleOk">
+			<div>
+				<p class="price">*票价</p>
+			</div>
 			<CommonTable :dataSource="state.tableDate.data" :columns="columns" :scrollY="false">
 				<template #bodyCell="{ column, record, text }">
 					<template v-if="column.key === 'partition'">
@@ -186,5 +189,8 @@ const edit = () => {
 	width: 100px;
 	height: 100px;
 	border: 1px solid red;
+}
+.price{
+	margin-left: 20px;
 }
 </style>
