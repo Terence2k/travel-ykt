@@ -165,28 +165,32 @@ onBeforeUnmount(() => {
 		flex: 1;
 	}
 }
-.table-area {
-	overflow: hidden;
-	.list-btn {
-		display: flex;
-		justify-content: flex-end;
-		padding: 24px 52px 16px;
-	}
-	.success {
-		background-color: #36b374;
-		color: #fff;
-	}
-	.action-btns {
-		a {
-			margin: 0 6px;
-			&:first-of-type {
-				margin-left: 0;
-			}
-		}
-	}
-}
+// .table-area {
+// 	overflow: hidden;
+// 	.list-btn {
+// 		display: flex;
+// 		justify-content: flex-end;
+// 		padding: 24px 52px 16px;
+// 	}
+// 	.success {
+// 		background-color: #36b374;
+// 		color: #fff;
+// 	}
+// 	.action-btns {
+// 		a {
+// 			margin: 0 6px;
+// 			&:first-of-type {
+// 				margin-left: 0;
+// 			}
+// 		}
+// 	}
+// }
 
 // table style
+.list-btn{
+	margin-right: 20px;
+	margin-bottom: 10px;
+}
 .ant-table-thead > tr > th {
 	border-top: 1px solid #f0f0f0;
 	background-color: #fcfcfc;
