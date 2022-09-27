@@ -17,3 +17,19 @@ export async function updateProductRule(data: any) {
 		showLoading: true,
 	});
 }
+// 产品结算规则 ---- 删除产品结算
+export async function deleteProductRule(id: number) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/product-rule/delete/${id}`,
+		method: 'delete',
+		showLoading: true,
+	});
+}
+// 产品结算规则 ---- 产品结算详情
+export async function productRuleDetail(id: number) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/product-rule/detail/${id}`,
+		method: 'get',
+		showLoading: true,
+	});
+}
