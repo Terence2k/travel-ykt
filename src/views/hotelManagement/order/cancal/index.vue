@@ -19,7 +19,7 @@
 			@showSizeChange="pageSideChange"
 		>
 		</CommonPagination>
-		<BaseModal :title="'审核'" v-model="visible" :onOk="handleOk">
+		<BaseModal :title="'审核'" v-model="visible">
 			<a-form>
 				<a-form-item label="状态">
 					<a-radio-group >
