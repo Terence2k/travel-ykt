@@ -1,11 +1,11 @@
 <template>
 	<CommonTable :dataSource="tableList" :columns="columnsCount" :scrollY="false" bordered>
 		<template #bodyCell="{ column, record }">
-			<template v-if="column.key === 'ticketName'">
-				<a-input v-model:value="formData.data.creditCode" placeholder="输入每日库存" />
+			<template v-if="column.key === 'wateryPrice'">
+				<a-input v-model:value="formData.data.wateryPrice" placeholder="输入" />
 			</template>
-			<template v-if="column.key === 'verificationType'">
-				<a-input v-model:value="formData.data.creditCode" placeholder="输入每日库存" />
+			<template v-if="column.key === 'price'">
+				<a-input v-model:value="formData.data.price" placeholder="输入" />
 			</template>
 		</template>
 	</CommonTable>
@@ -50,10 +50,13 @@ const columnsCount = ref([
 		width: 200,
 	},
 ]);
+console.log(props.tableList[0].wateryPrice);
 
 // 数据
 const formData = reactive({
-	data: [],
+	data: {
+		wateryPrice: props.tableList[0].wateryPrice,
+	},
 });
 // 表单
 const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
