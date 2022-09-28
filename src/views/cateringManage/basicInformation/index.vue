@@ -157,7 +157,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 // table style
 .ant-table-thead > tr > th {
 	border-top: 1px solid #f0f0f0;
