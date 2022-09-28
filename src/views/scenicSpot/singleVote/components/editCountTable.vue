@@ -1,6 +1,14 @@
 <template>
-	<CommonTable :dataSource="tableList" :columns="columnsCount" :scrollY="false" bordered>
+	<CommonTable
+		:dataSource="isCreate ? formData.datas : formData.data"
+		:columns="isCreate ? columnsCountCreate : columnsCount"
+		:scrollY="false"
+		bordered
+	>
 		<template #bodyCell="{ column, record }">
+			<template v-if="column.key === 'assistId' && isCreate">
+				<div style="text-align: center">{{ record.assistId }}</div>
+			</template>
 			<template v-if="column.key === 'name'">
 				{{ record.name }}
 				<!-- <a-input v-model:value="formData.data.creditCode" placeholder="输入每日库存" /> -->
@@ -19,9 +27,10 @@ import { message } from 'ant-design-vue';
 
 const route = useRouter();
 
-const type = computed(() => {
-	return route.currentRoute.value?.query?.t;
+const isCreate = computed(() => {
+	return route.currentRoute.value?.query?.s;
 });
+
 const useForm = Form.useForm;
 
 const props = defineProps({
@@ -37,33 +46,53 @@ const props = defineProps({
 const columnsCount = ref([
 	{
 		title: '核销账号',
+		dataIndex: 'account',
+		key: 'account',
+		width: 200,
+	},
+	{
+		title: '姓名',
+		dataIndex: 'username',
+		key: 'username',
+		width: 200,
+	},
+]);
+
+const columnsCountCreate = ref([
+	{
+		title: '核销账号',
 		dataIndex: 'assistId',
 		key: 'assistId',
 		width: 200,
+		customCell: (_, index) => ({
+			colSpan: 2,
+		}),
 	},
 	{
 		title: '姓名',
 		dataIndex: 'name',
 		key: 'name',
 		width: 200,
+		customCell: (_, index) => ({
+			colSpan: 0,
+		}),
 	},
 ]);
 
 // 数据
 const formData = reactive({
 	data: [],
+	datas: [{ assistId: '系统将自动识别可核销账号' }],
 });
-// 表单
-const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
-	formData,
-	reactive({
-		'data.provinceId': [{ required: true, message: '请选择省份' }],
-		'data.cityId': [{ required: true, message: '请选择市' }],
-	})
-);
+
 //初始化数据
-const initTable = () => {};
-onMounted(() => {});
+const getList = async () => {
+	let res = await api.getVerifUser();
+	formData.data = res;
+};
+onMounted(() => {
+	getList();
+});
 </script>
 
 <style lang="scss" scoped>

@@ -35,7 +35,7 @@
 				<a-button  style="width:76px" @click="visible = false">取消</a-button>
 			</template>
 		</BaseModal>
-		<BaseModal :title="'审核'" v-model="Vdetail" :onOk="handleOk">
+		<BaseModal :title="'审核'" v-model="Vdetail" >
 			<a-form>
 				<a-form-item label="状态">
 					<a-radio-group >
@@ -184,7 +184,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="less">
+<style  scoped lang="less">
 // table style
 .ant-table-thead > tr > th {
 	border-top: 1px solid #f0f0f0;

@@ -4,7 +4,9 @@
 			<header>基本信息</header>
 			<a-form :model="formData.data" ref="formref" :rules="rulesRef" labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
 				<a-form-item label="所属门店" name="companyName">
-					<a-input v-model:value="formData.data.companyName" />
+					<a-select allowClear v-model:value="formData.data.companyName" placeholder="请选择门店名称">
+						<a-select-option v-for="i in cateringStoreName" :key="i.shopName" :value="i.shopId">{{ i.shopName }}</a-select-option>
+					</a-select>
 				</a-form-item>
 				<a-form-item label="餐饮名称" name="cateringName">
 					<a-input placeholder="请输入餐饮名称" v-model:value="formData.data.cateringName" />
@@ -46,6 +48,8 @@ import CommonSearch from '@/components/common/CommonSearch.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import { computed, reactive, toRaw, ref, watch } from 'vue';
 import { message } from 'ant-design-vue';
+import { useScenicSpotOption } from '@/stores/modules/scenicSpot';
+const scenicSpotOptions = useScenicSpotOption();
 import api from '@/api';
 import Pic from '@/components/common/imageWrapper.vue';
 
@@ -67,7 +71,10 @@ const formData = reactive({
 	data: [],
 });
 
+const cateringStoreName = computed(() => scenicSpotOptions.cateringStoreName);
+
 const initPage = async (): Promise<void> => {
+	await scenicSpotOptions.getCateringStoreName();
 	api.getProductInfo(route.currentRoute.value?.query?.id).then((res: any) => {
 		formData.data = res;
 	});
@@ -119,7 +126,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="less">
+<style  scoped lang="less">
 .warp {
 	width: 100%;
 	box-sizing: border-box;

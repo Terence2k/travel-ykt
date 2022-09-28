@@ -19,7 +19,7 @@
 			@showSizeChange="pageSideChange"
 		>
 		</CommonPagination>
-		<BaseModal :title="'审核'" v-model="visible" :onOk="handleOk">
+		<BaseModal :title="'审核'" v-model="visible" >
 			<a-form>
 				<a-form-item label="状态">
 					<a-radio-group >
@@ -166,7 +166,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="less">
+<style  scoped lang="less">
 // table style
 .ant-table-thead > tr > th {
 	border-top: 1px solid #f0f0f0;
