@@ -1,6 +1,7 @@
 <template>
 	<div class="wrapper">
 		<BaseModal :modelValue="modelValue" title="关联核销项目" width="600px" @cancel="cancel">
+			{{ formValidate.proj }}
 			<a-form :model="formValidate" :label-col="{ span: 3 }" :wrapper-col="{ span: 12, offset: 1 }" labelAlign="left">
 				<a-form-item label="核销项目" class="fz14" v-bind="validateInfos.proj">
 					<a-select
@@ -19,16 +20,30 @@
 			</template>
 		</BaseModal>
 		<div class="inner-wrapper">
-			<CommonTable :dataSource="tableList" :columns="type === '2' ? columns : column" :scrollY="false" bordered class="left">
+			<CommonTable
+				:dataSource="isCreate && !type ? formValidate.initData : tableList"
+				:columns="type ? columns : column"
+				:scrollY="false"
+				bordered
+				class="left"
+			>
 				<template #bodyCell="{ column, record, index }">
 					<template v-if="column.key === 'itemId'">
 						<div class="action-btns">
-							<span style="margin-right: 20px"> {{ itemNameCompute(record.itemId) }}</span>
-							<a href="javascript:;" @click="change(record)">更换</a>
+							<span style="margin-right: 20px">
+								{{ itemNameCompute(record.itemId) }}
+							</span>
+							<a v-if="record.itemId" href="javascript:;" @click="change(record)">更换</a>
+							<a href="javascript:;" v-if="isCreate && !type" @click="change(record)">请选择</a>
 						</div>
 					</template>
 					<template v-if="column.key === 'verificationNumber'">
-						<a-input v-model:value="record.verificationNumber" placeholder="可核销次数" />
+						<a-input
+							v-model:value="record.verificationNumber"
+							:formatter="(value) => value.replace(/\D/g, '')"
+							:parser="(value) => value.replace(/\D/g, '')"
+							placeholder="可核销次数"
+						/>
 					</template>
 					<template v-if="column.key === 'ifVerification'">
 						{{ record.verificationNumber ? '是' : '否' }}
@@ -40,10 +55,10 @@
 					</template>
 				</template>
 			</CommonTable>
-			<a-button type="primary" class="btn" v-show="type === '2'" @click="CreateData"> 关联核销项目</a-button>
+			<a-button type="primary" class="btn" v-show="type" @click="CreateData"> 关联核销项目</a-button>
 		</div>
 
-		<span style="color: #c8c9cc" v-show="type === '2'">
+		<span style="color: #c8c9cc" v-show="type">
 			<span style="color: red">*</span>其中，非必核销项目数量为{{ ifVerificationNum }}项，可核销总数（不包括必核销项）不超过{{ times }} 次</span
 		>
 	</div>
@@ -61,7 +76,10 @@ import { message } from 'ant-design-vue';
 const route = useRouter();
 
 const type = computed(() => {
-	return route.currentRoute.value?.query?.t;
+	return route.currentRoute.value?.query?.t === '2';
+});
+const isCreate = computed(() => {
+	return route.currentRoute.value?.query?.s;
 });
 const useForm = Form.useForm;
 
@@ -141,6 +159,7 @@ const change = (value: object) => {
 // 关联核销项目
 const formValidate = reactive({
 	proj: [],
+	initData: [{}],
 });
 const emits = defineEmits(['del-verification-obj', 'add-verification-obj']);
 const del = (index: number | null) => {
@@ -159,11 +178,12 @@ const delCancel = () => {
 const apply = () => {
 	validate()
 		.then((res) => {
-			cancel();
-			resetFields();
-			console.log(formValidate, res);
+			toRaw(formValidate.proj).map((i) => {
+				emits('add-verification-obj', { itemId: i, ifVerification: null, verificationNumber: null });
+				return i;
+			});
 
-			emits('add-verification-obj', toRaw(res));
+			cancel();
 		})
 		.catch((err) => {
 			console.log('error', err);
@@ -176,7 +196,7 @@ const CreateData = () => {
 
 const cancel = () => {
 	modelValue.value = false;
-	resetFields();
+	// resetFields();
 };
 const options = ref([
 	{
@@ -202,7 +222,10 @@ const formData = reactive({
 	data: [],
 });
 
-const handleChange = () => {};
+const handleChange = (value) => {
+	console.log(value);
+	formValidate.proj = value;
+};
 // 表单
 const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
 	formValidate,
@@ -212,6 +235,12 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 );
 const getList = async () => {
 	formData.data = await api.getVariflist();
+	let res = await api.getScenicOneTicket();
+
+	let arr = res.map((i) => {
+		return { value: i.id, label: i.itemName };
+	});
+	options.value = arr;
 };
 
 // 删除提示
