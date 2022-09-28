@@ -10,7 +10,7 @@
 				</a-select>
 			</search-item>
 			<search-item label="门店名称">
-				<a-input placeholder="请输入门店名称" v-model:value="state.tableData.param.name"/>
+				<a-input placeholder="请输入门店名称" v-model:value="state.tableData.param.shopName"/>
 			</search-item>
 			<search-item label="联系电话">
 				<a-input placeholder="请输入联系电话"  v-model:value="state.tableData.param.phone"/>
@@ -100,7 +100,7 @@ const state = reactive({
 			pageNo: 1,
 			pageSize: 10,
 			phone: null,
-			name: null,
+			shopName: null,
 			auditStatus: null,
 		},
 	},
@@ -157,7 +157,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 // table style
 .ant-table-thead > tr > th {
 	border-top: 1px solid #f0f0f0;

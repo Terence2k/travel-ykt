@@ -87,7 +87,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .warp {
 	header {
 		// width: 64px;

@@ -46,24 +46,24 @@
 					<a-radio :value="3">价格</a-radio>
 				</a-radio-group>
 			</a-form-item>
-			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 1">
+			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 1" :rules="rulesRef.percentage">
+				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入收费数量（单位：%）" style="width: 100%">
+					<template #addonAfter>
+						<span>%</span>
+					</template>
+				</a-input-number>
+			</a-form-item>
+			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 3" :rules="rulesRef.integer">
 				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入收费数量（单位：元）" style="width: 100%">
 					<template #addonAfter>
 						<span>元</span>
 					</template>
 				</a-input-number>
 			</a-form-item>
-			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 2">
+			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 2" :rules="rulesRef.integer">
 				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入收费数量（单位：人）" style="width: 100%">
 					<template #addonAfter>
 						<span>人</span>
-					</template>
-				</a-input-number>
-			</a-form-item>
-			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 3">
-				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入收费数量（单位：%）" style="width: 100%">
-					<template #addonAfter>
-						<span>%</span>
 					</template>
 				</a-input-number>
 			</a-form-item>
@@ -81,7 +81,8 @@
 				</a-radio-group>
 			</a-form-item>
 			<a-form-item label="垫付单位" name="prepaidCompany" v-if="formState.isPrepaid === 1">
-				<a-checkbox-group v-model:value="formState.prepaidCompany" :options="unitList" />
+				<a-radio-group v-model:value="formState.prepaidCompany" :options="unitList" />
+				<!-- <a-checkbox-group v-model:value="formState.prepaidCompany" :options="unitList" /> -->
 			</a-form-item>
 			<div class="title">
 				分账规则
@@ -117,14 +118,14 @@
 
 <script setup lang="ts">
 import CommonTable from '@/components/common/CommonTable.vue';
-import { UnwrapRef } from 'vue';
+import { UnwrapRef, Ref } from 'vue';
 import RulesAddUpdate from './rules-add-update.vue';
 import DelModal from '@/components/common/DelModal.vue';
 import lodash from 'lodash';
 import { useRouter } from 'vue-router';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import { message } from 'ant-design-vue';
-import { isIntegerNotMust } from '@/utils/validator';
+import { isIntegerNotMust, isBtnZeroToHundred } from '@/utils/validator';
 import api from '@/api';
 import { updateProductRule } from '@/api/settlementManage.api';
 import { FormState } from './type';
@@ -134,7 +135,7 @@ const formState: UnwrapRef<FormState> = reactive({
 	costName: null,
 	teamTypeId: null,
 	productId: null,
-	prepaidCompany: [],
+	prepaidCompany: null,
 	splitList: [],
 	ruleStatus: null,
 	chargeProductSonId: null,
@@ -183,9 +184,13 @@ const rulesRef = {
 	chargeModel: [{ required: true, message: '请输入收费模式' }],
 	isPrepaid: [{ required: true, message: '请新增是否垫付' }],
 	prepaidCompany: [{ required: true, message: '请选择垫付单位' }],
-	chargeCount: [{ required: true, message: '请填写收费数量' }],
+	// chargeCount: [{ required: true, message: '请填写收费数量' }],
 	chargeProductSonId: [{ required: true, message: '请选择收费子产品' }],
 	lastCostBelongCompany: [{ required: true, message: '请选择剩余费用归属' }],
+	// 百分比
+	percentage: [{ required: true, validator: isBtnZeroToHundred, trigger: 'blur' }],
+	// 人数和金额
+	integer: [{ required: true, validator: isIntegerNotMust, trigger: 'blur' }],
 };
 // 缓存删除编辑数据
 const cacheData = ref({
@@ -194,18 +199,23 @@ const cacheData = ref({
 	editItem: {},
 	rulesShow: false,
 	rulesParams: {},
+	edit: false,
 });
 const init = () => {
 	const route = useRouter();
 	const query = route.currentRoute.value.query;
 	if (query && query.oid) {
 		navigatorBar.setNavigator(['编辑']);
+		cacheData.value.edit = true;
 	} else {
 		navigatorBar.setNavigator(['新增']);
+		cacheData.value.edit = false;
 		// 默认状态开启
 		formState.ruleStatus = 1;
 		// 默认是否垫付关闭
 		formState.isPrepaid = 0;
+		// 默认为百分比
+		formState.chargeModel = 1;
 	}
 };
 const delItem = (index: any) => {
@@ -241,9 +251,12 @@ const rulesSubmit = (e: any) => {
 const submit = () => {
 	formRef.value
 		.validate()
-		.then((result: any) => {
-			edit();
-			save();
+		.then(() => {
+			if (cacheData.value.edit) {
+				edit();
+			} else {
+				save();
+			}
 		})
 		.catch((err: any) => {
 			message.error('请填写完整数据');

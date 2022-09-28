@@ -158,7 +158,7 @@ const edit = (key: string) => {
 };
 
 watch(
-	route,
+	() => route.query,
 	(res) => {
 		state.hotelId = route?.query?.id;
 		if (state.hotelId) {
