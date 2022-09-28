@@ -81,7 +81,6 @@
 
 <script setup lang="ts">
 import { useRouter, useRoute } from 'vue-router';
-import { CloseOutlined } from '@ant-design/icons-vue';
 const router = useRouter();
 const route = useRoute();
 const back = () => {
