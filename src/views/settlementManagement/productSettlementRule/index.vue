@@ -27,9 +27,9 @@
 	</CommonSearch>
 	<div class="table-area">
 		<a-tabs v-model:activeKey="activeKey">
-			<a-tab-pane key="1" tab="景区"></a-tab-pane>
-			<a-tab-pane key="2" tab="酒店" force-render></a-tab-pane>
-			<a-tab-pane key="3" tab="餐饮"></a-tab-pane>
+			<a-tab-pane :key="1" tab="景区"></a-tab-pane>
+			<a-tab-pane :key="2" tab="酒店" force-render></a-tab-pane>
+			<a-tab-pane :key="3" tab="餐饮"></a-tab-pane>
 		</a-tabs>
 		<a-spin size="large" :spinning="state.tableData.loading">
 			<CommonTable :dataSource="state.tableData.data" :columns="columns">
@@ -62,7 +62,7 @@ import api from '@/api';
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 const route = useRouter();
-
+const activeKey = ref(1);
 const columns = [
 	{
 		title: '团单类型',
@@ -164,7 +164,7 @@ const status = {
 };
 onMounted(() => {
 	initList();
-	navigatorBar.setNavigator(['通用结算规则']);
+	navigatorBar.setNavigator(['产品结算规则']);
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();

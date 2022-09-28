@@ -97,7 +97,7 @@ const handleCancel = () => {
 };
 
 watch(
-	route,
+	() => route.query,
 	(res) => {
 		const id = route?.query?.id;
 		if (id) {

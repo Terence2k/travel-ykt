@@ -35,12 +35,15 @@
 				<a-button @click="cancel">取消</a-button>
 			</template>
 		</BaseModal>
+		<DelModal :params="{ title: '删除', content: '是否确定该条数据' }" v-model="delShow" @submit="delSubmit" @cancel="delCancel" />
 	</div>
 </template>
 
 <script setup lang="ts">
 import CommonTable from '@/components/common/CommonTable.vue';
 import BaseModal from '@/components/common/BaseModal.vue';
+import DelModal from '@/components/common/DelModal.vue';
+
 import { Form } from 'ant-design-vue';
 
 import api from '@/api';
@@ -114,10 +117,22 @@ const columnsCount = ref([
 		width: 200,
 	},
 ]);
-
+// 删除提示
+const delShow = ref(false);
+const delIndex = ref<null | number>();
 const emits = defineEmits(['del-rule-obj', 'add-rule-obj']);
 const del = (index: number) => {
-	emits('del-rule-obj', index);
+	// emits('del-rule-obj', index);
+	delShow.value = true;
+	delIndex.value = index;
+};
+const delSubmit = () => {
+	emits('del-rule-obj', toRaw(delIndex.value));
+	delCancel();
+};
+const delCancel = () => {
+	delShow.value = false;
+	delIndex.value = null;
 };
 const modelValue = ref(false);
 const CreateData = () => {

@@ -1,7 +1,7 @@
 <template>
 	<div class="editWrapper">
 		<header class="title">基本信息</header>
-		<a-form class="" ref="formRef" :label-col="{ span: 3 }" labelAlign="left" :wrapper-col="{ span: 7 }" :scrollToFirstError="true">
+		<a-form class="" ref="formRef" :model="formData" :label-col="{ span: 3 }" labelAlign="left" :wrapper-col="{ span: 7 }" :scrollToFirstError="true">
 			<a-form-item label="归属景区">
 				<a-input v-model:value="formData.data.scenicId" placeholder="请填写景区名字" />
 			</a-form-item>
@@ -19,10 +19,10 @@
 					<a-select-option :value="2">老人</a-select-option>
 				</a-select>
 			</a-form-item>
-			<a-form-item label="可预定时间" v-bind="validateInfos[`data.orderTimeRule`]">
+			<a-form-item label="可预定时间" v-bind="errorInfos" style="margin-bottom: 10px">
 				<a-radio-group v-model:value="formData.data.orderTimeRule">
-					<a-radio :value="0">当日可定</a-radio>
-					<a-radio :value="1">次日可定</a-radio>
+					<a-radio :value="false">当日可定</a-radio>
+					<a-radio :value="true">次日可定</a-radio>
 				</a-radio-group>
 				<br />
 				<br />
@@ -65,7 +65,7 @@
 			<a-form-item label="门票库存" v-bind="validateInfos[`data.dayStock`]">
 				<a-input v-model:value="formData.data.dayStock" placeholder="输入每日库存" />
 			</a-form-item>
-			<a-form-item label="票价" :wrapper-col="{ span: 12 }">
+			<a-form-item label="票价" :wrapper-col="{ span: 12 }" v-bind="errorPriceInfos">
 				<div class="table-wrapper">
 					<EditPriceTable :tableList="[{ wateryPrice: formData.data.wateryPrice, price: formData.data.price }]" />
 				</div>
@@ -111,39 +111,37 @@ const route = useRouter();
 
 const useForm = Form.useForm;
 const navigatorBar = useNavigatorBar();
-const scenicSpotOptions = useScenicSpotOption();
 // 数据
 const formData = reactive({
 	data: {
-		oid: 4, //新增时需要传主键
-		verificationType: 'ONE', //核销类型
-
-		scenicId: '1', //关联景区id
-		ticketName: '凤凰古城2.0v', //门票名称
-		ticketType: 1, //门票类型:0-儿童,1-成人,2-老人
-		orderTime: '03:04', //预约时间 单位:时分
-		orderTimeRule: 0, //预约时间规则:0-当日,1-次日
+		oid: null, //新增时需要传主键
+		verificationType: null, //核销类型
+		scenicId: null, //关联景区id
+		ticketName: null, //门票名称
+		ticketType: null, //门票类型:0-儿童,1-成人,2-老人
+		orderTime: null, //预约时间 单位:时分
+		orderTimeRule: null, //预约时间规则:0-当日,1-次日
 		validTime: null, //有效期 1~7
 		optionalVerificationCount: null, //有效期 1~7
-		assistId: 77, //辅助核销id
-		dayStock: 20, //门票日库存
-		wateryPrice: 30000, //水牌价
-		price: 50000, //售价
-		oneExplain: '单票说明', //单票说明
-		restsExplain: '其他说明', //其他说明
+		assistId: null, //辅助核销id
+		dayStock: null, //门票日库存
+		wateryPrice: null, //水牌价
+		price: null, //售价
+		oneExplain: null, //单票说明
+		restsExplain: null, //其他说明
 		itemList: [
-			{
-				itemId: 1, //itemId
-				verificationNumber: 30, //核销数
-				ifVerification: true, //是否必须核销
-			},
+			// {
+			// 	itemId: 1, //itemId
+			// 	verificationNumber: 30, //核销数
+			// 	ifVerification: true, //是否必须核销
+			// },
 		], //核销项目
 		discountList: [
-			{
-				ruleName: '军官半价', //规则名称
-				certifId: [141], //证件id
-				discount: 5, //打折比
-			},
+			// {
+			// 	ruleName: '军官半价', //规则名称
+			// 	certifId: [141], //证件id
+			// 	discount: 5, //打折比
+			// },
 		], //折扣集合
 	},
 });
@@ -152,25 +150,35 @@ const formData = reactive({
 const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
 	formData,
 	reactive({
-		'data.provinceId': [{ required: true, message: '请选择省份' }],
-		'data.cityId': [{ required: true, message: '请选择市' }],
+		'data.orderTime': [{ required: true, message: '请选择当日最晚可定票时间' }],
+		'data.orderTimeRule': [{ required: true, message: '请选择可预定时间' }],
+		'data.wateryPrice': [{ required: true, message: '请输入降水价' }],
+		'data.price': [{ required: true, message: '请输入价格' }],
+		'data.verificationType': [{ required: true, message: '请选择市' }],
+		'data.scenicId': [{ required: true, message: '请选择归属景区' }],
+		'data.ticketName': [{ required: true, message: '请输入门票名称' }],
+		'data.ticketType': [{ required: true, message: '请选择门票分类' }],
+
+		'data.validTime': [{ required: true, message: '请选择有效时间' }],
+		'data.optionalVerificationCount': [{ required: true, message: '请选择有效期' }],
+		'data.assistId': [{ required: true, message: '请选择市' }],
+		'data.dayStock': [{ required: true, message: '请输入门票库存' }],
+
+		'data.oneExplain': [{ required: true, message: '请输入' }],
+		'data.restsExplain': [{ required: true, message: '请输入' }],
 	})
 );
-
-//初始化下拉列表
-const initOpeion = async () => {
-	await scenicSpotOptions.getBusinessTypeOption();
-	await scenicSpotOptions.getAllAreaProvice(0);
-};
+//合并错误提示
+const errorInfos = computed(() => {
+	return mergeValidateInfo(toArray(validateInfos).splice(0, 2));
+});
+const errorPriceInfos = computed(() => {
+	return mergeValidateInfo(toArray(validateInfos).splice(2, 3));
+});
 //类型
 const type = computed(() => {
 	return route.currentRoute.value?.query?.t;
 });
-//下拉列表
-const businessTypeOption = computed(() => scenicSpotOptions.businessTypeOption);
-const proviceList = computed(() => scenicSpotOptions.proviceList);
-const cityList = computed(() => scenicSpotOptions.cityList);
-const areaList = computed(() => scenicSpotOptions.areaList);
 
 const tickerType = computed(() => (route.currentRoute.value?.query?.t === '1' ? '单票：单点核销' : '单票：多点核销'));
 // 提交
@@ -178,20 +186,23 @@ const onSubmit = async () => {
 	validate()
 		.then((res) => {
 			console.log(toRaw(formData.data), 'psss');
-			save(toRaw(formData.data));
+			// save(toRaw(formData.data));
+			route.currentRoute.value?.query?.s ? createInfo(toRaw(formData.data)) : editInfo(toRaw(formData.data));
 		})
 		.catch((err) => {
 			console.log('error', err);
 		});
 };
 // 保存
-const save = async (params: object) => {
-	let res = await api.changeScenicSpotInformation(params);
-	if (res) {
-		message.success('保存成功');
-		route.push({ path: '/scenic-spot/information/list' });
-	}
+const createInfo = (params: object) => {
+	console.log(params);
 };
+const editInfo = async (params: any) => {
+	let res = await api.saveSingleVoteInfo(params);
+	message.success(res);
+	route.push({ path: 'scenic-spot/singleVote/list' });
+};
+//删除
 const delRuleObj = (index: number) => {
 	formData.data.discountList.splice(index, 1);
 };
@@ -214,21 +225,27 @@ const reset = (): void => {
 };
 //初始化页面
 const initPage = async (): Promise<void> => {
-	route.currentRoute.value?.query?.s ? navigatorBar.setNavigator(['景区信息管理', '新增']) : navigatorBar.setNavigator(['景区信息管理', '编辑']);
+	route.currentRoute.value?.query?.s ? initCreatePage() : initEditPage();
+};
+
+const initEditPage = async () => {
+	navigatorBar.setNavigator(['景区信息管理', '编辑']);
+
+	let res = await api.getScenicSpotSignleDetail(route.currentRoute.value?.query?.oid);
+	formData.data = res;
+};
+
+const initCreatePage = () => {
+	navigatorBar.setNavigator(['景区信息管理', '新增']);
 	formData.data.verificationType = route.currentRoute.value?.query?.t === '1' ? 'ONE' : 'MANY';
 };
-//创建
-const createInfo = () => {};
-// 编辑
-const editInfo = () => {};
 
 onMounted(() => {
-	initOpeion();
 	initPage();
 	// 自定义面包屑
 });
 onBeforeUnmount(() => {
-	navigatorBar.clearNavigator();
+	// navigatorBar.clearNavigator();
 });
 </script>
 
