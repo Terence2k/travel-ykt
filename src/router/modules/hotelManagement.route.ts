@@ -110,6 +110,15 @@ export default [
 					},
 				],
 			},
+
+			{
+				path: 'roomBooking',
+				name: 'roomBooking',
+				component: () => import('@/views/hotelManagement/roomBooking/index.vue'),
+				meta: {
+					title: '房间预定管理',
+				},
+			},
 		],
 	},
 ];
