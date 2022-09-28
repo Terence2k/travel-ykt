@@ -71,7 +71,7 @@ export default [
 						},
 					},
 					{
-						path: 'check',
+						path: 'check/name/:name/businessType/:businessType/businessTypeName/:businessTypeName/regionName/:regionName/creditCode/:creditCode/businessLicenseUrl/:businessLicenseUrl/contactName/:contactName/phone/:phone/account/:account/oid/:oid',
 						component: () => import('@/views/baseInfoManage/businessManagement/check.vue'),
 						name: 'check',
 						meta: {
@@ -80,9 +80,10 @@ export default [
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
+						props: true
 					},
 					{
-						path: 'details',
+						path: 'details/name/:name/businessTypeName/:businessTypeName/regionName/:regionName/creditCode/:creditCode/businessLicenseUrl/:businessLicenseUrl/contactName/:contactName/phone/:phone/account/:account',
 						component: () => import('@/views/baseInfoManage/businessManagement/details.vue'),
 						name: 'details',
 						meta: {
@@ -91,6 +92,7 @@ export default [
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
+						props: true
 					},
 
 				]
