@@ -22,6 +22,7 @@
 								:name="[record.key, column.key]">
 								<a-date-picker 
 									:show-time="{ format: 'HH:mm' }" 
+									value-format="YYYY-MM-DD HH:mm"
 									v-model:value="editableData[record.key][column.dataIndex]" />
 							</a-form-item>
 							<template v-else>
@@ -62,7 +63,7 @@
 			</CommonTable>
 		</a-form>
 		<div class="footer-btn">
-			<a-button type="primary">添加</a-button>
+			<a-button type="primary" @click="add">添加</a-button>
 		</div>
 	</div> 
 </template>
@@ -77,7 +78,9 @@ const {
 	edit, 
 	save,
 	rulesRef,
-	formRef } = useGuideInfo()
+	formRef,
+	getGuideList, add } = useGuideInfo()
+	getGuideList()
 </script>
 <style lang="less" scoped>
 	.tips {

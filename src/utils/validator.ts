@@ -1,3 +1,5 @@
+import type { FormInstance } from 'ant-design-vue';
+
 // 验证是否整数
 export function isIntegerNotMust(rule: any, value: any, callback: any) {
 	if (!Number(value)) {
@@ -28,4 +30,28 @@ export function isBtnZeroToHundred(rule: any, value: any, callback: any) {
 			}
 		}
 	}, 100);
+}
+
+export function validateRules(rules:any, data:any, key?:string) {
+	let rulesRef:any = {}
+	if (key) {
+		rulesRef[key] = rules;
+	} else {
+		for (let k in data) {
+			rulesRef[k] = rules;
+		}
+	}
+	return rulesRef
+}
+
+export async function validateFields(fromRef: FormInstance) {
+	let flag = false
+	try {
+		const values = await fromRef.validateFields()
+		// console.log('Success:', values);
+		flag = true
+	} catch (errorInfo) {
+		// console.log('Failed:', errorInfo);
+	}
+	return flag;
 }
