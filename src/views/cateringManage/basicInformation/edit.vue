@@ -77,9 +77,9 @@
 				<div class="title">补充说明</div>
 
 				<a-form-item label="营业时间" required>
-					<a-time-picker v-model:value="formData.data.starttime" valueFormat="HH:mm" :placeholder="formData.data.startTime" />
+					<a-time-picker v-model:value="formData.data.starttime" format="HH:mm" :placeholder="formData.data.startTime" />
 					<span class="span_width">至</span>
-					<a-time-picker v-model:value="formData.data.endtime" valueFormat="HH:mm" :placeholder="formData.data.endTime" />
+					<a-time-picker v-model:value="formData.data.endtime" format="HH:mm" :placeholder="formData.data.endTime" />
 				</a-form-item>
 				<a-form-item label="联系电话" v-bind="validateInfos[`data.shopPhone`]">
 					<a-input v-model:value="formData.data.shopPhone" placeholder="请输入联系电话" />
@@ -109,7 +109,6 @@ import Pic from '@/components/common/imageWrapper.vue';
 import { toArray } from 'lodash';
 import api from '@/api';
 const useForm = Form.useForm;
-
 const navigatorBar = useNavigatorBar();
 const route = useRouter();
 
@@ -171,6 +170,10 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 const errorInfos = computed(() => {
 	return mergeValidateInfo(toArray(validateInfos).splice(0, 4));
 });
+
+const disabledDate = (time: any) => {
+	return time.getTime() < Date.now() - 24 * 60 * 60 * 1000;
+};
 
 const onSubmit = () => {
 	validate()
@@ -238,7 +241,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .warp {
 	width: 100%;
 	box-sizing: border-box;

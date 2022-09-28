@@ -65,9 +65,9 @@
 			<a-form-item label="门票库存" v-bind="validateInfos[`data.dayStock`]">
 				<a-input v-model:value="formData.data.dayStock" placeholder="输入每日库存" />
 			</a-form-item>
-			<a-form-item label="票价" :wrapper-col="{ span: 12 }" v-bind="errorPriceInfos">
+			<a-form-item label="票价" :wrapper-col="{ span: 12 }" v-bind="errorPriceInfos" style="margin-bottom: 10px">
 				<div class="table-wrapper">
-					<EditPriceTable :tableList="[{ wateryPrice: formData.data.wateryPrice, price: formData.data.price }]" />
+					<EditPriceTable :tableList="[{ wateryPrice: formData.data.wateryPrice, price: formData.data.price }]" @change-price="changePrice" />
 				</div>
 			</a-form-item>
 			<a-form-item label="费用包含">
@@ -193,6 +193,17 @@ const onSubmit = async () => {
 			console.log('error', err);
 		});
 };
+interface interfaceType {
+	wateryPrice: null | number;
+	price: null | number;
+}
+
+const changePrice = (val: interfaceType) => {
+	const { wateryPrice, price } = val;
+	console.log('emit get ', val);
+	formData.data.wateryPrice = wateryPrice;
+	formData.data.price = price;
+};
 // 保存
 const createInfo = (params: object) => {
 	console.log(params);
@@ -200,7 +211,7 @@ const createInfo = (params: object) => {
 const editInfo = async (params: any) => {
 	let res = await api.saveSingleVoteInfo(params);
 	message.success(res);
-	route.push({ path: 'scenic-spot/singleVote/list' });
+	route.push({ path: '/scenic-spot/singleVote/list' });
 };
 //删除
 const delRuleObj = (index: number) => {
@@ -215,9 +226,8 @@ const delVerificationObj = (index: number) => {
 	formData.data.itemList.splice(index, 1);
 };
 const addVerificationObj = (obj: object) => {
-	console.log(obj);
-
-	formData.data.itemList.push(obj);
+	console.log(obj, 'addVerificationObj');
+	formData.data.itemList.push(toRaw(obj));
 };
 // 重置
 const reset = (): void => {

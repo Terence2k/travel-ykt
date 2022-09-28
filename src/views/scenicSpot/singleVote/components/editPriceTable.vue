@@ -2,10 +2,24 @@
 	<CommonTable :dataSource="tableList" :columns="columnsCount" :scrollY="false" bordered>
 		<template #bodyCell="{ column, record }">
 			<template v-if="column.key === 'wateryPrice'">
-				<a-input v-model:value="formData.data.wateryPrice" placeholder="输入" />
+				<a-input-number
+					:controls="false"
+					:formatter="(value) => value.replace(/\D/g, '')"
+					:parser="(value) => value.replace(/\D/g, '')"
+					v-model:value="formData.data.wateryPrice"
+					placeholder="输入"
+					@change="changePrice"
+				/>
 			</template>
 			<template v-if="column.key === 'price'">
-				<a-input v-model:value="formData.data.price" placeholder="输入" />
+				<a-input-number
+					:controls="false"
+					:formatter="(value) => value.replace(/\D/g, '')"
+					:parser="(value) => value.replace(/\D/g, '')"
+					v-model:value="formData.data.price"
+					placeholder="输入"
+					@change="changePrice"
+				/>
 			</template>
 		</template>
 	</CommonTable>
@@ -24,6 +38,19 @@ const route = useRouter();
 const type = computed(() => {
 	return route.currentRoute.value?.query?.t;
 });
+
+watch(
+	() => props.tableList,
+	async (nV, oV) => {
+		if (nV !== oV) {
+			formData.data = nV[0];
+		}
+	}
+);
+const emits = defineEmits(['change-price']);
+const changePrice = () => {
+	emits('change-price', formData.data);
+};
 const useForm = Form.useForm;
 
 const props = defineProps({
@@ -50,12 +77,12 @@ const columnsCount = ref([
 		width: 200,
 	},
 ]);
-console.log(props.tableList[0].wateryPrice);
 
 // 数据
 const formData = reactive({
 	data: {
-		wateryPrice: props.tableList[0].wateryPrice,
+		wateryPrice: null,
+		price: null,
 	},
 });
 // 表单
