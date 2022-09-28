@@ -226,9 +226,8 @@ const delVerificationObj = (index: number) => {
 	formData.data.itemList.splice(index, 1);
 };
 const addVerificationObj = (obj: object) => {
-	console.log(obj);
-
-	formData.data.itemList.push(obj);
+	console.log(obj, 'addVerificationObj');
+	formData.data.itemList.push(toRaw(obj));
 };
 // 重置
 const reset = (): void => {

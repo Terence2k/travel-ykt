@@ -1,6 +1,7 @@
 <template>
 	<div class="wrapper">
 		<BaseModal :modelValue="modelValue" title="关联核销项目" width="600px" @cancel="cancel">
+			{{ formValidate.proj }}
 			<a-form :model="formValidate" :label-col="{ span: 3 }" :wrapper-col="{ span: 12, offset: 1 }" labelAlign="left">
 				<a-form-item label="核销项目" class="fz14" v-bind="validateInfos.proj">
 					<a-select
@@ -177,11 +178,12 @@ const delCancel = () => {
 const apply = () => {
 	validate()
 		.then((res) => {
-			cancel();
-			resetFields();
-			console.log(formValidate, res);
+			toRaw(formValidate.proj).map((i) => {
+				emits('add-verification-obj', { itemId: i, ifVerification: null, verificationNumber: null });
+				return i;
+			});
 
-			emits('add-verification-obj', toRaw(res));
+			cancel();
 		})
 		.catch((err) => {
 			console.log('error', err);
@@ -194,7 +196,7 @@ const CreateData = () => {
 
 const cancel = () => {
 	modelValue.value = false;
-	resetFields();
+	// resetFields();
 };
 const options = ref([
 	{
@@ -220,7 +222,10 @@ const formData = reactive({
 	data: [],
 });
 
-const handleChange = () => {};
+const handleChange = (value) => {
+	console.log(value);
+	formValidate.proj = value;
+};
 // 表单
 const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
 	formValidate,
@@ -230,6 +235,12 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 );
 const getList = async () => {
 	formData.data = await api.getVariflist();
+	let res = await api.getScenicOneTicket();
+
+	let arr = res.map((i) => {
+		return { value: i.id, label: i.itemName };
+	});
+	options.value = arr;
 };
 
 // 删除提示
