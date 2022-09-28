@@ -106,6 +106,18 @@ export default [
 					isDetail: false, // 在左侧的导航栏不会展示
 				},
 			},
+			// 
+			{
+				path: 'auditProcess',
+				component: () => import('@/views/baseInfoManage/auditProcess/index.vue'),
+				name: 'auditProcess',
+				meta: {
+					title: '审核流程配置',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					isDetail: false, // 在左侧的导航栏不会展示
+				},
+			},
 		],
 	},
 ];
