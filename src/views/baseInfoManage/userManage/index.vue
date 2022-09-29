@@ -140,8 +140,7 @@
         status: null,
       },
       roleParam: {
-        pageNo: 1,
-        pageSize: 100000,
+        businessType: ''
       }
     },
     params: {},
@@ -177,18 +176,6 @@
     state.operationModal.showDetails = false;
   };
 
-  const getRoleList = () => {
-    api.roleList(state.tableData.roleParam).then((res: any) => {
-      console.log('角色列表:', res);
-      state.optionRoleList = res.content.map((item: any) => {
-        return {
-          roleName: item.roleName,
-          roleId: item.oid
-        }
-      });
-    })
-  }
-
   const addOrUpdate = (param: any) => {
     const { row, handle } = param;
     console.log(row);
@@ -219,7 +206,6 @@
   }
 
   onMounted(() => {
-    getRoleList();
     onSearch();
   })
 </script>
