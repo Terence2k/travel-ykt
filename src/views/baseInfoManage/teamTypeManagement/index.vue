@@ -42,8 +42,7 @@
       </a-form-item>
       <a-form-item label="必购项目">
         <a-transfer v-model:target-keys="targetKeys" class="tree-transfer" :data-source="dataSource"
-          :render="(item: any) => item.title" :show-select-all="false" @change="transferChange"
-          :titles="['必购项目', '必购项目已选中']">
+          :render="(item: any) => item.title" :show-select-all="false" :titles="['必购项目', '必购项目已选中']">
           <template #children="{ direction, selectedKeys, onItemSelect }">
             <a-tree v-if="direction === 'left'" block-node checkable default-expand-all
               :checked-keys="[...selectedKeys, ...targetKeys]" :tree-data="tData" @check="
@@ -75,7 +74,8 @@ import CommonPagination from '@/components/common/CommonPagination.vue'
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
-import type { TransferProps, TreeProps } from 'ant-design-vue';
+import type { TransferProps } from 'ant-design-vue';
+import { flatten, onChecked, format } from '@/views/baseInfoManage/teamTypeManagement/transfer'
 const columns = [
   {
     title: '序号',
@@ -150,7 +150,6 @@ const state = reactive({
 const { tableData } = toRefs(state)
 const modalVisible = ref<boolean>(false)
 const title = ref<string>('新增团队类型')
-
 /* 穿梭框相关 */
 const targetKeys = ref<number[]>([]);
 const tData: TransferProps['dataSource'] = [
@@ -178,103 +177,7 @@ const tData: TransferProps['dataSource'] = [
     ],
   },
 ];
-function formattingData(arr: any, group_key: string, _key: string) {
-  // 先定义一个空对象和空数组；
-  let map: any = {};
-  let res: any = [];
-  // 循环需要筛选的数组
-  for (let i = 0; i < arr.length; i++) {
-    let ai = arr[i];
-    // 将需要筛选的属性的值作为新对象的键，并且判断是否已经存在
-    if (!map[ai[group_key]]) {
-      // 不存在的话就在map对象中创建一个属性的值作为键名，键值为空数组的新对象，并且把arr[i]放入
-      map[ai[group_key]] = [ai.productId];
-    } else {
-      // 如果已经存在就直接把arr[i]放入
-      map[ai[group_key]].push(ai.productId);
-    }
-  }
-  // 循环后对map进行处理生成分组的数组
-  Object.keys(map).forEach((key) => {
-    res.push({
-      [group_key]: Number(key),
-      [_key]: map[key],
-    });
-  });
-  return res;
-}
-
-const format = (arr: any, tArr: TransferProps['dataSource']) => {
-  let ret: any = []
-  for (let i = arr.length - 1; i >= 0; i--) {
-    const element = arr[i];
-    for (let j = tArr.length - 1; j >= 0; j--) {
-      const telement = tArr[j];
-      if (telement?.children) {
-        for (let k = telement.children.length - 1; k >= 0; k--) {
-          const celement = telement.children[k];
-          if (element === celement?.key) {
-            ret.push({
-              itemId: telement.key, //项目id
-              productId: element //产品id
-            })
-          }
-        }
-      }
-    }
-  }
-  if (ret.length > 0) {
-    return formattingData(ret, 'itemId', 'productId')
-  }
-}
-
-const transferDataSource: TransferProps['dataSource'] = [];
-/* 扁平化 */
-function flatten(list: TransferProps['dataSource'] = []) {
-  list.forEach(item => {
-    transferDataSource.push(item);
-    flatten(item.children);
-  });
-}
-flatten(JSON.parse(JSON.stringify(tData)));
-const dataSource = ref(transferDataSource);
-
-/* function handleTreeData(data: TransferProps['dataSource'], targetKeys: string[] = []) {
-  data.forEach((item, index) => {
-    item['disabled'] = targetKeys.includes(item.key as any);
-    if (item.children) {
-      handleTreeData(item.children, targetKeys);
-    }
-  });
-  return data as TreeProps['treeData'];
-}
-const treeData = computed(() => {
-  return handleTreeData(tData, targetKeys.value);
-}); */
-
-function isChecked(selectedKeys: (string | number)[], eventKey: string | number) {
-  return selectedKeys.indexOf(eventKey) !== -1;
-}
-const onChecked = (
-  e: Parameters<TreeProps['onCheck']>[1] | Parameters<TreeProps['onSelect']>[1],
-  checkedKeys: string[],
-  onItemSelect: (n: any, c: boolean) => void,
-) => {
-  if (e.node.children) {
-    e.node.children.forEach((item: any) => {
-      onItemSelect(item.key, !isChecked(checkedKeys, item.key));
-    })
-  } else {
-    const { eventKey } = e.node;
-    onItemSelect(eventKey, !isChecked(checkedKeys, eventKey));
-  }
-};
-const transferChange = (targetKeys: string[], direction: string, moveKeys: string[]) => {
-  console.log(targetKeys, direction, moveKeys, '$$$$$');
-  /* nextTick(() => {
-    draggable(targetKeys)
-  }) */
-}
+const dataSource = ref(flatten(tData));
 
 interface addInterface {
   row?: any
@@ -318,7 +221,6 @@ const onHandleCurrentChange = (val: number) => {
   state.tableData.param.pageNo = val;
   onSearch();
 }
-
 const pageSideChange = (current: number, size: number) => {
   state.tableData.param.pageSize = size;
   onSearch();
@@ -328,16 +230,16 @@ const onSearch = async () => {
   state.tableData.data = res.content
   state.tableData.total = res.total
 }
-
 const closeModal = () => {
   modalVisible.value = false
   teamRef.value.resetFields()
   targetKeys.value = []
 }
+const teamTypeKeys = { parentKey: 'itemId', childrenKey: 'productId' }
 const save = () => {
   teamRef.value.validate().then(async (val: any) => {
     if (isAdd) {
-      let teamTypeItemBos = format(targetKeys.value, tData);
+      let teamTypeItemBos = format(targetKeys.value, tData, teamTypeKeys);
       let res = await api.addTeamType({ ...toRaw(teamForm), teamTypeItemBos });
       if (res === "添加成功") {
         message.success('新增团队类型成功！')
@@ -347,10 +249,9 @@ const save = () => {
         message.error('新增团队类型失败！')
       }
     } else {
-      console.log('edit');
       let teamTypeItemBos
       if (targetKeys.value !== normalProductIds) {
-        teamTypeItemBos = format(targetKeys.value, tData);
+        teamTypeItemBos = format(targetKeys.value, tData, teamTypeKeys);
       } else {
         teamTypeItemBos = undefined
       }
@@ -367,122 +268,6 @@ const save = () => {
     console.log(err);
   })
 }
-
-
-// draggable
-const draggable = (keys: string[]) => {
-  const node: HTMLUListElement = document.querySelector('.ant-transfer-list-content')!;
-  const childrenList = Array.from(node.children)
-  childrenList.forEach((item, index) => {
-    item.setAttribute('draggable', 'true')
-    item.setAttribute('data-key', keys[index])
-  });
-  let draging: EventTarget;
-  //使用事件委托，将li的事件委托给ul
-  node.ondragstart = function (event) {
-    //firefox设置了setData后元素才能拖动！！！！
-    //event.target出发事件的元素
-    event.dataTransfer.setData("te", event.target.innerText); //不能使用text，firefox会打开新tab
-    //event.dataTransfer.setData("self", event.target);
-    draging = event.target!;
-  }
-  node.ondragover = function (event) {
-    //取消默认行为
-    event.preventDefault();
-    const target = event.target!;
-    //因为dragover会发生在ul上，所以要判断是不是li
-    if (target.nodeName === "LI") {
-      if (target !== draging) {
-        //getBoundingClientRect()用于获取某个元素相对于视窗的位置集合
-        const targetRect = target.getBoundingClientRect();
-        const dragingRect = draging.getBoundingClientRect();
-        if (target) {
-          if (target.animated) {
-            return;
-          }
-        }
-        if (_index(draging) < _index(target)) {
-          //nextSibling 属性可返回某个元素之后紧跟的节点（处于同一树层级中）。
-          target.parentNode.insertBefore(draging, target.nextSibling);
-        } else {
-          target.parentNode.insertBefore(draging, target);
-        }
-        _animate(dragingRect, draging);
-        _animate(targetRect, target);
-      }
-    }
-  }
-  node.ondragend = function (event) {
-    const childrenList = document.querySelectorAll('.ant-transfer-list-content-item')
-    childrenList.forEach((item, index) => {
-      const key = item.getAttribute('data-key')!
-      targetKeys.value[index] = key
-    });
-  }
-  //获取元素在父元素中的index
-  function _index(el: EventTarget) {
-    var index = 0;
-    if (!el || !el.parentNode) {
-      return -1;
-    }
-    //previousElementSibling属性返回指定元素的前一个兄弟元素（相同节点树层中的前一个元素节点）。
-    while (el && (el = el.previousElementSibling)) {
-      index++;
-    }
-    return index;
-  }
-
-  function _animate(prevRect, target) {
-    var ms = 300;
-    if (ms) {
-      var currentRect = target.getBoundingClientRect();
-      //nodeType 属性返回以数字值返回指定节点的节点类型。1=元素节点  2=属性节点
-      if (prevRect.nodeType === 1) {
-        prevRect = prevRect.getBoundingClientRect();
-      }
-      _css(target, 'transition', 'none');
-      _css(target, 'transform', 'translate3d(' +
-        (prevRect.left - currentRect.left) + 'px,' +
-        (prevRect.top - currentRect.top) + 'px,0)'
-      );
-      target.offsetWidth; // 触发重绘
-      //放在timeout里面也可以
-      // setTimeout(function() {
-      //     _css(target, 'transition', 'all ' + ms + 'ms');
-      //     _css(target, 'transform', 'translate3d(0,0,0)');
-      // }, 0);
-      _css(target, 'transition', 'all ' + ms + 'ms');
-      _css(target, 'transform', 'translate3d(0,0,0)');
-      clearTimeout(target.animated);
-      target.animated = setTimeout(function () {
-        _css(target, 'transition', '');
-        _css(target, 'transform', '');
-        target.animated = false;
-      }, ms);
-    }
-  }
-  //给元素添加style
-  function _css(el, prop, val) {
-    let style = el && el.style;
-    if (style) {
-      if (val === void 0) {
-        //使用DefaultView属性可以指定打开窗体时所用的视图
-        if (document.defaultView && document.defaultView.getComputedStyle) {
-          val = document.defaultView.getComputedStyle(el, '');
-        } else if (el.currentStyle) {
-          val = el.currentStyle;
-        }
-        return prop === void 0 ? val : val[prop];
-      } else {
-        if (!(prop in style)) {
-          prop = '-webkit-' + prop;
-        }
-        style[prop] = val + (typeof val === 'string' ? '' : 'px');
-      }
-    }
-  }
-}
-
 onMounted(() => {
   onSearch()
 })
