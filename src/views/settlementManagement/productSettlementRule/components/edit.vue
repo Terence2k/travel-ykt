@@ -12,15 +12,21 @@
 			autocomplete="off"
 		>
 			<a-form-item label="团单类型" name="teamTypeId">
-				<a-select v-model:value="formState.teamTypeId" placeholder="请选择团单类型" allowClear>
-					<a-select-option :value="1">Jack</a-select-option>
-					<a-select-option :value="2">Lucy</a-select-option>
+				<a-select
+					v-model:value="formState.teamTypeId"
+					placeholder="请选择团单类型"
+					allowClear
+					:options="generaRulesOptions.teamTypeList.map((item) => ({ value: item.oid, label: item.name }))"
+				>
 				</a-select>
 			</a-form-item>
-			<a-form-item label="结算产品" name="productId">
-				<a-select v-model:value="formState.productId" placeholder="请选择结算产品" allowClear>
-					<a-select-option :value="1">Jack</a-select-option>
-					<a-select-option :value="2">Lucy</a-select-option>
+			<a-form-item label="结算产品" name="productType">
+				<a-select
+					v-model:value="formState.productType"
+					placeholder="请选择结算产品"
+					allowClear
+					:options="generaRulesOptions.productTypeList.map((item) => ({ value: item.value, label: item.name }))"
+				>
 				</a-select>
 			</a-form-item>
 			<a-form-item label="费用名称" name="costName">
@@ -31,19 +37,16 @@
 			</a-form-item>
 			<a-form-item label="状态" name="ruleStatus">
 				<a-radio-group v-model:value="formState.ruleStatus">
-					<a-radio :value="1">启用</a-radio>
-					<a-radio :value="0">禁用</a-radio>
+					<a-radio v-for="item in generaRulesOptions.ruleStatusList" :value="item.value" :key="item.name">{{ item.name }}</a-radio>
 				</a-radio-group>
 			</a-form-item>
 			<a-form-item label="优先级" name="level">
-				<a-input v-model:value="formState.level" placeholder="请输入规则优先级" allowClear />
+				<a-input-number v-model:value="formState.level" placeholder="请输入规则优先级" style="width: 100%"> </a-input-number>
 			</a-form-item>
 			<div class="title">扣费规则</div>
 			<a-form-item label="收费模式" name="chargeModel">
 				<a-radio-group v-model:value="formState.chargeModel">
-					<a-radio :value="1">百分比</a-radio>
-					<a-radio :value="2">人数</a-radio>
-					<a-radio :value="3">价格</a-radio>
+					<a-radio v-for="item in generaRulesOptions.chargeModelList" :value="item.value" :key="item.name">{{ item.name }}</a-radio>
 				</a-radio-group>
 			</a-form-item>
 			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 1" :rules="rulesRef.percentage">
@@ -68,34 +71,58 @@
 				</a-input-number>
 			</a-form-item>
 
-			<a-form-item label="收费子产品" name="chargeProductSonId">
-				<a-select v-model:value="formState.chargeProductSonId" placeholder="请选择收费子产品" allowClear>
-					<a-select-option :value="1">Jack</a-select-option>
-					<a-select-option :value="2">Lucy</a-select-option>
+			<a-form-item label="收费子产品" name="productSonType">
+				<a-select
+					v-model:value="formState.productSonType"
+					placeholder="请选择收费子产品"
+					allowClear
+					:options="generaRulesOptions.productSonTypeList.map((item) => ({ value: item.value, label: item.name }))"
+				>
 				</a-select>
 			</a-form-item>
 			<a-form-item label="是否垫付" name="isPrepaid">
 				<a-radio-group v-model:value="formState.isPrepaid">
-					<a-radio :value="1">是</a-radio>
-					<a-radio :value="0">否</a-radio>
+					<a-radio v-for="item in generaRulesOptions.isPrepaidList" :value="item.value" :key="item.name">{{ item.name }}</a-radio>
 				</a-radio-group>
 			</a-form-item>
 			<a-form-item label="垫付单位" name="prepaidCompany" v-if="formState.isPrepaid === 1">
-				<a-radio-group v-model:value="formState.prepaidCompany" :options="unitList" />
+				<!-- <a-radio-group v-model:value="formState.prepaidCompany" :options="unitList" /> -->
 				<!-- <a-checkbox-group v-model:value="formState.prepaidCompany" :options="unitList" /> -->
+				<a-select
+					v-model:value="formState.prepaidCompany"
+					placeholder="请选择垫付单位"
+					allowClear
+					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.value, label: item.name }))"
+				>
+				</a-select>
 			</a-form-item>
 			<div class="title">
 				分账规则
 				<a-button style="margin-left: 5px" type="primary" @click="addRules">新增</a-button>
 			</div>
 			<a-form-item label="剩余费用归属" name="lastCostBelongCompany">
-				<a-select allowClear v-model:value="formState.lastCostBelongCompany" style="width: 100%" placeholder="请选择结算产品">
-					<a-select-option :value="1">Jack</a-select-option>
-					<a-select-option :value="2">Lucy</a-select-option>
+				<a-select
+					allowClear
+					v-model:value="formState.lastCostBelongCompany"
+					style="width: 100%"
+					placeholder="请选择剩余费用归属"
+					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.value, label: item.name }))"
+				>
 				</a-select>
 			</a-form-item>
 			<CommonTable :dataSource="formState.splitList" :columns="columns" :scrollY="false" :scroll="{ y: '300px' }">
 				<template #bodyCell="{ column, record, index }">
+					<template v-if="column.key === 'companyType'">
+						<span>{{ getCompanyTypeName(record.companyType) }}</span>
+					</template>
+					<template v-if="column.key === 'splitModel'">
+						<span v-if="record.splitModel === 1">百分比</span>
+						<span v-if="record.splitModel === 2">价格</span>
+					</template>
+					<template v-if="column.key === 'splitCount'">
+						<span v-if="record.splitModel === 1">{{ record.splitCount }}%</span>
+						<span v-if="record.splitModel === 2">{{ record.splitCount }}元</span>
+					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a href="javascript:;" @click="editItem(record, index)">编辑</a>
@@ -108,7 +135,7 @@
 		<div class="footer">
 			<div class="tooter-btn">
 				<a-button type="primary" @click="submit">保存</a-button>
-				<a-button type="primary">取消</a-button>
+				<a-button type="primary" @click="cancel">取消</a-button>
 			</div>
 		</div>
 	</div>
@@ -129,7 +156,9 @@ import { isIntegerNotMust, isBtnZeroToHundred } from '@/utils/validator';
 import api from '@/api';
 import { updateProductRule } from '@/api/settlementManage.api';
 import { FormState } from './type';
+import { useGeneraRules } from '@/stores/modules/GeneraRules';
 const navigatorBar = useNavigatorBar();
+const generaRulesOptions = useGeneraRules();
 const formRef = ref();
 const formState: UnwrapRef<FormState> = reactive({
 	costName: null,
@@ -145,6 +174,8 @@ const formState: UnwrapRef<FormState> = reactive({
 	chargeModel: null,
 	costExplanation: null,
 	level: null,
+	productSonType: null,
+	productType: null,
 });
 const columns = ref([
 	{
@@ -173,11 +204,10 @@ const columns = ref([
 		key: 'action',
 	},
 ]);
-const unitList = ['旅行社', '集团', '监理公司', '一卡通', '协会'];
 const rulesRef = {
 	costName: [{ required: true, message: '请输入费用名称' }],
 	teamTypeId: [{ required: true, message: '请选择团单类型' }],
-	productId: [{ required: true, message: '请选择结算产品' }],
+	productType: [{ required: true, message: '请选择结算产品' }],
 	costExplanation: [{ required: true, message: '请输入费用说明' }],
 	ruleStatus: [{ required: true, message: '请选择状态' }],
 	level: [{ required: true, validator: isIntegerNotMust, trigger: 'blur' }],
@@ -201,12 +231,17 @@ const cacheData = ref({
 	rulesParams: {},
 	edit: false,
 });
+const oid = ref(null);
+// 初始化
 const init = () => {
 	const route = useRouter();
 	const query = route.currentRoute.value.query;
+	generaRulesOptions.getTeamTypeList();
 	if (query && query.oid) {
+		oid.value = query.oid;
 		navigatorBar.setNavigator(['编辑']);
 		cacheData.value.edit = true;
+		productRuleDetail(query.oid);
 	} else {
 		navigatorBar.setNavigator(['新增']);
 		cacheData.value.edit = false;
@@ -216,6 +251,14 @@ const init = () => {
 		formState.isPrepaid = 0;
 		// 默认为百分比
 		formState.chargeModel = 1;
+	}
+};
+const productRuleDetail = async (id: number) => {
+	const result = await api.productRuleDetail(id);
+	for (let key in formState) {
+		if (result[key]) {
+			formState[key] = result[key];
+		}
 	}
 };
 const delItem = (index: any) => {
@@ -264,19 +307,50 @@ const submit = () => {
 		});
 };
 const save = async () => {
+	saveParams();
 	console.log(formState, `formState`);
 	const result = await api.saveProductRule(formState);
-	console.log(result, `result`);
+	message.success('保存成功');
+	route.push({ path: '/settlementManagement/productSettlementRule/list' });
 };
 const edit = async () => {
+	saveParams();
 	const result = await api.updateProductRule(formState);
 	console.log(result, `result`);
+	message.success('修改成功');
+	route.push({ path: '/settlementManagement/productSettlementRule/list' });
+	// if (result.status === 200) {
+	// 	message.success('修改成功');
+	// 	route.push({ path: '/settlementManagement/productSettlementRule/list' });
+	// } else {
+	// 	message.error(`系统出错`);
+	// }
+};
+const saveParams = () => {
+	// 暂时写死
+	formState.chargeProductSonId = 1;
+	// 暂时写死
+	formState.productId = 1;
+	if (formState.productSonType === 'SELF') {
+		formState.chargeProductSonId = formState.productId;
+	}
+	if (oid.value) {
+		formState.oid = oid.value;
+	}
+};
+const route = useRouter();
+const cancel = () => {
+	route.go(-1);
 };
 onMounted(() => {
 	init();
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
+});
+// 获取表格分账规则分账单位名称
+const getCompanyTypeName = computed(() => (value: number) => {
+	return generaRulesOptions.prepaidCompanyList[value]['name'];
 });
 </script>
 

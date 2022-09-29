@@ -211,7 +211,9 @@
 
   const init = async () => {
     console.log('params', props.params);
-    formValidate.value = {};
+    formValidate.value = {
+      roleStatus: 1
+    };
     if (props.params?.oid) {
       getDetail(props.params.oid);
       options.title = '编辑角色';

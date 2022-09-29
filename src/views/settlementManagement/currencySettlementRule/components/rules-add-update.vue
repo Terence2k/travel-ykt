@@ -8,37 +8,36 @@
 			:wrapper-col="{ span: 16, offset: 1 }"
 			placeholder="请选择分账单位"
 		>
-			<a-form-item label="分账单位" name="unit">
-				<a-select ref="select" v-model:value="formValidate.unit" style="width: 100%">
-					<a-select-option value="旅行社">旅行社</a-select-option>
-					<a-select-option value="集团">集团</a-select-option>
-					<a-select-option value="监理公司">监理公司</a-select-option>
-					<a-select-option value="一卡通">一卡通</a-select-option>
-					<a-select-option value="协会">协会</a-select-option>
+			<a-form-item label="分账单位" name="companyType">
+				<a-select
+					ref="select"
+					v-model:value="formValidate.companyType"
+					style="width: 100%"
+					:options="state.prepaidCompanyList.map((item) => ({ value: item.value, label: item.name }))"
+				>
 				</a-select>
 			</a-form-item>
 			<a-form-item label="扣款模式">
-				<a-radio-group v-model:value="formValidate.deductionMode">
-					<a-radio :value="1">价格</a-radio>
-					<a-radio :value="2">百分比</a-radio>
+				<a-radio-group v-model:value="formValidate.splitModel">
+					<a-radio v-for="item in state.chargeModelList" :value="item.value" :key="item.name">{{ item.name }}</a-radio>
 				</a-radio-group>
 			</a-form-item>
-			<a-form-item label="分账金额" name="price" v-if="formValidate.deductionMode === 1">
-				<a-input-number v-model:value="formValidate.price" placeholder="请输入分账金额（单位：元）" style="width: 100%">
+			<a-form-item label="分账金额" v-if="formValidate.splitModel === 2" :rules="rules.integer">
+				<a-input-number v-model:value="formValidate.splitCount" placeholder="请输入分账金额（单位：元）" style="width: 100%">
 					<template #addonAfter>
 						<span>元</span>
 					</template>
 				</a-input-number>
 			</a-form-item>
-			<a-form-item label="分账百分比" name="percentage" v-if="formValidate.deductionMode === 2">
-				<a-input-number v-model:value="formValidate.percentage" placeholder="请输入分账占比（单位：%）" style="width: 100%">
+			<a-form-item label="分账百分比" v-if="formValidate.splitModel === 1" :rules="rules.percentage">
+				<a-input-number v-model:value="formValidate.splitCount" placeholder="请输入分账占比（单位：%）" style="width: 100%">
 					<template #addonAfter>
 						<span>%</span>
 					</template>
 				</a-input-number>
 			</a-form-item>
-			<a-form-item label="优先级" name="priority">
-				<a-input-number v-model:value="formValidate.priority" placeholder="请输入优先级" />
+			<a-form-item label="优先级" name="level">
+				<a-input-number v-model:value="formValidate.level" placeholder="请输入优先级" />
 			</a-form-item>
 		</a-form>
 		<template v-slot:footer>
@@ -59,8 +58,26 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
-	params: Object,
+	params: {
+		type: Object,
+		default: () => {
+			return {};
+		},
+	},
 	methods: Object,
+});
+const state: UnwrapRef<any> = reactive({
+	prepaidCompanyList: [
+		{ value: 1, name: '旅行社' },
+		{ value: 2, name: '集团' },
+		{ value: 3, name: '监理公司' },
+		{ value: 4, name: '一卡通' },
+		{ value: 5, name: '协会' },
+	],
+	chargeModelList: [
+		{ value: 1, name: '百分比' },
+		{ value: 2, name: '价格' },
+	],
 });
 const emit = defineEmits(['update:modelValue', 'submit']);
 const options = reactive({
@@ -69,15 +86,19 @@ const options = reactive({
 const formValidate: Ref<Record<string, any>> = ref({});
 
 const rules: any = {
-	unit: [{ required: true, trigger: 'blur', message: '请输入分账单位' }],
-	price: [{ required: true, validator: isIntegerNotMust, trigger: 'blur' }],
+	companyType: [{ required: true, trigger: 'blur', message: '请输入分账单位' }],
+	level: [{ required: true, validator: isIntegerNotMust, trigger: 'blur' }],
 	priority: [{ required: true, validator: isIntegerNotMust, trigger: 'blur' }],
+	splitCount: [{ required: true, validator: isBtnZeroToHundred, trigger: 'blur' }],
+	// 百分比
 	percentage: [{ required: true, validator: isBtnZeroToHundred, trigger: 'blur' }],
+	// 人数和金额
+	integer: [{ required: true, validator: isIntegerNotMust, trigger: 'blur' }],
 };
 const init = async () => {
 	if (props.params.add) {
 		options.title = '新增分账规则';
-		formValidate.value = { deductionMode: 1 };
+		formValidate.value = { splitModel: 1 };
 	} else {
 		options.title = '编辑分账规则';
 		formValidate.value = props.params.from;
@@ -88,7 +109,7 @@ const formRef = ref();
 const save = () => {
 	formRef.value
 		.validate()
-		.then((result: any) => {
+		.then(() => {
 			const params = { params: props.params, form: lodash.cloneDeep(formValidate.value) };
 			emit('submit', params);
 			formValidate.value = {};

@@ -94,3 +94,11 @@ export async function getScenicOneTicket() {
 		method: 'get',
 	});
 }
+
+// 获取景区下拉列表
+export async function getViewList() {
+	return request({
+		url: commonPath + `/ticket-service/public/api/scenic/lessInfos`,
+		method: 'get',
+	});
+}
