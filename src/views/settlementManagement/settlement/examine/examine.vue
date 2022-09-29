@@ -3,7 +3,7 @@
 		<CommonTable :dataSource="state.tableData.data" rowKey="oid" :columns="columns" :rowSelection="rowSelection">
 			<template #button>
 				<div class="btn">
-					<a-button type="primary">审核通过</a-button>
+					<a-button type="primary" @click="examine('all', null)">审核通过</a-button>
 				</div>
 			</template>
 			<template #bodyCell="{ column, record }">
@@ -14,8 +14,8 @@
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a @click="opendetailPage">审核</a>
-						<a @click="opendetailPage">查看</a>
+						<a @click="examine('one', record)">审核</a>
+						<a @click="toInfo(record)">查看</a>
 					</div>
 				</template>
 			</template>
@@ -35,48 +35,49 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import { reactive, onMounted } from 'vue';
 import api from '@/api';
-
+import { message } from 'ant-design-vue';
+import { Modal } from 'ant-design-vue';
 const router = useRouter();
 const columns = [
 	{
 		title: '团队类型',
-		dataIndex: 'username',
-		key: 'username',
+		dataIndex: 'aaa',
+		key: 'aaa',
 	},
 	{
 		title: '行程单号',
-		dataIndex: 'mobile',
-		key: 'mobile',
+		dataIndex: 'bbb',
+		key: 'bbb',
 	},
 	{
 		title: '线路名称',
-		dataIndex: 'unitTypeName',
-		key: 'unitTypeName',
+		dataIndex: 'bbb',
+		key: 'bbb',
 	},
 	{
 		title: '组团社',
-		dataIndex: 'unitName',
-		key: 'unitName',
+		dataIndex: 'bbb',
+		key: 'bbb',
 	},
 	{
 		title: '地接社',
-		dataIndex: 'roleList',
-		key: 'roleList',
+		dataIndex: 'bbb',
+		key: 'bbb',
 	},
 	{
 		title: '行程人数',
-		dataIndex: 'userStatusName',
-		key: 'userStatusName',
+		dataIndex: 'bbb',
+		key: 'bbb',
 	},
 	{
 		title: '行程费用',
-		dataIndex: 'userStatusName',
-		key: 'userStatusName',
+		dataIndex: 'bbb',
+		key: 'bbb',
 	},
 	{
 		title: '行程时间',
-		dataIndex: 'userStatusName',
-		key: 'userStatusName',
+		dataIndex: 'bbb',
+		key: 'bbb',
 	},
 	{
 		title: '结算状态',
@@ -93,7 +94,34 @@ const columns = [
 
 const state = reactive({
 	tableData: {
-		data: [],
+		data: [
+			{
+				oid: 1,
+				key: 1,
+				aaa: 'John Brown sr.',
+				bbb: 'test',
+				ccc: 'test',
+				ddd: 'test',
+				eee: 'test',
+				fff: 'test',
+				ggg: 'test',
+				hhh: 'test',
+				userStatusName: '正常',
+			},
+			{
+				oid: 2,
+				key: 2,
+				aaa: 'Joe Black',
+				bbb: 'test',
+				ccc: 'test',
+				ddd: 'test',
+				eee: 'test',
+				fff: 'test',
+				ggg: 'test',
+				hhh: 'test',
+				userStatusName: '异常',
+			},
+		],
 		total: 0,
 		loading: false,
 		param: {
@@ -105,6 +133,7 @@ const state = reactive({
 			uniType: '',
 		},
 	},
+	selectedRowKeys: [],
 	params: {},
 	operationModal: {
 		isAddOrUpdate: false,
@@ -117,6 +146,7 @@ const rowSelection = ref({
 	checkStrictly: false,
 	onChange: (selectedRowKeys: [], selectedRows: any) => {
 		console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+		state.selectedRowKeys = selectedRowKeys;
 	},
 });
 
@@ -133,32 +163,15 @@ const pageSideChange = (current: number, size: number) => {
 };
 
 const onSearch = () => {
-	api.userList(state.tableData.param).then((res: any) => {
-		console.log('res:', res);
-		state.tableData.data = res.content;
-		state.tableData.total = res.total;
-	});
+	// api.userList(state.tableData.param).then((res: any) => {
+	// 	console.log('res:', res);
+	// 	state.tableData.data = res.content;
+	// 	state.tableData.total = res.total;
+	// });
 };
 
 const cancel = (): any => {
 	state.operationModal.isAddOrUpdate = false;
-};
-
-const getRoleList = () => {
-	api
-		.roleList({
-			pageNo: 1,
-			pageSize: 100000,
-		})
-		.then((res: any) => {
-			console.log('角色列表:', res);
-			state.optionRoleList = res.content.map((item: any) => {
-				return {
-					roleName: item.roleName,
-					roleId: item.oid,
-				};
-			});
-		});
 };
 
 const addOrUpdate = (param: any) => {
@@ -175,12 +188,45 @@ const addOrUpdate = (param: any) => {
 	state.operationModal.isAddOrUpdate = true;
 };
 
-const opendetailPage = () => {
-	router.push({ path: '/catering/order_Management/order_detail' });
+// 审核通过
+const examine = (type: string, record: any) => {
+	// type:one单项  all批量
+	if (type == 'one') {
+		// 单项跳转审核详情页
+		router.push({ path: '/settlementManagement/settlement/examineInfo', query: { oid: encodeURIComponent(record.oid) } });
+	} else {
+		// 判断是否有选择项
+		if (state.selectedRowKeys.length == 0) {
+			message.warn('请先选择审核项');
+			return;
+		}
+		Modal.confirm({
+			title: '审核通过',
+			width: 560,
+			closable: true,
+			centered: true,
+			icon: false,
+			content: '是否确定所选数据审核通过',
+			onOk() {
+				// api
+				// 	.comprehensiveFeeEnable(state.selectedRowKeys)
+				// 	.then((res: any) => {
+				message.success('操作成功');
+				// 		onSearch();
+				// 	})
+				// 	.catch((err: any) => {
+				// 		message.error(err || '操作失败');
+				// 	});
+			},
+			onCancel() {},
+		});
+	}
 };
-
+// 查看详情
+const toInfo = (record: any) => {
+	router.push({ path: '/settlementManagement/settlement/info', query: { oid: encodeURIComponent(record.oid) } });
+};
 onMounted(() => {
-	getRoleList();
 	onSearch();
 });
 </script>

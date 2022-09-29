@@ -7,9 +7,6 @@
       <template v-if="column.key === 'index'">
         {{ index + 1 }}
       </template>
-      <template v-if="column.key === 'businessLicenseUrl'">
-        <a-image width="100%" :src="record.businessLicenseUrl" />
-      </template>
       <template v-if="column.key === 'productsLength'">
         <a-popover title="必购项目">
           <template #content>
@@ -28,7 +25,8 @@
             @confirm="deleteTeam(record.oid)">
             <a>删除</a>
           </a-popconfirm>
-          <a @click="disable(record)">禁用</a>
+          <a @click="disable(0, record.oid)" v-show="record.state === 1">禁用</a>
+          <a @click="disable(1, record.oid)" v-show="record.state === 0">启用</a>
         </div>
       </template>
     </template>
@@ -42,10 +40,10 @@
       <a-form-item label="取个名字" name="name">
         <a-input v-model:value="teamForm.name" placeholder="给团队类型取个名字，20字以内…" />
       </a-form-item>
-      <a-form-item label="必购项目" name="name">
+      <a-form-item label="必购项目">
         <a-transfer v-model:target-keys="targetKeys" class="tree-transfer" :data-source="dataSource"
           :render="(item: any) => item.title" :show-select-all="false" @change="transferChange"
-          :titles="['产品', '产品已选中']">
+          :titles="['必购项目', '必购项目已选中']">
           <template #children="{ direction, selectedKeys, onItemSelect }">
             <a-tree v-if="direction === 'left'" block-node checkable default-expand-all
               :checked-keys="[...selectedKeys, ...targetKeys]" :tree-data="tData" @check="
@@ -126,10 +124,13 @@ const columns = [
     width: 208
   },
 ]
+let isAdd = true
+let normalProductIds: number[] = []
 const teamRef = ref()
 const teamForm = reactive({
   name: undefined,
-  state: 1
+  state: 1,
+  oid: undefined
 })
 const formRules: any = {
   name: [{ required: true, trigger: 'blur', message: '名字不能为空' }],
@@ -151,19 +152,81 @@ const modalVisible = ref<boolean>(false)
 const title = ref<string>('新增团队类型')
 
 /* 穿梭框相关 */
-const targetKeys = ref<string[]>([]);
+const targetKeys = ref<number[]>([]);
 const tData: TransferProps['dataSource'] = [
-  { key: '1', title: 'test1' },
   {
-    key: '0-1',
-    title: '0-1',
+    key: '11',
+    title: 'test11',
     children: [
-      { key: '2', title: 'test2' },
-      { key: '5', title: 'test5' },
+      { key: 1, title: 'test1' },
+      { key: 2, title: 'test2' },
     ],
   },
-  { key: '6', title: 'test6' },
+  {
+    key: '12',
+    title: 'test12',
+    children: [
+      { key: 5, title: 'test5' },
+      { key: 6, title: 'test6' },
+    ],
+  },
+  {
+    key: '13',
+    title: 'test13',
+    children: [
+      { key: 7, title: 'test7' },
+    ],
+  },
 ];
+function formattingData(arr: any, group_key: string, _key: string) {
+  // 先定义一个空对象和空数组；
+  let map: any = {};
+  let res: any = [];
+  // 循环需要筛选的数组
+  for (let i = 0; i < arr.length; i++) {
+    let ai = arr[i];
+    // 将需要筛选的属性的值作为新对象的键，并且判断是否已经存在
+    if (!map[ai[group_key]]) {
+      // 不存在的话就在map对象中创建一个属性的值作为键名，键值为空数组的新对象，并且把arr[i]放入
+      map[ai[group_key]] = [ai.productId];
+    } else {
+      // 如果已经存在就直接把arr[i]放入
+      map[ai[group_key]].push(ai.productId);
+    }
+  }
+  // 循环后对map进行处理生成分组的数组
+  Object.keys(map).forEach((key) => {
+    res.push({
+      [group_key]: Number(key),
+      [_key]: map[key],
+    });
+  });
+  return res;
+}
+
+const format = (arr: any, tArr: TransferProps['dataSource']) => {
+  let ret: any = []
+  for (let i = arr.length - 1; i >= 0; i--) {
+    const element = arr[i];
+    for (let j = tArr.length - 1; j >= 0; j--) {
+      const telement = tArr[j];
+      if (telement?.children) {
+        for (let k = telement.children.length - 1; k >= 0; k--) {
+          const celement = telement.children[k];
+          if (element === celement?.key) {
+            ret.push({
+              itemId: telement.key, //项目id
+              productId: element //产品id
+            })
+          }
+        }
+      }
+    }
+  }
+  if (ret.length > 0) {
+    return formattingData(ret, 'itemId', 'productId')
+  }
+}
 
 const transferDataSource: TransferProps['dataSource'] = [];
 /* 扁平化 */
@@ -207,10 +270,10 @@ const onChecked = (
   }
 };
 const transferChange = (targetKeys: string[], direction: string, moveKeys: string[]) => {
-  console.log(targetKeys, direction, moveKeys);
-  nextTick(() => {
-    dragList(targetKeys)
-  })
+  console.log(targetKeys, direction, moveKeys, '$$$$$');
+  /* nextTick(() => {
+    draggable(targetKeys)
+  }) */
 }
 
 interface addInterface {
@@ -221,16 +284,36 @@ const addOrUpdate = ({ row, handle }: addInterface) => {
   modalVisible.value = true
   if (handle === 'add') {
     title.value = '新增团队类型'
+    isAdd = true
   } else if (handle === 'update') {
     title.value = '编辑团队类型'
-    const { name, state, products } = row
+    const { name, state, productIds, oid } = row
     teamForm.name = name;
     teamForm.state = state;
-    targetKeys.value = products
+    teamForm.oid = oid;
+    targetKeys.value = productIds;
+    normalProductIds = productIds;
+    isAdd = false
   }
 }
-const deleteTeam = (oid: string) => { }
-const disable = () => { }
+const deleteTeam = async (oid: string) => {
+  let res = await api.updataTeamType({ oid, isDeleted: 1 })
+  if (res === "删除成功!") {
+    message.success(res)
+    onSearch();
+  } else {
+    message.error(res)
+  }
+}
+const disable = async (state: number, oid: string) => {
+  let res = await api.updataTeamType({ oid, state })
+  if (res === '修改成功') {
+    message.success(res)
+    onSearch();
+  } else {
+    message.success('禁用失败！')
+  }
+}
 const onHandleCurrentChange = (val: number) => {
   state.tableData.param.pageNo = val;
   onSearch();
@@ -252,16 +335,42 @@ const closeModal = () => {
   targetKeys.value = []
 }
 const save = () => {
-  teamRef.value.validate().then((val: any) => {
-    console.log(toRaw(teamForm), val);
+  teamRef.value.validate().then(async (val: any) => {
+    if (isAdd) {
+      let teamTypeItemBos = format(targetKeys.value, tData);
+      let res = await api.addTeamType({ ...toRaw(teamForm), teamTypeItemBos });
+      if (res === "添加成功") {
+        message.success('新增团队类型成功！')
+        closeModal()
+        onSearch();
+      } else {
+        message.error('新增团队类型失败！')
+      }
+    } else {
+      console.log('edit');
+      let teamTypeItemBos
+      if (targetKeys.value !== normalProductIds) {
+        teamTypeItemBos = format(targetKeys.value, tData);
+      } else {
+        teamTypeItemBos = undefined
+      }
+      let res = await api.updataTeamType({ ...toRaw(teamForm), teamTypeItemBos })
+      if (res === "修改成功") {
+        message.success('编辑团队类型成功！')
+        closeModal()
+        onSearch();
+      } else {
+        message.error('编辑团队类型失败！')
+      }
+    }
   }).catch((err: string) => {
     console.log(err);
   })
 }
 
 
-
-const dragList = (keys: string[]) => {
+// draggable
+const draggable = (keys: string[]) => {
   const node: HTMLUListElement = document.querySelector('.ant-transfer-list-content')!;
   const childrenList = Array.from(node.children)
   childrenList.forEach((item, index) => {

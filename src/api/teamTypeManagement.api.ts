@@ -10,3 +10,21 @@ export function selectTeamTypeList(data: any) {
 		showLoading: true
 	});
 }
+// 新增团队类型
+export function addTeamType(data: any) {
+	return request({
+		url: `${commonPart}addTeamType`,
+		method: 'post',
+		data,
+		showLoading: true
+	});
+}
+// 修改团队类型
+export function updataTeamType(data: any) {
+	return request({
+		url: `${commonPart}updataTeamType`,
+		method: 'post',
+		data,
+		showLoading: true
+	});
+}
