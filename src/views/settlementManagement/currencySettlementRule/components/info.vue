@@ -13,64 +13,78 @@
 		>
 			<a-form-item label="团单类型" name="type">
 				<div>
-					<span>{{ formState.type }}</span>
+					<span>{{ getTypeName('teamTypeId') }}</span>
 				</div>
 			</a-form-item>
 
 			<a-form-item label="结算产品" name="product">
 				<div>
-					<span>{{ formState.product }}</span>
+					<span>{{ getTypeName('productType') }}</span>
 				</div>
 			</a-form-item>
 			<a-form-item label="费用名称" name="name">
 				<div>
-					<span>{{ formState.name }}</span>
+					<span>{{ formState.costName }}</span>
 				</div>
 			</a-form-item>
 			<a-form-item label="费用说明" name="explain">
 				<div>
-					<span>{{ formState.explain }}</span>
+					<span>{{ formState.costExplanation }}</span>
 				</div>
 			</a-form-item>
 			<a-form-item label="状态" name="state">
 				<div>
-					<span>{{ formState.state }}</span>
+					<span>{{ getTypeName('ruleStatus') }}</span>
 				</div>
 			</a-form-item>
 			<a-form-item label="优先级" name="priority">
 				<div>
-					<span>{{ formState.priority }}</span>
+					<span>{{ formState.level }}</span>
 				</div>
 			</a-form-item>
 			<div class="title">扣费规则</div>
 			<a-form-item label="收费模式" name="chargingMode">
 				<div>
-					<span>{{ formState.chargingMode }}</span>
+					<span>{{ getTypeName('chargeModel') }}</span>
 				</div>
 			</a-form-item>
 			<a-form-item label="收费数量" name="chargingNumber">
 				<div>
-					<span>{{ formState.chargingNumber }}</span>
+					<span>{{ formState.chargeCount }}</span>
 				</div>
 			</a-form-item>
 			<a-form-item label="是否垫付" name="isPayment">
 				<div>
-					<span>{{ formState.isPayment }}</span>
+					<span>{{ getTypeName('isPrepaid') }}</span>
 				</div>
 			</a-form-item>
 			<a-form-item label="垫付单位" name="paymentUnit">
 				<div>
-					<span>{{ formState.paymentUnit }}</span>
+					<span>{{ getTypeName('prepaidCompany') }}</span>
 				</div>
 			</a-form-item>
 			<div class="title">分账规则</div>
 			<a-form-item label="剩余费用归属" name="attributionExpenses">
 				<div>
-					<span>{{ formState.attributionExpenses }}</span>
+					<span>{{ getTypeName('lastCostBelongCompany') }}</span>
 				</div>
 			</a-form-item>
-			<CommonTable :dataSource="formState.list" :columns="columns" :scrollY="false" :scroll="{ y: '300px' }"> </CommonTable>
 		</a-form>
+		<CommonTable :dataSource="formState.splitList" :columns="columns" :scrollY="false" :scroll="{ y: '300px' }">
+			<template #bodyCell="{ column, record, index }">
+				<template v-if="column.key === 'companyType'">
+					<span>{{ getCompanyTypeName(record.companyType) }}</span>
+				</template>
+				<template v-if="column.key === 'splitModel'">
+					<span v-if="record.splitModel === 1">百分比</span>
+					<span v-if="record.splitModel === 2">价格</span>
+				</template>
+				<template v-if="column.key === 'splitCount'">
+					<span v-if="record.splitModel === 1">{{ record.splitCount }}%</span>
+					<span v-if="record.splitModel === 2">{{ record.splitCount }}元</span>
+				</template>
+			</template>
+		</CommonTable>
 		<div class="footer">
 			<div class="tooter-btn">
 				<a-button type="primary" @click="edit">编辑</a-button>
@@ -83,68 +97,116 @@
 import CommonTable from '@/components/common/CommonTable.vue';
 import { UnwrapRef } from 'vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
-interface FormState {
-	name: string | null;
-	list: any;
-	type: string | null;
-	product: string | null;
-	paymentUnit: Array<any>;
-}
+import api from '@/api';
+import { FormState } from './type';
+import { useGeneraRules } from '@/stores/modules/GeneraRules';
 const navigatorBar = useNavigatorBar();
+const generaRulesOptions = useGeneraRules();
 const formRef = ref();
 const formState: UnwrapRef<FormState> = reactive({
-	name: null,
-	type: null,
-	product: null,
-	paymentUnit: [],
-	list: [
-		{
-			unit: '旅行社',
-			percentage: '20%',
-		},
-		{
-			unit: '集团',
-			percentage: '50%',
-		},
-		{
-			unit: '一卡通',
-			percentage: '80%',
-		},
-		{
-			unit: '一卡通',
-			percentage: '100%',
-		},
-	],
+	costName: null,
+	teamTypeId: null,
+	productId: null,
+	prepaidCompany: null,
+	splitList: [],
+	ruleStatus: null,
+	chargeProductSonId: null,
+	chargeCount: null,
+	isPrepaid: null,
+	lastCostBelongCompany: null,
+	chargeModel: null,
+	costExplanation: null,
+	level: null,
+	productType: null,
 });
 const columns = ref([
 	{
 		title: '分账单位',
-		dataIndex: 'unit',
-		key: 'unit',
+		dataIndex: 'companyType',
+		key: 'companyType',
+	},
+	{
+		title: '扣款模式',
+		dataIndex: 'splitModel',
+		key: 'splitModel',
 	},
 	{
 		title: '分账金额',
-		dataIndex: 'price',
-		key: 'price',
+		dataIndex: 'splitCount',
+		key: 'splitCount',
 	},
 	{
 		title: '优先级',
-		dataIndex: 'priority',
-		key: 'priority',
+		dataIndex: 'level',
+		key: 'level',
 	},
 ]);
-const unitList = ['旅行社', '集团', '监理公司', '一卡通', '协会'];
+const route = useRouter();
 // 缓存删除编辑数据
-const init = () => {
+const init = async () => {
 	navigatorBar.setNavigator(['查看']);
+	const id: any = route.currentRoute.value.query.oid;
+	// await getTeamType();
+	await currencySettlementRuleDetail(id);
+};
+const oid = ref('');
+const currencySettlementRuleDetail = async (id: number) => {
+	const result = await api.currencySettlementRuleDetail(id);
+	oid.value = result.oid;
+	for (let key in formState) {
+		if (result[key]) {
+			formState[key] = result[key];
+		}
+	}
 };
 onMounted(() => {
 	init();
+	generaRulesOptions.getTeamTypeList();
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
 });
-const edit = () => {};
+const edit = () => {
+	route.push({ path: '/settlementManagement/productSettlementRule/edit', query: { oid: encodeURIComponent(oid.value) } });
+};
+const getTypeName = computed(() => (str: string) => {
+	if (str === 'teamTypeId') {
+		const idx = generaRulesOptions.teamTypeList.findIndex((item: any) => item.oid === formState.teamTypeId);
+		if (idx !== -1) {
+			return generaRulesOptions.teamTypeList[idx]['name'];
+		}
+	}
+	if (str === 'productType') {
+		const idx = generaRulesOptions.productTypeList.findIndex((item: any) => item.value === formState.productType);
+		if (idx !== -1) {
+			return generaRulesOptions.productTypeList[idx]['name'];
+		}
+	}
+	if (str === 'ruleStatus') {
+		return formState.ruleStatus === 1 ? '启用' : '禁用';
+	}
+	if (str === 'chargeModel') {
+		const idx = generaRulesOptions.chargeModelList.findIndex((item: any) => item.value === formState.chargeModel);
+		if (idx !== -1) {
+			return generaRulesOptions.chargeModelList[idx]['name'];
+		}
+	}
+	if (str === 'isPrepaid') {
+		return formState.isPrepaid === 1 ? '是' : '否';
+	}
+	if (str === 'prepaidCompany') {
+		const idx = generaRulesOptions.prepaidCompanyList.findIndex((item: any) => item.value === formState.prepaidCompany);
+		if (idx !== -1) {
+			return generaRulesOptions.prepaidCompanyList[idx]['name'];
+		}
+	}
+	if (str === 'lastCostBelongCompany') {
+		const idx = generaRulesOptions.prepaidCompanyList.findIndex((item: any) => item.value === formState.lastCostBelongCompany);
+		if (idx !== -1) {
+			return generaRulesOptions.prepaidCompanyList[idx]['name'];
+		}
+	}
+});
 </script>
 
 <style lang="less" scoped>
