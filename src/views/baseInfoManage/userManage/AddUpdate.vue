@@ -33,8 +33,25 @@
         <a-input v-model:value="formValidate.mobile" />
       </a-form-item>
       <a-form-item
+        label="可用范围"
+        name="businessType"
+      >
+        <a-select
+          ref="select"
+          placeholder="请输入可用范围"
+          allowClear
+          v-model:value="formValidate.businessType"
+          @change="getRoleList"
+        >
+          <a-select-option v-for="item in roleManage.businessType" :value="item.value">
+            {{ item.title }}
+          </a-select-option>
+        </a-select>
+      </a-form-item>
+      <a-form-item
         label="所属角色"
         name="roleIds"
+        v-if="formValidate.businessType"
       >
         <a-select
           ref="select"
@@ -67,14 +84,15 @@
   import type { FormInstance } from 'ant-design-vue';
   import api from '@/api';
   import { message } from 'ant-design-vue';
+  import { getUserInfo } from '@/utils/util';
+  import { useRoleManage } from '@/stores/modules/roleManage';
 
   const props = defineProps({
       modelValue: {
         type: Boolean,
         default: false
       },
-      params: Object,
-      roleList: Array
+      params: Object
   })
   const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
   const dialogVisible = ref(false);
@@ -86,8 +104,12 @@
     mobile: [{ required: true, trigger: 'blur', message: '请输入用户电话' }],
     account: [{ required: true, trigger: 'blur', message: '请输入账号' }],
     roleIds: [{ required: true, trigger: 'blur', message: '请选择所属角色' }],
+    businessType: [{ required: true, trigger: 'change', message: '请选择可用范围' }],
     userStatus: [{ required: true, trigger: 'change', message: '请选择用户状态' }],
   };
+  const userInfo = getUserInfo();
+  const roleList: Ref<Array<any>> = ref([]);
+  const roleManage = useRoleManage();
 
 	const handleOk = async (callback:Function) => {
 
@@ -134,6 +156,17 @@
     } else {
       options.title = '新增用户';
     }
+  }
+
+  const getRoleList = (businessType: string) => {
+    api.getRoleListByType(businessType).then((res: any) => {
+      roleList.value = res.map((item: any) => {
+        return {
+          roleName: item.roleName,
+          roleId: item.oid
+        }
+      });
+    })
   }
 
   watch(() => props.modelValue, async (nVal) => {

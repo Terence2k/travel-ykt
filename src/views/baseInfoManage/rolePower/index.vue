@@ -122,7 +122,7 @@
       param: {
         pageNo: 1,
         pageSize: 10,
-        availableRange: null,
+        availableRange: '',
         roleName: '',
         status: null,
       },
@@ -157,12 +157,6 @@
       console.log('res:', res);
       state.tableData.data = res.content;
       state.tableData.total = res.total;
-    })
-  }
-
-  const getBusinessType = () => {
-    api.businessType().then((res: any) => {
-      state.optionTypeList = res;
     })
   }
 
@@ -201,7 +195,6 @@
   }
 
   onMounted(() => {
-    getBusinessType();
     onSearch();
   })
 </script>
