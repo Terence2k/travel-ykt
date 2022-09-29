@@ -2,36 +2,40 @@
 	<div class="warp">
 		<!-- <header>基本信息</header> -->
 		<div class="title">基本信息</div>
-		<a-form labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
-			<a-form-item label="综费产品" name="menuName">
-				<a-input v-model:value="formValidate.menuName" placeholder="请填写产品名称" />
+		<a-form :model="formData.data" :rules="rulesRef" ref="formref" labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
+			<a-form-item label="综费产品" name="comprehensiveFeeProductName">
+				<a-input v-model:value="formData.data.comprehensiveFeeProductName" placeholder="请填写产品名称" />
 			</a-form-item>
-			<a-form-item label="是否必收费用" name="menuStatus">
-				<a-radio-group v-model:value="formValidate.menuStatus">
-					<a-radio :value="1">必收</a-radio>
-					<a-radio :value="0">可选</a-radio>
+			<a-form-item label="是否必收费用" name="confirmNeedFeeType">
+				<a-radio-group v-model:value="formData.data.confirmNeedFeeType">
+					<a-radio :value="0">必收</a-radio>
+					<a-radio :value="1">可选</a-radio>
 				</a-radio-group>
 			</a-form-item>
-			<a-form labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
-				<a-form-item label="费用说明" name="menuName">
-					<a-input v-model:value="formValidate.menuName" placeholder="请填写规则说明" />
-				</a-form-item>
-			</a-form>
-			<a-form-item label="状态" name="menuStatus">
-				<a-radio-group v-model:value="formValidate.menuStatus">
+			<a-form-item label="费用说明" name="feeExplanation">
+				<a-input v-model:value="formData.data.feeExplanation" placeholder="请填写规则说明" />
+			</a-form-item>
+			<a-form-item label="状态" name="status">
+				<a-radio-group v-model:value="formData.data.status">
 					<a-radio :value="1">启用</a-radio>
 					<a-radio :value="0">禁用</a-radio>
 				</a-radio-group>
 			</a-form-item>
 			<div class="title">扣费规则</div>
-			<a-form-item label="收费模式" name="menuStatus">
-				<a-radio-group v-model:value="formValidate.menuStatus">
-					<a-radio :value="1">人数</a-radio>
-					<a-radio :value="0">价格</a-radio>
+			<a-form-item label="收费模式" name="feeModel">
+				<a-radio-group v-model:value="formData.data.feeModel">
+					<a-radio :value="0">人数</a-radio>
+					<a-radio :value="1">价格</a-radio>
 				</a-radio-group>
 			</a-form-item>
-			<a-form-item label="收款数量" name="menuDescribe">
-				<a-input v-model:value="formValidate.menuDescribe" placeholder="请输入收款数量" />
+			<a-form-item label="收款数量" name="feeNumber">
+				<a-input v-model:value="formData.data.feeNumber" placeholder="请填写收款数量">
+					<template #addonAfter>
+						<div>
+							{{ formData.data.feeModel === 1 ? '元' : "元/人"}}
+						</div>
+					</template>
+				</a-input>
 			</a-form-item>
 		</a-form>
 		<div class="footer">
@@ -47,42 +51,83 @@
 import { ref, Ref, computed, watch, toRefs, reactive } from 'vue';
 import api from '@/api';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
+import { isIntegerNotMust } from '@/utils/validator';
+import { message } from 'ant-design-vue';
 const navigatorBar = useNavigatorBar();
 const tstyle = { 'font-weight': '700' };
-const formValidate: Ref<Record<string, any>> = ref({});
 const route = useRouter();
+const formref = ref();
 
-// 保存
-const onSubmit = async () => {
-	console.log('保存');
-	// validate()
-	// 	.then((res) => {
-	// 		console.log(toRaw(formData.data), 'psss');
-	// 		save(toRaw(formData.data));
-	// 	})
-	// 	.catch((err) => {
-	// 		console.log('error', err);
-	// 	});
+const rulesRef = {
+	comprehensiveFeeProductName: [{ required: true, message: '请填写产品名称' }],
+	confirmNeedFeeType: [{ required: true, message: '请选择是否必收费用' }],
+	feeExplanation: [{ required: true, message: '请填写规则说明' }],
+	status: [{ required: true, message: '请选择状态' }],
+	feeModel: [{ required: true, message: '请选择收费模式' }],
+	feeNumber: [{ required: true, validator: isIntegerNotMust, message: '请填写正确的收款数量' }],
+};
+const formData: any = reactive({
+	data: {}
+});
+//初始化页面
+const initPage = async (): Promise<void> => {
+	// 判断编辑还是新增，自定义面包屑
+	if (route.currentRoute.value?.query?.edit) {
+		navigatorBar.setNavigator(['结算管理', '综费产品', '编辑'])
+		api.getcomprehensiveFeeDetail(route.currentRoute.value?.query?.oid).then((res: any) => {
+			formData.data = res;
+		});
+	} else {
+		navigatorBar.setNavigator(['结算管理', '综费产品', '新增']);
+		// 新增页面 默认选中
+		formData.data.confirmNeedFeeType = 0; // 费用必收
+		formData.data.status = 1; // 状态启用
+		formData.data.feeModel = 0; // 收费模式 人数
+	}
+};
+// 提交保存
+const onSubmit = () => {
+	formref.value
+		.validate()
+		.then((res: object) => {
+			const Data = {
+				comprehensiveFeeProductName: formData.data.comprehensiveFeeProductName,
+				confirmNeedFeeType: formData.data.confirmNeedFeeType,
+				feeExplanation: formData.data.feeExplanation,
+				status: formData.data.status,
+				feeModel: formData.data.feeModel,
+				feeNumber: formData.data.feeNumber,
+			};
+			save(toRaw(Data));
+		})
+		.catch((err: object) => {
+			console.log('error', err);
+		});
+};
+// 保存成功
+const save = async (params: any) => {
+	let res;
+	if (route.currentRoute.value?.query?.edit) {
+		// 判断是否编辑
+		params.oid = formData.data.oid; // 编辑需要带oid
+		await api.comprehensiveFeeUpdate(params).then((res) => { // 编辑
+			message.success('保存成功');
+			route.push({ path: '/settlementManagement/comprehensiveFee' });
+		})
+	} else {
+		await api.comprehensiveFeeAdd(params).then((res) => { // 新增
+			message.success('保存成功');
+			route.push({ path: '/settlementManagement/comprehensiveFee' });
+		})
+	}
 };
 // 取消
 const reset = async () => {
 	route.push({ path: '/settlementManagement/comprehensiveFee' });
-	// validate()
-	// 	.then((res) => {
-	// 		console.log(toRaw(formData.data), 'psss');
-	// 		save(toRaw(formData.data));
-	// 	})
-	// 	.catch((err) => {
-	// 		console.log('error', err);
-	// 	});
 };
-//初始化页面
-const initPage = async (): Promise<void> => {
-	route.currentRoute.value?.query?.edit ? navigatorBar.setNavigator(['结算管理','综费产品', '编辑']) : navigatorBar.setNavigator(['结算管理','综费产品', '新增']);
-};
+
 onMounted(() => {
 	initPage();
-	// 自定义面包屑
 });
 </script>
 
@@ -95,7 +140,7 @@ onMounted(() => {
 		font-weight: bold;
 		color: #1e2226;
 		margin-top: 12px;
-		// margin-bottom: 16px;
+		margin-bottom: 16px;
 		border-bottom: 1px solid #f1f2f5;
 		font-size: 16px;
 		font-family: Microsoft YaHei UI;
@@ -124,27 +169,27 @@ onMounted(() => {
 		}
 	}
 }
-.ant-form-item {
-	font-size: 14px;
-	font-family: Microsoft YaHei UI;
-	font-weight: 400;
-	color: #1e2226;
-	margin-top: 13px;
-	margin-bottom: 0;
-	height: 32px;
-}
-::v-deep(.ant-form-item-control-input) {
-	height: 18px;
-}
-::v-deep(.ant-form-item-label > label) {
-	position: relative;
-	display: inline-flex;
-	align-items: center;
-	max-width: 100%;
-	height: 32px;
-	font-size: 14px;
-	font-family: Microsoft YaHei UI;
-	font-weight: 400;
-	color: #1e2226;
-}
+// .ant-form-item {
+// 	font-size: 14px;
+// 	font-family: Microsoft YaHei UI;
+// 	font-weight: 400;
+// 	color: #1e2226;
+// 	margin-top: 13px;
+// 	margin-bottom: 0;
+// 	height: 32px;
+// }
+// ::v-deep(.ant-form-item-control-input) {
+// 	height: 18px;
+// }
+// ::v-deep(.ant-form-item-label > label) {
+// 	position: relative;
+// 	display: inline-flex;
+// 	align-items: center;
+// 	max-width: 100%;
+// 	height: 32px;
+// 	font-size: 14px;
+// 	font-family: Microsoft YaHei UI;
+// 	font-weight: 400;
+// 	color: #1e2226;
+// }
 </style>
