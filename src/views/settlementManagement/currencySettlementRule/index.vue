@@ -1,8 +1,8 @@
 <template>
 	<CommonSearch>
 		<search-item label="团队类型">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.auditStatus" style="width: 200px" placeholder="请选择团单类型">
-				<a-select-option :value="item.value" v-for="item in generaRulesOptions.teamTypeList" :key="item.name">{{ item.name }}</a-select-option>
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.teamTypeId" style="width: 200px" placeholder="请选择团单类型">
+				<a-select-option :value="item.oid" v-for="item in generaRulesOptions.teamTypeList" :key="item.name">{{ item.name }}</a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="结算产品">
@@ -140,7 +140,7 @@ const state = reactive({
 		total: 400,
 		loading: false,
 		param: {
-			teamTypeId: 1, //团队类型id(对应ljykt_travel_agency数据库sys_team_type表oid)
+			teamTypeId: '', //团队类型id(对应ljykt_travel_agency数据库sys_team_type表oid)
 			productType: null, //产品类型 1-景区 2-酒店 3-餐饮 6开始为综费产品id
 			costName: '', //费用名称
 			ruleStatus: null, //规则状态 1-启用 0-禁用
