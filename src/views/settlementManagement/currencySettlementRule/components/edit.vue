@@ -11,65 +11,109 @@
 			:wrapper-col="{ span: 6 }"
 			autocomplete="off"
 		>
-			<a-form-item label="团单类型" name="type">
-				<a-select v-model:value="formState.type" placeholder="请选择团单类型" allowClear>
-					<a-select-option value="jack">Jack</a-select-option>
-					<a-select-option value="lucy">Lucy</a-select-option>
+			<a-form-item label="团单类型" name="teamTypeId">
+				<a-select
+					v-model:value="formState.teamTypeId"
+					placeholder="请选择团单类型"
+					allowClear
+					:options="generaRulesOptions.teamTypeList.map((item) => ({ value: item.oid, label: item.name }))"
+				>
 				</a-select>
 			</a-form-item>
-			<a-form-item label="结算产品" name="product">
-				<a-select v-model:value="formState.product" placeholder="请选择结算产品" allowClear>
-					<a-select-option value="jack">Jack</a-select-option>
-					<a-select-option value="lucy">Lucy</a-select-option>
+			<a-form-item label="结算产品" name="productType">
+				<a-select
+					v-model:value="formState.productType"
+					placeholder="请选择结算产品"
+					allowClear
+					:options="generaRulesOptions.productTypeList.map((item) => ({ value: item.value, label: item.name }))"
+				>
 				</a-select>
 			</a-form-item>
-			<a-form-item label="费用名称" name="name">
-				<a-input v-model:value="formState.name" placeholder="请输入费用名称" allowClear />
+			<a-form-item label="费用名称" name="costName">
+				<a-input v-model:value="formState.costName" placeholder="请输入费用名称" allowClear />
 			</a-form-item>
-			<a-form-item label="费用说明" name="explain">
-				<a-input v-model:value="formState.explain" placeholder="请输入费用说明" allowClear />
+			<a-form-item label="费用说明" name="costExplanation">
+				<a-input v-model:value="formState.costExplanation" placeholder="请输入费用说明" allowClear />
 			</a-form-item>
-			<a-form-item label="状态" name="state">
-				<a-radio-group v-model:value="formState.state">
-					<a-radio value="1">启用</a-radio>
-					<a-radio value="2">禁用</a-radio>
+			<a-form-item label="状态" name="ruleStatus">
+				<a-radio-group v-model:value="formState.ruleStatus">
+					<a-radio v-for="item in generaRulesOptions.ruleStatusList" :value="item.value" :key="item.name">{{ item.name }}</a-radio>
 				</a-radio-group>
 			</a-form-item>
-			<a-form-item label="优先级" name="priority">
-				<a-input v-model:value="formState.priority" placeholder="请输入规则优先级" allowClear />
+			<a-form-item label="优先级" name="level">
+				<a-input-number v-model:value="formState.level" placeholder="请输入规则优先级" style="width: 100%"> </a-input-number>
 			</a-form-item>
 			<div class="title">扣费规则</div>
-			<a-form-item label="收费模式" name="chargingMode">
-				<a-radio-group v-model:value="formState.chargingMode">
-					<a-radio value="1">百分比</a-radio>
-					<a-radio value="2">人数</a-radio>
-					<a-radio value="2">价格</a-radio>
+			<a-form-item label="收费模式" name="chargeModel">
+				<a-radio-group v-model:value="formState.chargeModel">
+					<a-radio v-for="item in generaRulesOptions.chargeModelList" :value="item.value" :key="item.name">{{ item.name }}</a-radio>
 				</a-radio-group>
 			</a-form-item>
-			<a-form-item label="收费数量" name="chargingNumber">
-				<a-input allowClear v-model:value="formState.chargingNumber" placeholder="请输入数值(单位：%，元/人、元)" />
+			<a-form-item label="收费数量" name="charCount" v-if="formState.chargeModel === 1" :rules="rulesRef.percentage">
+				<a-input-number v-model:value="formState.charCount" placeholder="请输入收费数量（单位：%）" style="width: 100%">
+					<template #addonAfter>
+						<span>%</span>
+					</template>
+				</a-input-number>
 			</a-form-item>
-			<a-form-item label="是否垫付" name="isPayment">
-				<a-radio-group v-model:value="formState.isPayment">
-					<a-radio value="1">是</a-radio>
-					<a-radio value="2">否</a-radio>
+			<a-form-item label="收费数量" name="charCount" v-if="formState.chargeModel === 3" :rules="rulesRef.integer">
+				<a-input-number v-model:value="formState.charCount" placeholder="请输入收费数量（单位：元）" style="width: 100%">
+					<template #addonAfter>
+						<span>元</span>
+					</template>
+				</a-input-number>
+			</a-form-item>
+			<a-form-item label="收费数量" name="charCount" v-if="formState.chargeModel === 2" :rules="rulesRef.integer">
+				<a-input-number v-model:value="formState.charCount" placeholder="请输入收费数量（单位：人）" style="width: 100%">
+					<template #addonAfter>
+						<span>人</span>
+					</template>
+				</a-input-number>
+			</a-form-item>
+
+			<a-form-item label="是否垫付" name="isPrepaid">
+				<a-radio-group v-model:value="formState.isPrepaid">
+					<a-radio v-for="item in generaRulesOptions.isPrepaidList" :value="item.value" :key="item.name">{{ item.name }}</a-radio>
 				</a-radio-group>
 			</a-form-item>
-			<a-form-item label="垫付单位" name="paymentUnit">
-				<a-checkbox-group v-model:value="formState.paymentUnit" :options="unitList" />
+			<a-form-item label="垫付单位" name="prepaidCompany" v-if="formState.isPrepaid === 1">
+				<!-- <a-radio-group v-model:value="formState.prepaidCompany" :options="unitList" /> -->
+				<!-- <a-checkbox-group v-model:value="formState.prepaidCompany" :options="unitList" /> -->
+				<a-select
+					v-model:value="formState.prepaidCompany"
+					placeholder="请选择垫付单位"
+					allowClear
+					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.value, label: item.name }))"
+				>
+				</a-select>
 			</a-form-item>
 			<div class="title">
 				分账规则
 				<a-button style="margin-left: 5px" type="primary" @click="addRules">新增</a-button>
 			</div>
-			<a-form-item label="剩余费用归属" name="attributionExpenses">
-				<a-select allowClear v-model:value="formState.attributionExpenses" style="width: 100%" placeholder="请选择结算产品">
-					<a-select-option value="jack">Jack</a-select-option>
-					<a-select-option value="lucy">Lucy</a-select-option>
+			<a-form-item label="剩余费用归属" name="lastCostBelongCompany">
+				<a-select
+					allowClear
+					v-model:value="formState.lastCostBelongCompany"
+					style="width: 100%"
+					placeholder="请选择剩余费用归属"
+					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.value, label: item.name }))"
+				>
 				</a-select>
 			</a-form-item>
-			<CommonTable :dataSource="formState.list" :columns="columns" :scrollY="false" :scroll="{ y: '300px' }">
+			<CommonTable :dataSource="formState.splitList" :columns="columns" :scrollY="false" :scroll="{ y: '300px' }">
 				<template #bodyCell="{ column, record, index }">
+					<template v-if="column.key === 'companyType'">
+						<span>{{ getCompanyTypeName(record.companyType) }}</span>
+					</template>
+					<template v-if="column.key === 'splitModel'">
+						<span v-if="record.splitModel === 1">百分比</span>
+						<span v-if="record.splitModel === 2">价格</span>
+					</template>
+					<template v-if="column.key === 'splitCount'">
+						<span v-if="record.splitModel === 1">{{ record.splitCount }}%</span>
+						<span v-if="record.splitModel === 2">{{ record.splitCount }}元</span>
+					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a href="javascript:;" @click="editItem(record, index)">编辑</a>
@@ -82,7 +126,7 @@
 		<div class="footer">
 			<div class="tooter-btn">
 				<a-button type="primary" @click="submit">保存</a-button>
-				<a-button type="primary">取消</a-button>
+				<a-button type="primary" @click="cancel">取消</a-button>
 			</div>
 		</div>
 	</div>
@@ -92,61 +136,58 @@
 
 <script setup lang="ts">
 import CommonTable from '@/components/common/CommonTable.vue';
-import { UnwrapRef } from 'vue';
-import RulesAddUpdate from '@/views/settlementManagement/currencySettlementRule/components/rules-add-update.vue';
+import { UnwrapRef, Ref } from 'vue';
+import RulesAddUpdate from './rules-add-update.vue';
 import DelModal from '@/components/common/DelModal.vue';
 import lodash from 'lodash';
 import { useRouter } from 'vue-router';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import { message } from 'ant-design-vue';
-interface FormState {
-	name: string | null;
-	list: any;
-	type: string | null;
-	product: string | null;
-	paymentUnit: Array<any>;
-}
+import { isIntegerNotMust, isBtnZeroToHundred } from '@/utils/validator';
+import api from '@/api';
+import { updateProductRule } from '@/api/settlementManage.api';
+import { FormState } from './type';
+import { useGeneraRules } from '@/stores/modules/GeneraRules';
 const navigatorBar = useNavigatorBar();
+const generaRulesOptions = useGeneraRules();
 const formRef = ref();
 const formState: UnwrapRef<FormState> = reactive({
-	name: null,
-	type: null,
-	product: null,
-	paymentUnit: [],
-	list: [
-		{
-			unit: '旅行社',
-			percentage: '20%',
-		},
-		{
-			unit: '集团',
-			percentage: '50%',
-		},
-		{
-			unit: '一卡通',
-			percentage: '80%',
-		},
-		{
-			unit: '一卡通',
-			percentage: '100%',
-		},
-	],
+	costName: null,
+	teamTypeId: null,
+	productId: null,
+	prepaidCompany: null,
+	splitList: [],
+	ruleStatus: null,
+	chargeProductSonId: null,
+	charCount: null,
+	isPrepaid: null,
+	lastCostBelongCompany: null,
+	chargeModel: null,
+	costExplanation: null,
+	level: null,
+	productSonType: null,
+	productType: null,
 });
 const columns = ref([
 	{
 		title: '分账单位',
-		dataIndex: 'unit',
-		key: 'unit',
+		dataIndex: 'companyType',
+		key: 'companyType',
+	},
+	{
+		title: '扣款模式',
+		dataIndex: 'splitModel',
+		key: 'splitModel',
 	},
 	{
 		title: '分账金额',
-		dataIndex: 'price',
-		key: 'price',
+		dataIndex: 'splitCount',
+		key: 'splitCount',
 	},
 	{
 		title: '优先级',
-		dataIndex: 'priority',
-		key: 'priority',
+		dataIndex: 'level',
+		key: 'level',
 	},
 	{
 		title: '操作',
@@ -154,17 +195,21 @@ const columns = ref([
 		key: 'action',
 	},
 ]);
-const unitList = ['旅行社', '集团', '监理公司', '一卡通', '协会'];
 const rulesRef = {
-	name: [{ required: true, message: '请输入费用名称' }],
-	type: [{ required: true, message: '请选择结算产品' }],
-	product: [{ required: true, message: '请选择结算产品' }],
-	explain: [{ required: true, message: '请输入费用说明' }],
-	state: [{ required: true, message: '请选择状态' }],
-	chargingMode: [{ required: true, message: '请输入收费模式' }],
-	isPayment: [{ required: true, message: '请新增是否垫付' }],
-	paymentUnit: [{ required: true, message: '请选择垫付单位' }],
-	chargingNumber: [{ required: true, message: '请填写收费数量' }],
+	costName: [{ required: true, message: '请输入费用名称' }],
+	teamTypeId: [{ required: true, message: '请选择团单类型' }],
+	productType: [{ required: true, message: '请选择结算产品' }],
+	costExplanation: [{ required: true, message: '请输入费用说明' }],
+	ruleStatus: [{ required: true, message: '请选择状态' }],
+	level: [{ required: true, validator: isIntegerNotMust, trigger: 'blur' }],
+	chargeModel: [{ required: true, message: '请输入收费模式' }],
+	isPrepaid: [{ required: true, message: '请新增是否垫付' }],
+	prepaidCompany: [{ required: true, message: '请选择垫付单位' }],
+	lastCostBelongCompany: [{ required: true, message: '请选择剩余费用归属' }],
+	// 百分比
+	percentage: [{ required: true, validator: isBtnZeroToHundred, trigger: 'blur' }],
+	// 人数和金额
+	integer: [{ required: true, validator: isIntegerNotMust, trigger: 'blur' }],
 };
 // 缓存删除编辑数据
 const cacheData = ref({
@@ -173,14 +218,36 @@ const cacheData = ref({
 	editItem: {},
 	rulesShow: false,
 	rulesParams: {},
+	edit: false,
 });
+const oid = ref(null);
+// 初始化
 const init = () => {
 	const route = useRouter();
 	const query = route.currentRoute.value.query;
+	generaRulesOptions.getTeamTypeList();
 	if (query && query.oid) {
+		oid.value = query.oid;
 		navigatorBar.setNavigator(['编辑']);
+		cacheData.value.edit = true;
+		currencySettlementRuleDetail(query.oid);
 	} else {
 		navigatorBar.setNavigator(['新增']);
+		cacheData.value.edit = false;
+		// 默认状态开启
+		formState.ruleStatus = 1;
+		// 默认是否垫付关闭
+		formState.isPrepaid = 0;
+		// 默认为百分比
+		formState.chargeModel = 1;
+	}
+};
+const currencySettlementRuleDetail = async (id: number) => {
+	const result = await api.currencySettlementRuleDetail(id);
+	for (let key in formState) {
+		if (result[key]) {
+			formState[key] = result[key];
+		}
 	}
 };
 const delItem = (index: any) => {
@@ -188,7 +255,7 @@ const delItem = (index: any) => {
 	cacheData.value.delShow = true;
 };
 const delSubmit = () => {
-	formState.list.splice(cacheData.value.delIndex, 1);
+	formState.splitList.splice(cacheData.value.delIndex, 1);
 	delCancel();
 };
 const delCancel = () => {
@@ -205,33 +272,70 @@ const editItem = (e: any, index: number) => {
 };
 const rulesSubmit = (e: any) => {
 	if (e.params.add) {
-		formState.list.push(e.form);
+		formState.splitList.push(e.form);
 	} else {
 		console.log(e);
 		console.log(e.params.index);
-		formState.list[e.params.index] = e.form;
+		formState.splitList[e.params.index] = e.form;
 		console.log(formState, `formState`);
 	}
 };
 const submit = () => {
 	formRef.value
 		.validate()
-		.then((result: any) => {
-			save();
+		.then(() => {
+			if (cacheData.value.edit) {
+				edit();
+			} else {
+				save();
+			}
 		})
 		.catch((err: any) => {
 			message.error('请填写完整数据');
 			console.log('error', err);
 		});
 };
-const save = () => {
+const save = async () => {
+	saveParams();
 	console.log(formState, `formState`);
+	const result = await api.saveCurrencySettlementRule(formState);
+	message.success('保存成功');
+	route.push({ path: '/settlementManagement/currencySettlementRule/list' });
+};
+const edit = async () => {
+	saveParams();
+	const result = await api.updateCurrencySettlementRule(formState);
+	console.log(result, `result`);
+	message.success('修改成功');
+	route.push({ path: '/settlementManagement/currencySettlementRule/list' });
+	// if (result.status === 200) {
+	// 	message.success('修改成功');
+	// 	route.push({ path: '/settlementManagement/productSettlementRule/list' });
+	// } else {
+	// 	message.error(`系统出错`);
+	// }
+};
+const saveParams = () => {
+	if (formState.productSonType === 'SELF') {
+		formState.chargeProductSonId = formState.productId;
+	}
+	if (oid.value) {
+		formState.oid = oid.value;
+	}
+};
+const route = useRouter();
+const cancel = () => {
+	route.go(-1);
 };
 onMounted(() => {
 	init();
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
+});
+// 获取表格分账规则分账单位名称
+const getCompanyTypeName = computed(() => (value: number) => {
+	return generaRulesOptions.prepaidCompanyList[value]['name'];
 });
 </script>
 
