@@ -15,7 +15,7 @@
             企业名称
           </div>
           <div>
-            {{ form.name }}
+            {{ name }}
           </div>
         </div>
         <div class="row_info">
@@ -23,7 +23,7 @@
             企业类型
           </div>
           <div>
-            {{ form.businessTypeName }}
+            {{ businessTypeName }}
           </div>
         </div>
         <div class="row_info">
@@ -31,7 +31,7 @@
             所属地区
           </div>
           <div>
-            {{ form.regionName }}
+            {{ regionName }}
           </div>
         </div>
         <div class="row_info">
@@ -39,7 +39,7 @@
             信用代码
           </div>
           <div>
-            {{ form.creditCode }}
+            {{ creditCode }}
           </div>
         </div>
         <div class="row_info">
@@ -47,7 +47,7 @@
             营业执照
           </div>
           <div class="img_box">
-            <a-image width="100%" :src="form.businessLicenseUrl" />
+            <a-image width="100%" :src="businessLicenseUrl" />
           </div>
         </div>
         <div class="row_info">
@@ -55,7 +55,7 @@
             姓名
           </div>
           <div>
-            {{ form.contactName }}
+            {{ contactName }}
           </div>
         </div>
         <div class="row_info">
@@ -63,7 +63,7 @@
             手机号
           </div>
           <div>
-            {{ form.phone }}
+            {{ phone }}
           </div>
         </div>
         <div class="row_info">
@@ -71,7 +71,7 @@
             账号
           </div>
           <div>
-            {{ form.account }}
+            {{ account }}
           </div>
         </div>
       </div>
@@ -81,50 +81,42 @@
 
 <script setup lang="ts">
 import { useRouter, useRoute } from 'vue-router';
-import { CloseOutlined } from '@ant-design/icons-vue';
 const router = useRouter();
 const route = useRoute();
 const back = () => {
   router.push({
-    path: '/baseInfo/businessManagement/apply'
+    // path: '/baseInfo/businessManagement/apply'
+    name: 'apply'
   })
 }
-const form = reactive({
-  name: undefined,
-  businessTypeName: undefined,
-  regionName: undefined,
-  creditCode: undefined,
-  businessLicenseUrl: undefined,
-  contactName: undefined,
-  phone: undefined,
-  account: undefined
-})
-watch(
-  () => route.query,
-  (val: any) => {
-    const {
-      name,
-      businessTypeName,
-      regionName,
-      creditCode,
-      businessLicenseUrl,
-      contactName,
-      phone,
-      account,
-    } = val
-    form.name = name
-    form.businessTypeName = businessTypeName
-    form.regionName = regionName
-    form.creditCode = creditCode
-    form.businessLicenseUrl = businessLicenseUrl
-    form.contactName = contactName
-    form.phone = phone
-    form.account = account
-  },
-  {
-    immediate: true
+type propsType = {
+  name?: string,
+  businessTypeName?: string,
+  regionName?: string,
+  creditCode?: string,
+  businessLicenseUrl?: string,
+  contactName?: string,
+  phone?: string,
+  account?: string
+}
+const props = defineProps<propsType>()
+const transitionProps: propsType = {}
+let key: keyof propsType;
+for (key in props) {
+  if (Object.prototype.hasOwnProperty.call(props, key)) {
+    transitionProps[key] = JSON.parse(decodeURIComponent(props[key] as string))
   }
-)
+}
+const {
+  name,
+  businessTypeName,
+  regionName,
+  creditCode,
+  businessLicenseUrl,
+  contactName,
+  phone,
+  account,
+} = transitionProps
 </script>
 
 <style scoped lang="scss">

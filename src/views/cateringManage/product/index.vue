@@ -2,14 +2,14 @@
 	<div>
 		<CommonSearch>
 			<search-item label="状态">
-				<a-select ref="select" placeholder="请选择状态" v-model:value="state.tableData.param.status">
+				<a-select ref="select" allowClear placeholder="请选择状态" v-model:value="state.tableData.param.status">
 					<a-select-option :value="1">启用</a-select-option>
 					<a-select-option :value="0">停用</a-select-option>
 				</a-select>
 			</search-item>
 			<search-item label="所属门店">
-				<a-select ref="select" placeholder="请选择所属门店">
-					<a-select-option value="p">all</a-select-option>
+				<a-select allowClear v-model:value="state.tableData.param.shopId" placeholder="请选择门店名称">
+					<a-select-option v-for="i in cateringStoreName" :key="i.shopId" :value="i.shopId">{{ i.shopName }}</a-select-option>
 				</a-select>
 			</search-item>
 			<search-item label="联系电话">
@@ -50,6 +50,10 @@ import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { ref, reactive, onMounted } from 'vue';
 import api from '@/api';
+import { useScenicSpotOption } from '@/stores/modules/scenicSpot';
+
+const scenicSpotOptions = useScenicSpotOption();
+
 const navigatorBar = useNavigatorBar();
 
 const router = useRouter();
@@ -76,7 +80,7 @@ const columns = [
 		key: 'status',
 	},
 	{
-		title: '所属部门',
+		title: '所属门店',
 		dataIndex: 'companyName',
 		key: 'companyName',
 	},
@@ -97,7 +101,7 @@ const state = reactive({
 			pageNo: 1,
 			pageSize: 10,
 			shopPhone: null,
-			companyId: null,
+			shopId: null,
 			status: null,
 		},
 	},
@@ -115,12 +119,15 @@ const pageSideChange = (current: number, size: number) => {
 	state.tableData.param.pageSize = size;
 };
 
-const getList = () => {
+const cateringStoreName = computed(() => scenicSpotOptions.cateringStoreName);
+
+const getList = async (): Promise<void> => {
 	api.getProductPage(state.tableData.param).then((res: any) => {
 		state.tableData.total = res.total;
 		const list: [any] = dealData(res.content);
 		state.tableData.data = list;
 	});
+	await scenicSpotOptions.getCateringStoreName();
 };
 const status = {
 	false: '停用',
@@ -150,7 +157,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="less">
+<style scoped lang="less">
 // table style
 .ant-table-thead > tr > th {
 	border-top: 1px solid #f0f0f0;

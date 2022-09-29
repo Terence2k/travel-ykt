@@ -1,6 +1,10 @@
 import { cloneDeep } from 'lodash';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import type { UnwrapRef } from 'vue';
+
+import { validateRules, validateFields, generateGuid } from '@/utils';
+
+import api from '@/api/index';
 interface DataItem {
 	name: string;
 	name1: string,
@@ -10,9 +14,19 @@ interface DataItem {
 	name5: string,
 	name6: string
 }
+
+const rules = {
+	name: [{ required: true, message: '请选择带团时间' }],
+	name5: [{ required: true, message: '请选择导游' }]
+}
+
 export function useGuideInfo(): Record<string, any> {
 	const state = reactive<{editableData: UnwrapRef<Record<string, DataItem>>, [k:string]: any}>({
 		editableData: {},
+		guideParams: {
+			pageNo: 1,
+			pageSize: 10
+		},
 		tableData: [
 			{
 				key: '1',
@@ -80,40 +94,20 @@ export function useGuideInfo(): Record<string, any> {
 	});
 
 	const methods = {
-		validateRules(key?:string) {
-			state.rulesRef = {}
-			let rules = {
-				name: [{ required: true, message: '请选择带团时间' }],
-				name5: [{ required: true, message: '请选择导游' }]
-			}
-			if (key) {
-				state.rulesRef[key] = rules;
-			} else {
-				for (let k in state.editableData) {
-					state.rulesRef[k] = rules;
-				}
-			}
-			
-		},
-		async validateFields() {
-			let flag = false
-			try {
-				const values = await state.formRef.validateFields()
-				// console.log('Success:', values);
-				flag = true
-			} catch (errorInfo) {
-				// console.log('Failed:', errorInfo);
-			}
-			return flag;
-		},
+		
 		edit: (key: string) => {
 			const cur = cloneDeep(state.tableData.filter((item:any) => key === item.key)[0])
-			cur.name = dayjs(cur.name, 'YYYY-MM-DD HH:mm');
+			cur.name && (cur.name = dayjs(cur.name, 'YYYY-MM-DD HH:mm'));
 			state.editableData[key] = cur;
 		},
+
 		save: async (key: string) => {
-			await methods.validateRules(key);
-			const res = await methods.validateFields();
+			state.rulesRef = {}
+			const rule = await validateRules(rules, state.editableData, key)
+			for (let k in rule) {
+				state.rulesRef[k] = rule[k]
+			}
+			const res = await validateFields(state.formRef);
 			if (!res) return
 			if (key) {
 				state.editableData[key].name = dayjs(state.editableData[key].name).format('YYYY-MM-DD HH:mm');
@@ -126,6 +120,17 @@ export function useGuideInfo(): Record<string, any> {
 					delete state.editableData[k];
 				}
 			}
+		},
+
+		add: () => {
+			let key = generateGuid();
+			state.tableData.push({key, name: undefined});
+			methods.edit(key);
+			console.log(state.tableData)
+		},
+
+		getGuideList() {
+			api.travelManagement.getGuideList(state.guideParams)
 		}
 	}
 	return {

@@ -4,6 +4,9 @@
 			<slot name="button"></slot>
 		</div>
 		<a-table v-bind="$attrs" :scroll="scroll" :row-selection="$attrs.rowSelection" :pagination="false" class="common-table">
+			<template #headerCell="data">
+				<slot name="headerCell" v-bind="data || {}"></slot>
+			</template>
 			<template #bodyCell="data">
 				<slot name="bodyCell" v-bind="data || {}"></slot>
 			</template>

@@ -54,7 +54,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="less">
+<style  scoped lang="less">
 .warp {
 	width: 100%;
 	box-sizing: border-box;

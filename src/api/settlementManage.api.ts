@@ -59,6 +59,22 @@ export async function getcomprehensiveFeeDetail(oid: any) {
 		showLoading: true,
 	});
 }
+// 产品结算规则 ---- 删除产品结算
+export async function deleteProductRule(id: number) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/product-rule/delete/${id}`,
+		method: 'delete',
+		showLoading: true,
+	});
+}
+// 产品结算规则 ---- 产品结算详情
+export async function productRuleDetail(id: number) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/product-rule/detail/${id}`,
+		method: 'get',
+		showLoading: true,
+	});
+}
 // 编辑综费产品
 export async function comprehensiveFeeUpdate(data: any) {
 	return request({

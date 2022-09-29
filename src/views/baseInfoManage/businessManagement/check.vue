@@ -16,7 +16,7 @@
             企业名称
           </div>
           <div>
-            {{ form.name }}
+            {{ name }}
           </div>
         </div>
         <div class="row_info">
@@ -25,7 +25,7 @@
             企业类型
           </div>
           <div>
-            {{ form.businessTypeName }}
+            {{ businessTypeName }}
           </div>
         </div>
         <div class="row_info">
@@ -34,7 +34,7 @@
             所属地区
           </div>
           <div>
-            {{ form.regionName }}
+            {{ regionName }}
           </div>
         </div>
         <div class="row_info">
@@ -43,7 +43,7 @@
             信用代码
           </div>
           <div>
-            {{ form.creditCode }}
+            {{ creditCode }}
           </div>
         </div>
         <div class="row_info">
@@ -52,7 +52,7 @@
             营业执照
           </div>
           <div class="img_box">
-            <a-image width="100%" :src="form.businessLicenseUrl" />
+            <a-image width="100%" :src="businessLicenseUrl" />
           </div>
         </div>
         <div class="row_info">
@@ -61,7 +61,7 @@
             姓名
           </div>
           <div>
-            {{ form.contactName }}
+            {{ contactName }}
           </div>
         </div>
         <div class="row_info">
@@ -70,7 +70,7 @@
             手机号
           </div>
           <div>
-            {{ form.phone }}
+            {{ phone }}
           </div>
         </div>
         <div class="row_info">
@@ -79,7 +79,7 @@
             账号
           </div>
           <div>
-            {{ form.account }}
+            {{ account }}
           </div>
         </div>
       </div>
@@ -122,11 +122,10 @@ import api from '@/api';
 import { message } from 'ant-design-vue';
 const checkFormRef = ref();
 const router = useRouter();
-const route = useRoute();
 const rolesList = ref([])
 const back = () => {
   router.push({
-    path: '/baseInfo/businessManagement/apply'
+    name: 'apply'
   })
 }
 const state = reactive({
@@ -134,60 +133,50 @@ const state = reactive({
 })
 const { modalVisible } = toRefs(state)
 
-const form = reactive({
-  name: undefined,
-  businessType: undefined,
-  businessTypeName: undefined,
-  regionName: undefined,
-  creditCode: undefined,
-  businessLicenseUrl: undefined,
-  contactName: undefined,
-  phone: undefined,
-  account: undefined
-})
+type propsType = {
+  name?: string,
+  businessType?: string | number,
+  businessTypeName?: string,
+  regionName?: string,
+  creditCode?: string,
+  businessLicenseUrl?: string,
+  contactName?: string,
+  phone?: string,
+  account?: string,
+  oid?: string | number
+}
+const props = defineProps<propsType>()
+const transitionProps: propsType = {}
+let key: keyof propsType;
+for (key in props) {
+  if (Object.prototype.hasOwnProperty.call(props, key)) {
+    transitionProps[key] = JSON.parse(decodeURIComponent(props[key] as string))
+  }
+}
+const {
+  name,
+  businessType,
+  businessTypeName,
+  regionName,
+  creditCode,
+  businessLicenseUrl,
+  contactName,
+  phone,
+  account,
+  oid
+} = transitionProps
 const checkForm = reactive({
-  oid: undefined,
-  account: undefined,
+  oid: oid,
+  account: account,
   roldId: undefined,
   auditResult: 2
 })
+
 const getListByBusinessType = async () => {
-  let data = await api.listByBusinessType(form.businessType)
+  let data = await api.listByBusinessType(businessType)
   rolesList.value = data
 }
-watch(
-  () => route.query,
-  (val: any) => {
-    if (route.path !== '/baseInfo/businessManagement/check') return
-    const {
-      name,
-      businessType,
-      businessTypeName,
-      regionName,
-      creditCode,
-      businessLicenseUrl,
-      contactName,
-      phone,
-      account,
-      oid
-    } = val
-    form.name = name
-    form.businessType = businessType
-    form.businessTypeName = businessTypeName
-    form.regionName = regionName
-    form.creditCode = creditCode
-    form.businessLicenseUrl = businessLicenseUrl
-    form.contactName = contactName
-    form.phone = phone
-    form.account = account
-    checkForm.account = account
-    checkForm.oid = oid
-    getListByBusinessType()
-  },
-  {
-    immediate: true
-  }
-)
+getListByBusinessType()
 
 const formRules: any = {
   auditResult: [{ required: true, trigger: 'blur', message: '请选择是否通过' }],
@@ -196,7 +185,9 @@ const formRules: any = {
 const loading = ref(false)
 const submit = () => {
   checkFormRef.value.validateFields().then(async () => {
+    loading.value = true
     let res = await api.auditCompany(toRaw(checkForm))
+    loading.value = false
     if (res) {
       message.success('审核成功！')
       router.push({
@@ -212,7 +203,6 @@ const submit = () => {
     console.log(err);
   })
 }
-
 </script>
 
 <style scoped lang="scss">
