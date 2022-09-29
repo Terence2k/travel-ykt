@@ -114,7 +114,7 @@ const initList = async () => {
 };
 onMounted(() => {
 	initList();
-	navigatorBar.setNavigator(['结算管理']);
+	navigatorBar.setNavigator(['结算管理','结算管理']);
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();

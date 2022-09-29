@@ -6,6 +6,15 @@
 			<a-form-item label="综费产品" name="comprehensiveFeeProductName">
 				<a-input v-model:value="formData.data.comprehensiveFeeProductName" placeholder="请填写产品名称" />
 			</a-form-item>
+			<a-form-item label="费用归属" name="belongCompany">
+				<a-select v-model:value="formData.data.belongCompany" style="width: 100%" placeholder="请选择费用归属" allowClear>
+					<a-select-option :value="1">旅行社</a-select-option>
+					<a-select-option :value="2">集团</a-select-option>
+					<a-select-option :value="3">监理公司</a-select-option>
+					<a-select-option :value="4">一卡通</a-select-option>
+					<a-select-option :value="5">协会</a-select-option>
+				</a-select>
+			</a-form-item>
 			<a-form-item label="是否必收费用" name="confirmNeedFeeType">
 				<a-radio-group v-model:value="formData.data.confirmNeedFeeType">
 					<a-radio :value="0">必收</a-radio>
@@ -64,7 +73,8 @@ const rulesRef = {
 	feeExplanation: [{ required: true, message: '请填写规则说明' }],
 	status: [{ required: true, message: '请选择状态' }],
 	feeModel: [{ required: true, message: '请选择收费模式' }],
-	feeNumber: [{ required: true, validator: isIntegerNotMust, message: '请填写正确的收款数量' }],
+	feeNumber: [{ required: true, validator: isIntegerNotMust }],
+	belongCompany: [{ required: true, message: '请选择费用归属', trigger: 'blur',}],
 };
 const formData: any = reactive({
 	data: {}
@@ -97,6 +107,7 @@ const onSubmit = () => {
 				status: formData.data.status,
 				feeModel: formData.data.feeModel,
 				feeNumber: formData.data.feeNumber,
+				belongCompany: formData.data.belongCompany
 			};
 			save(toRaw(Data));
 		})

@@ -69,6 +69,11 @@ const columns = [
 		key: 'feeText',
 	},
 	{
+		title: '费用归属',
+		dataIndex: 'belongCompanyName',
+		key: 'belongCompanyName',
+	},
+	{
 		title: '是否必收费用',
 		dataIndex: 'confirmNeedFeeTypeName',
 		key: 'confirmNeedFeeTypeName',
@@ -217,7 +222,7 @@ const dealData = (params: [any]) => {
 	params.map((i: any) => {
 		// feeModel 收费模式: 0-人数 1-价格
 		// feeNumber 收费数量
-		i.feeText = i.feeModel == 0 ? `${i.feeNumber} 元/人` : `${i.feeNumber} 元`;		
+		i.feeText = i.feeModel == 0 ? `${i.feeNumber} 元/人` : `${i.feeNumber} 元`;	
 		return i;
 	});
 
