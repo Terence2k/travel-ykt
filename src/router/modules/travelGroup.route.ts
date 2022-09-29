@@ -22,8 +22,7 @@ export default [
 			},
 			{
 				path: 'travel_manage',
-				component: () => import('@/views/travelManagement/index.vue'),
-
+				redirect: '/travel/travel_manage/travel_list',
 				name: 'travel_manage',
 				meta: {
 					title: '行程管理',
@@ -31,19 +30,33 @@ export default [
 					// auth: ["admin"],
 					// isDetail: true, // 在左侧的导航栏不会展示
 				},
-			},
-			{
-				path: 'travel_list',
-				component: () => import('@/views/travelList/index.vue'),
+				children: [
+					{
+						path: 'travel_list',
+						component: () => import('@/views/travelManagement/travelList.vue'),
+		
+						name: 'travel_list',
+						meta: {
+							// title: '行程管理',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						}
+					},
+					{
+						path: 'add_travel',
+						component: () => import('@/views/travelManagement/addTravel.vue'),
 
-				name: 'travel_list',
-				meta: {
-					title: '接团行程管理',
-					// icon: 'liulanqi',
-					// auth: ["admin"],
-					// isDetail: true, // 在左侧的导航栏不会展示
-				},
-			},
+						name: 'add_travel',
+						meta: {
+							title: '新增行程',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					}
+				]
+			}
 		],
 	},
 ];

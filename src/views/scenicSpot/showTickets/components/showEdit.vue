@@ -34,8 +34,21 @@
 			</a-form>
 		</div>
 		<BaseModal title="审核" v-model="dialogVisible" :onOk="handleOk">
+			<div>
+				<p class="price">*票价</p>
+			</div>
 			<CommonTable :dataSource="state.tableDate.data" :columns="columns" :scrollY="false">
-
+				<template #bodyCell="{ column, record, text }">
+					<template v-if="column.key === 'partition'">
+						{{ record.partition }}
+					</template>
+					<template v-if="column.key === 'stock'">
+						<a-input v-model:value="record.stock" style="width: 150px"  :placeholder="record.stockMax" @change="aa" oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')" />
+					</template>
+					<template v-if="column.key === 'price'">
+						<a-input v-model:value="record.price" style="width: 150px" :placeholder="record.priceMax" />
+					</template>
+				</template>
 			</CommonTable>
 			<template v-slot:footer>
 				<a-button type="primary" @click="save">保存</a-button>
@@ -76,19 +89,25 @@ const state = reactive({
 	tableDate: {
 		data: [
 			{
-				username: '普通座',
-				mobile: '1',
-				unitTypeName: '1',
+				partition: '普通座',
+				stock: '',
+				price: '',
+				stockMax:'最大2000',
+				priceMax:'200元'
 			},
 			{
-				username: 'VIP座',
-				mobile: '1',
-				unitTypeName: '1',
+				partition: 'VIP座',
+				stock: '',
+				price: '',
+				stockMax:'最大1000',
+				priceMax:'200元'
 			},
 			{
-				username: 'SVIP座',
-				mobile: '1',
-				unitTypeName: '1',
+				partition: 'SVIP座',
+				stock: '',
+				price: '',
+				stockMax:'最大500',
+				priceMax:'200元'
 			},
 		],
 	},
@@ -96,21 +115,37 @@ const state = reactive({
 const columns = [
 	{
 		title: '分区',
-		dataIndex: 'username',
-		key: 'username',
+		dataIndex: 'partition',
+		key: 'partition',
 	},
 	{
 		title: '库存',
-		dataIndex: 'mobile',
-		key: 'mobile',
+		dataIndex: 'stock',
+		key: 'stock',
 	},
 	{
 		title: '价格',
-		dataIndex: 'unitTypeName',
-		key: 'unitTypeName',
+		dataIndex: 'price',
+		key: 'price',
 	},
 ];
-
+const save=()=>{
+	console.log(state.tableDate.data,'111111')
+}
+const aa=()=>{
+	if(Number(state.tableDate.data[0].stock)>2000)
+	{
+		state.tableDate.data[0].stock='2000'
+	}
+	if(Number(state.tableDate.data[1].stock)>1000)
+	{
+		state.tableDate.data[1].stock='1000'
+	}
+	if(Number(state.tableDate.data[2].stock)>500)
+	{
+		state.tableDate.data[2].stock='500'
+	}
+}
 const handleOk = async (callback: Function) => {};
 const edit = () => {
 	dialogVisible.value = true;
@@ -149,5 +184,13 @@ const edit = () => {
 	button:first-of-type {
 		margin-right: 16px;
 	}
+}
+.aa {
+	width: 100px;
+	height: 100px;
+	border: 1px solid red;
+}
+.price{
+	margin-left: 20px;
 }
 </style>

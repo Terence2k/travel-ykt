@@ -9,6 +9,46 @@ export default [
 		component: () => import('@/components/layout/index.vue'),
 		children: [
 			{
+				path: 'comprehensiveFee',
+				name: 'comprehensiveFee',
+				redirect: '/settlementManagement/comprehensiveFee/list',
+				meta: {
+					title: '综费产品',
+					isDetail: false, // 在左侧的导航栏不会展示
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/settlementManagement/comprehensiveFee/index.vue'),
+						name: 'comprehensiveFee',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'edit',
+						component: () => import('@/views/settlementManagement/comprehensiveFee/components/edit.vue'),
+						name: 'comprehensiveFeeEdit',
+						meta: {
+							title: '编辑',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'info',
+						component: () => import('@/views/settlementManagement/comprehensiveFee/components/info.vue'),
+						name: 'comprehensiveFeeInfo',
+						meta: {
+							title: '查看',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
+			{
 				path: 'settlementRule',
 				component: () => import('@/views/settlementManagement/settlementRule/index.vue'),
 				name: 'settlementRule',
@@ -47,8 +87,8 @@ export default [
 					},
 					{
 						path: 'info',
-						component: () => import('@/views/scenicSpot/scenicSpotInformation/components/info.vue'),
-						name: 'info',
+						component: () => import('@/views/settlementManagement/currencySettlementRule/components/info.vue'),
+						name: 'currencySettlementRuleInfo',
 						meta: {
 							title: '查看',
 							isDetail: true, // 在左侧的导航栏不会展示
@@ -94,18 +134,56 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
+					{
+						path: 'info',
+						component: () => import('@/views/settlementManagement/productSettlementRule/components/info.vue'),
+						name: 'configureRulesInfo',
+						meta: {
+							title: '查看',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
 				],
 			},
 			{
 				path: 'settlement',
-				component: () => import('@/views/settlementManagement/settlement/index.vue'),
 				name: 'settlement',
+				redirect: '/settlementManagement/settlement/list',
 				meta: {
 					title: '结算管理',
 					// icon: 'liulanqi',
 					// auth: ["admin"],
 					isDetail: false, // 在左侧的导航栏不会展示
 				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/settlementManagement/settlement/index.vue'),
+						name: 'settlement',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'info',
+						component: () => import('@/views/settlementManagement/settlement/components/info.vue'),
+						name: 'settlementInfo',
+						meta: {
+							title: '查看',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'examineInfo',
+						component: () => import('@/views/settlementManagement/settlement/examine/examineInfo.vue'),
+						name: 'examineInfo',
+						meta: {
+							title: '查看',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
 			},
 			{
 				path: 'transferManagement',

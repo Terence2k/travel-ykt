@@ -1,11 +1,25 @@
 <template>
 	<CommonTable :dataSource="tableList" :columns="columnsCount" :scrollY="false" bordered>
 		<template #bodyCell="{ column, record }">
-			<template v-if="column.key === 'ticketName'">
-				<a-input v-model:value="formData.data.creditCode" placeholder="输入每日库存" />
+			<template v-if="column.key === 'wateryPrice'">
+				<a-input-number
+					:controls="false"
+					:formatter="(value) => value.replace(/\D/g, '')"
+					:parser="(value) => value.replace(/\D/g, '')"
+					v-model:value="formData.data.wateryPrice"
+					placeholder="输入"
+					@change="changePrice"
+				/>
 			</template>
-			<template v-if="column.key === 'verificationType'">
-				<a-input v-model:value="formData.data.creditCode" placeholder="输入每日库存" />
+			<template v-if="column.key === 'price'">
+				<a-input-number
+					:controls="false"
+					:formatter="(value) => value.replace(/\D/g, '')"
+					:parser="(value) => value.replace(/\D/g, '')"
+					v-model:value="formData.data.price"
+					placeholder="输入"
+					@change="changePrice"
+				/>
 			</template>
 		</template>
 	</CommonTable>
@@ -24,6 +38,19 @@ const route = useRouter();
 const type = computed(() => {
 	return route.currentRoute.value?.query?.t;
 });
+
+watch(
+	() => props.tableList,
+	async (nV, oV) => {
+		if (nV !== oV) {
+			formData.data = nV[0];
+		}
+	}
+);
+const emits = defineEmits(['change-price']);
+const changePrice = () => {
+	emits('change-price', formData.data);
+};
 const useForm = Form.useForm;
 
 const props = defineProps({
@@ -39,21 +66,24 @@ const props = defineProps({
 const columnsCount = ref([
 	{
 		title: '水牌价',
-		dataIndex: 'ticketName',
-		key: 'ticketName',
+		dataIndex: 'wateryPrice',
+		key: 'wateryPrice',
 		width: 200,
 	},
 	{
 		title: '售价',
-		dataIndex: 'verificationType',
-		key: 'verificationType',
+		dataIndex: 'price',
+		key: 'price',
 		width: 200,
 	},
 ]);
 
 // 数据
 const formData = reactive({
-	data: [],
+	data: {
+		wateryPrice: null,
+		price: null,
+	},
 });
 // 表单
 const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(

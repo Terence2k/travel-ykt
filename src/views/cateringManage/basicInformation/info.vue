@@ -3,49 +3,49 @@
 		<div class="form_pad">
 			<header>基本信息</header>
 			<a-form name="basic" labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
-				<a-form-item label="门店名称" name="ac">
+				<a-form-item label="门店名称" >
 					{{ formData.data.name }}
 				</a-form-item>
-				<a-form-item label="企业类型" name="ac">
+				<a-form-item label="企业类型" >
 					{{ formData.data.accountType }}
 				</a-form-item>
-				<a-form-item label="门店地址" :wrapperCol="{ span: 10 }" name="ac">
+				<a-form-item label="门店地址" :wrapperCol="{ span: 10 }" >
 					{{ formData.data.addressDetail }}
 				</a-form-item>
-				<a-form-item label="统一社会信用代码" name="ac">
+				<a-form-item label="统一社会信用代码" >
 					{{ formData.data.creditCode }}
 				</a-form-item>
-				<a-form-item label="营业执照" name="ac"> <img :src="formData.data.businessLicenseUrl" /> </a-form-item>
-				<a-form-item label="联系人姓名" name="ac">
+				<a-form-item label="营业执照" > <img :src="formData.data.businessLicenseUrl" /> </a-form-item>
+				<a-form-item label="联系人姓名" >
 					{{ formData.data.contactName }}
 				</a-form-item>
-				<a-form-item label="联系人电话" name="ac">
+				<a-form-item label="联系人电话" >
 					{{ formData.data.phone }}
 				</a-form-item>
-				<a-form-item label="企业状态" name="ac">
+				<a-form-item label="企业状态" >
 					{{ formData.data.onOff == 0 ? '关闭' : '开通' }}
 				</a-form-item>
 				<div class="title">结算（收款）账户信息</div>
 
-				<a-form-item label="收款账号" name="ac">
+				<a-form-item label="收款账号" >
 					{{ formData.data.bankAccount }}
 				</a-form-item>
-				<a-form-item label="账户名" name="ac">
+				<a-form-item label="账户名" >
 					{{ formData.data.bankAccountName }}
 				</a-form-item>
-				<a-form-item label="开户行地址" name="ac">
+				<a-form-item label="开户行地址" >
 					{{ formData.data.accountAddress }}
 				</a-form-item>
-				<a-form-item label="收款行" name="ac">
+				<a-form-item label="收款行" >
 					{{ formData.data.bank }}
 				</a-form-item>
 				<div class="title">补充说明</div>
 
-				<a-form-item label="营业时间" name="ac"> {{ formData.data.startTime }} 至 {{ formData.data.endTime }} </a-form-item>
-				<a-form-item label="联系电话" name="ac">
+				<a-form-item label="营业时间" > {{ formData.data.startTime }} 至 {{ formData.data.endTime }} </a-form-item>
+				<a-form-item label="联系电话" >
 					{{ formData.data.shopPhone }}
 				</a-form-item>
-				<a-form-item label="其他" name="ac">
+				<a-form-item label="其他" >
 					{{ formData.data.cateringDesc }}
 				</a-form-item>
 			</a-form>
@@ -87,7 +87,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .warp {
 	header {
 		// width: 64px;

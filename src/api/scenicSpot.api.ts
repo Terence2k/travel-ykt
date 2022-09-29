@@ -6,7 +6,6 @@ export async function getScenicSpotInformationList(data: any) {
 		url: commonPath + `/ticket-service/public/api/scenic`,
 		method: 'get',
 		data,
-		// showLoading: true,
 	});
 }
 // 编辑景点信息
@@ -15,7 +14,6 @@ export async function changeScenicSpotInformation(data: any) {
 		url: commonPath + `/ticket-service/public/api/scenic`,
 		method: 'post',
 		data,
-		// showLoading: true,
 	});
 }
 //查询景点详情
@@ -23,7 +21,6 @@ export async function getScenicById(id: any) {
 	return request({
 		url: commonPath + `/ticket-service/public/api/scenic/${id}`,
 		method: 'get',
-		// showLoading: true,
 	});
 }
 
@@ -33,7 +30,6 @@ export async function getSingleVoteList(data: any) {
 		url: commonPath + `/ticket-service/public/api/scenic-one-ticket/page`,
 		method: 'get',
 		data,
-		// showLoading: true,
 	});
 }
 
@@ -42,7 +38,6 @@ export async function getAllArea(pid: any, level: any) {
 	return request({
 		url: `${commonPath}/customer-service/public/api/area/list/${pid}/${level}`,
 		method: 'get',
-		// showLoading: true,
 	});
 }
 // 获取地区
@@ -50,7 +45,6 @@ export async function getAreaByid(id: any) {
 	return request({
 		url: `${commonPath}/customer-service/public/api/area/${id}`,
 		method: 'get',
-		// showLoading: true,
 	});
 }
 
@@ -58,10 +52,45 @@ export async function getAreaByid(id: any) {
 export async function getCompandType() {
 	return request({
 		url: `${commonPath}/customer-service/public/api/dictionary/dropDownQueryListChild?pid=115`,
-		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded',
-		},
+
 		method: 'post',
 		showLoading: false,
+	});
+}
+// 获取核销项目列表
+export async function getVariflist() {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-one-ticket/varif-list?id=2`,
+		method: 'get',
+	});
+}
+// 获取单票详情
+export async function getScenicSpotSignleDetail(id: number) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-one-ticket/${id}`,
+		method: 'get',
+	});
+}
+// 获取获取核销权限用户
+export async function getVerifUser() {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-one-ticket/get-verif-user?companyId=8`,
+		method: 'get',
+	});
+}
+// 新增或 编辑单票信息
+export async function saveSingleVoteInfo(data: any) {
+	return request({
+		url: commonPath + `/ticket-service/public/api/scenic-one-ticket/save`,
+		method: 'post',
+		data,
+	});
+}
+
+// 核销项目列表
+export async function getScenicOneTicket() {
+	return request({
+		url: commonPath + `/ticket-service/public/api/scenic-one-ticket/varif-list?id=2`,
+		method: 'get',
 	});
 }

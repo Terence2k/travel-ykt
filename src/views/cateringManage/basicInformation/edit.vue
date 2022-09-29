@@ -12,7 +12,9 @@
 				:scrollToFirstError="true"
 			>
 				<a-form-item label="门店名称" v-bind="validateInfos[`data.name`]">
-					<a-input v-model:value="formData.data.name" />
+					<a-select allowClear v-model:value="formData.data.name" placeholder="请选择门店名称">
+						<a-select-option v-for="i in cateringStoreName" :key="i.shopName" :value="i.shopId">{{ i.shopName }}</a-select-option>
+					</a-select>
 				</a-form-item>
 				<a-form-item label="企业类型" v-bind="validateInfos[`data.businessType`]">
 					<a-select allowClear v-model:value="formData.data.businessType" placeholder="请选择企业类型">
@@ -75,9 +77,9 @@
 				<div class="title">补充说明</div>
 
 				<a-form-item label="营业时间" required>
-					<a-time-picker v-model:value="formData.data.starttime" valueFormat="HH:mm" :placeholder="formData.data.startTime" />
+					<a-time-picker v-model:value="formData.data.starttime" format="HH:mm" :placeholder="formData.data.startTime" />
 					<span class="span_width">至</span>
-					<a-time-picker v-model:value="formData.data.endtime" valueFormat="HH:mm" :placeholder="formData.data.endTime" />
+					<a-time-picker v-model:value="formData.data.endtime" format="HH:mm" :placeholder="formData.data.endTime" />
 				</a-form-item>
 				<a-form-item label="联系电话" v-bind="validateInfos[`data.shopPhone`]">
 					<a-input v-model:value="formData.data.shopPhone" placeholder="请输入联系电话" />
@@ -107,7 +109,6 @@ import Pic from '@/components/common/imageWrapper.vue';
 import { toArray } from 'lodash';
 import api from '@/api';
 const useForm = Form.useForm;
-
 const navigatorBar = useNavigatorBar();
 const route = useRouter();
 
@@ -120,6 +121,7 @@ const businessTypeOption = computed(() => scenicSpotOptions.businessTypeOption);
 const proviceList = computed(() => scenicSpotOptions.proviceList);
 const cityList = computed(() => scenicSpotOptions.cityList);
 const areaList = computed(() => scenicSpotOptions.areaList);
+const cateringStoreName = computed(() => scenicSpotOptions.cateringStoreName);
 // 联动
 const selectCity = async (id: number) => {
 	if (id) {
@@ -168,6 +170,10 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 const errorInfos = computed(() => {
 	return mergeValidateInfo(toArray(validateInfos).splice(0, 4));
 });
+
+const disabledDate = (time: any) => {
+	return time.getTime() < Date.now() - 24 * 60 * 60 * 1000;
+};
 
 const onSubmit = () => {
 	validate()
@@ -219,6 +225,7 @@ const save = async (params: object) => {
 
 const initPage = async (): Promise<void> => {
 	await scenicSpotOptions.getBusinessTypeOption();
+	await scenicSpotOptions.getCateringStoreName();
 	await scenicSpotOptions.getAllAreaProvice(0);
 	api.getCateringInfo(route.currentRoute.value?.query?.oid).then((res: any) => {
 		formData.data = res;
@@ -234,7 +241,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .warp {
 	width: 100%;
 	box-sizing: border-box;

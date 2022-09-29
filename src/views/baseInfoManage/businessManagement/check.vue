@@ -16,7 +16,7 @@
             企业名称
           </div>
           <div>
-            丽江黑白水旅行社
+            {{ name }}
           </div>
         </div>
         <div class="row_info">
@@ -25,7 +25,7 @@
             企业类型
           </div>
           <div>
-            旅行社
+            {{ businessTypeName }}
           </div>
         </div>
         <div class="row_info">
@@ -34,7 +34,7 @@
             所属地区
           </div>
           <div>
-            云南省丽江市玉龙县
+            {{ regionName }}
           </div>
         </div>
         <div class="row_info">
@@ -43,7 +43,7 @@
             信用代码
           </div>
           <div>
-            YN346810967
+            {{ creditCode }}
           </div>
         </div>
         <div class="row_info">
@@ -52,6 +52,7 @@
             营业执照
           </div>
           <div class="img_box">
+            <a-image width="100%" :src="businessLicenseUrl" />
           </div>
         </div>
         <div class="row_info">
@@ -60,7 +61,7 @@
             姓名
           </div>
           <div>
-            墩海皇
+            {{ contactName }}
           </div>
         </div>
         <div class="row_info">
@@ -69,7 +70,7 @@
             手机号
           </div>
           <div>
-            13713763849
+            {{ phone }}
           </div>
         </div>
         <div class="row_info">
@@ -78,7 +79,7 @@
             账号
           </div>
           <div>
-            as_123
+            {{ account }}
           </div>
         </div>
       </div>
@@ -86,23 +87,24 @@
         审核意见
       </div>
       <div class="check_opetion">
-        <a-form name="basic" autocomplete="off" labelAlign="left" :label-col="{ span: 4 }" :wrapper-col="{ span: 24 }">
-          <a-form-item label="审核意见" name="username" :colon="false">
-            <a-radio-group name="radioGroup">
-              <a-radio value="1">通过</a-radio>
-              <a-radio value="2">不通过</a-radio>
+        <a-form ref="checkFormRef" :model="checkForm" :rules="formRules" name="basic" autocomplete="off"
+          labelAlign="left" :label-col="{ span: 4 }" :wrapper-col="{ span: 24 }">
+          <a-form-item label="审核意见" name="auditResult" :colon="false">
+            <a-radio-group name="auditResult" v-model:value="checkForm.auditResult">
+              <a-radio :value="2">通过</a-radio>
+              <a-radio :value="3">不通过</a-radio>
             </a-radio-group>
           </a-form-item>
-          <a-form-item label="用户角色" name="username" :colon="false">
-            <a-select ref="select" placeholder="请选择所属角色" style="width:390px">
-              <a-select-option value="d">{{'name'}}</a-select-option>
+          <a-form-item label="用户角色" name="roldId" :colon="false">
+            <a-select name="roldId" v-model:value="checkForm.roldId" placeholder="请选择所属角色" style="width:390px">
+              <a-select-option v-for="item in rolesList" :value="item.oid">{{item.roleName}}</a-select-option>
             </a-select>
           </a-form-item>
         </a-form>
       </div>
     </div>
     <div class="btn_box">
-      <a-button type="primary" @click="submit" style="margin-right:20px">提交</a-button>
+      <a-button type="primary" @click="submit" style="margin-right:20px" :loading="loading">提交</a-button>
       <!-- <a-button @click="back">返回列表</a-button> -->
     </div>
   </div>
@@ -113,23 +115,93 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue'
-import {
-  CloseOutlined
-} from '@ant-design/icons-vue';
+import { CloseOutlined } from '@ant-design/icons-vue';
+import api from '@/api';
+import { message } from 'ant-design-vue';
+const checkFormRef = ref();
 const router = useRouter();
+const rolesList = ref([])
 const back = () => {
   router.push({
-    path: '/baseInfo/businessManagement/apply'
+    name: 'apply'
   })
 }
 const state = reactive({
   modalVisible: false
 })
 const { modalVisible } = toRefs(state)
+
+type propsType = {
+  name?: string,
+  businessType?: string | number,
+  businessTypeName?: string,
+  regionName?: string,
+  creditCode?: string,
+  businessLicenseUrl?: string,
+  contactName?: string,
+  phone?: string,
+  account?: string,
+  oid?: string | number
+}
+const props = defineProps<propsType>()
+const transitionProps: propsType = {}
+let key: keyof propsType;
+for (key in props) {
+  if (Object.prototype.hasOwnProperty.call(props, key)) {
+    transitionProps[key] = JSON.parse(decodeURIComponent(props[key] as string))
+  }
+}
+const {
+  name,
+  businessType,
+  businessTypeName,
+  regionName,
+  creditCode,
+  businessLicenseUrl,
+  contactName,
+  phone,
+  account,
+  oid
+} = transitionProps
+const checkForm = reactive({
+  oid: oid,
+  account: account,
+  roldId: undefined,
+  auditResult: 2
+})
+
+const getListByBusinessType = async () => {
+  let data = await api.listByBusinessType(businessType)
+  rolesList.value = data
+}
+getListByBusinessType()
+
+const formRules: any = {
+  auditResult: [{ required: true, trigger: 'blur', message: '请选择是否通过' }],
+  roldId: [{ required: true, trigger: 'blur', message: '请选择所属角色' }],
+};
+const loading = ref(false)
 const submit = () => {
-  state.modalVisible = true
+  checkFormRef.value.validateFields().then(async () => {
+    loading.value = true
+    let res = await api.auditCompany(toRaw(checkForm))
+    loading.value = false
+    if (res) {
+      message.success('审核成功！')
+      router.push({
+        name: 'apply',
+        params: {
+          isRefresh: 1
+        }
+      })
+    } else {
+      message.success('审核失败！')
+    }
+  }).catch((err: any) => {
+    console.log(err);
+  })
 }
 </script>
 
