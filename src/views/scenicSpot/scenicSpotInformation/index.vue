@@ -1,30 +1,31 @@
 <template>
-	<CommonSearch>
-		<search-item label="审核状态">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.auditStatus" style="width: 200px" placeholder="请选择景区等级">
-				<a-select-option :value="-1">未提交</a-select-option>
-				<a-select-option :value="0">待审核 </a-select-option>
-				<a-select-option :value="1"> 审核通过</a-select-option>
-				<a-select-option :value="2"> 审核未通过</a-select-option>
-			</a-select>
-		</search-item>
-		<search-item label="景区等级">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.scenicLevel" style="width: 200px" placeholder="请选择景区等级">
-				<a-select-option :value="num" v-for="num in 10" :key="num">{{ num }}</a-select-option>
-			</a-select>
-		</search-item>
-		<search-item label="景区名称">
-			<a-input v-model:value="state.tableData.param.name" placeholder="请选择审核状态" />
-		</search-item>
-		<template #button>
-			<a-button @click="initList">查询</a-button>
-		</template>
-	</CommonSearch>
-	<div class="table-area">
-		<div class="list-btn">
-			<a-button type="primary" class="success">导出</a-button>
-		</div>
-		<a-spin size="large" :spinning="state.tableData.loading">
+	<a-spin size="large" :spinning="state.tableData.loading" style="min-height: 50vh">
+		<CommonSearch>
+			<search-item label="审核状态">
+				<a-select allowClear ref="select" v-model:value="state.tableData.param.auditStatus" style="width: 200px" placeholder="请选择景区等级">
+					<a-select-option :value="-1">未提交</a-select-option>
+					<a-select-option :value="0">待审核 </a-select-option>
+					<a-select-option :value="1"> 审核通过</a-select-option>
+					<a-select-option :value="2"> 审核未通过</a-select-option>
+				</a-select>
+			</search-item>
+			<search-item label="景区等级">
+				<a-select allowClear ref="select" v-model:value="state.tableData.param.scenicLevel" style="width: 200px" placeholder="请选择景区等级">
+					<a-select-option :value="num" v-for="num in 10" :key="num">{{ num }}</a-select-option>
+				</a-select>
+			</search-item>
+			<search-item label="景区名称">
+				<a-input v-model:value="state.tableData.param.name" placeholder="请选择审核状态" />
+			</search-item>
+			<template #button>
+				<a-button @click="initList">查询</a-button>
+			</template>
+		</CommonSearch>
+		<div class="table-area">
+			<div class="list-btn">
+				<a-button type="primary" class="success">导出</a-button>
+			</div>
+
 			<CommonTable :dataSource="state.tableData.data" :columns="columns">
 				<template #bodyCell="{ column, record }">
 					<template v-if="column.key === 'action'">
@@ -35,15 +36,16 @@
 					</template>
 				</template>
 			</CommonTable>
-		</a-spin>
-		<CommonPagination
-			:current="state.tableData.param.pageNo"
-			:page-size="state.tableData.param.pageSize"
-			:total="state.tableData.total"
-			@change="onHandleCurrentChange"
-			@showSizeChange="pageSideChange"
-		/>
-	</div>
+
+			<CommonPagination
+				:current="state.tableData.param.pageNo"
+				:page-size="state.tableData.param.pageSize"
+				:total="state.tableData.total"
+				@change="onHandleCurrentChange"
+				@showSizeChange="pageSideChange"
+			/>
+		</div>
+	</a-spin>
 </template>
 
 <script setup lang="ts">
