@@ -30,8 +30,8 @@
       <a-form-item label="事件触发的操作页面" name="auditTypePage">
         <a-input v-model:value="auditForm.auditTypePage" disabled />
       </a-form-item>
-      <!-- <a-form-item label="参与审核的部门或角色" name="sysAuditNodeVos"> -->
-      <a-form-item label="参与审核的部门或角色">
+      <a-form-item label="参与审核的部门或角色" name="sysAuditNodeVos">
+        <!-- <a-form-item label="参与审核的部门或角色"> -->
         <a-transfer v-model:target-keys="targetKeys" class="tree-transfer" :data-source="dataSource"
           :render="(item: any) => item.title" :show-select-all="false" @change="transferChange"
           :titles="['部门角色', '部门角色已选中']" :list-style="{
@@ -64,7 +64,7 @@ import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModa
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import type { TransferProps } from 'ant-design-vue';
-import { flatten, onChecked, format, formatAudit } from '@/views/baseInfoManage/teamTypeManagement/transfer'
+import { flatten, onChecked } from '@/views/baseInfoManage/teamTypeManagement/transfer'
 const columns = [
   {
     title: '序号',
@@ -124,13 +124,15 @@ const auditForm = reactive({
   auditTypeName: undefined,
   auditTypeExplain: undefined,
   auditTypePage: undefined,
-  oid: undefined
+  oid: undefined,
+  sysAuditNodeVos: undefined
 })
 /* 穿梭框相关 */
 const targetKeys = ref<number[]>([]);
 // draggable
 const draggable = (dragelist: string[]) => {
   const node: HTMLUListElement = document.querySelector('.ant-transfer-list-content')!;
+  if (!node?.children) return
   const childrenList = Array.from(node.children)
   if (childrenList.length === 0 || !node) return
   childrenList.forEach((item, index) => {
@@ -243,6 +245,9 @@ const draggable = (dragelist: string[]) => {
   }
 }
 const transferChange = (targetKeys: string[], direction: string, moveKeys: string[]) => {
+  if (targetKeys.length > 0) {
+    auditRef.value.resetFields('sysAuditNodeVos')
+  }
   nextTick(() => {
     draggable(targetKeys)
   })
@@ -279,19 +284,40 @@ const closeModal = () => {
   auditRef.value.resetFields()
   targetKeys.value = []
 }
+const formatAudit = (arr: any, tArr: TransferProps['dataSource']) => {
+  let ret: any = []
+  for (let i = 0, l = arr.length; i < l; i++) {
+    const element = arr[i];
+    for (let j = 0, l = tArr.length; j < l; j++) {
+      const telement = tArr[j];
+      if (telement?.children) {
+        for (let k = 0, l = telement.children.length; k < l; k++) {
+          const celement = telement.children[k];
+          if (element === celement?.key) {
+            ret.push({
+              businessType: telement.key, //项目id
+              roleId: element, //产品id
+              auditSort: i + 1 //排序
+            })
+          }
+        }
+      }
+    }
+  }
+  return ret
+}
 const save = () => {
+  auditForm.sysAuditNodeVos = formatAudit(targetKeys.value, tData.value);
   auditRef.value.validate().then(async (val: any) => {
-    let sysAuditNodeVos = formatAudit(targetKeys.value, tData.value, { parentKey: 'businessType', childrenKey: 'roleId' });
-    console.log(sysAuditNodeVos, 'ssssssss');
-
-    /* let res = await api.AuditUpdate({ ...toRaw(auditForm), teamTypeItemBos });
-    if (res === "添加成功") {
-      message.success('新增团队类型成功！')
-      closeModal()
+    let res = await api.AuditUpdate({ ...toRaw(auditForm) });
+    console.log(res, '%%%%%');
+    if (res === null) {
+      message.success('编辑审核流程成功！')
+      closeModal();
       onSearch();
     } else {
-      message.error('新增团队类型失败！')
-    } */
+      message.error('编辑审核流程失败！')
+    }
   }).catch((err: string) => {
     console.log(err);
   })
@@ -301,7 +327,6 @@ const onSearch = async () => {
   state.tableData.data = res.content
   state.tableData.total = res.total
 }
-
 const getRolesList = async () => {
   let res = await api.getBusinessTypeRole()
   let data: TransferProps['dataSource']

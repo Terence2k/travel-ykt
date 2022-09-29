@@ -84,33 +84,6 @@ const format = (arr: any, tArr: TransferProps['dataSource'], keys: { parentKey: 
     return formattingData(ret, keys)
   }
 }
-const formatAudit = (arr: any, tArr: TransferProps['dataSource'], keys: { parentKey: any, childrenKey: any }) => {
-  let ret: any = []
-  for (let i = arr.length - 1; i >= 0; i--) {
-    const element = arr[i];
-    for (let j = tArr.length - 1; j >= 0; j--) {
-      const telement = tArr[j];
-      if (telement?.children) {
-        for (let k = telement.children.length - 1; k >= 0; k--) {
-          const celement = telement.children[k];
-          if (element === celement?.key) {
-            ret.push({
-              [keys.parentKey]: telement.key, //项目id
-              [keys.childrenKey]: element, //产品id
-            })
-            /* ret.push({
-              itemId: telement.key, //项目id
-              productId: element //产品id
-            }) */
-          }
-        }
-      }
-    }
-  }
-  if (ret.length > 0) {
-    return formattingData(ret, keys)
-  }
-}
 /* function handleTreeData(data: TransferProps['dataSource'], targetKeys: string[] = []) {
   data.forEach((item, index) => {
     item['disabled'] = targetKeys.includes(item.key as any);
@@ -123,4 +96,4 @@ const formatAudit = (arr: any, tArr: TransferProps['dataSource'], keys: { parent
 const treeData = computed(() => {
   return handleTreeData(tData, targetKeys.value);
 }); */
-export { flatten, onChecked, format, formatAudit }
+export { flatten, onChecked, format }
