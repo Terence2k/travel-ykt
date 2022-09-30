@@ -2,7 +2,7 @@
 	<div class="warp">
 		<div class="trave-contaner">
 			<a-tabs v-model:activeKey="activeKey">
-				<a-tab-pane key="1" tab="酒店信息" force-render>
+				<a-tab-pane key="1" tab="订单信息" force-render>
 					<div class="form_pad">
 						<header>行程信息</header>
 						<a-form name="basic" labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
