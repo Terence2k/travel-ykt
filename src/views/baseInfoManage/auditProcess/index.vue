@@ -311,7 +311,7 @@ const save = () => {
   auditRef.value.validate().then(async (val: any) => {
     let res = await api.AuditUpdate({ ...toRaw(auditForm) });
     console.log(res, '%%%%%');
-    if (res === null) {
+    if (res === '修改成功') {
       message.success('编辑审核流程成功！')
       closeModal();
       onSearch();

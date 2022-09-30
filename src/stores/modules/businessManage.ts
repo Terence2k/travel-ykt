@@ -12,7 +12,7 @@ export const useBusinessManageOption = defineStore('businessManage', {
 		getBusinessTypeOption() {
 			api.businessTypeDropDown().then((res: any) => {
 				const options = res.map((i: any) => {
-					return { name: i.name, oid: i.codeValue };
+					return { name: i.name, oid: i.oid, codeValue: i.codeValue };
 				});
 				this.businessTypeOption = options;
 				return options;

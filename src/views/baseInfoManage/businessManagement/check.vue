@@ -173,7 +173,7 @@ const checkForm = reactive({
 })
 
 const getListByBusinessType = async () => {
-  let data = await api.listByBusinessType(businessType)
+  let data = await api.listByBusinessType(oid)
   rolesList.value = data
 }
 getListByBusinessType()

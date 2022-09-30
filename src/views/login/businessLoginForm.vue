@@ -3,7 +3,7 @@
     autocomplete="off">
     <a-form-item name="businessType" label="企业类型">
       <a-select v-model:value="$attrs.model.businessType" placeholder="请选择企业类型">
-        <a-select-option v-for="item in businessTypeOption" :value="item.oid">{{ item.name }}
+        <a-select-option v-for="item in businessTypeOption" :value="item.codeValue">{{ item.name }}
         </a-select-option>
       </a-select>
     </a-form-item>
