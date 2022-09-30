@@ -32,21 +32,21 @@
       </a-form-item>
       <a-form-item label="参与审核的部门或角色" name="sysAuditNodeVos">
         <!-- <a-form-item label="参与审核的部门或角色"> -->
-        <a-transfer v-model:target-keys="checkedKeys" class="tree-transfer" :data-source="dataSource"
+        <a-transfer v-model:target-keys="targetKeys" class="tree-transfer" :data-source="dataSource"
           :render="(item: any) => item.title" :show-select-all="false" @change="transferChange"
           :titles="['部门角色', '部门角色已选中']" :list-style="{
             width: '300px',
             maxHeight: '350px',
           }">
           <template #children="{ direction, selectedKeys, onItemSelect }">
-            <a-tree v-if="direction === 'left'" block-node checkable check-strictly default-expand-all
-              :checked-keys="[...selectedKeys, ...checkedKeys]" :tree-data="tData" @check="
+            <a-tree v-if="direction === 'left'" block-node checkable default-expand-all
+              :checked-keys="[...selectedKeys, ...targetKeys]" :tree-data="tData" @check="
                 (_, props) => {
-                  onChecked(props, [...selectedKeys, ...checkedKeys], onItemSelect);
+                  onChecked(props, [...selectedKeys, ...targetKeys], onItemSelect);
                 }
               " @select="
                 (_, props) => {
-                  onChecked(props, [...selectedKeys, ...checkedKeys], onItemSelect);
+                  onChecked(props, [...selectedKeys, ...targetKeys], onItemSelect);
                 }
               " />
           </template>
@@ -63,8 +63,8 @@ import CommonPagination from '@/components/common/CommonPagination.vue'
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
-import type { TransferProps, TreeProps } from 'ant-design-vue';
-import { any } from '_vue-types@3.0.2@vue-types';
+import type { TransferProps } from 'ant-design-vue';
+import { flatten, onChecked } from '@/views/baseInfoManage/teamTypeManagement/transfer'
 const columns = [
   {
     title: '序号',
@@ -128,105 +128,9 @@ const auditForm = reactive({
   sysAuditNodeVos: undefined
 })
 /* 穿梭框相关 */
-const checkedKeys = ref<any[]>([]);
-// 记录被选中父元素key
-const chosedKeys: (string | number)[] = []
-function flatten(data: TransferProps['dataSource'] = []) {
-  const transferDataSource: TransferProps['dataSource'] = [];
-  /* 扁平化 */
-  function flat(list: TransferProps['dataSource'] = []) {
-    list.forEach(item => {
-      transferDataSource.push(item);
-      flat(item.children);
-    });
-  }
-  flat(JSON.parse(JSON.stringify(data)));
-  return transferDataSource
-}
-
-function handleTreeData(data: TransferProps['dataSource'], disabledKeys: any[] = []) {
-  data.forEach(item => {
-    item['disabled'] = disabledKeys.includes(item.key as any);
-    if (item.children) {
-      handleTreeData(item.children, disabledKeys);
-    }
-  });
-  return data as TransferProps['dataSource'];
-}
-
-// 如果父元素被选中则子元素不能选中，父元素取消选中子元素可被选中
-function disabledChildKeys(data: TransferProps['dataSource'], parentKeys: any[] = []) {
-  data.forEach(item => {
-    if (parentKeys.includes(item.key)) {
-      item.children.forEach((citem: any) => {
-        citem['disabled'] = true;
-      });
-    } else {
-      item.children.forEach((citem: any) => {
-        citem['disabled'] = false;
-      });
-    }
-  });
-  return data as TransferProps['dataSource'];
-}
-
-// 如果右侧穿梭框取消选中，启用父元素下禁用的子选项
-function enableChildKeys(data: TransferProps['dataSource'], parentKeys: any[] = []) {
-  data.forEach(item => {
-    if (parentKeys.includes(item.key)) {
-      item.children.forEach((citem: any) => {
-        citem['disabled'] = false;
-      });
-    }
-  });
-  return data as TransferProps['dataSource'];
-}
-
-function getKeys(arr: any[]) {
-  let temp = arr.map((item: any) => {
-    return item.key
-  })
-  return temp
-}
-
-function isChecked(selectedKeys: (string | number)[], eventKey: string | number) {
-  return selectedKeys.indexOf(eventKey) !== -1;
-}
-
-function setChosedKeys(e: Parameters<TreeProps['onCheck']>[1] | Parameters<TreeProps['onSelect']>[1]) {
-  const { checked, node: { eventKey } } = e
-  if (checked) {
-    chosedKeys.push(eventKey)
-  } else {
-    // 如果key选中到穿梭框右侧则不能删除
-    if (checkedKeys.value.includes(eventKey)) return
-    let index = chosedKeys.indexOf(eventKey)
-    if (index !== -1) {
-      chosedKeys.splice(index, 1)
-    }
-  }
-}
-const onChecked = (
-  e: Parameters<TreeProps['onCheck']>[1] | Parameters<TreeProps['onSelect']>[1],
-  checkedKeys: any[],
-  onItemSelect: (n: any, c: boolean) => void,
-) => {
-  if (e.node.children) {
-    const { eventKey } = e.node;
-    onItemSelect(eventKey, !isChecked(checkedKeys, eventKey));
-    setChosedKeys(e)
-    tData.value = disabledChildKeys(tData.value, chosedKeys);
-    console.log(chosedKeys, '$$$$$$$');
-    // console.log(tData.value, '$$$$$$$');
-    // console.log(e, eventKey)
-    // console.log(checkedKeys)
-  } else {
-    const { eventKey } = e.node;
-    onItemSelect(eventKey, !isChecked(checkedKeys, eventKey));
-  }
-};
+const targetKeys = ref<number[]>([]);
 // draggable
-const draggable = (dragelist: any[]) => {
+const draggable = (dragelist: string[]) => {
   const node: HTMLUListElement = document.querySelector('.ant-transfer-list-content')!;
   if (!node?.children) return
   const childrenList = Array.from(node.children)
@@ -274,7 +178,7 @@ const draggable = (dragelist: any[]) => {
     const childrenList = document.querySelectorAll('.ant-transfer-list-content-item')
     childrenList.forEach((item, index) => {
       const key = item.getAttribute('data-key')!
-      checkedKeys.value[index] = key
+      targetKeys.value[index] = Number(key)
     });
   }
   //获取元素在父元素中的index
@@ -340,38 +244,7 @@ const draggable = (dragelist: any[]) => {
     }
   }
 }
-const transferChange = (targetKeys: any[], direction: string, moveKeys: (string | number)[]) => {
-  console.log(targetKeys, direction, moveKeys, '&^&&^&^&^');
-  if (direction === 'left') {
-    tData.value = enableChildKeys(tData.value, moveKeys)
-    // 更新父元素列表
-    for (let i = 0; i < moveKeys.length; i++) {
-      let index = chosedKeys.indexOf(moveKeys[i])
-      if (index !== -1) {
-        chosedKeys.splice(index, 1)
-      }
-    }
-  }
-  // 如果选中的左侧父元素添加到右侧，和右边的元素存在父子关系则删除对应的子元素
-  if (direction === 'right') {
-    for (let j = 0, l = tData.value?.length; j < l; j++) {
-      const item = tData.value[j];
-      let index = moveKeys.indexOf(item.key)
-      if (index === -1) {
-        continue
-      } else {
-        for (let k = 0, l = item.children.length; k < l; k++) {
-          const citem = item.children[k];
-          let cindex = checkedKeys.value.indexOf(citem.key)
-          if (cindex !== -1) {
-            checkedKeys.value.splice(cindex, 1)
-          } else {
-            continue
-          }
-        }
-      }
-    }
-  }
+const transferChange = (targetKeys: string[], direction: string, moveKeys: string[]) => {
   if (targetKeys.length > 0) {
     auditRef.value.resetFields('sysAuditNodeVos')
   }
@@ -392,12 +265,9 @@ const addOrUpdate = async ({ row, handle }: addInterface) => {
     auditForm.auditTypeExplain = auditTypeExplain
     auditForm.auditTypePage = auditTypePage
     auditForm.oid = oid
-    checkedKeys.value = auditModelDetailVos.map((item: any) => {
-      return item.roleId
+    targetKeys.value = auditModelDetailVos.map((item: any) => {
+      return item.roleId as number
     })
-    /* nextTick(() => {
-      draggable(checkedKeys.value)
-    }) */
   }
 }
 const onHandleCurrentChange = (val: number) => {
@@ -412,7 +282,7 @@ const pageSideChange = (current: number, size: number) => {
 const closeModal = () => {
   modalVisible.value = false
   auditRef.value.resetFields()
-  checkedKeys.value = []
+  targetKeys.value = []
 }
 const formatAudit = (arr: any, tArr: TransferProps['dataSource']) => {
   let ret: any = []
@@ -437,7 +307,7 @@ const formatAudit = (arr: any, tArr: TransferProps['dataSource']) => {
   return ret
 }
 const save = () => {
-  auditForm.sysAuditNodeVos = formatAudit(checkedKeys.value, tData.value);
+  auditForm.sysAuditNodeVos = formatAudit(targetKeys.value, tData.value);
   auditRef.value.validate().then(async (val: any) => {
     let res = await api.AuditUpdate({ ...toRaw(auditForm) });
     console.log(res, '%%%%%');
