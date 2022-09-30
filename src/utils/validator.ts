@@ -3,14 +3,17 @@ import type { FormInstance } from 'ant-design-vue';
 // 验证是否整数
 export function isIntegerNotMust(rule: any, value: any, callback: any) {
 	if (!Number(value)) {
-		callback(new Error('请输入正整数'));
+		// callback(new Error('请输入正整数'));
+		return Promise.reject(new Error('请输入正整数'));
 	} else {
 		const re = /^[0-9]*[1-9][0-9]*$/;
 		const rsCheck = re.test(value);
 		if (!rsCheck) {
 			callback(new Error('请输入正整数'));
+			// return Promise.reject(new Error('请输入正整数'));
 		} else {
 			callback();
+			// return Promise.resolve();
 		}
 	}
 }
@@ -18,22 +21,26 @@ export function isIntegerNotMust(rule: any, value: any, callback: any) {
 export function isBtnZeroToHundred(rule: any, value: any, callback: any) {
 	if (!value) {
 		return callback(new Error('输入不可以为空'));
+		// return Promise.reject(new Error('输入不可以为空'));
 	}
 	setTimeout(() => {
 		if (!Number(value)) {
 			callback(new Error('请输入[1,100]之间的数字'));
+			// return Promise.reject(new Error('请输入[1,100]之间的数字'));
 		} else {
 			if (value < 0 || value > 100) {
 				callback(new Error('请输入[1,100]之间的数字'));
+				// return Promise.reject(new Error('请输入[1,100]之间的数字'));
 			} else {
 				callback();
+				// return Promise.resolve();
 			}
 		}
 	}, 100);
 }
 
-export function validateRules(rules:any, data:any, key?:string) {
-	let rulesRef:any = {}
+export function validateRules(rules: any, data: any, key?: string) {
+	let rulesRef: any = {};
 	if (key) {
 		rulesRef[key] = rules;
 	} else {
@@ -41,15 +48,15 @@ export function validateRules(rules:any, data:any, key?:string) {
 			rulesRef[k] = rules;
 		}
 	}
-	return rulesRef
+	return rulesRef;
 }
 
 export async function validateFields(fromRef: FormInstance) {
-	let flag = false
+	let flag = false;
 	try {
-		const values = await fromRef.validateFields()
+		const values = await fromRef.validateFields();
 		// console.log('Success:', values);
-		flag = true
+		flag = true;
 	} catch (errorInfo) {
 		// console.log('Failed:', errorInfo);
 	}

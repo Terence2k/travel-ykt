@@ -6,17 +6,33 @@
 		</div>
 		<a-spin size="large" :spinning="state.tableData.loading">
 			<CommonTable
-				:dataSource="state.tableData.data"
+				:data-source="state.tableData.data"
 				:columns="columns"
-				:row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
+				:rowSelection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
+				rowKey="oid"
+				:scroll="{ x: '100%' }"
 			>
 				<template #bodyCell="{ column, record, index }">
+					<!-- 团单类型 -->
+					<template v-if="column.key === 'teamTypeId'">
+						<span>{{ getTeamTypeName(record.teamTypeId) }}</span>
+					</template>
+					<!-- 产品类型 -->
+					<template v-if="column.key === 'productType'">
+						<span>{{ getProductTypeName(record.productType) }}</span>
+					</template>
+					<!-- 优先级 -->
+					<template v-if="column.key === 'ruleStatus'">
+						<span v-if="record.ruleStatus === 0">禁用</span>
+						<span v-if="record.ruleStatus === 1">启用</span>
+					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a href="javascript:;" @click="toCheck(record)">查看</a>
 							<a href="javascript:;" @click="toEditPage(record)">编辑</a>
-							<a href="javascript:;" @click="showTip('state', index)">启用</a>
-							<a href="javascript:;" @click="showTip('index', index)">删除</a>
+							<a v-if="record.ruleStatus === 1" href="javascript:;" @click="showTip('state', 0, record)">禁用</a>
+							<a v-if="record.ruleStatus === 0" href="javascript:;" @click="showTip('state', 1, record)">启用</a>
+							<a href="javascript:;" @click="showTip('index', index, record)">删除</a>
 						</div>
 					</template>
 				</template>
@@ -34,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { Ref } from 'vue';
+import { UnwrapRef, Ref } from 'vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
@@ -54,8 +70,8 @@ const columns = [
 	},
 	{
 		title: '结算产品',
-		dataIndex: 'productId',
-		key: 'productId',
+		dataIndex: 'productType',
+		key: 'productType',
 	},
 	{
 		title: '费用名称',
@@ -74,8 +90,8 @@ const columns = [
 	},
 	{
 		title: '状态',
-		dataIndex: 'auditStatus',
-		key: 'auditStatus',
+		dataIndex: 'ruleStatus',
+		key: 'ruleStatus',
 	},
 	{
 		title: '优先级',
@@ -92,22 +108,31 @@ const columns = [
 
 const state = reactive({
 	tableData: {
-		data: [
-			{
-				teamTypeId: 123456,
-			},
-		],
+		data: [],
 		total: 400,
 		loading: false,
 		param: {
+			productSonType: 'ONE',
+			productId: 1,
+			productType: 1,
 			pageNo: 1,
 			pageSize: 10,
-			scenicLevel: null, //景区等级(字典序号)
-			auditStatus: null, //审核状态（-1未提交  0待审核  1审核通过  2审核未通过）
-			name: '',
 		},
 	},
 	selectedRowKeys: [],
+	teamTypeList: [],
+	productTypeList: [
+		{ value: 1, name: '景区' },
+		{ value: 2, name: '酒店' },
+		{ value: 3, name: '餐饮' },
+	],
+	prepaidCompanyList: [
+		{ value: 1, name: '旅行社' },
+		{ value: 2, name: '集团' },
+		{ value: 3, name: '监理公司' },
+		{ value: 4, name: '一卡通' },
+		{ value: 5, name: '协会' },
+	],
 });
 
 //搜索
@@ -124,7 +149,10 @@ const pageSideChange = (current: number, size: number) => {
 };
 //新增
 const toAddPage = () => {
-	route.push({ path: '/settlementManagement/productSettlementRule/edit' });
+	route.push({
+		path: '/settlementManagement/productSettlementRule/edit',
+		query: { productId: encodeURIComponent(state.tableData.param['productId']) },
+	});
 };
 //编辑
 const toEditPage = (record: any) => {
@@ -141,43 +169,40 @@ const toCheck = (record: any) => {
 // 	});
 // };
 const initList = async () => {
+	const { productId, productType, productSonType } = route.currentRoute.value.query;
+	state.tableData.param['productId'] = productId;
+	state.tableData.param['productType'] = productType;
+	state.tableData.param['productSonType'] = productSonType;
+	await getTeamType();
 	// state.tableData.loading = true;
-	// let res = await api.getScenicSpotInformationList(state.tableData.param);
-	// const { total, content } = res;
-	// state.tableData.total = total;
-	// const list: [any] = dealData(content);
-	// state.tableData.data = list;
-	// state.tableData.loading = false;
+	let res: any = await api.productRuleConfigList(state.tableData.param);
+	const { total, content } = res;
+	state.tableData.total = total;
+	const list: [any] = dealData(content);
+	state.tableData.data = list;
+	state.tableData.loading = false;
 };
-const status = {
-	'-1': '未提交',
-	0: '待审核',
-	1: '审核通过',
-	2: '审核未通过',
-};
+
 const dealData = (params: [any]) => {
 	params.map((i: any) => {
-		// i.derate = i.derate ? '支持' : '不支持';
-		i.scenicLevel = i.scenicLevel ? i.scenicLevel : 0;
-		i.auditStatus = status[i.auditStatus];
-		let all = i.derateRule?.split(',');
-		//减免规则
-		if (all?.length > 1) {
-			i.derateRule = '满' + all[0] + '减' + all[1];
-		} else {
-			i.derateRule = '无';
-		}
-
 		return i;
 	});
-
 	return params;
+};
+// 修改状态
+const updateStatus = async (ids: Array<number>, ruleStatus: number) => {
+	const result = await api.productRuleUpdateStatus({
+		ids,
+		ruleStatus,
+	});
+	console.log(result);
 };
 interface cacheDataType {
 	delIndex: null | number | Array<any> | string;
 	delShow: boolean;
 	delParams?: delParamsType;
 	delState?: string;
+	state?: string | null | number;
 }
 interface delParamsType {
 	title?: string;
@@ -188,11 +213,12 @@ const cacheData: Ref<cacheDataType> = ref({
 	delShow: false,
 	delParams: {},
 	delState: '',
+	state: null,
 });
-const showTip = (str: string, par: any) => {
+const showTip = (str: string, par: any, record: any) => {
 	if (str === 'index') {
 		cacheData.value.delParams = { title: '删除', content: '是否删除所选数据？' };
-		cacheData.value.delIndex = par;
+		cacheData.value.delIndex = [record.oid];
 		cacheData.value.delState = 'del';
 	} else if (str === 'all') {
 		cacheData.value.delParams = { title: '删除', content: '是否删除所选数据？' };
@@ -205,14 +231,21 @@ const showTip = (str: string, par: any) => {
 		} else {
 			parStr = '禁用';
 		}
-		cacheData.value.delIndex = par;
+		cacheData.value.delIndex = [record.oid];
+		cacheData.value.state = par;
 		cacheData.value.delState = 'state';
 		cacheData.value.delParams = { title: parStr, content: `确定是否${parStr}？` };
 	}
 	cacheData.value.delShow = true;
 };
-const tipSubmit = () => {
-	// 调用接口
+const tipSubmit = async () => {
+	// 修改状态
+	if (cacheData.value.delState === 'state') {
+		await updateStatus(cacheData.value.delIndex, cacheData.value.state);
+	} else if (cacheData.value.delState === 'del') {
+		///删除
+		await api.deleteProductRule({ ids: cacheData.value.delIndex });
+	}
 	initList();
 	tipCancel();
 };
@@ -221,16 +254,29 @@ const tipCancel = () => {
 	cacheData.value.delIndex = null;
 	cacheData.value.delShow = false;
 };
-const onSelectChange = (selectedRowKeys: []) => {
+const onSelectChange = (selectedRowKeys: any) => {
 	console.log('selectedRowKeys changed: ', selectedRowKeys);
 	state.selectedRowKeys = selectedRowKeys;
 };
 onMounted(() => {
 	initList();
-	navigatorBar.setNavigator(['通用结算规则']);
+	navigatorBar.setNavigator(['产品结算规则']);
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
+});
+// 获取团队枚举值
+const getTeamType = async () => {
+	const result = await api.productRuleTeamType();
+	state.teamTypeList = result;
+};
+
+// 计算属性
+const getTeamTypeName = computed(() => (value: number) => {
+	return state.teamTypeList.find((item) => item.oid === value)['name'];
+});
+const getProductTypeName = computed(() => (value: number) => {
+	return state.productTypeList.find((item) => item.value === value)['name'];
 });
 </script>
 

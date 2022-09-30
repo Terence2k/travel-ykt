@@ -35,7 +35,22 @@
 	</div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import api from '@/api';
+const route = useRoute();
+watch(
+	() => route.query,
+	(res) => {
+		const id = res.id;
+		if (id) {
+			api.getHotelInfoAuditResult({}).then((res) => {
+				console.info('获取审核信息 ：', res);
+			});
+		}
+	},
+	{ immediate: true }
+);
+</script>
 
 <style lang="less" scoped>
 @import './styles/hotelInfo-display.less';

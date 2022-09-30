@@ -2,10 +2,10 @@
 	<CommonSearch>
 		<search-item label="团单类型">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.auditStatus" style="width: 200px" placeholder="请选择归属景区">
-				<a-select-option :value="-1">未提交</a-select-option>
-				<a-select-option :value="0">待审核 </a-select-option>
-				<a-select-option :value="1"> 审核通过</a-select-option>
-				<a-select-option :value="2"> 审核未通过</a-select-option>
+				<a-select-option :value="-1">团单类型1</a-select-option>
+				<a-select-option :value="0">团单类型2 </a-select-option>
+				<a-select-option :value="1"> 团单类型3</a-select-option>
+				<a-select-option :value="2"> 团单类型4</a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="行程单号">
@@ -30,7 +30,7 @@
 			<a-button @click="initList">查询</a-button>
 		</template>
 	</CommonSearch>
-	<div class="table-contaner">
+	<div>
 		<a-tabs v-model:activeKey="activeKey">
 			<a-tab-pane v-for="(item, index) in pages" :key="index" :tab="item.label">
 				<component :is="item.name" v-if="index == activeKey"></component>
@@ -114,7 +114,7 @@ const initList = async () => {
 };
 onMounted(() => {
 	initList();
-	navigatorBar.setNavigator(['结算管理']);
+	navigatorBar.setNavigator(['结算管理','结算管理']);
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
@@ -128,9 +128,6 @@ onBeforeUnmount(() => {
 // ::v-deep(.ant-tabs-top > .ant-tabs-nav) {
 // 	margin: 0;
 // }
-.table-area .list-btn {
-	padding: 0;
-}
 .ant-table-thead > tr > th {
 	border-top: 1px solid #f0f0f0;
 	background-color: #fcfcfc;

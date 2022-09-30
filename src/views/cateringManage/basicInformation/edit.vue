@@ -77,9 +77,9 @@
 				<div class="title">补充说明</div>
 
 				<a-form-item label="营业时间" required>
-					<a-time-picker v-model:value="formData.data.starttime" format="HH:mm" :placeholder="formData.data.startTime" />
+					<a-time-picker v-model:value="formData.data.starttime" format="HH:mm" valueFormat="HH:mm" :placeholder="formData.data.startTime" />
 					<span class="span_width">至</span>
-					<a-time-picker v-model:value="formData.data.endtime" format="HH:mm" :placeholder="formData.data.endTime" />
+					<a-time-picker v-model:value="formData.data.endtime" format="HH:mm" valueFormat="HH:mm" :placeholder="formData.data.endTime" />
 				</a-form-item>
 				<a-form-item label="联系电话" v-bind="validateInfos[`data.shopPhone`]">
 					<a-input v-model:value="formData.data.shopPhone" placeholder="请输入联系电话" />
@@ -90,8 +90,7 @@
 			</a-form>
 		</div>
 		<div class="footer">
-			<a-button type="primary" @click.prevent="onSubmit">保存</a-button>
-			<a-button type="primary">提交审核</a-button>
+			<a-button type="primary" @click="auditing">提交审核</a-button>
 		</div>
 	</div>
 </template>
@@ -175,7 +174,7 @@ const disabledDate = (time: any) => {
 	return time.getTime() < Date.now() - 24 * 60 * 60 * 1000;
 };
 
-const onSubmit = () => {
+const auditing = () => {
 	validate()
 		.then((res) => {
 			const Data = {
@@ -207,18 +206,17 @@ const onSubmit = () => {
 			if (formData.data.endtime) {
 				Data.endTime = formData.data.endtime;
 			}
-			save(toRaw(Data));
+			Audit(toRaw(Data));
 		})
 		.catch((err) => {
 			console.log('error', err);
 		});
-	console.log('submit!', toRaw(formData.data));
 };
 
-const save = async (params: object) => {
-	let res = await api.getCateringEdit(params);
+const Audit = async (params: object) => {
+	let res = await api.getCateringAudit(params);
 	if (res) {
-		message.success('保存成功');
+		message.success('提交审核成功');
 		route.push({ path: '/catering/basic_Information/index' });
 	}
 };

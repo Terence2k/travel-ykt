@@ -2,7 +2,7 @@ import { request, commonPath } from '@/utils/index';
 const commonPart = `${commonPath}/customer-service/public/api/company/`
 const commonPart1 = `${commonPath}/customer-service/public/api/sys-role/`
 const commonPart2 = `${commonPath}/customer-service/public/api/sys-user/`
-
+const commonPart3 = `${commonPath}/customer-service/public/api/dictionary/`
 // 企业注册
 export function companyRegister(data: any) {
 	return request({
@@ -22,10 +22,12 @@ export function findCompanyList(data: any) {
 	});
 }
 // 根据企业业态查询角色
-export function listByBusinessType(id: any) {
+export function listByBusinessType(data: any) {
 	return request({
-		url: `${commonPart1}listByBusinessType/${id}`,
-		method: 'get',
+		url: `${commonPart1}list`,
+		method: 'post',
+		data,
+		showLoading: true
 	});
 }
 // 审核企业
@@ -41,6 +43,14 @@ export function auditCompany(data: any) {
 export function resetPassword(data: any) {
 	return request({
 		url: `${commonPart2}resetPassword?oid=${data.oid}&newPassword=${data.newPassword}`,
+		method: 'post',
+		showLoading: true
+	});
+}
+// 获取企业类型
+export function businessTypeDropDown(codeValue: string) {
+	return request({
+		url: `${commonPart3}dropDownQueryListChildByCodeValue?codeValue=${codeValue}`,
 		method: 'post',
 		showLoading: true
 	});

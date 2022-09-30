@@ -28,9 +28,9 @@
 				</a-form-item>
 				<div class="title">其他信息</div>
 				<a-form-item label="供餐时间" required>
-					<a-time-picker v-model:value="formData.data.starttime" valueFormat="HH:mm" :placeholder="formData.data.provideStart" />
+					<a-time-picker v-model:value="formData.data.provideStart" format="HH:mm" valueFormat="HH:mm" :placeholder="formData.data.provideStart" />
 					<span class="span_width">至</span>
-					<a-time-picker v-model:value="formData.data.endtime" valueFormat="HH:mm" :placeholder="formData.data.provideEnd" />
+					<a-time-picker v-model:value="formData.data.provideEnd" format="HH:mm" valueFormat="HH:mm" :placeholder="formData.data.provideEnd" />
 				</a-form-item>
 				<a-form-item label="其他">
 					<a-input placeholder="请输入" v-model:value="formData.data.cateringDesc" />
@@ -126,7 +126,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style  scoped lang="less">
+<style scoped lang="less">
 .warp {
 	width: 100%;
 	box-sizing: border-box;

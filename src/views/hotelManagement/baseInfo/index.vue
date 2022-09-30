@@ -31,10 +31,10 @@
 
 			<div class="table-bar">
 				<div class="flex-container">
-					<a-button class="button-create-item">新增</a-button>
+					<a-button class="button-create-item">导出</a-button>
 				</div>
 				<div class="table-container">
-					<CommonTable :columns="columns" :dataSource="dataSource">
+					<CommonTable :columns="columns" :rowSelection="rowSelection" :dataSource="dataSource">
 						<template #bodyCell="{ column, record }">
 							<template v-if="column.dataIndex === 'auditStatus'">
 								<div class="cell-auditStatus">
@@ -83,10 +83,10 @@ interface DataSourceItem {
 	reduceRule: string;
 }
 const router = useRouter();
-const status = ref<string>('');
-const star = ref<string>('');
-const hotelName = ref<string>('');
-const phoneNumber = ref<string>('');
+const status = ref<string>(undefined);
+const star = ref<string>(undefined);
+const hotelName = ref<string>(undefined);
+const phoneNumber = ref<string>(undefined);
 
 let statusOptionsData = [
 	{
@@ -177,41 +177,41 @@ const getAuditStatusName = (auditStatus: number) => {
 	return statusName;
 };
 
-let dataSource: DataSourceItem[] = [
-	{
-		oid: 1,
-		hotelName: '阳光商务一百酒店',
-		hotelStarId: 1,
-		hotelStarCode: '1星A级',
-		creditCode: 'LJ32323EWC',
-		phone: '8291829',
-		address: '丽江市古城区雪山路778',
-		auditStatus: '待审核',
-		reduceRule: '16免1',
-	},
-	{
-		oid: 2,
-		hotelName: '世纪天宸酒店',
-		hotelStarId: 2,
-		hotelStarCode: '6星A级',
-		creditCode: 'QJ5523ETY',
-		phone: '855529',
-		address: '丽江市古城区雪山路779',
-		auditStatus: '审核通过',
-		reduceRule: '10免1',
-	},
-];
+// let dataSource: DataSourceItem[] = [
+// 	{
+// 		oid: 1,
+// 		hotelName: '阳光商务一百酒店',
+// 		hotelStarId: 1,
+// 		hotelStarCode: '1星A级',
+// 		creditCode: 'LJ32323EWC',
+// 		phone: '8291829',
+// 		address: '丽江市古城区雪山路778',
+// 		auditStatus: '待审核',
+// 		reduceRule: '16免1',
+// 	},
+// 	{
+// 		oid: 2,
+// 		hotelName: '世纪天宸酒店',
+// 		hotelStarId: 2,
+// 		hotelStarCode: '6星A级',
+// 		creditCode: 'QJ5523ETY',
+// 		phone: '855529',
+// 		address: '丽江市古城区雪山路779',
+// 		auditStatus: '审核通过',
+// 		reduceRule: '10免1',
+// 	},
+// ];
 
-// const dataSource = computed(() => {
-// 	if (Array.isArray(tableState.tableData.data)) {
-// 		return tableState.tableData.data.map((item) => {
-// 			return {
-// 				...item,
-// 				key: item?.oid,
-// 			};
-// 		});
-// 	}
-// });
+const dataSource = computed(() => {
+	if (Array.isArray(tableState.tableData.data)) {
+		return tableState.tableData.data.map((item) => {
+			return {
+				...item,
+				key: item?.oid,
+			};
+		});
+	}
+});
 
 const rowSelection = ref({
 	checkStrictly: false,

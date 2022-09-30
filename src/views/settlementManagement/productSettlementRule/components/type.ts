@@ -12,6 +12,9 @@ export interface FormState {
 	lastCostBelongCompany?: number | null;
 	chargeModel?: number | null;
 	level?: number | null;
+	productSonType?: string | null;
+	productType?: number | null;
+	oid?: number | null;
 }
 export interface splitListType {
 	companyType?: number | null;

@@ -37,6 +37,8 @@ const props = defineProps({
 	params: Object,
 	methods: Object,
 });
+
+const { modelValue } = toRefs(props);
 const dialogVisible = ref(false);
 const emit = defineEmits(['update:modelValue']);
 const formValidate: Ref<Record<string, any>> = ref({});

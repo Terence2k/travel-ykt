@@ -81,16 +81,16 @@ export async function getVerifUser() {
 // 新增或 编辑单票信息
 export async function saveSingleVoteInfo(data: any) {
 	return request({
-		url: commonPath + `/ticket-service/public/api/scenic-one-ticket/save`,
+		url: commonPath + `/ticket-service/public/api/scenic-one-ticket/audit`,
 		method: 'post',
 		data,
 	});
 }
 
-// 核销项目列表
-export async function getScenicOneTicket() {
+// 获取景区下拉列表
+export async function getViewList() {
 	return request({
-		url: commonPath + `/ticket-service/public/api/scenic-one-ticket/varif-list?id=2`,
+		url: commonPath + `/ticket-service/public/api/scenic/lessInfos`,
 		method: 'get',
 	});
 }

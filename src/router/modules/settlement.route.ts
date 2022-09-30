@@ -48,16 +48,16 @@ export default [
 					},
 				],
 			},
-			{
-				path: 'settlementRule',
-				component: () => import('@/views/settlementManagement/settlementRule/index.vue'),
-				name: 'settlementRule',
-				meta: {
-					title: '结算规则管理',
-					// icon: 'liulanqi',
-					// auth: ["admin"],
-				},
-			},
+			// {
+			// 	path: 'settlementRule',
+			// 	component: () => import('@/views/settlementManagement/settlementRule/index.vue'),
+			// 	name: 'settlementRule',
+			// 	meta: {
+			// 		title: '结算规则管理',
+			// 		// icon: 'liulanqi',
+			// 		// auth: ["admin"],
+			// 	},
+			// },
 			{
 				path: 'currencySettlementRule',
 				name: 'currencySettlementRule',
@@ -147,14 +147,43 @@ export default [
 			},
 			{
 				path: 'settlement',
-				component: () => import('@/views/settlementManagement/settlement/index.vue'),
 				name: 'settlement',
+				redirect: '/settlementManagement/settlement/list',
 				meta: {
 					title: '结算管理',
 					// icon: 'liulanqi',
 					// auth: ["admin"],
 					isDetail: false, // 在左侧的导航栏不会展示
 				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/settlementManagement/settlement/index.vue'),
+						name: 'settlement',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'info',
+						component: () => import('@/views/settlementManagement/settlement/components/info.vue'),
+						name: 'settlementInfo',
+						meta: {
+							title: '查看',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'examineInfo',
+						component: () => import('@/views/settlementManagement/settlement/examine/examineInfo.vue'),
+						name: 'examineInfo',
+						meta: {
+							title: '查看',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
 			},
 			{
 				path: 'transferManagement',

@@ -19,7 +19,7 @@
 					</a-select>
 				</div>
 				<div class="item-button item">
-					<a-button class="button-search item">清空</a-button>
+					<a-button @click="clearSearchFilter" class="button-search item">清空</a-button>
 				</div>
 			</div>
 
@@ -28,7 +28,7 @@
 					<span>房态管理</span>
 				</div>
 				<div class="table-container">
-					<RoomBookingTable> </RoomBookingTable>
+					<RoomBookingTable :hotelId="hotel"> </RoomBookingTable>
 				</div>
 			</div>
 		</div>
@@ -36,12 +36,16 @@
 </template>
 
 <script setup lang="ts">
+import api from '@/api';
 import RoomBookingTable from './components/roomBookingTable/roomBookingTable.vue';
+
 const hotel = ref('');
 const hotelOptionsData = ref([]);
+
 const hotelOptions = ref<SelectProps['options']>(hotelOptionsData);
 
-const auditStatus = ref('');
+const auditStatus = ref(1);
+
 const auditStatusData = ref([
 	{
 		value: 0,
@@ -54,6 +58,35 @@ const auditStatusData = ref([
 ]);
 
 const auditStatusOptions = ref<SelectProps['options']>(auditStatusData);
+
+const clearSearchFilter = () => {
+	auditStatus.value = undefined;
+};
+
+watch(
+	() => auditStatus.value,
+	(val) => {
+		if (auditStatus.value) {
+			api.getHotelList(val).then((result) => {
+				if (Array.isArray(result)) {
+					hotelOptionsData.value = result?.map((item) => {
+						return {
+							value: item?.hotelId,
+							label: item?.hotelName,
+						};
+					});
+					hotel.value = hotelOptionsData.value[0]?.value || '';
+				}
+			});
+		} else {
+			hotelOptionsData.value = [];
+			hotel.value = undefined;
+		}
+	},
+	{
+		immediate: true,
+	}
+);
 </script>
 
 <style lang="less" scoped>
