@@ -21,7 +21,7 @@
 		</CommonSearch>
 		<CommonTable :dataSource="state.tableData.data" rowKey="id" :columns="columns">
 			<template #button>
-				<a-button type="primary">导出</a-button>
+				<a-button type="primary" @click="openAddPage">新增</a-button>
 			</template>
 			<template #bodyCell="{ column, record }">
 				<template v-if="column.key === 'action'">
@@ -146,6 +146,9 @@ const openEditPage = (record: any) => {
 };
 const openInfoPage = (record: any) => {
 	router.push({ path: '/catering/product_Management/product_info', query: { id: record.oid } });
+};
+const openAddPage = (record: any) => {
+	router.push({ path: '/catering/product_Management/product_add' });
 };
 
 onMounted(() => {

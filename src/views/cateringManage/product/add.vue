@@ -27,10 +27,16 @@
 					</a-radio-group>
 				</a-form-item>
 				<div class="title">其他信息</div>
-				<a-form-item label="供餐时间" required>
-					<a-time-picker v-model:value="formData.data.provideStart" format="HH:mm" valueFormat="HH:mm" :placeholder="formData.data.provideStart" />
-					<span class="span_width">至</span>
-					<a-time-picker v-model:value="formData.data.provideEnd" format="HH:mm" valueFormat="HH:mm" :placeholder="formData.data.provideEnd" />
+				<a-form-item label="供餐时间" required style="margin-bottom: 0px">
+					<div style="display: flex">
+						<a-form-item name="provideStart">
+							<a-time-picker v-model:value="formData.data.provideStart" format="HH:mm" valueFormat="HH:mm" />
+							<span class="span_width">至</span>
+						</a-form-item>
+						<a-form-item name="provideEnd">
+							<a-time-picker v-model:value="formData.data.provideEnd" format="HH:mm" valueFormat="HH:mm" />
+						</a-form-item>
+					</div>
 				</a-form-item>
 				<a-form-item label="其他">
 					<a-input placeholder="请输入" v-model:value="formData.data.cateringDesc" />
@@ -65,6 +71,8 @@ const rulesRef = {
 	price: [{ required: true, message: '请填写单价' }],
 	imgUrl: [{ required: true, message: '请上传图片' }],
 	status: [{ required: true, message: '请选择状态' }],
+	provideEnd: [{ required: true, message: '请选择开始时间' }],
+	provideStart: [{ required: true, message: '请选择结束时间' }],
 };
 
 const formData = reactive({
@@ -75,50 +83,54 @@ const cateringStoreName = computed(() => scenicSpotOptions.cateringStoreName);
 
 const initPage = async (): Promise<void> => {
 	await scenicSpotOptions.getCateringStoreName();
-	api.getProductInfo(route.currentRoute.value?.query?.id).then((res: any) => {
-		formData.data = res;
-	});
 };
 
 const onSubmit = () => {
-	formref.value
-		.validate()
-		.then((res) => {
-			const Data = {
-				oid: formData.data.oid, //oid
-				shopId: formData.data.shopId, //oid
-				companyName: formData.data.companyName,
-				cateringName: formData.data.cateringName,
-				orderNum: formData.data.orderNum,
-				price: formData.data.price,
-				imgUrl: formData.data.imgUrl,
-				status: formData.data.status,
-				provideStart: formData.data.provideStart,
-				provideEnd: formData.data.provideEnd,
-				cateringDesc: formData.data.cateringDesc,
-			};
-			if (formData.data.starttime) {
-				Data.provideStart = formData.data.starttime;
-			}
-			if (formData.data.endtime) {
-				Data.provideEnd = formData.data.endtime;
-			}
-			save(toRaw(Data));
-		})
-		.catch((err) => {
-			console.log('error', err);
-		});
+	const Data = {
+		shopId: formData.data.shopId, //oid
+		companyName: formData.data.companyName,
+		cateringName: formData.data.cateringName,
+		orderNum: formData.data.orderNum,
+		price: formData.data.price,
+		imgUrl: formData.data.imgUrl,
+		status: formData.data.status,
+		provideStart: formData.data.provideStart,
+		provideEnd: formData.data.provideEnd,
+		cateringDesc: formData.data.cateringDesc,
+	};
+	console.log(save(toRaw(Data)));
+
+	// formref.value
+	// 	.validate()
+	// 	.then((res) => {
+	// 		const Data = {
+	// 			shopId: formData.data.shopId, //oid
+	// 			companyName: formData.data.companyName,
+	// 			cateringName: formData.data.cateringName,
+	// 			orderNum: formData.data.orderNum,
+	// 			price: formData.data.price,
+	// 			imgUrl: formData.data.imgUrl,
+	// 			status: formData.data.status,
+	// 			provideStart: formData.data.provideStart,
+	// 			provideEnd: formData.data.provideEnd,
+	// 			cateringDesc: formData.data.cateringDesc,
+	// 		};
+	// 		save(toRaw(Data));
+	// 	})
+	// 	.catch((err) => {
+	// 		console.log('error', err);
+	// 	});
 };
 const save = async (params: object) => {
 	let res = await api.getProductEdit(params);
 	if (res) {
-		message.success('保存成功');
+		message.success('新增成功');
 		route.push({ path: '/catering/product_Management/index' });
 	}
 };
 
 onMounted(() => {
-	navigatorBar.setNavigator(['产品管理', '编辑']);
+	navigatorBar.setNavigator(['产品管理', '新增']);
 	initPage();
 });
 onBeforeUnmount(() => {

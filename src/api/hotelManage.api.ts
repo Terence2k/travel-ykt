@@ -165,3 +165,31 @@ export async function getHotelRoomStockInFuture(data: any) {
 		showLoading: true,
 	});
 }
+
+//更改酒店房间库存并提交审核
+export async function editHotelRoomStock(data: any) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-room-stock/submitAudit`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
+
+//酒店库存更改审核通过
+export async function hotelRoomStockPass(id: number) {
+	return request({
+		url: `${commonPath}hotel-service/public/api/hotel-room-stock/auditAdopt/${id}`,
+		method: 'get',
+		showLoading: true,
+	});
+}
+
+//酒店库存更改审核失败 /hotel-service/public/api/hotel-room-stock/auditFailed/10
+export async function hotelRoomStockFailed(id: number) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-room-stock/auditFailed/${id}`,
+		method: 'get',
+		showLoading: true,
+	});
+}
