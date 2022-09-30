@@ -32,6 +32,14 @@ export function getCateringEdit(data: any) {
 	});
 }
 
+export function getCateringAudit(data: any) {
+	return request({
+		url: `${commonPart}/catering/audit`,
+		method: 'post',
+		data
+	});
+}
+
 // 产品
 export function getProductPage(data: any) {
 	return request({

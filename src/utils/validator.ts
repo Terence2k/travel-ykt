@@ -39,8 +39,8 @@ export function isBtnZeroToHundred(rule: any, value: any, callback: any) {
 	}, 100);
 }
 
-export function validateRules(rules:any, data:any, key?:string) {
-	let rulesRef:any = {}
+export function validateRules(rules: any, data: any, key?: string) {
+	let rulesRef: any = {};
 	if (key) {
 		rulesRef[key] = rules;
 	} else {
@@ -48,15 +48,15 @@ export function validateRules(rules:any, data:any, key?:string) {
 			rulesRef[k] = rules;
 		}
 	}
-	return rulesRef
+	return rulesRef;
 }
 
 export async function validateFields(fromRef: FormInstance) {
-	let flag = false
+	let flag = false;
 	try {
-		const values = await fromRef.validateFields()
+		const values = await fromRef.validateFields();
 		// console.log('Success:', values);
-		flag = true
+		flag = true;
 	} catch (errorInfo) {
 		// console.log('Failed:', errorInfo);
 	}

@@ -4,8 +4,8 @@
 			<template #bodyCell="{ column, record }">
 				<template v-if="column.dataIndex === 'actions'">
 					<div class="action-btns">
-						<a @click="visible = true">查看</a>
-						<a @click="openInfoPage">审核</a>
+						<a @click="openInfoPage">查看</a>
+						<a @click="visible = true">审核</a>
 						<a>打印票据</a>
 					</div>
 				</template>
@@ -19,10 +19,10 @@
 			@showSizeChange="pageSideChange"
 		>
 		</CommonPagination>
-		<BaseModal :title="'审核'" v-model="visible" >
+		<BaseModal :title="'审核'" v-model="visible">
 			<a-form>
 				<a-form-item label="状态">
-					<a-radio-group >
+					<a-radio-group>
 						<a-radio value="1">通过</a-radio>
 						<a-radio value="2">不通过</a-radio>
 					</a-radio-group>
@@ -154,7 +154,6 @@ const openInfoPage = (record: any) => {
 	router.push({ path: '/hotelManagement/hotelOrder/orderEdit', query: { oid: 1 } });
 };
 
-
 onMounted(() => {
 	navigatorBar.setNavigator(['订单管理']);
 	// getCateringList();
@@ -164,7 +163,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style  scoped lang="less">
+<style scoped lang="less">
 // table style
 .ant-table-thead > tr > th {
 	border-top: 1px solid #f0f0f0;
