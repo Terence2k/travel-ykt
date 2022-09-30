@@ -2,8 +2,11 @@
 	<div class="editWrapper">
 		<header class="title">基本信息</header>
 		<a-form class="" ref="formRef" :model="formData" :label-col="{ span: 3 }" labelAlign="left" :wrapper-col="{ span: 7 }" :scrollToFirstError="true">
-			<a-form-item label="归属景区">
+			<a-form-item label="归属景区" v-if="type === '1'">
 				<a-input v-model:value="formData.data.scenicId" placeholder="请填写景区名字" />
+				<a-select allowClear Fv-model:value="formData.data.scenicId" placeholder="请选择">
+					<a-select-option :value="vlItem.old" v-for="vlItem in viewList" :key="vlItem.old">{{ vlItem }}</a-select-option>
+				</a-select>
 			</a-form-item>
 			<a-form-item label="票种分类">
 				<a-input disabled v-model:value="tickerType" />
@@ -233,14 +236,16 @@ const addVerificationObj = (obj: object) => {
 const reset = (): void => {
 	resetFields();
 };
+const viewList = ref(null);
 //初始化页面
 const initPage = async (): Promise<void> => {
 	route.currentRoute.value?.query?.s ? initCreatePage() : initEditPage();
+	let res = await api.getViewList();
+	viewList.value = res;
 };
 
 const initEditPage = async () => {
 	navigatorBar.setNavigator(['景区信息管理', '编辑']);
-
 	let res = await api.getScenicSpotSignleDetail(route.currentRoute.value?.query?.oid);
 	formData.data = res;
 };

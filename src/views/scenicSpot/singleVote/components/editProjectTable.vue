@@ -1,7 +1,6 @@
 <template>
 	<div class="wrapper">
 		<BaseModal :modelValue="modelValue" title="关联核销项目" width="600px" @cancel="cancel">
-			{{ formValidate.proj }}
 			<a-form :model="formValidate" :label-col="{ span: 3 }" :wrapper-col="{ span: 12, offset: 1 }" labelAlign="left">
 				<a-form-item label="核销项目" class="fz14" v-bind="validateInfos.proj">
 					<a-select
@@ -34,7 +33,7 @@
 								{{ itemNameCompute(record.itemId) }}
 							</span>
 							<a v-if="record.itemId" href="javascript:;" @click="change(record)">更换</a>
-							<a href="javascript:;" v-if="isCreate && !type" @click="change(record)">请选择</a>
+							<a href="javascript:;" v-if="isCreate && !type && formValidate.initData[0].init" @click="CreateData">请选择</a>
 						</div>
 					</template>
 					<template v-if="column.key === 'verificationNumber'">
@@ -76,7 +75,7 @@ import { message } from 'ant-design-vue';
 const route = useRouter();
 
 const type = computed(() => {
-	return route.currentRoute.value?.query?.t === '2';
+	return route.currentRoute.value?.query?.t === '2' ? true : false;
 });
 const isCreate = computed(() => {
 	return route.currentRoute.value?.query?.s;
@@ -159,7 +158,7 @@ const change = (value: object) => {
 // 关联核销项目
 const formValidate = reactive({
 	proj: [],
-	initData: [{}],
+	initData: [{ init: true }],
 });
 const emits = defineEmits(['del-verification-obj', 'add-verification-obj']);
 const del = (index: number | null) => {
@@ -178,10 +177,18 @@ const delCancel = () => {
 const apply = () => {
 	validate()
 		.then((res) => {
-			toRaw(formValidate.proj).map((i) => {
-				emits('add-verification-obj', { itemId: i, ifVerification: null, verificationNumber: null });
-				return i;
-			});
+			console.log(isCreate.value, type.value, '099');
+
+			if (isCreate.value && !type.value) {
+				console.log('formValidate.initData');
+
+				formValidate.initData = [{ itemId: formValidate.proj[0], ifVerification: null, verificationNumber: null }];
+			} else {
+				toRaw(formValidate.proj).map((i) => {
+					emits('add-verification-obj', { itemId: i, ifVerification: null, verificationNumber: null });
+					return i;
+				});
+			}
 
 			cancel();
 		})

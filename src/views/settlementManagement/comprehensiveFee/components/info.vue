@@ -5,23 +5,26 @@
 
 		<a-form labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
 			<a-form-item label="综费产品">
-				<span>导服费</span>
+				<span>{{ formData.data.comprehensiveFeeProductName }}</span>
+			</a-form-item>
+			<a-form-item label="费用归属">
+				<span>{{ formData.data.belongCompanyName }}</span>
 			</a-form-item>
 			<a-form-item label="是否必收费用">
-				<span>必收</span>
+				<span>{{ formData.data.confirmNeedFeeTypeName }}</span>
 			</a-form-item>
 			<a-form-item label="费用说明">
-				<span>————</span>
+				<span>{{ formData.data.feeExplanation || '' }}</span>
 			</a-form-item>
 			<a-form-item label="状态">
-				<span>启用</span>
+				<span>{{ formData.data.statusName }}</span>
 			</a-form-item>
 			<div class="title">扣费规则</div>
 			<a-form-item label="收费模式">
-				<span>人数</span>
+				<span>{{ formData.data.feeModel == 0 ? '人数' : '价格' }}</span>
 			</a-form-item>
 			<a-form-item label="收款数量">
-				<span>10</span>
+				<span>{{ (formData.data.feeNumber || '') + ( formData.data.feeModel == 0 ? ' 元/人' : ' 元' ) }}</span>
 			</a-form-item>
 		</a-form>
 		<div class="footer">
@@ -35,9 +38,26 @@
 <script lang="ts" setup>
 const route = useRouter();
 const tstyle = { 'font-weight': '700' };
+import api from '@/api';
+
+// 跳转编辑页
 const toEdit = () => {
-	route.push({ path: '/settlementManagement/comprehensiveFee/edit' ,query: { edit: 1, oid: encodeURIComponent(1) } });
+	route.push({ path: '/settlementManagement/comprehensiveFee/edit' ,query: { edit: 1, oid: route.currentRoute.value?.query?.oid } });
 };
+const formData: any = reactive({
+	data: {
+		
+	},
+});
+//初始化页面
+const initPage = async (): Promise<void> => {
+	api.getcomprehensiveFeeDetail(route.currentRoute.value?.query?.oid).then((res: any) => {
+		formData.data = res;
+	});
+};
+onMounted(() => {
+	initPage();
+})
 </script>
 
 <style lang="less" scoped>
@@ -83,9 +103,12 @@ const toEdit = () => {
 	font-family: Microsoft YaHei UI;
 	font-weight: 400;
 	color: #1e2226;
-	margin-top: 13px;
+	margin-top: 6px;
 	margin-bottom: 0;
 	height: 32px;
+}
+.ant-form-item:first-child {
+    margin-top: 13px;
 }
 ::v-deep(.ant-form-item-control-input) {
 	height: 18px;

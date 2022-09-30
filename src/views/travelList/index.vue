@@ -1,30 +1,24 @@
 <template>
   <CommonSearch>
-    <search-item label="状态">
+    <search-item label="关键词搜索">
+      <a-input
+        v-model:value="state.tableData.param.roleIds"
+        placeholder="请输入游客姓名、导游姓名、旅行社名称、线路名称等关键字"
+        style="width: 434px"/>
+    </search-item>
+    <search-item label="组团模式">
       <a-select
         ref="select"
-        placeholder="请选择状态"
+        placeholder="请选择组团模式"
         v-model:value="state.tableData.param.status"
         allowClear
       >
         <a-select-option :value="1">启用</a-select-option>
-        <a-select-option :value="0">禁用</a-select-option>
+        <a-select-option :value="0">停用</a-select-option>
       </a-select>
     </search-item>
-    <search-item label="可用范围">
-      <a-select
-        ref="select"
-        placeholder="请输入可用范围"
-        allowClear
-        v-model:value="state.tableData.param.availableRange"
-      >
-        <a-select-option v-for="item in roleManage.businessType" :value="item.value">
-          {{ item.title }}
-        </a-select-option>
-      </a-select>
-    </search-item>
-    <search-item label="角色名称">
-      <a-input v-model:value="state.tableData.param.roleName" placeholder="请输入角色名称"/>
+    <search-item label="行程时间">
+      <a-input v-model:value="state.tableData.param.keyWord" placeholder="请选择起止时间"/>
     </search-item>
     <template #button>
       <a-button @click="onSearch">查询</a-button>
@@ -35,11 +29,16 @@
         <a-button type="primary" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
       </template>
       <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'roleList'">
+          <span v-for="item, index in record.roleList">
+            {{`${item.roleName}${index == record.roleList.length - 1? '' : '，' }`}}
+          </span>
+        </template>
         <template v-if="column.key === 'action'">
           <div class="action-btns">
             <a @click="addOrUpdate({  row: record,  handle: 'update'})">编辑</a>
-            <a @click="editStatus(record.oid, 0)" v-if="record.roleStatus === 1">禁用</a>
-            <a @click="editStatus(record.oid, 1)" v-if="record.roleStatus === 0">启用</a>
+            <a @click="editStatus(record.oid, 0)" v-if="record.userStatus === 1">停用</a>
+            <a @click="editStatus(record.oid, 1)" v-if="record.userStatus === 0">启用</a>
             <a @click="showDetails(record)">查看</a>
           </div>
         </template>
@@ -55,12 +54,13 @@
   <AddUpdate 
     v-model="state.operationModal.isAddOrUpdate"
     :params="state.params"
-    :optionTypeList="roleManage.businessType"
+    :roleList="state.optionRoleList"
     @onSearch="onSearch"
     @cancel="cancel"/>
   <Detail
     v-model="state.operationModal.showDetails"
     :params="state.params"
+    :roleList="state.optionRoleList"
     @cancel="cancel"/>
 </template>
 
@@ -73,38 +73,37 @@
   import Detail from './Detail.vue';
   import api from '@/api';
   import { message } from 'ant-design-vue';
-  import { useRoleManage } from '@/stores/modules/roleManage';
   
   const columns = [
     {
-      title: '角色名称',
-      dataIndex: 'roleName',
-      key: 'roleName',
+      title: '用户姓名',
+      dataIndex: 'username',
+      key: 'username',
     },
     {
-      title: '可用范围',
-      dataIndex: 'availableRangeName',
-      key: 'availableRangeName',
+      title: '手机号',
+      dataIndex: 'mobile',
+      key: 'mobile',
+    },
+    {
+      title: '所属单位类型',
+      dataIndex: 'unitTypeName',
+      key: 'unitTypeName',
+    },
+    {
+      title: '所属单位',
+      dataIndex: 'unitName',
+      key: 'unitName',
+    },
+    {
+      title: '所属角色',
+      dataIndex: 'roleList',
+      key: 'roleList',
     },
     {
       title: '状态',
-      dataIndex: 'roleStatusName',
-      key: 'roleStatusName',
-    },
-    {
-      title: '用户数量',
-      dataIndex: 'userCount',
-      key: 'userCount',
-    },
-    {
-      title: '编辑人',
-      dataIndex: 'lastUpdaterName',
-      key: 'lastUpdaterName',
-    },
-    {
-      title: '编辑时间',
-      dataIndex: 'lastUpdateTime',
-      key: 'lastUpdateTime',
+      dataIndex: 'userStatusName',
+      key: 'userStatusName',
     },
     {
       title: '操作',
@@ -122,8 +121,8 @@
       param: {
         pageNo: 1,
         pageSize: 10,
-        availableRange: '',
-        roleName: '',
+        keyWord: '',
+        roleIds: [],
         status: null,
       },
       roleParam: {
@@ -136,9 +135,8 @@
       isAddOrUpdate: false,
       showDetails: false
     },
-    optionTypeList: [] as any
+    optionRoleList: [] as any
   });
-  const roleManage = useRoleManage();
 
   const onHandleCurrentChange = (val: number) => {
     console.log('change:', val);
@@ -153,7 +151,7 @@
   }
 
   const onSearch = () => {
-    api.roleList(state.tableData.param).then((res: any) => {
+    api.userList(state.tableData.param).then((res: any) => {
       console.log('res:', res);
       state.tableData.data = res.content;
       state.tableData.total = res.total;
@@ -181,7 +179,7 @@
     let formData = new FormData();
     formData.append('oid', id);
     formData.append('status', status);
-    api.editRoleStatus(formData).then((res: any) => {
+    api.editStatus(formData).then((res: any) => {
       message.success('操作成功');
       state.operationModal.isAddOrUpdate = false;
       onSearch();
@@ -195,7 +193,7 @@
   }
 
   onMounted(() => {
-    onSearch();
+    // onSearch();
   })
 </script>
 

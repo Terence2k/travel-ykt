@@ -1,10 +1,10 @@
 <template>
 	<div>
-		<CommonTable :dataSource="state.tableData.data" rowKey="oid" :columns="columns">
-			<template #bodyCell="{ column }">
+		<CommonTable :dataSource="state.tableData.data" :columns="columns" >
+			<template #bodyCell="{ column, record }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a @click="opendetailPage">查看</a>
+						<a @click="toInfo(record)">查看</a>
 					</div>
 				</template>
 			</template>
@@ -24,48 +24,50 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import { reactive, onMounted } from 'vue';
 import api from '@/api';
+import { message } from 'ant-design-vue';
+import { Modal } from 'ant-design-vue';
 
 const router = useRouter();
 const columns = [
 	{
 		title: '团队类型',
-		dataIndex: 'username',
-		key: 'username',
+		dataIndex: 'aaa',
+		key: 'aaa',
 	},
 	{
 		title: '行程单号',
-		dataIndex: 'mobile',
-		key: 'mobile',
+		dataIndex: 'bbb',
+		key: 'bbb',
 	},
 	{
 		title: '线路名称',
-		dataIndex: 'unitTypeName',
-		key: 'unitTypeName',
+		dataIndex: 'ccc',
+		key: 'ccc',
 	},
 	{
 		title: '组团社',
-		dataIndex: 'unitName',
-		key: 'unitName',
+		dataIndex: 'ddd',
+		key: 'ddd',
 	},
 	{
 		title: '地接社',
-		dataIndex: 'roleList',
-		key: 'roleList',
+		dataIndex: 'eee',
+		key: 'eee',
 	},
 	{
 		title: '行程人数',
-		dataIndex: 'userStatusName',
-		key: 'userStatusName',
+		dataIndex: 'fff',
+		key: 'fff',
 	},
 	{
 		title: '行程费用',
-		dataIndex: 'userStatusName',
-		key: 'userStatusName',
+		dataIndex: 'ggg',
+		key: 'ggg',
 	},
 	{
 		title: '行程时间',
-		dataIndex: 'userStatusName',
-		key: 'userStatusName',
+		dataIndex: 'hhh',
+		key: 'hhh',
 	},
 	{
 		title: '操作',
@@ -77,7 +79,32 @@ const columns = [
 
 const state = reactive({
 	tableData: {
-		data: [],
+		data: [
+			{
+				oid: 1,
+				key: 1,
+				aaa: 'John Brown sr.',
+				bbb: 'test',
+				ccc: 'test',
+				ddd: 'test',
+				eee: 'test',
+				fff: 'test',
+				ggg: 'test',
+				hhh: 'test',
+			},
+			{
+				oid: 2,
+				key: 2,
+				aaa: 'Joe Black',
+				bbb: 'test',
+				ccc: 'test',
+				ddd: 'test',
+				eee: 'test',
+				fff: 'test',
+				ggg: 'test',
+				hhh: 'test',
+			},
+		],
 		total: 0,
 		loading: false,
 		param: {
@@ -109,59 +136,27 @@ const pageSideChange = (current: number, size: number) => {
 };
 
 const onSearch = () => {
-	api.userList(state.tableData.param).then((res: any) => {
-		console.log('res:', res);
-		state.tableData.data = res.content;
-		state.tableData.total = res.total;
-	});
+	// api.userList(state.tableData.param).then((res: any) => {
+	// 	console.log('res:', res);
+	// 	state.tableData.data = res.content;
+	// 	state.tableData.total = res.total;
+	// });
 };
 
-const cancel = (): any => {
-	state.operationModal.isAddOrUpdate = false;
+// 查看详情
+const toInfo = (record: any) => {
+	router.push({ path: '/settlementManagement/settlement/info', query: { oid: encodeURIComponent(record.oid) } });
 };
-
-const getRoleList = () => {
-	api
-		.roleList({
-			pageNo: 1,
-			pageSize: 100000,
-		})
-		.then((res: any) => {
-			console.log('角色列表:', res);
-			state.optionRoleList = res.content.map((item: any) => {
-				return {
-					roleName: item.roleName,
-					roleId: item.oid,
-				};
-			});
-		});
-};
-
-const addOrUpdate = (param: any) => {
-	console.log('state.operationModal.isAddOrUpdate:', state.operationModal.isAddOrUpdate);
-
-	const { row, handle } = param;
-	console.log(row);
-	console.log(handle);
-
-	state.params = {};
-	if (handle === 'update') {
-		state.params = row;
-	}
-	state.operationModal.isAddOrUpdate = true;
-};
-
-const opendetailPage = () => {
-	router.push({ path: '/catering/order_Management/order_detail' });
-};
-
 onMounted(() => {
-	getRoleList();
+	// getRoleList();
 	onSearch();
 });
 </script>
 
 <style lang="less" scoped>
+.btn {
+	margin: -8px 0 8px 0;
+}
 .ant-table-thead > tr > th {
 	border-top: 1px solid #f0f0f0;
 	background-color: #fcfcfc;

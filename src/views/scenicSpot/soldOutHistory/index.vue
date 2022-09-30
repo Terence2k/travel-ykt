@@ -1,35 +1,36 @@
 <template>
 	<Audit ref="auditRef" />
-	<div>
-		<CommonSearch>
-			<search-item label="输入搜索">
-				<a-input v-model:value="state.tableData.param.name" placeholder="请输入" />
-			</search-item>
-			<search-item label="门票分类">
-				<a-select allowClear ref="select" v-model:value="state.tableData.param.auditStatus" style="width: 200px" placeholder="请选择门票分类">
-					<a-select-option :value="-1">option1</a-select-option>
-				</a-select>
-			</search-item>
-			<template #button>
-				<a-button @click="initList">查询</a-button>
-			</template>
-		</CommonSearch>
-		<div class="table-area">
-			<a-spin size="large" :spinning="state.tableData.loading">
+	<a-spin size="large" :spinning="state.tableData.loading" style="min-height: 50vh">
+		<div>
+			<CommonSearch>
+				<search-item label="输入搜索">
+					<a-input v-model:value="state.tableData.param.name" placeholder="请输入" />
+				</search-item>
+				<search-item label="门票分类">
+					<a-select allowClear ref="select" v-model:value="state.tableData.param.auditStatus" style="width: 200px" placeholder="请选择门票分类">
+						<a-select-option :value="-1">option1</a-select-option>
+					</a-select>
+				</search-item>
+				<template #button>
+					<a-button @click="initList">查询</a-button>
+				</template>
+			</CommonSearch>
+			<div class="table-area">
 				<div class="list-btn">
 					<!-- <a-button type="primary" class="success">导出</a-button> -->
 				</div>
 				<CommonTable :dataSource="state.tableData.data" :columns="columns"> </CommonTable>
-			</a-spin>
-			<CommonPagination
-				:current="state.tableData.param.pageNo"
-				:page-size="state.tableData.param.pageSize"
-				:total="state.tableData.total"
-				@change="onHandleCurrentChange"
-				@showSizeChange="pageSideChange"
-			/>
+
+				<CommonPagination
+					:current="state.tableData.param.pageNo"
+					:page-size="state.tableData.param.pageSize"
+					:total="state.tableData.total"
+					@change="onHandleCurrentChange"
+					@showSizeChange="pageSideChange"
+				/>
+			</div>
 		</div>
-	</div>
+	</a-spin>
 </template>
 
 <script setup lang="ts">

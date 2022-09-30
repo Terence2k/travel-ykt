@@ -1,21 +1,21 @@
 <template>
 	<Audit ref="auditRef" />
 	<div>
-		<CommonSearch>
-			<search-item label="输入搜索">
-				<a-input v-model:value="state.tableData.param.ticketName" placeholder="门票名称/关键词" />
-			</search-item>
-			<search-item label="门票分类">
-				<a-select allowClear ref="select" v-model:value="state.tableData.param.ticketType" style="width: 200px" placeholder="请选择">
-					<a-select-option :value="index" v-for="(item, index) in ticketType" :key="item">{{ item }}</a-select-option>
-				</a-select>
-			</search-item>
-			<template #button>
-				<a-button @click="initList">查询</a-button>
-			</template>
-		</CommonSearch>
-		<div class="table-area">
-			<a-spin size="large" :spinning="state.tableData.loading">
+		<a-spin size="large" :spinning="state.tableData.loading" style="min-height: 50vh">
+			<CommonSearch>
+				<search-item label="输入搜索">
+					<a-input v-model:value="state.tableData.param.ticketName" placeholder="门票名称/关键词" />
+				</search-item>
+				<search-item label="门票分类">
+					<a-select allowClear ref="select" v-model:value="state.tableData.param.ticketType" style="width: 200px" placeholder="请选择">
+						<a-select-option :value="index" v-for="(item, index) in ticketType" :key="item">{{ item }}</a-select-option>
+					</a-select>
+				</search-item>
+				<template #button>
+					<a-button @click="initList">查询</a-button>
+				</template>
+			</CommonSearch>
+			<div class="table-area">
 				<div class="list-btn">
 					<a-button type="primary" class="success" @click="createNewProject">新增门票</a-button>
 				</div>
@@ -30,16 +30,17 @@
 						</template>
 					</template>
 				</CommonTable>
-			</a-spin>
-			<CommonPagination
-				:current="state.tableData.param.pageNo"
-				:page-size="state.tableData.param.pageSize"
-				:total="state.tableData.total"
-				@change="onHandleCurrentChange"
-				@showSizeChange="pageSideChange"
-			/>
-		</div>
-		<Create ref="createModelRef" />
+
+				<CommonPagination
+					:current="state.tableData.param.pageNo"
+					:page-size="state.tableData.param.pageSize"
+					:total="state.tableData.total"
+					@change="onHandleCurrentChange"
+					@showSizeChange="pageSideChange"
+				/>
+			</div>
+			<Create ref="createModelRef" />
+		</a-spin>
 	</div>
 </template>
 

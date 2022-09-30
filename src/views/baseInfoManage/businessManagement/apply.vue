@@ -2,7 +2,7 @@
 	<CommonSearch>
 		<search-item label="企业类型">
 			<a-select placeholder="请选企业类型" v-model:value="tableData.param.businessType" allowClear>
-				<a-select-option v-for="item in businessTypeOption" :value="item.oid">{{ item.name }}
+				<a-select-option v-for="item in businessTypeOption" :value="item.codeValue">{{ item.name }}
 				</a-select-option>
 			</a-select>
 		</search-item>
@@ -34,12 +34,12 @@
 			</template>
 			<template v-if="column.key === 'action'">
 				<div class="action-btns">
-					<a @click="goTo(record)" v-show="checkVisible(record.auditStatus)">审核</a>
+					<a @click="goTo(record, 'check')" v-show="checkVisible(record.auditStatus)">审核</a>
 					<a-popconfirm title="确认重制密码吗?重制后默认密码为：123456" ok-text="确认" cancel-text="取消"
 						@confirm="resetPassword(record.oid)">
 						<a v-show="restVisible(record.auditStatus)">重置密码</a>
 					</a-popconfirm>
-					<a @click="details(record)">查看</a>
+					<a @click="goTo(record, 'details')">查看</a>
 				</div>
 			</template>
 		</template>
@@ -59,27 +59,27 @@ import addBusinessAccount from '@/views/baseInfoManage/businessManagement/compon
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router';
-import { useScenicSpotOption } from '@/stores/modules/scenicSpot';
-const scenicSpotOptions = useScenicSpotOption();
+import { useBusinessManageOption } from '@/stores/modules/businessManage';
+const businessManageOptions = useBusinessManageOption();
 const router = useRouter();
 const route = useRoute();
-const goTo = (value: any) => {
+const goTo = (value: any, name: string) => {
+	let newObj: any = {}
+	for (const key in value) {
+		if (Object.prototype.hasOwnProperty.call(value, key)) {
+			newObj[key] = encodeURIComponent(JSON.stringify(value[key]));
+		}
+	}
 	router.push({
-		path: '/baseInfo/businessManagement/check',
-		query: value
-	})
-}
-const details = (value: any) => {
-	router.push({
-		path: '/baseInfo/businessManagement/details',
-		query: value
+		name: name,
+		params: newObj
 	})
 }
 const modalVisible = ref(false)
 const initOpeion = async () => {
-	await scenicSpotOptions.getBusinessTypeOption();
+	await businessManageOptions.getBusinessTypeOption();
 };
-const businessTypeOption = computed(() => scenicSpotOptions.businessTypeOption);
+const businessTypeOption = computed(() => businessManageOptions.businessTypeOption);
 const checkVisible = computed(() => (val: number) => {
 	let a = false
 	switch (val) {
@@ -225,8 +225,6 @@ const resetPassword = async (oid: string) => {
 	} else {
 		message.error(res);
 	}
-	console.log(res);
-
 }
 onActivated(() => {
 	if (route.params?.isRefresh) {

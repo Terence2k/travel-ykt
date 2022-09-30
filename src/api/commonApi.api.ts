@@ -8,5 +8,14 @@ export const commonApi = {
             data,
             showLoading: true
         });
+    },
+    getTeamTypeList(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/team/selectTeamTypeList`,
+            method: 'post',
+            data,
+            showLoading: true
+        });
     }
 }
+    
