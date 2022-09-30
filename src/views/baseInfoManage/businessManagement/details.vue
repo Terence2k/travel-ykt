@@ -15,7 +15,7 @@
             企业名称
           </div>
           <div>
-            {{ name }}
+            {{ form.name }}
           </div>
         </div>
         <div class="row_info">
@@ -23,7 +23,7 @@
             企业类型
           </div>
           <div>
-            {{ businessTypeName }}
+            {{ form.businessTypeName }}
           </div>
         </div>
         <div class="row_info">
@@ -31,7 +31,7 @@
             所属地区
           </div>
           <div>
-            {{ regionName }}
+            {{ form.regionName }}
           </div>
         </div>
         <div class="row_info">
@@ -39,7 +39,7 @@
             信用代码
           </div>
           <div>
-            {{ creditCode }}
+            {{ form.creditCode }}
           </div>
         </div>
         <div class="row_info">
@@ -47,7 +47,7 @@
             营业执照
           </div>
           <div class="img_box">
-            <a-image width="100%" :src="businessLicenseUrl" />
+            <a-image width="100%" :src="form.businessLicenseUrl" />
           </div>
         </div>
         <div class="row_info">
@@ -55,7 +55,7 @@
             姓名
           </div>
           <div>
-            {{ contactName }}
+            {{ form.contactName }}
           </div>
         </div>
         <div class="row_info">
@@ -63,7 +63,7 @@
             手机号
           </div>
           <div>
-            {{ phone }}
+            {{ form.phone }}
           </div>
         </div>
         <div class="row_info">
@@ -71,7 +71,7 @@
             账号
           </div>
           <div>
-            {{ account }}
+            {{ form.account }}
           </div>
         </div>
       </div>
@@ -81,11 +81,11 @@
 
 <script setup lang="ts">
 import { useRouter, useRoute } from 'vue-router';
+import { CloseOutlined } from '@ant-design/icons-vue';
 const router = useRouter();
 const route = useRoute();
 const back = () => {
   router.push({
-    // path: '/baseInfo/businessManagement/apply'
     name: 'apply'
   })
 }
@@ -99,24 +99,17 @@ type propsType = {
   phone?: string,
   account?: string
 }
-const props = defineProps<propsType>()
-const transitionProps: propsType = {}
-let key: keyof propsType;
-for (key in props) {
-  if (Object.prototype.hasOwnProperty.call(props, key)) {
-    transitionProps[key] = JSON.parse(decodeURIComponent(props[key] as string))
+const form = reactive<propsType>({})
+watch(() => route.params, (val: propsType) => {
+  let key: keyof propsType;
+  for (key in val) {
+    if (Object.prototype.hasOwnProperty.call(val, key)) {
+      form[key] = JSON.parse(decodeURIComponent(val[key] as string))
+    }
   }
-}
-const {
-  name,
-  businessTypeName,
-  regionName,
-  creditCode,
-  businessLicenseUrl,
-  contactName,
-  phone,
-  account,
-} = transitionProps
+}, {
+  immediate: true
+})
 </script>
 
 <style scoped lang="scss">
