@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isArray } from 'lodash';
 import dayjs, { Dayjs } from 'dayjs';
 import type { UnwrapRef } from 'vue';
 
@@ -6,78 +6,68 @@ import { validateRules, validateFields, generateGuid } from '@/utils';
 
 import api from '@/api/index';
 interface DataItem {
-	name: string;
-	name1: string,
-	name2: string,
-	name3: string,
-	name4: string,
-	name5: string,
-	name6: string
+	time: string;
+	endDate: string,
+	startDate: string,
+	belongTravelAgencyName: string,
+	guideName: string,
+	guidePhone: string,
+	guideType: string | number,
+	guideCertificateNo: string,
+	guideOid: string | number
 }
 
 const rules = {
-	name: [{ required: true, message: '请选择带团时间' }],
-	name5: [{ required: true, message: '请选择导游' }]
+	time: [{ required: true, message: '请选择带团时间' }],
+	guideOid: [{ required: true, message: '请选择导游' }]
 }
 
-export function useGuideInfo(): Record<string, any> {
+export function useGuideInfo(props: any, emits: any): Record<string, any> {
+	const { onCheck } = toRefs(props);
 	const state = reactive<{editableData: UnwrapRef<Record<string, DataItem>>, [k:string]: any}>({
 		editableData: {},
 		guideParams: {
 			pageNo: 1,
-			pageSize: 10
+			pageSize: 10,
+			queryType: 2
 		},
-		tableData: [
-			{
-				key: '1',
-				name: '2022-09-21 09:59:14',
-				name1: '123',
-				name2: '123',
-				name3: '123',
-				name4: '123',
-				name5: '',
-				name6: '123'
-			}
-		],
+		guideData: [],
+		tableData: [],
 		columns: [
 			{
 				title: ' 序号 ',
 				key: 'index',
 				width: '80px'
-				// render: (text: any, record: any, index: number) => `${index + 1}`,  //每一页都从1开始
-				// render:(text, record, index) => 
-				// `${(pagination.current - 1) * (pagination.pageSize) + (index + 1)}`  
-				//当前页数减1乘以每一页页数再加当前页序号+1
 			},
 			{
 				title: '已选带团时间',
-				dataIndex: 'name',
-				key: 'name',
+				dataIndex: 'time',
+				key: 'time',
 			},
 			{
 				title: '已选导游',
-				dataIndex: 'name5',
-				key: 'name5',
+				dataIndex: 'guideName',
+				key: 'guideName',
 			},
 			{
 				title: '导游电话',
-				dataIndex: 'name4',
-				key: 'name4',
+				dataIndex: 'guidePhone',
+				key: 'guidePhone',
 			},
 			{
 				title: '导游编号',
-				dataIndex: 'name3',
-				key: 'name3',
+				dataIndex: 'guideCertificateNo',
+				key: 'guideCertificateNo',
 			},
 			{
 				title: '导游类型',
-				dataIndex: 'name2',
-				key: 'name2',
+				dataIndex: 'guideType',
+				key: 'guideType',
 			},
 			{
 				title: '签约旅行社',
-				dataIndex: 'name1',
-				key: 'name1',
+				dataIndex: 'belongTravelAgencyName',
+				key: 'belongTravelAgencyName',
 			},
 			{
 				title: '操作',
@@ -87,36 +77,55 @@ export function useGuideInfo(): Record<string, any> {
 		],
 		rulesRef: {
 			1: {
-				name5: [{ required: true, message: '请选择行程类型' }]
+				guideName: [{ required: true, message: '请选择行程类型' }]
 			}
 		},
 		formRef: null
 	});
 
 	const methods = {
-		
+		copyData(key:any) {
+			Object.assign(
+				state.tableData.filter((item:any) => key === item.key)[0], 
+				state.editableData[key]
+			);
+		},
+		addRules(key?: any) {
+			state.rulesRef = {}
+			const rule = validateRules(rules, state.editableData, key)
+			for (let k in rule) {
+				state.rulesRef[k] = rule[k]
+			}
+		},
 		edit: (key: string) => {
-			const cur = cloneDeep(state.tableData.filter((item:any) => key === item.key)[0])
-			cur.name && (cur.name = dayjs(cur.name, 'YYYY-MM-DD HH:mm'));
+			const cur = cloneDeep(
+				state.tableData.filter((item:any) => key === item.key)[0]
+			);
+			cur.time = cur.startDate && 
+						cur.endDate && 
+						[cur.startDate, cur.endDate] || [];
 			state.editableData[key] = cur;
 		},
 
-		save: async (key: string) => {
+		save: async (key?: string) => {
 			state.rulesRef = {}
 			const rule = await validateRules(rules, state.editableData, key)
 			for (let k in rule) {
 				state.rulesRef[k] = rule[k]
 			}
 			const res = await validateFields(state.formRef);
+			emits('onSuccess', res ? {guideList: state.tableData} : {guideList: res});
 			if (!res) return
 			if (key) {
-				state.editableData[key].name = dayjs(state.editableData[key].name).format('YYYY-MM-DD HH:mm');
-				Object.assign(state.tableData.filter((item:any) => key === item.key)[0], state.editableData[key]);
+				state.editableData[key].startDate = state.editableData[key].time[0]
+				state.editableData[key].endDate = state.editableData[key].time[1]
+				methods.copyData(key)
 				delete state.editableData[key];
 			} else {
 				for (let k in state.editableData) {
-					state.editableData[k].name = dayjs(state.editableData[k].name).format('YYYY-MM-DD HH:mm');
-					Object.assign(state.tableData.filter((item:any) => k === item.key)[0], state.editableData[k]);
+					state.editableData[k].startDate = state.editableData[k].time[0]
+					state.editableData[k].endDate = state.editableData[k].time[1]
+					methods.copyData(k)
 					delete state.editableData[k];
 				}
 			}
@@ -124,15 +133,34 @@ export function useGuideInfo(): Record<string, any> {
 
 		add: () => {
 			let key = generateGuid();
-			state.tableData.push({key, name: undefined});
+			state.tableData.push({key});
 			methods.edit(key);
 			console.log(state.tableData)
 		},
 
-		getGuideList() {
-			api.travelManagement.getGuideList(state.guideParams)
+		async getGuideList() {
+			const res = await api.travelManagement.getGuideList(state.guideParams);
+			state.guideData = res.content;
+		},
+		guideChange(value:any, { item }: any, key:any) {
+			state.editableData[key] = {
+				...state.editableData[key],
+				guidePhone: item.phone,
+				guideType: item.guideType,
+				guideCertificateNo: item.guideCertificateNo,
+				guideOid: item.oid,
+				belongTravelAgencyName: item.belongTravelAgencyName,
+				guideName: item.guideName
+			}
+			methods.copyData(key)
 		}
+		
 	}
+	watch(onCheck, (newVal) => {
+		// console.log(newVal)
+		methods.addRules()
+		methods.save()
+	})
 	return {
 		...toRefs(state),
 		...methods

@@ -22,3 +22,15 @@ export enum GroupStatus {
   CloseAnAccount, //已结算
   Cancellation    //已作废
 }
+
+// 线路类型
+export enum RouteType {
+  Routemodel = 1,
+  CustomRoute
+}
+
+// 性别
+export enum Gender {
+  Madam,
+  Male
+}

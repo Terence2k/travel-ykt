@@ -16,6 +16,21 @@ export const commonApi = {
             data,
             showLoading: true
         });
+    },
+    getCityList(data: any) {
+        return request({
+            url: `${commonPath}/customer-service/public/api/area/list/${data}`,
+            method: 'get',
+            showLoading: false
+        });
+    },
+    getCodeValue(data: any) {
+        return request({
+            url: `${commonPath}/customer-service/public/api/dictionary/dropDownQueryListChildByCodeValue?codeValue=${data.codeValue}`,
+            method: 'post',
+            showLoading: false
+        });
     }
+    
 }
     

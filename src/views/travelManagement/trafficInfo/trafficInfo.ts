@@ -1,75 +1,50 @@
 import { cloneDeep } from 'lodash';
 import dayjs from 'dayjs';
-import { generateGuid } from '@/utils/util'
+import { validateRules, validateFields, generateGuid } from '@/utils';
 import { defineProps } from 'vue';
 import type { UnwrapRef } from 'vue';
+import { useTravelStore } from '@/stores/modules/travelManagement';
+import { CODEVALUE } from '@/constant'
 interface DataItem {
-	name: string;
-	name1: string,
-	name2: string,
-	name3: string,
-	name4: string,
-	name5: string,
-	name6: string
+	transportationType: string;
+	driver: string,
+	approvedLoad: string,
+	companyName: string,
+	licencePlateColor: string,
+	licencePlateNumber: string,
+	time: string
 }
-export function useTrafficInfo(props: any): Record<string, any> {
-    // const rowSelection = ref({
-    //     checkStrictly: false,
-    //     onChange: (selectedRowKeys: (string | number)[], selectedRows: DataItem[]) => {
-    //       console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-    //     },
-    //     onSelect: (record: DataItem, selected: boolean, selectedRows: DataItem[]) => {
-    //       console.log(record, selected, selectedRows);
-    //     },
-    //     onSelectAll: (selected: boolean, selectedRows: DataItem[], changeRows: DataItem[]) => {
-    //       console.log(selected, selectedRows, changeRows);
-    //     },
-    // });
+
+const rules = {
+	transportationType: [{ required: true, message: '请选择交通类型' }],
+	licencePlateNumber: [{ required: true, message: '请输入车牌号' }],
+	licencePlateColor: [{ required: true, message: '请选择车牌颜色' }],
+	companyName: [{ required: true, message: '请输入车企名称' }],
+	approvedLoad: [{ required: true, message: '请输入核载人数（人）' }],
+	time: [{ required: true, message: '请选择用车时间段' }],
+	driver: [{ required: true, message: '请输入驾驶员' }]
+}
+
+export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 	const { onCheck } = toRefs(props);
+	const travelStore = useTravelStore();
+	const trafficType = computed(() => travelStore.trafficType);
+	const trafficColor = computed(() => travelStore.trafficColor);
 	const state = reactive<{editableData: UnwrapRef<Record<string, DataItem>>, [k:string]: any}>({
 		formRef: null,
 		editableData: {},
 		startRef: {},
-		cityOptions: [
-			{
-			  value: 'zhejiang',
-			  label: 'Zhejiang',
-			  children: [
-				{
-				  value: 'hangzhou',
-				  label: 'Hangzhou',
-				  children: [
-					{
-					  value: 'xihu',
-					  label: 'West Lake',
-					},
-				  ],
-				},
-			  ]
-			}
-		],
-		selectKey: ['name', 'name4'],
-		inputKey: ['name5', 'name3', 'name2', 'name1'], 
+		selectKey: ['transportationType', 'licencePlateColor'],
+		inputKey: ['licencePlateNumber', 'companyName', 'approvedLoad', 'driver'], 
 		rulesRef: {
 			1: {
-				name5: [{ required: true, message: '请选择行程类型' }]
+				licencePlateNumber: [{ required: true, message: '请选择行程类型' }]
 			}
 		},
         onSelect: (record: DataItem, selected: boolean, selectedRows: DataItem[]) => {
             console.log(record, selected, selectedRows);
         },
-		tableData: [
-			{
-				key: '1',
-				name: 'lucy',
-				name1: '123',
-				name2: '123',
-				name3: '123',
-				name4: '123',
-				name5: '123',
-				name6: []
-			}
-		],
+		tableData: [],
 		columns: [
 			{
 				title: ' 序号 ',
@@ -78,38 +53,40 @@ export function useTrafficInfo(props: any): Record<string, any> {
 			},
 			{
 				title: '交通类型',
-				dataIndex: 'name',
-				key: 'name',
+				dataIndex: 'transportationType',
+				key: 'transportationType',
+				data: trafficType
 			},
 			{
 				title: '车牌号',
-				dataIndex: 'name5',
-				key: 'name5',
+				dataIndex: 'licencePlateNumber',
+				key: 'licencePlateNumber',
 			},
 			{
 				title: '车牌颜色',
-				dataIndex: 'name4',
-				key: 'name4',
+				dataIndex: 'licencePlateColor',
+				key: 'licencePlateColor',
+				data: trafficColor
 			},
 			{
 				title: '车企名称',
-				dataIndex: 'name3',
-				key: 'name3',
+				dataIndex: 'companyName',
+				key: 'companyName',
 			},
 			{
 				title: '核载人数（人）',
-				dataIndex: 'name2',
-				key: 'name2',
+				dataIndex: 'approvedLoad',
+				key: 'approvedLoad',
 			},
             {
 				title: '用车时段',
-				dataIndex: 'name6',
-				key: 'name6',
+				dataIndex: 'time',
+				key: 'time',
 			},
 			{
 				title: '驾驶员',
-				dataIndex: 'name1',
-				key: 'name1',
+				dataIndex: 'driver',
+				key: 'driver',
 			},
 			{
 				title: '操作',
@@ -120,51 +97,35 @@ export function useTrafficInfo(props: any): Record<string, any> {
 	});
 
 	const methods = {
-		validateRules(key?:string) {
-			state.rulesRef = {}
-			let rules = {
-				name: [{ required: true, message: '请选择交通类型' }],
-				name5: [{ required: true, message: '请输入车牌号' }],
-				name4: [{ required: true, message: '请选择车牌颜色' }],
-				name3: [{ required: true, message: '请输入车企名称' }],
-				name2: [{ required: true, message: '请输入核载人数（人）' }],
-				name6: [{ required: true, message: '请选择用车时间段' }],
-				name1: [{ required: true, message: '请输入驾驶员' }]
-			}
-			if (key) {
-				state.rulesRef[key] = rules;
-			} else {
-				for (let k in state.editableData) {
-					state.rulesRef[k] = rules;
-				}
-			}
-			
+		copyData(key:any) {
+			Object.assign(
+				state.tableData.filter((item:any) => key === item.key)[0], 
+				state.editableData[key]
+			);
 		},
-		async validateFields() {
-			let flag = false
-			try {
-				const values = await state.formRef.validateFields()
-				// console.log('Success:', values);
-				flag = true
-			} catch (errorInfo) {
-				// console.log('Failed:', errorInfo);
+		addRules(key?: any) {
+			state.rulesRef = {}
+			const rule = validateRules(rules, state.editableData, key)
+			for (let k in rule) {
+				state.rulesRef[k] = rule[k]
 			}
-			return flag;
 		},
 		edit: (key: string) => {
-			const cur = cloneDeep(state.tableData.filter((item:any, index: number) => key === item.key)[0])
-			state.editableData[key] = cur;
+			state.editableData[key] = cloneDeep(
+				state.tableData.filter((item:any, index: number) => key === item.key)[0]
+			)
 		},
 		save: async (key?: string) => {
-			await methods.validateRules(key);
-			const res = await methods.validateFields();
+			await methods.addRules(key)
+			const res = await validateFields(state.formRef);
+			emits('onSuccess', res ? {transportList: state.tableData} : {transportList: res});
 			if (!res) return
 			if (key) {
-				Object.assign(state.tableData.filter((item:any) => key === item.key)[0], state.editableData[key]);
+				methods.copyData(key);
 				delete state.editableData[key];
 			} else {
 				for (let k in state.editableData) {
-					Object.assign(state.tableData.filter((item:any) => k === item.key)[0], state.editableData[k]);
+					methods.copyData(key);
 					delete state.editableData[k];
 				}
 			}
@@ -177,9 +138,11 @@ export function useTrafficInfo(props: any): Record<string, any> {
 			console.log(state.tableData)
 		}
 	}
+	travelStore.getTraveCode(CODEVALUE.TRAVE_CODE.TRAFFICTYPE, 'trafficType');
+	travelStore.getTraveCode(CODEVALUE.TRAVE_CODE.TRAFFICCOLOR, 'trafficColor');
 	watch(onCheck, (newVal) => {
 		// console.log(newVal)
-		methods.validateRules();
+		methods.addRules()
 		methods.save()
 	})
 	return {
