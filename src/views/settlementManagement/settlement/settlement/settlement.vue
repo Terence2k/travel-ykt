@@ -225,7 +225,7 @@ const transfer = (type: string, record: any) => {
 			// api
 			// 	.comprehensiveFeeEnable(record.oid)
 			// 	.then((res: any) => {
-			// 		message.success('操作成功');
+					message.success('操作成功');
 			// 		onSearch();
 			// 	})
 			// 	.catch((err: any) => {

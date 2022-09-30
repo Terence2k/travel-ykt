@@ -2,10 +2,10 @@
 	<CommonSearch>
 		<search-item label="团单类型">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.auditStatus" style="width: 200px" placeholder="请选择归属景区">
-				<a-select-option :value="-1">未提交</a-select-option>
-				<a-select-option :value="0">待审核 </a-select-option>
-				<a-select-option :value="1"> 审核通过</a-select-option>
-				<a-select-option :value="2"> 审核未通过</a-select-option>
+				<a-select-option :value="-1">团单类型1</a-select-option>
+				<a-select-option :value="0">团单类型2 </a-select-option>
+				<a-select-option :value="1"> 团单类型3</a-select-option>
+				<a-select-option :value="2"> 团单类型4</a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="行程单号">

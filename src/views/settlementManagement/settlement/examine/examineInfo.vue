@@ -138,7 +138,7 @@ const formData: any = reactive({
             type: 'John Brown sr.',
             name: 'test',
             bank: 'test',
-            price: 'test',
+            price: '1001',
             time: 'test',
         },
         {
@@ -147,7 +147,7 @@ const formData: any = reactive({
             type: 'John Brown sr.',
             name: 'test',
             bank: 'test',
-            price: 'test',
+            price: '1001',
             time: 'test',
         },
         {
@@ -156,7 +156,7 @@ const formData: any = reactive({
             type: 'John Brown sr.',
             name: 'test',
             bank: 'test',
-            price: 'test',
+            price: '1001',
             time: 'test',
         },
     ],
@@ -203,6 +203,7 @@ const editItem = ((record: any) => {
 const adjustConfirm = ((e: any) => {
     console.log('我回来了');
     console.log(e);
+	message.success('保存成功');
     // 
 })
 //初始化页面
