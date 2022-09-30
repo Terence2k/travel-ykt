@@ -2,7 +2,7 @@ import { request, commonPath } from '@/utils/index';
 const commonPart = `${commonPath}/customer-service/public/api/company/`
 const commonPart1 = `${commonPath}/customer-service/public/api/sys-role/`
 const commonPart2 = `${commonPath}/customer-service/public/api/sys-user/`
-
+const path = `${commonPath}/customer-service/public/api/dictionary/dropDownQueryListChildByCodeValue?codeValue=BUSINESS_TYPE`
 // 企业注册
 export function companyRegister(data: any) {
 	return request({
@@ -41,6 +41,14 @@ export function auditCompany(data: any) {
 export function resetPassword(data: any) {
 	return request({
 		url: `${commonPart2}resetPassword?oid=${data.oid}&newPassword=${data.newPassword}`,
+		method: 'post',
+		showLoading: true
+	});
+}
+// 获取企业类型
+export function businessTypeDropDown() {
+	return request({
+		url: path,
 		method: 'post',
 		showLoading: true
 	});

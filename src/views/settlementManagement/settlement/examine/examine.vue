@@ -51,38 +51,38 @@ const columns = [
 	},
 	{
 		title: '线路名称',
-		dataIndex: 'bbb',
-		key: 'bbb',
+		dataIndex: 'ccc',
+		key: 'ccc',
 	},
 	{
 		title: '组团社',
-		dataIndex: 'bbb',
-		key: 'bbb',
+		dataIndex: 'ddd',
+		key: 'ddd',
 	},
 	{
 		title: '地接社',
-		dataIndex: 'bbb',
-		key: 'bbb',
+		dataIndex: 'eee',
+		key: 'eee',
 	},
 	{
 		title: '行程人数',
-		dataIndex: 'bbb',
-		key: 'bbb',
+		dataIndex: 'fff',
+		key: 'fff',
 	},
 	{
 		title: '行程费用',
-		dataIndex: 'bbb',
-		key: 'bbb',
+		dataIndex: 'ggg',
+		key: 'ggg',
 	},
 	{
 		title: '行程时间',
-		dataIndex: 'bbb',
-		key: 'bbb',
+		dataIndex: 'hhh',
+		key: 'hhh',
 	},
 	{
 		title: '结算状态',
-		dataIndex: 'userStatusName',
-		key: 'userStatusName',
+		dataIndex: 'iii',
+		key: 'iii',
 	},
 	{
 		title: '操作',
@@ -106,6 +106,7 @@ const state = reactive({
 				fff: 'test',
 				ggg: 'test',
 				hhh: 'test',
+				iii: 'test',
 				userStatusName: '正常',
 			},
 			{
@@ -119,6 +120,7 @@ const state = reactive({
 				fff: 'test',
 				ggg: 'test',
 				hhh: 'test',
+				iii: 'test',
 				userStatusName: '异常',
 			},
 		],
@@ -174,19 +176,6 @@ const cancel = (): any => {
 	state.operationModal.isAddOrUpdate = false;
 };
 
-const addOrUpdate = (param: any) => {
-	console.log('state.operationModal.isAddOrUpdate:', state.operationModal.isAddOrUpdate);
-
-	const { row, handle } = param;
-	console.log(row);
-	console.log(handle);
-
-	state.params = {};
-	if (handle === 'update') {
-		state.params = row;
-	}
-	state.operationModal.isAddOrUpdate = true;
-};
 
 // 审核通过
 const examine = (type: string, record: any) => {
