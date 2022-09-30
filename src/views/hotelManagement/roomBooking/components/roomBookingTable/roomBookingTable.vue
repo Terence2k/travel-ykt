@@ -73,7 +73,7 @@
 <script setup lang="ts">
 import { PlusSquareOutlined, MinusSquareOutlined } from '@ant-design/icons-vue';
 import { cloneDeep } from 'lodash';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import CommonTable from '@/components/common/CommonTable.vue';
 import BaseModal from '@/components/common/BaseModal.vue';
 import api from '@/api';
