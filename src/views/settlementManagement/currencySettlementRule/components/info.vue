@@ -167,7 +167,7 @@ onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
 });
 const edit = () => {
-	route.push({ path: '/settlementManagement/productSettlementRule/edit', query: { oid: encodeURIComponent(oid.value) } });
+	route.push({ path: '/settlementManagement/currencySettlementRule/edit', query: { oid: encodeURIComponent(oid.value) } });
 };
 const getTypeName = computed(() => (str: string) => {
 	if (str === 'teamTypeId') {
@@ -206,6 +206,13 @@ const getTypeName = computed(() => (str: string) => {
 			return generaRulesOptions.prepaidCompanyList[idx]['name'];
 		}
 	}
+});
+const getCompanyTypeName = computed(() => (value: number) => {
+	const idx = generaRulesOptions.prepaidCompanyList.findIndex((item) => item.value === value);
+	if (idx !== -1) {
+		return generaRulesOptions.prepaidCompanyList[idx]['name'];
+	}
+	return;
 });
 </script>
 
