@@ -209,7 +209,6 @@ const changePrice = (val: interfaceType) => {
 };
 // 保存
 const save = async (params: object) => {
-	delete params.assistId;
 	let res = await api.saveSingleVoteInfo(params);
 	message.success(res);
 	route.push({ path: '/scenic-spot/singleVote/list' });
