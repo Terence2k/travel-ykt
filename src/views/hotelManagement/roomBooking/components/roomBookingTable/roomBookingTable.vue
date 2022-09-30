@@ -86,7 +86,7 @@ const props = defineProps({
 
 const currentDayjs = dayjs();
 
-const columns: TableColumnsType = ref([
+const columns = ref([
 	{
 		title: '房间',
 		dataIndex: 'roomType',

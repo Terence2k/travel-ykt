@@ -38,13 +38,30 @@
 <script setup lang="ts">
 import api from '@/api';
 import RoomBookingTable from './components/roomBookingTable/roomBookingTable.vue';
-const hotel = ref('');
 
+const hotel = ref('');
 const hotelOptionsData = ref([]);
 
 const hotelOptions = ref<SelectProps['options']>(hotelOptionsData);
 
 const auditStatus = ref(1);
+
+const auditStatusData = ref([
+	{
+		value: 0,
+		label: '待审核',
+	},
+	{
+		value: 1,
+		label: '无需审核',
+	},
+]);
+
+const auditStatusOptions = ref<SelectProps['options']>(auditStatusData);
+
+const clearSearchFilter = () => {
+	auditStatus.value = undefined;
+};
 
 watch(
 	() => auditStatus.value,
@@ -52,7 +69,7 @@ watch(
 		if (auditStatus.value) {
 			api.getHotelList(val).then((result) => {
 				if (Array.isArray(result)) {
-					hotelOptionsData.value = result.map((item) => {
+					hotelOptionsData.value = result?.map((item) => {
 						return {
 							value: item?.hotelId,
 							label: item?.hotelName,
@@ -70,25 +87,6 @@ watch(
 		immediate: true,
 	}
 );
-const auditStatusData = ref([
-	{
-		value: 0,
-		label: '待审核',
-	},
-	{
-		value: 1,
-		label: '无需审核',
-	},
-]);
-
-const auditStatusOptions = ref<SelectProps['options']>(auditStatusData);
-
-const clearSearchFilter = () => {
-	auditStatus.value = undefined;
-};
-// onMounted(() => {
-
-// });
 </script>
 
 <style lang="less" scoped>
