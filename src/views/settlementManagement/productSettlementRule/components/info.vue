@@ -221,7 +221,11 @@ const getTypeName = computed(() => (str: string) => {
 });
 // 获取表格分账规则分账单位名称
 const getCompanyTypeName = computed(() => (value: number) => {
-	return generaRulesOptions.prepaidCompanyList[value]['name'];
+	const idx = generaRulesOptions.prepaidCompanyList.findIndex((item) => item.value === value);
+	if (idx !== -1) {
+		return generaRulesOptions.prepaidCompanyList[idx]['name'];
+	}
+	return;
 });
 </script>
 

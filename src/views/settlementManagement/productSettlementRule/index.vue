@@ -30,7 +30,7 @@
 			<a-tab-pane :key="3" tab="餐饮"></a-tab-pane>
 		</a-tabs>
 		<a-spin size="large" :spinning="state.tableData.loading">
-			<CommonTable :dataSource="state.tableData.data" :columns="columns">
+			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%' }">
 				<template #bodyCell="{ column, record }">
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
@@ -147,7 +147,15 @@ const pageSideChange = (current: number, size: number) => {
 };
 //查看
 const toConfigure = (record: any) => {
-	route.push({ path: '/settlementManagement/productSettlementRule/configureRules', query: { oid: encodeURIComponent(record.oid) } });
+	console.log(record, `record`);
+	route.push({
+		path: '/settlementManagement/productSettlementRule/configureRules',
+		query: {
+			productId: encodeURIComponent(record.productId),
+			productType: encodeURIComponent(record.productType),
+			productSonType: encodeURIComponent(record.productSonType),
+		},
+	});
 };
 // const onSearch = () => {
 // 	userList(state.tableData.param).then((res) => {
@@ -165,17 +173,7 @@ const initList = async () => {
 };
 const dealData = (params: [any]) => {
 	params.map((i: any) => {
-		// i.derate = i.derate ? '支持' : '不支持';
-		// i.scenicLevel = i.scenicLevel ? i.scenicLevel : 0;
-		// i.auditStatus = status[i.auditStatus];
-		// let all = i.derateRule?.split(',');
-		// //减免规则
-		// if (all?.length > 1) {
-		// 	i.derateRule = '满' + all[0] + '减' + all[1];
-		// } else {
-		// 	i.derateRule = '无';
-		// }
-
+		// i.key = i.productId;
 		return i;
 	});
 

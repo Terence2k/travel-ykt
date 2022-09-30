@@ -43,7 +43,7 @@
 			<a-form-item label="优先级" name="level">
 				<a-input-number v-model:value="formState.level" placeholder="请输入规则优先级" style="width: 100%"> </a-input-number>
 			</a-form-item>
-			<div class="title">扣费规则</div>
+			<div class="title">收费规则</div>
 			<a-form-item label="收费模式" name="chargeModel">
 				<a-radio-group v-model:value="formState.chargeModel">
 					<a-radio v-for="item in generaRulesOptions.chargeModelList" :value="item.value" :key="item.name">{{ item.name }}</a-radio>
@@ -245,6 +245,7 @@ const init = () => {
 	} else {
 		navigatorBar.setNavigator(['新增']);
 		cacheData.value.edit = false;
+		formState.productId = query.productId;
 		// 默认状态开启
 		formState.ruleStatus = 1;
 		// 默认是否垫付关闭
@@ -329,8 +330,6 @@ const edit = async () => {
 const saveParams = () => {
 	// 暂时写死
 	formState.chargeProductSonId = 1;
-	// 暂时写死
-	formState.productId = 1;
 	if (formState.productSonType === 'SELF') {
 		formState.chargeProductSonId = formState.productId;
 	}
@@ -350,7 +349,11 @@ onBeforeUnmount(() => {
 });
 // 获取表格分账规则分账单位名称
 const getCompanyTypeName = computed(() => (value: number) => {
-	return generaRulesOptions.prepaidCompanyList[value]['name'];
+	const idx = generaRulesOptions.prepaidCompanyList.findIndex((item) => item.value === value);
+	if (idx !== -1) {
+		return generaRulesOptions.prepaidCompanyList[idx]['name'];
+	}
+	return;
 });
 </script>
 

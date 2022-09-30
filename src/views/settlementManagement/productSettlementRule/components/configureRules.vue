@@ -9,6 +9,8 @@
 				:data-source="state.tableData.data"
 				:columns="columns"
 				:rowSelection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
+				rowKey="oid"
+				:scroll="{ x: '100%' }"
 			>
 				<template #bodyCell="{ column, record, index }">
 					<!-- 团单类型 -->
@@ -30,7 +32,7 @@
 							<a href="javascript:;" @click="toEditPage(record)">编辑</a>
 							<a v-if="record.ruleStatus === 1" href="javascript:;" @click="showTip('state', 0, record)">禁用</a>
 							<a v-if="record.ruleStatus === 0" href="javascript:;" @click="showTip('state', 1, record)">启用</a>
-							<a href="javascript:;" @click="showTip('index', index,record)">删除</a>
+							<a href="javascript:;" @click="showTip('index', index, record)">删除</a>
 						</div>
 					</template>
 				</template>
@@ -147,7 +149,10 @@ const pageSideChange = (current: number, size: number) => {
 };
 //新增
 const toAddPage = () => {
-	route.push({ path: '/settlementManagement/productSettlementRule/edit' });
+	route.push({
+		path: '/settlementManagement/productSettlementRule/edit',
+		query: { productId: encodeURIComponent(state.tableData.param['productId']) },
+	});
 };
 //编辑
 const toEditPage = (record: any) => {
@@ -164,6 +169,10 @@ const toCheck = (record: any) => {
 // 	});
 // };
 const initList = async () => {
+	const { productId, productType, productSonType } = route.currentRoute.value.query;
+	state.tableData.param['productId'] = productId;
+	state.tableData.param['productType'] = productType;
+	state.tableData.param['productSonType'] = productSonType;
 	await getTeamType();
 	// state.tableData.loading = true;
 	let res: any = await api.productRuleConfigList(state.tableData.param);
@@ -213,9 +222,7 @@ const showTip = (str: string, par: any, record: any) => {
 		cacheData.value.delState = 'del';
 	} else if (str === 'all') {
 		cacheData.value.delParams = { title: '删除', content: '是否删除所选数据？' };
-		cacheData.value.delIndex = state.selectedRowKeys.map((index) => {
-			return state.tableData.data[index]['oid'];
-		});
+		cacheData.value.delIndex = state.selectedRowKeys;
 		cacheData.value.delState = 'del';
 	} else if (str === 'state') {
 		let parStr = '';

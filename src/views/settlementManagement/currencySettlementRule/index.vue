@@ -29,9 +29,11 @@
 		</div>
 		<a-spin size="large" :spinning="state.tableData.loading">
 			<CommonTable
-				:data-source="state.tableData.data"
+				:dataSource="state.tableData.data"
 				:columns="columns"
+				rowKey="oid"
 				:rowSelection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
+				:scroll="{ x: '100%' }"
 			>
 				<template #bodyCell="{ column, record, index }">
 					<!-- 团单类型 -->
@@ -132,11 +134,7 @@ const columns = [
 
 const state = reactive({
 	tableData: {
-		data: [
-			{
-				name: 123456,
-			},
-		],
+		data: [],
 		total: 400,
 		loading: false,
 		param: {
@@ -192,16 +190,7 @@ const initList = async () => {
 };
 const dealData = (params: [any]) => {
 	params.map((i: any) => {
-		// i.derate = i.derate ? '支持' : '不支持';
-		// i.scenicLevel = i.scenicLevel ? i.scenicLevel : 0;
-		// i.auditStatus = status[i.auditStatus];
-		// let all = i.derateRule?.split(',');
-		// //减免规则
-		// if (all?.length > 1) {
-		// 	i.derateRule = '满' + all[0] + '减' + all[1];
-		// } else {
-		// 	i.derateRule = '无';
-		// }
+		// i.key = i.oid;
 
 		return i;
 	});
@@ -233,9 +222,7 @@ const showTip = (str: string, par: any, record: any) => {
 		cacheData.value.delState = 'del';
 	} else if (str === 'all') {
 		cacheData.value.delParams = { title: '删除', content: '是否删除所选数据？' };
-		cacheData.value.delIndex = state.selectedRowKeys.map((index) => {
-			return state.tableData.data[index]['oid'];
-		});
+		cacheData.value.delIndex = state.selectedRowKeys;
 		cacheData.value.delState = 'del';
 	} else if (str === 'state') {
 		let parStr = '';
