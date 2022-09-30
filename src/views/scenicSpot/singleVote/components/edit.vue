@@ -5,7 +5,7 @@
 			<a-form-item label="归属景区" v-if="type === '1'">
 				<!-- <a-input v-model:value="formData.data.scenicId" placeholder="请填写景区名字" /> -->
 				<a-select allowClear v-model:value="formData.data.scenicId" placeholder="请选择">
-					<a-select-option :value="vlItem.old" v-for="vlItem in viewList" :key="vlItem.old">{{ vlItem }}</a-select-option>
+					<a-select-option :value="vlItem.old" v-for="vlItem in viewList" :key="vlItem.ticketId">{{ vlItem.ticketName }}</a-select-option>
 				</a-select>
 			</a-form-item>
 			<a-form-item label="票种分类">
@@ -39,9 +39,9 @@
 				/>
 			</a-form-item>
 
-			<a-form-item label=" 有效期" v-bind="validateInfos[`data.optionalVerificationCount`]" :wrapper-col="{ span: 12 }">
+			<a-form-item label="有效期" v-bind="validateInfos[`data.validTime`]" :wrapper-col="{ span: 12 }">
 				指定入园时间起 ,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<a-select allowClear ref="select" v-model:value="formData.data.optionalVerificationCount" placeholder="请选择" style="width: 120px">
+				<a-select allowClear ref="select" v-model:value="formData.data.validTime" placeholder="请选择" style="width: 120px">
 					<a-select-option :value="day" v-for="day in 7" :key="day">{{ day }}日内有效</a-select-option>
 				</a-select>
 				<span class="tips"> 说明 ： 超过当日24时算一日结束 </span>
@@ -132,11 +132,11 @@ const formData = reactive({
 		oneExplain: null, //单票说明
 		restsExplain: null, //其他说明
 		itemList: [
-			// {
-			// 	itemId: 1, //itemId
-			// 	verificationNumber: 30, //核销数
-			// 	ifVerification: true, //是否必须核销
-			// },
+			{
+				itemId: 1, //itemId
+				verificationNumber: 30, //核销数
+				ifVerification: true, //是否必须核销
+			},
 		], //核销项目
 		discountList: [
 			// {
@@ -162,8 +162,8 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 		'data.ticketType': [{ required: true, message: '请选择门票分类' }],
 
 		'data.validTime': [{ required: true, message: '请选择有效时间' }],
-		'data.optionalVerificationCount': [{ required: true, message: '请选择有效期' }],
-		'data.assistId': [{ required: true, message: '请选择市' }],
+		// 'data.optionalVerificationCount': [{ required: true, message: '请选择有效期' }],
+		// 'data.assistId': [{ required: true, message: '请选择市' }],
 		'data.dayStock': [{ required: true, message: '请输入门票库存' }],
 
 		'data.oneExplain': [{ required: true, message: '请输入' }],
@@ -189,7 +189,8 @@ const onSubmit = async () => {
 		.then((res) => {
 			console.log(toRaw(formData.data), 'psss');
 			// save(toRaw(formData.data));
-			route.currentRoute.value?.query?.s ? createInfo(toRaw(formData.data)) : editInfo(toRaw(formData.data));
+			save(toRaw(formData.data));
+			// route.currentRoute.value?.query?.s ? save(toRaw(formData.data)) : editInfo(toRaw(formData.data));
 		})
 		.catch((err) => {
 			console.log('error', err);
@@ -207,15 +208,12 @@ const changePrice = (val: interfaceType) => {
 	formData.data.price = price;
 };
 // 保存
-const createInfo = (params: object) => {
-	console.log(params);
-};
-const editInfo = async (params: any) => {
-	delete params.assistId;
+const save = async (params: object) => {
 	let res = await api.saveSingleVoteInfo(params);
 	message.success(res);
 	route.push({ path: '/scenic-spot/singleVote/list' });
 };
+// const editInfo = async (params: any) => {};
 //删除
 const delRuleObj = (index: number) => {
 	formData.data.discountList.splice(index, 1);

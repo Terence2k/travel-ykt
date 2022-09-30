@@ -152,7 +152,12 @@ const itemNameCompute = (id: number) => {
 };
 
 const change = (value: object) => {
-	console.log(value);
+	console.log(value, type.value);
+	if (type.value) {
+		console.log('多点');
+	} else {
+		console.log('单点');
+	}
 };
 
 // 关联核销项目
@@ -242,9 +247,9 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 );
 const getList = async () => {
 	formData.data = await api.getVariflist();
-	let res = await api.getScenicOneTicket();
+	// let res = await api.getScenicOneTicket();
 
-	let arr = res.map((i) => {
+	let arr = formData.data.map((i) => {
 		return { value: i.id, label: i.itemName };
 	});
 	options.value = arr;
