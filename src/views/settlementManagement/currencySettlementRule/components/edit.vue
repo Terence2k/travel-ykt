@@ -43,7 +43,7 @@
 			<a-form-item label="优先级" name="level">
 				<a-input-number v-model:value="formState.level" placeholder="请输入规则优先级" style="width: 100%"> </a-input-number>
 			</a-form-item>
-			<div class="title">扣费规则</div>
+			<div class="title">收费规则</div>
 			<a-form-item label="收费模式" name="chargeModel">
 				<a-radio-group v-model:value="formState.chargeModel">
 					<a-radio v-for="item in generaRulesOptions.chargeModelList" :value="item.value" :key="item.name">{{ item.name }}</a-radio>

@@ -48,16 +48,16 @@ export default [
 					},
 				],
 			},
-			{
-				path: 'settlementRule',
-				component: () => import('@/views/settlementManagement/settlementRule/index.vue'),
-				name: 'settlementRule',
-				meta: {
-					title: '结算规则管理',
-					// icon: 'liulanqi',
-					// auth: ["admin"],
-				},
-			},
+			// {
+			// 	path: 'settlementRule',
+			// 	component: () => import('@/views/settlementManagement/settlementRule/index.vue'),
+			// 	name: 'settlementRule',
+			// 	meta: {
+			// 		title: '结算规则管理',
+			// 		// icon: 'liulanqi',
+			// 		// auth: ["admin"],
+			// 	},
+			// },
 			{
 				path: 'currencySettlementRule',
 				name: 'currencySettlementRule',

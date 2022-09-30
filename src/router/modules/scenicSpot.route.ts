@@ -123,6 +123,64 @@ export default [
 					},
 				],
 			},
+			{
+				path: 'shows',
+				name: 'shows',
+				redirect: '/scenic-spot/shows/list',
+				meta: {
+					title: '演出节目管理',
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/scenicSpot/show/index.vue'),
+						name: 'shows-list',
+						meta: {
+							title: '首页',
+							activeMeun: 'information',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					// {
+					// 	path: 'show_edit',
+					// 	component: () => import('@/views/scenicSpot/showTickets/components/showEdit.vue'),
+					// 	name: 'showTickets-show_edit',
+					// 	meta: {
+					// 		title: '编辑',
+					// 		isDetail: true, // 在左侧的导航栏不会展示
+					// 	},
+					// },
+				],
+			},
+			{
+				path: 'show-venue',
+				name: 'show-vueue',
+				redirect: '/scenic-spot/show-venue/list',
+				meta: {
+					title: '演出场馆管理',
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/scenicSpot/showVenue/index.vue'),
+						name: 'show-venue-list',
+						meta: {
+							title: '首页',
+							activeMeun: 'information',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					// {
+					// 	path: 'show_edit',
+					// 	component: () => import('@/views/scenicSpot/showTickets/components/showEdit.vue'),
+					// 	name: 'showTickets-show_edit',
+					// 	meta: {
+					// 		title: '编辑',
+					// 		isDetail: true, // 在左侧的导航栏不会展示
+					// 	},
+					// },
+				],
+			},
 		],
 	},
 ];

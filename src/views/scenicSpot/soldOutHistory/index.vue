@@ -1,5 +1,4 @@
 <template>
-	<Audit ref="auditRef" />
 	<a-spin size="large" :spinning="state.tableData.loading" style="min-height: 50vh">
 		<div>
 			<CommonSearch>
