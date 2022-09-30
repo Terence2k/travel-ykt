@@ -34,8 +34,9 @@
 				v-for="(item) in pages" 
 				:key="item.value" 
 				:tab="item.label">
-				
-        <div class="d-flex justify-content-end">
+					
+				<!--  v-if="showAddBtn" -->
+				<div class="d-flex justify-content-end">
 					<a-button @click="goToPath" type="primary" style="margin-right: 20px">+协作组团</a-button>
 					<a-button @click="goToPath" type="primary" style="margin-right: 20px">+非协作组团</a-button>
 				</div>
@@ -46,11 +47,11 @@
 </template>
 <script lang="ts" setup>
 	import CommonSearch from '@/components/common/CommonSearch.vue'
-  import SearchItem from '@/components/common/CommonSearchItem.vue'
-  import drafts from './travelList/drafts.vue';
-  import waitingGroup from './travelList/waitingGroup.vue';
-  import unpaid from './travelList/Unpiad.vue';
-  import refuseGroup from './travelList/refuseGroup.vue';
+	import SearchItem from '@/components/common/CommonSearchItem.vue'
+	import drafts from './travelList/drafts.vue';
+	import waitingGroup from './travelList/waitingGroup.vue';
+	import unpaid from './travelList/Unpiad.vue';
+	import refuseGroup from './travelList/refuseGroup.vue';
 	import waitRegiment from './travelList/waitregiment.vue';
 	import haveABall from './travelList/haveABall.vue';
 	import closeAnAccount from './travelList/closeAnAccount.vue';
@@ -59,9 +60,11 @@
 
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupStatus } from '@/enum';
+	import { getUserInfo } from '@/utils/util';
+	import { ROLE } from '@/constant'
+	import api from '@/api';
 
-	import api from '@/api'
-
+	const userInfo = getUserInfo();
 	const travelStore = useTravelStore();
 	const router = useRouter()
 	const activeKey = ref(GroupStatus.Drafts);
@@ -135,6 +138,10 @@
 			params.startDate = '';
 			params.endDate = '';
 		}
+	})
+
+	const showAddBtn = computed(() => {
+		return userInfo.sysRoles.some((it: any) => it.roleCode === ROLE.TRAVE_CODE);
 	})
 </script>
 <style lang="less" scoped>

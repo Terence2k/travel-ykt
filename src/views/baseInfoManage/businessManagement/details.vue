@@ -86,45 +86,30 @@ const router = useRouter();
 const route = useRoute();
 const back = () => {
   router.push({
-    path: '/baseInfo/businessManagement/apply'
+    name: 'apply'
   })
 }
-const form = reactive({
-  name: undefined,
-  businessTypeName: undefined,
-  regionName: undefined,
-  creditCode: undefined,
-  businessLicenseUrl: undefined,
-  contactName: undefined,
-  phone: undefined,
-  account: undefined
-})
-watch(
-  () => route.query,
-  (val: any) => {
-    const {
-      name,
-      businessTypeName,
-      regionName,
-      creditCode,
-      businessLicenseUrl,
-      contactName,
-      phone,
-      account,
-    } = val
-    form.name = name
-    form.businessTypeName = businessTypeName
-    form.regionName = regionName
-    form.creditCode = creditCode
-    form.businessLicenseUrl = businessLicenseUrl
-    form.contactName = contactName
-    form.phone = phone
-    form.account = account
-  },
-  {
-    immediate: true
+type propsType = {
+  name?: string,
+  businessTypeName?: string,
+  regionName?: string,
+  creditCode?: string,
+  businessLicenseUrl?: string,
+  contactName?: string,
+  phone?: string,
+  account?: string
+}
+const form = reactive<propsType>({})
+watch(() => route.params, (val: propsType) => {
+  let key: keyof propsType;
+  for (key in val) {
+    if (Object.prototype.hasOwnProperty.call(val, key)) {
+      form[key] = JSON.parse(decodeURIComponent(val[key] as string))
+    }
   }
-)
+}, {
+  immediate: true
+})
 </script>
 
 <style scoped lang="scss">

@@ -146,3 +146,50 @@ export async function getCompanyType() {
 		showLoading: false,
 	});
 }
+
+// 获取酒店列表
+export async function getHotelList(auditStatus: any) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-room-stock/listHotel?auditStatus=${auditStatus}`,
+		method: 'get',
+		// showLoading: true,
+	});
+}
+
+// 获取未来一段时间酒店房间库存数据
+export async function getHotelRoomStockInFuture(data: any) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-room-stock/list`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
+
+//更改酒店房间库存并提交审核
+export async function editHotelRoomStock(data: any) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-room-stock/submitAudit`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
+
+//酒店库存更改审核通过
+export async function hotelRoomStockPass(id: number) {
+	return request({
+		url: `${commonPath}hotel-service/public/api/hotel-room-stock/auditAdopt/${id}`,
+		method: 'get',
+		showLoading: true,
+	});
+}
+
+//酒店库存更改审核失败 /hotel-service/public/api/hotel-room-stock/auditFailed/10
+export async function hotelRoomStockFailed(id: number) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-room-stock/auditFailed/${id}`,
+		method: 'get',
+		showLoading: true,
+	});
+}

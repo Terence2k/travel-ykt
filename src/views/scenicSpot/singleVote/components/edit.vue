@@ -2,8 +2,11 @@
 	<div class="editWrapper">
 		<header class="title">基本信息</header>
 		<a-form class="" ref="formRef" :model="formData" :label-col="{ span: 3 }" labelAlign="left" :wrapper-col="{ span: 7 }" :scrollToFirstError="true">
-			<a-form-item label="归属景区">
+			<a-form-item label="归属景区" v-if="type === '1'">
 				<a-input v-model:value="formData.data.scenicId" placeholder="请填写景区名字" />
+				<a-select allowClear Fv-model:value="formData.data.scenicId" placeholder="请选择">
+					<a-select-option :value="vlItem.old" v-for="vlItem in viewList" :key="vlItem.old">{{ vlItem }}</a-select-option>
+				</a-select>
 			</a-form-item>
 			<a-form-item label="票种分类">
 				<a-input disabled v-model:value="tickerType" />
@@ -65,9 +68,9 @@
 			<a-form-item label="门票库存" v-bind="validateInfos[`data.dayStock`]">
 				<a-input v-model:value="formData.data.dayStock" placeholder="输入每日库存" />
 			</a-form-item>
-			<a-form-item label="票价" :wrapper-col="{ span: 12 }" v-bind="errorPriceInfos">
+			<a-form-item label="票价" :wrapper-col="{ span: 12 }" v-bind="errorPriceInfos" style="margin-bottom: 10px">
 				<div class="table-wrapper">
-					<EditPriceTable :tableList="[{ wateryPrice: formData.data.wateryPrice, price: formData.data.price }]" />
+					<EditPriceTable :tableList="[{ wateryPrice: formData.data.wateryPrice, price: formData.data.price }]" @change-price="changePrice" />
 				</div>
 			</a-form-item>
 			<a-form-item label="费用包含">
@@ -193,6 +196,17 @@ const onSubmit = async () => {
 			console.log('error', err);
 		});
 };
+interface interfaceType {
+	wateryPrice: null | number;
+	price: null | number;
+}
+
+const changePrice = (val: interfaceType) => {
+	const { wateryPrice, price } = val;
+	console.log('emit get ', val);
+	formData.data.wateryPrice = wateryPrice;
+	formData.data.price = price;
+};
 // 保存
 const createInfo = (params: object) => {
 	console.log(params);
@@ -200,7 +214,7 @@ const createInfo = (params: object) => {
 const editInfo = async (params: any) => {
 	let res = await api.saveSingleVoteInfo(params);
 	message.success(res);
-	route.push({ path: 'scenic-spot/singleVote/list' });
+	route.push({ path: '/scenic-spot/singleVote/list' });
 };
 //删除
 const delRuleObj = (index: number) => {
@@ -215,22 +229,23 @@ const delVerificationObj = (index: number) => {
 	formData.data.itemList.splice(index, 1);
 };
 const addVerificationObj = (obj: object) => {
-	console.log(obj);
-
-	formData.data.itemList.push(obj);
+	console.log(obj, 'addVerificationObj');
+	formData.data.itemList.push(toRaw(obj));
 };
 // 重置
 const reset = (): void => {
 	resetFields();
 };
+const viewList = ref(null);
 //初始化页面
 const initPage = async (): Promise<void> => {
 	route.currentRoute.value?.query?.s ? initCreatePage() : initEditPage();
+	let res = await api.getViewList();
+	viewList.value = res;
 };
 
 const initEditPage = async () => {
 	navigatorBar.setNavigator(['景区信息管理', '编辑']);
-
 	let res = await api.getScenicSpotSignleDetail(route.currentRoute.value?.query?.oid);
 	formData.data = res;
 };

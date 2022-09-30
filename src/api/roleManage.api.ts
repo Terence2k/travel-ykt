@@ -66,3 +66,14 @@ export async function editRoleStatus(data: any) {
 		showLoading: true
 	});
 }
+
+// 根据企业业态查询角色
+export async function getRoleListByType(data: any) {
+  console.log('data:,', data);
+  
+	return request({
+		url: `${commonPath}/customer-service/public/api/sys-role/listByBusinessType?businessType=${data}`,
+		method: 'get',
+		showLoading: false
+	});
+}

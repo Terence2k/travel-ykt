@@ -83,10 +83,10 @@ interface DataSourceItem {
 	reduceRule: string;
 }
 const router = useRouter();
-const status = ref<string>('');
-const star = ref<string>('');
-const hotelName = ref<string>('');
-const phoneNumber = ref<string>('');
+const status = ref<string>(undefined);
+const star = ref<string>(undefined);
+const hotelName = ref<string>(undefined);
+const phoneNumber = ref<string>(undefined);
 
 let statusOptionsData = [
 	{

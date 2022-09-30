@@ -105,7 +105,6 @@
     </div>
     <div class="btn_box">
       <a-button type="primary" @click="submit" style="margin-right:20px" :loading="loading">提交</a-button>
-      <!-- <a-button @click="back">返回列表</a-button> -->
     </div>
   </div>
   <CommonModal title="新增字典详情" v-model:visible="modalVisible" @close="modalVisible = false"
@@ -122,72 +121,58 @@ import api from '@/api';
 import { message } from 'ant-design-vue';
 const checkFormRef = ref();
 const router = useRouter();
-const route = useRoute();
+const route = useRoute()
 const rolesList = ref([])
 const back = () => {
   router.push({
-    path: '/baseInfo/businessManagement/apply'
+    name: 'apply'
   })
+  checkFormRef.value.resetFields()
 }
 const state = reactive({
   modalVisible: false
 })
 const { modalVisible } = toRefs(state)
 
-const form = reactive({
-  name: undefined,
-  businessType: undefined,
-  businessTypeName: undefined,
-  regionName: undefined,
-  creditCode: undefined,
-  businessLicenseUrl: undefined,
-  contactName: undefined,
-  phone: undefined,
-  account: undefined
-})
-const checkForm = reactive({
-  oid: undefined,
-  account: undefined,
-  roldId: undefined,
+type propsType = {
+  name?: string,
+  businessType?: string | number,
+  businessTypeName?: string,
+  regionName?: string,
+  creditCode?: string,
+  businessLicenseUrl?: string,
+  contactName?: string,
+  phone?: string,
+  account?: string,
+  oid?: string | number
+}
+const form = reactive<propsType>({})
+type checkFormType = {
+  oid?: number | string,
+  account?: number | string,
+  roldId?: number | string,
+  auditResult: 2 | 3
+}
+const checkForm = reactive<checkFormType>({
   auditResult: 2
 })
-const getListByBusinessType = async () => {
-  let data = await api.listByBusinessType(form.businessType)
-  rolesList.value = data
-}
-watch(
-  () => route.query,
-  (val: any) => {
-    if (route.path !== '/baseInfo/businessManagement/check') return
-    const {
-      name,
-      businessType,
-      businessTypeName,
-      regionName,
-      creditCode,
-      businessLicenseUrl,
-      contactName,
-      phone,
-      account,
-      oid
-    } = val
-    form.name = name
-    form.businessType = businessType
-    form.businessTypeName = businessTypeName
-    form.regionName = regionName
-    form.creditCode = creditCode
-    form.businessLicenseUrl = businessLicenseUrl
-    form.contactName = contactName
-    form.phone = phone
-    form.account = account
-    checkForm.account = account
-    checkForm.oid = oid
-    getListByBusinessType()
-  },
-  {
-    immediate: true
+watch(() => route.params, (val: propsType) => {
+  let key: keyof propsType;
+  for (key in val) {
+    if (Object.prototype.hasOwnProperty.call(val, key)) {
+      form[key] = JSON.parse(decodeURIComponent(val[key] as string))
+    }
   }
-)
+  checkForm.oid = form.oid
+  checkForm.account = form.account
+}, {
+  immediate: true
+})
+
+const getListByBusinessType = async () => {
+  let data = await api.listByBusinessType({ status: 1, pageNo: 1, pageSize: 10000, availableRange: form.businessType })
+  rolesList.value = data.content
+}
 
 const formRules: any = {
   auditResult: [{ required: true, trigger: 'blur', message: '请选择是否通过' }],
@@ -196,7 +181,9 @@ const formRules: any = {
 const loading = ref(false)
 const submit = () => {
   checkFormRef.value.validateFields().then(async () => {
+    loading.value = true
     let res = await api.auditCompany(toRaw(checkForm))
+    loading.value = false
     if (res) {
       message.success('审核成功！')
       router.push({
@@ -206,13 +193,15 @@ const submit = () => {
         }
       })
     } else {
-      message.success('审核失败！')
+      message.error('审核失败！')
     }
   }).catch((err: any) => {
     console.log(err);
   })
 }
-
+onActivated(() => {
+  getListByBusinessType()
+})
 </script>
 
 <style scoped lang="scss">

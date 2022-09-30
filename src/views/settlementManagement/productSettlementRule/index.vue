@@ -1,24 +1,22 @@
 <template>
 	<CommonSearch>
 		<search-item label="归属景区">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.auditStatus" style="width: 200px" placeholder="请选择归属景区">
-				<a-select-option :value="-1">未提交</a-select-option>
-				<a-select-option :value="0">待审核 </a-select-option>
-				<a-select-option :value="1"> 审核通过</a-select-option>
-				<a-select-option :value="2"> 审核未通过</a-select-option>
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.scenicId" style="width: 200px" placeholder="请选择归属景区">
+				<a-select-option v-for="item in state.scenicList" :value="item['ticketId']" :key="item['ticketName']">{{ item.ticketName }}</a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="产品名称">
-			<a-input v-model:value="state.tableData.param.name" placeholder="请输入费用名称" />
+			<a-input v-model:value="state.tableData.param.productName" placeholder="请输入费用名称" allowClear />
 		</search-item>
 		<search-item label="产品类型">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.scenicLevel" style="width: 200px" placeholder="请选择结算产品">
-				<a-select-option :value="num" v-for="num in 10" :key="num">{{ num }}</a-select-option>
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.productSonType" style="width: 200px" placeholder="请选择结算产品">
+				<a-select-option :value="item.value" v-for="item in state.productSonTypeList" :key="item.name">{{ item.name }}</a-select-option>
 			</a-select>
 		</search-item>
-		<search-item label="是否有产品规则">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.scenicLevel" style="width: 200px" placeholder="请选择结算产品">
-				<a-select-option :value="num" v-for="num in 10" :key="num">{{ num }}</a-select-option>
+		<search-item label="是否有结算规则">
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.hasProductRule" style="width: 200px" placeholder="请选择结算产品">
+				<a-select-option :value="true">是</a-select-option>
+				<a-select-option :value="false">否</a-select-option>
 			</a-select>
 		</search-item>
 		<template #button>
@@ -26,18 +24,26 @@
 		</template>
 	</CommonSearch>
 	<div class="table-area">
-		<a-tabs v-model:activeKey="activeKey">
+		<a-tabs v-model:activeKey="state.tableData.param.productType">
 			<a-tab-pane :key="1" tab="景区"></a-tab-pane>
 			<a-tab-pane :key="2" tab="酒店" force-render></a-tab-pane>
 			<a-tab-pane :key="3" tab="餐饮"></a-tab-pane>
 		</a-tabs>
 		<a-spin size="large" :spinning="state.tableData.loading">
-			<CommonTable :dataSource="state.tableData.data" :columns="columns">
+			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%' }">
 				<template #bodyCell="{ column, record }">
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a href="javascript:;" @click="toConfigure(record)">配置规则</a>
 						</div>
+					</template>
+					<template v-if="column.key === 'hasProductRule'">
+						<span v-if="record.hasProductRule">是</span>
+						<span v-else>否</span>
+					</template>
+					<!-- 产品类型 -->
+					<template v-if="column.key === 'productType'">
+						<span>{{ getProductTypeName(record.productType) }}</span>
 					</template>
 				</template>
 			</CommonTable>
@@ -59,45 +65,31 @@ import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import api from '@/api';
+import { useGeneraRules } from '@/stores/modules/GeneraRules';
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 const route = useRouter();
 const activeKey = ref(1);
 const columns = [
 	{
-		title: '团单类型',
-		dataIndex: 'scenicLevel',
-		key: 'scenicLevel',
+		title: '产品名称',
+		dataIndex: 'productName',
+		key: 'productName',
 	},
 	{
-		title: '结算产品',
-		dataIndex: 'name',
-		key: 'name',
+		title: '归属景区',
+		dataIndex: 'scenicName',
+		key: 'scenicName',
 	},
 	{
-		title: '费用名称',
-		dataIndex: 'creditCode',
-		key: 'creditCode',
+		title: '产品类型',
+		dataIndex: 'productType',
+		key: 'productType',
 	},
 	{
-		title: '收费金额',
-		dataIndex: 'phone',
-		key: 'phone',
-	},
-	{
-		title: '费用说明',
-		dataIndex: 'addressDetail',
-		key: 'addressDetail',
-	},
-	{
-		title: '状态',
-		dataIndex: 'auditStatus',
-		key: 'auditStatus',
-	},
-	{
-		title: '优先级',
-		dataIndex: 'derateRule',
-		key: 'derateRule',
+		title: '是否有结算规则',
+		dataIndex: 'hasProductRule',
+		key: 'hasProductRule',
 	},
 	{
 		title: '操作',
@@ -106,7 +98,6 @@ const columns = [
 		width: 208,
 	},
 ];
-
 const state = reactive({
 	tableData: {
 		data: [
@@ -117,15 +108,31 @@ const state = reactive({
 		total: 400,
 		loading: false,
 		param: {
-			pageNo: 1,
-			pageSize: 10,
-			scenicLevel: null, //景区等级(字典序号)
-			auditStatus: null, //审核状态（-1未提交  0待审核  1审核通过  2审核未通过）
-			name: '',
+			scenicId: '', //关联景区id
+			productName: '', //产品名称
+			productType: 1, //产品类型 1-景区 2-酒店 3-餐饮
+			productSonType: '', //产品类型下拉列表，UNITE-联票 ONE-单票 SHOW-演出票
+			hasProductRule: '', //是否有结算规则 true-是 false-否
+			pageNo: 1, //页号
+			pageSize: 10, //页大小
 		},
 	},
+	scenicList: [],
+	productSonTypeList: [
+		{
+			value: 'UNITE',
+			name: '联票',
+		},
+		{
+			value: 'ONE',
+			name: '单票',
+		},
+		{
+			value: 'SHOW',
+			name: '演出票',
+		},
+	],
 });
-
 //搜索
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
@@ -140,7 +147,15 @@ const pageSideChange = (current: number, size: number) => {
 };
 //查看
 const toConfigure = (record: any) => {
-	route.push({ path: '/settlementManagement/productSettlementRule/configureRules', query: { oid: encodeURIComponent(record.oid) } });
+	console.log(record, `record`);
+	route.push({
+		path: '/settlementManagement/productSettlementRule/configureRules',
+		query: {
+			productId: encodeURIComponent(record.productId),
+			productType: encodeURIComponent(record.productType),
+			productSonType: encodeURIComponent(record.productSonType),
+		},
+	});
 };
 // const onSearch = () => {
 // 	userList(state.tableData.param).then((res) => {
@@ -148,27 +163,49 @@ const toConfigure = (record: any) => {
 // 	});
 // };
 const initList = async () => {
-	// state.tableData.loading = true;
-	// let res = await api.getScenicSpotInformationList(state.tableData.param);
-	// const { total, content } = res;
-	// state.tableData.total = total;
-	// const list: [any] = dealData(content);
-	// state.tableData.data = list;
-	// state.tableData.loading = false;
+	state.tableData.loading = true;
+	let res = await api.productRuleList(state.tableData.param);
+	const { total, content } = res;
+	state.tableData.total = total;
+	const list: [any] = dealData(content);
+	state.tableData.data = list;
+	state.tableData.loading = false;
 };
-const status = {
-	'-1': '未提交',
-	0: '待审核',
-	1: '审核通过',
-	2: '审核未通过',
+const dealData = (params: [any]) => {
+	params.map((i: any) => {
+		// i.key = i.productId;
+		return i;
+	});
+
+	return params;
 };
 onMounted(() => {
 	initList();
+	getEnum();
 	navigatorBar.setNavigator(['产品结算规则']);
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
 });
+
+const generaRulesOptions = useGeneraRules();
+
+const getEnum = async () => {
+	await generaRulesOptions.getTeamTypeList();
+	await productRuleLessInfos();
+};
+const getProductTypeName = computed(() => (value: number) => {
+	const idx = generaRulesOptions.productTypeList.findIndex((item) => item.value === value);
+	if (idx !== -1) {
+		return generaRulesOptions.productTypeList[idx]['name'];
+	}
+	return;
+});
+// 景区下拉枚举
+const productRuleLessInfos = async () => {
+	const result = await api.productRuleLessInfos();
+	state.scenicList = result;
+};
 </script>
 
 <style lang="less" scoped>
