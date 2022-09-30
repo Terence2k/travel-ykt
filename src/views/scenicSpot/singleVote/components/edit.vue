@@ -3,8 +3,8 @@
 		<header class="title">基本信息</header>
 		<a-form class="" ref="formRef" :model="formData" :label-col="{ span: 3 }" labelAlign="left" :wrapper-col="{ span: 7 }" :scrollToFirstError="true">
 			<a-form-item label="归属景区" v-if="type === '1'">
-				<a-input v-model:value="formData.data.scenicId" placeholder="请填写景区名字" />
-				<a-select allowClear Fv-model:value="formData.data.scenicId" placeholder="请选择">
+				<!-- <a-input v-model:value="formData.data.scenicId" placeholder="请填写景区名字" /> -->
+				<a-select allowClear v-model:value="formData.data.scenicId" placeholder="请选择">
 					<a-select-option :value="vlItem.old" v-for="vlItem in viewList" :key="vlItem.old">{{ vlItem }}</a-select-option>
 				</a-select>
 			</a-form-item>
@@ -88,8 +88,7 @@
 
 			<div class="footer">
 				<div class="tooter-btn">
-					<a-button type="primary" @click.prevent="onSubmit">保存</a-button>
-					<a-button type="primary" @click="reset">提交审核</a-button>
+					<a-button type="primary" @click.prevent="onSubmit">提交审核</a-button>
 				</div>
 			</div>
 		</a-form>
@@ -212,6 +211,7 @@ const createInfo = (params: object) => {
 	console.log(params);
 };
 const editInfo = async (params: any) => {
+	delete params.assistId;
 	let res = await api.saveSingleVoteInfo(params);
 	message.success(res);
 	route.push({ path: '/scenic-spot/singleVote/list' });

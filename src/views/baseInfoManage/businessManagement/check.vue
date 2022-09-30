@@ -16,7 +16,7 @@
             企业名称
           </div>
           <div>
-            {{ name }}
+            {{ form.name }}
           </div>
         </div>
         <div class="row_info">
@@ -25,7 +25,7 @@
             企业类型
           </div>
           <div>
-            {{ businessTypeName }}
+            {{ form.businessTypeName }}
           </div>
         </div>
         <div class="row_info">
@@ -34,7 +34,7 @@
             所属地区
           </div>
           <div>
-            {{ regionName }}
+            {{ form.regionName }}
           </div>
         </div>
         <div class="row_info">
@@ -43,7 +43,7 @@
             信用代码
           </div>
           <div>
-            {{ creditCode }}
+            {{ form.creditCode }}
           </div>
         </div>
         <div class="row_info">
@@ -52,7 +52,7 @@
             营业执照
           </div>
           <div class="img_box">
-            <a-image width="100%" :src="businessLicenseUrl" />
+            <a-image width="100%" :src="form.businessLicenseUrl" />
           </div>
         </div>
         <div class="row_info">
@@ -61,7 +61,7 @@
             姓名
           </div>
           <div>
-            {{ contactName }}
+            {{ form.contactName }}
           </div>
         </div>
         <div class="row_info">
@@ -70,7 +70,7 @@
             手机号
           </div>
           <div>
-            {{ phone }}
+            {{ form.phone }}
           </div>
         </div>
         <div class="row_info">
@@ -79,7 +79,7 @@
             账号
           </div>
           <div>
-            {{ account }}
+            {{ form.account }}
           </div>
         </div>
       </div>
@@ -105,7 +105,6 @@
     </div>
     <div class="btn_box">
       <a-button type="primary" @click="submit" style="margin-right:20px" :loading="loading">提交</a-button>
-      <!-- <a-button @click="back">返回列表</a-button> -->
     </div>
   </div>
   <CommonModal title="新增字典详情" v-model:visible="modalVisible" @close="modalVisible = false"
@@ -122,11 +121,13 @@ import api from '@/api';
 import { message } from 'ant-design-vue';
 const checkFormRef = ref();
 const router = useRouter();
+const route = useRoute()
 const rolesList = ref([])
 const back = () => {
   router.push({
     name: 'apply'
   })
+  checkFormRef.value.resetFields()
 }
 const state = reactive({
   modalVisible: false
@@ -145,38 +146,33 @@ type propsType = {
   account?: string,
   oid?: string | number
 }
-const props = defineProps<propsType>()
-const transitionProps: propsType = {}
-let key: keyof propsType;
-for (key in props) {
-  if (Object.prototype.hasOwnProperty.call(props, key)) {
-    transitionProps[key] = JSON.parse(decodeURIComponent(props[key] as string))
-  }
+const form = reactive<propsType>({})
+type checkFormType = {
+  oid?: number | string,
+  account?: number | string,
+  roldId?: number | string,
+  auditResult: 2 | 3
 }
-const {
-  name,
-  businessType,
-  businessTypeName,
-  regionName,
-  creditCode,
-  businessLicenseUrl,
-  contactName,
-  phone,
-  account,
-  oid
-} = transitionProps
-const checkForm = reactive({
-  oid: oid,
-  account: account,
-  roldId: undefined,
+const checkForm = reactive<checkFormType>({
   auditResult: 2
+})
+watch(() => route.params, (val: propsType) => {
+  let key: keyof propsType;
+  for (key in val) {
+    if (Object.prototype.hasOwnProperty.call(val, key)) {
+      form[key] = JSON.parse(decodeURIComponent(val[key] as string))
+    }
+  }
+  checkForm.oid = form.oid
+  checkForm.account = form.account
+}, {
+  immediate: true
 })
 
 const getListByBusinessType = async () => {
-  let data = await api.listByBusinessType(oid)
-  rolesList.value = data
+  let data = await api.listByBusinessType({ status: 1, pageNo: 1, pageSize: 10000, availableRange: form.businessType })
+  rolesList.value = data.content
 }
-getListByBusinessType()
 
 const formRules: any = {
   auditResult: [{ required: true, trigger: 'blur', message: '请选择是否通过' }],
@@ -197,12 +193,15 @@ const submit = () => {
         }
       })
     } else {
-      message.success('审核失败！')
+      message.error('审核失败！')
     }
   }).catch((err: any) => {
     console.log(err);
   })
 }
+onActivated(() => {
+  getListByBusinessType()
+})
 </script>
 
 <style scoped lang="scss">

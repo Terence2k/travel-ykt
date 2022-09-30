@@ -64,6 +64,15 @@ export default [
 						},
 					},
 					{
+						path: 'product_add',
+						component: () => import('@/views/cateringManage/product/add.vue'),
+						name: 'product_add',
+						meta: {
+							title: '新增',
+							isDetail: true,
+						},
+					},
+					{
 						path: 'index',
 						component: () => import('@/views/cateringManage/product/index.vue'),
 						meta: {

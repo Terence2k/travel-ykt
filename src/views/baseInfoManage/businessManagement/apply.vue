@@ -75,18 +75,6 @@ const goTo = (value: any, name: string) => {
 		params: newObj
 	})
 }
-/* const details = (value: any) => {
-	let newObj: any = {}
-	for (const key in value) {
-		if (Object.prototype.hasOwnProperty.call(value, key)) {
-			newObj[key] = encodeURIComponent(JSON.stringify(value[key]));
-		}
-	}
-	router.push({
-		name: 'details',
-		params: newObj
-	})
-} */
 const modalVisible = ref(false)
 const initOpeion = async () => {
 	await businessManageOptions.getBusinessTypeOption();
@@ -237,8 +225,6 @@ const resetPassword = async (oid: string) => {
 	} else {
 		message.error(res);
 	}
-	console.log(res);
-
 }
 onActivated(() => {
 	if (route.params?.isRefresh) {

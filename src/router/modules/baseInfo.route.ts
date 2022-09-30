@@ -80,7 +80,6 @@ export default [
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
-						props: true
 					},
 					{
 						path: 'details/name/:name/businessTypeName/:businessTypeName/regionName/:regionName/creditCode/:creditCode/businessLicenseUrl/:businessLicenseUrl/contactName/:contactName/phone/:phone/account/:account',

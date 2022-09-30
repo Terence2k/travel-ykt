@@ -1,7 +1,28 @@
 
 .wrapper-roomBookingTable{
 
+  
 
+  .flex-container{
+    display: flex;
+    align-items:center;
+  }
+  .container-time{
+
+    padding: 12px 0px;
+
+    .select-bar{
+      margin-left: auto;
+
+      .select {
+        min-width: 100px;
+        margin-left:15px;
+      }
+    }
+  }
+  .table-area {
+    padding: 0px !important;
+  }
   .cell-header{
 
     display: flex;
@@ -27,6 +48,35 @@
         margin-right: 3px;
       }
     }
+
+    .cursor-point{
+      user-select: none;
+      cursor: pointer;
+    }
   }
 
+
+
 }
+
+:deep{
+  .ant-form-item-label > label {
+      width:125px;
+  }
+
+  .flex-container{
+    position: relative;
+    top:1px;
+    display: flex;
+    align-items: center;
+    .tip{
+      font-size:11px;
+      display: inline-block;
+      margin-left: 10px;
+      color:#C9C9C9FF;
+      align-self: flex-end;
+    }
+  }
+  
+}
+
