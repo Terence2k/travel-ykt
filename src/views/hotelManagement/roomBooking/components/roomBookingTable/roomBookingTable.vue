@@ -475,7 +475,7 @@ watch(
 	() => props.hotelId,
 	(hotelId) => {
 		console.info('hotelId change');
-		getHotelRoomTypeStockTableInfo(hotelId || 1); //speTest
+		getHotelRoomTypeStockTableInfo(hotelId);
 	},
 	{
 		immediate: true,
@@ -486,7 +486,7 @@ watch(
 	() => year.value,
 	() => {
 		console.info('year.value change');
-		getHotelRoomTypeStockTableInfo(props.hotelId || 1); //speTest
+		getHotelRoomTypeStockTableInfo(props.hotelId);
 	}
 );
 
@@ -494,7 +494,7 @@ watch(
 	() => month.value,
 	() => {
 		console.info('month.value change');
-		getHotelRoomTypeStockTableInfo(props.hotelId || 1); //speTest
+		getHotelRoomTypeStockTableInfo(props.hotelId);
 	}
 );
 

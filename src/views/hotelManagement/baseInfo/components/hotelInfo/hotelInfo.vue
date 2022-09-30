@@ -19,8 +19,7 @@
 					<a-form-item class="form-item" label="企业类型" name="companyType">
 						<a-select v-model:value="formValidate.companyType" :options="companyTypeOptions"></a-select>
 					</a-form-item>
-					<a-form-item class="form-item" label="所属地区">
-						<!-- <address-selector placeholder="请选择所属地区" v-model:value="areaState.regionCode" @change="regionChange" /> -->
+					<a-form-item class="form-item" label="所属地区" name="area">
 						<div class="flex-container">
 							<a-form-item name="firstLevelArea">
 								<a-select v-model:value="areaState.firstLevelArea" class="select-area" :options="areaState.firstLevelAreasGroup"></a-select>
@@ -39,7 +38,7 @@
 					<a-form-item class="form-item" label="统一社会信用代码" name="usci">
 						<a-input v-model:value="formValidate.usci" />
 					</a-form-item>
-					<a-form-item class="form-item item-businessLicense" label="营业执照">
+					<a-form-item class="form-item item-businessLicense" label="营业执照" name="image">
 						<!-- <Pic v-model:value="formValidate.businessLicense"></Pic> -->
 						<a-form-item name="businessLicense" no-style>
 							<a-upload
@@ -113,8 +112,7 @@
 			</div>
 			<div class="footer-container">
 				<div class="form-item footer-item">
-					<a-button html-type="submit" @click="saveHotelInfo" class="button">保存</a-button>
-					<a-button class="button">提交审核</a-button>
+					<a-button html-type="submit" @click="saveHotelInfo" class="button">提交审核</a-button>
 				</div>
 			</div>
 		</a-form>
@@ -125,8 +123,7 @@
 import { toRaw } from '@vue/reactivity';
 import api from '@/api';
 import { message } from 'ant-design-vue/es';
-// import Pic from '@/components/common/imageWrapper.vue';
-// import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
+
 interface FileItem {
 	uid: string;
 	name?: string;
@@ -187,10 +184,12 @@ let businessLicenseValidate = async (_rule: Rule, value: string) => {
 const rules: any = {
 	hotelName: [{ required: true, trigger: 'blur', message: '请输入酒店名称' }],
 	companyType: [{ required: true, trigger: 'blur', message: '请输入企业类型' }],
+	area: [{ required: true, trigger: 'change', message: '' }],
 	firstLevelArea: [{ validator: address1Validate, trigger: 'change', message: '请输入第一级地址' }],
 	secondLevelArea: [{ validator: address2Validate, trigger: 'change', message: '请输入第二级地址' }],
 	thirdLevelArea: [{ validator: address3Validate, trigger: 'change', message: '请输入第三级地址' }],
 	detailAddress: [{ validator: address4Validate, trigger: 'blur', message: '请输入详细地址' }],
+	image: [{ required: true, trigger: 'change', message: '' }],
 	businessLicense: [{ validator: businessLicenseValidate, trigger: 'change', message: '请上传营业执照' }],
 	usci: [{ required: true, trigger: 'blur', message: '请输入统一社会信用代码' }],
 	personName: [{ required: true, trigger: 'blur', message: '请输入联系人姓名' }],
@@ -216,12 +215,6 @@ const areaState = reactive({
 	currentSecondLevelAreasGroup: [],
 	currentThirdLevelAreasGroup: [],
 });
-
-const regionChange = () => {
-	areaState.provinceId = areaState.regionCode ? areaState.regionCode[0] : undefined;
-	areaState.cityId = areaState.regionCode ? areaState.regionCode[1] : undefined;
-	areaState.areaId = areaState.regionCode ? areaState.regionCode[2] : undefined;
-};
 
 const fileState = reactive({
 	businessLicense: [],
@@ -318,9 +311,9 @@ watch(
 
 				//localStorage.setItem('hotelTabInfo', JSON.stringify(res));
 				const resultRes = {
+					oid: res?.oid,
 					hotelName: res?.hotelName,
-					companyType: res?.businessType,
-					//companyTypeName: res?.businessTypeName,
+					companyTypeName: res?.businessTypeName,
 					firstLevelArea: res?.provinceId,
 					secondLevelArea: res?.cityId,
 					thirdLevelArea: res?.areaId,
@@ -339,9 +332,25 @@ watch(
 					passBankAddress: res?.accountAddress,
 					receivableBank: res?.bank,
 				};
+				api.getCompanyType().then((result) => {
+					if (Array.isArray(result)) {
+						companyTypeOptions.value = result?.map((item) => {
+							return {
+								value: item.oid,
+								label: item.name,
+							};
+						});
+						// console.log(
+						// 	'xxxxxxxxxxxxxxxxxxxx',
+						// 	companyTypeOptions.value.find((item) => item.label === resultRes?.companyTypeName),
+						// 	resultRes?.companyTypeName
+						// );
+						resultRes.companyType = companyTypeOptions.value.find((item) => item.label === resultRes?.companyTypeName).value;
+						formValidate.value.companyType = resultRes.companyType;
+					}
+				});
 				hotelInfoResponse.value = resultRes;
 				formValidate.value.hotelName = resultRes.hotelName;
-				formValidate.value.companyType = resultRes.companyType;
 				areaState.firstLevelArea = resultRes.firstLevelArea;
 				areaState.secondLevelArea = resultRes.secondLevelArea;
 				areaState.thirdLevelArea = resultRes.thirdLevelArea;
@@ -376,17 +385,6 @@ watch(
 						};
 					});
 					console.info('area 1', areaState.firstLevelAreasGroup.value);
-				}
-			});
-
-			api.getCompanyType().then((result) => {
-				if (Array.isArray(result)) {
-					companyTypeOptions.value = result?.map((item) => {
-						return {
-							value: item.oid,
-							label: item.name,
-						};
-					});
 				}
 			});
 

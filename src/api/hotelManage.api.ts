@@ -89,6 +89,16 @@ export async function editHotelDetailInfo(data: any) {
 	});
 }
 
+//接受审核信息 /hotel-service/private/api/hotel-information/receiveAuditResult
+export async function getHotelInfoAuditResult(data: any) {
+	return request({
+		url: `${commonPath}/hotel-service/private/api/hotel-information/receiveAuditResult`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
+
 //根据酒店id查询房型信息
 export async function getRoomDetailInfo(data: any, id: number) {
 	return request({
