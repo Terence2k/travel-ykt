@@ -32,9 +32,9 @@
       </a-form-item>
       <a-form-item label="参与审核的部门或角色" name="sysAuditNodeVos">
         <!-- <a-form-item label="参与审核的部门或角色"> -->
-        <a-transfer v-model:target-keys="checkedKeys" class="tree-transfer" :data-source="dataSource"
-          :render="(item: any) => item.title" :show-select-all="false" @change="transferChange"
-          :titles="['部门角色', '部门角色已选中']" :list-style="{
+        <a-transfer v-model:target-keys="checkedKeys" v-model:selected-keys="selectedKeys1" class="tree-transfer"
+          :data-source="dataSource" :render="(item: any) => item.title" :show-select-all="false"
+          @change="transferChange" :titles="['部门角色', '部门角色已选中']" :list-style="{
             width: '300px',
             maxHeight: '350px',
           }">
@@ -129,6 +129,7 @@ const auditForm = reactive({
 })
 /* 穿梭框相关 */
 const checkedKeys = ref<any[]>([]);
+const selectedKeys1 = ref<any[]>([]);
 // 记录被选中父元素key
 const chosedKeys: (string | number)[] = []
 function flatten(data: TransferProps['dataSource'] = []) {
@@ -216,10 +217,6 @@ const onChecked = (
     onItemSelect(eventKey, !isChecked(checkedKeys, eventKey));
     setChosedKeys(e)
     tData.value = disabledChildKeys(tData.value, chosedKeys);
-    console.log(chosedKeys, '$$$$$$$');
-    // console.log(tData.value, '$$$$$$$');
-    // console.log(e, eventKey)
-    // console.log(checkedKeys)
   } else {
     const { eventKey } = e.node;
     onItemSelect(eventKey, !isChecked(checkedKeys, eventKey));
@@ -232,8 +229,11 @@ const draggable = (dragelist: any[]) => {
   const childrenList = Array.from(node.children)
   if (childrenList.length === 0 || !node) return
   childrenList.forEach((item, index) => {
+    // 设置所有子元素draggable属性为true
     item.setAttribute('draggable', 'true')
+    // 将key添加到自定义属性data-key
     item.setAttribute('data-key', dragelist[index])
+    item.setAttribute('data-keytype', typeof dragelist[index])
   });
   let draging: EventTarget;
   //使用事件委托，将li的事件委托给ul
@@ -274,7 +274,13 @@ const draggable = (dragelist: any[]) => {
     const childrenList = document.querySelectorAll('.ant-transfer-list-content-item')
     childrenList.forEach((item, index) => {
       const key = item.getAttribute('data-key')!
-      checkedKeys.value[index] = key
+      const keytype = item.getAttribute('data-keytype')!
+      // 修改移动后checkedKeys的子元素的顺序
+      if (keytype === 'number') {
+        checkedKeys.value[index] = Number(key)
+      } else if (keytype === 'string') {
+        checkedKeys.value[index] = key
+      }
     });
   }
   //获取元素在父元素中的index
@@ -341,7 +347,6 @@ const draggable = (dragelist: any[]) => {
   }
 }
 const transferChange = (targetKeys: any[], direction: string, moveKeys: (string | number)[]) => {
-  console.log(targetKeys, direction, moveKeys, '&^&&^&^&^');
   if (direction === 'left') {
     tData.value = enableChildKeys(tData.value, moveKeys)
     // 更新父元素列表
@@ -354,7 +359,7 @@ const transferChange = (targetKeys: any[], direction: string, moveKeys: (string 
   }
   // 如果选中的左侧父元素添加到右侧，和右边的元素存在父子关系则删除对应的子元素
   if (direction === 'right') {
-    for (let j = 0, l = tData.value?.length; j < l; j++) {
+    for (let j = 0, l = tData.value?.length!; j < l; j++) {
       const item = tData.value[j];
       let index = moveKeys.indexOf(item.key)
       if (index === -1) {
@@ -376,8 +381,28 @@ const transferChange = (targetKeys: any[], direction: string, moveKeys: (string 
     auditRef.value.resetFields('sysAuditNodeVos')
   }
   nextTick(() => {
+    if (direction === 'right') {
+      setTitle()
+    }
     draggable(targetKeys)
   })
+}
+// 设置穿梭框右侧的元素名称
+const setTitle = () => {
+  const childrenList = Array.from(document.querySelectorAll('.ant-transfer-list-content-item-text'))
+  if (childrenList.length === 0) return
+  for (let i = 0, l = checkedKeys.value.length; i < l; i++) {
+    const item = checkedKeys.value[i];
+    for (let j = 0, l = tData.value?.length!; j < l; j++) {
+      const citem = tData.value[j];
+      for (let k = 0, l = citem.children.length; k < l; k++) {
+        const element = citem.children[k];
+        if (item === element.key) {
+          childrenList[i].innerHTML = `${citem.title}：${element.title}`
+        }
+      }
+    }
+  }
 }
 
 interface addInterface {
@@ -395,9 +420,10 @@ const addOrUpdate = async ({ row, handle }: addInterface) => {
     checkedKeys.value = auditModelDetailVos.map((item: any) => {
       return item.roleId
     })
-    /* nextTick(() => {
+    nextTick(() => {
+      setTitle()
       draggable(checkedKeys.value)
-    }) */
+    })
   }
 }
 const onHandleCurrentChange = (val: number) => {
@@ -413,6 +439,9 @@ const closeModal = () => {
   modalVisible.value = false
   auditRef.value.resetFields()
   checkedKeys.value = []
+  chosedKeys.splice(0, chosedKeys.length)
+  selectedKeys1.value = []
+  getRolesList()
 }
 const formatAudit = (arr: any, tArr: TransferProps['dataSource']) => {
   let ret: any = []
@@ -440,7 +469,6 @@ const save = () => {
   auditForm.sysAuditNodeVos = formatAudit(checkedKeys.value, tData.value);
   auditRef.value.validate().then(async (val: any) => {
     let res = await api.AuditUpdate({ ...toRaw(auditForm) });
-    console.log(res, '%%%%%');
     if (res === '修改成功') {
       message.success('编辑审核流程成功！')
       closeModal();
