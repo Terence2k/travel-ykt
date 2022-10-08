@@ -64,7 +64,6 @@ import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModa
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import type { TransferProps, TreeProps } from 'ant-design-vue';
-import { any } from '_vue-types@3.0.2@vue-types';
 const columns = [
   {
     title: '序号',
