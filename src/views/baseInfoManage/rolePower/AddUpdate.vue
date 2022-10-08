@@ -43,6 +43,7 @@
       >
         <a-tree
           v-model:checkedKeys="checkedKeys"
+          :checkStrictly="true"
           checkable
           :tree-data="menuTreeDate"
           :field-names="fieldNames"
@@ -95,6 +96,8 @@
   const menuIdsInfo: Ref<Array<any>> = ref([]);
 
   watch(checkedKeys, () => {
+    console.log('checkedKeys:', checkedKeys.value);
+    
     formValidate.value.menuIds = Object.values(checkedKeys.value);
   });
   
