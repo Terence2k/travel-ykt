@@ -9,7 +9,7 @@
 			<div class="menu-wrapper-inner">
 				<div class="hidden_wrapper">
 					<a-menu class="menu-wrapper" v-model:selectedKeys="selectedKeys" v-model:openKeys="openKeys" mode="inline" @click="onSelect">
-						<SliderItem v-for="item in navs" :key="item.path" :item="item" :openKeys="openKeys"></SliderItem>
+						<SliderItem v-for="item in userInfo.sysMenuVos" :key="item.path" :item="item" :openKeys="openKeys"></SliderItem>
 					</a-menu>
 				</div>
 			</div>
@@ -107,11 +107,32 @@ const goBack = () => {
 	route.back();
 };
 
+const handleMenuTree = (menuList: any) => {
+  menuList = menuList.map((item: any) => {
+    return {
+      children: item.childMenuList,
+      keys: item.url,
+      path: item.url,
+      title: item.menuName
+    }
+  });
+  return menuList;
+}
+
 watchEffect(() => {
 	const modules = permissioStore.getMenuList;
 	if (modules.length > 0) {
 		navs.value = modules;
 	}
+  
+  userInfo.sysMenuVos = handleMenuTree(userInfo.sysMenuVos);
+  userInfo.sysMenuVos.forEach((item: any) => {
+    if (item.children?.length) {
+      item.children = handleMenuTree(item.children);
+    } else {
+      delete item.children;
+    }
+  });
 });
 const state = reactive({
 	routeList: [],

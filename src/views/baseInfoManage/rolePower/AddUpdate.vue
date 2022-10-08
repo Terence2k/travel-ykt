@@ -190,18 +190,6 @@
     })
   }
 
-  const handleMenuTree = (menuList: any) => {
-    menuList.forEach((item: any) => {
-      // 设置表格树形结构数据唯一标识key
-      item.key = item.oid;
-      if (item.children?.length) {
-        handleMenuTree(item.children);
-      } else {
-        delete item.children;
-      }
-    });
-  }
-
   const getMenuList = () => {
     api.menuList().then((res: any) => {
       ///转换树
