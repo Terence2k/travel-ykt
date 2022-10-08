@@ -112,7 +112,7 @@ export async function getRoomDetailInfo(data: any, id: number) {
 //编辑酒店房型信息
 export async function editRoomDetailInfo(data: any) {
 	return request({
-		url: `${commonPath}/hotel-service/public/api/hotel-room-type/updateRoomType`,
+		url: `${commonPath}/hotel-service/public/api/hotel-room-type/editRoomType`,
 		method: 'post',
 		data,
 		showLoading: true,
@@ -199,6 +199,24 @@ export async function hotelRoomStockPass(id: number) {
 export async function hotelRoomStockFailed(id: number) {
 	return request({
 		url: `${commonPath}/hotel-service/public/api/hotel-room-stock/auditFailed/${id}`,
+		method: 'get',
+		showLoading: true,
+	});
+}
+
+// 获取处于审核状态的酒店房型信息
+export async function getRoomDetailInfoInAuditStatus(id: number) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-room-type/showAuditRoomType/${id}`,
+		method: 'get',
+		showLoading: true,
+	});
+}
+
+// /hotel-service/public/api/hotel-room-type/auditPassOrNot/{uuid}?flag=
+export async function auditRoomDetailInfo(uuid: string, isPass: boolean) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-room-type/auditPassOrNot/${uuid}?flag=${isPass}`,
 		method: 'get',
 		showLoading: true,
 	});
