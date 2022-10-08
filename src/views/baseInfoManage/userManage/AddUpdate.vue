@@ -51,15 +51,18 @@
       <a-form-item
         label="所属角色"
         name="roleIds"
-        v-if="formValidate.businessType"
+        v-if="formValidate.businessType || formValidate.oid"
       >
         <a-select
           ref="select"
           mode="multiple"
           v-model:value="formValidate.roleIds"
+          v-if="formValidate.businessType"
         >
           <a-select-option v-for="item in roleList" :value="item.roleId">{{ item.roleName }}</a-select-option>
         </a-select>
+        <span v-for="item, index in formValidate.roleList" v-else>
+        {{`${item.roleName}${index == formValidate.roleList.length - 1? '' : '，' }`}}</span>
       </a-form-item>
       <a-form-item
         label="状态"
@@ -151,7 +154,7 @@
     formValidate.value = {};
     if (props.params?.oid) {
       formValidate.value = { ...props.params };
-      formValidate.value.roleIds = formValidate.value.roleList.map((item: any) => item.oid)
+      formValidate.value.roleIds = formValidate.value.roleList.map((item: any) => item.oid);
       options.title = '编辑用户';
     } else {
       options.title = '新增用户';
@@ -159,6 +162,7 @@
   }
 
   const getRoleList = (businessType: string) => {
+    formValidate.value.roleIds = [];
     api.getRoleListByType(businessType).then((res: any) => {
       roleList.value = res.map((item: any) => {
         return {
