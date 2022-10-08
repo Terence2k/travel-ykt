@@ -159,10 +159,9 @@
   const getDetailMenuIds = (data: any) => {
     data.forEach((item: any) => {
       const firstMenu = menuTreeDate.value.find((it: any) => it.value == item.oid);
-      if (firstMenu) {
-        if (firstMenu.children?.length == item.childMenuList?.length) {
+      // 如果父级菜单没有全选则不选中
+      if (firstMenu && firstMenu.children?.length == item.childMenuList?.length) {
           menuIdsInfo.value.push(item.oid);
-        }
       }
       if (item.childMenuList?.length) {
         getDetailMenuIds(item.childMenuList);
