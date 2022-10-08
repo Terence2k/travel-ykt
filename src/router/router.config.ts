@@ -10,7 +10,7 @@ import scenicSpot from './modules/scenicSpot.route';
 export const basicRouter = [
 	{
 		path: '/',
-		redirect: '/baseInfo/user_manage',
+		// redirect: '/baseInfo/user_manage',
 	},
 	{
 		path: '/',

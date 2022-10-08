@@ -90,7 +90,7 @@ const handleFinish = async (values: any) => {
     window.localStorage.setItem('authorization', `${res.authorization}`);
     window.localStorage.setItem('userInfo', JSON.stringify(res));
     router.replace({
-      path: state.redirect || '/',
+      path: res.sysMenuVos[0].childMenuList[0].url || '/',
       query: state.otherQuery,
     });
   }).catch(err => {

@@ -65,6 +65,7 @@ import axios, {
           console.log(res);
           const { data, headers } = res;
           console.log('data:', data);
+          if (!data.msg && data.message) data.msg = data.message;
           if (data instanceof Blob) return res;
           const { status = 1, success = false, msg } = data;
           if (status !== 200 && !success) {
