@@ -1,5 +1,5 @@
 <template>
-	<BaseModal :title="options.title" v-model="modelValue" :onOk="handleOk">
+	<BaseModal :title="options.title" v-model="modelValue" @close="handleOk">
 		<a-form
       ref="formRef"
       :model="formValidate"
@@ -114,8 +114,8 @@
   const roleList: Ref<Array<any>> = ref([]);
   const roleManage = useRoleManage();
 
-	const handleOk = async (callback:Function) => {
-
+	const handleOk = () => {
+    emit('cancel');
   };
   
   const save = () => {

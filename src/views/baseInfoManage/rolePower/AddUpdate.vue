@@ -1,5 +1,5 @@
 <template>
-	<BaseModal :title="options.title" v-model="modelValue">
+	<BaseModal :title="options.title" v-model="modelValue" @close="handleOk">
 		<a-form
       ref="formRef"
       :model="formValidate"
@@ -123,6 +123,10 @@
   const fieldNames: TreeProps['fieldNames'] = {
     key: 'value',
     title: 'label',
+  };
+
+  const handleOk = () => {
+    emit('cancel');
   };
   
   const save = () => {

@@ -1,5 +1,5 @@
 <template>
-	<BaseModal :title="options.title" v-model="modelValue">
+	<BaseModal :title="options.title" v-model="modelValue" @close="handleOk">
 		<a-form ref="formRef" :model="formValidate" :rules="rules" :label-col="{ span: 5 }" :wrapper-col="{ span: 16, offset: 1 }" labelAlign="left">
 			<a-form-item label="菜单名称" name="menuName">
 				<a-input v-model:value="formValidate.menuName" placeholder="请输入菜单名称" />
@@ -87,6 +87,10 @@ const rules: any = {
 	menuType: [{ required: true, trigger: 'change', message: '请选择菜单类型' }],
 	menuStatus: [{ required: true, trigger: 'change', message: '请选择菜单状态' }],
 	buttonId: [{ required: true, trigger: 'change', message: '请选择操作按钮' }],
+};
+
+const handleOk = () => {
+  emit('cancel');
 };
 
 const save = () => {
