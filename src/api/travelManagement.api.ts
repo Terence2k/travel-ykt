@@ -13,7 +13,7 @@ export const travelManagement = {
     getGuideList(data: any) {
         return request({
             url: `${commonPath}/travel-agency-service/public/api/guide/list`,
-            method: 'get',
+            method: 'post',
             data,
             showLoading: false
         });
@@ -34,6 +34,17 @@ export const travelManagement = {
             data,
             showLoading: false
         });
-    }
+    },
+
+    saveItinerary(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/saveItinerary`,
+            method: 'post',
+            data,
+            showLoading: false
+        });
+    },
+
+    
     
 }

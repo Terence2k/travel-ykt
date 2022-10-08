@@ -33,7 +33,10 @@
 										style="width: 100%"
 										
 										v-model:value="editableData[record.key][column.key]">
-										<a-select-option value="lucy">Lucy</a-select-option>
+										<a-select-option 
+											v-for="val in column.data"
+											:key="val.codeValue"
+											:value="val.codeValue">{{val.name}}</a-select-option>
 									</a-select>
 								</a-form-item>
 								
@@ -58,13 +61,14 @@
 								</template>
 							</div>
 						</template>
-						<template v-if="column.key === 'name2'">
+						<template v-if="column.key === 'sourceAddress'">
 							<a-form-item
 								v-if="editableData[record.key]"
 								:name="[record.key, column.key]">
 								<a-cascader
 									v-if="editableData[record.key]"
-									v-model:value="editableData[record.key][column.dataIndex]" 
+									:load-data="loadData"
+									v-model:value="editableData[record.key][column.key]" 
 									:options="cityOptions" />
 							</a-form-item>
 							
@@ -72,12 +76,12 @@
 								{{ text }}
 							</template>
 						</template>
-						<template v-if="column.key === 'name1'">
+						<template v-if="column.key === 'healthCode'">
 							<span class="green-code">
 								{{text}}
 							</span>
 						</template>
-						<template v-if="column.key === 'name6'">
+						<template v-if="column.key === 'certificatePicture'">
 							<Upload></Upload>
 						</template>
 						<template v-if="column.key === 'action'">
@@ -101,11 +105,13 @@
 import CommonTable from '@/components/common/CommonTable.vue';
 import Upload from '@/components/common/Upload.vue';
 import { useTouristInfo } from './touristInfo';
+
 const props = defineProps({
 	onCheck: {
 		type: Boolean
 	}
 })
+const emits = defineEmits(['onSuccess'])
 const { 
 	columns, 
 	tableData, 
@@ -118,7 +124,8 @@ const {
 	cityOptions,
 	add,
 	rulesRef,
-	formRef } = useTouristInfo(props)
+	formRef,
+	loadData } = useTouristInfo(props, emits)
 </script>
 <style lang="less" scoped>
     .action-btn {

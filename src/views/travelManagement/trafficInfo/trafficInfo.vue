@@ -26,9 +26,11 @@
 									:name="[record.key, column.key]">
 									<a-select
 										style="width: 100%"
-										
 										v-model:value="editableData[record.key][column.key]">
-										<a-select-option value="lucy">Lucy</a-select-option>
+										<a-select-option
+											v-for="val in column.data"
+											:key="val.codeValue"
+											:value="val.codeValue">{{val.name}}</a-select-option>
 									</a-select>
 								</a-form-item>
 								
@@ -53,7 +55,7 @@
 								</template>
 							</div>
 						</template>
-						<template v-if="column.key === 'name6'">
+						<template v-if="column.key === 'time'">
 							<div>
 								<a-form-item 
 									v-if="editableData[record.key]" 
@@ -84,7 +86,7 @@
 		</a-form>
 		<div class="footer-btn">
 			<a-button type="primary" @click="add">添加</a-button>
-			<a-button>批量删除</a-button>
+			<!-- <a-button>批量删除</a-button> -->
 		</div>
     </div>
 </template>
@@ -97,6 +99,7 @@ const props = defineProps({
 		type: Boolean
 	}
 })
+const emits = defineEmits(['onSuccess'])
 const { 
 	columns, 
 	tableData, 
@@ -109,7 +112,7 @@ const {
 	cityOptions,
 	add,
 	rulesRef,
-	formRef } = useTrafficInfo(props)
+	formRef } = useTrafficInfo(props, emits)
 </script>
 <style lang="less" scoped>
 	::v-deep(.ant-upload-select-picture-card) {

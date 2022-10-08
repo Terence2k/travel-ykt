@@ -15,35 +15,45 @@
 							{{index + 1}}
 						</div>
 					</template>
-					<template v-if="column.key === 'name'">
+					<template v-if="column.key === 'time'">
 						<div>
 							<a-form-item 
 								v-if="editableData[record.key]" 
 								:name="[record.key, column.key]">
-								<a-date-picker 
-									:show-time="{ format: 'HH:mm' }" 
-									value-format="YYYY-MM-DD HH:mm"
-									v-model:value="editableData[record.key][column.dataIndex]" />
+									<a-range-picker
+										v-model:value="editableData[record.key][column.key]"
+										show-time
+										format="YYYY-MM-DD HH:mm:ss"
+										value-format="YYYY-MM-DD HH:mm:ss"
+									/>
 							</a-form-item>
 							<template v-else>
-								{{ text }}
+								{{ record.startDate }}
+								-
+								{{record.endDate}}
 							</template>
 						</div>
 					</template>
 
-					<template v-if="column.key === 'name5'">
+					<template v-if="column.key === 'guideName'">
 						<div>
 							<a-form-item 
 								v-if="editableData[record.key]" 
-								:name="[record.key, column.key]">
+								:name="[record.key, 'guideOid']">
 								<!-- <a-button class="select-guide" v-if="editableData[record.key]" >
 									{{text ? text : '请选择导游'}}
 									<caret-down-outlined />
 								</a-button> -->
 								<a-select
 									style="width: 100%"
-									v-model:value="editableData[record.key][column.key]">
-									<a-select-option value="lucy">Lucy</a-select-option>
+									@change="(val: any, option: any) => guideChange(val, option, record.key)"
+									v-model:value="editableData[record.key]['guideOid']">
+									<a-select-option 
+										v-for="item in guideData"
+										:item="item"
+										:key="item.oid"
+										:value="item.oid"
+										>{{item.guideName}}</a-select-option>
 								</a-select>
 							</a-form-item>
 							<template v-else>
@@ -71,6 +81,13 @@
 import { CaretDownOutlined } from '@ant-design/icons-vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import { useGuideInfo } from './guideInfo';
+
+const props = defineProps({
+	onCheck: {
+		type: Boolean
+	}
+})
+const emits = defineEmits(['onSuccess'])
 const { 
 	columns, 
 	tableData, 
@@ -79,7 +96,8 @@ const {
 	save,
 	rulesRef,
 	formRef,
-	getGuideList, add } = useGuideInfo()
+	getGuideList, 
+	add, guideData, guideChange } = useGuideInfo(props, emits)
 	getGuideList()
 </script>
 <style lang="less" scoped>

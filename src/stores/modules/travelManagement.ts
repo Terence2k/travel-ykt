@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { GroupMode, GroupStatus } from '@/enum';
+import { GroupMode, GroupStatus, Gender } from '@/enum';
 import api from '@/api/index';
 interface TraveDataItem {
 	groupType: GroupMode.All | GroupMode.TeamGroup |GroupMode.NoTeamGroup;
@@ -24,7 +24,21 @@ export const useTravelStore = defineStore({
 			[GroupStatus.WaitingChange]: '待变更',
 			[GroupStatus.CloseAnAccount]: '已结算',
 			[GroupStatus.Cancellation]: '已作废'
-		}
+		},
+		genderList: [
+			{
+				name: '男',
+				codeValue: Gender.Male
+			},
+			{
+				name: '女',
+				codeValue: Gender.Madam
+			}
+		],
+		IDCard: [],
+		specialId: [],
+		trafficType: [],
+		trafficColor: []
 	}),
 	getters: {
 		// count(): string {
@@ -40,6 +54,23 @@ export const useTravelStore = defineStore({
 				return it
 			})
 			return res
+		},
+		async getTraveCode(codeValue: string, type: string) {
+			const res = await api.commonApi.getCodeValue({codeValue})
+			switch(type) {
+				case 'IDCard' :
+					this.IDCard = res;
+					break;
+				case 'specialId' :
+					this.specialId = res;
+					break;
+				case 'trafficType' :
+					this.trafficType = res;
+					break;
+				case 'trafficColor' :
+					this.trafficColor = res;
+					break;
+			}
 		}
 	},
 });
