@@ -19,8 +19,12 @@
 					</div>
 				</div>
 			</template>
-			<template #bodyCell="{ column, record }">
-				<div class="cell-body" v-if="column.dataIndex !== 'roomType' && column?.appointedTime">
+			<template #bodyCell="{ column, record, text }">
+				<div
+					class="cell-body"
+					:class="{ audit: record[column.dataIndex]?.auditStatus === 0 }"
+					v-if="column.dataIndex !== 'roomType' && column?.appointedTime"
+				>
 					<div class="item">
 						<span class="icon-status"></span>
 						<span>{{ record[column.dataIndex]?.roomStatusName || '' }}</span>
@@ -28,6 +32,9 @@
 					<div @dblclick="openRoomStatusDetailsModal(record[column.dataIndex])" class="item cursor-point">
 						<span>{{ `剩下${record[column.dataIndex]?.stockNum || '未知'}间` }}</span>
 					</div>
+				</div>
+				<div v-else class="cell-body">
+					<span>{{ text }}</span>
 				</div>
 			</template>
 		</CommonTable>

@@ -189,7 +189,7 @@ export async function editHotelRoomStock(data: any) {
 //酒店库存更改审核通过
 export async function hotelRoomStockPass(id: number) {
 	return request({
-		url: `${commonPath}hotel-service/public/api/hotel-room-stock/auditAdopt/${id}`,
+		url: `${commonPath}/hotel-service/public/api/hotel-room-stock/auditAdopt/${id}`,
 		method: 'get',
 		showLoading: true,
 	});
@@ -219,5 +219,16 @@ export async function auditRoomDetailInfo(uuid: string, isPass: boolean) {
 		url: `${commonPath}/hotel-service/public/api/hotel-room-type/auditPassOrNot/${uuid}?flag=${isPass}`,
 		method: 'get',
 		showLoading: true,
+	});
+}
+
+// /customer-service/public/api/sys/audit/flow/handle
+// 酒店基本信息提交审核
+export async function saveHotelInfo(data: any) {
+	return request({
+		url: `${commonPath}/customer-service/public/api/sys/audit/flow/handle`,
+		data,
+		method: 'post',
+		showLoading: false,
 	});
 }

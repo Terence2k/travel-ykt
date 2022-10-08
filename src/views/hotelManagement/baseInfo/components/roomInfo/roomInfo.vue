@@ -64,6 +64,7 @@
 </template>
 
 <script setup lang="ts">
+import { toRaw } from 'vue';
 import { cloneDeep } from 'lodash-es';
 import { message } from 'ant-design-vue/es';
 import api from '@/api';
@@ -112,8 +113,10 @@ const columns = [
 	},
 ];
 interface DataSourceItem {
-	hotelId: string | number;
 	key: string | number;
+	auditOrderId: string;
+	auditStatus: number;
+	hotelId: string | number;
 	oid: string | number;
 	roomTypeCode?: string | number;
 	roomTypeName: string;
@@ -124,24 +127,8 @@ interface DataSourceItem {
 }
 const dataSource: DataSourceItem[] = ref([]);
 
-const systemRoomNameOptions = ref<SelectProps['options']>([
-	{
-		value: 1,
-		label: '标准间',
-	},
-	{
-		value: 2,
-		label: '湖畔风光间',
-	},
-	{
-		value: 3,
-		label: '原始风情间',
-	},
-	{
-		value: 4,
-		label: '现代商务间',
-	},
-]);
+const systemRoomData = ref([]);
+const systemRoomNameOptions = ref<SelectProps['options']>(systemRoomData);
 
 const state = reactive({
 	hotelId: 0,
@@ -154,6 +141,17 @@ const edit = (key: string) => {
 		delete editableData[key];
 	} else {
 		editableData[key] = cloneDeep(dataSource.value.filter((item) => key === item.key)[0]);
+		editableData[key].operationType = 1;
+	}
+};
+
+const remove = (key: string) => {
+	if (editableData[key]) {
+		editableData[key].operationType = 2;
+	} else {
+		editableData[key] = cloneDeep(dataSource.value.filter((item) => key === item.key)[0]);
+		editableData[key].operationType = 2;
+		dataSource.value = dataSource.value.filter((item) => key !== item.key);
 	}
 };
 
@@ -181,6 +179,20 @@ watch(
 				.catch((err) => {
 					console.error(err);
 				});
+
+			api.commonApi
+				.getCodeValue({
+					codeValue: 'jdxtfx',
+				})
+				.then((res) => {
+					systemRoomData.value = res.map((item) => {
+						return {
+							value: item.oid,
+							label: item.name,
+						};
+					});
+					console.log('dddddddddd', systemRoomData);
+				});
 		}
 	},
 	{
@@ -189,22 +201,33 @@ watch(
 );
 
 const saveRoomInfo = () => {
-	const result = cloneDeep(Object.values(editableData)).map((item) => {
-		delete item.key;
-		return {
-			...item,
-			price: item.price * 100,
-		};
-	});
-	cloneDeep(dataSource.value).forEach((item) => {
-		if (item?.key && editableData[item.key]) {
-			console.log('被修改的key：', item.key);
+	console.info('editableData :', editableData, toRaw(editableData));
+	const editableRawData = toRaw(editableData);
+	let editableArray = [];
+	for (let property in editableRawData) {
+		editableArray.push(editableRawData[property]);
+	}
+	console.info('editableArray', editableArray);
+	const result = editableArray?.map((item) => {
+		if (item.oid) {
+			return {
+				oid: item.oid,
+				hotelId: parseInt(item.hotelId),
+				roomTypeName: item.roomTypeName,
+				roomTypeCode: item.roomTypeCode,
+				roomNum: parseInt(item.roomNum),
+				roomOccupancyNum: parseInt(item.roomOccupancyNum),
+				operationType: parseInt(item.operationType),
+			};
 		} else {
-			delete item.key;
-			result.push({
-				...item,
-				price: item.price * 100,
-			});
+			return {
+				hotelId: parseInt(item.hotelId),
+				roomTypeName: item.roomTypeName,
+				roomTypeCode: item.roomTypeCode,
+				roomNum: parseInt(item.roomNum),
+				roomOccupancyNum: parseInt(item.roomOccupancyNum),
+				operationType: parseInt(item.operationType),
+			};
 		}
 	});
 	console.info('保存的房型信息：', result);
@@ -221,16 +244,24 @@ const saveRoomInfo = () => {
 };
 
 const add = () => {
-	dataSource.value.push({
-		hotelId: state.hotelId,
+	const newData = {
 		key: Date.now().toString(),
-		roomTypeCode: '',
-		roomTypeName: '',
-		systemRoomName: '标准间',
-		price: 100,
+		auditOrderId: '',
+		auditStatus: 1,
+		hotelId: parseInt(state.hotelId),
+		roomTypeCode: 121,
 		roomNum: 0,
 		roomOccupancyNum: 0,
-	});
+		operationType: 0,
+		price: 100,
+	};
+	dataSource.value.push(newData);
+	if (editableData[newData.key]) {
+		editableData[newData.key].operationType = 0;
+	} else {
+		editableData[newData.key] = cloneDeep(dataSource.value.filter((item) => newData.key === item.key)[0]);
+		editableData[newData.key].operationType = 0;
+	}
 };
 </script>
 
