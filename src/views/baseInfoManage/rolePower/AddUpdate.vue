@@ -43,7 +43,6 @@
       >
         <a-tree
           v-model:checkedKeys="checkedKeys"
-          :checkStrictly="true"
           checkable
           :tree-data="menuTreeDate"
           :field-names="fieldNames"
@@ -159,9 +158,16 @@
 
   const getDetailMenuIds = (data: any) => {
     data.forEach((item: any) => {
-      menuIdsInfo.value.push(item.oid);
+      const firstMenu = menuTreeDate.value.find((it: any) => it.value == item.oid);
+      if (firstMenu) {
+        if (firstMenu.children?.length == item.childMenuList?.length) {
+          menuIdsInfo.value.push(item.oid);
+        }
+      }
       if (item.childMenuList?.length) {
         getDetailMenuIds(item.childMenuList);
+      } else if (!item.childMenuList) {
+        menuIdsInfo.value.push(item.oid);
       }
     })
   }
