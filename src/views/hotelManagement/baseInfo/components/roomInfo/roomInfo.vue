@@ -48,8 +48,8 @@
 			</template>
 		</CommonTable>
 		<div class="footer">
-			<a-button @click="saveRoomInfo" class="button-save button">保存</a-button>
-			<a-button class="button-submit button">提交审核</a-button>
+			<!-- <a-button @click="saveRoomInfo" class="button-save button">保存</a-button> -->
+			<a-button class="button-submit button" @click="saveRoomInfo">提交审核</a-button>
 		</div>
 		<!-- <CommonPagination
 			class="pagination-custom"
@@ -68,7 +68,7 @@ import { cloneDeep } from 'lodash-es';
 import { message } from 'ant-design-vue/es';
 import api from '@/api';
 import CommonTable from '@/components/common/CommonTable.vue';
-import CommonPagination from '@/components/common/CommonPagination.vue';
+// import CommonPagination from '@/components/common/CommonPagination.vue';
 
 const route = useRoute();
 const editableData: UnwrapRef<Record<string, DataItem>> = reactive({});

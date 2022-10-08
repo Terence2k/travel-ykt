@@ -1,4 +1,33 @@
 .wrapper-tab-roomInfo-display{
 
-  
+  :deep{ 
+    .ant-table-body{
+      overflow: hidden scroll !important;
+      height: calc(100vh - 295px) !important;
+      border-bottom:1px solid #f5f4f7;
+    }
+
+    .ant-table-summary > tr > td {
+      border: none !important;
+    }
+
+    .ant-table-thead > tr > th {
+      white-space: nowrap !important;
+    }
+  }
+
+  .table-area {
+    padding: 0px !important;
+  }
+
+  .footer{
+    padding:10px 0;
+    background-color: white;
+    button{
+      background-color:#5eb27a;
+      color:white;
+      margin-right: 20px;
+      font-size: 13px;
+    }
+  }
 }
