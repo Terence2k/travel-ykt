@@ -15,6 +15,7 @@ export interface FormState {
 	productSonType?: string | null;
 	productType?: number | null;
 	oid?: number | null;
+	charCount?: number | string | null;
 }
 export interface splitListType {
 	companyType?: number | null;

@@ -138,7 +138,7 @@ const state = reactive({
 		total: 400,
 		loading: false,
 		param: {
-			teamTypeId: '', //团队类型id(对应ljykt_travel_agency数据库sys_team_type表oid)
+			teamTypeId: null, //团队类型id(对应ljykt_travel_agency数据库sys_team_type表oid)
 			productType: null, //产品类型 1-景区 2-酒店 3-餐饮 6开始为综费产品id
 			costName: '', //费用名称
 			ruleStatus: null, //规则状态 1-启用 0-禁用
@@ -221,6 +221,10 @@ const showTip = (str: string, par: any, record: any) => {
 		cacheData.value.delIndex = [record.oid];
 		cacheData.value.delState = 'del';
 	} else if (str === 'all') {
+		if (state.selectedRowKeys.length === 0) {
+			message.error(`请先选择数据`);
+			return;
+		}
 		cacheData.value.delParams = { title: '删除', content: '是否删除所选数据？' };
 		cacheData.value.delIndex = state.selectedRowKeys;
 		cacheData.value.delState = 'del';

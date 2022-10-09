@@ -22,14 +22,24 @@
 					<a-radio v-for="item in state.chargeModelList" :value="item.value" :key="item.name">{{ item.name }}</a-radio>
 				</a-radio-group>
 			</a-form-item>
-			<a-form-item label="分账金额" v-if="formValidate.splitModel === 2" :rules="rules.integer">
+			<a-form-item
+				label="分账金额"
+				v-if="formValidate.splitModel === 2"
+				name="splitCount"
+				:rules="[{ required: formValidate.splitModel === 2 ? true : false, validator: isIntegerNotMust, trigger: 'blur' }]"
+			>
 				<a-input-number v-model:value="formValidate.splitCount" placeholder="请输入分账金额（单位：元）" style="width: 100%">
 					<template #addonAfter>
 						<span>元</span>
 					</template>
 				</a-input-number>
 			</a-form-item>
-			<a-form-item label="分账百分比" v-if="formValidate.splitModel === 1" :rules="rules.percentage">
+			<a-form-item
+				label="分账百分比"
+				v-if="formValidate.splitModel === 1"
+				name="splitCount"
+				:rules="[{ required: formValidate.splitModel === 1 ? true : false, validator: isBtnZeroToHundred, trigger: 'blur' }]"
+			>
 				<a-input-number v-model:value="formValidate.splitCount" placeholder="请输入分账占比（单位：%）" style="width: 100%">
 					<template #addonAfter>
 						<span>%</span>
@@ -89,11 +99,12 @@ const rules: any = {
 	companyType: [{ required: true, trigger: 'blur', message: '请输入分账单位' }],
 	level: [{ required: true, validator: isIntegerNotMust, trigger: 'blur' }],
 	priority: [{ required: true, validator: isIntegerNotMust, trigger: 'blur' }],
-	splitCount: [{ required: true, validator: isBtnZeroToHundred, trigger: 'blur' }],
-	// 百分比
-	percentage: [{ required: true, validator: isBtnZeroToHundred, trigger: 'blur' }],
-	// 人数和金额
-	integer: [{ required: true, validator: isIntegerNotMust, trigger: 'blur' }],
+	// splitCount: [{ required: true }],
+	splitModel: [{ required: true, message: '请选择', trigger: 'blur' }],
+	// // 百分比
+	// percentage: [{ required: formValidate.value.splitModel === 1 ? true : false, validator: isBtnZeroToHundred, trigger: 'blur' }],
+	// // 人数和金额
+	// integer: [{ required: formValidate.value.splitModel === 2 ? true : false, validator: isIntegerNotMust, trigger: 'blur' }],
 };
 const init = async () => {
 	if (props.params.add) {
@@ -131,7 +142,6 @@ watch(
 		}
 	}
 );
-
 watch(dialogVisible, (nVal) => {
 	console.log('dialogVisible:', nVal);
 	emit('update:modelValue', nVal);
