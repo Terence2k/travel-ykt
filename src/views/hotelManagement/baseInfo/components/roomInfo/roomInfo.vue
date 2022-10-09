@@ -2,9 +2,17 @@
 	<div class="wrapper-tab-roomInfo">
 		<CommonTable :columns="columns" :data-source="dataSource">
 			<template #bodyCell="{ column, text, record }">
-				<template v-if="['roomTypeName', 'price', 'roomNum'].includes(column.dataIndex)">
+				<template v-if="['roomTypeName'].includes(column.dataIndex)">
 					<div>
 						<a-input v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]" />
+						<template v-else>
+							<a-input :disabled="true" :defaultValue="text" />
+						</template>
+					</div>
+				</template>
+				<template v-if="['price', 'roomNum'].includes(column.dataIndex)">
+					<div>
+						<a-input type="number" v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]" />
 						<template v-else>
 							<a-input :disabled="true" :defaultValue="text" />
 						</template>
@@ -22,7 +30,7 @@
 				</template>
 				<template v-if="['roomOccupancyNum'].includes(column.dataIndex)">
 					<div>
-						<a-input style="width: 16%" v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]" />
+						<a-input type="number" style="width: 16%" v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]" />
 						<template v-else>
 							<a-input style="width: 16%" :disabled="true" :defaultValue="text" />
 						</template>
@@ -49,7 +57,9 @@
 		</CommonTable>
 		<div class="footer">
 			<!-- <a-button @click="saveRoomInfo" class="button-save button">保存</a-button> -->
-			<a-button class="button-submit button" @click="saveRoomInfo">提交审核</a-button>
+			<a-button :class="{ mdisabled: state.isAuditStatus }" :disabled="state.isAuditStatus" class="button-submit button" @click="saveRoomInfo"
+				>提交审核</a-button
+			>
 		</div>
 		<!-- <CommonPagination
 			class="pagination-custom"
@@ -132,6 +142,7 @@ const systemRoomNameOptions = ref<SelectProps['options']>(systemRoomData);
 
 const state = reactive({
 	hotelId: 0,
+	isAuditStatus: false,
 	roomInfoResponse: [],
 	roomInfoRequest: [],
 });
@@ -168,6 +179,9 @@ watch(
 					if (Array.isArray(res) && res.length > 0) {
 						state.roomInfoResponse.value = res;
 						dataSource.value = res.map((item) => {
+							if (item.auditStatus === 1) {
+								state.isAuditStatus = true;
+							}
 							return {
 								...item,
 								price: item.price / 100,

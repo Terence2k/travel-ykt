@@ -417,8 +417,14 @@ const addOrUpdate = async ({ row, handle }: addInterface) => {
     auditForm.auditTypePage = auditTypePage
     auditForm.oid = oid
     checkedKeys.value = auditModelDetailVos.map((item: any) => {
-      return item.roleId
+      if (item.roleId) {
+        return item.roleId
+      } else {
+        chosedKeys.push(item.businessType)
+        return item.businessType
+      }
     })
+    tData.value = disabledChildKeys(tData.value, chosedKeys);
     nextTick(() => {
       setTitle()
       draggable(checkedKeys.value)
@@ -448,6 +454,12 @@ const formatAudit = (arr: any, tArr: TransferProps['dataSource']) => {
     const element = arr[i];
     for (let j = 0, l = tArr.length; j < l; j++) {
       const telement = tArr[j];
+      if (element === telement?.key) {
+        ret.push({
+          businessType: telement.key, //项目id
+          auditSort: i + 1 //排序
+        })
+      }
       if (telement?.children) {
         for (let k = 0, l = telement.children.length; k < l; k++) {
           const celement = telement.children[k];

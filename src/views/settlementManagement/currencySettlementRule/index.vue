@@ -1,7 +1,7 @@
 <template>
 	<CommonSearch>
 		<search-item label="团队类型">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.teamTypeId" style="width: 200px" placeholder="请选择团单类型">
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.teamTypeId" style="width: 200px" placeholder="请选择团队类型">
 				<a-select-option :value="item.oid" v-for="item in generaRulesOptions.teamTypeList" :key="item.name">{{ item.name }}</a-select-option>
 			</a-select>
 		</search-item>
@@ -36,7 +36,7 @@
 				:scroll="{ x: '100%' }"
 			>
 				<template #bodyCell="{ column, record, index }">
-					<!-- 团单类型 -->
+					<!-- 团队类型 -->
 					<template v-if="column.key === 'teamTypeId'">
 						<span>{{ getTeamTypeName(record.teamTypeId) }}</span>
 					</template>
@@ -90,7 +90,7 @@ const route = useRouter();
 
 const columns = [
 	{
-		title: '团单类型',
+		title: '团队类型',
 		dataIndex: 'teamTypeId',
 		key: 'teamTypeId',
 	},

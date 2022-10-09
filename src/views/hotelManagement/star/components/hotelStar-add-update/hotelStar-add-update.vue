@@ -1,12 +1,12 @@
 <template>
 	<div class="wrapper">
-		<BaseModal :title="options.title" v-model="modelValue">
+		<BaseModal :title="options.title" v-model="modelValue" @close="handleOk">
 			<a-form :model="formValidate" :rules="rules" :label-col="{ span: 5 }" :wrapper-col="{ span: 16, offset: 1 }" labelAlign="left">
 				<a-form-item label="酒店星级" name="starCode">
 					<a-input v-model:value="formValidate.starCode" />
 				</a-form-item>
 				<a-form-item label="诚信指导价" name="price">
-					<a-input v-model:value="formValidate.price" />
+					<a-input type="number" v-model:value="formValidate.price" />
 				</a-form-item>
 				<a-form-item label="状态" name="ratedStatus">
 					<a-radio-group v-model:value="formValidate.ratedStatus">
@@ -40,7 +40,7 @@ const props = defineProps({
 
 const { modelValue } = toRefs(props);
 const dialogVisible = ref(false);
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
 const formValidate: Ref<Record<string, any>> = ref({});
 const options = reactive({
 	title: '新增酒店星级',
@@ -111,6 +111,12 @@ watch(dialogVisible, (nVal) => {
 	console.log('dialogVisible:', nVal);
 	emit('update:modelValue', nVal);
 });
+
+const handleOk = () => {
+	//console.log('handleOk');
+	dialogVisible.value = false;
+	emit('cancel');
+};
 </script>
 
 <style lang="less" scoped></style>
