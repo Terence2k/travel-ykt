@@ -147,7 +147,10 @@ const formData = reactive({
 		], //折扣集合
 	},
 });
-
+//类型
+const type = computed(() => {
+	return route.currentRoute.value?.query?.t;
+});
 // 表单
 const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
 	formData,
@@ -157,7 +160,7 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 		'data.wateryPrice': [{ required: true, message: '请输入降水价' }],
 		'data.price': [{ required: true, message: '请输入价格' }],
 		'data.verificationType': [{ required: true, message: '请选择市' }],
-		'data.scenicId': [{ required: true, message: '请选择归属景区' }],
+		'data.scenicId': [{ required: type.value === '1' ? true : false, message: '请选择归属景区' }],
 		'data.ticketName': [{ required: true, message: '请输入门票名称' }],
 		'data.ticketType': [{ required: true, message: '请选择门票分类' }],
 
@@ -176,10 +179,6 @@ const errorInfos = computed(() => {
 });
 const errorPriceInfos = computed(() => {
 	return mergeValidateInfo(toArray(validateInfos).splice(2, 3));
-});
-//类型
-const type = computed(() => {
-	return route.currentRoute.value?.query?.t;
 });
 
 const tickerType = computed(() => (route.currentRoute.value?.query?.t === '1' ? '单票：单点核销' : '单票：多点核销'));
