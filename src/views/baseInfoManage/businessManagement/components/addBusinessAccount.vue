@@ -16,7 +16,7 @@ export interface Props {
 const props = withDefaults(defineProps<Props>(), {
   modalVisible: false,
 })
-const emit = defineEmits(['update:modalVisible','success'])
+const emit = defineEmits(['update:modalVisible', 'success'])
 const businessLoginRef = ref()
 const form = reactive({
   businessType: undefined,
@@ -27,7 +27,7 @@ const form = reactive({
   provinceId: '',
   cityId: '',
   areaId: '',
-  businessLicenseUrl: undefined,
+  businessLicenseUrl: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
   account: '',
   region: [],
 });

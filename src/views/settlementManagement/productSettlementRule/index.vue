@@ -182,10 +182,6 @@ const dealData = (params: [any]) => {
 onMounted(() => {
 	initList();
 	getEnum();
-	navigatorBar.setNavigator(['产品结算规则']);
-});
-onBeforeUnmount(() => {
-	navigatorBar.clearNavigator();
 });
 
 const generaRulesOptions = useGeneraRules();

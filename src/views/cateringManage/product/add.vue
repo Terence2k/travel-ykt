@@ -17,7 +17,7 @@
 				<a-form-item label="单价" name="price">
 					<a-input placeholder="请输入单价，单位：元/人" v-model:value="formData.data.price" />
 				</a-form-item>
-				<a-form-item label="图片" name="imgUrl">
+				<a-form-item label="图片">
 					<Pic v-model:value="formData.data.imgUrl"></Pic>
 				</a-form-item>
 				<a-form-item label="状态" name="status">
@@ -86,40 +86,33 @@ const initPage = async (): Promise<void> => {
 };
 
 const onSubmit = () => {
-	const Data = {
-		shopId: formData.data.shopId, //oid
-		companyName: formData.data.companyName,
-		cateringName: formData.data.cateringName,
-		orderNum: formData.data.orderNum,
-		price: formData.data.price,
-		imgUrl: formData.data.imgUrl,
-		status: formData.data.status,
-		provideStart: formData.data.provideStart,
-		provideEnd: formData.data.provideEnd,
-		cateringDesc: formData.data.cateringDesc,
-	};
-	console.log(save(toRaw(Data)));
+	// const Data = {
+	// 	shopId: formData.data.companyName,
+	// 	cateringName: formData.data.cateringName,
+	// 	orderNum: Number(formData.data.orderNum),
+	// 	price: Number(formData.data.price),
+	// 	imgUrl: formData.data.imgUrl,
+	// 	status: formData.data.status,
+	// 	provideStart: formData.data.provideStart,
+	// 	provideEnd: formData.data.provideEnd,
+	// 	cateringDesc: formData.data.cateringDesc,
+	// };
+	// console.log(toRaw(Data));
 
-	// formref.value
-	// 	.validate()
-	// 	.then((res) => {
-	// 		const Data = {
-	// 			shopId: formData.data.shopId, //oid
-	// 			companyName: formData.data.companyName,
-	// 			cateringName: formData.data.cateringName,
-	// 			orderNum: formData.data.orderNum,
-	// 			price: formData.data.price,
-	// 			imgUrl: formData.data.imgUrl,
-	// 			status: formData.data.status,
-	// 			provideStart: formData.data.provideStart,
-	// 			provideEnd: formData.data.provideEnd,
-	// 			cateringDesc: formData.data.cateringDesc,
-	// 		};
-	// 		save(toRaw(Data));
-	// 	})
-	// 	.catch((err) => {
-	// 		console.log('error', err);
-	// 	});
+	formref.value.validate().then((res) => {
+		const Data = {
+			shopId: formData.data.companyName,
+			cateringName: formData.data.cateringName,
+			orderNum: Number(formData.data.orderNum),
+			price: Number(formData.data.price),
+			imgUrl: formData.data.imgUrl,
+			status: formData.data.status,
+			provideStart: formData.data.provideStart,
+			provideEnd: formData.data.provideEnd,
+			cateringDesc: formData.data.cateringDesc,
+		};
+		save(toRaw(Data));
+	});
 };
 const save = async (params: object) => {
 	let res = await api.getProductEdit(params);

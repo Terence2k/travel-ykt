@@ -11,7 +11,7 @@
 			:wrapper-col="{ span: 6 }"
 			autocomplete="off"
 		>
-			<a-form-item label="团单类型" name="type">
+			<a-form-item label="团队类型" name="type">
 				<div>
 					<span>{{ getTypeName('teamTypeId') }}</span>
 				</div>
@@ -48,9 +48,12 @@
 					<span>{{ getTypeName('chargeModel') }}</span>
 				</div>
 			</a-form-item>
-			<a-form-item label="收费数量" name="chargingNumber">
+			<a-form-item label="收费数量" name="charCount">
 				<div>
-					<span>{{ formState.chargeCount }}</span>
+					<span>{{ formState.charCount }}</span>
+					<span v-if="formState.chargeModel === 1">%</span>
+					<span v-if="formState.chargeModel === 2">人</span>
+					<span v-if="formState.chargeModel === 3">元</span>
 				</div>
 			</a-form-item>
 			<a-form-item label="是否垫付" name="isPayment">
@@ -88,6 +91,7 @@
 		<div class="footer">
 			<div class="tooter-btn">
 				<a-button type="primary" @click="edit">编辑</a-button>
+				<a-button @click="cancel">返回</a-button>
 			</div>
 		</div>
 	</div>
@@ -98,7 +102,7 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import { UnwrapRef } from 'vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import api from '@/api';
-import { FormState } from './type';
+import { FormState } from '../../productSettlementRule/components/type';
 import { useGeneraRules } from '@/stores/modules/GeneraRules';
 const navigatorBar = useNavigatorBar();
 const generaRulesOptions = useGeneraRules();
@@ -118,6 +122,7 @@ const formState: UnwrapRef<FormState> = reactive({
 	costExplanation: null,
 	level: null,
 	productType: null,
+	charCount: null,
 });
 const columns = ref([
 	{
@@ -214,6 +219,9 @@ const getCompanyTypeName = computed(() => (value: number) => {
 	}
 	return;
 });
+const cancel = () => {
+	route.go(-1);
+};
 </script>
 
 <style lang="less" scoped>

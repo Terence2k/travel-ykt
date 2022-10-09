@@ -32,7 +32,7 @@ const form = reactive({
   provinceId: '',
   cityId: '',
   areaId: '',
-  businessLicenseUrl: undefined,
+  businessLicenseUrl: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
   account: '',
   region: [],
 });
