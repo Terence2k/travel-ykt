@@ -38,7 +38,7 @@ const previewTitle = ref('');
   reader.addEventListener('load', () => callback(reader.result as string));
   reader.readAsDataURL(img);
 } */
-const fileList = ref([]);
+const fileList = ref<UploadProps['fileList']>([]);
 const loading = ref<boolean>(false);
 const imageUrl = ref<string>('');
 
@@ -102,6 +102,16 @@ const clear = () => {
 }
 defineExpose({
   clear,
+})
+onMounted(() => {
+  if (props.uploadedFile) {
+    fileList.value = [{
+      uid: '-1',
+      name: 'image.png',
+      status: 'done',
+      url: props.uploadedFile as string,
+    }]
+  }
 })
 </script>
 <style scoped lang="scss">

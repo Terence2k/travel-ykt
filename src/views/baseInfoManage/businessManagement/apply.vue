@@ -1,7 +1,7 @@
 <template>
 	<CommonSearch>
 		<search-item label="企业类型">
-			<a-select placeholder="请选企业类型" v-model:value="tableData.param.businessType" allowClear>
+			<a-select placeholder="请选择企业类型" v-model:value="tableData.param.businessType" allowClear>
 				<a-select-option v-for="item in businessTypeOption" :value="item.codeValue">{{ item.name }}
 				</a-select-option>
 			</a-select>

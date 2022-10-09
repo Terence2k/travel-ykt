@@ -94,6 +94,8 @@ defineExpose({
 })
 onMounted(() => {
   initOpeion()
+  console.log('$$$$$$$$$', attrs.model.businessLicenseUrl);
+
 })
 </script>
 
