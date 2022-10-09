@@ -76,6 +76,7 @@ const props = defineProps({
 	},
 	methods: Object,
 });
+const { modelValue } = toRefs(props);
 const state: UnwrapRef<any> = reactive({
 	prepaidCompanyList: [
 		{ value: 1, name: '旅行社' },
@@ -140,17 +141,13 @@ watch(
 		if (dialogVisible.value) {
 			await init();
 		}
-	},
-	{ deep: true }
+	}
 );
-watch(
-	dialogVisible,
-	(nVal) => {
-		console.log('dialogVisible:', nVal);
-		emit('update:modelValue', nVal);
-	},
-	{ deep: true }
-);
+
+watch(dialogVisible, (nVal) => {
+	console.log('dialogVisible:', nVal);
+	emit('update:modelValue', nVal);
+});
 </script>
 
 <style scoped>
