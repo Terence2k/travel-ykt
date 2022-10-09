@@ -2,87 +2,42 @@
 	<div class="editWrapper">
 		<header class="title">基本信息</header>
 		<a-form class="" ref="formRef" :model="formData" :label-col="{ span: 3 }" labelAlign="left" :wrapper-col="{ span: 7 }" :scrollToFirstError="true">
-			<a-form-item label="归属景区" v-if="type === '1'">
+			<a-form-item label="演出名称">
+				<a-input v-model:value="formData.data.ticketName" placeholder="请填写演出名字" />
+			</a-form-item>
+			<a-form-item label="演出场馆">
+				<a-input v-model:value="formData.data.ticketName" />
+			</a-form-item>
+
+			<a-form-item label="开始时间" v-bind="validateInfos[`data.ticketName`]">
+				<a-input v-model:value="formData.data.ticketName" placeholder="请填写门票名称" />
+			</a-form-item>
+			<a-form-item label="结束时间" v-bind="validateInfos[`data.ticketName`]">
+				<a-input v-model:value="formData.data.ticketName" placeholder="请填写门票名称" />
+			</a-form-item>
+			<a-form-item label="归属景区">
 				<!-- <a-input v-model:value="formData.data.scenicId" placeholder="请填写景区名字" /> -->
 				<a-select allowClear v-model:value="formData.data.scenicId" placeholder="请选择">
 					<a-select-option :value="vlItem.old" v-for="vlItem in viewList" :key="vlItem.ticketId">{{ vlItem.ticketName }}</a-select-option>
 				</a-select>
 			</a-form-item>
-			<a-form-item label="票种分类">
-				<a-input disabled v-model:value="tickerType" />
-			</a-form-item>
 
-			<a-form-item label="门票名称" v-bind="validateInfos[`data.ticketName`]">
-				<a-input v-model:value="formData.data.ticketName" placeholder="请填写门票名称" />
+			<a-form-item label="演出描述">
+				<a-textarea v-model:value="formData.data.oneExplain" placeholder="演出描述" :rows="4" />
 			</a-form-item>
-			<a-form-item label="门票分类" v-bind="validateInfos[`data.ticketType`]">
-				<a-select allowClear ref="select" v-model:value="formData.data.ticketType" placeholder="请选择">
-					<a-select-option :value="0">儿童</a-select-option>
-					<a-select-option :value="1">成人</a-select-option>
-					<a-select-option :value="2">老人</a-select-option>
-				</a-select>
-			</a-form-item>
-			<a-form-item label="可预定时间" v-bind="errorInfos" style="margin-bottom: 10px">
+			<a-form-item label="周期设定" v-bind="validateInfos[`data.ticketType`]">
 				<a-radio-group v-model:value="formData.data.orderTimeRule">
-					<a-radio :value="false">当日可定</a-radio>
-					<a-radio :value="true">次日可定</a-radio>
+					<a-radio :value="1">每天</a-radio>
+					<a-radio :value="2">每周</a-radio>
+					<a-radio :value="3">每月</a-radio>
 				</a-radio-group>
-				<br />
-				<br />
-				当日最晚可定票时间：
-				<a-time-picker
-					v-model:value="formData.data.orderTime"
-					valueFormat="HH:mm"
-					format="HH:mm"
-					:placeholder="formData.data.orderTime"
-					style="width: 120px"
-				/>
-			</a-form-item>
-
-			<a-form-item label="有效期" v-bind="validateInfos[`data.validTime`]" :wrapper-col="{ span: 12 }">
-				指定入园时间起 ,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<a-select allowClear ref="select" v-model:value="formData.data.validTime" placeholder="请选择" style="width: 120px">
-					<a-select-option :value="day" v-for="day in 7" :key="day">{{ day }}日内有效</a-select-option>
-				</a-select>
-				<span class="tips"> 说明 ： 超过当日24时算一日结束 </span>
-			</a-form-item>
-
-			<div class="title">核销规则</div>
-
-			<a-form-item label="核销项目" :wrapper-col="{ span: 12 }">
-				<div :class="type === '2' ? 'table-wrapper-long' : 'table-wrapper'">
-					<EditProjectTable
-						@del-verification-obj="delVerificationObj"
-						@add-verification-obj="addVerificationObj"
-						:tableList="formData.data.itemList"
-					/>
-				</div>
-			</a-form-item>
-			<a-form-item label="可核销账号" :wrapper-col="{ span: 12 }">
-				<div class="table-wrapper">
-					<EditCountTable :tableList="[{ assistId: formData.data.assistId }]" />
-				</div>
-			</a-form-item>
-
-			<div class="title">票价</div>
-			<a-form-item label="门票库存" v-bind="validateInfos[`data.dayStock`]">
-				<a-input v-model:value="formData.data.dayStock" placeholder="输入每日库存" />
-			</a-form-item>
-			<a-form-item label="票价" :wrapper-col="{ span: 12 }" v-bind="errorPriceInfos" style="margin-bottom: 10px">
-				<div class="table-wrapper">
-					<EditPriceTable :tableList="[{ wateryPrice: formData.data.wateryPrice, price: formData.data.price }]" @change-price="changePrice" />
-				</div>
-			</a-form-item>
-			<a-form-item label="费用包含">
-				<a-textarea v-model:value="formData.data.oneExplain" placeholder="请输入费用包含" :rows="4" />
-			</a-form-item>
-			<a-form-item label="其他说明">
-				<a-textarea v-model:value="formData.data.restsExplain" placeholder="请输入其他说明" :rows="4" />
-			</a-form-item>
-			<div class="title">减免规则</div>
-			<a-form-item label="减免规则" :wrapper-col="{ span: 12 }">
-				<div class="table-wrapper-long">
-					<EditRuleTable :tableList="formData.data.discountList" @del-rule-obj="delRuleObj" @add-rule-obj="addRuleObj" />
+				<div>
+					<a-form-item v-bind="validateInfos[`data.ticketType`]" v-if="formData.data.orderTimeRule === 2">
+						<a-checkbox-group v-model:value="formData.data.orderTimeRul" name="checkboxgroup" :options="optionsWeek" />
+					</a-form-item>
+					<a-form-item v-bind="validateInfos[`data.ticketType`]" v-if="formData.data.orderTimeRule === 3">
+						<a-checkbox-group v-model:value="formData.data.orderTimeRul" name="checkboxgroup" :options="options" />
+					</a-form-item>
 				</div>
 			</a-form-item>
 
@@ -102,15 +57,21 @@ import { useScenicSpotOption } from '@/stores/modules/scenicSpot';
 import { Form } from 'ant-design-vue';
 import { RadioGroupProps } from 'ant-design-vue';
 import { toArray } from 'lodash';
-import EditProjectTable from './editProjectTable.vue';
-import EditCountTable from './editCountTable.vue';
-import EditPriceTable from './editPriceTable.vue';
-import EditRuleTable from './editRuleTable.vue';
+
 import api from '@/api';
 import { message } from 'ant-design-vue';
 
 const route = useRouter();
-
+const options = ref([]);
+const optionsWeek = [
+	{ label: '周一', value: '1' },
+	{ label: '周二', value: '2' },
+	{ label: '周三', value: '3' },
+	{ label: '周四', value: '4' },
+	{ label: '周五', value: '5' },
+	{ label: '周六', value: '6' },
+	{ label: '周日', value: '7' },
+];
 const useForm = Form.useForm;
 const navigatorBar = useNavigatorBar();
 // 数据
@@ -147,10 +108,7 @@ const formData = reactive({
 		], //折扣集合
 	},
 });
-//类型
-const type = computed(() => {
-	return route.currentRoute.value?.query?.t;
-});
+
 // 表单
 const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
 	formData,
@@ -160,7 +118,7 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 		'data.wateryPrice': [{ required: true, message: '请输入降水价' }],
 		'data.price': [{ required: true, message: '请输入价格' }],
 		'data.verificationType': [{ required: true, message: '请选择市' }],
-		'data.scenicId': [{ required: type.value === '1' ? true : false, message: '请选择归属景区' }],
+		'data.scenicId': [{ required: true, message: '请选择归属景区' }],
 		'data.ticketName': [{ required: true, message: '请输入门票名称' }],
 		'data.ticketType': [{ required: true, message: '请选择门票分类' }],
 
@@ -179,6 +137,10 @@ const errorInfos = computed(() => {
 });
 const errorPriceInfos = computed(() => {
 	return mergeValidateInfo(toArray(validateInfos).splice(2, 3));
+});
+//类型
+const type = computed(() => {
+	return route.currentRoute.value?.query?.t;
 });
 
 const tickerType = computed(() => (route.currentRoute.value?.query?.t === '1' ? '单票：单点核销' : '单票：多点核销'));
@@ -251,9 +213,14 @@ const initCreatePage = () => {
 	navigatorBar.setNavigator(['景区信息管理', '新增']);
 	formData.data.verificationType = route.currentRoute.value?.query?.t === '1' ? 'ONE' : 'MANY';
 };
-
+const initOption = () => {
+	for (let i = 1; i < 32; i++) {
+		options.value.push({ value: i, label: i + '号' });
+	}
+};
 onMounted(() => {
 	initPage();
+	initOption();
 	// 自定义面包屑
 });
 onBeforeUnmount(() => {

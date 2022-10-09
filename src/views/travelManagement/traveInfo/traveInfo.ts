@@ -13,6 +13,7 @@ interface DataItem {
 export function useTraveInfo(): Record<string, any> {
 	const state = reactive<{editableData: UnwrapRef<Record<string, DataItem>>, [k:string]: any}>({
 		editableData: {},
+		addHotelPop: false,
 		tableData: [
 			{
 				key: '1',
@@ -52,14 +53,9 @@ export function useTraveInfo(): Record<string, any> {
 				key: 'name3',
 			},
 			{
-				title: '费用（元）',
+				title: '金额（元）',
 				dataIndex: 'name1',
 				key: 'name1',
-			},
-			{
-				title: '操作',
-				key: 'action',
-				fixed: 'right'
 			}
 		],
         ticketColumns: [
@@ -149,6 +145,9 @@ export function useTraveInfo(): Record<string, any> {
 			cur.name = dayjs(cur.name).format('YYYY-MM-DD HH:mm');
 			Object.assign(state.tableData.filter((item:any) => key === item.key)[0], state.editableData[key]);
 			delete state.editableData[key];
+		},
+		add(key: string) {
+			state[key] = true;
 		}
 	}
 	return {

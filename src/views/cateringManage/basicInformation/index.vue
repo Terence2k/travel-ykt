@@ -27,7 +27,7 @@
 				<template v-if="column.dataIndex === 'actions'">
 					<div class="action-btns">
 						<a @click="openInfoPage(record)">查看</a>
-						<a @click="openEditPage(record)">审核</a>
+						<a @click="openEditPage(record)" v-if="record.auditStatus != '审核通过' ">审核</a>
 					</div>
 				</template>
 			</template>

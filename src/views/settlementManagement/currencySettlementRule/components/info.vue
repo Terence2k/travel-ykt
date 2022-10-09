@@ -91,6 +91,7 @@
 		<div class="footer">
 			<div class="tooter-btn">
 				<a-button type="primary" @click="edit">编辑</a-button>
+				<a-button @click="cancel">返回</a-button>
 			</div>
 		</div>
 	</div>
@@ -218,6 +219,9 @@ const getCompanyTypeName = computed(() => (value: number) => {
 	}
 	return;
 });
+const cancel = () => {
+	route.go(-1);
+};
 </script>
 
 <style lang="less" scoped>
