@@ -25,7 +25,7 @@
 							<div class="action-btns">
 								<a href="javascript:;" @click="toEdit(record)">编辑</a>
 								<a href="javascript:;">删除</a>
-								<a href="javascript:;" v-if="record.putaway === '上架'" @click="open"> 下架申请</a>
+								<a href="javascript:;" v-if="record.putaway === '上架'" @click="open(record)"> 下架申请</a>
 							</div>
 						</template>
 					</template>
@@ -101,9 +101,8 @@ const columns = [
 ];
 
 const auditRef = ref();
-const open = () => {
-	console.log(auditRef.value.open);
-	auditRef.value.open();
+const open = (value) => {
+	auditRef.value.open(value.oid);
 };
 
 const toEdit = (record: any) => {
