@@ -214,19 +214,30 @@ export async function getRoomDetailInfoInAuditStatus(id: number) {
 }
 
 // /hotel-service/public/api/hotel-room-type/auditPassOrNot/{uuid}?flag=
-export async function auditRoomDetailInfo(uuid: string, isPass: boolean) {
+export async function auditRoomDetailInfo(uuid: string, roleId: string, isPass: boolean) {
 	return request({
-		url: `${commonPath}/hotel-service/public/api/hotel-room-type/auditPassOrNot/${uuid}?flag=${isPass}`,
+		url: `${commonPath}/hotel-service/public/api/hotel-room-type/auditPassOrNot/${uuid}/${roleId}?flag=${isPass}`,
 		method: 'get',
 		showLoading: true,
 	});
 }
 
 // /customer-service/public/api/sys/audit/flow/handle
-// 酒店基本信息提交审核
-export async function saveHotelInfo(data: any) {
+// 酒店基本信息审核
+export async function auditHotelInfo(data: any) {
 	return request({
 		url: `${commonPath}/customer-service/public/api/sys/audit/flow/handle`,
+		data,
+		method: 'post',
+		showLoading: false,
+	});
+}
+
+// /customer-service/public/api/sys/audit/flow/getAuditButton
+// 查询是否有审核权限，返回roleId
+export async function getRoleId(data: any) {
+	return request({
+		url: `${commonPath}/customer-service/public/api/sys/audit/flow/getAuditButton`,
 		data,
 		method: 'post',
 		showLoading: false,

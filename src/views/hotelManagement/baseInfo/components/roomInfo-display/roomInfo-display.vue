@@ -122,9 +122,16 @@ watch(
 );
 
 const auditPass = () => {
-	api.auditRoomDetailInfo(state.auditOrderId, true).then((res) => {
-		console.log('房型审核通过返回：', res);
-	});
+	api
+		.getRoleId({
+			uuid: state.auditOrderId,
+		})
+		.then((res) => {
+			console.log('getRoleId：', res);
+			// api.auditRoomDetailInfo(state.auditOrderId, true).then((res) => {
+			// 	console.log('房型审核通过返回：', res);
+			// });
+		});
 };
 
 const auditFail = () => {
