@@ -11,10 +11,10 @@
 			:wrapper-col="{ span: 6 }"
 			autocomplete="off"
 		>
-			<a-form-item label="团单类型" name="teamTypeId">
+			<a-form-item label="团队类型" name="teamTypeId">
 				<a-select
 					v-model:value="formState.teamTypeId"
-					placeholder="请选择团单类型"
+					placeholder="请选择团队类型"
 					allowClear
 					:options="generaRulesOptions.teamTypeList.map((item) => ({ value: item.oid, label: item.name }))"
 				>
@@ -126,7 +126,7 @@
 		<div class="footer">
 			<div class="tooter-btn">
 				<a-button type="primary" @click="submit">保存</a-button>
-				<a-button type="primary" @click="cancel">取消</a-button>
+				<a-button @click="cancel">取消</a-button>
 			</div>
 		</div>
 	</div>
@@ -197,7 +197,7 @@ const columns = ref([
 ]);
 const rulesRef = {
 	costName: [{ required: true, message: '请输入费用名称' }],
-	teamTypeId: [{ required: true, message: '请选择团单类型' }],
+	teamTypeId: [{ required: true, message: '请选择团队类型' }],
 	productType: [{ required: true, message: '请选择结算产品' }],
 	costExplanation: [{ required: true, message: '请输入费用说明' }],
 	ruleStatus: [{ required: true, message: '请选择状态' }],

@@ -258,7 +258,7 @@ onMounted(() => {
 	// 自定义面包屑
 });
 onBeforeUnmount(() => {
-	// navigatorBar.clearNavigator();
+	navigatorBar.clearNavigator();
 });
 </script>
 

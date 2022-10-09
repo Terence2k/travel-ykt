@@ -8,10 +8,10 @@ import settlementRoute from './modules/settlement.route';
 import cateringManageRoute from './modules/catering.route';
 import scenicSpot from './modules/scenicSpot.route';
 export const basicRouter = [
-	{
-		path: '/',
-		// redirect: '/baseInfo/user_manage',
-	},
+	// {
+	// 	path: '/',
+	// 	// redirect: '/baseInfo/user_manage',
+	// },
 	{
 		path: '/',
 		component: () => import('../components/layout/index.vue'),

@@ -1,7 +1,7 @@
 <template>
 	<CommonSearch>
 		<search-item label="团队类型">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.teamTypeId" style="width: 200px" placeholder="请选择团单类型">
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.teamTypeId" style="width: 200px" placeholder="请选择团队类型">
 				<a-select-option :value="item.oid" v-for="item in generaRulesOptions.teamTypeList" :key="item.name">{{ item.name }}</a-select-option>
 			</a-select>
 		</search-item>
@@ -36,7 +36,7 @@
 				:scroll="{ x: '100%' }"
 			>
 				<template #bodyCell="{ column, record, index }">
-					<!-- 团单类型 -->
+					<!-- 团队类型 -->
 					<template v-if="column.key === 'teamTypeId'">
 						<span>{{ getTeamTypeName(record.teamTypeId) }}</span>
 					</template>
@@ -90,7 +90,7 @@ const route = useRouter();
 
 const columns = [
 	{
-		title: '团单类型',
+		title: '团队类型',
 		dataIndex: 'teamTypeId',
 		key: 'teamTypeId',
 	},
@@ -138,7 +138,7 @@ const state = reactive({
 		total: 400,
 		loading: false,
 		param: {
-			teamTypeId: '', //团队类型id(对应ljykt_travel_agency数据库sys_team_type表oid)
+			teamTypeId: null, //团队类型id(对应ljykt_travel_agency数据库sys_team_type表oid)
 			productType: null, //产品类型 1-景区 2-酒店 3-餐饮 6开始为综费产品id
 			costName: '', //费用名称
 			ruleStatus: null, //规则状态 1-启用 0-禁用
@@ -221,6 +221,10 @@ const showTip = (str: string, par: any, record: any) => {
 		cacheData.value.delIndex = [record.oid];
 		cacheData.value.delState = 'del';
 	} else if (str === 'all') {
+		if (state.selectedRowKeys.length === 0) {
+			message.error(`请先选择数据`);
+			return;
+		}
 		cacheData.value.delParams = { title: '删除', content: '是否删除所选数据？' };
 		cacheData.value.delIndex = state.selectedRowKeys;
 		cacheData.value.delState = 'del';
@@ -275,11 +279,11 @@ const onSelectChange = (selectedRowKeys: any) => {
 onMounted(async () => {
 	getEnum();
 	initList();
-	navigatorBar.setNavigator(['通用结算规则']);
+	// navigatorBar.setNavigator(['通用结算规则']);
 });
-onBeforeUnmount(() => {
-	navigatorBar.clearNavigator();
-});
+// onBeforeUnmount(() => {
+// 	navigatorBar.clearNavigator();
+// });
 
 const getEnum = async () => {
 	await generaRulesOptions.getTeamTypeList();

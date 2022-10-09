@@ -94,3 +94,11 @@ export async function getViewList() {
 		method: 'get',
 	});
 }
+// 获取景区下架
+export async function scenicTicketDown(data: any) {
+	return request({
+		url: commonPath + `/ticket-service/public/api/scenic-ticket-down`,
+		method: 'post',
+		data,
+	});
+}
