@@ -141,15 +141,15 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
-					// {
-					// 	path: 'show_edit',
-					// 	component: () => import('@/views/scenicSpot/showTickets/components/showEdit.vue'),
-					// 	name: 'showTickets-show_edit',
-					// 	meta: {
-					// 		title: '编辑',
-					// 		isDetail: true, // 在左侧的导航栏不会展示
-					// 	},
-					// },
+					{
+						path: 'show-edit',
+						component: () => import('@/views/scenicSpot/show/components/edit.vue'),
+						name: 'show-edit',
+						meta: {
+							title: '编辑',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
 				],
 			},
 			{
