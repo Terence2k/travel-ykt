@@ -112,7 +112,7 @@ export async function getRoomDetailInfo(data: any, id: number) {
 //编辑酒店房型信息
 export async function editRoomDetailInfo(data: any) {
 	return request({
-		url: `${commonPath}/hotel-service/public/api/hotel-room-type/updateRoomType`,
+		url: `${commonPath}/hotel-service/public/api/hotel-room-type/editRoomType`,
 		method: 'post',
 		data,
 		showLoading: true,
@@ -189,7 +189,7 @@ export async function editHotelRoomStock(data: any) {
 //酒店库存更改审核通过
 export async function hotelRoomStockPass(id: number) {
 	return request({
-		url: `${commonPath}hotel-service/public/api/hotel-room-stock/auditAdopt/${id}`,
+		url: `${commonPath}/hotel-service/public/api/hotel-room-stock/auditAdopt/${id}`,
 		method: 'get',
 		showLoading: true,
 	});
@@ -201,5 +201,34 @@ export async function hotelRoomStockFailed(id: number) {
 		url: `${commonPath}/hotel-service/public/api/hotel-room-stock/auditFailed/${id}`,
 		method: 'get',
 		showLoading: true,
+	});
+}
+
+// 获取处于审核状态的酒店房型信息
+export async function getRoomDetailInfoInAuditStatus(id: number) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-room-type/showAuditRoomType/${id}`,
+		method: 'get',
+		showLoading: true,
+	});
+}
+
+// /hotel-service/public/api/hotel-room-type/auditPassOrNot/{uuid}?flag=
+export async function auditRoomDetailInfo(uuid: string, isPass: boolean) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-room-type/auditPassOrNot/${uuid}?flag=${isPass}`,
+		method: 'get',
+		showLoading: true,
+	});
+}
+
+// /customer-service/public/api/sys/audit/flow/handle
+// 酒店基本信息提交审核
+export async function saveHotelInfo(data: any) {
+	return request({
+		url: `${commonPath}/customer-service/public/api/sys/audit/flow/handle`,
+		data,
+		method: 'post',
+		showLoading: false,
 	});
 }

@@ -140,6 +140,15 @@ interface FileInfo {
 	fileList: FileItem[];
 }
 
+// const props = defineProps({
+// 	activeTabKey: {
+// 		type: Number,
+// 		default: 1,
+// 	},
+// });
+
+// const { activeTabKey } = toRefs(props);
+
 const route = useRoute();
 
 const formValidate: Ref<Record<string, any>> = ref({});

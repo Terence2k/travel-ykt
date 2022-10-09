@@ -24,9 +24,8 @@
     padding: 0px !important;
   }
   .cell-header{
-
     display: flex;
-
+    
     .item{
       width:60px;
       margin-right: 20px;
@@ -34,6 +33,10 @@
   }
   .cell-body{
     display: flex;
+    padding: 16px 16px;
+    &.audit{
+      background-color:#F466561A;
+    }
 
     .item{
       width:60px;
@@ -62,6 +65,11 @@
 :deep{
   .ant-form-item-label > label {
       width:125px;
+  }
+
+
+  .ant-table-tbody > tr > td{
+    padding: 0px !important;
   }
 
   .flex-container{
