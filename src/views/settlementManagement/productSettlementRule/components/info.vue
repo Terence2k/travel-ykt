@@ -48,9 +48,12 @@
 					<span>{{ getTypeName('chargeModel') }}</span>
 				</div>
 			</a-form-item>
-			<a-form-item label="收费数量" name="chargingNumber">
+			<a-form-item label="收费数量" name="charCount">
 				<div>
-					<span>{{ formState.chargeCount }}</span>
+					<span>{{ formState.charCount }}</span>
+					<span v-if="formState.chargeModel === 1">%</span>
+					<span v-if="formState.chargeModel === 2">人</span>
+					<span v-if="formState.chargeModel === 3">元</span>
 				</div>
 			</a-form-item>
 			<a-form-item label="收费子产品" name="chargeProduct">

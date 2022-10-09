@@ -126,7 +126,7 @@
 		<div class="footer">
 			<div class="tooter-btn">
 				<a-button type="primary" @click="submit">保存</a-button>
-				<a-button type="primary" @click="cancel">取消</a-button>
+				<a-button @click="cancel">取消</a-button>
 			</div>
 		</div>
 	</div>
