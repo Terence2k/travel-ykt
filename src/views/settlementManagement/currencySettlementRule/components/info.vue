@@ -11,7 +11,7 @@
 			:wrapper-col="{ span: 6 }"
 			autocomplete="off"
 		>
-			<a-form-item label="团单类型" name="type">
+			<a-form-item label="团队类型" name="type">
 				<div>
 					<span>{{ getTypeName('teamTypeId') }}</span>
 				</div>

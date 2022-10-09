@@ -13,7 +13,7 @@
 				:scroll="{ x: '100%' }"
 			>
 				<template #bodyCell="{ column, record, index }">
-					<!-- 团单类型 -->
+					<!-- 团队类型 -->
 					<template v-if="column.key === 'teamTypeId'">
 						<span>{{ getTeamTypeName(record.teamTypeId) }}</span>
 					</template>
@@ -64,7 +64,7 @@ const route = useRouter();
 
 const columns = [
 	{
-		title: '团单类型',
+		title: '团队类型',
 		dataIndex: 'teamTypeId',
 		key: 'teamTypeId',
 	},
