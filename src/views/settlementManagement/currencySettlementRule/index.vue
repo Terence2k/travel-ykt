@@ -279,11 +279,11 @@ const onSelectChange = (selectedRowKeys: any) => {
 onMounted(async () => {
 	getEnum();
 	initList();
-	navigatorBar.setNavigator(['通用结算规则']);
+	// navigatorBar.setNavigator(['通用结算规则']);
 });
-onBeforeUnmount(() => {
-	navigatorBar.clearNavigator();
-});
+// onBeforeUnmount(() => {
+// 	navigatorBar.clearNavigator();
+// });
 
 const getEnum = async () => {
 	await generaRulesOptions.getTeamTypeList();

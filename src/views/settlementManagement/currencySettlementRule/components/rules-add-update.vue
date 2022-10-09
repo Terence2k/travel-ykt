@@ -140,12 +140,17 @@ watch(
 		if (dialogVisible.value) {
 			await init();
 		}
-	}
+	},
+	{ deep: true }
 );
-watch(dialogVisible, (nVal) => {
-	console.log('dialogVisible:', nVal);
-	emit('update:modelValue', nVal);
-});
+watch(
+	dialogVisible,
+	(nVal) => {
+		console.log('dialogVisible:', nVal);
+		emit('update:modelValue', nVal);
+	},
+	{ deep: true }
+);
 </script>
 
 <style scoped>
