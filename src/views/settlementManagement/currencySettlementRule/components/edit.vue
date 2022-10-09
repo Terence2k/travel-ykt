@@ -245,7 +245,7 @@ const init = () => {
 const currencySettlementRuleDetail = async (id: number) => {
 	const result = await api.currencySettlementRuleDetail(id);
 	for (let key in formState) {
-		if (result[key]) {
+		if (result[key] || result[key] === 0) {
 			formState[key] = result[key];
 		}
 	}
