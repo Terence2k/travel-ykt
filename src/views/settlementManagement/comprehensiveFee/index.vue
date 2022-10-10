@@ -21,7 +21,7 @@
 	</div>
 	<div>
 		<a-spin size="large" :spinning="state.tableData.loading">
-			<CommonTable :dataSource="state.tableData.data" :columns="columns" rowKey="oid" :rowSelection="rowSelection">
+			<CommonTable :dataSource="state.tableData.data" :columns="columns" rowKey="oid" :row-selection="rowSelection">
 				<template #bodyCell="{ column, record }">
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
@@ -112,12 +112,17 @@ const state = reactive({
 });
 
 // 当前选择列
-const rowSelection = ref({
-	checkStrictly: false,
-	onChange: (selectedRowKeys: [], selectedRows: any) => {
-		state.selectedRowKeys = selectedRowKeys;
-	},
-});
+const rowSelection = computed(() => {
+	return {
+		onChange: (selectedRowKeys: [], selectedRows: any) => {
+			state.selectedRowKeys = selectedRowKeys;
+			console.log(state.selectedRowKeys);
+		},
+	}
+})
+const onSelect = (selectedRowKeys: [],record: any, selected: boolean, selectedRows: any[]) => {
+		console.log(selectedRowKeys);
+	}
 // 新增按钮
 const toAdd = () => {
 	route.push({ path: '/settlementManagement/comprehensiveFee/edit' });

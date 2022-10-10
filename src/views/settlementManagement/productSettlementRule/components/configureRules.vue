@@ -8,7 +8,7 @@
 			<CommonTable
 				:data-source="state.tableData.data"
 				:columns="columns"
-				:rowSelection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
+				:row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
 				rowKey="oid"
 				:scroll="{ x: '100%' }"
 			>
