@@ -37,7 +37,7 @@
 					<a-radio :value="1">价格</a-radio>
 				</a-radio-group>
 			</a-form-item>
-			<a-form-item label="收款数量" name="feeNumber">
+			<a-form-item label="收费金额" name="feeNumber">
 				<a-input v-model:value="formData.data.feeNumber" placeholder="请填写收款数量">
 					<template #addonAfter>
 						<div>
