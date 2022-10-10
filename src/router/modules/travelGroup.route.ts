@@ -42,6 +42,18 @@ export default [
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
+					},
+					{
+						path: 'travel_detail',
+						component: () => import('@/views/travelManagement/travelDetail.vue'),
+
+						name: 'travel_detail',
+						meta: {
+							title: '行程详情',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
 					}
 				]
 			},

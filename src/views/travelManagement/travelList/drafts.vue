@@ -4,6 +4,11 @@
       <template #button>
       </template>
       <template #bodyCell="{ column, text, index }">
+        <template v-if="column.key === 'itineraryNo'">
+					<div>
+					  <a @click="goToDetail(text)">{{text}}</a>
+					</div>
+				</template>
         <template v-if="column.key === 'index'">
 					<div>
 						{{(state.params.pageNo - 1) * (state.params.pageSize) + (index + 1)}}
@@ -42,6 +47,7 @@
 	import { GroupMode, GroupStatus } from '@/enum'
 
 	const travelStore = useTravelStore();
+	const router = useRouter()
 	const state = reactive({
 		total: 0,
 		params: {
@@ -109,6 +115,16 @@
 	const pageSideChange = () => {
 
 	}
+  const goToDetail = (val: any) => {
+    console.log('val：', val);
+		router.push({
+			name: 'travel_detail',
+			params: {
+        itineraryNo: val
+      }
+		})
+    
+  }
 	const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
 			console.log(record, selected, selectedRows);
 	}
