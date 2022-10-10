@@ -22,7 +22,7 @@ export default [
 				path: 'hotelBaseInfo',
 				name: 'hotelBaseInfo',
 				meta: {
-					title: '基础信息管理',
+					title: '房型管理',
 				},
 				children: [
 					{
@@ -117,6 +117,15 @@ export default [
 				component: () => import('@/views/hotelManagement/roomBooking/index.vue'),
 				meta: {
 					title: '房间预定管理',
+				},
+			},
+
+			{
+				path: 'systemRoomType',
+				name: 'systemRoomType',
+				component: () => import('@/views/hotelManagement/systemRoomType/index.vue'),
+				meta: {
+					title: '系统房型管理',
 				},
 			},
 		],

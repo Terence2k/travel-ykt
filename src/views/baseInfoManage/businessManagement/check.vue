@@ -95,11 +95,11 @@
               <a-radio :value="3">不通过</a-radio>
             </a-radio-group>
           </a-form-item>
-          <a-form-item label="用户角色" name="roldId" :colon="false">
+          <!-- <a-form-item label="用户角色" name="roldId" :colon="false">
             <a-select name="roldId" v-model:value="checkForm.roldId" placeholder="请选择所属角色" style="width:390px">
               <a-select-option v-for="item in rolesList" :value="item.oid">{{item.roleName}}</a-select-option>
             </a-select>
-          </a-form-item>
+          </a-form-item> -->
         </a-form>
       </div>
     </div>
@@ -122,7 +122,7 @@ import { message } from 'ant-design-vue';
 const checkFormRef = ref();
 const router = useRouter();
 const route = useRoute()
-const rolesList = ref([])
+// const rolesList = ref([])
 const back = () => {
   router.push({
     name: 'apply'
@@ -169,10 +169,10 @@ watch(() => route.params, (val: propsType) => {
   immediate: true
 })
 
-const getListByBusinessType = async () => {
+/* const getListByBusinessType = async () => {
   let data = await api.listByBusinessType({ status: 1, pageNo: 1, pageSize: 10000, availableRange: form.businessType })
   rolesList.value = data.content
-}
+} */
 
 const formRules: any = {
   auditResult: [{ required: true, trigger: 'blur', message: '请选择是否通过' }],
@@ -200,7 +200,7 @@ const submit = () => {
   })
 }
 onActivated(() => {
-  getListByBusinessType()
+  // getListByBusinessType()
 })
 </script>
 

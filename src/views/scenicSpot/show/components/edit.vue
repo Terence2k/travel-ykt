@@ -219,7 +219,7 @@ const initOption = () => {
 	}
 };
 onMounted(() => {
-	initPage();
+	// initPage();
 	initOption();
 	// 自定义面包屑
 });

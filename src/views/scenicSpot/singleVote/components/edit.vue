@@ -124,7 +124,7 @@ const formData = reactive({
 		orderTime: null, //预约时间 单位:时分
 		orderTimeRule: null, //预约时间规则:0-当日,1-次日
 		validTime: null, //有效期 1~7
-		optionalVerificationCount: null, //有效期 1~7
+		optionalVerificationCount: null, //非必核销次数【多点核销必传】
 		assistId: null, //辅助核销id
 		dayStock: null, //门票日库存
 		wateryPrice: null, //水牌价
@@ -147,7 +147,10 @@ const formData = reactive({
 		], //折扣集合
 	},
 });
-
+//类型
+const type = computed(() => {
+	return route.currentRoute.value?.query?.t;
+});
 // 表单
 const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
 	formData,
@@ -156,8 +159,8 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 		'data.orderTimeRule': [{ required: true, message: '请选择可预定时间' }],
 		'data.wateryPrice': [{ required: true, message: '请输入降水价' }],
 		'data.price': [{ required: true, message: '请输入价格' }],
-		'data.verificationType': [{ required: true, message: '请选择市' }],
-		'data.scenicId': [{ required: true, message: '请选择归属景区' }],
+		'data.verificationType': [{ required: true, message: 'verificationType' }],
+		'data.scenicId': [{ required: type.value === '1' ? true : false, message: '请选择归属景区' }],
 		'data.ticketName': [{ required: true, message: '请输入门票名称' }],
 		'data.ticketType': [{ required: true, message: '请选择门票分类' }],
 
@@ -166,8 +169,8 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 		// 'data.assistId': [{ required: true, message: '请选择市' }],
 		'data.dayStock': [{ required: true, message: '请输入门票库存' }],
 
-		'data.oneExplain': [{ required: true, message: '请输入' }],
-		'data.restsExplain': [{ required: true, message: '请输入' }],
+		// 'data.oneExplain': [{ required: true, message: '请输入' }],
+		// 'data.restsExplain': [{ required: true, message: '请输入' }],
 	})
 );
 //合并错误提示
@@ -176,10 +179,6 @@ const errorInfos = computed(() => {
 });
 const errorPriceInfos = computed(() => {
 	return mergeValidateInfo(toArray(validateInfos).splice(2, 3));
-});
-//类型
-const type = computed(() => {
-	return route.currentRoute.value?.query?.t;
 });
 
 const tickerType = computed(() => (route.currentRoute.value?.query?.t === '1' ? '单票：单点核销' : '单票：多点核销'));
@@ -196,6 +195,7 @@ const onSubmit = async () => {
 			console.log('error', err);
 		});
 };
+
 interface interfaceType {
 	wateryPrice: null | number;
 	price: null | number;
@@ -213,7 +213,6 @@ const save = async (params: object) => {
 	message.success(res);
 	route.push({ path: '/scenic-spot/singleVote/list' });
 };
-// const editInfo = async (params: any) => {};
 //删除
 const delRuleObj = (index: number) => {
 	formData.data.discountList.splice(index, 1);
@@ -250,7 +249,7 @@ const initEditPage = async () => {
 
 const initCreatePage = () => {
 	navigatorBar.setNavigator(['景区信息管理', '新增']);
-	formData.data.verificationType = route.currentRoute.value?.query?.t === '1' ? 'ONE' : 'MANY';
+	formData.data.verificationType = route.currentRoute.value?.query?.t === '1' ? 0 : 1;
 };
 
 onMounted(() => {

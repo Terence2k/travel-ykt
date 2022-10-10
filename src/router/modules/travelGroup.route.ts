@@ -43,8 +43,20 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
+					{
+						path: 'travel_detail',
+						component: () => import('@/views/travelManagement/travelDetail.vue'),
+						name: 'travel_detail',
+						meta: {
+							title: '行程详情',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
 				],
 			},
+
 			// Enterprise Information Management
 			{
 				path: 'enterpriseInfoManagement',
@@ -69,7 +81,7 @@ export default [
 						},
 					},
 					{
-						path: 'modifyEnterpriseInfo',
+						path: 'modifyEnterpriseInfo/name/:name/addressDetail/:addressDetail/legalPerson/:legalPerson/managementRange/:managementRange/registeredCapital/:registeredCapital/establishTime/:establishTime/businessTerm/:businessTerm/contactName/:contactName/phone/:phone/accountType/:accountType/bankAccountName/:bankAccountName/accountAddress/:accountAddress/bankAccount/:bankAccount/businessLicenseUrl/:businessLicenseUrl/manageUrl/:manageUrl/oid/:oid',
 						component: () => import('@/views/enterpriseInfoManagement/modifyEnterpriseInfo.vue'),
 						name: 'modifyEnterpriseInfo',
 						meta: {

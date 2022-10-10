@@ -1,7 +1,33 @@
 
 .wrapper-roomBookingTable{
 
+  :deep{
+    .ant-form-item-label > label {
+        width:125px;
+    }
+    .ant-table-tbody > tr > td{
+      padding: 0px !important;
+    }
   
+    .ant-table-thead > tr > th{
+      padding: 0px !important;
+    }
+  
+    .flex-container{
+      position: relative;
+      top:1px;
+      display: flex;
+      align-items: center;
+      .tip{
+        font-size:11px;
+        display: inline-block;
+        margin-left: 10px;
+        color:#C9C9C9FF;
+        align-self: flex-end;
+      }
+    }
+    
+  }
 
   .flex-container{
     display: flex;
@@ -24,16 +50,16 @@
     padding: 0px !important;
   }
   .cell-header{
-    display: flex;
-    
+    display: inline-flex;
+    padding: 16px 16px;
     .item{
       width:60px;
       margin-right: 20px;
     }
   }
   .cell-body{
-    display: flex;
-    padding: 16px 16px;
+    display: inline-flex;
+    padding: 16px 20px;
     &.audit{
       background-color:#F466561A;
     }
@@ -57,34 +83,33 @@
       cursor: pointer;
     }
   }
-
-
-
 }
+
 
 :deep{
   .ant-form-item-label > label {
       width:125px;
   }
-
-
   .ant-table-tbody > tr > td{
     padding: 0px !important;
   }
 
-  .flex-container{
-    position: relative;
-    top:1px;
-    display: flex;
-    align-items: center;
-    .tip{
-      font-size:11px;
-      display: inline-block;
-      margin-left: 10px;
-      color:#C9C9C9FF;
-      align-self: flex-end;
-    }
+  .ant-table-thead > tr > th{
+    padding: 0px !important;
   }
-  
+
 }
+
+.flex-container{
+  display: flex;
+  align-items:center;
+  .tip{
+    font-size:11px;
+    display: inline-block;
+    margin-left: 10px;
+    color:#C9C9C9FF;
+    align-self: flex-end;
+  }
+}
+
 

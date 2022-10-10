@@ -90,6 +90,18 @@
         <td class="key">公司账号</td>
         <td class="value">{{ details.bankAccount }}</td>
       </tr>
+      <tr class="row">
+        <td class="key">营业执照</td>
+        <td class="value">
+          <a-image width="200px" :src="details.businessLicenseUrl" />
+        </td>
+      </tr>
+      <tr class="row">
+        <td class="key">经营许可证</td>
+        <td class="value">
+          <a-image width="200px" :src="details.manageUrl" />
+        </td>
+      </tr>
     </table>
     <div class="btn_box">
       <span class="btn" @click="goTo">信息有变更，立即更新</span>
@@ -102,10 +114,23 @@ import { useRouter, useRoute } from 'vue-router';
 import api from '@/api';
 const router = useRouter();
 const route = useRoute();
-const goTo = () => {
-  router.push({
-    name: 'modifyEnterpriseInfo'
-  })
+type detailsType = {
+  name?: string,
+  addressDetail?: string,
+  legalPerson?: string,
+  managementRange?: string,
+  registeredCapital?: string,
+  establishTime?: string,
+  businessTerm?: string,
+  contactName?: string,
+  phone?: string,
+  accountType?: number | string,
+  bankAccountName?: string,
+  accountAddress?: string,
+  bankAccount?: string,
+  businessLicenseUrl?: string,
+  manageUrl?: string,
+  oid?: string | number
 }
 type stateType = {
   baseInfo: {
@@ -114,21 +139,7 @@ type stateType = {
     createTime?: string,
     group?: string
   }
-  details: {
-    name?: string,
-    addressDetail?: string,
-    legalPerson?: string,
-    managementRange?: string,
-    registeredCapital?: string,
-    establishTime?: string,
-    businessTerm?: string,
-    contactName?: string,
-    phone?: string,
-    accountType?: number | string,
-    bankAccountName?: string,
-    accountAddress?: string,
-    bankAccount?: string
-  }
+  details: detailsType
 }
 const state = reactive<stateType>({
   baseInfo: {},
@@ -142,6 +153,20 @@ const initOpeion = async () => {
   state.baseInfo.createTime = createTime
   state.baseInfo.group = group
   state.details = companyBO
+  state.details.manageUrl = "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+}
+const goTo = () => {
+  let newObj: any = {}
+  let key: keyof detailsType
+  for (key in state.details) {
+    if (Object.prototype.hasOwnProperty.call(state.details, key)) {
+      newObj[key] = encodeURIComponent(JSON.stringify(state.details[key]));
+    }
+  }
+  router.push({
+    name: 'modifyEnterpriseInfo',
+    params: newObj
+  })
 }
 onMounted(() => {
   initOpeion()
