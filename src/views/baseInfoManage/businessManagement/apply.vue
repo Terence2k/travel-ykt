@@ -34,7 +34,7 @@
 			</template>
 			<template v-if="column.key === 'action'">
 				<div class="action-btns">
-					<a @click="goTo(record, 'check')" v-show="checkVisible(record.auditStatus)">审核</a>
+					<a @click="goTo(record, 'check')" v-show="checkVisible(record.auditStatus) && record?.auditState">审核</a>
 					<a-popconfirm title="确认重制密码吗?重制后默认密码为：123456" ok-text="确认" cancel-text="取消"
 						@confirm="resetPassword(record.oid)">
 						<a v-show="restVisible(record.auditStatus)">重置密码</a>
@@ -196,9 +196,9 @@ const pageSideChange = (current: number, size: number) => {
 	onSearch();
 }
 
-const onSearch = () => {
-	api.findCompanyList(state.tableData.param).then((res: any) => {
-		res.content.forEach((item: any) => {
+const onSearch = async () => {
+	/* api.findCompanyList(state.tableData.param).then((res: any) => {
+		res.content.forEach(async (item: any) => {
 			if (item.auditStatus === 1) {
 				item.auditStatusText = '待审核'
 			} else if (item.auditStatus === 2) {
@@ -206,10 +206,39 @@ const onSearch = () => {
 			} else if (item.auditStatus === 3) {
 				item.auditStatusText = '审核不通过'
 			}
+			console.log(item.auditUuid);
+			if (item.auditUuid) {
+				let res = await api.getAuditButton({ uuid: item.auditUuid })
+				if (res) {
+					item.auditState = res
+				}
+			}
 		})
 		state.tableData.data = res.content;
 		state.tableData.total = res.total;
+		console.log(state.tableData.data,'#######');
+	}) */
+	let res = await api.findCompanyList(state.tableData.param)
+	await res.content.forEach((item: any) => {
+		return new Promise<void>(async (resolve, reject) => {
+			if (item.auditStatus === 1) {
+				item.auditStatusText = '待审核'
+			} else if (item.auditStatus === 2) {
+				item.auditStatusText = '审核通过'
+			} else if (item.auditStatus === 3) {
+				item.auditStatusText = '审核不通过'
+			}
+			console.log(item.auditUuid);
+			if (item.auditUuid) {
+				let res1 = await api.getAuditButton({ uuid: item.auditUuid })
+				if (res1) {
+					item.auditState = res1
+				}
+			}
+		})
 	})
+	state.tableData.data = res.content;
+	state.tableData.total = res.total;
 }
 interface addInterface {
 	row?: any

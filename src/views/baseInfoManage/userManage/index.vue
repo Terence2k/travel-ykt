@@ -9,16 +9,7 @@
       </a-select>
     </search-item> -->
     <search-item label="角色名称">
-      <a-select
-        ref="select"
-        mode="multiple"
-        placeholder="请选择角色"
-        v-model:value="state.tableData.param.roleIds"
-      >
-        <a-select-option v-for="item in state.optionRoleList" :value="item.roleId">
-          {{ item.roleName }}
-        </a-select-option>
-      </a-select>
+      <a-input v-model:value="state.tableData.param.roleName" placeholder="请输入角色名称"/>
     </search-item>
     <search-item label="状态">
       <a-select
@@ -68,13 +59,11 @@
   <AddUpdate 
     v-model="state.operationModal.isAddOrUpdate"
     :params="state.params"
-    :roleList="state.optionRoleList"
     @onSearch="onSearch"
     @cancel="cancel"/>
   <Detail
     v-model="state.operationModal.showDetails"
     :params="state.params"
-    :roleList="state.optionRoleList"
     @cancel="cancel"/>
 </template>
 
@@ -136,7 +125,7 @@
         pageNo: 1,
         pageSize: 10,
         keyWord: '',
-        roleIds: [],
+        roleName: '',
         status: null,
       },
       roleParam: {

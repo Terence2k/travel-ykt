@@ -45,6 +45,18 @@ export const travelManagement = {
         });
     },
 
+    getItineraryDetail(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/detail`,
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            method: 'get',
+            data,
+            showLoading: false
+        });
+    },
+
     
     
 }

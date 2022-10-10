@@ -24,7 +24,7 @@
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
 								<a href="javascript:;" @click="toEdit(record)">编辑</a>
-								<a href="javascript:;">删除</a>
+								<a href="javascript:;" @click="del(record)">删除</a>
 								<a href="javascript:;" v-if="record.putaway === '上架'" @click="open(record)"> 下架申请</a>
 							</div>
 						</template>
@@ -41,6 +41,7 @@
 			</div>
 			<Create ref="createModelRef" />
 		</a-spin>
+		<DelModal :params="{ title: '删除', content: '是否确定该条数据' }" v-model="delShow" @submit="delSubmit" @cancel="delCancel" />
 	</div>
 </template>
 
@@ -55,6 +56,7 @@ import AddPopup from './addPopup.vue';
 import Modal from '@/components/common/BaseModal.vue';
 import Audit from './components/aduit.vue';
 import Create from './components/create.vue';
+import DelModal from '@/components/common/DelModal.vue';
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 const route = useRouter();
@@ -109,6 +111,24 @@ const toEdit = (record: any) => {
 	console.log(record);
 
 	route.push({ path: '/scenic-spot/singleVote/edit', query: { t: record.ticketType, oid: record.oid } });
+};
+// 删除提示
+const delShow = ref(false);
+const delOid = ref<null | number>();
+const del = (record: any) => {
+	delShow.value = true;
+	delOid.value = record.oid;
+	// emits('del-verification-obj', index);
+};
+const delSubmit = () => {
+	// emits('del-verification-obj', toRaw(delOid.value));
+	// console.log(delOid.value);
+	api.singleVoteDel(delOid.value);
+	delCancel();
+};
+const delCancel = () => {
+	delShow.value = false;
+	delOid.value = null;
 };
 const cancel = () => {
 	modelValue.value = false;
