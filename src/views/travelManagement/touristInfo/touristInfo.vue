@@ -41,7 +41,7 @@
 								</a-form-item>
 								
 								<template v-else>
-									{{ text }}
+									{{ column.data.filter(it => it.codeValue === text)[0].name }}
 								</template>
 							</div>
 						</template>
@@ -61,7 +61,7 @@
 								</template>
 							</div>
 						</template>
-						<template v-if="column.key === 'sourceAddress'">
+						<template v-if="column.key === 'addressId'">
 							<a-form-item
 								v-if="editableData[record.key]"
 								:name="[record.key, column.key]">
@@ -69,11 +69,12 @@
 									v-if="editableData[record.key]"
 									:load-data="loadData"
 									v-model:value="editableData[record.key][column.key]" 
-									:options="cityOptions" />
+									:options="cityOptions"
+									@change="(val, option) => handleChange(val, option, record.key)" />
 							</a-form-item>
 							
 							<template v-else>
-								{{ text }}
+								{{ record.sourceAddressStr }}
 							</template>
 						</template>
 						<template v-if="column.key === 'healthCode'">
@@ -125,7 +126,7 @@ const {
 	add,
 	rulesRef,
 	formRef,
-	loadData } = useTouristInfo(props, emits)
+	loadData, handleChange } = useTouristInfo(props, emits)
 </script>
 <style lang="less" scoped>
     .action-btn {

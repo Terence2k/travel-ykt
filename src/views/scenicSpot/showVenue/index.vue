@@ -1,12 +1,15 @@
 <template>
 	<CommonSearch>
 		<SearchItem label="输入搜索">
-			<a-input placeholder="门票名称/关键词" style="width: 200px" />
+			<a-input placeholder="演出名称/关键词" style="width: 200px" />
 		</SearchItem>
-		<SearchItem label="归属景区">
+		<SearchItem label="场馆分类">
 			<a-select ref="select" style="width: 200px" placeholder="请选择">
 				<a-select-option value="all">all</a-select-option>
 			</a-select>
+		</SearchItem>
+		<SearchItem label="开始时间">
+			<a-date-picker :show-time="{ format: 'HH:mm:ss' }" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" v-model:value="state.time" />
 		</SearchItem>
 		<template #button>
 			<a-button>查询</a-button>
@@ -22,7 +25,6 @@
 					<div class="action-btns">
 						<a href="javascript:;" @click="toEditPage()">编辑</a>
 						<a href="javascript:;" @click="del(index)">删除</a>
-						<a>下架申请</a>
 					</div>
 				</template>
 			</template>
@@ -63,14 +65,19 @@ const columns = [
 		key: 'name',
 	},
 	{
-		title: '演出票名称',
+		title: '演出名称',
 		dataIndex: 'age',
 		key: 'age',
 	},
 	{
-		title: '归属景区',
+		title: '演出场馆',
 		dataIndex: 'address',
 		key: 'address',
+	},
+	{
+		title: '归属景区',
+		dataIndex: 'address2',
+		key: 'address2',
 	},
 	{
 		title: '审核状态',
@@ -78,7 +85,12 @@ const columns = [
 		key: 'address2',
 	},
 	{
-		title: '平台上下架状态',
+		title: '开始时间',
+		dataIndex: 'address3',
+		key: 'address3',
+	},
+	{
+		title: '周期',
 		dataIndex: 'address3',
 		key: 'address3',
 	},
@@ -91,6 +103,7 @@ const columns = [
 ];
 
 const state = reactive({
+	time: '',
 	tableData: {
 		data: [],
 		total: 400,
@@ -115,7 +128,7 @@ const pageSideChange = (current: number, size: number) => {
 };
 //编辑
 const toEditPage = () => {
-	route.push({ path: '/scenic-spot/showTickets/show_edit' });
+	// route.push({ path: '/scenic-spot/showTickets/show_edit' });
 };
 //新增
 const add = () => {

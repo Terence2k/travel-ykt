@@ -532,7 +532,9 @@ const saveModalInfo = () => {
 			stockNum: modalState.baseInfo?.stockNum,
 		})
 		.then((response) => {
+			modalState.visible = false;
 			console.log('提交审核 返回：', response);
+			getHotelRoomTypeStockTableInfo(props?.hotelId);
 		});
 };
 
@@ -540,6 +542,8 @@ const passModalInfo = () => {
 	if (modalState.baseInfo?.oid) {
 		api.hotelRoomStockPass(modalState.baseInfo?.oid).then((res: any) => {
 			console.log('审核通过 返回：', res);
+			modalState.visible = false;
+			getHotelRoomTypeStockTableInfo(props?.hotelId);
 		});
 	}
 };
@@ -548,6 +552,8 @@ const failModalInfo = () => {
 	if (modalState.baseInfo?.oid) {
 		api.hotelRoomStockFailed(modalState.baseInfo?.oid).then((res: any) => {
 			console.log('审核不通过 返回：', res);
+			modalState.visible = false;
+			getHotelRoomTypeStockTableInfo(props?.hotelId);
 		});
 	}
 };

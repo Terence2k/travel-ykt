@@ -13,8 +13,9 @@ interface DataItem {
 	guideName: string,
 	guidePhone: string,
 	guideType: string | number,
-	guideCertificateNo: string,
-	guideOid: string | number
+	guideCertificateNo: string,	
+	guideOid: string | number,
+	belongTravelOid: string
 }
 
 const rules = {
@@ -146,11 +147,12 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 			state.editableData[key] = {
 				...state.editableData[key],
 				guidePhone: item.phone,
-				guideType: item.guideType,
+				belongTravelOid: item.belongTravelAgencyId,
+				guideType: item.guideType || 2,	
 				guideCertificateNo: item.guideCertificateNo,
-				guideOid: item.oid,
+				guideOid: item.oid,	
 				belongTravelAgencyName: item.belongTravelAgencyName,
-				guideName: item.guideName
+				guideName: item.guideName	
 			}
 			methods.copyData(key)
 		}

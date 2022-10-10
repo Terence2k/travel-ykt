@@ -35,7 +35,7 @@
 								</a-form-item>
 								
 								<template v-else>
-									{{ text }}
+									{{ column.data.filter(it => it.codeValue === text)[0].name }}
 								</template>
 							</div>
 						</template>
@@ -63,13 +63,14 @@
                                         <a-range-picker
                                             v-model:value="editableData[record.key][column.key]"
                                             show-time
-                                            format="YYYY-MM-DD HH:mm"
-                                            value-format="YYYY-MM-DD HH:mm"
+                                            format="YYYY-MM-DD HH:mm:ss"
+                                            value-format="YYYY-MM-DD HH:mm:ss"
+											@change="(event) => handleTime(event, record.key)"
                                         />
 								</a-form-item>
 								
 								<template v-else>
-									{{ text }}
+									{{ record.useStartDate + '-' + record.useEndDate }}
 								</template>
 							</div>
 						</template>
@@ -112,7 +113,7 @@ const {
 	cityOptions,
 	add,
 	rulesRef,
-	formRef } = useTrafficInfo(props, emits)
+	formRef, handleTime } = useTrafficInfo(props, emits)
 </script>
 <style lang="less" scoped>
 	::v-deep(.ant-upload-select-picture-card) {

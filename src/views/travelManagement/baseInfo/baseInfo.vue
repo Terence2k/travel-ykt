@@ -105,8 +105,9 @@
 import { getUserInfo } from '@/utils/util';
 import { RouteType } from '@/enum';
 import api from '@/api/index';
+
 interface FormState {
-	groupType: string | number;
+	groupType: any;
 	contactPhone: string;
 	subTravelOperatorOid: string;
 	travelOid: string;
@@ -127,6 +128,8 @@ interface TeamType {
 	subTravelList: Array<any>;
 	travelOperatorList: Array<any>;
 }
+
+const route = useRoute()
 const userInfo = getUserInfo()
 const page = reactive({
 	teamType: {
@@ -170,7 +173,7 @@ const rulesRef = {
 };
 
 const formState = reactive<FormState>({
-	groupType: 1,
+	groupType: route.query.type,
 	contactPhone: userInfo.mobile,
 	subTravelOperatorOid: '',
 	travelOid: userInfo.sysCompany.oid,

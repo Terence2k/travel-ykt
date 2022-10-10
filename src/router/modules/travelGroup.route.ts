@@ -81,7 +81,7 @@ export default [
 						}
 					},
 					{
-						path: 'modifyEnterpriseInfo',
+						path: 'modifyEnterpriseInfo/name/:name/addressDetail/:addressDetail/legalPerson/:legalPerson/managementRange/:managementRange/registeredCapital/:registeredCapital/establishTime/:establishTime/businessTerm/:businessTerm/contactName/:contactName/phone/:phone/accountType/:accountType/bankAccountName/:bankAccountName/accountAddress/:accountAddress/bankAccount/:bankAccount/businessLicenseUrl/:businessLicenseUrl/manageUrl/:manageUrl/oid/:oid',
 						component: () => import('@/views/enterpriseInfoManagement/modifyEnterpriseInfo.vue'),
 						name: 'modifyEnterpriseInfo',
 						meta: {
