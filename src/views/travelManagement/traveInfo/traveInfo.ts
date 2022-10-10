@@ -10,10 +10,12 @@ interface DataItem {
 	name5: string,
 	name6: string
 }
-export function useTraveInfo(): Record<string, any> {
+export function useTraveInfo(props: any, emits: any): Record<string, any> {
+	const { onCheck } = toRefs(props);
 	const state = reactive<{editableData: UnwrapRef<Record<string, DataItem>>, [k:string]: any}>({
 		editableData: {},
 		addHotelPop: false,
+		addTicketPop: false,
 		tableData: [
 			{
 				key: '1',

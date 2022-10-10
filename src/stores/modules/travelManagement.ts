@@ -39,7 +39,8 @@ export const useTravelStore = defineStore({
 		IDCard: [],
 		specialId: [],
 		trafficType: [],
-		trafficColor: []
+		trafficColor: [],
+		touristList: []
 	}),
 	getters: {
 		// count(): string {
@@ -72,6 +73,9 @@ export const useTravelStore = defineStore({
 					this.trafficColor = res;
 					break;
 			}
+		},
+		setTouristList(list: any) {
+			this.touristList = list
 		}
 	},
 });

@@ -41,7 +41,7 @@
 								</a-form-item>
 								
 								<template v-else>
-									{{ column.data.filter(it => it.codeValue === text)[0].name }}
+									{{ column.data.filter(it => it.codeValue === text)[0]?.name }}
 								</template>
 							</div>
 						</template>
