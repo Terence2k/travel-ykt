@@ -1,15 +1,15 @@
 <template>
-	<div class="hotelStar-modal-wrapper">
+	<div class="systemRoomType-modal-wrapper">
 		<BaseModal :title="options.title" v-model="modelValue" @close="handleOk">
 			<a-form :model="formValidate" :rules="rules" :label-col="{ span: 5 }" :wrapper-col="{ span: 16, offset: 1 }" labelAlign="left">
-				<a-form-item label="酒店星级" name="starCode">
-					<a-input v-model:value="formValidate.starCode" />
+				<a-form-item label="系统房型" name="sysRoomTypeCode">
+					<a-input v-model:value="formValidate.sysRoomTypeCode" />
 				</a-form-item>
-				<a-form-item label="诚信指导价" name="price">
-					<a-input type="number" v-model:value="formValidate.price" />
+				<a-form-item label="最多入住人数" name="roomOccupancyNum">
+					<a-input type="number" v-model:value="formValidate.roomOccupancyNum" />
 				</a-form-item>
-				<a-form-item label="状态" name="ratedStatus">
-					<a-radio-group v-model:value="formValidate.ratedStatus">
+				<a-form-item label="状态" name="sysRoomTypeStatus">
+					<a-radio-group v-model:value="formValidate.sysRoomTypeStatus">
 						<a-radio :value="1">启用</a-radio>
 						<a-radio :value="0">禁用</a-radio>
 					</a-radio-group>
@@ -43,23 +43,21 @@ const dialogVisible = ref(false);
 const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
 const formValidate: Ref<Record<string, any>> = ref({});
 const options = reactive({
-	title: '新增酒店星级',
+	title: '新增系统房型',
 });
 const rules: any = {
-	starCode: [{ required: true, trigger: 'blur', message: '请输入酒店星级' }],
-	price: [{ required: true, trigger: 'blur', message: '请输入最低价格，单位（元）' }],
-	ratedStatus: [{ required: true, trigger: 'change', message: '请选择状态' }],
+	sysRoomTypeCode: [{ required: true, trigger: 'blur', message: '请输入系统房型' }],
+	roomOccupancyNum: [{ required: true, trigger: 'blur', message: '请输入最多入住人数' }],
+	sysRoomTypeStatus: [{ required: true, trigger: 'change', message: '请选择状态' }],
 };
 
 const save = () => {
 	console.log('formValidate:', formValidate.value);
 	if (props.params?.oid) {
 		api
-			.editHotelStarData({
+			.editSystemRoomType({
 				oid: formValidate.value.oid,
-				price: formValidate.value.price * 100,
-				starCode: formValidate.value.starCode,
-				ratedStatus: formValidate.value.ratedStatus,
+				...formValidate.value,
 			})
 			.then((res: any) => {
 				console.log('res:', res);
@@ -72,7 +70,7 @@ const save = () => {
 			});
 	} else {
 		api
-			.addHotelStarData(formValidate.value)
+			.addSystemRoomType(formValidate.value)
 			.then((res: any) => {
 				console.log('res:', res);
 				dialogVisible.value = false;
@@ -89,10 +87,10 @@ const init = async () => {
 	console.log('params', props.params);
 	formValidate.value = {};
 	if (props.params?.oid) {
-		formValidate.value = { ...props.params, price: props.params.price / 100 };
-		options.title = '编辑酒店星级';
+		formValidate.value = { ...props.params };
+		options.title = '编辑系统房型';
 	} else {
-		options.title = '新增酒店星级';
+		options.title = '新增系统房型';
 	}
 };
 

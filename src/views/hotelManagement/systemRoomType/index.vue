@@ -1,6 +1,5 @@
 <template>
-	<div class="hotelStar-wrapper">
-		<!-- <div class="title">星级管理</div> -->
+	<div class="systemRoomType-wrapper">
 		<div class="content-container">
 			<div class="search-bar">
 				<span class="field-select item">状态</span>
@@ -14,11 +13,6 @@
 				</div>
 				<div class="table-container">
 					<CommonTable :dataSource="dataSource" :columns="columns">
-						<!-- <template #button>
-							<div class="flex-container">
-								<a-button class="button-create-item" >新增</a-button>
-							</div>
-						</template> -->
 						<template #bodyCell="{ column, record }">
 							<template v-if="column.dataIndex === 'price'">
 								<div class="cell-price">
@@ -28,7 +22,7 @@
 							<template v-if="column.dataIndex === 'actions'">
 								<div class="cell-actions">
 									<span class="item" @click="addOrUpdate({ row: record, handle: 'update' })">编辑</span>
-									<span class="item" @click="toggleHotelStarStatus(record)">{{ record?.ratedStatus === 0 ? '启用' : '禁用' }}</span>
+									<span class="item" @click="toggleSysRoomTypeStatus(record)">{{ record?.sysRoomTypeStatus === 0 ? '启用' : '禁用' }}</span>
 								</div>
 							</template>
 						</template>
@@ -42,7 +36,8 @@
 						@showSizeChange="pageSideChange"
 					>
 					</CommonPagination>
-					<HotelStarAddUpdate v-model="tableState.operationModal.isAddOrUpdate" :params="tableState.params" :methods="methods"> </HotelStarAddUpdate>
+					<SystemRoomTypeAddUpdate v-model="tableState.operationModal.isAddOrUpdate" :params="tableState.params" :methods="methods">
+					</SystemRoomTypeAddUpdate>
 				</div>
 			</div>
 		</div>
@@ -55,7 +50,7 @@ import type { SelectProps } from 'ant-design-vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
-import HotelStarAddUpdate from './components/hotelStar-add-update/hotelStar-add-update.vue';
+import SystemRoomTypeAddUpdate from './components/systemRoomType-add-update/systemRoomType-add-update.vue';
 import api from '@/api';
 
 const status = ref('');
@@ -80,21 +75,21 @@ const columns: TableColumnsType = [
 		width: 100,
 	},
 	{
-		title: '酒店星级',
-		dataIndex: 'starCode',
-		key: 'starCode',
+		title: '系统房型',
+		dataIndex: 'sysRoomTypeCode',
+		key: 'sysRoomTypeCode',
 		width: '25%',
 	},
 	{
-		title: '诚信指导价',
-		dataIndex: 'price',
-		key: 'price',
+		title: '最大入住人数',
+		dataIndex: 'roomOccupancyNum',
+		key: 'roomOccupancyNum',
 		width: 150,
 	},
 	{
 		title: '状态',
-		dataIndex: 'ratedStatusName',
-		key: 'ratedStatusName',
+		dataIndex: 'sysRoomTypeStatusName',
+		key: 'sysRoomTypeStatusName',
 		width: '40%',
 	},
 	{
@@ -114,7 +109,7 @@ const tableState = reactive({
 		param: {
 			pageNo: 1,
 			pageSize: 10,
-			ratedStatus: status,
+			sysRoomTypeStatus: status,
 		},
 	},
 	params: {},
@@ -139,7 +134,7 @@ const pageSideChange = (current: number, size: number) => {
 
 const onSearch = () => {
 	api
-		.getHotelStarTableInfo(tableState.tableData.param)
+		.getSystemRoomType(tableState.tableData.param)
 		.then((res: any) => {
 			console.log('res:', res);
 			tableState.tableData.data = res.content;
@@ -167,11 +162,11 @@ const addOrUpdate = (param: any) => {
 	tableState.operationModal.isAddOrUpdate = true;
 };
 
-const toggleHotelStarStatus = (param: any) => {
+const toggleSysRoomTypeStatus = (param: any) => {
 	console.info(param);
-	if (param.ratedStatus === 0) {
+	if (param.sysRoomTypeStatus === 0) {
 		api
-			.enableHotelStar({}, param.oid)
+			.enableSystemRoomType(param.oid)
 			.then((res) => {
 				console.log(res);
 				onSearch();
@@ -181,7 +176,7 @@ const toggleHotelStarStatus = (param: any) => {
 			});
 	} else {
 		api
-			.disableHotelStar({}, param.oid)
+			.disableSystemRoomType(param.oid)
 			.then((res) => {
 				console.log(res);
 				onSearch();

@@ -1,20 +1,20 @@
 <template>
 	<CommonSearch>
 		<search-item label="归属景区">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.scenicId" style="width: 200px" placeholder="请选择归属景区">
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.scenicId" style="width: 180px" placeholder="请选择归属景区">
 				<a-select-option v-for="item in state.scenicList" :value="item['ticketId']" :key="item['ticketName']">{{ item.ticketName }}</a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="产品名称">
-			<a-input v-model:value="state.tableData.param.productName" placeholder="请输入费用名称" allowClear />
+			<a-input v-model:value="state.tableData.param.productName" placeholder="请输入费用名称" allowClear style="width: 180px" />
 		</search-item>
 		<search-item label="产品类型">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.productSonType" style="width: 200px" placeholder="请选择结算产品">
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.productSonType" style="width: 180px" placeholder="请选择结算产品">
 				<a-select-option :value="item.value" v-for="item in state.productSonTypeList" :key="item.name">{{ item.name }}</a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="是否有结算规则">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.hasProductRule" style="width: 200px" placeholder="请选择结算产品">
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.hasProductRule" style="width: 180px" placeholder="请选择结算产品">
 				<a-select-option :value="true">是</a-select-option>
 				<a-select-option :value="false">否</a-select-option>
 			</a-select>
@@ -42,8 +42,8 @@
 						<span v-else>否</span>
 					</template>
 					<!-- 产品类型 -->
-					<template v-if="column.key === 'productType'">
-						<span>{{ getProductTypeName(record.productType) }}</span>
+					<template v-if="column.key === 'productSonType'">
+						<span>{{ getProductTypeName(record.productSonType) }}</span>
 					</template>
 				</template>
 			</CommonTable>
@@ -83,8 +83,8 @@ const columns = [
 	},
 	{
 		title: '产品类型',
-		dataIndex: 'productType',
-		key: 'productType',
+		dataIndex: 'productSonType',
+		key: 'productSonType',
 	},
 	{
 		title: '是否有结算规则',
@@ -105,14 +105,14 @@ const state = reactive({
 				name: 123456,
 			},
 		],
-		total: 400,
+		total: 11,
 		loading: false,
 		param: {
-			scenicId: '', //关联景区id
-			productName: '', //产品名称
+			scenicId: null, //关联景区id
+			productName: null, //产品名称
 			productType: 1, //产品类型 1-景区 2-酒店 3-餐饮
-			productSonType: '', //产品类型下拉列表，UNITE-联票 ONE-单票 SHOW-演出票
-			hasProductRule: '', //是否有结算规则 true-是 false-否
+			productSonType: null, //产品类型下拉列表，UNITE-联票 ONE-单票 SHOW-演出票
+			hasProductRule: null, //是否有结算规则 true-是 false-否
 			pageNo: 1, //页号
 			pageSize: 10, //页大小
 		},
@@ -138,13 +138,16 @@ const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
 	state.tableData.param.pageNo = val;
 	// onSearch();
+	initList();
 };
 //翻页
 const pageSideChange = (current: number, size: number) => {
 	console.log('changePageSize:', size);
 	state.tableData.param.pageSize = size;
 	// onSearch();
+	initList();
 };
+const generaRulesOptions = useGeneraRules();
 //查看
 const toConfigure = (record: any) => {
 	console.log(record, `record`);
@@ -184,16 +187,14 @@ onMounted(() => {
 	getEnum();
 });
 
-const generaRulesOptions = useGeneraRules();
-
 const getEnum = async () => {
 	await generaRulesOptions.getTeamTypeList();
 	await productRuleLessInfos();
 };
-const getProductTypeName = computed(() => (value: number) => {
-	const idx = generaRulesOptions.productTypeList.findIndex((item) => item.value === value);
+const getProductTypeName = computed(() => (value: string) => {
+	const idx = state.productSonTypeList.findIndex((item) => item.value === value);
 	if (idx !== -1) {
-		return generaRulesOptions.productTypeList[idx]['name'];
+		return state.productSonTypeList[idx]['name'];
 	}
 	return;
 });

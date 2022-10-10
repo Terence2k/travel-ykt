@@ -152,9 +152,8 @@ const state = reactive({
 
 //搜索
 const onHandleCurrentChange = (val: number) => {
-	console.log('change:', val);
 	state.tableData.param.pageNo = val;
-	// onSearch();
+	initList();
 };
 //翻页
 const pageSideChange = (current: number, size: number) => {
@@ -173,12 +172,7 @@ const initList = async () => {
 	state.tableData.loading = false;
 };
 
-const status: any = {
-	TO_AUDIT: '待审核',
-	PASS: '审核通过',
-	AUDITING: '审核中',
-	NO_PASS: '审核不通过',
-};
+const status = ['待审核', '审核中', '审核通过', '审核不通过'];
 
 const ticketType: any = {
 	0: '儿童',
@@ -191,7 +185,7 @@ const dealData = (params: [any]) => {
 		i.ticketTypes = ticketType[i.ticketType];
 		i.auditStatus = status[i.auditStatus];
 		i.putaway = i.putaway ? '上架' : '下架';
-		i.verificationType = i.verificationType === 'MANY' ? '多点核销' : i.verificationType === 'ONE' ? '单点核销' : '';
+		i.verificationType = i.verificationType === 1 ? '多点核销' : i.verificationType === 0 ? '单点核销' : '';
 		return i;
 	});
 

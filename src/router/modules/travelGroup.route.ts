@@ -29,7 +29,7 @@ export default [
 							// icon: 'liulanqi',
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
-						}
+						},
 					},
 					{
 						path: 'add_travel',
@@ -46,7 +46,6 @@ export default [
 					{
 						path: 'travel_detail',
 						component: () => import('@/views/travelManagement/travelDetail.vue'),
-
 						name: 'travel_detail',
 						meta: {
 							title: '行程详情',
@@ -54,9 +53,10 @@ export default [
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
-					}
-				]
+					},
+				],
 			},
+
 			// Enterprise Information Management
 			{
 				path: 'enterpriseInfoManagement',
@@ -78,7 +78,7 @@ export default [
 							// icon: 'liulanqi',
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
-						}
+						},
 					},
 					{
 						path: 'modifyEnterpriseInfo/name/:name/addressDetail/:addressDetail/legalPerson/:legalPerson/managementRange/:managementRange/registeredCapital/:registeredCapital/establishTime/:establishTime/businessTerm/:businessTerm/contactName/:contactName/phone/:phone/accountType/:accountType/bankAccountName/:bankAccountName/accountAddress/:accountAddress/bankAccount/:bankAccount/businessLicenseUrl/:businessLicenseUrl/manageUrl/:manageUrl/oid/:oid',
@@ -89,9 +89,9 @@ export default [
 							// icon: 'liulanqi',
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
-						}
+						},
 					},
-				]
+				],
 			},
 			// tourGuideManage
 			{
@@ -114,7 +114,7 @@ export default [
 							// icon: 'liulanqi',
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
-						}
+						},
 					},
 					{
 						path: 'addTourGuide',
@@ -125,10 +125,34 @@ export default [
 							// icon: 'liulanqi',
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
-						}
+						},
 					},
-				]
-			}
+				],
+			},
+			{
+				path: 'travelTtemplate',
+				name: 'travelTtemplate',
+				meta: {
+					title: '行程模板管理',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					// isDetail: true, // 在左侧的导航栏不会展示
+				},
+				redirect: '/travel/travelTtemplate/templateList',
+				children: [
+					{
+						path: 'templateList',
+						component: () => import('@/views/travelManagement/travelTemplate/index.vue'),
+						name: 'templateList',
+						meta: {
+							title: '基础信息',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
 		],
 	},
 ];
