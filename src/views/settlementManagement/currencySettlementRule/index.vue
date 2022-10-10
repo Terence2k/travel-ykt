@@ -32,7 +32,7 @@
 				:dataSource="state.tableData.data"
 				:columns="columns"
 				rowKey="oid"
-				:rowSelection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
+				:row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
 				:scroll="{ x: '100%' }"
 			>
 				<template #bodyCell="{ column, record, index }">

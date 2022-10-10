@@ -18,6 +18,9 @@
 						<span>{{ getMonthAndDayText(column?.appointedTime) }}</span>
 					</div>
 				</div>
+				<div v-else class="cell-header">
+					<span>房间</span>
+				</div>
 			</template>
 			<template #bodyCell="{ column, record, text }">
 				<div
@@ -418,25 +421,28 @@ const dataSource = computed(() => {
 			result.roomType = item?.roomTypeName || '';
 			if (item?.appointedStockList && Array.isArray(item.appointedStockList)) {
 				item.appointedStockList.forEach((innerItem, index) => {
-					result[`date${index + 1}`] = {
-						oid: innerItem.oid,
-						auditStatus: innerItem.auditStatus,
-						appointedTime: innerItem.appointedTime,
-						roomStatus: innerItem.roomStatus,
-						roomStatusName: innerItem.roomStatusName,
-						stockNum: innerItem.stockNum,
-						roomTypeName: result.roomType,
-					};
-					columns.value[index + 1] = {
-						...columns.value[index + 1],
-						appointedTime: innerItem.appointedTime,
-					};
+					if (index < 31) {
+						result[`date${index + 1}`] = {
+							oid: innerItem.oid,
+							auditStatus: innerItem.auditStatus,
+							appointedTime: innerItem.appointedTime,
+							roomStatus: innerItem.roomStatus,
+							roomStatusName: innerItem.roomStatusName,
+							stockNum: innerItem.stockNum,
+							roomTypeName: result.roomType,
+						};
+						columns.value[index + 1] = {
+							...columns.value[index + 1],
+							appointedTime: innerItem.appointedTime,
+						};
+					}
 				});
 
 				columns.value = columns.value.filter((item, index) => index < 1 || item?.appointedTime);
 			}
 
 			console.info('result', result);
+			console.info('columns.value', columns.value);
 			return result;
 		});
 	}
@@ -532,7 +538,9 @@ const saveModalInfo = () => {
 			stockNum: modalState.baseInfo?.stockNum,
 		})
 		.then((response) => {
+			modalState.visible = false;
 			console.log('提交审核 返回：', response);
+			getHotelRoomTypeStockTableInfo(props?.hotelId);
 		});
 };
 
@@ -540,6 +548,8 @@ const passModalInfo = () => {
 	if (modalState.baseInfo?.oid) {
 		api.hotelRoomStockPass(modalState.baseInfo?.oid).then((res: any) => {
 			console.log('审核通过 返回：', res);
+			modalState.visible = false;
+			getHotelRoomTypeStockTableInfo(props?.hotelId);
 		});
 	}
 };
@@ -548,6 +558,8 @@ const failModalInfo = () => {
 	if (modalState.baseInfo?.oid) {
 		api.hotelRoomStockFailed(modalState.baseInfo?.oid).then((res: any) => {
 			console.log('审核不通过 返回：', res);
+			modalState.visible = false;
+			getHotelRoomTypeStockTableInfo(props?.hotelId);
 		});
 	}
 };

@@ -34,7 +34,7 @@
 					<a-button class="button-create-item">导出</a-button>
 				</div>
 				<div class="table-container">
-					<CommonTable :columns="columns" :rowSelection="rowSelection" :dataSource="dataSource">
+					<CommonTable :columns="columns" :row-selection="rowSelection" :dataSource="dataSource">
 						<template #bodyCell="{ column, record }">
 							<template v-if="column.dataIndex === 'auditStatus'">
 								<div class="cell-auditStatus">
@@ -213,18 +213,19 @@ const dataSource = computed(() => {
 	}
 });
 
-const rowSelection = ref({
-	checkStrictly: false,
-	onChange: (selectedRowKeys: (string | number)[], selectedRows: DataSourceItem[]) => {
-		console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-	},
-	onSelect: (record: DataSourceItem, selected: boolean, selectedRows: DataSourceItem[]) => {
-		console.log(record, selected, selectedRows);
-	},
-	onSelectAll: (selected: boolean, selectedRows: DataSourceItem[], changeRows: DataSourceItem[]) => {
-		console.log(selected, selectedRows, changeRows);
-	},
-});
+const rowSelection = computed(() => {
+	return {
+		onChange: (selectedRowKeys: (string | number)[], selectedRows: DataSourceItem[]) => {
+			console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+		},
+		onSelect: (record: DataSourceItem, selected: boolean, selectedRows: DataSourceItem[]) => {
+			console.log(record, selected, selectedRows);
+		},
+		onSelectAll: (selected: boolean, selectedRows: DataSourceItem[], changeRows: DataSourceItem[]) => {
+			console.log(selected, selectedRows, changeRows);
+		},
+	}
+})
 
 const tableState = reactive({
 	tableData: {

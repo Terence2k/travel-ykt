@@ -80,11 +80,7 @@ import { message } from 'ant-design-vue';
   const saveItinerary = (val:any) => {
 		return api.travelManagement.saveItinerary(
 			{
-				attachmentParam: val.attachmentParam || {
-          "receptionAgreement": "http://test1.jpg",
-          "rentCarContract": "http://test2.jpg",
-          "travelContract": "http://test.jpg"
-        },
+				attachmentParam: val.attachmentParam || {},
 				basicParam: val.basicParam || {},
 				guideList: val.guideList || [],
 				itineraryInfoParam: val.itineraryInfoParam || {},

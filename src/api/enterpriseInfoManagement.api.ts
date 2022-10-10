@@ -9,3 +9,12 @@ export function getTravelInformation(data: any) {
     showLoading: true
   });
 }
+// 编辑旅行社信息提交审核
+export function submitInformationAudit(data: any) {
+  return request({
+    url: `${commonPart}submitInformationAudit`,
+    method: 'post',
+    data,
+    showLoading: true
+  });
+}

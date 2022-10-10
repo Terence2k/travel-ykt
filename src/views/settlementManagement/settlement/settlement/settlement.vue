@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<CommonTable :dataSource="state.tableData.data" rowKey="oid" :columns="columns" :rowSelection="rowSelection">
+		<CommonTable :dataSource="state.tableData.data" rowKey="oid" :columns="columns" :row-selection="rowSelection">
 			<template #button>
 				<div class="btn">
 					<a-button type="primary" @click="transfer('all', null)">申请转账</a-button>
@@ -137,13 +137,13 @@ const state = reactive({
 	optionRoleList: [],
 });
 // 当前选择列
-const rowSelection = ref({
-	checkStrictly: false,
-	onChange: (selectedRowKeys: [], selectedRows: any) => {
-		console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+const rowSelection = computed(() => {
+	return {
+		onChange: (selectedRowKeys: [], selectedRows: any) => {
 		state.selectedRowKeys = selectedRowKeys;
 	},
-});
+	}
+})
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
 	state.tableData.param.pageNo = val;

@@ -102,3 +102,10 @@ export async function scenicTicketDown(data: any) {
 		data,
 	});
 }
+//单票删除
+export async function singleVoteDel(id: number) {
+	return request({
+		url: commonPath + `/ticket-service/public/api/scenic-one-ticket/${id}`,
+		method: 'delete',
+	});
+}

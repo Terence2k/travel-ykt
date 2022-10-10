@@ -13,7 +13,9 @@ interface DataItem {
 	gender: string,
 	name: string,
 	certificateNo: string,
-	certificatePicture: string
+	certificatePicture: string,
+	sourceAddressStr: string,
+	addressId: []
 }
 
 const rules = {
@@ -73,8 +75,8 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			},
 			{
 				title: '客源地',
-				dataIndex: 'sourceAddress',
-				key: 'sourceAddress',
+				dataIndex: 'addressId',
+				key: 'addressId',
 			},
 			{
 				title: '健康状态',
@@ -154,6 +156,11 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			state.tableData.push({key});
 			methods.edit(key);
 			console.log(state.tableData)
+		},
+		handleChange(val: any, option: any, key: string) {
+			console.log(val, option)
+			state.editableData[key].sourceAddress = val[val.length - 1];
+			state.editableData[key].sourceAddressStr = option.map((it:any) => it.label).join(',')
 		}
 	}
 	watch(onCheck, (newVal) => {

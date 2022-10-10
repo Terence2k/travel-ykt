@@ -9,19 +9,8 @@
                             {{index + 1}}
                         </div>
                     </template>
-
-                    <template v-if="column.key === 'action'">
-                        <div class="action-btns">
-                            <a class="item" v-if="!editableData[record.key]"  @click="edit(record.key)">编辑</a>
-                            <a class="item" v-else @click="save(record.key)">确定</a>
-                            <a class="item">删除</a>
-                        </div>
-                    </template>
                 </template>
             </CommonTable>
-            <div class="footer-btn">
-                <a-button type="primary">添加</a-button>
-            </div>
         </div>
         <div>
             <p class="title">景区门票</p>
@@ -43,7 +32,7 @@
                 </template>
             </CommonTable>
             <div class="footer-btn">
-                <a-button type="primary">添加</a-button>
+                <a-button type="primary" @click="add('addHotelPop')">添加</a-button>
             </div>
         </div>
         <div>
@@ -71,11 +60,14 @@
         </div>
 		
 	</div> 
+    <addHotel v-model="addHotelPop" />
 </template>
 <script lang="ts" setup>
 import CommonTable from '@/components/common/CommonTable.vue';
+import addHotel from './addHotel.vue';
 import { useTraveInfo } from './traveInfo';
-const { columns, ticketColumns, hotelColumns, tableData, editableData, edit, save } = useTraveInfo()
+const { columns, ticketColumns, addHotelPop, hotelColumns, tableData, editableData, edit, save, add } = useTraveInfo();
+
 </script>
 <style lang="less" scoped>
 	.select-guide {

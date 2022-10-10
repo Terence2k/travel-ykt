@@ -12,7 +12,9 @@ interface DataItem {
 	companyName: string,
 	licencePlateColor: string,
 	licencePlateNumber: string,
-	time: string
+	time: string,
+	useEndDate: string,
+	useStartDate: string
 }
 
 const rules = {
@@ -118,6 +120,7 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 		save: async (key?: string) => {
 			await methods.addRules(key)
 			const res = await validateFields(state.formRef);
+			
 			emits('onSuccess', res ? {transportList: state.tableData} : {transportList: res});
 			if (!res) return
 			if (key) {
@@ -125,7 +128,7 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 				delete state.editableData[key];
 			} else {
 				for (let k in state.editableData) {
-					methods.copyData(key);
+					methods.copyData(k);
 					delete state.editableData[k];
 				}
 			}
@@ -136,6 +139,11 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 			state.tableData.push({key});
 			methods.edit(key);
 			console.log(state.tableData)
+		},
+		handleTime(event: any, key: string) {
+			console.log(event, key)
+			state.editableData[key].useStartDate = event[0];
+			state.editableData[key].useEndDate = event[1];
 		}
 	}
 	travelStore.getTraveCode(CODEVALUE.TRAVE_CODE.TRAFFICTYPE, 'trafficType');
