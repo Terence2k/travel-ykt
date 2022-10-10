@@ -19,7 +19,7 @@
 					</template>
 					<!-- 产品类型 -->
 					<template v-if="column.key === 'productType'">
-						<span>{{ getProductTypeName(record.productType) }}</span>
+						<span>{{ getProductName(record.productSonType, record.chargeProductSonId) }}</span>
 					</template>
 					<!-- 优先级 -->
 					<template v-if="column.key === 'ruleStatus'">
@@ -133,6 +133,7 @@ const state = reactive({
 		{ value: 4, name: '一卡通' },
 		{ value: 5, name: '协会' },
 	],
+	productSonList: [],
 });
 
 //搜索
@@ -151,7 +152,11 @@ const pageSideChange = (current: number, size: number) => {
 const toAddPage = () => {
 	route.push({
 		path: '/settlementManagement/productSettlementRule/edit',
-		query: { productId: encodeURIComponent(state.tableData.param['productId']) },
+		query: {
+			productId: encodeURIComponent(state.tableData.param['productId']),
+			productType: encodeURIComponent(state.tableData.param['productType']),
+			productSonType: encodeURIComponent(state.tableData.param['productSonType']),
+		},
 	});
 };
 //编辑
@@ -173,6 +178,14 @@ const initList = async () => {
 	state.tableData.param['productId'] = productId;
 	state.tableData.param['productType'] = productType;
 	state.tableData.param['productSonType'] = productSonType;
+	let productRuleList = await api.productRuleList({
+		productId,
+		productType,
+		productSonType,
+		pageNo: 1, //页号
+		pageSize: 10,
+	});
+	state.productSonList = productRuleList.content[0].productSonList;
 	await getTeamType();
 	// state.tableData.loading = true;
 	let res: any = await api.productRuleConfigList(state.tableData.param);
@@ -260,11 +273,11 @@ const onSelectChange = (selectedRowKeys: any) => {
 };
 onMounted(() => {
 	initList();
-	navigatorBar.setNavigator(['产品结算规则']);
+	// navigatorBar.setNavigator(['产品结算规则']);
 });
-onBeforeUnmount(() => {
-	navigatorBar.clearNavigator();
-});
+// onBeforeUnmount(() => {
+// 	navigatorBar.clearNavigator();
+// });
 // 获取团队枚举值
 const getTeamType = async () => {
 	const result = await api.productRuleTeamType();
@@ -277,6 +290,18 @@ const getTeamTypeName = computed(() => (value: number) => {
 });
 const getProductTypeName = computed(() => (value: number) => {
 	return state.productTypeList.find((item) => item.value === value)['name'];
+});
+const getProductName = computed(() => (productSonType: string, chargeProductSonId: numebr) => {
+	if (state.productSonList.length > 0) {
+		const idx: number = state.productSonList.findIndex((item) => item.productSonId === chargeProductSonId);
+		if (idx !== -1) {
+			return state.productSonList[idx]['productSonName'];
+		} else {
+			return;
+		}
+	} else {
+		return productSonType;
+	}
 });
 </script>
 
