@@ -51,10 +51,18 @@
   }
   .cell-header{
     display: inline-flex;
-    padding: 16px 16px;
+    flex-direction: column;
+    padding: 8px 16px;
+    width:100%;
+    background: #fdfdfe !important;
     .item{
-      width:60px;
-      margin-right: 20px;
+      display: inline-block;
+      width:100%;
+     text-align: center;
+    }
+    &.row-first{
+      width:100%;
+      background-color:#F7F8FAFF !important;
     }
   }
   .cell-body{
@@ -76,6 +84,11 @@
         background: rgba(255,159,63,0.39);
         margin-right: 3px;
       }
+    }
+
+    &.row-first{
+      width:100%;
+      background-color:#F7F8FAFF !important;
     }
 
     .cursor-point{
