@@ -56,7 +56,26 @@ export const travelManagement = {
             showLoading: false
         });
     },
-
-    
+    getScenicList(data: any) {
+        return request({
+            url: `${commonPath}/ticket-service/public/api/scenic/lessInfos`,
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            method: 'get',
+            data,
+            showLoading: false
+        });
+    },
+    getTicketList(id: any) {
+        return request({
+            url: `${commonPath}/ticket-service/public/api/scenic-travel-itinerary/get-all-ticket/${id}`,
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            method: 'get',
+            showLoading: false
+        });
+    },
     
 }

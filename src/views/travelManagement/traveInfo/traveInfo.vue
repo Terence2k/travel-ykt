@@ -32,7 +32,7 @@
                 </template>
             </CommonTable>
             <div class="footer-btn">
-                <a-button type="primary" @click="add('addHotelPop')">添加</a-button>
+                <a-button type="primary" @click="add('addTicketPop')">添加</a-button>
             </div>
         </div>
         <div>
@@ -55,18 +55,36 @@
                 </template>
             </CommonTable>
             <div class="footer-btn">
-                <a-button type="primary">添加</a-button>
+                <a-button type="primary" @click="add('addHotelPop')">添加</a-button>
             </div>
         </div>
 		
 	</div> 
     <addHotel v-model="addHotelPop" />
+    <addTicket v-model="addTicketPop" />
 </template>
 <script lang="ts" setup>
 import CommonTable from '@/components/common/CommonTable.vue';
 import addHotel from './addHotel.vue';
+import addTicket from './addTicket.vue';
 import { useTraveInfo } from './traveInfo';
-const { columns, ticketColumns, addHotelPop, hotelColumns, tableData, editableData, edit, save, add } = useTraveInfo();
+const props = defineProps({
+	onCheck: {
+		type: Boolean
+	}
+})
+const emits = defineEmits(['onSuccess'])
+const { 
+    columns, 
+    ticketColumns, 
+    addHotelPop, 
+    addTicketPop, 
+    hotelColumns, 
+    tableData, 
+    editableData, 
+    edit, 
+    save, 
+    add } = useTraveInfo(props, emits);
 
 </script>
 <style lang="less" scoped>

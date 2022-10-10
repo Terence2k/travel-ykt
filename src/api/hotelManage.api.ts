@@ -243,3 +243,17 @@ export async function getRoleId(data: any) {
 		showLoading: false,
 	});
 }
+// 根据酒店id查询酒店信息
+export async function getHotelInfoByRated(id: number) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-information/getHotelInfoByRatedId/${id}`,
+		method: 'get',
+	});
+}
+export async function getRoomType(data: any) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-room-type/listRoomType`,
+		method: 'post',
+		data
+	});
+}
