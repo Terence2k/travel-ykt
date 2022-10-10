@@ -61,7 +61,7 @@
 					<span>{{ getTypeName('isPrepaid') }}</span>
 				</div>
 			</a-form-item>
-			<a-form-item label="垫付单位" name="paymentUnit">
+			<a-form-item label="垫付单位" name="paymentUnit" v-if="formState.isPrepaid === 1">
 				<div>
 					<span>{{ getTypeName('prepaidCompany') }}</span>
 				</div>
