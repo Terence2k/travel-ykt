@@ -35,3 +35,10 @@ export enum Gender {
   Madam,
   Male
 }
+
+// 组团类型
+export enum GroupType {
+  Cooperation = 1,
+  NonCooperation
+
+}

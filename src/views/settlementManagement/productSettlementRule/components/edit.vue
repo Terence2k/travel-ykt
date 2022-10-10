@@ -20,7 +20,7 @@
 				>
 				</a-select>
 			</a-form-item>
-			<a-form-item label="结算产品" name="productType">
+			<!-- <a-form-item label="结算产品" name="productType">
 				<a-select
 					v-model:value="formState.productType"
 					placeholder="请选择结算产品"
@@ -28,11 +28,11 @@
 					:options="generaRulesOptions.productTypeList.map((item) => ({ value: item.value, label: item.name }))"
 				>
 				</a-select>
-			</a-form-item>
+			</a-form-item> -->
 			<a-form-item label="费用名称" name="costName">
 				<a-input v-model:value="formState.costName" placeholder="请输入费用名称" allowClear />
 			</a-form-item>
-			<a-form-item label="费用说明" name="costExplanation">
+			<a-form-item label="费用说明">
 				<a-input v-model:value="formState.costExplanation" placeholder="请输入费用说明" allowClear />
 			</a-form-item>
 			<a-form-item label="状态" name="ruleStatus">
@@ -50,36 +50,40 @@
 				</a-radio-group>
 			</a-form-item>
 			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 1" :rules="rulesRef.percentage">
-				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入收费数量（单位：%）" style="width: 100%">
+				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入收费数量（单位：%）" style="width: 100%" :min="0">
 					<template #addonAfter>
 						<span>%</span>
 					</template>
 				</a-input-number>
 			</a-form-item>
 			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 3" :rules="rulesRef.integer">
-				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入收费数量（单位：元）" style="width: 100%">
+				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入收费数量（单位：元）" style="width: 100%" :min="0">
 					<template #addonAfter>
 						<span>元</span>
 					</template>
 				</a-input-number>
 			</a-form-item>
 			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 2" :rules="rulesRef.integer">
-				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入收费数量（单位：人）" style="width: 100%">
+				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入收费数量（单位：人）" style="width: 100%" :min="0">
 					<template #addonAfter>
 						<span>人</span>
 					</template>
 				</a-input-number>
 			</a-form-item>
 
-			<a-form-item label="收费子产品" name="productSonType">
+			<a-form-item label="收费子产品" name="chargeProductSonId" v-if="cacheData.productSonList.length > 0">
 				<a-select
-					v-model:value="formState.productSonType"
+					v-model:value="formState.chargeProductSonId"
 					placeholder="请选择收费子产品"
 					allowClear
-					:options="generaRulesOptions.productSonTypeList.map((item) => ({ value: item.value, label: item.name }))"
+					:options="cacheData.productSonList.map((item) => ({ value: item.productSonId, label: item.productSonName }))"
 				>
 				</a-select>
 			</a-form-item>
+			<a-form-item v-else label="收费子产品">
+				<span>{{ cacheData.productName }}</span>
+			</a-form-item>
+
 			<a-form-item label="是否垫付" name="isPrepaid">
 				<a-radio-group v-model:value="formState.isPrepaid">
 					<a-radio v-for="item in generaRulesOptions.isPrepaidList" :value="item.value" :key="item.name">{{ item.name }}</a-radio>
@@ -135,7 +139,7 @@
 		<div class="footer">
 			<div class="tooter-btn">
 				<a-button type="primary" @click="submit">保存</a-button>
-				<a-button type="primary" @click="cancel">取消</a-button>
+				<a-button @click="cancel">取消</a-button>
 			</div>
 		</div>
 	</div>
@@ -230,34 +234,60 @@ const cacheData = ref({
 	rulesShow: false,
 	rulesParams: {},
 	edit: false,
+	productSonList: [],
+	productName: '',
 });
-const oid = ref(null);
+const oid: Ref<any> = ref(null);
 // 初始化
-const init = () => {
+const init = async () => {
 	const route = useRouter();
 	const query = route.currentRoute.value.query;
 	generaRulesOptions.getTeamTypeList();
+	const { productId, productType, productSonType } = route.currentRoute.value.query;
+	let productRuleList = await api.productRuleList({
+		productId,
+		productType,
+		productSonType,
+		pageNo: 1, //页号
+		pageSize: 10,
+	});
+	// 由于产品子类别是否存在需要对其进行判断
+	if (productRuleList.content[0].productSonList.length > 0) {
+		cacheData.value.productSonList = productRuleList.content[0].productSonList;
+	} else {
+		cacheData.value.productName = productRuleList.content[0].productName;
+		// formState.productSonType = 'SELF';
+		formState.chargeProductSonId = Number(query.productId);
+	}
 	if (query && query.oid) {
 		oid.value = query.oid;
 		navigatorBar.setNavigator(['编辑']);
 		cacheData.value.edit = true;
-		productRuleDetail(query.oid);
+		productRuleDetail(Number(query.oid));
 	} else {
 		navigatorBar.setNavigator(['新增']);
 		cacheData.value.edit = false;
-		formState.productId = query.productId;
+		formState.productId = Number(query.productId);
 		// 默认状态开启
 		formState.ruleStatus = 1;
 		// 默认是否垫付关闭
 		formState.isPrepaid = 0;
 		// 默认为百分比
 		formState.chargeModel = 1;
+		// 默认为景区
+		formState.productType = 1;
+		// 从父元素带过来
+		formState.productSonType = String(query.productSonType);
+		// if (formState.productSonType !== 'SELF') {
+
+		// }
 	}
+	console.log(formState, `formState`);
 };
 const productRuleDetail = async (id: number) => {
 	const result = await api.productRuleDetail(id);
 	for (let key in formState) {
-		if (result[key]) {
+		if (result[key] || result[key] === 0) {
 			formState[key] = result[key];
 		}
 	}
@@ -329,10 +359,10 @@ const edit = async () => {
 };
 const saveParams = () => {
 	// 暂时写死
-	formState.chargeProductSonId = 1;
-	if (formState.productSonType === 'SELF') {
-		formState.chargeProductSonId = formState.productId;
-	}
+	// formState.chargeProductSonId = 1;
+	// if (formState.productSonType === 'SELF') {
+	// 	formState.chargeProductSonId = formState.productId;
+	// }
 	if (oid.value) {
 		formState.oid = oid.value;
 	}

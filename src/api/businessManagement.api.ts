@@ -3,6 +3,7 @@ const commonPart = `${commonPath}/customer-service/public/api/company/`
 const commonPart1 = `${commonPath}/customer-service/public/api/sys-role/`
 const commonPart2 = `${commonPath}/customer-service/public/api/sys-user/`
 const commonPart3 = `${commonPath}/customer-service/public/api/dictionary/`
+const commonPart4 = `${commonPath}/customer-service/public/api/sys/audit/flow/`
 // 企业注册
 export function companyRegister(data: any) {
 	return request({
@@ -16,6 +17,15 @@ export function companyRegister(data: any) {
 export function findCompanyList(data: any) {
 	return request({
 		url: `${commonPart}findCompanyList`,
+		method: 'post',
+		data,
+		showLoading: true
+	});
+}
+// 查询审核按钮
+export function getAuditButton(data: any) {
+	return request({
+		url: `${commonPart4}getAuditButton`,
 		method: 'post',
 		data,
 		showLoading: true

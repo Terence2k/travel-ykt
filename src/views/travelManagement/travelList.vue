@@ -37,8 +37,8 @@
 					
 				<!--  v-if="showAddBtn" -->
 				<div class="d-flex justify-content-end">
-					<a-button @click="goToPath" type="primary" style="margin-right: 20px">+协作组团</a-button>
-					<a-button @click="goToPath" type="primary" style="margin-right: 20px">+非协作组团</a-button>
+					<a-button @click="goToPath(GroupType.Cooperation)" type="primary" style="margin-right: 20px">+协作组团</a-button>
+					<a-button @click="goToPath(GroupType.NonCooperation)" type="primary" style="margin-right: 20px">+非协作组团</a-button>
 				</div>
 				<component :onCheck="check" :is="item.name"></component>
 			</a-tab-pane>
@@ -59,7 +59,7 @@
 	import cancellation from './travelList/cancellation.vue';
 
 	import { useTravelStore } from '@/stores/modules/travelManagement';
-	import { GroupStatus } from '@/enum';
+	import { GroupStatus, GroupType } from '@/enum';
 	import { getUserInfo } from '@/utils/util';
 	import { ROLE } from '@/constant'
 	import api from '@/api';
@@ -124,10 +124,12 @@
 		}
 	]
 	
-	const goToPath = () => {
+	const goToPath = (type: number) => {
 		router.push({
 			path: '/travel/travel_manage/add_travel',
-			query: {}
+			query: {
+				type
+			}
 		})
 	}
 	watch(() => params.time, newVal => {

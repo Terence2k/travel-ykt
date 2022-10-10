@@ -120,9 +120,8 @@ const state = reactive({
 
 //搜索
 const onHandleCurrentChange = (val: number) => {
-	console.log('change:', val);
 	state.tableData.param.pageNo = val;
-	// onSearch();
+	initList();
 };
 //翻页
 const pageSideChange = (current: number, size: number) => {

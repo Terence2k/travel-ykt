@@ -54,7 +54,6 @@
         default: false
       },
       params: Object,
-      roleList: Array
   })
   const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
   const dialogVisible = ref(false);

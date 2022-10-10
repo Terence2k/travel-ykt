@@ -61,7 +61,7 @@
 					<span>{{ getTypeName('isPrepaid') }}</span>
 				</div>
 			</a-form-item>
-			<a-form-item label="垫付单位" name="paymentUnit">
+			<a-form-item label="垫付单位" name="paymentUnit" v-if="formState.isPrepaid === 1">
 				<div>
 					<span>{{ getTypeName('prepaidCompany') }}</span>
 				</div>
@@ -91,6 +91,7 @@
 		<div class="footer">
 			<div class="tooter-btn">
 				<a-button type="primary" @click="edit">编辑</a-button>
+				<a-button @click="cancel">返回</a-button>
 			</div>
 		</div>
 	</div>
@@ -218,6 +219,9 @@ const getCompanyTypeName = computed(() => (value: number) => {
 	}
 	return;
 });
+const cancel = () => {
+	route.go(-1);
+};
 </script>
 
 <style lang="less" scoped>

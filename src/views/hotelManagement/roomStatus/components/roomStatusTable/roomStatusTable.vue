@@ -179,18 +179,19 @@ const columns: TableColumnsType = [
 	},
 ];
 
-const rowSelection = ref({
-	checkStrictly: false,
-	onChange: (selectedRowKeys: (string | number)[], selectedRows: DataSourceItem[]) => {
-		console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-	},
-	onSelect: (record: DataSourceItem, selected: boolean, selectedRows: DataSourceItem[]) => {
-		console.log(record, selected, selectedRows);
-	},
-	onSelectAll: (selected: boolean, selectedRows: DataSourceItem[], changeRows: DataSourceItem[]) => {
-		console.log(selected, selectedRows, changeRows);
-	},
-});
+const rowSelection = computed(() => {
+	return {
+		onChange: (selectedRowKeys: (string | number)[], selectedRows: DataSourceItem[]) => {
+			console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+		},
+		onSelect: (record: DataSourceItem, selected: boolean, selectedRows: DataSourceItem[]) => {
+			console.log(record, selected, selectedRows);
+		},
+		onSelectAll: (selected: boolean, selectedRows: DataSourceItem[], changeRows: DataSourceItem[]) => {
+			console.log(selected, selectedRows, changeRows);
+		},
+	}
+})
 
 const dataSource = computed(() => {
 	if (Array.isArray(tableState.tableData.data)) {
