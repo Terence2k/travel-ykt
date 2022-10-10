@@ -56,6 +56,7 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import DelModal from '@/components/common/DelModal.vue';
+import { message } from 'ant-design-vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import api from '@/api';
 const navigatorBar = useNavigatorBar();
@@ -234,6 +235,10 @@ const showTip = (str: string, par: any, record: any) => {
 		cacheData.value.delIndex = [record.oid];
 		cacheData.value.delState = 'del';
 	} else if (str === 'all') {
+		if (state.selectedRowKeys.length === 0) {
+			message.error(`请先选择数据`);
+			return;
+		}
 		cacheData.value.delParams = { title: '删除', content: '是否删除所选数据？' };
 		cacheData.value.delIndex = state.selectedRowKeys;
 		cacheData.value.delState = 'del';

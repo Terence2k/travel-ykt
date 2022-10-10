@@ -12,15 +12,16 @@ export enum GroupMode {
 
 // 行程单状态
 export enum GroupStatus {
-  Drafts = 1,     //草稿
-  WaitingGroup,   //待接团
-  Unpaid,         //未支付
-  RefuseGroup,    //拒绝接团
-  WaitRegiment,   //待出团
-  HaveABall,      //已出团
-  WaitingChange,  //待变更
-  CloseAnAccount, //已结算
-  Cancellation    //已作废
+  Drafts = 1,     //草稿1
+  WaitingGroup,   //待接团2
+  HaveABall,      //已接团3
+  // Unpaid,         //未支付
+  RefuseGroup,    //拒绝接团4
+  // WaitRegiment,   //待出团
+  WaitingChange,  //待变更7
+  CloseAnAccount, //已结算8
+  Cancellation,    //已作废9
+  Overtime        //审核超时10
 }
 
 // 线路类型

@@ -90,7 +90,7 @@
 					key: 'touristCount',
 			},
 			{
-					title: '任务拒绝时间',
+					title: '拒绝/逾期时间',
 					dataIndex: 'touristCount',
 					key: 'touristCount',
 			},

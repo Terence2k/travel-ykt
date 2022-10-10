@@ -16,9 +16,7 @@
 
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
-				<a>编辑</a>
-				<a>发送任务</a>
-				<a>发团</a>
+				<a>置位草稿</a>
 			</div>
 		</template>
 				</template>
@@ -77,24 +75,14 @@
 					key: 'subTravelName',
 			},
 			{
-					title: '行程时间',
-					dataIndex: 'time',
-					key: 'time',
-			},
-			{
-					title: '团队类型',
-					dataIndex: 'groupTypeStr',
-					key: 'groupTypeStr',
-			},
-			{
-					title: '带队导游',
-					dataIndex: 'guides',
-					key: 'guides',
-			},
-			{
-					title: '团客人数',
+					title: '审核超时时间',
 					dataIndex: 'touristCount',
 					key: 'touristCount',
+			},
+			{
+					title: '审核类型',
+					dataIndex: 'groupTypeStr',
+					key: 'groupTypeStr',
 			},
 			{
 					title: '操作',

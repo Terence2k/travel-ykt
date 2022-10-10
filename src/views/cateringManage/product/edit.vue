@@ -17,7 +17,7 @@
 				<a-form-item label="单价" name="price">
 					<a-input placeholder="请输入单价，单位：元/人" v-model:value="formData.data.price" />
 				</a-form-item>
-				<a-form-item label="图片" name="imgUrl">
+				<a-form-item label="图片" >
 					<Pic v-model:value="formData.data.imgUrl"></Pic>
 				</a-form-item>
 				<a-form-item label="状态" name="status">
