@@ -86,7 +86,7 @@
 			<div class="footer">
 				<div class="tooter-btn">
 					<a-button type="primary" @click.prevent="onSubmit">保存</a-button>
-					<a-button type="primary" @click="reset">提交审核</a-button>
+					<!-- <a-button type="primary" @click="reset">提交审核</a-button> -->
 				</div>
 			</div>
 		</a-form>
@@ -179,7 +179,7 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 		'data.creditCode': [{ required: true, message: '请填写统一社会行用代码' }],
 		'data.phone': [{ required: true, message: '请填写手机号码' }],
 		'data.contactName': [{ required: true, message: '请填写联系人姓名' }],
-		'data.businessLicenseUrl': [{ required: true, message: '请上传图片' }],
+		// 'data.businessLicenseUrl': [{ required: true, message: '请上传图片' }],
 		'data.derate': [{ required: true, message: '请选择' }],
 		'data.derateRule': [{ required: true, message: '请填写规则' }],
 		'data.accountType': [{ required: true, message: '请选择账户类型' }],

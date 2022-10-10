@@ -91,7 +91,7 @@
 					key: 'guides',
 			},
 			{
-					title: '协作状态',
+					title: '团客人数',
 					dataIndex: 'touristCount',
 					key: 'touristCount',
 			},

@@ -75,7 +75,7 @@
 					key: 'subTravelName',
 			},
 			{
-					title: '行程时间',
+					title: '原定行程时间',
 					dataIndex: 'time',
 					key: 'time',
 			},
@@ -90,7 +90,7 @@
 					key: 'touristCount',
 			},
 			{
-					title: '结算完成时间',
+					title: '撤销时间',
 					dataIndex: 'touristCount',
 					key: 'touristCount',
 			},
