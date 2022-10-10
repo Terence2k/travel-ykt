@@ -17,13 +17,14 @@ export const useTravelStore = defineStore({
 		groupStatus: {
 			[GroupStatus.Drafts]: '草稿',
 			[GroupStatus.WaitingGroup]: '待接团',
-			[GroupStatus.Unpaid]: '待支付',
 			[GroupStatus.RefuseGroup]: '拒绝接团',
-			[GroupStatus.WaitRegiment]: '待出团',
-			[GroupStatus.HaveABall]: '已出团',
+			// [GroupStatus.WaitRegiment]: '待出团',
+			[GroupStatus.HaveABall]: '已接团',
 			[GroupStatus.WaitingChange]: '待变更',
 			[GroupStatus.CloseAnAccount]: '已结算',
-			[GroupStatus.Cancellation]: '已作废'
+			[GroupStatus.Cancellation]: '已撤销',
+			[GroupStatus.Overtime]: '审核超时',
+
 		},
 		genderList: [
 			{

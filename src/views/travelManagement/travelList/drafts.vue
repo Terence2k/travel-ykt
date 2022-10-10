@@ -17,7 +17,7 @@
         <template v-if="column.key === 'action'">
           <div class="action-btns">
             <a>编辑</a>
-            <a>发送任务</a>
+            <a>邀请地接社编辑</a>
             <a>发团</a>
           </div>
         </template>
