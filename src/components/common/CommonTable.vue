@@ -3,7 +3,7 @@
 		<div class="list-btn" v-if="slotButton">
 			<slot name="button"></slot>
 		</div>
-		<a-table v-bind="$attrs" :scroll="scroll" :row-selection="$attrs.rowSelection" :pagination="false" class="common-table">
+		<a-table v-bind="$attrs" :scroll="scroll" :pagination="false" class="common-table">
 			<template #headerCell="data">
 				<slot name="headerCell" v-bind="data || {}"></slot>
 			</template>

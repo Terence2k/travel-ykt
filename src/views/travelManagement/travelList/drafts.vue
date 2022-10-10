@@ -3,10 +3,10 @@
 		<CommonTable :row-selection="{onSelect}" :dataSource="state.tableData" :columns="state.columns">
       <template #button>
       </template>
-      <template #bodyCell="{ column, text, index }">
+      <template #bodyCell="{ column, text, index, record }">
         <template v-if="column.key === 'itineraryNo'">
 					<div>
-					  <a @click="goToDetail(text)">{{text}}</a>
+					  <a @click="goToDetail(record)">{{text}}</a>
 					</div>
 				</template>
         <template v-if="column.key === 'index'">
@@ -120,7 +120,7 @@
 		router.push({
 			name: 'travel_detail',
 			params: {
-        itineraryNo: val
+        detailInfo: JSON.stringify(val)
       }
 		})
     
