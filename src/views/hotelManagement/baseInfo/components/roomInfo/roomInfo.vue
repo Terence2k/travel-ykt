@@ -194,19 +194,15 @@ watch(
 					console.error(err);
 				});
 
-			api.commonApi
-				.getCodeValue({
-					codeValue: 'jdxtfx',
-				})
-				.then((res) => {
-					systemRoomData.value = res.map((item) => {
-						return {
-							value: item.oid,
-							label: item.name,
-						};
-					});
-					console.log('dddddddddd', systemRoomData);
+			api.getEnableSystemRoomType().then((res) => {
+				systemRoomData.value = res.map((item) => {
+					return {
+						value: item.oid,
+						label: item.sysRoomTypeCode,
+					};
 				});
+				//console.log('dddddddddd', systemRoomData);
+			});
 		}
 	},
 	{
