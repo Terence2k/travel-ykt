@@ -63,8 +63,8 @@
 				<a-input v-model:value="formState.subTravelContactPhone" />
 			</a-form-item>
 
-			<a-form-item label="行程人数" name="touristNum">
-				<a-input v-model:value="formState.touristNum" plcaeholder="单位：人" />
+			<a-form-item label="游客人数" name="touristNum">
+				<a-input v-model:value="formState.touristNum" placeholder="添加游客名单后自动计算"  disabled/>
 			</a-form-item>
 
 			<!-- <a-form-item label="线路类型" name="routeType">
@@ -105,6 +105,7 @@
 import { getUserInfo } from '@/utils/util';
 import { RouteType } from '@/enum';
 import api from '@/api/index';
+import { useTravelStore } from '@/stores/modules/travelManagement';
 
 interface FormState {
 	groupType: any;
@@ -129,6 +130,8 @@ interface TeamType {
 	travelOperatorList: Array<any>;
 }
 
+const travelStore = useTravelStore();
+const touristCount = computed(() => travelStore.touristList.length ? travelStore.touristList.length : '添加游客名单后自动计算')
 const route = useRoute()
 const userInfo = getUserInfo()
 const page = reactive({
@@ -172,13 +175,14 @@ const rulesRef = {
 	subTravelOid: [{ required: true, message: '请选择地接旅行社'}]
 };
 
+
 const formState = reactive<FormState>({
 	groupType: route.query.type,
 	contactPhone: userInfo.mobile,
 	subTravelOperatorOid: '',
 	travelOid: userInfo.sysCompany.oid,
 	travelOperatorOid: userInfo.oid,
-	touristNum: '',
+	touristNum: touristCount.value,
 	subTravelContactPhone: '',
 	routeName: '',
 	endDate: '',
@@ -199,6 +203,7 @@ const onFinishFailed = (errorInfo: any) => {
 const onSubmit = async () => {
 	try {
 		const values = await formRef.value.validateFields()
+		formState.touristNum = touristCount.value
 		emits('onSuccess', {basicParam: formState});
 	} catch (errorInfo) {
 		emits('onSuccess', {basicParam: false});
