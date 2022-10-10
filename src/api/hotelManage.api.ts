@@ -257,3 +257,64 @@ export async function getRoomType(data: any) {
 		data
 	});
 }
+
+// /hotel-service/public/api/hotel-sys-room-type/page
+// 分页查询酒店系统房型
+export async function getSystemRoomType(data: any) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-sys-room-type/page`,
+		data,
+		method: 'post',
+		showLoading: false,
+	});
+}
+
+// /hotel-service/public/api/hotel-sys-room-type/add
+// 新增系统房型
+export async function addSystemRoomType(data: any) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-sys-room-type/add`,
+		data,
+		method: 'post',
+		showLoading: false,
+	});
+}
+
+// /hotel-service/public/api/hotel-sys-room-type/update
+// 编辑系统房型
+export async function editSystemRoomType(data: any) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-sys-room-type/update`,
+		data,
+		method: 'post',
+		showLoading: false,
+	});
+}
+
+// /hotel-service/public/api/hotel-sys-room-type/enable/:oid
+// 启用系统房型
+export async function enableSystemRoomType(id: number) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-sys-room-type/enable/${id}`,
+		method: 'get',
+		showLoading: true,
+	});
+}
+
+//禁用系统房型
+export async function disableSystemRoomType(id: number) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-sys-room-type/disenable/${id}`,
+		method: 'get',
+		showLoading: true,
+	});
+}
+
+// /hotel-service/public/api/hotel-sys-room-type/list
+export async function getEnableSystemRoomType() {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-sys-room-type/list`,
+		method: 'get',
+		showLoading: true,
+	});
+}

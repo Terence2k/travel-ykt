@@ -50,9 +50,9 @@
 	import SearchItem from '@/components/common/CommonSearchItem.vue'
 	import drafts from './travelList/drafts.vue';
 	import waitingGroup from './travelList/waitingGroup.vue';
-	import unpaid from './travelList/Unpiad.vue';
+	import overtime from './travelList/overtime.vue';
 	import refuseGroup from './travelList/refuseGroup.vue';
-	import waitRegiment from './travelList/waitregiment.vue';
+	// import waitRegiment from './travelList/waitregiment.vue';
 	import haveABall from './travelList/haveABall.vue';
 	import closeAnAccount from './travelList/closeAnAccount.vue';
 	import waitingChange from './travelList/waitingChange.vue';
@@ -87,25 +87,20 @@
 			label: travelStore.groupStatus[GroupStatus.WaitingGroup],
 			value: GroupStatus.WaitingGroup
 		},
+		// {
+		// 	name: waitRegiment,
+		// 	label: travelStore.groupStatus[GroupStatus.WaitRegiment],
+		// 	value: GroupStatus.WaitRegiment
+		// },
 		{
-			name: unpaid,
-			label: travelStore.groupStatus[GroupStatus.Unpaid],
-			value: GroupStatus.Unpaid
+			name: haveABall,
+			label: travelStore.groupStatus[GroupStatus.HaveABall],
+			value: GroupStatus.HaveABall
 		},
 		{
 			name: refuseGroup,
 			label: travelStore.groupStatus[GroupStatus.RefuseGroup],
 			value: GroupStatus.RefuseGroup
-		},
-		{
-			name: waitRegiment,
-			label: travelStore.groupStatus[GroupStatus.WaitRegiment],
-			value: GroupStatus.WaitRegiment
-		},
-		{
-			name: haveABall,
-			label: travelStore.groupStatus[GroupStatus.HaveABall],
-			value: GroupStatus.HaveABall
 		},
 		{
 			name: closeAnAccount,
@@ -121,6 +116,11 @@
 			name: cancellation,
 			label: travelStore.groupStatus[GroupStatus.Cancellation],
 			value: GroupStatus.Cancellation
+		},
+		{
+			name: overtime,
+			label: travelStore.groupStatus[GroupStatus.Overtime],
+			value: GroupStatus.Unpaid
 		}
 	]
 	

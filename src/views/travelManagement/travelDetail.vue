@@ -5,7 +5,7 @@
     </div>
     <div class="status-btns">
       <div class="status">
-        当前状态：{{params.statusName}}
+        当前状态：{{state.params.statusName}}
       </div>
       <div class="btns">
         <a-button type="primary">打印行程单</a-button>
@@ -15,22 +15,22 @@
     </div>
     <a-row>
       <a-col :span="17">
-        <a-descriptions :title="`行程单ID：${params.itineraryNo}`" bordered>
-          <a-descriptions-item label="线路名称" :span="3">丽江古城-束河古镇-泸沽湖 夕阳红老年品质5日游（湖北-10月）</a-descriptions-item>
-          <a-descriptions-item label="组团模式" :span="2">组团模式</a-descriptions-item>
-          <a-descriptions-item label="团队类型" :span="2">团队类型</a-descriptions-item>
-          <a-descriptions-item label="组团社" :span="2">组团社</a-descriptions-item>
-          <a-descriptions-item label="组团社计调" :span="2">组团社计调</a-descriptions-item>
-          <a-descriptions-item label="地接社" :span="2">地接社</a-descriptions-item>
-          <a-descriptions-item label="地接社计调" :span="2">地接社计调</a-descriptions-item>
-          <a-descriptions-item label="游客人数" :span="2">游客人数</a-descriptions-item>
-          <a-descriptions-item label="古维费应缴人数" :span="2">古维费应缴人数</a-descriptions-item>
-          <a-descriptions-item label="行程开始时间" :span="2">行程开始时间</a-descriptions-item>
-          <a-descriptions-item label="行程结束时间" :span="2">行程结束时间</a-descriptions-item>
-          <a-descriptions-item label="已添加景区" :span="2">已添加景区</a-descriptions-item>
-          <a-descriptions-item label="已添加餐饮" :span="2">已添加餐饮</a-descriptions-item>
-          <a-descriptions-item label="已添加酒店" :span="2">已添加酒店</a-descriptions-item>
-          <a-descriptions-item label="预估应缴费（元）" :span="2">预估应缴费（元）</a-descriptions-item>
+        <a-descriptions :title="`行程单ID：${state.params.itineraryNo}`" bordered>
+          <a-descriptions-item label="线路名称" :span="3">{{state.data.routeName}}</a-descriptions-item>
+          <a-descriptions-item label="组团模式" :span="2">{{state.data.groupTypeName}}</a-descriptions-item>
+          <a-descriptions-item label="团队类型">团队类型</a-descriptions-item>
+          <a-descriptions-item label="组团社" :span="2">{{state.data.travelName}}</a-descriptions-item>
+          <a-descriptions-item label="组团社计调" >{{state.data.travelOperator.username}} {{state.data.travelOperator.mobile}}</a-descriptions-item>
+          <a-descriptions-item label="地接社" :span="2">{{state.data.subTravelName}}</a-descriptions-item>
+          <a-descriptions-item label="地接社计调">{{state.data.subTravelOperator.username}} {{state.data.subTravelOperator.mobile}}</a-descriptions-item>
+          <a-descriptions-item label="游客人数" :span="2">{{state.data.touristCount}}</a-descriptions-item>
+          <a-descriptions-item label="古维费应缴人数">{{state.data.guWeiCount}}</a-descriptions-item>
+          <a-descriptions-item label="行程开始时间" :span="2">{{state.data.startDate}}</a-descriptions-item>
+          <a-descriptions-item label="行程结束时间">{{state.data.endDate}}</a-descriptions-item>
+          <a-descriptions-item label="已添加景区" :span="2">{{state.data.ticketCount}}</a-descriptions-item>
+          <a-descriptions-item label="已添加餐饮">{{state.data.cateringCount}}</a-descriptions-item>
+          <a-descriptions-item label="已添加酒店" :span="2">{{state.data.hotelCount}}</a-descriptions-item>
+          <a-descriptions-item label="预估应缴费（元）">{{state.data.totalFee}}</a-descriptions-item>
         </a-descriptions>
       </a-col>
       <a-col :span="7">
@@ -42,16 +42,44 @@
   </div> 
 </template>
 <script lang="ts" setup>
-  import { ref, Ref, computed, watch, toRefs, reactive } from 'vue';
-  const params: Ref<Record<string, any>> = ref({});
+  import { ref, Ref } from 'vue';
+  import api from '@/api';
+  const state = reactive({
+		data: {
+      travelOperator: {},
+      subTravelOperator: {}
+    },
+    param: {
+      pageNo: 1,
+      pageSize: 10,
+    },
+    params: {} as any,
+  });
+
+  const getItineraryDetail = () => {
+    let queryData = {
+      oid: state.params.oid,
+      ...state.param
+    }
+	  api.travelManagement.getItineraryDetail(queryData).then((res: any) => {
+      state.data = res.basic;
+		})
+		.catch((err: any) => {
+			console.log(err);
+		});
+  }
+
   onMounted(() => {
     const tempData = localStorage.getItem('tempData');
     if (tempData) {
-      params.value = JSON.parse(tempData);
+      state.params = JSON.parse(tempData);
     } else {
-      let { detailInfo } = useRoute().params as any; //isUpdate 传false的时候，解构后也是string类型
-      params.value = JSON.parse(decodeURIComponent(detailInfo));
+      let { detailInfo } = useRoute().params as any;
+      state.params = JSON.parse(decodeURIComponent(detailInfo));
       localStorage.setItem('tempData', decodeURIComponent(detailInfo));
+    }
+    if (state.params) {
+      getItineraryDetail();
     }
   })
 </script>

@@ -86,19 +86,6 @@ const initPage = async (): Promise<void> => {
 };
 
 const onSubmit = () => {
-	// const Data = {
-	// 	shopId: formData.data.companyName,
-	// 	cateringName: formData.data.cateringName,
-	// 	orderNum: Number(formData.data.orderNum),
-	// 	price: Number(formData.data.price),
-	// 	imgUrl: formData.data.imgUrl,
-	// 	status: formData.data.status,
-	// 	provideStart: formData.data.provideStart,
-	// 	provideEnd: formData.data.provideEnd,
-	// 	cateringDesc: formData.data.cateringDesc,
-	// };
-	// console.log(toRaw(Data));
-
 	formref.value.validate().then((res) => {
 		const Data = {
 			shopId: formData.data.companyName,

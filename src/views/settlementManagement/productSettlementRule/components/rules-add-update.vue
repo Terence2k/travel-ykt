@@ -28,7 +28,7 @@
 				name="splitCount"
 				:rules="[{ required: formValidate.splitModel === 2 ? true : false, validator: isIntegerNotMust, trigger: 'blur' }]"
 			>
-				<a-input-number v-model:value="formValidate.splitCount" placeholder="请输入分账金额（单位：元）" style="width: 100%">
+				<a-input-number v-model:value="formValidate.splitCount" placeholder="请输入分账金额（单位：元）" style="width: 100%" :min="0">
 					<template #addonAfter>
 						<span>元</span>
 					</template>
@@ -40,7 +40,7 @@
 				name="splitCount"
 				:rules="[{ required: formValidate.splitModel === 1 ? true : false, validator: isBtnZeroToHundred, trigger: 'blur' }]"
 			>
-				<a-input-number v-model:value="formValidate.splitCount" placeholder="请输入分账占比（单位：%）" style="width: 100%">
+				<a-input-number v-model:value="formValidate.splitCount" placeholder="请输入分账占比（单位：%）" style="width: 100%" :min="0">
 					<template #addonAfter>
 						<span>%</span>
 					</template>

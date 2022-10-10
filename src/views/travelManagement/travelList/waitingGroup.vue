@@ -66,11 +66,6 @@
 					key: 'routeName',
 			},
 			{
-					title: '组团社',
-					dataIndex: 'travelName',
-					key: 'travelName',
-			},
-			{
 					title: '地接社',
 					dataIndex: 'subTravelName',
 					key: 'subTravelName',
