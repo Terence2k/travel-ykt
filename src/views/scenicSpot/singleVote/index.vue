@@ -172,7 +172,7 @@ const initList = async () => {
 	state.tableData.loading = false;
 };
 
-const status = ['待审核', '审核通过', '审核中', '审核不通过'];
+const status = ['待审核', '审核中', '审核通过', '审核不通过'];
 
 const ticketType: any = {
 	0: '儿童',
