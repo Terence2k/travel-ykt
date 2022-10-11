@@ -23,13 +23,13 @@
 			<a-form-item label="收费模式">
 				<span>{{ formData.data.feeModel == 0 ? '人数' : '价格' }}</span>
 			</a-form-item>
-			<a-form-item label="收款数量">
+			<a-form-item label="收费金额">
 				<span>{{ (formData.data.feeNumber || '') + ( formData.data.feeModel == 0 ? ' 元/人' : ' 元' ) }}</span>
 			</a-form-item>
 		</a-form>
 		<div class="footer">
 			<div class="tooter-btn">
-				<a-button type="primary" @click.prevent="toEdit">编辑</a-button>
+				<a-button type="primary" @click.prevent="toEdit">返回</a-button>
 			</div>
 		</div>
 	</div>
@@ -42,7 +42,8 @@ import api from '@/api';
 
 // 跳转编辑页
 const toEdit = () => {
-	route.push({ path: '/settlementManagement/comprehensiveFee/edit' ,query: { edit: 1, oid: route.currentRoute.value?.query?.oid } });
+	route.go(-1)
+	// route.push({ path: '/settlementManagement/comprehensiveFee/edit' ,query: { edit: 1, oid: route.currentRoute.value?.query?.oid } });
 };
 const formData: any = reactive({
 	data: {

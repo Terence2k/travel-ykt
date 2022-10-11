@@ -18,7 +18,7 @@
         <a-descriptions :title="`行程单ID：${state.params.itineraryNo}`" bordered>
           <a-descriptions-item label="线路名称" :span="3">{{state.data.routeName}}</a-descriptions-item>
           <a-descriptions-item label="组团模式" :span="2">{{state.data.groupTypeName}}</a-descriptions-item>
-          <a-descriptions-item label="团队类型">团队类型</a-descriptions-item>
+          <a-descriptions-item label="团队类型">{{state.data.teamTypeName}}</a-descriptions-item>
           <a-descriptions-item label="组团社" :span="2">{{state.data.travelName}}</a-descriptions-item>
           <a-descriptions-item label="组团社计调" >{{state.data.travelOperator.username}} {{state.data.travelOperator.mobile}}</a-descriptions-item>
           <a-descriptions-item label="地接社" :span="2">{{state.data.subTravelName}}</a-descriptions-item>
@@ -35,25 +35,43 @@
       </a-col>
       <a-col :span="7">
         <a-descriptions title="&nbsp;" bordered layout="vertical">
-          <a-descriptions-item label="行程单二维码">待提交后生成</a-descriptions-item>
+          <a-descriptions-item label="行程单二维码" :labelStyle="labelStyle" :contentStyle="contentStyle">
+            待提交后生成
+          </a-descriptions-item>
         </a-descriptions>
       </a-col>
     </a-row>
   </div> 
 </template>
 <script lang="ts" setup>
-  import { ref, Ref } from 'vue';
+  import { ref, Ref, CSSProperties } from 'vue';
   import api from '@/api';
   const state = reactive({
 		data: {
       travelOperator: {},
       subTravelOperator: {}
-    },
+    } as any,
     param: {
       pageNo: 1,
       pageSize: 10,
     },
     params: {} as any,
+  });
+  // 行程单二维码标签样式
+  const labelStyle = computed((): CSSProperties => {
+    return {
+      display: 'flex',
+      justifyContent: 'center'
+    };
+  });
+  // 行程单二维码内容样式
+  const contentStyle = computed((): CSSProperties => {
+    return {
+      lineHeight: '352px',
+      display: 'flex',
+      justifyContent: 'center',
+      color: '#9DA0A4',
+    };
   });
 
   const getItineraryDetail = () => {
@@ -73,13 +91,10 @@
     const tempData = localStorage.getItem('tempData');
     if (tempData) {
       state.params = JSON.parse(tempData);
+      getItineraryDetail();
     } else {
       let { detailInfo } = useRoute().params as any;
       state.params = JSON.parse(decodeURIComponent(detailInfo));
-      localStorage.setItem('tempData', decodeURIComponent(detailInfo));
-    }
-    if (state.params) {
-      getItineraryDetail();
     }
   })
 </script>
@@ -104,6 +119,11 @@
     }
   }
   .info-card {
+  }
+  :deep(.qr-code.ant-descriptions-item-content) {
+    height: 384px;
+    text-align: center;
+    color: #9DA0A4;
   }
 }
 </style>

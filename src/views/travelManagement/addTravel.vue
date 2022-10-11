@@ -75,12 +75,15 @@ import { message } from 'ant-design-vue';
     } ,500)
   watch(obj, (newVal) => {
     debounceFun(newVal.data)
-    
   })
   const saveItinerary = (val:any) => {
 		return api.travelManagement.saveItinerary(
 			{
-				attachmentParam: val.attachmentParam || {},
+				attachmentParam: val.attachmentParam || {
+          receptionAgreement: "http://test1.jpg",
+          rentCarContract: "http://test2.jpg",
+          travelContract: "http://test.jpg"
+        },
 				basicParam: val.basicParam || {},
 				guideList: val.guideList || [],
 				itineraryInfoParam: val.itineraryInfoParam || {},

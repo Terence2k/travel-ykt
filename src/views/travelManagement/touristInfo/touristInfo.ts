@@ -8,13 +8,14 @@ import api from '@/api/index';
 import { CODEVALUE } from '@/constant'
 interface DataItem {
 	certificateType: string;
-	healthCode: string,
-	sourceAddress: string,
-	gender: string,
-	name: string,
-	certificateNo: string,
-	certificatePicture: string,
-	sourceAddressStr: string,
+	healthCode: string;
+	sourceAddress: string;
+	gender: string;
+	name: string;
+	certificateNo: string;
+	certificatePicture: string;
+	sourceAddressStr: string;
+	specialCertificateType: string;
 	addressId: []
 }
 
@@ -34,7 +35,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 		editableData: {},
 		startRef: {},
 		cityOptions: [],
-		selectKey: ['certificateType', 'gender',],
+		selectKey: ['certificateType', 'gender', 'specialCertificateType'],
 		inputKey: ['certificateNo', 'name'],
 		rulesRef: {
 			1: {
@@ -83,10 +84,16 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 				dataIndex: 'healthCode',
 				key: 'healthCode',
 			},
+			{
+				title: '特殊证件类型',
+				dataIndex: 'specialCertificateType',
+				key: 'specialCertificateType',
+				data: travelStore.specialId
+			},
             {
 				title: '证件图片',
-				dataIndex: 'certificatePicture',
-				key: 'certificatePicture',
+				dataIndex: 'specialCertificatePicture',
+				key: 'specialCertificatePicture',
 			},
 			{
 				title: '操作',
@@ -138,8 +145,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 		save: async (key?: string) => {
 			await methods.addRules(key)
 			const res = await validateFields(state.formRef);
-			emits('onSuccess', res ? {touristList: state.tableData} : {transportList: res});
-			if (!res) return
+			if (!res) return emits('onSuccess', {touristList: res});
 			if (key) {
 				methods.copyData(key);
 				delete state.editableData[key];
@@ -148,7 +154,9 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 					methods.copyData(k);
 					delete state.editableData[k];
 				}
+				emits('onSuccess', {touristList: state.tableData});
 			}
+			travelStore.setTouristList(state.tableData)
 			
 		},
 		add: () => {

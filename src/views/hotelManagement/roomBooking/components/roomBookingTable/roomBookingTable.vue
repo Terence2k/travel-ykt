@@ -12,13 +12,13 @@
 			<template #headerCell="{ column }">
 				<div class="cell-header" v-if="column.dataIndex !== 'roomType' && column?.appointedTime">
 					<div class="item">
-						<span>{{ getDayNumText(column?.appointedTime) }}</span>
-					</div>
-					<div class="item">
 						<span>{{ getMonthAndDayText(column?.appointedTime) }}</span>
 					</div>
+					<div class="item">
+						<span>{{ getDayNumText(column?.appointedTime) }}</span>
+					</div>
 				</div>
-				<div v-else class="cell-header">
+				<div v-else class="cell-header row-first">
 					<span>房间</span>
 				</div>
 			</template>
@@ -36,7 +36,7 @@
 						<span>{{ `剩下${record[column.dataIndex]?.stockNum || '未知'}间` }}</span>
 					</div>
 				</div>
-				<div v-else class="cell-body">
+				<div v-else class="cell-body row-first">
 					<span>{{ text }}</span>
 				</div>
 			</template>

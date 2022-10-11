@@ -117,6 +117,7 @@
 	}
   const goToDetail = (val: any) => {
     console.log('val：', val);
+    localStorage.setItem('tempData', JSON.stringify(val));
 		router.push({
 			name: 'travel_detail',
 			params: {

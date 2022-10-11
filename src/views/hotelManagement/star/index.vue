@@ -77,21 +77,25 @@ const columns: TableColumnsType = [
 		title: '序号',
 		dataIndex: 'oid',
 		key: 'oid',
+		width: 100,
 	},
 	{
 		title: '酒店星级',
 		dataIndex: 'starCode',
 		key: 'starCode',
+		width: '25%',
 	},
 	{
 		title: '诚信指导价',
 		dataIndex: 'price',
 		key: 'price',
+		width: 150,
 	},
 	{
 		title: '状态',
 		dataIndex: 'ratedStatusName',
 		key: 'ratedStatusName',
+		width: '40%',
 	},
 	{
 		title: '操作',
