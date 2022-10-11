@@ -27,12 +27,12 @@
 						<template v-if="selectKey.includes(column.key)">
 							<div>
 								<a-form-item 
-									v-if="editableData[record.key]" 
-									:name="[record.key, column.key]">
+									v-if="editableData[record.key ? record.key : record.oid]" 
+									:name="[record.key ? record.key : record.oid, column.key]">
 									<a-select
 										style="width: 100%"
 										
-										v-model:value="editableData[record.key][column.key]">
+										v-model:value="editableData[record.key ? record.key : record.oid][column.key]">
 										<a-select-option 
 											v-for="val in column.data"
 											:key="val.codeValue"
@@ -49,10 +49,10 @@
 						<template v-if="inputKey.includes(column.key)">
 							<div>
 								<a-form-item 
-									v-if="editableData[record.key]" 
-									:name="[record.key, column.key]">
+									v-if="editableData[record.key ? record.key : record.oid]" 
+									:name="[record.key ? record.key : record.oid, column.key]">
 									<a-input
-										v-model:value="editableData[record.key][column.key]" 
+										v-model:value="editableData[record.key ? record.key : record.oid][column.key]" 
 										placeholder="请输入" />
 								</a-form-item>
 								
@@ -63,18 +63,18 @@
 						</template>
 						<template v-if="column.key === 'addressId'">
 							<a-form-item
-								v-if="editableData[record.key]"
-								:name="[record.key, column.key]">
+								v-if="editableData[record.key ? record.key : record.oid]"
+								:name="[record.key ? record.key : record.oid, column.key]">
 								<a-cascader
-									v-if="editableData[record.key]"
+									v-if="editableData[record.key ? record.key : record.oid]"
 									:load-data="loadData"
-									v-model:value="editableData[record.key][column.key]" 
+									v-model:value="editableData[record.key ? record.key : record.oid][column.key]" 
 									:options="cityOptions"
-									@change="(val, option) => handleChange(val, option, record.key)" />
+									@change="(val, option) => handleChange(val, option, record.key ? record.key : record.oid)" />
 							</a-form-item>
 							
 							<template v-else>
-								{{ record.sourceAddressStr }}
+								{{ record.sourceAddressName }}
 							</template>
 						</template>
 						<template v-if="column.key === 'healthCode'">
@@ -82,14 +82,14 @@
 								{{text}}
 							</span>
 						</template>
-						<template v-if="column.key === 'certificatePicture'">
+						<template v-if="column.key === 'specialCertificatePicture'">
 							<Upload></Upload>
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a class="item" v-if="!editableData[record.key]"  @click="edit(record.key)">编辑</a>
-								<a class="item" v-else @click="save(record.key)">确定</a>
-								<a class="item">删除</a>
+								<a class="item" v-if="!editableData[record.key ? record.key : record.oid]"  @click="edit(record.key ? record.key : record.oid)">编辑</a>
+								<a class="item" v-else @click="save(record.key ? record.key : record.oid)">确定</a>
+								<a class="item" @click="del(index)">删除</a>
 							</div>
 						</template>
 				</template>
@@ -124,6 +124,7 @@ const {
 	inputKey, 
 	cityOptions,
 	add,
+	del,
 	rulesRef,
 	formRef,
 	loadData, handleChange } = useTouristInfo(props, emits)

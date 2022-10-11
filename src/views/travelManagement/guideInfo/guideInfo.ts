@@ -5,6 +5,7 @@ import type { UnwrapRef } from 'vue';
 import { validateRules, validateFields, generateGuid } from '@/utils';
 
 import api from '@/api/index';
+import { useTravelStore } from '@/stores/modules/travelManagement';
 interface DataItem {
 	time: string;
 	endDate: string,
@@ -25,6 +26,8 @@ const rules = {
 
 export function useGuideInfo(props: any, emits: any): Record<string, any> {
 	const { onCheck } = toRefs(props);
+	const travelStore = useTravelStore()
+	const route = useRoute()
 	const state = reactive<{editableData: UnwrapRef<Record<string, DataItem>>, [k:string]: any}>({
 		editableData: {},
 		guideParams: {
@@ -33,7 +36,7 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 			queryType: 2
 		},
 		guideData: [],
-		tableData: [],
+		tableData: route.query.id ? travelStore.guideList : [],
 		columns: [
 			{
 				title: ' 序号 ',
@@ -64,6 +67,7 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 				title: '导游类型',
 				dataIndex: 'guideType',
 				key: 'guideType',
+				data: travelStore.guideType
 			},
 			{
 				title: '签约旅行社',
@@ -87,7 +91,7 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 	const methods = {
 		copyData(key:any) {
 			Object.assign(
-				state.tableData.filter((item:any) => key === item.key)[0], 
+				state.tableData.filter((item:any) => key === (item.key ? item.key : item.oid))[0], 
 				state.editableData[key]
 			);
 		},
@@ -100,12 +104,17 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 		},
 		edit: (key: string) => {
 			const cur = cloneDeep(
-				state.tableData.filter((item:any) => key === item.key)[0]
+				state.tableData.filter((item:any) => key === (item.key ? item.key : item.oid))[0]
 			);
 			cur.time = cur.startDate && 
 						cur.endDate && 
 						[cur.startDate, cur.endDate] || [];
 			state.editableData[key] = cur;
+		},
+		del(key: string) {
+			console.log(key)
+			state.tableData.splice(key, 1);
+			// state.tableData = state.tableData.filter((item: any) => key !== (item.key ? item.key : item.oid));
 		},
 
 		save: async (key?: string) => {
@@ -115,8 +124,8 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 				state.rulesRef[k] = rule[k]
 			}
 			const res = await validateFields(state.formRef);
-			emits('onSuccess', res ? {guideList: state.tableData} : {guideList: res});
-			if (!res) return
+			
+			if (!res) return emits('onSuccess', {guideList: res});
 			if (key) {
 				state.editableData[key].startDate = state.editableData[key].time[0]
 				state.editableData[key].endDate = state.editableData[key].time[1]
@@ -129,6 +138,7 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 					methods.copyData(k)
 					delete state.editableData[k];
 				}
+				emits('onSuccess', {guideList: state.tableData});
 			}
 		},
 

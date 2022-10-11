@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { GroupMode, GroupStatus, Gender } from '@/enum';
+import { GroupMode, GroupStatus, Gender, GuideType } from '@/enum';
 import api from '@/api/index';
 interface TraveDataItem {
 	groupType: GroupMode.All | GroupMode.TeamGroup |GroupMode.NoTeamGroup;
@@ -26,6 +26,10 @@ export const useTravelStore = defineStore({
 			[GroupStatus.Overtime]: '审核超时',
 
 		},
+		guideType: {
+			[GuideType.UnderGuide]: '直属导游',
+			[GuideType.AppointGuide]: '可委派导游'
+		},
 		genderList: [
 			{
 				name: '男',
@@ -40,7 +44,14 @@ export const useTravelStore = defineStore({
 		specialId: [],
 		trafficType: [],
 		trafficColor: [],
-		touristList: []
+		baseInfo: {
+			subTravelOperator: {}
+		},
+		guideList: [],
+		touristList: [],
+		trafficList: [],
+		traveInfo: {},
+		fileInfo: {}
 	}),
 	getters: {
 		// count(): string {
@@ -76,6 +87,21 @@ export const useTravelStore = defineStore({
 		},
 		setTouristList(list: any) {
 			this.touristList = list
+		},
+		setBaseInfo(data: any) {
+			this.baseInfo = data
+		},
+		setGuideList(list: any) {
+			this.guideList = list
+		},
+		setTrafficList(list: any) {
+			this.trafficList = list
+		},
+		setTraveInfo(data: any) {
+			this.traveInfo = data
+		},
+		setFileInfo(data: any) {
+			this.fileInfo = data
 		}
 	},
 });

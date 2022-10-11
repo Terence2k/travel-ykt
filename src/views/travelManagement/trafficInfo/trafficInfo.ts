@@ -13,8 +13,8 @@ interface DataItem {
 	licencePlateColor: string,
 	licencePlateNumber: string,
 	time: string,
-	useEndDate: string,
-	useStartDate: string
+	endDate: string,
+	startDate: string
 }
 
 const rules = {
@@ -29,6 +29,7 @@ const rules = {
 
 export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 	const { onCheck } = toRefs(props);
+	const route = useRoute()
 	const travelStore = useTravelStore();
 	const trafficType = computed(() => travelStore.trafficType);
 	const trafficColor = computed(() => travelStore.trafficColor);
@@ -46,7 +47,7 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
         onSelect: (record: DataItem, selected: boolean, selectedRows: DataItem[]) => {
             console.log(record, selected, selectedRows);
         },
-		tableData: [],
+		tableData: route.query.id ? travelStore.trafficList : [],
 		columns: [
 			{
 				title: ' 序号 ',
@@ -101,7 +102,7 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 	const methods = {
 		copyData(key:any) {
 			Object.assign(
-				state.tableData.filter((item:any) => key === item.key)[0], 
+				state.tableData.filter((item:any) => key === (item.key ? item.key : item.oid))[0], 
 				state.editableData[key]
 			);
 		},
@@ -114,15 +115,17 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 		},
 		edit: (key: string) => {
 			state.editableData[key] = cloneDeep(
-				state.tableData.filter((item:any, index: number) => key === item.key)[0]
+				state.tableData.filter((item:any, index: number) => key === (item.key ? item.key : item.oid))[0]
 			)
+		},
+		del(key: string) {
+			state.tableData.splice(key, 1)
 		},
 		save: async (key?: string) => {
 			await methods.addRules(key)
 			const res = await validateFields(state.formRef);
 			
-			emits('onSuccess', res ? {transportList: state.tableData} : {transportList: res});
-			if (!res) return
+			if (!res) return emits('onSuccess', {transportList: res});
 			if (key) {
 				methods.copyData(key);
 				delete state.editableData[key];
@@ -131,6 +134,7 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 					methods.copyData(k);
 					delete state.editableData[k];
 				}
+				emits('onSuccess', {transportList: state.tableData});
 			}
 			
 		},
@@ -142,8 +146,8 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 		},
 		handleTime(event: any, key: string) {
 			console.log(event, key)
-			state.editableData[key].useStartDate = event[0];
-			state.editableData[key].useEndDate = event[1];
+			state.editableData[key].startDate = event[0];
+			state.editableData[key].endDate = event[1];
 		}
 	}
 	travelStore.getTraveCode(CODEVALUE.TRAVE_CODE.TRAFFICTYPE, 'trafficType');
