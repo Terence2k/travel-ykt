@@ -21,7 +21,7 @@
 
         <template v-if="column.key === 'action'">
           <div class="action-btns">
-            <a>编辑</a>
+            <a @click="goToPath(record.oid)">编辑</a>
             <a>邀请地接社编辑</a>
             <a>发团</a>
           </div>
@@ -39,7 +39,7 @@
 </template>
 <script lang="ts" setup>
 	import CommonTable from '@/components/common/CommonTable.vue';
-  import CommonPagination from '@/components/common/CommonPagination.vue';
+  	import CommonPagination from '@/components/common/CommonPagination.vue';
 
 	import api from '@/api/index';
 
@@ -105,24 +105,32 @@
 		]
 	})
 	const onSearch = async () => {
-		const res = await travelStore.getTravelList({pageNo: 1, pageSize: 10, status: GroupStatus.Drafts});
+		const res = await travelStore.getTravelList({pageNo: state.params.pageNo, pageSize: state.params.pageSize, status: GroupStatus.Drafts});
 		state.tableData = res.content
 		state.total = res.total;
 	}
-	const onHandleCurrentChange = () => {
-
+	const onHandleCurrentChange = (e:any) => {
+		state.params.pageNo = e
+		onSearch()
 	}
 	const pageSideChange = () => {
 
 	}
-  const goToDetail = (val: any) => {
-    console.log('val：', val);
-    localStorage.setItem('tempData', JSON.stringify(val));
+	const goToPath = (id: number) => {
+		router.push({
+			path: '/travel/travel_manage/add_travel',
+			query: {
+				id
+			}
+		})
+	}
+  	const goToDetail = (val: any) => {
+    	console.log('val：', val);
 		router.push({
 			name: 'travel_detail',
 			params: {
-        detailInfo: JSON.stringify(val)
-      }
+				detailInfo: JSON.stringify(val)
+			}
 		})
     
   }

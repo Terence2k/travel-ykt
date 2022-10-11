@@ -21,9 +21,12 @@ import touristInfo from './touristInfo/touristInfo.vue';
 import traveInfo from './traveInfo/traveInfo.vue';
 import trafficInfo from './trafficInfo/trafficInfo.vue';
 import fileInfo from './fileInfo/fileInfo.vue';
-import { debounce } from 'lodash';
+import { cloneDeep, debounce } from 'lodash';
 import api from '@/api';
 import { message } from 'ant-design-vue';
+import { useTravelStore } from '@/stores/modules/travelManagement';
+  const route = useRoute()
+  const travelStore = useTravelStore();
   const activeKey = ref(0);
   const check = ref(false)
   const pages = [
@@ -57,12 +60,13 @@ import { message } from 'ant-design-vue';
     data: {}
   })
   const save = (e: any) => {
+    console.log(e)
     rulesPass.push(e)
     for (let i = 0; i < rulesPass.length; i++) {
-      obj.data = {
+      obj.data = cloneDeep({
         ...obj.data,
         ...rulesPass[i]
-      }
+      })
     }
 
   }
@@ -76,9 +80,32 @@ import { message } from 'ant-design-vue';
   watch(obj, (newVal) => {
     debounceFun(newVal.data)
   })
+  const getTraveDetail = () => {
+    if (!route.query.id) return
+    api.travelManagement.getItineraryDetail({
+      oid: route.query.id,
+      pageNo: 1,
+      pageSize: 100000
+    }).then((res: any) => {
+      res.basic.teamId = res.basic.itineraryNo
+      res.basic.touristNum = res.basic.touristCount
+      res.basic.travelOperatorOid = res.basic.travelOperator.oid
+      res.basic.contactPhone = res.basic.travelOperator.mobile
+      res.basic.username = res.basic.travelOperator.username
+      res.basic.subTravelOperatorOid = res.basic.subTravelOperator.oid
+      res.basic.subTravelContactPhone = res.basic.subTravelOperator.mobile
+      travelStore.setBaseInfo(res.basic);
+      travelStore.setGuideList(res.guideList);
+      travelStore.setTouristList(res.touristList.content);
+      travelStore.setTrafficList(res.transportList);
+      
+    })
+  }
   const saveItinerary = (val:any) => {
-		return api.travelManagement.saveItinerary(
+    let ajax = route.query.id ? api.travelManagement.editItinerary : api.travelManagement.saveItinerary
+		return ajax(
 			{
+        oid: route.query.id,
 				attachmentParam: val.attachmentParam || {
           receptionAgreement: "http://test1.jpg",
           rentCarContract: "http://test2.jpg",
@@ -94,6 +121,7 @@ import { message } from 'ant-design-vue';
       message.success('新增成功');
     })
 	}
+  getTraveDetail()
 </script>
 <style lang="less" scoped>
   .trave-contaner {

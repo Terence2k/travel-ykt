@@ -23,9 +23,16 @@
 			name="teamType"
 			>
 			<!-- <a-input v-model:value="formState.username" /> -->
-				<a-radio-group v-model:value="formState.teamType" name="radioGroup">
-					<a-radio :value="item.oid" v-for="item in list.teamType" :key="item.oid">{{item.name}}</a-radio>
-				</a-radio-group>
+			
+			<a-radio-group v-model:value="formState.teamType" name="radioGroup">
+				<a-row type="flex">
+					<a-col :span="6" v-for="item in list.teamType" :key="item.oid" class="mb-2">
+						<a-radio :value="item.oid">{{item.name}}</a-radio>
+					</a-col>
+					
+				</a-row>
+			</a-radio-group>
+				
 			</a-form-item>
 
 			<a-form-item label="组团社（发团）" name="travelName">
@@ -33,9 +40,10 @@
 			</a-form-item>
 
 			<a-form-item label="组团社计调">
-				<a-select v-model:value="formState.travelOperatorOid" placeholder="请选择组团社做团人" disabled>
+				<a-input v-model:value="formState.username" disabled />
+				<!-- <a-select v-model:value="formState.travelOperatorOid" placeholder="请选择组团社做团人" disabled>
 					<a-select-option :value="userInfo.oid">{{userInfo.username}}</a-select-option>
-				</a-select>
+				</a-select> -->
 			</a-form-item>
 
 			<a-form-item label="组团社计调电话" name="contactPhone">
@@ -49,18 +57,20 @@
 			</a-form-item>
 
 			<a-form-item label="地接计调" name="subTravelOperatorOid">
-				<a-select v-model:value="formState.subTravelOperatorOid" placeholder="请选择地接做团人">
+				<a-select v-model:value="formState.subTravelOperatorOid" @change="handleChange" placeholder="请选择地接做团人">
 					<a-select-option 
 						:value="item.oid" 
 						v-for="item in list.travelOperatorList" 
-						:key="item.oid">
+						:key="item.oid"
+						:phone="item.mobile"
+						>
 						{{item.username}}
 					</a-select-option>
 				</a-select>
 			</a-form-item>
 
 			<a-form-item label="地接社计调电话" name="subTravelContactPhone">
-				<a-input v-model:value="formState.subTravelContactPhone" />
+				<a-input v-model:value="formState.subTravelContactPhone" placeholder="选定地接社计调后自动读出" disabled />
 			</a-form-item>
 
 			<a-form-item label="游客人数" name="touristNum">
@@ -107,23 +117,6 @@ import { RouteType } from '@/enum';
 import api from '@/api/index';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 
-interface FormState {
-	groupType: any;
-	contactPhone: string;
-	subTravelOperatorOid: string;
-	travelOid: string;
-	touristNum: number | string;
-	subTravelContactPhone: string;
-	routeName: string;
-	endDate: string;
-	startDate: string;
-	teamId: string;
-	teamType: string;
-	subTravelOid: string;
-	travelName: string;
-	travelOperatorOid: string | number;
-	routeType: string | number
-}
 interface TeamType {
 	teamType: Array<any>;
 	subTravelList: Array<any>;
@@ -133,7 +126,6 @@ interface TeamType {
 const travelStore = useTravelStore();
 const touristCount = computed(() => travelStore.touristList.length ? travelStore.touristList.length : '添加游客名单后自动计算')
 const route = useRoute()
-const userInfo = getUserInfo()
 const page = reactive({
 	teamType: {
 		pageNo: 1,
@@ -159,6 +151,32 @@ const props = defineProps({
 
 const emits = defineEmits(['onSuccess'])
 
+let userInfo: any = {}
+let addParams: any = {}
+if (route.query.id) {
+	
+} else {
+	userInfo = getUserInfo()
+	addParams = {
+		username: userInfo.username,
+		groupType: route.query.type,
+		contactPhone: userInfo.mobile,
+		subTravelOperatorOid: '',
+		travelOid: userInfo.sysCompany.oid,
+		travelOperatorOid: userInfo.oid,
+		touristNum: touristCount.value,
+		subTravelContactPhone: '',
+		routeName: '',
+		endDate: '',
+		startDate: '',
+		teamId: '',
+		teamType: '',
+		subTravelOid: '',
+		// routeType: 1,
+		travelName: userInfo.sysCompany.name
+	}
+}
+
 
 const rulesRef = {
 	teamType: [{ required: true, message: '请选择行程类型' }],
@@ -176,35 +194,14 @@ const rulesRef = {
 };
 
 
-const formState = reactive<FormState>({
-	groupType: route.query.type,
-	contactPhone: userInfo.mobile,
-	subTravelOperatorOid: '',
-	travelOid: userInfo.sysCompany.oid,
-	travelOperatorOid: userInfo.oid,
-	touristNum: touristCount.value,
-	subTravelContactPhone: '',
-	routeName: '',
-	endDate: '',
-	startDate: '',
-	teamId: '',
-	teamType: '',
-	subTravelOid: '',
-	routeType: 1,
-	travelName: userInfo.sysCompany.name
-});
-const onFinish = (values: any) => {
-	console.log('Success:', values);
-};
 
-const onFinishFailed = (errorInfo: any) => {
-	console.log('Failed:', errorInfo);
-};
+const formState = ref<{[k:string]: any}>(route.query.id ? travelStore.baseInfo : addParams);
+
 const onSubmit = async () => {
 	try {
 		const values = await formRef.value.validateFields()
-		formState.touristNum = touristCount.value
-		emits('onSuccess', {basicParam: formState});
+		formState.value.touristNum = touristCount.value
+		emits('onSuccess', {basicParam: formState.value});
 	} catch (errorInfo) {
 		emits('onSuccess', {basicParam: false});
 	}
@@ -220,8 +217,17 @@ const getSubtravelList = async () => {
 const gettravelOperatorList = async (travelId: number) => {
 	list.travelOperatorList = await api.travelManagement.gettravelOperatorList({travelId});
 }
+const handleChange = (event: any, option: any) => {
+	formState.value.subTravelContactPhone = option.phone
+}
 watch(() => props.onCheck, (newVal) => {
 	onSubmit()
+})
+watch(() => travelStore.baseInfo, newVal => {
+	formState.value = newVal;
+	if (route.query.id) {
+		list.travelOperatorList = [newVal.subTravelOperator];
+	}
 })
 getTeamTypeList();
 getSubtravelList();
@@ -234,5 +240,8 @@ getSubtravelList();
 		display: flex;
 		justify-content: end;
 		margin-bottom: 10px;
+	}
+	.mb-2 {
+		margin-bottom: 5px;
 	}
 </style>
