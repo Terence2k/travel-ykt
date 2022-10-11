@@ -2,7 +2,7 @@
 	<div class="editWrapper">
 		<header class="title">基本信息</header>
 		<a-form class="" ref="formRef" :model="formData" :label-col="{ span: 3 }" labelAlign="left" :wrapper-col="{ span: 7 }" :scrollToFirstError="true">
-			<a-form-item label="归属景区" v-if="type === '1'">
+			<a-form-item label="归属景区">
 				<!-- <a-input v-model:value="formData.data.scenicId" placeholder="请填写景区名字" /> -->
 				<a-select allowClear v-model:value="formData.data.scenicId" placeholder="请选择">
 					<a-select-option :value="vlItem.old" v-for="vlItem in viewList" :key="vlItem.ticketId">{{ vlItem.ticketName }}</a-select-option>
@@ -15,13 +15,13 @@
 			<a-form-item label="门票名称" v-bind="validateInfos[`data.ticketName`]">
 				<a-input v-model:value="formData.data.ticketName" placeholder="请填写门票名称" />
 			</a-form-item>
-			<a-form-item label="门票分类" v-bind="validateInfos[`data.ticketType`]">
+			<!-- <a-form-item label="门票分类" v-bind="validateInfos[`data.ticketType`]">
 				<a-select allowClear ref="select" v-model:value="formData.data.ticketType" placeholder="请选择">
 					<a-select-option :value="0">儿童</a-select-option>
 					<a-select-option :value="1">成人</a-select-option>
 					<a-select-option :value="2">老人</a-select-option>
 				</a-select>
-			</a-form-item>
+			</a-form-item> -->
 			<a-form-item label="可预定时间" v-bind="errorInfos" style="margin-bottom: 10px">
 				<a-radio-group v-model:value="formData.data.orderTimeRule">
 					<a-radio :value="false">当日可定</a-radio>
@@ -120,7 +120,6 @@ const formData = reactive({
 		verificationType: null, //核销类型
 		scenicId: null, //关联景区id
 		ticketName: null, //门票名称
-		ticketType: null, //门票类型:0-儿童,1-成人,2-老人
 		orderTime: null, //预约时间 单位:时分
 		orderTimeRule: null, //预约时间规则:0-当日,1-次日
 		validTime: null, //有效期 1~7
@@ -160,9 +159,9 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 		'data.wateryPrice': [{ required: true, message: '请输入降水价' }],
 		'data.price': [{ required: true, message: '请输入价格' }],
 		'data.verificationType': [{ required: true, message: 'verificationType' }],
-		'data.scenicId': [{ required: type.value === '1' ? true : false, message: '请选择归属景区' }],
+		'data.scenicId': [{ required: true, message: '请选择归属景区' }],
 		'data.ticketName': [{ required: true, message: '请输入门票名称' }],
-		'data.ticketType': [{ required: true, message: '请选择门票分类' }],
+		// 'data.ticketType': [{ required: true, message: '请选择门票分类' }],
 
 		'data.validTime': [{ required: true, message: '请选择有效时间' }],
 		// 'data.optionalVerificationCount': [{ required: true, message: '请选择有效期' }],
@@ -245,6 +244,7 @@ const initEditPage = async () => {
 	navigatorBar.setNavigator(['景区信息管理', '编辑']);
 	let res = await api.getScenicSpotSignleDetail(route.currentRoute.value?.query?.oid);
 	formData.data = res;
+	console.log();
 };
 
 const initCreatePage = () => {
