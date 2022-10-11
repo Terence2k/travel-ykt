@@ -10,7 +10,15 @@
 						</template>
 					</div>
 				</template>
-				<template v-if="['price', 'roomNum'].includes(column.dataIndex)">
+				<template v-if="['price'].includes(column.dataIndex)">
+					<div>
+						<a-input :disabled="true" type="number" v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]" />
+						<template v-else>
+							<a-input :disabled="true" :defaultValue="text" />
+						</template>
+					</div>
+				</template>
+				<template v-if="['roomNum'].includes(column.dataIndex)">
 					<div>
 						<a-input type="number" v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]" />
 						<template v-else>
@@ -201,7 +209,6 @@ watch(
 						label: item.sysRoomTypeCode,
 					};
 				});
-				//console.log('dddddddddd', systemRoomData);
 			});
 		}
 	},
@@ -224,7 +231,7 @@ const saveRoomInfo = () => {
 				oid: item.oid,
 				hotelId: parseInt(item.hotelId),
 				roomTypeName: item.roomTypeName,
-				roomTypeCode: item.roomTypeCode,
+				roomTypeCode: item.systemRoomName,
 				roomNum: parseInt(item.roomNum),
 				roomOccupancyNum: parseInt(item.roomOccupancyNum),
 				operationType: parseInt(item.operationType),
@@ -233,7 +240,7 @@ const saveRoomInfo = () => {
 			return {
 				hotelId: parseInt(item.hotelId),
 				roomTypeName: item.roomTypeName,
-				roomTypeCode: item.roomTypeCode,
+				roomTypeCode: item.systemRoomName,
 				roomNum: parseInt(item.roomNum),
 				roomOccupancyNum: parseInt(item.roomOccupancyNum),
 				operationType: parseInt(item.operationType),
@@ -259,7 +266,7 @@ const add = () => {
 		auditOrderId: '',
 		auditStatus: 1,
 		hotelId: parseInt(state.hotelId),
-		roomTypeCode: 121,
+		roomTypeCode: 1,
 		roomNum: 0,
 		roomOccupancyNum: 0,
 		operationType: 0,

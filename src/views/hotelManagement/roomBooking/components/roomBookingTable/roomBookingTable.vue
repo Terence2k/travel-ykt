@@ -1,7 +1,7 @@
 <template>
 	<div class="wrapper-roomBookingTable">
 		<div class="container-time flex-container">
-			<div>当前时间：{{ getCurrentTimeDetailText() }}</div>
+			<div>当前时间：{{ tableState.params.currentTimeDetailText }}</div>
 			<div class="flex-container select-bar">
 				<a-select class="select-year select item" :showArrow="true" :options="yearOptions" v-model:value="year" placeholder="年份"> </a-select>
 
@@ -418,8 +418,8 @@ const modalState = reactive({
 });
 
 const getCurrentHourAndMinuteText = () => {
-	const section = currentDayjs.format('A');
-	const time = currentDayjs.format('h:mm');
+	const section = dayjs().format('A');
+	const time = dayjs().format('h:mm');
 	return `${section}${time}`;
 };
 
@@ -428,8 +428,18 @@ const getMonthAndDayText = (date: string) => {
 	return `${currentDate.getMonth() + 1}月${currentDate.getDate()}号`;
 };
 
+const getCurrentTimeDetailTextInLoop = () => {
+	setInterval(() => {
+		tableState.params.currentTimeDetailText = `${currentDayjs.format('YYYY年MM月DD日')}\u3000${getDayNumText(
+			currentDayjs.format('YYYY-MM-DD')
+		)}\u3000${getCurrentHourAndMinuteText()}`;
+	}, 10000);
+};
+
 const getCurrentTimeDetailText = () => {
-	return `${currentDayjs.format('YYYY年MM月DD日')}\u3000${getDayNumText(currentDayjs.format('YYYY-MM-DD'))}\u3000${getCurrentHourAndMinuteText()}`;
+	tableState.params.currentTimeDetailText = `${currentDayjs.format('YYYY年MM月DD日')}\u3000${getDayNumText(
+		currentDayjs.format('YYYY-MM-DD')
+	)}\u3000${getCurrentHourAndMinuteText()}`;
 };
 
 const dataSource = computed(() => {
@@ -477,6 +487,9 @@ const tableState = reactive({
 			hotelId: undefined,
 		},
 	},
+	params: {
+		currentTimeDetailText: '',
+	},
 });
 
 const getHotelRoomTypeStockTableInfo = (hotelId) => {
@@ -506,6 +519,8 @@ watch(
 	() => props.hotelId,
 	(hotelId) => {
 		console.info('hotelId change');
+		getCurrentTimeDetailText();
+		getCurrentTimeDetailTextInLoop();
 		getHotelRoomTypeStockTableInfo(hotelId);
 	},
 	{
