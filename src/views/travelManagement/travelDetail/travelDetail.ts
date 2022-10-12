@@ -5,8 +5,6 @@ const sharedOnCell = (_, index) => {
 };
 
 export const getOptions = (props: any) => {
-  console.log('props.hotelList:', props.hotelList);
-  
   // 酒店入住人数
   // props.hotelList.peopleCount = props.hotelList.map((item: any) => item.peopleCount).reduce((prev: any, curr: any, idx: any, arr: any) => prev + curr);
   // // 酒店房间数量
