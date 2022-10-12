@@ -27,8 +27,8 @@
           <address-selector placeholder="请选择所属地区" v-model:value="form.regionCode" @change="regionChange">
           </address-selector>
         </a-form-item>
-        <a-form-item name="address" label="企业详情地址">
-          <a-input v-model:value="form.address" placeholder="请输入企业详情地址">
+        <a-form-item name="addressDetail" label="企业详情地址">
+          <a-input v-model:value="form.addressDetail" placeholder="请输入企业详情地址">
           </a-input>
         </a-form-item>
         <a-form-item name="legalPerson" label="法定代表人">
@@ -44,10 +44,12 @@
           </a-input>
         </a-form-item>
         <a-form-item name="establishTime" label="成立日期">
-          <a-date-picker v-model:value="form.establishTime" placeholder="请选择成立日期" style="width:100%" />
+          <a-date-picker v-model:value="form.establishTime" placeholder="请选择成立日期" style="width:100%"
+            :format="dateFormat" :valueFormat="dateFormat" />
         </a-form-item>
         <a-form-item name="businessTerm" label="营业期限">
-          <a-date-picker v-model:value="form.businessTerm" placeholder="请选择营业期限" style="width:100%" />
+          <a-date-picker v-model:value="form.businessTerm" placeholder="请选择营业期限" style="width:100%" :format="dateFormat"
+            :valueFormat="dateFormat" />
         </a-form-item>
         <a-form-item name="contactName" label="联系人">
           <a-input v-model:value="form.contactName" placeholder="请输入联系人">
@@ -121,8 +123,8 @@
           <address-selector placeholder="请选择所属地区" v-model:value="form.regionCode" @change="regionChange">
           </address-selector>
         </a-form-item>
-        <a-form-item name="address" label="企业详情地址">
-          <a-input v-model:value="form.address" placeholder="请输入企业详情地址">
+        <a-form-item name="addressDetail" label="企业详情地址">
+          <a-input v-model:value="form.addressDetail" placeholder="请输入企业详情地址">
           </a-input>
         </a-form-item>
         <a-form-item name="contactName" label="联系人">
@@ -235,8 +237,8 @@
           <address-selector placeholder="请选择所属地区" v-model:value="form.regionCode" @change="regionChange">
           </address-selector>
         </a-form-item>
-        <a-form-item name="address" label="企业详情地址">
-          <a-input v-model:value="form.address" placeholder="请输入企业详情地址">
+        <a-form-item name="addressDetail" label="企业详情地址">
+          <a-input v-model:value="form.addressDetail" placeholder="请输入企业详情地址">
           </a-input>
         </a-form-item>
         <a-form-item name="contactName" label="联系人">
@@ -292,6 +294,7 @@ import AddressSelector from '@/views/baseInfoManage/businessManagement/component
 const router = useRouter();
 const route = useRoute();
 const formRef = ref()
+const dateFormat = 'YYYY-MM-DD';
 const back = () => {
   router.push({
     name: 'apply',
@@ -312,7 +315,7 @@ type detailsType = {
   provinceId?: string | number,
   cityId?: string | number,
   areaId?: string | number,
-  address?: string,
+  addressDetail?: string,
   legalPerson?: string,
   managementRange?: string,
   registeredCapital?: string,
@@ -370,7 +373,7 @@ const formRules6: Record<string, Rule[]> = {
   businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
   name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
   regionCode: [{ required: true, trigger: 'blur', message: '请选择企业所属地区' }],
-  address: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
+  addressDetail: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
   legalPerson: [{ required: true, trigger: 'blur', message: '请输入法定代表人' }],
   managementRange: [{ required: true, trigger: 'blur', message: '请输入经营范围' }],
   registeredCapital: [{ required: true, trigger: 'blur', message: '请输入注册资本' }],
@@ -393,7 +396,7 @@ const formRules9: Record<string, Rule[]> = {
   businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
   name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
   regionCode: [{ required: true, trigger: 'blur', message: '请选择企业所属地区' }],
-  address: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
+  addressDetail: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
   contactName: [{ required: true, trigger: 'blur', message: '请输入联系人姓名' }],
   phone: [{ required: true, trigger: 'blur', message: '请输入联系电话' }],
   accountType: [{ required: true, trigger: 'blur', message: '请选择公司账户类型' }],
@@ -420,7 +423,7 @@ const formRules8: Record<string, Rule[]> = {
   businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
   name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
   regionCode: [{ required: true, trigger: 'blur', message: '请选择企业所属地区' }],
-  address: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
+  addressDetail: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
   contactName: [{ required: true, trigger: 'blur', message: '请输入联系人姓名' }],
   phone: [{ required: true, trigger: 'blur', message: '请输入联系电话' }],
   account: [{ required: true, trigger: 'blur', message: '请输入超级管理员账号' }],
