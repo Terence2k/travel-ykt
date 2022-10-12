@@ -5,12 +5,14 @@ const sharedOnCell = (_, index) => {
 };
 
 export const getOptions = (props: any) => {
+  console.log('props.hotelList:', props.hotelList);
+  
   // 酒店入住人数
-  props.hotelList.peopleCount = props.hotelList.map((item: any) => item.peopleCount).reduce((prev: any, curr: any, idx: any, arr: any) => prev + curr);
-  // 酒店房间数量
-  props.hotelList.roomCount = props.hotelList.map((item: any) => item.roomCount).reduce((prev: any, curr: any, idx: any, arr: any) => prev + curr);
-  // 酒店预估费用
-  props.hotelList.totalFee = props.hotelList.map((item: any) => item.totalFee).reduce((prev: any, curr: any, idx: any, arr: any) => prev + curr);
+  // props.hotelList.peopleCount = props.hotelList.map((item: any) => item.peopleCount).reduce((prev: any, curr: any, idx: any, arr: any) => prev + curr);
+  // // 酒店房间数量
+  // props.hotelList.roomCount = props.hotelList.map((item: any) => item.roomCount).reduce((prev: any, curr: any, idx: any, arr: any) => prev + curr);
+  // // 酒店预估费用
+  // props.hotelList.totalFee = props.hotelList.map((item: any) => item.totalFee).reduce((prev: any, curr: any, idx: any, arr: any) => prev + curr);
   let touristOption = {
     columns: [
       {
