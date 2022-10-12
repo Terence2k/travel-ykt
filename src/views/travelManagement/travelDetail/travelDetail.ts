@@ -5,12 +5,6 @@ const sharedOnCell = (_, index) => {
 };
 
 export const getOptions = (props: any) => {
-  // 酒店入住人数
-  // props.hotelList.peopleCount = props.hotelList.map((item: any) => item.peopleCount).reduce((prev: any, curr: any, idx: any, arr: any) => prev + curr);
-  // // 酒店房间数量
-  // props.hotelList.roomCount = props.hotelList.map((item: any) => item.roomCount).reduce((prev: any, curr: any, idx: any, arr: any) => prev + curr);
-  // // 酒店预估费用
-  // props.hotelList.totalFee = props.hotelList.map((item: any) => item.totalFee).reduce((prev: any, curr: any, idx: any, arr: any) => prev + curr);
   let touristOption = {
     columns: [
       {
@@ -59,7 +53,10 @@ export const getOptions = (props: any) => {
       },
     ],
     title: '游客信息',
-    descriptions: `共${props.touristList.total}人，古维待缴人数：${props.basic.guWeiCount}，待缴费用：￥${props.touristList.total}`,
+    descriptions: 
+      `共<span style="color: red;">${props.touristList.total}</span>人，
+      古维待缴人数：<span style="color: red;">${props.basic.guWeiCount}</span>，
+      待缴费用：<span style="color: red;">￥${props.basic.totalFee || 0}</span>`,
     dataSource: props.touristList.content,
     pagination: true
   }
@@ -107,7 +104,10 @@ export const getOptions = (props: any) => {
       },
     ],
     title: '保险购买信息',
-    descriptions: `共${props.touristInsurance.length}人，保险购买状态：${props.touristInsurance[0]?.isBuy}，预估保费：${props.touristInsurance[0]?.totalFee}元`,
+    descriptions: 
+      `共<span style="color: red;">${props.touristInsurance.length}</span>人，
+      保险购买状态：${props.touristInsurance[0]?.isBuy || ''}，
+      预估保费：<span style="color: red;">${props.touristInsurance.reduce((prev: any, curr: any) => prev + curr.totalFee, 0)}</span>元`,
     dataSource: props.touristInsurance,
   }
   let hotelListOption = {
@@ -159,7 +159,11 @@ export const getOptions = (props: any) => {
       },
     ],
     title: '已预订酒店',
-    descriptions: `已预订${props.hotelList.length}个酒店，入住人数：${props.hotelList.peopleCount}人；房间数量：${props.hotelList.roomCount};预估费用：${props.hotelList.totalFee}元`,
+    descriptions: 
+      `已预订<span style="color: red;">${props.hotelList.length}</span>个酒店，
+      入住人数：<span style="color: red;">${props.hotelList.reduce((prev: any, curr: any) => prev + curr.peopleCount, 0)}</span>人；
+      房间数量：<span style="color: red;">${props.hotelList.reduce((prev: any, curr: any) => prev + curr.roomCount, 0)}</span>;
+      预估费用：<span style="color: red;">${props.hotelList.reduce((prev: any, curr: any) => prev + curr.totalFee, 0)}</span>元`,
     dataSource: props.hotelList,
   }
   let ticketListOption = {
@@ -212,7 +216,10 @@ export const getOptions = (props: any) => {
       },
     ],
     title: '已预订景区',
-    descriptions: `已预订${props.ticketList.length}个景区，门票数量：${props.ticketList.length}；预估费用：${props.ticketList.length}元`,
+    descriptions: 
+      `已预订<span style="color: red;">${props.ticketList.length}</span>个景区，
+      门票数量：<span style="color: red;">${props.ticketList.reduce((prev: any, curr: any) => prev + curr.ticketCount, 0)}</span>；
+      预估费用：<span style="color: red;">${props.ticketList.reduce((prev: any, curr: any) => prev + curr.totalFee, 0)}</span>元`,
     dataSource: props.ticketList,
   }
   let cateringListOption = {
@@ -270,7 +277,10 @@ export const getOptions = (props: any) => {
       },
     ],
     title: '已预订餐饮',
-    descriptions: `已预订${props.cateringList.length}个餐厅，就餐人数：${props.cateringList.length}；预估费用：${props.cateringList.length}元`,
+    descriptions: 
+      `已预订<span style="color: red;">${props.cateringList.length}</span>个餐厅，
+      就餐人数：<span style="color: red;">${props.cateringList.reduce((prev: any, curr: any) => prev + curr.peopleCount, 0)}</span>；
+      预估费用：<span style="color: red;">${props.cateringList.reduce((prev: any, curr: any) => prev + curr.totalFee, 0)}</span>元`,
     dataSource: props.cateringList,
   }
   return {
