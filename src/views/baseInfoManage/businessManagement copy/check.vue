@@ -58,7 +58,7 @@
         <div class="row_info">
           <div class="info_key">
             <span style="color:#ff4d4f">*</span>
-            联系人
+            姓名
           </div>
           <div>
             {{ form.contactName }}
@@ -67,7 +67,7 @@
         <div class="row_info">
           <div class="info_key">
             <span style="color:#ff4d4f">*</span>
-            联系人手机号
+            手机号
           </div>
           <div>
             {{ form.phone }}

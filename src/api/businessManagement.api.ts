@@ -41,14 +41,23 @@ export function listByBusinessType(data: any) {
 	});
 }
 // 审核企业
-export function auditCompany(data: any) {
+/* export function auditCompany(data: any) {
 	return request({
 		url: `${commonPart}auditCompany`,
 		method: 'post',
 		data,
 		showLoading: true
 	});
+} */
+export function auditCompany(data: any) {
+	return request({
+		url: `${commonPart4}handle`,
+		method: 'post',
+		data,
+		showLoading: true
+	});
 }
+
 // 管理员重置密码
 export function resetPassword(data: any) {
 	return request({
