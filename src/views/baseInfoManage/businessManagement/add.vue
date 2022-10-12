@@ -44,10 +44,12 @@
           </a-input>
         </a-form-item>
         <a-form-item name="establishTime" label="成立日期">
-          <a-date-picker v-model:value="form.establishTime" placeholder="请选择成立日期" style="width:100%" />
+          <a-date-picker v-model:value="form.establishTime" placeholder="请选择成立日期" style="width:100%"
+            :format="dateFormat" :valueFormat="dateFormat" />
         </a-form-item>
         <a-form-item name="businessTerm" label="营业期限">
-          <a-date-picker v-model:value="form.businessTerm" placeholder="请选择营业期限" style="width:100%" />
+          <a-date-picker v-model:value="form.businessTerm" placeholder="请选择营业期限" style="width:100%" :format="dateFormat"
+            :valueFormat="dateFormat" />
         </a-form-item>
         <a-form-item name="contactName" label="联系人">
           <a-input v-model:value="form.contactName" placeholder="请输入联系人">
@@ -292,6 +294,7 @@ import AddressSelector from '@/views/baseInfoManage/businessManagement/component
 const router = useRouter();
 const route = useRoute();
 const formRef = ref()
+const dateFormat = 'YYYY-MM-DD';
 const back = () => {
   router.push({
     name: 'apply',

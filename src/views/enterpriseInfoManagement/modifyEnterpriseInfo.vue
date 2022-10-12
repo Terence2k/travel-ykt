@@ -23,10 +23,12 @@
         </a-input>
       </a-form-item>
       <a-form-item name="establishTime" label="成立日期">
-        <a-date-picker v-model:value="infoForm.establishTime" placeholder="请选择成立日期" style="width:100%" />
+        <a-date-picker v-model:value="infoForm.establishTime" placeholder="请选择成立日期" style="width:100%"
+          :format="dateFormat" :valueFormat="dateFormat" />
       </a-form-item>
       <a-form-item name="businessTerm" label="营业期限">
-        <a-date-picker v-model:value="infoForm.businessTerm" placeholder="请选择营业期限" style="width:100%" />
+        <a-date-picker v-model:value="infoForm.businessTerm" placeholder="请选择营业期限" style="width:100%"
+          :format="dateFormat" :valueFormat="dateFormat" />
       </a-form-item>
       <!-- <a-form-item name="name" label="公司联系方式">
         <a-input v-model:value="infoForm.name" placeholder="请输入营业期限">
@@ -87,6 +89,7 @@ const back = () => {
 }
 const imgUploadRef = ref()
 const loading = ref(false)
+const dateFormat = 'YYYY-MM-DD';
 const formRules = []
 type detailsType = {
   name?: string,
