@@ -3,12 +3,7 @@
 		<CommonTable :row-selection="{onSelect}" :dataSource="state.tableData" :columns="state.columns">
       <template #button>
       </template>
-      <template #bodyCell="{ column, text, index, record }">
-        <template v-if="column.key === 'itineraryNo'">
-					<div>
-					  <a @click="goToDetail(record)">{{text}}</a>
-					</div>
-				</template>
+      <template #bodyCell="{ column, text, index }">
         <template v-if="column.key === 'index'">
 					<div>
 						{{(state.params.pageNo - 1) * (state.params.pageSize) + (index + 1)}}
@@ -47,7 +42,6 @@
 	import { GroupMode, GroupStatus } from '@/enum'
 
 	const travelStore = useTravelStore();
-	const router = useRouter()
 	const state = reactive({
 		total: 0,
 		params: {
@@ -115,17 +109,6 @@
 	const pageSideChange = () => {
 
 	}
-  const goToDetail = (val: any) => {
-    console.log('val：', val);
-    localStorage.setItem('tempData', JSON.stringify(val));
-		router.push({
-			name: 'travel_detail',
-			params: {
-        detailInfo: JSON.stringify(val)
-      }
-		})
-    
-  }
 	const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
 			console.log(record, selected, selectedRows);
 	}

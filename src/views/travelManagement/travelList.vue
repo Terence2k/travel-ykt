@@ -25,7 +25,8 @@
 			</search-item>
 
 			<template #button>
-				<a-button>查询</a-button>
+				<a-button @click="query">查询</a-button>
+				<a-button style="margin-left:30px" @click="reset">重置</a-button>
 			</template>
 		</CommonSearch>
 
@@ -131,6 +132,16 @@
 				type
 			}
 		})
+	}
+	//查询
+	const query=()=>{
+		console.log(GroupStatus.Cancellation,'11111111')
+	}
+	//重置
+	const reset =()=>{
+		params.keyWord='',
+		params.time='',
+		params.groupType=''
 	}
 	watch(() => params.time, newVal => {
 		if (newVal) {
