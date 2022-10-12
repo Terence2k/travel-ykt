@@ -138,7 +138,7 @@ export default [
 					// auth: ["admin"],
 					// isDetail: true, // 在左侧的导航栏不会展示
 				},
-				redirect: '/travel/travelTtemplate/templateList',
+				redirect: '/travel/travelTtemplate',
 				children: [
 					{
 						path: 'templateList',
@@ -146,6 +146,17 @@ export default [
 						name: 'templateList',
 						meta: {
 							title: '基础信息',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'info',
+						component: () => import('@/views/travelManagement/travelTemplate/tabs/index.vue'),
+						name: 'info',
+						meta: {
+							title: '查看',
 							// icon: 'liulanqi',
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示

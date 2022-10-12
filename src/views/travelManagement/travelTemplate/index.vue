@@ -15,15 +15,17 @@
 				<a-button @click="getList">查询</a-button>
 			</template>
 		</CommonSearch>
-		<CommonTable :dataSource="state.tableData.data" rowKey="id" :columns="columns">
+		<CommonTable :dataSource="state.tableData.data" rowKey="id" :row-selection="rowSelection" :columns="columns">
 			<template #button>
-				<a-button type="primary" @click="openAddPage">新增</a-button>
+				<a-button type="primary" @click="openAddPage" style="margin-right:16px">新增</a-button>
+				<a-button type="primary">导出</a-button>
 			</template>
 			<template #bodyCell="{ column, record }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a @click="openInfoPage(record)">查看</a>
-						<a @click="openEditPage(record)">编辑</a>
+						<a >编辑</a>
+						<a >允许带团</a>
 					</div>
 				</template>
 			</template>
@@ -53,30 +55,38 @@ const scenicSpotOptions = useScenicSpotOption();
 const navigatorBar = useNavigatorBar();
 
 const router = useRouter();
+
+interface DataSourceItem {
+	cateringName: string | number;
+	key: string | number;
+	orderNum: string;
+	price: string | number;
+	status: string;
+	companyName: string;
+}
 const columns = [
-	{ title: '序号', dataIndex: 'oid', width: 70, key: 'arrange' },
 	{
-		title: '餐饮名称',
+		title: '模板名称',
 		dataIndex: 'cateringName',
 		key: 'cateringName',
 	},
 	{
-		title: '可预订数量',
+		title: '导游电话',
 		dataIndex: 'orderNum',
 		key: 'orderNum',
 	},
 	{
-		title: '单价(元/人)',
+		title: '导游证号',
 		dataIndex: 'price',
 		key: 'price',
 	},
 	{
-		title: '状态',
+		title: '所属旅行社',
 		dataIndex: 'status',
 		key: 'status',
 	},
 	{
-		title: '所属门店',
+		title: '状态',
 		dataIndex: 'companyName',
 		key: 'companyName',
 	},
@@ -115,6 +125,20 @@ const pageSideChange = (current: number, size: number) => {
 	state.tableData.param.pageSize = size;
 };
 
+const rowSelection = computed(() => {
+	return {
+		// onChange: (selectedRowKeys: (string | number)[], selectedRows: DataSourceItem[]) => {
+		// 	console.log('1',`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+		// },
+		onSelect: (record: DataSourceItem, selected: boolean, selectedRows: DataSourceItem[]) => {
+			console.log(record, selected, selectedRows);
+		},
+		// onSelectAll: (selected: boolean, selectedRows: DataSourceItem[], changeRows: DataSourceItem[]) => {
+		// 	console.log(selected, selectedRows, changeRows);
+		// },
+	}
+})
+
 const cateringStoreName = computed(() => scenicSpotOptions.cateringStoreName);
 
 const getList = async (): Promise<void> => {
@@ -141,14 +165,14 @@ const openEditPage = (record: any) => {
 	router.push({ path: '/catering/product_Management/product_edit', query: { id: record.oid } });
 };
 const openInfoPage = (record: any) => {
-	router.push({ path: '/catering/product_Management/product_info', query: { id: record.oid } });
+	router.push({ path: '/travel/travelTtemplate/info', query: { id: record.oid } });
 };
 const openAddPage = (record: any) => {
 	router.push({ path: '/catering/product_Management/product_add' });
 };
 
 onMounted(() => {
-	navigatorBar.setNavigator(['产品管理']);
+	navigatorBar.setNavigator(['行程模板管理']);
 	getList();
 });
 onBeforeUnmount(() => {
