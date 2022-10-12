@@ -50,7 +50,7 @@
 			</a-form-item>
 			<a-form-item label="收费数量" name="charCount">
 				<div>
-					<span>{{ formState.charCount }}</span>
+					<span>{{ formState.chargeCount }}</span>
 					<span v-if="formState.chargeModel === 1">%</span>
 					<span v-if="formState.chargeModel === 2">人</span>
 					<span v-if="formState.chargeModel === 3">元</span>
