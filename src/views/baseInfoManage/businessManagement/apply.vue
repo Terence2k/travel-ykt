@@ -658,6 +658,9 @@ const onQuery = () => {
 	}
 }
 const auditEnterprise = (record: any) => {
+	failForm.uuid = record.uuid
+	failForm.roleId = record.roleId
+	failForm.businessType = record.auditBusinessType
 	if (record.source === '企业注册') {
 		auditVisible.value = true
 		let key: keyof detailsType
@@ -666,10 +669,7 @@ const auditEnterprise = (record: any) => {
 				details[key] = record[key];
 			}
 		}
-		failForm.uuid = record.uuid
-		failForm.roleId = record.roleId
-		failForm.businessType = record.auditBusinessType
-	} else if (record.source === '企业信息变更') {
+	} else if (record.source === '信息变更') {
 		changeAuditVisible.value = true
 	}
 }

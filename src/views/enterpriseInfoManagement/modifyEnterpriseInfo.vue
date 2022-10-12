@@ -50,8 +50,8 @@
         <a-input v-model:value="infoForm.bankAccountName" placeholder="请输入公司账户名称">
         </a-input>
       </a-form-item>
-      <a-form-item name="accountAddress" label="开户行">
-        <a-input v-model:value="infoForm.accountAddress" placeholder="请输入开户行">
+      <a-form-item name="bank" label="开户行">
+        <a-input v-model:value="infoForm.bank" placeholder="请输入开户行">
         </a-input>
       </a-form-item>
       <a-form-item name="bankAccount" label="公司账号">
@@ -107,7 +107,8 @@ type detailsType = {
   bankAccount?: string,
   businessLicenseUrl?: string,
   manageUrl?: string,
-  oid?: string | number
+  oid?: string | number,
+  bank?: string
 }
 const infoForm = reactive<detailsType>({
   name: undefined,
