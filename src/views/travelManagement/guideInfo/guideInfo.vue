@@ -18,10 +18,10 @@
 					<template v-if="column.key === 'time'">
 						<div>
 							<a-form-item 
-								v-if="editableData[record.key]" 
-								:name="[record.key, column.key]">
+								v-if="editableData[record.key ? record.key : record.oid]" 
+								:name="[record.key ? record.key : record.oid, column.key]">
 									<a-range-picker
-										v-model:value="editableData[record.key][column.key]"
+										v-model:value="editableData[record.key ? record.key : record.oid][column.key]"
 										show-time
 										format="YYYY-MM-DD HH:mm:ss"
 										value-format="YYYY-MM-DD HH:mm:ss"
@@ -38,16 +38,16 @@
 					<template v-if="column.key === 'guideName'">
 						<div>
 							<a-form-item 
-								v-if="editableData[record.key]" 
-								:name="[record.key, 'guideOid']">
-								<!-- <a-button class="select-guide" v-if="editableData[record.key]" >
+								v-if="editableData[record.key ? record.key : record.oid]" 
+								:name="[record.key ? record.key : record.oid, 'guideOid']">
+								<!-- <a-button class="select-guide" v-if="editableData[record.key ? record.key : record.oid]" >
 									{{text ? text : '请选择导游'}}
 									<caret-down-outlined />
 								</a-button> -->
 								<a-select
 									style="width: 100%"
-									@change="(val: any, option: any) => guideChange(val, option, record.key)"
-									v-model:value="editableData[record.key]['guideOid']">
+									@change="(val: any, option: any) => guideChange(val, option, record.key ? record.key : record.oid)"
+									v-model:value="editableData[record.key ? record.key : record.oid]['guideOid']">
 									<a-select-option 
 										v-for="item in guideData"
 										:item="item"
@@ -61,12 +61,14 @@
 							</template>
 						</div>
 					</template>
-
+					<template v-if="column.key === 'guideType'">
+						{{column.data[text]}}
+					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a class="item" v-if="!editableData[record.key]"  @click="edit(record.key)">编辑</a>
-							<a class="item" v-else @click="save(record.key)">确定</a>
-							<a class="item">删除</a>
+							<a class="item" v-if="!editableData[record.key ? record.key : record.oid]"  @click="edit(record.key ? record.key : record.oid)">编辑</a>
+							<a class="item" v-else @click="save(record.key ? record.key : record.oid)">确定</a>
+							<a class="item" @click="del(index)">删除</a>
 						</div>
 					</template>
 				</template>
@@ -97,7 +99,8 @@ const {
 	rulesRef,
 	formRef,
 	getGuideList, 
-	add, guideData, guideChange } = useGuideInfo(props, emits)
+	add,
+	del, guideData, guideChange } = useGuideInfo(props, emits)
 	getGuideList()
 </script>
 <style lang="less" scoped>

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="state.data.oid">
     <div class="page-title">
       行程详情预览和打印
     </div>
@@ -41,11 +41,48 @@
         </a-descriptions>
       </a-col>
     </a-row>
+    <div v-for="item in getOptions(state.itineraryDetail)">
+      <div class="page-title" style="margin-top: 32px;">
+        {{item.title}}<span class="descriptions">({{item.descriptions}})</span>
+      </div>
+      <CommonTable :columns="item.columns" :dataSource="item.dataSource" :scrollY="false">
+        <template #bodyCell="{ column, text, index, record }">
+            <template v-if="column.key === 'index'">
+                <div>
+                    {{index + 1}}
+                </div>
+            </template>
+            <template v-if="column.key === 'action'">
+              <div class="action-btns">
+                <a>退订</a>
+              </div>
+            </template>
+        </template>
+      </CommonTable>
+      <CommonPagination
+        :current="state.param.pageNo"
+        :page-size="state.param.pageSize"
+        :total="item.dataSource.length"
+        v-if="item.pagination"
+      />
+    </div>
+
+    <div class="page-title">
+      变更历史记录
+    </div>
+    <!-- <a-steps direction="vertical" size="small" :current="3">
+      <a-step title="Finished" description="This is a description." />
+      <a-step title="In Progress" description="This is a description." />
+      <a-step title="Waiting" description="This is a description." />
+    </a-steps> -->
   </div> 
 </template>
 <script lang="ts" setup>
   import { ref, Ref, CSSProperties } from 'vue';
   import api from '@/api';
+  import CommonTable from '@/components/common/CommonTable.vue';
+  import CommonPagination from '@/components/common/CommonPagination.vue';
+  import { getOptions } from './travelDetail/travelDetail';
   const state = reactive({
 		data: {
       travelOperator: {},
@@ -56,6 +93,7 @@
       pageSize: 10,
     },
     params: {} as any,
+    itineraryDetail: {}
   });
   // 行程单二维码标签样式
   const labelStyle = computed((): CSSProperties => {
@@ -81,6 +119,7 @@
     }
 	  api.travelManagement.getItineraryDetail(queryData).then((res: any) => {
       state.data = res.basic;
+      state.itineraryDetail = res;
 		})
 		.catch((err: any) => {
 			console.log(err);
@@ -96,6 +135,7 @@
       let { detailInfo } = useRoute().params as any;
       state.params = JSON.parse(decodeURIComponent(detailInfo));
     }
+    
   })
 </script>
 <style lang="less" scoped>
@@ -106,7 +146,9 @@
     font-size: 16px;
     font-weight: bold;
     color: #1E2226;
-    border-bottom: 1px solid #F1F2F5;
+    .descriptions {
+      margin-left: 5px;
+    }
   }
   .status-btns {
     padding: 16px 0;
@@ -118,7 +160,8 @@
       }
     }
   }
-  .info-card {
+  .table-area {
+    padding: 0;
   }
   :deep(.qr-code.ant-descriptions-item-content) {
     height: 384px;

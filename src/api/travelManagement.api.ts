@@ -77,5 +77,14 @@ export const travelManagement = {
             showLoading: false
         });
     },
+    editItinerary(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/edit`,
+            data,
+            method: 'post',
+            showLoading: true
+        });
+    }
+    
     
 }

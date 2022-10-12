@@ -1,28 +1,29 @@
 <template>
 	<div class="wrapper-tab-roomInfo-display">
 		<CommonTable :columns="columns" :data-source="dataSource">
-			<template #bodyCell="{ column, text }">
-				<template v-if="['roomTypeName', 'price', 'roomNum'].includes(column.dataIndex)">
-					<div>
-						<span>{{ text }}</span>
-					</div>
-				</template>
-				<template v-if="['systemRoomName'].includes(column.dataIndex)">
-					<div>
-						<span>{{ text }}</span>
-					</div>
-				</template>
-				<template v-if="['roomOccupancyNum'].includes(column.dataIndex)">
-					<div>
-						<span>{{ text }}</span>
-					</div>
-				</template>
-				<!-- <template v-else-if="column.dataIndex === 'actions'">
-					<div class="cell-actions">
-						<span class="item" @click="edit(record.key)">{{ editableData[record.key] ? '取消' : '编辑' }}</span>
-						<span class="item" @click="remove(record.key)">删除</span>
-					</div>
-				</template> -->
+			<template #bodyCell="{ column, record, text }">
+				<div>
+					<template v-if="['roomTypeName', 'price', 'roomNum'].includes(column.dataIndex)">
+						<div>
+							<span>{{ text }}</span>
+						</div>
+					</template>
+					<template v-if="['systemRoomName'].includes(column.dataIndex)">
+						<div>
+							<span>{{ text }}</span>
+						</div>
+					</template>
+					<template v-if="['roomOccupancyNum'].includes(column.dataIndex)">
+						<div>
+							<span>{{ text }}</span>
+						</div>
+					</template>
+					<template v-if="column.dataIndex === 'actions'">
+						<div class="cell-actions">
+							<span>{{ getActionText(record.operationType) }}</span>
+						</div>
+					</template>
+				</div>
 			</template>
 		</CommonTable>
 		<div class="footer">
@@ -69,6 +70,13 @@ const columns = [
 		dataIndex: 'roomOccupancyNum',
 		key: 'roomOccupancyNum',
 		width: '44%',
+	},
+
+	{
+		title: '操作类型',
+		dataIndex: 'actions',
+		key: 'actions',
+		width: 160,
 	},
 ];
 interface DataSourceItem {
@@ -128,16 +136,43 @@ const auditPass = () => {
 		})
 		.then((res) => {
 			console.log('getRoleId：', res);
-			// api.auditRoomDetailInfo(state.auditOrderId, true).then((res) => {
-			// 	console.log('房型审核通过返回：', res);
-			// });
+			if (res[0]?.roleId) {
+				api.auditRoomDetailInfo(state.auditOrderId, res[0]?.roleId, true).then((res) => {
+					console.log('房型审核通过返回：', res);
+				});
+			}
 		});
 };
 
 const auditFail = () => {
-	api.auditRoomDetailInfo(state.auditOrderId, false).then((res) => {
-		console.log('房型审核不通过返回：', res);
-	});
+	api
+		.getRoleId({
+			uuid: state.auditOrderId,
+		})
+		.then((res) => {
+			console.log('getRoleId：', res);
+			if (res[0]?.roleId) {
+				api.auditRoomDetailInfo(state.auditOrderId, res[0]?.roleId, false).then((res) => {
+					console.log('房型审核不通过返回：', res);
+				});
+			}
+		});
+};
+
+const getActionText = (code) => {
+	let resultText = '';
+	switch (code) {
+		case 0:
+			resultText = '新增';
+			break;
+		case 1:
+			resultText = '编辑';
+			break;
+		case 2:
+			resultText = '删除';
+			break;
+	}
+	return resultText;
 };
 </script>
 

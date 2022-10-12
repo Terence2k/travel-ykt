@@ -1,7 +1,7 @@
 <template>
 	<div class="wrapper-roomBookingTable">
 		<div class="container-time flex-container">
-			<div>当前时间：{{ getCurrentTimeDetailText() }}</div>
+			<div>当前时间：{{ tableState.params.currentTimeDetailText }}</div>
 			<div class="flex-container select-bar">
 				<a-select class="select-year select item" :showArrow="true" :options="yearOptions" v-model:value="year" placeholder="年份"> </a-select>
 
@@ -29,11 +29,19 @@
 					v-if="column.dataIndex !== 'roomType' && column?.appointedTime"
 				>
 					<div class="item">
-						<span class="icon-status"></span>
+						<span class="icon-status" :class="{ close: record[column.dataIndex]?.roomStatus === 0 }"></span>
 						<span>{{ record[column.dataIndex]?.roomStatusName || '' }}</span>
 					</div>
 					<div @dblclick="openRoomStatusDetailsModal(record[column.dataIndex])" class="item cursor-point">
-						<span>{{ `剩下${record[column.dataIndex]?.stockNum || '未知'}间` }}</span>
+						<div>
+							<span>
+								剩下
+								<span class="color-stock" :class="{ empty: record[column.dataIndex]?.stockNum === 0 }">
+									{{ `${record[column.dataIndex]?.stockNum}` }}
+								</span>
+								间
+							</span>
+						</div>
 					</div>
 				</div>
 				<div v-else class="cell-body row-first">
@@ -41,6 +49,15 @@
 				</div>
 			</template>
 		</CommonTable>
+		<!-- <CommonPagination
+			class="pagination-custom"
+			:current="tableState.tableData.param.pageNumber"
+			:page-size="tableState.tableData.param.pageSize"
+			:total="tableState.tableData.total"
+			@change="onHandleCurrentChange"
+			@showSizeChange="pageSideChange"
+		>
+		</CommonPagination> -->
 		<BaseModal :title="'房态详情'" v-model="modalState.visible">
 			<a-form>
 				<a-form-item label="房型名称">
@@ -85,6 +102,7 @@ import { PlusSquareOutlined, MinusSquareOutlined } from '@ant-design/icons-vue';
 import { cloneDeep } from 'lodash';
 import dayjs from 'dayjs';
 import CommonTable from '@/components/common/CommonTable.vue';
+//import CommonPagination from '@/components/common/CommonPagination.vue';
 import BaseModal from '@/components/common/BaseModal.vue';
 import api from '@/api';
 
@@ -400,8 +418,8 @@ const modalState = reactive({
 });
 
 const getCurrentHourAndMinuteText = () => {
-	const section = currentDayjs.format('A');
-	const time = currentDayjs.format('h:mm');
+	const section = dayjs().format('A');
+	const time = dayjs().format('h:mm');
 	return `${section}${time}`;
 };
 
@@ -410,13 +428,23 @@ const getMonthAndDayText = (date: string) => {
 	return `${currentDate.getMonth() + 1}月${currentDate.getDate()}号`;
 };
 
+const getCurrentTimeDetailTextInLoop = () => {
+	setInterval(() => {
+		tableState.params.currentTimeDetailText = `${currentDayjs.format('YYYY年MM月DD日')}\u3000${getDayNumText(
+			currentDayjs.format('YYYY-MM-DD')
+		)}\u3000${getCurrentHourAndMinuteText()}`;
+	}, 10000);
+};
+
 const getCurrentTimeDetailText = () => {
-	return `${currentDayjs.format('YYYY年MM月DD日')}\u3000${getDayNumText(currentDayjs.format('YYYY-MM-DD'))}\u3000${getCurrentHourAndMinuteText()}`;
+	tableState.params.currentTimeDetailText = `${currentDayjs.format('YYYY年MM月DD日')}\u3000${getDayNumText(
+		currentDayjs.format('YYYY-MM-DD')
+	)}\u3000${getCurrentHourAndMinuteText()}`;
 };
 
 const dataSource = computed(() => {
 	if (Array.isArray(tableState.tableData.data)) {
-		return tableState.tableData.data.map((item) => {
+		return tableState.tableData.data.map((item, index) => {
 			const result = {};
 			result.roomType = item?.roomTypeName || '';
 			if (item?.appointedStockList && Array.isArray(item.appointedStockList)) {
@@ -441,8 +469,8 @@ const dataSource = computed(() => {
 				columns.value = columns.value.filter((item, index) => index < 1 || item?.appointedTime);
 			}
 
-			console.info('result', result);
-			console.info('columns.value', columns.value);
+			console.info(`result${index}`, result);
+			//console.info('columns.value', columns.value);
 			return result;
 		});
 	}
@@ -458,6 +486,9 @@ const tableState = reactive({
 			pageSize: 10,
 			hotelId: undefined,
 		},
+	},
+	params: {
+		currentTimeDetailText: '',
 	},
 });
 
@@ -488,6 +519,8 @@ watch(
 	() => props.hotelId,
 	(hotelId) => {
 		console.info('hotelId change');
+		getCurrentTimeDetailText();
+		getCurrentTimeDetailTextInLoop();
 		getHotelRoomTypeStockTableInfo(hotelId);
 	},
 	{
@@ -563,6 +596,20 @@ const failModalInfo = () => {
 		});
 	}
 };
+
+// const onHandleCurrentChange = (val: number) => {
+// 	console.log('change:', val);
+// 	tableState.tableData.param.pageNo = val;
+// 	//onSearch();
+// 	getHotelRoomTypeStockTableInfo(props?.hotelId);
+// };
+
+// const pageSideChange = (current: number, size: number) => {
+// 	console.log('changePageSize:', size);
+// 	tableState.tableData.param.pageSize = size;
+// 	//onSearch();
+// 	getHotelRoomTypeStockTableInfo(props?.hotelId);
+// };
 </script>
 
 <style lang="less" scoped>

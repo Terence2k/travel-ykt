@@ -6,6 +6,7 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 import { validateRules, validateFields, generateGuid } from '@/utils';
 import api from '@/api/index';
 import { CODEVALUE } from '@/constant'
+import { message } from 'ant-design-vue';
 interface DataItem {
 	certificateType: string;
 	healthCode: string;
@@ -14,22 +15,25 @@ interface DataItem {
 	name: string;
 	certificateNo: string;
 	certificatePicture: string;
-	sourceAddressStr: string;
+	sourceAddressName: string;
 	specialCertificateType: string;
-	addressId: []
+	addressId: [],
+	specialCertificatePicture: []
 }
 
-const rules = {
+const rules:{[k:string]: any} = {
 	certificateType: [{ required: true, message: '请选择行证件类型' }],
 	certificateNo: [{ required: true, message: '请输入证件号码' }],
 	name: [{ required: true, message: '请输入姓名' }],
 	gender: [{ required: true, message: '请选择性别' }],
-	sourceAddress: [{ required: true, message: '请选择客源地' }]
+	addressId: [{ required: true, message: '请选择客源地' }]
 }
 export function useTouristInfo(props: any, emits: any): Record<string, any> {
 	const travelStore = useTravelStore()
+	const route = useRoute();
 	const { onCheck } = toRefs(props);
 	const IDCard = computed(() => travelStore.IDCard)
+	const specialId = computed(() => travelStore.specialId)
 	const state = reactive<{editableData: UnwrapRef<Record<string, DataItem>>, [k:string]: any}>({
 		formRef: null,
 		editableData: {},
@@ -37,15 +41,11 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 		cityOptions: [],
 		selectKey: ['certificateType', 'gender', 'specialCertificateType'],
 		inputKey: ['certificateNo', 'name'],
-		rulesRef: {
-			1: {
-				certificateNo: [{ required: true, message: '请选择行程类型' }]
-			}
-		},
+		rulesRef: {},
         onSelect: (record: DataItem, selected: boolean, selectedRows: DataItem[]) => {
             console.log(record, selected, selectedRows);
         },
-		tableData: [],
+		tableData: route.query.id ? travelStore.touristList : [],
 		columns: [
 			{
 				title: ' 序号 ',
@@ -88,7 +88,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 				title: '特殊证件类型',
 				dataIndex: 'specialCertificateType',
 				key: 'specialCertificateType',
-				data: travelStore.specialId
+				data: specialId
 			},
             {
 				title: '证件图片',
@@ -126,36 +126,62 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 		},
 		copyData(key:any) {
 			Object.assign(
-				state.tableData.filter((item:any) => key === item.key)[0], 
+				state.tableData.filter((item:any) => key === (item.key ? item.key : item.oid))[0], 
 				state.editableData[key]
 			);
 		},
+		// 特殊证件判断
+		isUpload(key: any) {
+			let flag: boolean = false;
+			if (state.editableData[key].specialCertificateType) {
+				(!state.editableData[key].specialCertificatePicture
+				|| !state.editableData[key].specialCertificatePicture.length) &&
+				message.error(`请上传游客${state.editableData[key].name}特殊证件图片`)
+				flag = false;
+			} else {
+				flag = true;
+			}
+			return flag;
+		},
 		addRules(key?: any) {
 			state.rulesRef = {}
+			
 			const rule = validateRules(rules, state.editableData, key)
+			
 			for (let k in rule) {
 				state.rulesRef[k] = rule[k]
 			}
 		},
 		edit: (key: string) => {
 			state.editableData[key] = cloneDeep(
-				state.tableData.filter((item:any, index: number) => key === item.key)[0]
+				state.tableData.filter((item:any, index: number) => key === (item.key ? item.key : item.oid))[0]
 			)
 		},
+		del(key: string) {
+			console.log(key)
+			state.tableData.splice(key, 1);
+			// state.tableData = state.tableData.filter((item: any) => key !== (item.key ? item.key : item.oid));
+		},
 		save: async (key?: string) => {
+			
 			await methods.addRules(key)
 			const res = await validateFields(state.formRef);
 			if (!res) return emits('onSuccess', {touristList: res});
 			if (key) {
+				if (!methods.isUpload(key)) return;
 				methods.copyData(key);
 				delete state.editableData[key];
 			} else {
 				for (let k in state.editableData) {
+					if (!methods.isUpload(k)) return;
 					methods.copyData(k);
 					delete state.editableData[k];
 				}
 				emits('onSuccess', {touristList: state.tableData});
 			}
+			
+			
+			
 			travelStore.setTouristList(state.tableData)
 			
 		},
@@ -168,7 +194,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 		handleChange(val: any, option: any, key: string) {
 			console.log(val, option)
 			state.editableData[key].sourceAddress = val[val.length - 1];
-			state.editableData[key].sourceAddressStr = option.map((it:any) => it.label).join(',')
+			state.editableData[key].sourceAddressName = option.map((it:any) => it.label).join('')
 		}
 	}
 	watch(onCheck, (newVal) => {

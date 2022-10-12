@@ -6,11 +6,11 @@
 				<search-item label="输入搜索">
 					<a-input v-model:value="state.tableData.param.ticketName" placeholder="门票名称/关键词" />
 				</search-item>
-				<search-item label="门票分类">
+				<!-- <search-item label="门票分类">
 					<a-select allowClear ref="select" v-model:value="state.tableData.param.ticketType" style="width: 200px" placeholder="请选择">
 						<a-select-option :value="index" v-for="(item, index) in ticketType" :key="item">{{ item }}</a-select-option>
 					</a-select>
-				</search-item>
+				</search-item> -->
 				<template #button>
 					<a-button @click="initList">查询</a-button>
 				</template>
@@ -19,7 +19,7 @@
 				<div class="list-btn">
 					<a-button type="primary" class="success" @click="createNewProject">新增门票</a-button>
 				</div>
-				<CommonTable :dataSource="state.tableData.data" :columns="columns">
+				<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%' }">
 					<template #bodyCell="{ column, record }">
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
@@ -68,36 +68,36 @@ const columns = [
 		title: '门票名称',
 		dataIndex: 'ticketName',
 		key: 'ticketName',
+		width: 200,
 	},
 	{
 		title: '票种',
 		dataIndex: 'verificationType',
 		key: 'verificationType',
+		width: 120,
 	},
 	{
 		title: '归属景区',
 		dataIndex: 'scenicName',
 		key: 'scenicName',
-	},
-	{
-		title: '门票分类',
-		dataIndex: 'ticketTypes',
-		key: 'ticketTypes',
+		width: 120,
 	},
 	{
 		title: '审核状态',
 		dataIndex: 'auditStatus',
 		key: 'auditStatus',
+		width: 120,
 	},
 	{
 		title: '平台上架状态',
 		dataIndex: 'putaway',
 		key: 'putaway',
+		width: 120,
 	},
 	{
 		title: '操作 ',
 		key: 'action',
-		fixed: 'right',
+		// fixed: 'right',
 		width: 208,
 	},
 ];
@@ -174,15 +174,8 @@ const initList = async () => {
 
 const status = ['待审核', '审核中', '审核通过', '审核不通过'];
 
-const ticketType: any = {
-	0: '儿童',
-	1: '成人',
-	2: '老人',
-};
-
 const dealData = (params: [any]) => {
 	params.map((i: any) => {
-		i.ticketTypes = ticketType[i.ticketType];
 		i.auditStatus = status[i.auditStatus];
 		i.putaway = i.putaway ? '上架' : '下架';
 		i.verificationType = i.verificationType === 1 ? '多点核销' : i.verificationType === 0 ? '单点核销' : '';

@@ -42,3 +42,9 @@ export enum GroupType {
   NonCooperation
 
 }
+
+// 导游类型
+export enum GuideType {
+  UnderGuide = 1,
+  AppointGuide
+}
