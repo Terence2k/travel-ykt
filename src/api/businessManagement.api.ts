@@ -4,10 +4,20 @@ const commonPart1 = `${commonPath}/customer-service/public/api/sys-role/`
 const commonPart2 = `${commonPath}/customer-service/public/api/sys-user/`
 const commonPart3 = `${commonPath}/customer-service/public/api/dictionary/`
 const commonPart4 = `${commonPath}/customer-service/public/api/sys/audit/flow/`
+const commonPart5 = `${commonPath}/hotel-service/public/api/hotel-information/`
 // 企业注册
 export function companyRegister(data: any) {
 	return request({
 		url: `${commonPart}companyRegister`,
+		method: 'post',
+		data,
+		showLoading: true
+	});
+}
+// 手动新增企业
+export function addCompany(data: any) {
+	return request({
+		url: `${commonPart}addCompany`,
 		method: 'post',
 		data,
 		showLoading: true
@@ -71,6 +81,23 @@ export function businessTypeDropDown(codeValue: string) {
 	return request({
 		url: `${commonPart3}dropDownQueryListChildByCodeValue?codeValue=${codeValue}`,
 		method: 'post',
+		showLoading: true
+	});
+}
+// 酒店根据企业id查询提交审核前、后数据
+export function getHotelAuditBeforeAfterData(companyId: string) {
+	return request({
+		url: `${commonPart5}getAuditBeforeAfterData?companyId=${companyId}`,
+		method: 'post',
+		showLoading: true
+	});
+}
+// 禁用企业
+export function onOffCompany(data: any) {
+	return request({
+		url: `${commonPart}onOffCompany`,
+		method: 'post',
+		data,
 		showLoading: true
 	});
 }

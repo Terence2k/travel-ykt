@@ -271,9 +271,9 @@
       添加后不可删除，但可以注销、禁用。
       您是否检查无误，确认要添加该企业？
     </CommonModal>
-    <CommonModal title="提示" v-model:visible="tipVisible" @cancel="tipCancel" @close="tipCancel" @conform="tipConform"
+    <CommonModal title="提示" v-model:visible="tipVisible" @cancel="tipCancel" @close="tipCancel" @conform="tipCancel"
       :conform-text="'我知道了'" :is-cancel="false">
-      您已成功添加 丽江风情假日旅行社 ，超级管理员账
+      您已成功添加 {{form.name}} ，超级管理员账
       号密码已分配成功，请线下告知该企业管理员登录。
     </CommonModal>
   </div>
@@ -294,7 +294,10 @@ const route = useRoute();
 const formRef = ref()
 const back = () => {
   router.push({
-    name: 'apply'
+    name: 'apply',
+    params: {
+      isRefresh: 1
+    }
   })
   formRef.value.resetFields()
   // currentOption.value = 'default'
@@ -462,9 +465,8 @@ const saveCancel = () => {
 }
 const saveConform = () => {
   loading.value = true;
-  api.companyRegister(form).then((res: any) => {
-    if (res == '提交成功，请耐心等待审核通过!') {
-      // message.success(res);
+  api.addCompany(form).then((res: any) => {
+    if (res == '企业创建成功！') {
       saveVisible.value = false
       tipVisible.value = true
     } else {
@@ -477,10 +479,11 @@ const saveConform = () => {
 }
 const tipCancel = () => {
   tipVisible.value = false
+  formRef.value.resetFields()
 }
-const tipConform = () => {
+/* const tipConform = () => {
   tipVisible.value = false
-}
+} */
 onMounted(() => {
   initOpeion()
 })

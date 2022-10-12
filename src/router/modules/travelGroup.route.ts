@@ -61,7 +61,7 @@ export default [
 			{
 				path: 'enterpriseInfoManagement',
 				name: 'enterpriseInfoManagement',
-				redirect: '/travel/enterpriseInfoManagement/enterpriseInfo',
+				redirect: '/travel/enterpriseInfoManagement/travelEnterpriseInfo',
 				meta: {
 					title: '企业信息管理',
 					// icon: 'liulanqi',
@@ -70,9 +70,9 @@ export default [
 				},
 				children: [
 					{
-						path: 'enterpriseInfo',
-						component: () => import('@/views/enterpriseInfoManagement/enterpriseInfo.vue'),
-						name: 'enterpriseInfo',
+						path: 'travelEnterpriseInfo',
+						component: () => import('@/views/enterpriseInfoManagement/travelEnterpriseInfo.vue'),
+						name: 'travelEnterpriseInfo',
 						meta: {
 							title: '企业信息',
 							// icon: 'liulanqi',

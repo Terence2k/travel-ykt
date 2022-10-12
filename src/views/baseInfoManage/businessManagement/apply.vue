@@ -17,7 +17,7 @@
 			</a-select>
 		</search-item>
 		<search-item label="企业名称">
-			<a-input v-model:value.trim="tableData.param.name" placeholder="请输入企业名称" allowClear/>
+			<a-input v-model:value.trim="tableData.param.name" placeholder="请输入企业名称" allowClear />
 		</search-item>
 		<template #button>
 			<a-button @click="onQuery">查询</a-button>
@@ -35,7 +35,7 @@
 			</address-selector>
 		</search-item>
 		<search-item label="企业名称">
-			<a-input v-model:value.trim="auditTableData.param.name" placeholder="请输入企业名称" allowClear/>
+			<a-input v-model:value.trim="auditTableData.param.name" placeholder="请输入企业名称" allowClear />
 		</search-item>
 		<template #button>
 			<a-button @click="onQuery">查询</a-button>
@@ -53,7 +53,7 @@
 			</address-selector>
 		</search-item>
 		<search-item label="企业名称">
-			<a-input v-model:value.trim="failTableData.param.name" placeholder="请输入企业名称" allowClear/>
+			<a-input v-model:value.trim="failTableData.param.name" placeholder="请输入企业名称" allowClear />
 		</search-item>
 		<template #button>
 			<a-button @click="onQuery">查询</a-button>
@@ -69,8 +69,8 @@
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a @click="disable" v-if="record.onOff">禁用</a>
-								<a v-else>启用</a>
+								<a @click="disable(record)" v-if="record.onOff">禁用</a>
+								<a v-else @click="enable(record)">启用</a>
 								<a @click="goTo(record, 'details')">查看</a>
 								<a @click="resetPassword(record.oid)">重置密码</a>
 							</div>
@@ -127,14 +127,13 @@
 			</a-tab-pane>
 			<template #rightExtra>
 				<a-button type="primary" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
+				<a-button type="primary" @click="changeAuditVisible = true">test</a-button>
 			</template>
 		</a-tabs>
 	</div>
 	<CommonModal title="禁用提醒" v-model:visible="disableVisible" @cancel="disableCancel" @close="disableCancel"
 		@conform="disableConform" :conform-text="'确认'">
-		是否禁用该企业？禁用后该企业超级管理员
-		仍可登录后台，但无法执行任何管理操作，
-		且该企业的其他角色管理员无法登录后台。
+		是否禁用该企业？禁用后该企业超级管理员仍可登录后台，但无法执行任何管理操作，且该企业的其他角色管理员无法登录后台。
 	</CommonModal>
 	<CommonModal title="强制重置密码" v-model:visible="resetPasswordVisible" @cancel="resetPasswordCancel"
 		@close="resetPasswordCancel" @conform="resetPasswordConform" :conform-text="'确认'">
@@ -186,12 +185,18 @@
 			</tr>
 		</table>
 	</CommonModal>
-	<CommonModal title="企业注册审核确认" v-model:visible="registerAuditVisible" @close="registerAuditClose"
+	<CommonModal :title="registerAuditTitle" v-model:visible="registerAuditVisible" @close="registerAuditClose"
 		@conform="registerAuditConform" :conform-text="'确定'">
-		您即将批准 {{details.name}} 的注册申请，批准
-		后该企业管理员将可以登录一卡通后台继续完善信息
+		<span v-if="isRegiste">
+			您即将批准 {{details.name}} 的注册申请，批准
+			后该企业管理员将可以登录一卡通后台继续完善信息
+		</span>
+		<span v-else>
+			您即将批准 {{details.name}} 的
+			企业信息变更申请，是否已检查无误？
+		</span>
 	</CommonModal>
-	<CommonModal title="驳回企业注册" v-model:visible="failVisible" @close="failClose" @cancel="failClose"
+	<CommonModal :title="failTitle" v-model:visible="failVisible" @close="failClose" @cancel="failClose"
 		@conform="failConform" :conform-text="'确定'">
 		<a-form ref="failFormRef" :model="failForm" :rules="failFormRules" name="fail-form" autocomplete="off"
 			labelAlign="left" :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
@@ -200,6 +205,50 @@
 				</a-textarea>
 			</a-form-item>
 		</a-form>
+	</CommonModal>
+	<CommonModal title="审核企业变更信息" v-model:visible="changeAuditVisible" @close="auditClose" @conform="auditConform"
+		:conform-text="'同意入驻'" :cancel-text="'驳回注册'" width="50%">
+		<table class="info_table" cellpadding="16px" border="1">
+			<tr class="row">
+				<th class="key_hd">变更项目</th>
+				<th class="key_hd">变更前内容</th>
+				<th class="key_hd">变更后内容</th>
+			</tr>
+			<tr class="row">
+				<td class="key">注册时间</td>
+				<td class="value">{{ details.lastUpdateTime }}</td>
+			</tr>
+			<tr class="row">
+				<td class="key">企业类型</td>
+				<td class="value">{{ details.businessTypeName }}</td>
+			</tr>
+			<tr class="row">
+				<td class="key">企业名称</td>
+				<td class="value">{{ details.name }}</td>
+			</tr>
+			<tr class="row">
+				<td class="key">统一社会信用代码</td>
+				<td class="value">{{ details.creditCode }}</td>
+			</tr>
+			<tr class="row">
+				<td class="key">管理员姓名</td>
+				<td class="value">{{ details.contactName }}</td>
+			</tr>
+			<tr class="row">
+				<td class="key">管理员手机号</td>
+				<td class="value">{{ details.phone }}</td>
+			</tr>
+			<tr class="row">
+				<td class="key">所属地区</td>
+				<td class="value">{{ details.regionName }}</td>
+			</tr>
+			<tr class="row">
+				<td class="key">营业执照</td>
+				<td class="value">
+					<a-image width="200px" :src="details.businessLicenseUrl" />
+				</td>
+			</tr>
+		</table>
 	</CommonModal>
 
 	<!-- <add-business-account v-model:modalVisible="modalVisible" @success="onSearch"></add-business-account> -->
@@ -240,14 +289,23 @@ const resetPasswordVisible = ref(false)
 const auditVisible = ref(false)
 const registerAuditVisible = ref(false)
 const failVisible = ref(false)
+const changeAuditVisible = ref(false)
+const isRegiste = ref(true)
 const failFormRules: Record<string, Rule[]> = {
 	auditRemark: [{ required: true, trigger: 'blur', message: '请输入驳回原因' }],
 }
+const registerAuditTitle = computed(() => {
+	return isRegiste ? '企业注册审核确认' : '企业信息变更审核确认'
+})
+const failTitle = computed(() => {
+	return isRegiste ? '驳回企业注册' : '驳回企业信息变更'
+})
 const failForm = reactive({
 	auditTypeCode: 1,
 	auditRemark: '',
 	uuid: '',
 	roleId: '',
+	businessType: '',
 	/* 
 	2 审核通过
 	3 审核不通过
@@ -548,6 +606,7 @@ const onAuditSearch = async () => {
 					if (item.auditUuid === citem.uuid) {
 						item.uuid = citem.uuid
 						item.roleId = citem.roleId
+						item.auditBusinessType = citem.auditBusinessType
 						item.isAudit = true
 					}
 				})
@@ -599,15 +658,20 @@ const onQuery = () => {
 	}
 }
 const auditEnterprise = (record: any) => {
-	auditVisible.value = true
-	let key: keyof detailsType
-	for (key in details) {
-		if (Object.prototype.hasOwnProperty.call(details, key)) {
-			details[key] = record[key];
+	if (record.source === '企业注册') {
+		auditVisible.value = true
+		let key: keyof detailsType
+		for (key in details) {
+			if (Object.prototype.hasOwnProperty.call(details, key)) {
+				details[key] = record[key];
+			}
 		}
+		failForm.uuid = record.uuid
+		failForm.roleId = record.roleId
+		failForm.businessType = record.auditBusinessType
+	} else if (record.source === '企业信息变更') {
+		changeAuditVisible.value = true
 	}
-	failForm.uuid = record.uuid
-	failForm.roleId = record.roleId
 }
 
 interface addInterface {
@@ -640,14 +704,39 @@ const resetPasswordConform = () => {
 		}
 	})
 }
-
-const disable = () => {
+const onOffCompanyParams = reactive({
+	oid: undefined,
+	operation: 0
+})
+const disable = (record: any) => {
 	disableVisible.value = true
+	onOffCompanyParams.oid = record.oid
+}
+const enable = async (record: any) => {
+	onOffCompanyParams.oid = record.oid
+	onOffCompanyParams.operation = 1
+	let res = await api.onOffCompany(onOffCompanyParams)
+	if (res) {
+		message.success('启用成功！')
+		onSearch();
+	} else {
+		message.error('启用失败！')
+	}
 }
 const disableCancel = () => {
 	disableVisible.value = false
 }
-const disableConform = () => { }
+const disableConform = async () => {
+	onOffCompanyParams.operation = 0
+	let res = await api.onOffCompany(onOffCompanyParams)
+	if (res) {
+		onSearch();
+		disableVisible.value = false
+		message.success('禁用成功！')
+	} else {
+		message.error('禁用失败！')
+	}
+}
 const auditClose = () => {
 	failVisible.value = true
 }
@@ -735,8 +824,13 @@ onMounted(() => {
 			background: rgba(245, 247, 250, 0.39);
 		}
 
+		.key_hd {
+			width: 150px;
+			background: rgba(245, 247, 250, 0.39);
+		}
+
 		.value {
-			width: 650px;
+			// width: 650px;
 		}
 	}
 }
