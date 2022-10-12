@@ -58,7 +58,11 @@
     .item{
       display: inline-block;
       width:100%;
-     text-align: center;
+      text-align: center;
+
+      .hidden{
+        opacity: 0;
+      }
     }
     &.row-first{
       width:100%;
@@ -121,19 +125,20 @@
   .ant-table-thead > tr > th{
     padding: 0px !important;
   }
-
-}
-
-.flex-container{
-  display: flex;
-  align-items:center;
-  .tip{
-    font-size:11px;
-    display: inline-block;
-    margin-left: 10px;
-    color:#C9C9C9FF;
-    align-self: flex-end;
+   
+  .flex-container{
+    display: flex;
+    align-items:center;
+    .tip{
+      font-size:11px;
+      display: inline-block;
+      margin-left: 10px;
+      color:#C9C9C9FF;
+      align-self: flex-end;
+    }
   }
 }
+
+
 
 

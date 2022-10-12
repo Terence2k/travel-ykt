@@ -12,10 +12,10 @@
 			<template #headerCell="{ column }">
 				<div class="cell-header" v-if="column.dataIndex !== 'roomType' && column?.appointedTime">
 					<div class="item">
-						<span>{{ getMonthAndDayText(column?.appointedTime) }}</span>
+						<span :class="{ hidden: dataSource.length === 0 }">{{ getMonthAndDayText(column?.appointedTime) }}</span>
 					</div>
 					<div class="item">
-						<span>{{ getDayNumText(column?.appointedTime) }}</span>
+						<span :class="{ hidden: dataSource.length === 0 }">{{ getDayNumText(column?.appointedTime) }}</span>
 					</div>
 				</div>
 				<div v-else class="cell-header row-first">
@@ -114,7 +114,7 @@ const props = defineProps({
 
 const currentDayjs = dayjs();
 
-const columns = ref([
+const originalColumns = [
 	{
 		title: '房间',
 		dataIndex: 'roomType',
@@ -307,7 +307,9 @@ const columns = ref([
 		key: '31',
 		width: '200px',
 	},
-]);
+];
+
+const columns = ref(originalColumns);
 
 const year = ref('');
 const month = ref((() => parseInt(currentDayjs.format('M')))());
@@ -532,6 +534,8 @@ watch(
 	() => year.value,
 	() => {
 		console.info('year.value change');
+		tableState.tableData.data = [];
+		columns.value = cloneDeep(originalColumns);
 		getHotelRoomTypeStockTableInfo(props.hotelId);
 	}
 );
@@ -540,6 +544,8 @@ watch(
 	() => month.value,
 	() => {
 		console.info('month.value change');
+		tableState.tableData.data = [];
+		columns.value = cloneDeep(originalColumns);
 		getHotelRoomTypeStockTableInfo(props.hotelId);
 	}
 );
