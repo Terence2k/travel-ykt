@@ -3,12 +3,12 @@
 		<CommonTable :row-selection="{onSelect}" :dataSource="state.tableData" :columns="state.columns">
       <template #button>
       </template>
-      <template #bodyCell="{ column, text, index, record }">
-        <template v-if="column.key === 'itineraryNo'">
+      <template #bodyCell="{ column, text, index,record }">
+		 <template v-if="column.key === 'itineraryNo'">
 					<div>
 					  <a @click="goToDetail(record)">{{text}}</a>
 					</div>
-				</template>
+		</template>
         <template v-if="column.key === 'index'">
 					<div>
 						{{(state.params.pageNo - 1) * (state.params.pageSize) + (index + 1)}}
@@ -125,7 +125,7 @@
 		})
 	}
   	const goToDetail = (val: any) => {
-    	console.log('val：', val);
+    localStorage.setItem('tempData', JSON.stringify(val));
 		router.push({
 			name: 'travel_detail',
 			params: {

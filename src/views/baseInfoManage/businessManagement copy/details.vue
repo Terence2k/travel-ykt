@@ -52,7 +52,7 @@
         </div>
         <div class="row_info">
           <div class="info_key">
-            联系人
+            姓名
           </div>
           <div>
             {{ form.contactName }}
@@ -60,7 +60,7 @@
         </div>
         <div class="row_info">
           <div class="info_key">
-            联系人手机号
+            手机号
           </div>
           <div>
             {{ form.phone }}

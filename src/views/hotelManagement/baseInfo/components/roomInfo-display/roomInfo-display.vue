@@ -98,30 +98,36 @@ const state = reactive({
 
 const dataSource: DataSourceItem[] = ref([]);
 
+const initPage = () => {
+	api
+		.getRoomDetailInfoInAuditStatus(state.hotelId)
+		.then((res) => {
+			console.info(`id${state.hotelId}审核中的房型信息:`, res);
+
+			if (Array.isArray(res) && res.length > 0) {
+				state.auditOrderId = res[0]?.auditOrderId;
+				dataSource.value = res.map((item) => {
+					return {
+						...item,
+						price: item.price / 100,
+						key: item?.oid,
+					};
+				});
+			} else {
+				dataSource.value = [];
+			}
+		})
+		.catch((err) => {
+			console.error(err);
+		});
+};
+
 watch(
 	() => route.query,
 	(res) => {
 		state.hotelId = res?.id;
 		if (state.hotelId) {
-			api
-				.getRoomDetailInfoInAuditStatus(state.hotelId)
-				.then((res) => {
-					console.info(`id${state.hotelId}审核中的房型信息:`, res);
-
-					if (Array.isArray(res) && res.length > 0) {
-						state.auditOrderId = res[0]?.auditOrderId;
-						dataSource.value = res.map((item) => {
-							return {
-								...item,
-								price: item.price / 100,
-								key: item?.oid,
-							};
-						});
-					}
-				})
-				.catch((err) => {
-					console.error(err);
-				});
+			initPage();
 		}
 	},
 	{
@@ -139,6 +145,7 @@ const auditPass = () => {
 			if (res[0]?.roleId) {
 				api.auditRoomDetailInfo(state.auditOrderId, res[0]?.roleId, true).then((res) => {
 					console.log('房型审核通过返回：', res);
+					initPage();
 				});
 			}
 		});
@@ -154,6 +161,7 @@ const auditFail = () => {
 			if (res[0]?.roleId) {
 				api.auditRoomDetailInfo(state.auditOrderId, res[0]?.roleId, false).then((res) => {
 					console.log('房型审核不通过返回：', res);
+					initPage();
 				});
 			}
 		});
