@@ -130,11 +130,11 @@
     const tempData = localStorage.getItem('tempData');
     if (tempData) {
       state.params = JSON.parse(tempData);
-      getItineraryDetail();
     } else {
       let { detailInfo } = useRoute().params as any;
       state.params = JSON.parse(decodeURIComponent(detailInfo));
     }
+    getItineraryDetail();
     
   })
 </script>
