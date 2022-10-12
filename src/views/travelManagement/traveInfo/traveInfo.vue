@@ -2,12 +2,15 @@
 	<div class="table-container">
         <div>
             <p class="title">综费产品</p>
-            <CommonTable :columns="columns" :dataSource="tableData" :scrollY="false">
+            <CommonTable :columns="columns" :dataSource="allFeesProducts" :scrollY="false">
                 <template #bodyCell="{ column, text, index, record }">
                     <template v-if="column.key === 'index'">
                         <div>
                             {{index + 1}}
                         </div>
+                    </template>
+                    <template v-if="column.key === 'feeModel'">
+                        {{column.data[text]}}
                     </template>
                 </template>
             </CommonTable>
@@ -81,6 +84,7 @@ const {
     addTicketPop, 
     hotelColumns, 
     tableData, 
+    allFeesProducts,
     editableData, 
     edit, 
     save, 

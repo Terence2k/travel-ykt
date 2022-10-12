@@ -48,3 +48,9 @@ export enum GuideType {
   UnderGuide = 1,
   AppointGuide
 }
+
+// 收费模式
+export enum FeeModel {
+  Number,
+  Price
+}

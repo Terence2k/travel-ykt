@@ -87,12 +87,12 @@
 						</template>
                         <template v-if="column.key === 'certificateType'">
 							<div>
-								{{ IDCard.filter((it: any) => it.codeValue === text)[0].name }}
+								{{ IDCard.filter((it: any) => it.codeValue === text)[0]?.name }}
 							</div>
 						</template>
                         <template v-if="column.key === 'gender'">
 							<div>
-								{{ travelStore.genderList.filter((it: any) => it.codeValue === text)[0].name }}
+								{{ travelStore.genderList.filter((it: any) => it.codeValue === text)[0]?.name }}
 							</div>
 						</template>
                         <template v-if="column.key === 'certificatePicture'">

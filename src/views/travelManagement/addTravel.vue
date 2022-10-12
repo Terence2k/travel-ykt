@@ -60,7 +60,6 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
     data: {}
   })
   const save = (e: any) => {
-    console.log(e)
     rulesPass.push(e)
     for (let i = 0; i < rulesPass.length; i++) {
       obj.data = cloneDeep({
@@ -112,13 +111,13 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
           travelContract: "http://test.jpg"
         },
 				basicParam: val.basicParam || {},
-				guideList: val.guideList || [],
+				guideList: travelStore.guideList,
 				itineraryInfoParam: val.itineraryInfoParam || {},
-				touristList: val.touristList || [],
-				transportList: val.transportList || []
+				touristList: travelStore.touristList,
+				transportList: travelStore.trafficList
 			}
 		).then((res: any) => {
-      message.success('新增成功');
+      message.success(res.message);
     })
 	}
   getTraveDetail()

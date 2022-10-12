@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { GroupMode, GroupStatus, Gender, GuideType } from '@/enum';
+import { GroupMode, GroupStatus, Gender, GuideType, FeeModel } from '@/enum';
 import api from '@/api/index';
 interface TraveDataItem {
 	groupType: GroupMode.All | GroupMode.TeamGroup |GroupMode.NoTeamGroup;
@@ -45,13 +45,20 @@ export const useTravelStore = defineStore({
 		trafficType: [],
 		trafficColor: [],
 		baseInfo: {
-			subTravelOperator: {}
+			subTravelOperator: {},
+			teamType: '',
+			startDate: '',
+			endDate: ''
 		},
 		guideList: [],
 		touristList: [],
 		trafficList: [],
 		traveInfo: {},
-		fileInfo: {}
+		fileInfo: {},
+		feeModel: {
+			[FeeModel.Number]: '人数',
+			[FeeModel.Price]: '价格'
+		}
 	}),
 	getters: {
 		// count(): string {

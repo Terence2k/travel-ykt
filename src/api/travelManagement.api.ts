@@ -84,7 +84,26 @@ export const travelManagement = {
             method: 'post',
             showLoading: true
         });
-    }
+    },
+    findByIdTeamType(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/team/findByIdTeamType`,
+            data,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            method: 'post',
+            showLoading: false
+        });
+    },
+    findProductInfo(oid: any) {
+        return request({
+            url: `${commonPath}/settlement-service/public/api/comprehensive-fee-product/detail/${oid}`,
+            method: 'get',
+            showLoading: false
+        });
+    },
+    
     
     
 }

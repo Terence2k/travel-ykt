@@ -140,6 +140,7 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 				}
 				emits('onSuccess', {guideList: state.tableData});
 			}
+			travelStore.setGuideList(state.tableData)
 		},
 
 		add: () => {

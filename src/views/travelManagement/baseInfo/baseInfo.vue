@@ -10,7 +10,7 @@
 			autocomplete="off"
 			labelAlign="left"
 			:label-col="{ span: 2 }"
-			:wrapper-col="{ span: 6 }"
+			:wrapper-col="{ span: 7 }"
 		>
 			<a-form-item label="线路名称" name="routeName">
 				<a-input 
@@ -26,7 +26,7 @@
 			
 			<a-radio-group v-model:value="formState.teamType" name="radioGroup">
 				<a-row type="flex">
-					<a-col :span="6" v-for="item in list.teamType" :key="item.oid" class="mb-2">
+					<a-col :span="8" v-for="item in list.teamType" :key="item.oid" class="mb-2">
 						<a-radio :value="item.oid">{{item.name}}</a-radio>
 					</a-col>
 					
@@ -172,7 +172,7 @@ if (route.query.id) {
 		teamId: '',
 		teamType: '',
 		subTravelOid: '',
-		// routeType: 1,
+		routeType: 1,
 		travelName: userInfo.sysCompany.name
 	}
 }

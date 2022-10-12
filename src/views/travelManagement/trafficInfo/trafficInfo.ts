@@ -136,7 +136,7 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 				}
 				emits('onSuccess', {transportList: state.tableData});
 			}
-			
+			travelStore.setTrafficList(state.tableData)
 		},
 		add: () => {
 			let key = generateGuid();
