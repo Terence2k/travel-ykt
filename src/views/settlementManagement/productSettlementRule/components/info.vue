@@ -50,16 +50,17 @@
 			</a-form-item>
 			<a-form-item label="收费数量" name="charCount">
 				<div>
-					<span>{{ formState.charCount }}</span>
+					<span>{{ formState.chargeCount }}</span>
 					<span v-if="formState.chargeModel === 1">%</span>
 					<span v-if="formState.chargeModel === 2">人</span>
 					<span v-if="formState.chargeModel === 3">元</span>
 				</div>
 			</a-form-item>
-			<a-form-item label="收费子产品" name="chargeProduct">
-				<div>
-					<span>{{ getTypeName('productSonType') }}</span>
-				</div>
+			<a-form-item label="收费子产品" name="chargeProductSonId" v-if="productSonList.length > 0">
+				<span>{{ getChargeProductSonName }}</span>
+			</a-form-item>
+			<a-form-item v-else label="收费子产品">
+				<span>{{ productName }}</span>
 			</a-form-item>
 			<a-form-item label="是否垫付" name="isPayment">
 				<div>
@@ -152,12 +153,29 @@ const columns = ref([
 	},
 ]);
 const route = useRouter();
+const productSonList = ref([]);
+const productName = ref('');
 // 缓存删除编辑数据
 const init = async () => {
 	navigatorBar.setNavigator(['查看']);
 	const id: any = route.currentRoute.value.query.oid;
 	// await getTeamType();
 	await productRuleDetail(id);
+	const { productId, productType, productSonType } = route.currentRoute.value.query;
+	let productRuleList = await api.productRuleList({
+		productId,
+		productType,
+		productSonType,
+		pageNo: 1, //页号
+		pageSize: 10,
+	});
+	// 由于产品子类别是否存在需要对其进行判断
+	if (productRuleList.content[0].productSonList.length > 0) {
+		productSonList.value = productRuleList.content[0].productSonList;
+	} else {
+		productName.value = productRuleList.content[0].productName;
+		formState.chargeProductSonId = Number(productId);
+	}
 };
 const oid = ref('');
 const productRuleDetail = async (id: number) => {
@@ -177,7 +195,16 @@ onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
 });
 const edit = () => {
-	route.push({ path: '/settlementManagement/productSettlementRule/edit', query: { oid: encodeURIComponent(oid.value) } });
+	const query = route.currentRoute.value.query;
+	route.push({
+		path: '/settlementManagement/productSettlementRule/edit',
+		query: {
+			oid: encodeURIComponent(oid.value),
+			productId: encodeURIComponent(query.productId),
+			productType: encodeURIComponent(query.productType),
+			productSonType: encodeURIComponent(query.productSonType),
+		},
+	});
 };
 const getTypeName = computed(() => (str: string) => {
 	if (str === 'teamTypeId') {
@@ -234,6 +261,14 @@ const getCompanyTypeName = computed(() => (value: number) => {
 const cancel = () => {
 	route.go(-1);
 };
+const getChargeProductSonName = computed(() => {
+	const idx = productSonList.value.findIndex((item) => item.productSonId === formState.chargeProductSonId);
+	if (idx !== -1) {
+		return productSonList.value[idx]['productSonName'];
+	} else {
+		return;
+	}
+});
 </script>
 
 <style lang="less" scoped>

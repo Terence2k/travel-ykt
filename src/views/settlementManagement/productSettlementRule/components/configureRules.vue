@@ -163,11 +163,27 @@ const toAddPage = () => {
 //编辑
 const toEditPage = (record: any) => {
 	console.log(record.oid, encodeURIComponent(record.oid));
-	route.push({ path: '/settlementManagement/productSettlementRule/edit', query: { oid: encodeURIComponent(record.oid) } });
+	route.push({
+		path: '/settlementManagement/productSettlementRule/edit',
+		query: {
+			oid: encodeURIComponent(record.oid),
+			productId: encodeURIComponent(state.tableData.param['productId']),
+			productType: encodeURIComponent(state.tableData.param['productType']),
+			productSonType: encodeURIComponent(state.tableData.param['productSonType']),
+		},
+	});
 };
 //查看
 const toCheck = (record: any) => {
-	route.push({ path: '/settlementManagement/productSettlementRule/info', query: { oid: encodeURIComponent(record.oid) } });
+	route.push({
+		path: '/settlementManagement/productSettlementRule/info',
+		query: {
+			oid: encodeURIComponent(record.oid),
+			productId: encodeURIComponent(state.tableData.param['productId']),
+			productType: encodeURIComponent(state.tableData.param['productType']),
+			productSonType: encodeURIComponent(state.tableData.param['productSonType']),
+		},
+	});
 };
 // const onSearch = () => {
 // 	userList(state.tableData.param).then((res) => {

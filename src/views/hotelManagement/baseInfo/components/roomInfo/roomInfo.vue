@@ -26,7 +26,7 @@
 						</template>
 					</div>
 				</template>
-				<template v-if="['systemRoomName'].includes(column.dataIndex)">
+				<template v-if="['roomTypeCode'].includes(column.dataIndex)">
 					<div>
 						<a-select v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]" :options="systemRoomNameOptions">
 						</a-select>
@@ -100,8 +100,8 @@ const columns = [
 	},
 	{
 		title: '系统房型',
-		dataIndex: 'systemRoomName',
-		key: 'systemRoomName',
+		dataIndex: 'roomTypeCode',
+		key: 'roomTypeCode',
 		width: '12%',
 	},
 	{
@@ -166,12 +166,58 @@ const edit = (key: string) => {
 
 const remove = (key: string) => {
 	if (editableData[key]) {
-		editableData[key].operationType = 2;
+		if (key.startsWith('NEW_')) {
+			delete editableData[key];
+		} else {
+			editableData[key].operationType = 2;
+		}
 	} else {
 		editableData[key] = cloneDeep(dataSource.value.filter((item) => key === item.key)[0]);
 		editableData[key].operationType = 2;
-		dataSource.value = dataSource.value.filter((item) => key !== item.key);
 	}
+	dataSource.value = dataSource.value.filter((item) => key !== item.key);
+};
+
+const initPage = () => {
+	for (let property in editableData) {
+		delete editableData[`${property}`];
+	}
+	api
+		.getRoomDetailInfo({}, state.hotelId)
+		.then((res) => {
+			console.info(`id${state.hotelId}房型信息:`, res);
+
+			if (Array.isArray(res) && res.length > 0) {
+				state.roomInfoResponse.value = res;
+				dataSource.value = res
+					.filter((item) => item.auditStatus !== 3)
+					.map((item) => {
+						if (item.auditStatus === 1) {
+							state.isAuditStatus = true;
+						}
+						return {
+							...item,
+							price: item.price / 100,
+							key: item?.oid,
+						};
+					});
+			} else {
+				state.roomInfoResponse.value = [];
+				dataSource.value = [];
+			}
+		})
+		.catch((err) => {
+			console.error(err);
+		});
+
+	api.getEnableSystemRoomType().then((res) => {
+		systemRoomData.value = res.map((item) => {
+			return {
+				value: item.oid,
+				label: item.sysRoomTypeCode,
+			};
+		});
+	});
 };
 
 watch(
@@ -179,37 +225,7 @@ watch(
 	(res) => {
 		state.hotelId = route?.query?.id;
 		if (state.hotelId) {
-			api
-				.getRoomDetailInfo({}, state.hotelId)
-				.then((res) => {
-					console.info(`id${state.hotelId}房型信息:`, res);
-
-					if (Array.isArray(res) && res.length > 0) {
-						state.roomInfoResponse.value = res;
-						dataSource.value = res.map((item) => {
-							if (item.auditStatus === 1) {
-								state.isAuditStatus = true;
-							}
-							return {
-								...item,
-								price: item.price / 100,
-								key: item?.oid,
-							};
-						});
-					}
-				})
-				.catch((err) => {
-					console.error(err);
-				});
-
-			api.getEnableSystemRoomType().then((res) => {
-				systemRoomData.value = res.map((item) => {
-					return {
-						value: item.oid,
-						label: item.sysRoomTypeCode,
-					};
-				});
-			});
+			initPage();
 		}
 	},
 	{
@@ -225,33 +241,39 @@ const saveRoomInfo = () => {
 		editableArray.push(editableRawData[property]);
 	}
 	console.info('editableArray', editableArray);
-	const result = editableArray?.map((item) => {
-		if (item.oid) {
-			return {
-				oid: item.oid,
-				hotelId: parseInt(item.hotelId),
-				roomTypeName: item.roomTypeName,
-				roomTypeCode: item.systemRoomName,
-				roomNum: parseInt(item.roomNum),
-				roomOccupancyNum: parseInt(item.roomOccupancyNum),
-				operationType: parseInt(item.operationType),
-			};
-		} else {
-			return {
-				hotelId: parseInt(item.hotelId),
-				roomTypeName: item.roomTypeName,
-				roomTypeCode: item.systemRoomName,
-				roomNum: parseInt(item.roomNum),
-				roomOccupancyNum: parseInt(item.roomOccupancyNum),
-				operationType: parseInt(item.operationType),
-			};
-		}
-	});
+	const result = editableArray
+		?.filter((item) => JSON.stringify(item) !== '{}')
+		.map((item) => {
+			console.log('item', item);
+			if (item.oid) {
+				return {
+					oid: item.oid,
+					hotelId: parseInt(item.hotelId),
+					roomTypeName: item.roomTypeName,
+					roomTypeCode: item.roomTypeCode,
+					roomNum: parseInt(item.roomNum),
+					roomOccupancyNum: parseInt(item.roomOccupancyNum),
+					operationType: parseInt(item.operationType),
+				};
+			} else {
+				if (item?.key) {
+					return {
+						hotelId: parseInt(item.hotelId),
+						roomTypeName: item.roomTypeName,
+						roomTypeCode: item.roomTypeCode,
+						roomNum: parseInt(item.roomNum),
+						roomOccupancyNum: parseInt(item.roomOccupancyNum),
+						operationType: parseInt(item.operationType),
+					};
+				}
+			}
+		});
 	console.info('保存的房型信息：', result);
 	api
 		.editRoomDetailInfo(result)
 		.then((res) => {
 			console.info('编辑房型信息返回：', res);
+			initPage();
 			message.success('保存成功');
 		})
 		.catch((err) => {
@@ -262,7 +284,7 @@ const saveRoomInfo = () => {
 
 const add = () => {
 	const newData = {
-		key: Date.now().toString(),
+		key: `NEW_${Date.now().toString()}`,
 		auditOrderId: '',
 		auditStatus: 1,
 		hotelId: parseInt(state.hotelId),
@@ -270,7 +292,7 @@ const add = () => {
 		roomNum: 0,
 		roomOccupancyNum: 0,
 		operationType: 0,
-		price: 100,
+		price: '',
 	};
 	dataSource.value.push(newData);
 	if (editableData[newData.key]) {

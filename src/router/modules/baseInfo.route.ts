@@ -64,14 +64,25 @@ export default [
 						component: () => import('@/views/baseInfoManage/businessManagement/apply.vue'),
 						name: 'apply',
 						meta: {
-							title: '企业申请',
+							title: '',
 							// icon: 'liulanqi',
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
 					{
-						path: 'check/name/:name/businessType/:businessType/businessTypeName/:businessTypeName/regionName/:regionName/creditCode/:creditCode/businessLicenseUrl/:businessLicenseUrl/contactName/:contactName/phone/:phone/account/:account/oid/:oid',
+						path: 'addBusinessAccount',
+						component: () => import('@/views/baseInfoManage/businessManagement/add.vue'),
+						name: 'addBusinessAccount',
+						meta: {
+							title: '新增',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'check/name/:name/businessType/:businessType/businessTypeName/:businessTypeName/regionName/:regionName/creditCode/:creditCode/businessLicenseUrl/:businessLicenseUrl/contactName/:contactName/phone/:phone/account/:account/uuid/:uuid/roldId/:roldId',
 						component: () => import('@/views/baseInfoManage/businessManagement/check.vue'),
 						name: 'check',
 						meta: {
@@ -97,6 +108,28 @@ export default [
 				]
 			},
 			{
+				path: 'enterpriseUserManagement',
+				component: () => import('@/views/baseInfoManage/enterpriseUserManagement/index.vue'),
+				name: 'enterpriseUserManagement',
+				meta: {
+					title: '企业用户管理',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					isDetail: false, // 在左侧的导航栏不会展示
+				},
+			},
+			{
+				path: 'enterpriseInfo',
+				component: () => import('@/views/baseInfoManage/enterpriseInfo/index.vue'),
+				name: 'enterpriseInfo',
+				meta: {
+					title: '企业基本信息',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					isDetail: false, // 在左侧的导航栏不会展示
+				},
+			},
+			{
 				path: 'teamTypeManagement',
 				component: () => import('@/views/baseInfoManage/teamTypeManagement/index.vue'),
 				name: 'teamTypeManagement',
@@ -107,7 +140,6 @@ export default [
 					isDetail: false, // 在左侧的导航栏不会展示
 				},
 			},
-			// 
 			{
 				path: 'auditProcess',
 				component: () => import('@/views/baseInfoManage/auditProcess/index.vue'),
