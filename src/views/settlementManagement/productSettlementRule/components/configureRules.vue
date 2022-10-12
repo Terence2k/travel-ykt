@@ -175,7 +175,15 @@ const toEditPage = (record: any) => {
 };
 //查看
 const toCheck = (record: any) => {
-	route.push({ path: '/settlementManagement/productSettlementRule/info', query: { oid: encodeURIComponent(record.oid) } });
+	route.push({
+		path: '/settlementManagement/productSettlementRule/info',
+		query: {
+			oid: encodeURIComponent(record.oid),
+			productId: encodeURIComponent(state.tableData.param['productId']),
+			productType: encodeURIComponent(state.tableData.param['productType']),
+			productSonType: encodeURIComponent(state.tableData.param['productSonType']),
+		},
+	});
 };
 // const onSearch = () => {
 // 	userList(state.tableData.param).then((res) => {
