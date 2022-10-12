@@ -17,7 +17,7 @@
 			</a-select>
 		</search-item>
 		<search-item label="企业名称">
-			<a-input v-model:value="tableData.param.name" placeholder="请输入企业名称" />
+			<a-input v-model:value.trim="tableData.param.name" placeholder="请输入企业名称" allowClear/>
 		</search-item>
 		<template #button>
 			<a-button @click="onQuery">查询</a-button>
@@ -35,7 +35,7 @@
 			</address-selector>
 		</search-item>
 		<search-item label="企业名称">
-			<a-input v-model:value="auditTableData.param.name" placeholder="请输入企业名称" />
+			<a-input v-model:value.trim="auditTableData.param.name" placeholder="请输入企业名称" allowClear/>
 		</search-item>
 		<template #button>
 			<a-button @click="onQuery">查询</a-button>
@@ -53,7 +53,7 @@
 			</address-selector>
 		</search-item>
 		<search-item label="企业名称">
-			<a-input v-model:value="failTableData.param.name" placeholder="请输入企业名称" />
+			<a-input v-model:value.trim="failTableData.param.name" placeholder="请输入企业名称" allowClear/>
 		</search-item>
 		<template #button>
 			<a-button @click="onQuery">查询</a-button>
