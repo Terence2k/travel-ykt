@@ -43,7 +43,7 @@
     </a-row>
     <div v-for="item in getOptions(state.itineraryDetail)">
       <div class="page-title" style="margin-top: 32px;">
-        {{item.title}}<span class="descriptions">({{item.descriptions}})</span>
+        {{item.title}}<span class="descriptions" v-html="item.descriptions"></span>
       </div>
       <CommonTable :columns="item.columns" :dataSource="item.dataSource" :scrollY="false">
         <template #bodyCell="{ column, text, index, record }">
@@ -75,7 +75,7 @@
       <a-step title="In Progress" description="This is a description." />
       <a-step title="Waiting" description="This is a description." />
     </a-steps> -->
-  </div> 
+  </div>
 </template>
 <script lang="ts" setup>
   import { ref, Ref, CSSProperties } from 'vue';

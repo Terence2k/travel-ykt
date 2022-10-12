@@ -81,7 +81,7 @@ const router = useRouter();
 const route = useRoute();
 const back = () => {
   router.push({
-    name: 'enterpriseInfo'
+    name: 'travelEnterpriseInfo'
   })
   imgUploadRef.value.clear()
 }
