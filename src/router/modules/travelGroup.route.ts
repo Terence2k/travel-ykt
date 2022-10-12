@@ -13,7 +13,7 @@ export default [
 				redirect: '/travel/travel_manage/travel_list',
 				name: 'travel_manage',
 				meta: {
-					title: '行程管理',
+					title: '发团行程管理',
 					// icon: 'liulanqi',
 					// auth: ["admin"],
 					// isDetail: true, // 在左侧的导航栏不会展示
@@ -25,7 +25,7 @@ export default [
 
 						name: 'travel_list',
 						meta: {
-							// title: '行程管理',
+							// title: '发团行程管理',
 							// icon: 'liulanqi',
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
@@ -157,6 +157,31 @@ export default [
 						name: 'info',
 						meta: {
 							title: '查看',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
+			{
+				path: 'take_group',
+				redirect: '/travel/take_group/take_group_list',
+				name: 'take_group',
+				meta: {
+					title: '接团行程管理',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					// isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'take_group_list',
+						component: () => import('@/views/travelManagement/travelTakeGroupList.vue'),
+
+						name: 'take_group_list',
+						meta: {
+							// title: '接团行程管理',
 							// icon: 'liulanqi',
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
