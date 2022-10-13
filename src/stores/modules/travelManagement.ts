@@ -55,6 +55,10 @@ export const useTravelStore = defineStore({
 		trafficList: [],
 		traveInfo: {},
 		fileInfo: {},
+		compositeProducts: [],
+		hotels: [],
+		scenicTickets: [],
+		teamType: '',
 		feeModel: {
 			[FeeModel.Number]: '人数',
 			[FeeModel.Price]: '价格'
@@ -109,6 +113,12 @@ export const useTravelStore = defineStore({
 		},
 		setFileInfo(data: any) {
 			this.fileInfo = data
+		},
+		setCompositeProducts(data: any) {
+			this.compositeProducts = data;
+		},
+		setTeamType(data: any) {
+			this.teamType = data;
 		}
 	},
 });
