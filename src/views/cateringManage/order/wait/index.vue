@@ -2,9 +2,14 @@
 	<div>
 		<CommonTable :dataSource="state.tableData.data" rowKey="id" :columns="columns">
 			<template #button>
-				<a-button type="primary" >导出</a-button>
+				<a-button type="primary">导出</a-button>
 			</template>
-			<template #bodyCell="{ column }">
+			<template #bodyCell="{ column, index }">
+				<template v-if="column.key === 'index'">
+					<div>
+						{{ index + 1 }}
+					</div>
+				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a @click="opendetailPage">查看</a>
@@ -30,7 +35,11 @@ import api from '@/api';
 
 const router = useRouter();
 const columns = [
-	{ title: '序号', dataIndex: 'oid', width: 70, key: 'arrange' },
+	{
+		title: ' 序号 ',
+		key: 'index',
+		width: '80px',
+	},
 	{
 		title: '用户姓名',
 		dataIndex: 'username',
@@ -146,7 +155,7 @@ const addOrUpdate = (param: any) => {
 };
 
 const opendetailPage = () => {
-	router.push({ path: '/catering/order_Management/order_detail'});
+	router.push({ path: '/catering/order_Management/order_detail' });
 };
 
 onMounted(() => {
