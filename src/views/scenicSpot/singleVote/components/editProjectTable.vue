@@ -13,6 +13,7 @@
 					></a-select>
 				</a-form-item>
 			</a-form>
+
 			<template v-slot:footer>
 				<a-button type="primary" @click="apply" style="width: 100px">保存</a-button>
 				<a-button @click="cancel">取消</a-button>
@@ -32,7 +33,7 @@
 							<span style="margin-right: 20px">
 								{{ itemNameCompute(record.itemId) }}
 							</span>
-							<a v-if="record.itemId" href="javascript:;" @click="change(record)">更换</a>
+							<a v-if="record.itemId && !type" href="javascript:;" @click="change(record)">更换</a>
 							<a href="javascript:;" v-if="isCreate && !type && formValidate.initData[0].init" @click="CreateData">请选择</a>
 						</div>
 					</template>
@@ -155,8 +156,10 @@ const change = (value: object) => {
 	console.log(value, type.value);
 	if (type.value) {
 		console.log('多点');
+		modelValue.value = true;
 	} else {
 		console.log('单点');
+		modelValue.value = true;
 	}
 };
 
@@ -252,7 +255,7 @@ const getList = async () => {
 	let arr = formData.data.map((i) => {
 		return { value: i.id, label: i.itemName };
 	});
-	options.value = arr;
+	// options.value = arr;
 };
 
 // 删除提示
