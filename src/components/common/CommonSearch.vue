@@ -42,4 +42,7 @@
 :deep(.ant-select) {
   width: 200px;
 }
+:deep(.ant-input-affix-wrapper) {
+  width: 200px;
+}
 </style>

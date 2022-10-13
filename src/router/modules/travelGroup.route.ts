@@ -13,7 +13,7 @@ export default [
 				redirect: '/travel/travel_manage/travel_list',
 				name: 'travel_manage',
 				meta: {
-					title: '行程管理',
+					title: '发团行程管理',
 					// icon: 'liulanqi',
 					// auth: ["admin"],
 					// isDetail: true, // 在左侧的导航栏不会展示
@@ -25,7 +25,7 @@ export default [
 
 						name: 'travel_list',
 						meta: {
-							// title: '行程管理',
+							// title: '发团行程管理',
 							// icon: 'liulanqi',
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
@@ -61,7 +61,7 @@ export default [
 			{
 				path: 'enterpriseInfoManagement',
 				name: 'enterpriseInfoManagement',
-				redirect: '/travel/enterpriseInfoManagement/enterpriseInfo',
+				redirect: '/travel/enterpriseInfoManagement/travelEnterpriseInfo',
 				meta: {
 					title: '企业信息管理',
 					// icon: 'liulanqi',
@@ -70,9 +70,9 @@ export default [
 				},
 				children: [
 					{
-						path: 'enterpriseInfo',
-						component: () => import('@/views/enterpriseInfoManagement/enterpriseInfo.vue'),
-						name: 'enterpriseInfo',
+						path: 'travelEnterpriseInfo',
+						component: () => import('@/views/enterpriseInfoManagement/travelEnterpriseInfo.vue'),
+						name: 'travelEnterpriseInfo',
 						meta: {
 							title: '企业信息',
 							// icon: 'liulanqi',
@@ -157,6 +157,31 @@ export default [
 						name: 'info',
 						meta: {
 							title: '查看',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
+			{
+				path: 'take_group',
+				redirect: '/travel/take_group/take_group_list',
+				name: 'take_group',
+				meta: {
+					title: '接团行程管理',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					// isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'take_group_list',
+						component: () => import('@/views/travelManagement/travelTakeGroupList.vue'),
+
+						name: 'take_group_list',
+						meta: {
+							// title: '接团行程管理',
 							// icon: 'liulanqi',
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示

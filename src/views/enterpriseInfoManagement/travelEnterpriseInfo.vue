@@ -84,7 +84,7 @@
       </tr>
       <tr class="row">
         <td class="key">开户行</td>
-        <td class="value">{{ details.accountAddress }}</td>
+        <td class="value">{{ details.bank }}</td>
       </tr>
       <tr class="row">
         <td class="key">公司账号</td>
@@ -130,7 +130,8 @@ type detailsType = {
   bankAccount?: string,
   businessLicenseUrl?: string,
   manageUrl?: string,
-  oid?: string | number
+  oid?: string | number,
+  bank?: string
 }
 type stateType = {
   baseInfo: {
