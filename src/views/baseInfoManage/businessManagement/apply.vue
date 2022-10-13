@@ -7,7 +7,8 @@
 			</a-select>
 		</search-item>
 		<search-item label="所属地区">
-			<address-selector placeholder="请选择所属地区" v-model:value="tableData.param.regionCode" @change="regionChange">
+			<address-selector placeholder="请选择所属地区" v-model:value="tableData.param.regionCode" @change="regionChange"
+				:key="activeKey">
 			</address-selector>
 		</search-item>
 		<search-item label="启用状态">
@@ -31,7 +32,8 @@
 			</a-select>
 		</search-item>
 		<search-item label="所属地区">
-			<address-selector placeholder="请选择所属地区" v-model:value="auditTableData.param.regionCode" @change="regionChange">
+			<address-selector placeholder="请选择所属地区" v-model:value="auditTableData.param.regionCode" @change="regionChange"
+				:key="activeKey">
 			</address-selector>
 		</search-item>
 		<search-item label="企业名称">
@@ -49,7 +51,8 @@
 			</a-select>
 		</search-item>
 		<search-item label="所属地区">
-			<address-selector placeholder="请选择所属地区" v-model:value="failTableData.param.regionCode" @change="regionChange">
+			<address-selector placeholder="请选择所属地区" v-model:value="failTableData.param.regionCode" @change="regionChange"
+				:key="activeKey">
 			</address-selector>
 		</search-item>
 		<search-item label="企业名称">
@@ -127,7 +130,6 @@
 			</a-tab-pane>
 			<template #rightExtra>
 				<a-button type="primary" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
-				<a-button type="primary" @click="changeAuditVisible = true">test</a-button>
 			</template>
 		</a-tabs>
 	</div>
@@ -148,52 +150,52 @@
 	</CommonModal>
 	<CommonModal title="审核企业注册信息" v-model:visible="auditVisible" @close="auditClose" @conform="auditConform"
 		:conform-text="'同意入驻'" :cancel-text="'驳回注册'" width="50%">
-		<table class="info_table" cellpadding="16px" border="1">
-			<tr class="row">
-				<td class="key">注册时间</td>
-				<td class="value">{{ details.lastUpdateTime }}</td>
-			</tr>
-			<tr class="row">
-				<td class="key">企业类型</td>
-				<td class="value">{{ details.businessTypeName }}</td>
-			</tr>
-			<tr class="row">
-				<td class="key">企业名称</td>
-				<td class="value">{{ details.name }}</td>
-			</tr>
-			<tr class="row">
-				<td class="key">统一社会信用代码</td>
-				<td class="value">{{ details.creditCode }}</td>
-			</tr>
-			<tr class="row">
-				<td class="key">管理员姓名</td>
-				<td class="value">{{ details.contactName }}</td>
-			</tr>
-			<tr class="row">
-				<td class="key">管理员手机号</td>
-				<td class="value">{{ details.phone }}</td>
-			</tr>
-			<tr class="row">
-				<td class="key">所属地区</td>
-				<td class="value">{{ details.regionName }}</td>
-			</tr>
-			<tr class="row">
-				<td class="key">营业执照</td>
-				<td class="value">
-					<a-image width="200px" :src="details.businessLicenseUrl" />
-				</td>
-			</tr>
-		</table>
+		<div class="table_box">
+			<table class="info_table" cellpadding="16px" border="1">
+				<tr class="row">
+					<td class="key">注册时间</td>
+					<td class="value">{{ details.lastUpdateTime }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">企业类型</td>
+					<td class="value">{{ details.businessTypeName }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">企业名称</td>
+					<td class="value">{{ details.name }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">统一社会信用代码</td>
+					<td class="value">{{ details.creditCode }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">管理员姓名</td>
+					<td class="value">{{ details.contactName }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">管理员手机号</td>
+					<td class="value">{{ details.phone }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">所属地区</td>
+					<td class="value">{{ details.regionName }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">营业执照</td>
+					<td class="value">
+						<a-image width="200px" :src="details.businessLicenseUrl" />
+					</td>
+				</tr>
+			</table>
+		</div>
 	</CommonModal>
 	<CommonModal :title="registerAuditTitle" v-model:visible="registerAuditVisible" @close="registerAuditClose"
 		@conform="registerAuditConform" :conform-text="'确定'">
 		<span v-if="isRegiste">
-			您即将批准 {{details.name}} 的注册申请，批准
-			后该企业管理员将可以登录一卡通后台继续完善信息
+			您即将批准 {{details.name}} 的注册申请，批准后该企业管理员将可以登录一卡通后台继续完善信息
 		</span>
 		<span v-else>
-			您即将批准 {{details.name}} 的
-			企业信息变更申请，是否已检查无误？
+			您即将批准 {{details.name}} 的企业信息变更申请，是否已检查无误？
 		</span>
 	</CommonModal>
 	<CommonModal :title="failTitle" v-model:visible="failVisible" @close="failClose" @cancel="failClose"
@@ -206,57 +208,41 @@
 			</a-form-item>
 		</a-form>
 	</CommonModal>
-	<CommonModal title="审核企业变更信息" v-model:visible="changeAuditVisible" @close="auditClose" @conform="auditConform"
-		:conform-text="'同意入驻'" :cancel-text="'驳回注册'" width="50%">
-		<table class="info_table" cellpadding="16px" border="1">
-			<tr class="row">
-				<th class="key_hd">变更项目</th>
-				<th class="key_hd">变更前内容</th>
-				<th class="key_hd">变更后内容</th>
-			</tr>
-			<tr v-for="(item,index) in changeKeys" :key="index">
-				<td class="key">{{ keyNameList[item] }}</td>
-				<!-- <td class="value">{{ newArrList[index].item }}</td>
-				<td class="value">{{ oldArrList[index].item }}</td> -->
-			</tr>
-			<!-- <tr class="row">
-				<td class="key">注册时间</td>
-				<td class="value">{{ details.lastUpdateTime }}</td>
-			</tr>
-			<tr class="row">
-				<td class="key">企业类型</td>
-				<td class="value">{{ details.businessTypeName }}</td>
-			</tr>
-			<tr class="row">
-				<td class="key">企业名称</td>
-				<td class="value">{{ details.name }}</td>
-			</tr>
-			<tr class="row">
-				<td class="key">统一社会信用代码</td>
-				<td class="value">{{ details.creditCode }}</td>
-			</tr>
-			<tr class="row">
-				<td class="key">管理员姓名</td>
-				<td class="value">{{ details.contactName }}</td>
-			</tr>
-			<tr class="row">
-				<td class="key">管理员手机号</td>
-				<td class="value">{{ details.phone }}</td>
-			</tr>
-			<tr class="row">
-				<td class="key">所属地区</td>
-				<td class="value">{{ details.regionName }}</td>
-			</tr>
-			<tr class="row">
-				<td class="key">营业执照</td>
-				<td class="value">
-					<a-image width="200px" :src="details.businessLicenseUrl" />
-				</td>
-			</tr> -->
-		</table>
-	</CommonModal>
+	<CommonModal title="审核企业变更信息" v-model:visible="changeAuditVisible" @close="auditClose" @cancel="changeAuditCancel"
+		@conform="auditConform" :conform-text="'同意变更'" :cancel-text="'驳回变更'" width="50%">
+		<div class="table_box">
+			<table class="change_table" cellpadding="16px" border="1">
+				<tr class="row">
+					<th class="key_hd">变更项目</th>
+					<th class="key_hd">变更前内容</th>
+					<th class="key_hd">变更后内容</th>
+				</tr>
+				<tr class="row" v-for="(item,index) in changeKeys" :key="index">
+					<td class="key">{{ keyNameList[item] }}</td>
 
-	<!-- <add-business-account v-model:modalVisible="modalVisible" @success="onSearch"></add-business-account> -->
+					<td class="value" v-if="['manageUrl','businessLicenseUrl'].includes(item) && oldArrList[index][item]">
+						<a-image width="200px" :src="oldArrList[index][item]" />
+					</td>
+					<td class="value" v-else-if="item === 'regionCode'">
+						<address-selector key="oldadd" style="width:100%" v-model:value="oldArrList[index][item]"
+							:reproduce="oldArrList[index][item]" disabled>
+						</address-selector>
+					</td>
+					<td class="value" v-else>{{ getComputedVal(item, oldArrList[index][item]) }}</td>
+
+					<td class="value" v-if="['manageUrl','businessLicenseUrl'].includes(item) && newArrList[index][item]">
+						<a-image width="200px" :src="newArrList[index][item]" />
+					</td>
+					<td class="value" v-else-if="item === 'regionCode'">
+						<address-selector key="newadd" style="width:100%" v-model:value="newArrList[index][item]"
+							:reproduce="newArrList[index][item]" disabled>
+						</address-selector>
+					</td>
+					<td class="value" v-else>{{ getComputedVal(item, newArrList[index][item]) }}</td>
+				</tr>
+			</table>
+		</div>
+	</CommonModal>
 </template>
 
 <script setup lang="ts">
@@ -265,7 +251,6 @@ import CommonPagination from '@/components/common/CommonPagination.vue'
 import CommonSearch from '@/components/common/CommonSearch.vue'
 import SearchItem from '@/components/common/CommonSearchItem.vue'
 import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
-// import addBusinessAccount from '@/views/baseInfoManage/businessManagement/components/addBusinessAccount.vue';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import type { Rule } from 'ant-design-vue/es/form';
 import api from '@/api';
@@ -302,10 +287,21 @@ const failFormRules: Record<string, Rule[]> = {
 	auditRemark: [{ required: true, trigger: 'blur', message: '请输入驳回原因' }],
 }
 const registerAuditTitle = computed(() => {
-	return isRegiste ? '企业注册审核确认' : '企业信息变更审核确认'
+	return isRegiste.value ? '企业注册审核确认' : '企业信息变更审核确认'
 })
 const failTitle = computed(() => {
-	return isRegiste ? '驳回企业注册' : '驳回企业信息变更'
+	return isRegiste.value ? '驳回企业注册' : '驳回企业信息变更'
+})
+const getComputedVal = computed(() => (key: string, val: any) => {
+	if (key === 'accountType') {
+		return val == 1 ? '对公账户' : '对私账户'
+	} else if (key === 'unitStatus') {
+		return val == 1 ? '停业' : '开业'
+	} else if (key === 'isReduced') {
+		return val == 1 ? '是' : '否'
+	} else {
+		return val
+	}
 })
 const failForm = reactive({
 	auditTypeCode: 1,
@@ -529,8 +525,12 @@ const {
 	failTableData,
 } = toRefs(state)
 const keyNameList = {
-	businessType: '企业类型',
+	// businessType: '企业类型',
 	name: '企业名称',
+	regionCode: '企业所属地区',
+	// provinceId: '省',
+	// cityId: '市',
+	// areaId: '县',
 	addressDetail: '企业详情地址',
 	legalPerson: '法定代表人',
 	managementRange: '经营范围',
@@ -545,8 +545,15 @@ const keyNameList = {
 	bankAccount: '公司账号',
 	creditCode: '统一社会信用代码',
 	businessLicenseUrl: '营业执照',
-	account: '超级管理员账号',
-	password: '超级管理员密码'
+	// manageUrl: '经营许可证',
+	hotelStarCode: '星级',
+	unitStatus: '开业状态', //  0-开业 1-停业
+	isReduced: '是否支持减免', // 0-否 1-是
+	reduceRule: '减免规则',
+	startTime: '开始营业时间', // '营业时间',
+	endTime: '结束营业时间',
+	shopPhone: '店铺联系电话',
+	cateringDesc: '其他'
 }
 const newArrList = ref<any[]>([])
 const oldArrList = ref<any[]>([])
@@ -602,23 +609,6 @@ const onSearch = () => {
 		state.tableData.total = res.total;
 	})
 }
-/* const onAuditSearch = async () => {
-	let res = await api.findCompanyList(state.auditTableData.param)
-	await res.content.forEach((item: any) => {
-		return new Promise<void>(async (resolve, reject) => {
-			if (item.auditUuid) {
-				let res1 = await api.getAuditButton({ uuid: item.auditUuid })
-				if (res1) {
-					item.uuid = res1[0].uuid
-					item.roleId = res1[0].roleId
-					item.isAudit = true
-				}
-			}
-		})
-	})
-	state.auditTableData.data = res.content;
-	state.auditTableData.total = res.total;
-} */
 const onAuditSearch = async () => {
 	let res = await api.findCompanyList(state.auditTableData.param)
 	const uuids: (string | number)[] = []
@@ -690,6 +680,7 @@ const auditEnterprise = async (record: any) => {
 	failForm.uuid = record.uuid
 	failForm.roleId = record.roleId
 	failForm.businessType = record.auditBusinessType
+	details.name = record.name
 	if (record.source === '企业注册') {
 		isRegiste.value = true
 		auditVisible.value = true
@@ -701,24 +692,44 @@ const auditEnterprise = async (record: any) => {
 		}
 	} else if (record.source === '信息变更') {
 		const res = await api.getChangeBeforeAfterData(record.oid, record.businessType)
-		const newList = res?.new
-		const oldList = res?.old
-		console.log(res, 'FFFFFFFF');
-		let keyList = Object.keys(newList)
-		if (keyList.length > 0) {
-			keyList.forEach((key: any) => {
-				if (newList[key] != oldList[key]) {
-					newArrList.value.push({ [key]: newList[key] })
-					oldArrList.value.push({ [key]: oldList[key] })
-					changeKeys.value.push(key)
-				}
-			})
-			console.log(newArrList, oldArrList, changeKeys, '##########');
-
+		const newList = flat(res?.new)
+		const oldList = flat(res?.old)
+		let keyList = Object.keys(keyNameList)
+		keyList.forEach((key: string) => {
+			if (newList[key] != oldList[key]) {
+				newArrList.value.push({ [key]: newList[key] })
+				oldArrList.value.push({ [key]: oldList[key] })
+				changeKeys.value.push(key)
+			}
+		})
+		const newRegion = [newList.provinceId, newList.cityId, newList.areaId]
+		const oldRegion = [oldList.provinceId, oldList.cityId, oldList.areaId]
+		if (newRegion.toString() !== oldRegion.toString()) {
+			newArrList.value.push({ regionCode: newRegion })
+			oldArrList.value.push({ regionCode: oldRegion })
+			changeKeys.value.push('regionCode')
 		}
 		changeAuditVisible.value = true
 		isRegiste.value = false
 	}
+}
+
+const flat = (target: any) => {
+	let obj: any = {};
+	let process = (_target: any) => {
+		if (Object.prototype.toString.call(_target) === '[object Object]') {
+			let keys = Object.keys(_target)
+			keys.forEach(item => {
+				if (Object.prototype.toString.call(_target[item]) === '[object Object]') {
+					process(_target[item])
+				} else {
+					obj[item] = _target[item]
+				}
+			})
+		}
+	}
+	process(target)
+	return obj
 }
 
 interface addInterface {
@@ -801,6 +812,7 @@ const registerAuditConform = async () => {
 		message.success('审核成功！')
 		auditVisible.value = false
 		registerAuditVisible.value = false
+		changeAuditVisible.value = false
 		onSearch()
 		onAuditSearch()
 	} else {
@@ -820,12 +832,18 @@ const failConform = () => {
 			message.success('驳回成功！')
 			auditVisible.value = false
 			failVisible.value = false
+			changeAuditVisible.value = false
 			onFailSearch()
 			onAuditSearch()
 		} else {
 			message.error('驳回失败！')
 		}
 	})
+}
+const changeAuditCancel = () => {
+	newArrList.value = []
+	oldArrList.value = []
+	changeKeys.value = []
 }
 onActivated(() => {
 	if (route.params?.isRefresh) {
@@ -856,28 +874,43 @@ onMounted(() => {
 	align-items: center;
 }
 
-.info_table {
-	width: 100%;
+.table_box {
+	max-height: 80vh;
+	padding: 1px 0;
+	overflow: auto;
 
 	.row {
+		width: 100%;
 		font-size: 14px;
 		font-family: Microsoft YaHei UI;
 		font-weight: 400;
 		color: #1E2226;
 		border: 1px solid #E9E9E9;
+	}
 
-		.key {
+	.change_table {
+		width: 100%;
+
+		.key,
+		.key_hd {
 			width: 150px;
-			background: rgba(245, 247, 250, 0.39);
 		}
 
 		.key_hd {
-			width: 150px;
 			background: rgba(245, 247, 250, 0.39);
 		}
 
 		.value {
-			// width: 650px;
+			min-width: 300px;
+		}
+	}
+
+	.info_table {
+		width: 100%;
+
+		.key {
+			width: 150px;
+			background: rgba(245, 247, 250, 0.39);
 		}
 	}
 }
