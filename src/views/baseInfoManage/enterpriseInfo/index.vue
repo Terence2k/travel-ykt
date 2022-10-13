@@ -8,7 +8,6 @@
         {{ enterpriseState }}
       </span> -->
     </div>
-    <!-- 旅行社、酒店、景区、餐厅 -->
     <div class="form_body">
       <a-form ref="formRef" :model="form" :rules="formRules" name="add-business" autocomplete="off" labelAlign="left"
         :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
@@ -86,6 +85,10 @@
         </a-form-item>
         <a-form-item name="businessLicenseUrl" label="营业执照">
           <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl" @done="uploadDown">
+          </img-upload>
+        </a-form-item>
+        <a-form-item name="businessLicenseUrl1" label="经营许可证" v-if="form.businessType == 'TRAVEL'">
+          <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl1" @done="uploadDown">
           </img-upload>
         </a-form-item>
         <!-- <div class="fail" v-if="failVisible">
