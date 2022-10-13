@@ -214,9 +214,9 @@ export async function getRoomDetailInfoInAuditStatus(id: number) {
 }
 
 // /hotel-service/public/api/hotel-room-type/auditPassOrNot/{uuid}?flag=
-export async function auditRoomDetailInfo(uuid: string, roleId: string, isPass: boolean) {
+export async function auditRoomDetailInfo(uuid: string, roleId: string, businessTypeCode: string, isPass: boolean) {
 	return request({
-		url: `${commonPath}/hotel-service/public/api/hotel-room-type/auditPassOrNot/${uuid}/${roleId}?flag=${isPass}`,
+		url: `${commonPath}/hotel-service/public/api/hotel-room-type/auditPassOrNot/${uuid}/${roleId}/${businessTypeCode}?flag=${isPass}`,
 		method: 'get',
 		showLoading: true,
 	});
@@ -254,7 +254,7 @@ export async function getRoomType(data: any) {
 	return request({
 		url: `${commonPath}/hotel-service/public/api/hotel-room-type/listRoomType`,
 		method: 'post',
-		data
+		data,
 	});
 }
 

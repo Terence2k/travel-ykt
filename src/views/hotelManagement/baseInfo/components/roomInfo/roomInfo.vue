@@ -1,5 +1,6 @@
 <template>
 	<div class="wrapper-tab-roomInfo">
+		<!-- <a-form ref="formRef" :rules="rulesRef" :model="editableData" autocomplete="off" labelAlign="left"> -->
 		<CommonTable :columns="columns" :data-source="dataSource">
 			<template #bodyCell="{ column, text, record }">
 				<template v-if="['roomTypeName'].includes(column.dataIndex)">
@@ -28,7 +29,12 @@
 				</template>
 				<template v-if="['roomTypeCode'].includes(column.dataIndex)">
 					<div>
-						<a-select v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]" :options="systemRoomNameOptions">
+						<a-select
+							@change="changeRoomOccupancyNum(editableData[record.key])"
+							v-if="editableData[record.key]"
+							v-model:value="editableData[record.key][column.dataIndex]"
+							:options="systemRoomNameOptions"
+						>
 						</a-select>
 
 						<template v-else>
@@ -38,7 +44,13 @@
 				</template>
 				<template v-if="['roomOccupancyNum'].includes(column.dataIndex)">
 					<div>
-						<a-input type="number" style="width: 16%" v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]" />
+						<a-input
+							:disabled="true"
+							type="number"
+							style="width: 16%"
+							v-if="editableData[record.key]"
+							v-model:value="editableData[record.key][column.dataIndex]"
+						/>
 						<template v-else>
 							<a-input style="width: 16%" :disabled="true" :defaultValue="text" />
 						</template>
@@ -63,6 +75,7 @@
 				</a-table-summary-row>
 			</template>
 		</CommonTable>
+		<!-- </a-form> -->
 		<div class="footer">
 			<!-- <a-button @click="saveRoomInfo" class="button-save button">保存</a-button> -->
 			<a-button :class="{ mdisabled: state.isAuditStatus }" :disabled="state.isAuditStatus" class="button-submit button" @click="saveRoomInfo"
@@ -143,6 +156,7 @@ interface DataSourceItem {
 	roomNum: number;
 	roomOccupancyNum: number;
 }
+
 const dataSource: DataSourceItem[] = ref([]);
 
 const systemRoomData = ref([]);
@@ -151,8 +165,10 @@ const systemRoomNameOptions = ref<SelectProps['options']>(systemRoomData);
 const state = reactive({
 	hotelId: 0,
 	isAuditStatus: false,
+	systemRoomAllData: [],
 	roomInfoResponse: [],
 	roomInfoRequest: [],
+	//errorTip: {},
 });
 
 const edit = (key: string) => {
@@ -211,6 +227,7 @@ const initPage = () => {
 		});
 
 	api.getEnableSystemRoomType().then((res) => {
+		state.systemRoomAllData = res;
 		systemRoomData.value = res.map((item) => {
 			return {
 				value: item.oid,
@@ -269,6 +286,7 @@ const saveRoomInfo = () => {
 			}
 		});
 	console.info('保存的房型信息：', result);
+
 	api
 		.editRoomDetailInfo(result)
 		.then((res) => {
@@ -288,7 +306,7 @@ const add = () => {
 		auditOrderId: '',
 		auditStatus: 1,
 		hotelId: parseInt(state.hotelId),
-		roomTypeCode: 1,
+		roomTypeCode: systemRoomData?.value[0]?.value || 1,
 		roomNum: 0,
 		roomOccupancyNum: 0,
 		operationType: 0,
@@ -296,11 +314,21 @@ const add = () => {
 	};
 	dataSource.value.push(newData);
 	if (editableData[newData.key]) {
+		console.log('aaaaaaaaa');
 		editableData[newData.key].operationType = 0;
 	} else {
 		editableData[newData.key] = cloneDeep(dataSource.value.filter((item) => newData.key === item.key)[0]);
 		editableData[newData.key].operationType = 0;
+		const roomOccupancyNum = state.systemRoomAllData.find((item) => item.oid === editableData[newData.key].roomTypeCode)?.roomOccupancyNum;
+
+		editableData[newData.key].roomOccupancyNum = roomOccupancyNum;
+		newData.roomOccupancyNum = roomOccupancyNum;
+		console.log('editableData[newData.key].roomOccupancyNum', state.systemRoomAllData);
 	}
+};
+
+const changeRoomOccupancyNum = (target) => {
+	target.roomOccupancyNum = state.systemRoomAllData.find((item) => item.oid === target.roomTypeCode)?.roomOccupancyNum;
 };
 </script>
 
