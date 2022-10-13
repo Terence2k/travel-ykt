@@ -243,7 +243,7 @@ const save = () => {
       let res = await api.addTeamType({ ...toRaw(teamForm), teamTypeItemBos });
       if (res === "添加成功") {
         message.success('新增团队类型成功！')
-        closeModal()
+        closeModal();
         onSearch();
       } else {
         message.error('新增团队类型失败！')
@@ -258,7 +258,7 @@ const save = () => {
       let res = await api.updataTeamType({ ...toRaw(teamForm), teamTypeItemBos })
       if (res === "修改成功") {
         message.success('编辑团队类型成功！')
-        closeModal()
+        closeModal();
         onSearch();
       } else {
         message.error('编辑团队类型失败！')

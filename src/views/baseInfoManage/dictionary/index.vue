@@ -1,12 +1,12 @@
 <template>
 	<div class="content_box">
 		<div class="content content_left">
-			<CommonTable :dataSource="tableData.data" :columns="columns" :scroll="{y:'100%'}">
+			<CommonTable :dataSource="tableData.data" :columns="columns" :scroll="scroll">
 				<template #button>
 					<div class="query_box">
 						<a-form autocomplete="off">
 							<a-form-item label="查询">
-								<a-input v-model:value="state.queryParams" placeholder="请输入ID或者名称" @change="queryList" />
+								<a-input v-model:value.trim="state.queryParams" placeholder="请输入ID或者名称" @change="queryList" />
 							</a-form-item>
 						</a-form>
 						<a-button type="primary" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
@@ -27,7 +27,7 @@
 		</div>
 		<div class="content content_middle"></div>
 		<div class="content content_right">
-			<CommonTable :dataSource="detailsTableData.data" :columns=" detailsColumns" :scroll="{y:'100%'}">
+			<CommonTable :dataSource="detailsTableData.data" :columns=" detailsColumns" :scroll="scroll">
 				<template #button>
 					<div class="query_box">
 						<span class="detail_text">字典详情</span>
@@ -134,6 +134,7 @@ const detailsColumns = [
 
 const labelCol = { span: 4 }
 const wrapperCol = { span: 20 }
+const scroll = { y: '60vh' }
 const useForm = Form.useForm;
 const state = reactive({
 	tableData: {

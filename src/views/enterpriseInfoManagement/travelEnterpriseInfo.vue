@@ -84,7 +84,7 @@
       </tr>
       <tr class="row">
         <td class="key">开户行</td>
-        <td class="value">{{ details.accountAddress }}</td>
+        <td class="value">{{ details.bank }}</td>
       </tr>
       <tr class="row">
         <td class="key">公司账号</td>
@@ -130,7 +130,8 @@ type detailsType = {
   bankAccount?: string,
   businessLicenseUrl?: string,
   manageUrl?: string,
-  oid?: string | number
+  oid?: string | number,
+  bank?: string
 }
 type stateType = {
   baseInfo: {
@@ -147,12 +148,12 @@ const state = reactive<stateType>({
 })
 const { baseInfo, details } = toRefs(state)
 const initOpeion = async () => {
-  let { accountBalance, delegateGuide, createTime, group, companyBO } = await api.getTravelInformation()
+  let { accountBalance, delegateGuide, createTime, group, companyBo } = await api.getTravelInformation()
   state.baseInfo.accountBalance = accountBalance
   state.baseInfo.delegateGuide = delegateGuide
   state.baseInfo.createTime = createTime
   state.baseInfo.group = group
-  state.details = companyBO
+  state.details = companyBo
   state.details.manageUrl = "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
 }
 const goTo = () => {

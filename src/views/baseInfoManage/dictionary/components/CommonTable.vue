@@ -1,9 +1,9 @@
 <template>
-	<div class="table-area">
-		<div class="list-btn">
+	<div class="table-box">
+		<div class="list-btns-box">
 			<slot name="button"></slot>
 		</div>
-		<a-table v-bind="$attrs" :pagination="false" class="common-table">
+		<a-table v-bind="$attrs" :pagination="false" class="common-table-box">
 			<template #bodyCell="data">
 				<slot name="bodyCell" v-bind="data || {}"></slot>
 			</template>
@@ -14,8 +14,10 @@
 <script setup lang="ts"></script>
 
 <style lang="scss">
-.table-area {
-	.list-btn {
+.table-box {
+	padding: 0;
+
+	.list-btns-box {
 		margin-bottom: 17px;
 	}
 
@@ -32,12 +34,7 @@
 	}
 }
 
-.common-table {
-
-	// 调整antable内容高度
-	.ant-table-body {
-		height: calc(100vh - 420px);
-	}
+.common-table-box {
 
 	// 调整antable表头字体
 	.ant-table-thead>tr>th {

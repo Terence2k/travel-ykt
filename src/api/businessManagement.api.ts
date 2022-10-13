@@ -4,10 +4,20 @@ const commonPart1 = `${commonPath}/customer-service/public/api/sys-role/`
 const commonPart2 = `${commonPath}/customer-service/public/api/sys-user/`
 const commonPart3 = `${commonPath}/customer-service/public/api/dictionary/`
 const commonPart4 = `${commonPath}/customer-service/public/api/sys/audit/flow/`
+const commonPart5 = `${commonPath}/hotel-service/public/api/hotel-information/`
 // 企业注册
 export function companyRegister(data: any) {
 	return request({
 		url: `${commonPart}companyRegister`,
+		method: 'post',
+		data,
+		showLoading: true
+	});
+}
+// 手动新增企业
+export function addCompany(data: any) {
+	return request({
+		url: `${commonPart}addCompany`,
 		method: 'post',
 		data,
 		showLoading: true
@@ -73,4 +83,45 @@ export function businessTypeDropDown(codeValue: string) {
 		method: 'post',
 		showLoading: true
 	});
+}
+// 禁用企业
+export function onOffCompany(data: any) {
+	return request({
+		url: `${commonPart}onOffCompany`,
+		method: 'post',
+		data,
+		showLoading: true
+	});
+}
+
+export function getChangeBeforeAfterData(companyId: string, type: string) {
+	if (type === 'HOTEL') {
+		// 酒店根据企业id查询提交审核前、后数据
+		return request({
+			url: `${commonPart5}getAuditBeforeAfterData?companyId=${companyId}`,
+			method: 'post',
+			showLoading: true
+		});
+	} else if (type === 'TRAVEL') {
+		// 旅行社根据企业id查询提交审核前、后数据
+		return request({
+			url: `${commonPart}findCompanyInformationAuditDta?companyId=${companyId}`,
+			method: 'post',
+			showLoading: true
+		});
+	} else if (type === 'CATERING') {
+		// 餐饮根据企业id查询提交审核前、后数据
+	} else if (type === 'TICKET') {
+		// 景区根据企业id查询提交审核前、后数据
+	} else if (type === 'SUPERVISE') {
+		// 监理根据企业id查询提交审核前、后数据
+	} else if (type === 'ASSOCIATION') {
+		// 协会根据企业id查询提交审核前、后数据
+	} else if (type === 'GROUP') {
+		// 集团根据企业id查询提交审核前、后数据
+	} else if (type === 'CULTURE_BUREAU') {
+		// 文旅局根据企业id查询提交审核前、后数据
+	} else if (type === 'ANCIENT_UYGUR') {
+		// 古维管理部门根据企业id查询提交审核前、后数据
+	}
 }

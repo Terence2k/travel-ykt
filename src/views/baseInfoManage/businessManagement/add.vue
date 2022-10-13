@@ -27,8 +27,8 @@
           <address-selector placeholder="请选择所属地区" v-model:value="form.regionCode" @change="regionChange">
           </address-selector>
         </a-form-item>
-        <a-form-item name="address" label="企业详情地址">
-          <a-input v-model:value="form.address" placeholder="请输入企业详情地址">
+        <a-form-item name="addressDetail" label="企业详情地址">
+          <a-input v-model:value="form.addressDetail" placeholder="请输入企业详情地址">
           </a-input>
         </a-form-item>
         <a-form-item name="legalPerson" label="法定代表人">
@@ -44,10 +44,12 @@
           </a-input>
         </a-form-item>
         <a-form-item name="establishTime" label="成立日期">
-          <a-date-picker v-model:value="form.establishTime" placeholder="请选择成立日期" style="width:100%" />
+          <a-date-picker v-model:value="form.establishTime" placeholder="请选择成立日期" style="width:100%"
+            :format="dateFormat" :valueFormat="dateFormat" />
         </a-form-item>
         <a-form-item name="businessTerm" label="营业期限">
-          <a-date-picker v-model:value="form.businessTerm" placeholder="请选择营业期限" style="width:100%" />
+          <a-date-picker v-model:value="form.businessTerm" placeholder="请选择营业期限" style="width:100%" :format="dateFormat"
+            :valueFormat="dateFormat" />
         </a-form-item>
         <a-form-item name="contactName" label="联系人">
           <a-input v-model:value="form.contactName" placeholder="请输入联系人">
@@ -121,8 +123,8 @@
           <address-selector placeholder="请选择所属地区" v-model:value="form.regionCode" @change="regionChange">
           </address-selector>
         </a-form-item>
-        <a-form-item name="address" label="企业详情地址">
-          <a-input v-model:value="form.address" placeholder="请输入企业详情地址">
+        <a-form-item name="addressDetail" label="企业详情地址">
+          <a-input v-model:value="form.addressDetail" placeholder="请输入企业详情地址">
           </a-input>
         </a-form-item>
         <a-form-item name="contactName" label="联系人">
@@ -235,8 +237,8 @@
           <address-selector placeholder="请选择所属地区" v-model:value="form.regionCode" @change="regionChange">
           </address-selector>
         </a-form-item>
-        <a-form-item name="address" label="企业详情地址">
-          <a-input v-model:value="form.address" placeholder="请输入企业详情地址">
+        <a-form-item name="addressDetail" label="企业详情地址">
+          <a-input v-model:value="form.addressDetail" placeholder="请输入企业详情地址">
           </a-input>
         </a-form-item>
         <a-form-item name="contactName" label="联系人">
@@ -271,9 +273,9 @@
       添加后不可删除，但可以注销、禁用。
       您是否检查无误，确认要添加该企业？
     </CommonModal>
-    <CommonModal title="提示" v-model:visible="tipVisible" @cancel="tipCancel" @close="tipCancel" @conform="tipConform"
+    <CommonModal title="提示" v-model:visible="tipVisible" @cancel="tipCancel" @close="tipCancel" @conform="tipCancel"
       :conform-text="'我知道了'" :is-cancel="false">
-      您已成功添加 丽江风情假日旅行社 ，超级管理员账
+      您已成功添加 {{form.name}} ，超级管理员账
       号密码已分配成功，请线下告知该企业管理员登录。
     </CommonModal>
   </div>
@@ -292,13 +294,8 @@ import AddressSelector from '@/views/baseInfoManage/businessManagement/component
 const router = useRouter();
 const route = useRoute();
 const formRef = ref()
-const back = () => {
-  router.push({
-    name: 'apply'
-  })
-  formRef.value.resetFields()
-  // currentOption.value = 'default'
-}
+const dateFormat = 'YYYY-MM-DD';
+
 const saveVisible = ref(false)
 const tipVisible = ref(false)
 const loading = ref(false)
@@ -309,7 +306,7 @@ type detailsType = {
   provinceId?: string | number,
   cityId?: string | number,
   areaId?: string | number,
-  address?: string,
+  addressDetail?: string,
   legalPerson?: string,
   managementRange?: string,
   registeredCapital?: string,
@@ -334,6 +331,16 @@ const form = reactive<detailsType>({
   name: undefined,
   businessLicenseUrl: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
 })
+const back = () => {
+  router.push({
+    name: 'apply',
+    params: {
+      isRefresh: 1
+    }
+  })
+  formRef.value.resetFields()
+  // currentOption.value = 'default'
+}
 const currentOption = ref('default')
 // 旅行社、酒店、景区、餐厅
 const condition1 = ['TRAVEL', 'HOTEL', 'TICKET', 'CATERING', 'default']
@@ -367,7 +374,7 @@ const formRules6: Record<string, Rule[]> = {
   businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
   name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
   regionCode: [{ required: true, trigger: 'blur', message: '请选择企业所属地区' }],
-  address: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
+  addressDetail: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
   legalPerson: [{ required: true, trigger: 'blur', message: '请输入法定代表人' }],
   managementRange: [{ required: true, trigger: 'blur', message: '请输入经营范围' }],
   registeredCapital: [{ required: true, trigger: 'blur', message: '请输入注册资本' }],
@@ -390,7 +397,7 @@ const formRules9: Record<string, Rule[]> = {
   businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
   name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
   regionCode: [{ required: true, trigger: 'blur', message: '请选择企业所属地区' }],
-  address: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
+  addressDetail: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
   contactName: [{ required: true, trigger: 'blur', message: '请输入联系人姓名' }],
   phone: [{ required: true, trigger: 'blur', message: '请输入联系电话' }],
   accountType: [{ required: true, trigger: 'blur', message: '请选择公司账户类型' }],
@@ -417,7 +424,7 @@ const formRules8: Record<string, Rule[]> = {
   businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
   name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
   regionCode: [{ required: true, trigger: 'blur', message: '请选择企业所属地区' }],
-  address: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
+  addressDetail: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
   contactName: [{ required: true, trigger: 'blur', message: '请输入联系人姓名' }],
   phone: [{ required: true, trigger: 'blur', message: '请输入联系电话' }],
   account: [{ required: true, trigger: 'blur', message: '请输入超级管理员账号' }],
@@ -455,6 +462,8 @@ const regionChange = () => {
 const submit = () => {
   formRef.value.validateFields().then(() => {
     saveVisible.value = true
+  }).catch((error) => {
+    console.log(error);
   })
 }
 const saveCancel = () => {
@@ -462,9 +471,8 @@ const saveCancel = () => {
 }
 const saveConform = () => {
   loading.value = true;
-  api.companyRegister(form).then((res: any) => {
-    if (res == '提交成功，请耐心等待审核通过!') {
-      // message.success(res);
+  api.addCompany(form).then((res: any) => {
+    if (res == '企业创建成功！') {
       saveVisible.value = false
       tipVisible.value = true
     } else {
@@ -477,10 +485,11 @@ const saveConform = () => {
 }
 const tipCancel = () => {
   tipVisible.value = false
+  formRef.value.resetFields()
 }
-const tipConform = () => {
+/* const tipConform = () => {
   tipVisible.value = false
-}
+} */
 onMounted(() => {
   initOpeion()
 })

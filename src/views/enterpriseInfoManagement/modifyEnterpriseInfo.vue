@@ -23,10 +23,12 @@
         </a-input>
       </a-form-item>
       <a-form-item name="establishTime" label="成立日期">
-        <a-date-picker v-model:value="infoForm.establishTime" placeholder="请选择成立日期" style="width:100%" />
+        <a-date-picker v-model:value="infoForm.establishTime" placeholder="请选择成立日期" style="width:100%"
+          :format="dateFormat" :valueFormat="dateFormat" />
       </a-form-item>
       <a-form-item name="businessTerm" label="营业期限">
-        <a-date-picker v-model:value="infoForm.businessTerm" placeholder="请选择营业期限" style="width:100%" />
+        <a-date-picker v-model:value="infoForm.businessTerm" placeholder="请选择营业期限" style="width:100%"
+          :format="dateFormat" :valueFormat="dateFormat" />
       </a-form-item>
       <!-- <a-form-item name="name" label="公司联系方式">
         <a-input v-model:value="infoForm.name" placeholder="请输入营业期限">
@@ -48,8 +50,8 @@
         <a-input v-model:value="infoForm.bankAccountName" placeholder="请输入公司账户名称">
         </a-input>
       </a-form-item>
-      <a-form-item name="accountAddress" label="开户行">
-        <a-input v-model:value="infoForm.accountAddress" placeholder="请输入开户行">
+      <a-form-item name="bank" label="开户行">
+        <a-input v-model:value="infoForm.bank" placeholder="请输入开户行">
         </a-input>
       </a-form-item>
       <a-form-item name="bankAccount" label="公司账号">
@@ -81,12 +83,13 @@ const router = useRouter();
 const route = useRoute();
 const back = () => {
   router.push({
-    name: 'enterpriseInfo'
+    name: 'travelEnterpriseInfo'
   })
   imgUploadRef.value.clear()
 }
 const imgUploadRef = ref()
 const loading = ref(false)
+const dateFormat = 'YYYY-MM-DD';
 const formRules = []
 type detailsType = {
   name?: string,
@@ -104,7 +107,8 @@ type detailsType = {
   bankAccount?: string,
   businessLicenseUrl?: string,
   manageUrl?: string,
-  oid?: string | number
+  oid?: string | number,
+  bank?: string
 }
 const infoForm = reactive<detailsType>({
   name: undefined,
@@ -124,7 +128,7 @@ watch(() => route.params, (val: detailsType) => {
 })
 
 const submit = async () => {
-  let res = await api.submitInformationAudit({ companyBO: toRaw(infoForm) })
+  let res = await api.submitInformationAudit({ companyBo: toRaw(infoForm) })
   if (res) {
     message.success('提交审核成功，请耐心等待审核结果！')
     back()
