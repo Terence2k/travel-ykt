@@ -295,16 +295,7 @@ const router = useRouter();
 const route = useRoute();
 const formRef = ref()
 const dateFormat = 'YYYY-MM-DD';
-const back = () => {
-  router.push({
-    name: 'apply',
-    params: {
-      isRefresh: 1
-    }
-  })
-  formRef.value.resetFields()
-  // currentOption.value = 'default'
-}
+
 const saveVisible = ref(false)
 const tipVisible = ref(false)
 const loading = ref(false)
@@ -340,6 +331,16 @@ const form = reactive<detailsType>({
   name: undefined,
   businessLicenseUrl: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
 })
+const back = () => {
+  router.push({
+    name: 'apply',
+    params: {
+      isRefresh: 1
+    }
+  })
+  formRef.value.resetFields()
+  // currentOption.value = 'default'
+}
 const currentOption = ref('default')
 // 旅行社、酒店、景区、餐厅
 const condition1 = ['TRAVEL', 'HOTEL', 'TICKET', 'CATERING', 'default']
@@ -461,6 +462,8 @@ const regionChange = () => {
 const submit = () => {
   formRef.value.validateFields().then(() => {
     saveVisible.value = true
+  }).catch((error) => {
+    console.log(error);
   })
 }
 const saveCancel = () => {

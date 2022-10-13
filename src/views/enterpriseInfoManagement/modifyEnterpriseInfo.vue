@@ -128,7 +128,7 @@ watch(() => route.params, (val: detailsType) => {
 })
 
 const submit = async () => {
-  let res = await api.submitInformationAudit({ companyBO: toRaw(infoForm) })
+  let res = await api.submitInformationAudit({ companyBo: toRaw(infoForm) })
   if (res) {
     message.success('提交审核成功，请耐心等待审核结果！')
     back()

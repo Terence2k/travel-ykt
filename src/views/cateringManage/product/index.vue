@@ -23,7 +23,12 @@
 			<template #button>
 				<a-button type="primary" @click="openAddPage">新增</a-button>
 			</template>
-			<template #bodyCell="{ column, record }">
+			<template #bodyCell="{ column, record, index }">
+				<template v-if="column.key === 'index'">
+					<div>
+						{{ index + 1 }}
+					</div>
+				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a @click="openInfoPage(record)">查看</a>
@@ -58,7 +63,11 @@ const navigatorBar = useNavigatorBar();
 
 const router = useRouter();
 const columns = [
-	{ title: '序号', dataIndex: 'oid', width: 70, key: 'arrange' },
+	{
+		title: ' 序号 ',
+		key: 'index',
+		width: '80px',
+	},
 	{
 		title: '餐饮名称',
 		dataIndex: 'cateringName',

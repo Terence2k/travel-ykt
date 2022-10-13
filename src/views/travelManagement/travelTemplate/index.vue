@@ -17,7 +17,7 @@
 		</CommonSearch>
 		<CommonTable :dataSource="state.tableData.data" rowKey="id" :row-selection="rowSelection" :columns="columns">
 			<template #button>
-				<a-button type="primary" @click="openAddPage" style="margin-right:16px">新增</a-button>
+				<a-button type="primary" @click="openInfoPage" style="margin-right:16px">新增</a-button>
 				<a-button type="primary">导出</a-button>
 			</template>
 			<template #bodyCell="{ column, record }">
