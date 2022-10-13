@@ -214,7 +214,12 @@
 				<th class="key_hd">变更前内容</th>
 				<th class="key_hd">变更后内容</th>
 			</tr>
-			<tr class="row">
+			<tr v-for="(item,index) in changeKeys" :key="index">
+				<td class="key">{{ keyNameList[item] }}</td>
+				<!-- <td class="value">{{ newArrList[index].item }}</td>
+				<td class="value">{{ oldArrList[index].item }}</td> -->
+			</tr>
+			<!-- <tr class="row">
 				<td class="key">注册时间</td>
 				<td class="value">{{ details.lastUpdateTime }}</td>
 			</tr>
@@ -247,7 +252,7 @@
 				<td class="value">
 					<a-image width="200px" :src="details.businessLicenseUrl" />
 				</td>
-			</tr>
+			</tr> -->
 		</table>
 	</CommonModal>
 
@@ -267,6 +272,8 @@ import api from '@/api';
 import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router';
 import { useBusinessManageOption } from '@/stores/modules/businessManage';
+import { keys } from 'lodash';
+import { any } from 'vue-types';
 const businessManageOptions = useBusinessManageOption();
 const router = useRouter();
 const route = useRoute();
@@ -333,7 +340,6 @@ const details = reactive<detailsType>({
 	regionName: undefined,
 	businessLicenseUrl: undefined
 })
-
 const layout = {
 	labelCol: { span: 6 },
 	wrapperCol: { span: 18 },
@@ -522,6 +528,29 @@ const {
 	auditTableData,
 	failTableData,
 } = toRefs(state)
+const keyNameList = {
+	businessType: '企业类型',
+	name: '企业名称',
+	addressDetail: '企业详情地址',
+	legalPerson: '法定代表人',
+	managementRange: '经营范围',
+	registeredCapital: '注册资本',
+	establishTime: '成立日期',
+	businessTerm: '营业期限',
+	contactName: '联系人',
+	phone: '联系电话',
+	accountType: '公司账户类型',
+	bankAccountName: '公司账户名称',
+	bank: '开户行',
+	bankAccount: '公司账号',
+	creditCode: '统一社会信用代码',
+	businessLicenseUrl: '营业执照',
+	account: '超级管理员账号',
+	password: '超级管理员密码'
+}
+const newArrList = ref<any[]>([])
+const oldArrList = ref<any[]>([])
+const changeKeys = ref<string[]>([])
 const regionChange = () => {
 	switch (activeKey.value) {
 		case '1':
@@ -657,11 +686,12 @@ const onQuery = () => {
 			break;
 	}
 }
-const auditEnterprise = (record: any) => {
+const auditEnterprise = async (record: any) => {
 	failForm.uuid = record.uuid
 	failForm.roleId = record.roleId
 	failForm.businessType = record.auditBusinessType
 	if (record.source === '企业注册') {
+		isRegiste.value = true
 		auditVisible.value = true
 		let key: keyof detailsType
 		for (key in details) {
@@ -670,7 +700,24 @@ const auditEnterprise = (record: any) => {
 			}
 		}
 	} else if (record.source === '信息变更') {
+		const res = await api.getChangeBeforeAfterData(record.oid, record.businessType)
+		const newList = res?.new
+		const oldList = res?.old
+		console.log(res, 'FFFFFFFF');
+		let keyList = Object.keys(newList)
+		if (keyList.length > 0) {
+			keyList.forEach((key: any) => {
+				if (newList[key] != oldList[key]) {
+					newArrList.value.push({ [key]: newList[key] })
+					oldArrList.value.push({ [key]: oldList[key] })
+					changeKeys.value.push(key)
+				}
+			})
+			console.log(newArrList, oldArrList, changeKeys, '##########');
+
+		}
 		changeAuditVisible.value = true
+		isRegiste.value = false
 	}
 }
 

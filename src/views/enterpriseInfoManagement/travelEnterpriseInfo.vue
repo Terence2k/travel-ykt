@@ -148,12 +148,12 @@ const state = reactive<stateType>({
 })
 const { baseInfo, details } = toRefs(state)
 const initOpeion = async () => {
-  let { accountBalance, delegateGuide, createTime, group, companyBO } = await api.getTravelInformation()
+  let { accountBalance, delegateGuide, createTime, group, companyBo } = await api.getTravelInformation()
   state.baseInfo.accountBalance = accountBalance
   state.baseInfo.delegateGuide = delegateGuide
   state.baseInfo.createTime = createTime
   state.baseInfo.group = group
-  state.details = companyBO
+  state.details = companyBo
   state.details.manageUrl = "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
 }
 const goTo = () => {

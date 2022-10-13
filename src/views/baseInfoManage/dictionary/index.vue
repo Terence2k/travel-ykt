@@ -1,7 +1,7 @@
 <template>
 	<div class="content_box">
 		<div class="content content_left">
-			<CommonTable :dataSource="tableData.data" :columns="columns" :scroll="{y:'100%'}">
+			<CommonTable :dataSource="tableData.data" :columns="columns" :scroll="scroll">
 				<template #button>
 					<div class="query_box">
 						<a-form autocomplete="off">
@@ -27,7 +27,7 @@
 		</div>
 		<div class="content content_middle"></div>
 		<div class="content content_right">
-			<CommonTable :dataSource="detailsTableData.data" :columns=" detailsColumns" :scroll="{y:'100%'}">
+			<CommonTable :dataSource="detailsTableData.data" :columns=" detailsColumns" :scroll="scroll">
 				<template #button>
 					<div class="query_box">
 						<span class="detail_text">字典详情</span>
@@ -134,6 +134,7 @@ const detailsColumns = [
 
 const labelCol = { span: 4 }
 const wrapperCol = { span: 20 }
+const scroll = { y: '60vh' }
 const useForm = Form.useForm;
 const state = reactive({
 	tableData: {
