@@ -1,7 +1,8 @@
 <template>
 	<div class="warp">
 		<div class="form_pad">
-			<a-form labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
+			<!-- 查看 -->
+			<a-form v-if="route.currentRoute.value?.query?.id" labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
 				<a-form-item label="所属门店" name="name"> {{ formData.data.companyName }} </a-form-item>
 				<a-form-item label="餐饮名称"> {{ formData.data.cateringName }} </a-form-item>
 				<a-form-item label="可预订数量"> {{ formData.data.orderNum }} </a-form-item>
@@ -9,11 +10,44 @@
 				<a-form-item label="图片">
 					<img :width="200" :src="formData.data.imgUrl" />
 				</a-form-item>
-				<a-form-item label="状态"> 
+				<a-form-item label="状态">
 					{{ formData.data.status == 1 ? '启用' : '禁用' }}
 				</a-form-item>
 				<a-form-item label="供餐时间"> {{ formData.data.provideStart }} 至 {{ formData.data.provideEnd }} </a-form-item>
 				<a-form-item label="其他"> {{ formData.data.cateringDesc }} </a-form-item>
+			</a-form>
+			<!-- 新增 -->
+			<a-form v-else labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
+				<a-form-item label="行程类型" name="a">
+					<a-radio-group :options="travaType" />
+				</a-form-item>
+				<a-form-item label="发团旅行社" name="a">
+					<a-input placeholder="发团旅行社" disabled />
+				</a-form-item>
+				<a-form-item label="做团人" name="a">
+					<a-select ref="select" placeholder="请选择组团社做发团人">
+						<a-select-option value="1">发团人</a-select-option>
+					</a-select>
+				</a-form-item>
+				<a-form-item label="联系电话" name="a">
+					<a-input placeholder="请输入联系电话"  />
+				</a-form-item>
+				<a-form-item label="地接旅行社" name="a">
+					<a-select ref="select" placeholder="请选择地接旅行社">
+						<a-select-option value="1">地接旅行社</a-select-option>
+					</a-select>
+				</a-form-item>
+				<a-form-item label="地接计调" name="a">
+					<a-select ref="select" placeholder="请选择地接做团人">
+						<a-select-option value="1">地接做团人</a-select-option>
+					</a-select>
+				</a-form-item>
+				<a-form-item label="联系电话" name="a">
+					<a-input placeholder="请输入联系电话"  />
+				</a-form-item>
+				<a-form-item label="模板名称" name="a">
+					<a-input   />
+				</a-form-item>
 			</a-form>
 		</div>
 		<!-- <div class="footer">
@@ -35,14 +69,31 @@ const formData = reactive({
 	data: [],
 });
 
+// 新增
+// 行程类型枚举
+const travaType = [
+	{ label: '标准团', value: '1' },
+	{ label: '散客网点团', value: '2' },
+	{ label: '休闲通道团', value: '3' },
+];
+
+// 查看
+
+// 初始化
 const initPage = async (): Promise<void> => {
-	api.getProductInfo(route.currentRoute.value?.query?.id).then((res: any) => {
-		formData.data = res;
-	});
+	if (route.currentRoute.value?.query?.id) {
+		api.getProductInfo(route.currentRoute.value?.query?.id).then((res: any) => {
+			formData.data = res;
+		});
+	}
 };
 
 onMounted(() => {
-	navigatorBar.setNavigator(['行程模板管理', '查看']);
+	if (route.currentRoute.value?.query?.id) {
+		navigatorBar.setNavigator(['行程模板管理', '查看']);
+	} else {
+		navigatorBar.setNavigator(['行程模板管理', '新增']);
+	}
 	initPage();
 });
 onBeforeUnmount(() => {
