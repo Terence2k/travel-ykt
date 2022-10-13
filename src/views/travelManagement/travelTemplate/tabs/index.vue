@@ -6,6 +6,10 @@
 					<component :is="item.name" v-if="index == activeKey"></component>
 				</a-tab-pane>
 			</a-tabs>
+			<div class="footer">
+				<a-button type="primary" @click="check = !check">保存</a-button>
+				<a-button type="primary">下一步</a-button>
+			</div>
 		</div>
 	</div>
 </template>
@@ -49,4 +53,17 @@ const pages = [
 .ant-table-body {
 	height: 500px;
 }
+.footer {
+		position: sticky;
+		bottom: 0;
+		line-height: 64px;
+		width: 100%;
+		border-top: 1px solid #F1F2F5;
+    background-color: #fff;
+    padding-left: 16px;
+    z-index: 99;
+		button:first-of-type {
+			margin-right: 16px;
+		}
+	}
 </style>

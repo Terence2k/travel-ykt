@@ -15,6 +15,7 @@
 			<a-button>查询</a-button>
 		</template>
 	</CommonSearch>
+	<editModel ref="editModelRef" />
 	<div class="table-area">
 		<div class="list-btn">
 			<a-button type="primary" class="success" @click="add()">新增</a-button>
@@ -23,7 +24,7 @@
 			<template #bodyCell="{ column, index }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a href="javascript:;" @click="toEditPage()">编辑</a>
+						<a href="javascript:;" @click="toEditPage()">编辑座位</a>
 						<a href="javascript:;" @click="del(index)">删除</a>
 					</div>
 				</template>
@@ -36,6 +37,7 @@
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
 		/>
+		<delModal :params="{ title: '删除', content: '是否确定该条数据' }" v-model="delShow" @submit="delSubmit" @cancel="delCancel" />
 	</div>
 </template>
 
@@ -45,6 +47,8 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
+import editModel from './components/edit.vue';
+import delModal from '@/components/common/DelModal.vue';
 const route = useRouter();
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
@@ -116,37 +120,52 @@ const state = reactive({
 });
 
 const onHandleCurrentChange = (val: number) => {
-	console.log('change:', val);
 	state.tableData.param.pageNo = val;
-	onSearch();
+	init();
 };
 
 const pageSideChange = (current: number, size: number) => {
-	console.log('changePageSize:', size);
 	state.tableData.param.pageSize = size;
-	// onSearch();
+	init();
 };
 //编辑
 const toEditPage = () => {
-	// route.push({ path: '/scenic-spot/showTickets/show_edit' });
+	editModelRef.value.open();
+	// route.push({ path: '/scenic-spot/shows/show-edit' });
 };
+const editModelRef = ref();
 //新增
 const add = () => {
-	route.push({ path: '/scenic-spot/showTickets/show_edit' });
+	editModelRef.value.open();
+	// route.push({ path: '/scenic-spot/shows/show-edit' });
 };
-//删除
-const del = (index) => {
-	console.log(index, '111111111');
-};
-const onSearch = () => {
+
+const init = () => {
 	// userList(state.tableData.param).then((res) => {
 	// 	console.log(res);
 	// });
 };
+// 删除提示
+const delShow = ref(false);
+const delOid = ref<null | number>();
+const del = (record: any) => {
+	delShow.value = true;
+	delOid.value = record;
+	// emits('del-verification-obj', index);
+};
+const delSubmit = () => {
+	// emits('del-verification-obj', toRaw(delOid.value));
+	// console.log(delOid.value);
+	// api.singleVoteDel(delOid.value);
+	delCancel();
+};
+const delCancel = () => {
+	delShow.value = false;
+	delOid.value = null;
+};
 onMounted(() => {
 	// navigatorBar
 	// 重新定义面包屑
-	// navigatorBar.clearNavigator();
 	// navigatorBar.setNavigator(['演出票']);
 });
 onBeforeUnmount(() => {

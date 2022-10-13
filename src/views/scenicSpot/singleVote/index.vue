@@ -130,12 +130,7 @@ const delCancel = () => {
 	delShow.value = false;
 	delOid.value = null;
 };
-const cancel = () => {
-	modelValue.value = false;
-};
-const onSearch = () => {
-	console.log('cancle');
-};
+
 const state = reactive({
 	tableData: {
 		data: [],

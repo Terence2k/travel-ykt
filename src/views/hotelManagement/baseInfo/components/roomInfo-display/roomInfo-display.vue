@@ -142,8 +142,8 @@ const auditPass = () => {
 		})
 		.then((res) => {
 			console.log('getRoleId：', res);
-			if (res[0]?.roleId) {
-				api.auditRoomDetailInfo(state.auditOrderId, res[0]?.roleId, true).then((res) => {
+			if (res[0]?.roleId && res[0]?.auditBusinessType) {
+				api.auditRoomDetailInfo(state.auditOrderId, res[0]?.roleId, res[0]?.auditBusinessType, true).then((res) => {
 					console.log('房型审核通过返回：', res);
 					initPage();
 				});
@@ -158,8 +158,8 @@ const auditFail = () => {
 		})
 		.then((res) => {
 			console.log('getRoleId：', res);
-			if (res[0]?.roleId) {
-				api.auditRoomDetailInfo(state.auditOrderId, res[0]?.roleId, false).then((res) => {
+			if (res[0]?.roleId && res[0]?.auditBusinessType) {
+				api.auditRoomDetailInfo(state.auditOrderId, res[0]?.roleId, res[0]?.auditBusinessType, false).then((res) => {
 					console.log('房型审核不通过返回：', res);
 					initPage();
 				});
