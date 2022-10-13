@@ -23,7 +23,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		tableData: [
 			{
 				key: '1',
-				name: '2022-09-21 09:59:14',
+				name: '1',
 				name1: '123',
 				name2: '123',
 				name3: '123',
@@ -175,21 +175,15 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			const formData = new FormData()
 			formData.append('id', travelStore.baseInfo.teamType)
 			const res = await api.travelManagement.findByIdTeamType(formData)
-			for (let i = 0; i < res.products.length; i++) {
-				const result = await api.travelManagement.findProductInfo(res.products[i].productId)
+			for (let i = 0; i < res.productIds.length; i++) {
+				const result = await api.travelManagement.findProductInfo(res.productIds[i])
 				result.peopleCount = travelStore.touristList.length;
-				result.unPrice = result.feeNumber;
-				result.isDay = true;
 				result.dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day')
 				result.totalMoney = result.peopleCount * result.dayCount * result.feeNumber
 				state.allFeesProducts.push(result)
 			}
-			travelStore.setCompositeProducts(state.allFeesProducts);
 		}
 	}
-	watch(() => travelStore.teamType, (newVal) => {
-		methods.findByIdTeamType()
-	})
 	methods.findByIdTeamType()
 	return {
 		...toRefs(state),

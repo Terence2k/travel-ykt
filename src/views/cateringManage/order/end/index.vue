@@ -2,9 +2,14 @@
 	<div>
 		<CommonTable :dataSource="state.tableData.data" rowKey="id" :columns="columns">
 			<template #button>
-				<a-button type="primary" >导出</a-button>
+				<a-button type="primary">导出</a-button>
 			</template>
-			<template #bodyCell="{ column }">
+			<template #bodyCell="{ column, index }">
+				<template v-if="column.key === 'index'">
+					<div>
+						{{ index + 1 }}
+					</div>
+				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a>查看</a>
@@ -33,8 +38,8 @@
 				</a-form-item>
 			</a-form>
 			<template v-slot:footer>
-				<a-button type="primary" style="width:88px">提交申请</a-button>
-				<a-button  style="width:76px" @click="visible = false">取消</a-button>
+				<a-button type="primary" style="width: 88px">提交申请</a-button>
+				<a-button style="width: 76px" @click="visible = false">取消</a-button>
 			</template>
 		</BaseModal>
 	</div>
@@ -62,7 +67,11 @@ const formState: UnwrapRef<FormState> = reactive({
 });
 
 const columns = [
-	{ title: '序号', dataIndex: 'oid', width: 70, key: 'arrange' },
+	{
+		title: ' 序号 ',
+		key: 'index',
+		width: '80px',
+	},
 	{
 		title: '用户姓名',
 		dataIndex: 'username',
