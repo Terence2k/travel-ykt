@@ -24,7 +24,7 @@
 			>
 			<!-- <a-input v-model:value="formState.username" /> -->
 			
-			<a-radio-group v-model:value="formState.teamType" name="radioGroup">
+			<a-radio-group v-model:value="formState.teamType" name="radioGroup" @change="changeRadio">
 				<a-row type="flex">
 					<a-col :span="8" v-for="item in list.teamType" :key="item.oid" class="mb-2">
 						<a-radio :value="item.oid">{{item.name}}</a-radio>
@@ -219,6 +219,10 @@ const gettravelOperatorList = async (travelId: number) => {
 }
 const handleChange = (event: any, option: any) => {
 	formState.value.subTravelContactPhone = option.phone
+}
+const changeRadio = (event:any) =>  {
+	travelStore.setTeamType(event.target.value);
+
 }
 watch(() => props.onCheck, (newVal) => {
 	onSubmit()

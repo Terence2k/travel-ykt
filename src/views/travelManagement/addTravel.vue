@@ -112,7 +112,9 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
         },
 				basicParam: val.basicParam || {},
 				guideList: travelStore.guideList,
-				itineraryInfoParam: val.itineraryInfoParam || {},
+				itineraryInfoParam: {
+          compositeProducts: travelStore.compositeProducts
+        },
 				touristList: travelStore.touristList,
 				transportList: travelStore.trafficList
 			}
