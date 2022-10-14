@@ -110,6 +110,10 @@ const addList = () => {
 		address3: '上架',
 	});
 };
+
+const del = (index) => {
+	dataSource.value.splice(index, 1);
+};
 // --------------------------------------------------------表单-----------------------------------------
 const apply = () => {
 	validate()
