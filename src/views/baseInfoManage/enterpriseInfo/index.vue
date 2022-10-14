@@ -4,9 +4,9 @@
       <span>
         我的企业基本信息
       </span>
-      <!-- <span class="enterprise_state">
+      <span class="enterprise_state">
         {{ enterpriseState }}
-      </span> -->
+      </span>
     </div>
     <div class="form_body">
       <a-form ref="formRef" :model="form" :rules="formRules" name="add-business" autocomplete="off" labelAlign="left"
@@ -106,7 +106,14 @@
           </div>
         </div> -->
         <a-form-item>
-          <a-button type="primary" @click="submit" style="margin-right:20px" :loading="loading">提交审核</a-button>
+          <a-button
+            type="primary"
+            @click="submit"
+            style="margin-right:20px"
+            :loading="loading"
+            v-if="form.informationAuditStatus != 1">
+              提交审核
+          </a-button>
         </a-form-item>
       </a-form>
     </div>
@@ -121,10 +128,11 @@ import { useBusinessManageOption } from '@/stores/modules/businessManage';
 import type { Rule } from 'ant-design-vue/es/form';
 import { message } from 'ant-design-vue';
 import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
+import { useTravelStore } from '@/stores/modules/travelManagement';
 
 const formRef = ref()
 const loading = ref(false)
-const enterpriseState = ref('信息不完善，待补充。')
+const enterpriseState = ref()
 const formRules = ref<Record<string, Rule[]>>({})
 // formRules.value = formRules6
 const businessManageOptions = useBusinessManageOption();
@@ -133,6 +141,7 @@ const state = reactive<any>({
 })
 const cityOptions: Ref<Array<any>> = ref([]);
 const { form } = toRefs(state);
+const travelStore = useTravelStore();
 
 const initOpeion = async () => {
   await businessManageOptions.getBusinessTypeOption();
@@ -143,7 +152,8 @@ const initOpeion = async () => {
   state.form.createTime = createTime;
   state.form.group = group;
   state.form.addressIds = [companyBo.provinceId, companyBo.cityId, companyBo.areaId];
-  console.log('state.form.addressIds:', state.form.addressIds)
+  enterpriseState.value = travelStore.enterpriseState[state.form.informationAuditStatus].descriptions;
+  console.log('state.form:', state.form)
 };
 const businessTypeOption = computed(() => businessManageOptions.businessTypeOption);
 const uploadDown = () => {
