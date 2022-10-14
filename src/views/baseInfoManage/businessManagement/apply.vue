@@ -846,7 +846,7 @@ const changeAuditCancel = () => {
 	changeKeys.value = []
 }
 onActivated(() => {
-	if (route.params?.isRefresh) {
+	if (route.params?.isRefresh === '1') {
 		onSearch()
 	}
 })
