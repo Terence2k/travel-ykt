@@ -159,15 +159,22 @@ const initOpeion = async () => {
     func = api.getTravelInformation();
     break;
     case 'HOTEL':
-    func = api.getHotelDetailInfo({}, userInfo.sysCompany.oid);
+    func = api.getScenicById(userInfo.sysCompany.oid);
+    break;
+    case 'TICKET':
+    func = api.getScenicById(userInfo.sysCompany.oid);
     break;
   }
   let { accountBalance, delegateGuide, createTime, group, companyBo } = await func;
-  state.form = companyBo;
-  state.form.accountBalance = accountBalance;
-  state.form.delegateGuide = delegateGuide;
-  state.form.createTime = createTime;
-  state.form.group = group;
+  if (companyBo) {
+    state.form = companyBo;
+    state.form.accountBalance = accountBalance;
+    state.form.delegateGuide = delegateGuide;
+    state.form.createTime = createTime;
+    state.form.group = group;
+  } else {
+    state.form = await func;
+  }
   state.form.addressIds = [companyBo.provinceId, companyBo.cityId, companyBo.areaId];
   enterpriseState.value = travelStore.enterpriseState[state.form.informationAuditStatus].descriptions;
   console.log('state.form:', state.form)
