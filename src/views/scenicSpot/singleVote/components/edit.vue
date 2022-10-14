@@ -74,7 +74,7 @@
 				</div>
 			</a-form-item>
 			<a-form-item label="费用包含">
-				<a-textarea v-model:value="formData.data.oneExplain" placeholder="请输入费用包含" :rows="4" />
+				<a-textarea v-model:value="formData.data.ticketDesc" placeholder="请输入费用包含" :rows="4" />
 			</a-form-item>
 			<a-form-item label="其他说明">
 				<a-textarea v-model:value="formData.data.restsExplain" placeholder="请输入其他说明" :rows="4" />
@@ -128,7 +128,7 @@ const formData = reactive({
 		dayStock: null, //门票日库存
 		wateryPrice: null, //水牌价
 		price: null, //售价
-		oneExplain: null, //单票说明
+		ticketDesc: null, //单票说明
 		restsExplain: null, //其他说明
 		itemList: [
 			{
@@ -168,7 +168,7 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 		// 'data.assistId': [{ required: true, message: '请选择市' }],
 		'data.dayStock': [{ required: true, message: '请输入门票库存' }],
 
-		// 'data.oneExplain': [{ required: true, message: '请输入' }],
+		// 'data.ticketDesc': [{ required: true, message: '请输入' }],
 		// 'data.restsExplain': [{ required: true, message: '请输入' }],
 	})
 );
@@ -217,8 +217,9 @@ const delRuleObj = (index: number) => {
 	formData.data.discountList.splice(index, 1);
 };
 const addRuleObj = (obj: object) => {
-	console.log(obj);
-
+	if (String(formData.data.discountList) === 'null') {
+		formData.data.discountList = [];
+	}
 	formData.data.discountList.push(obj);
 };
 const delVerificationObj = (index: number) => {

@@ -18,7 +18,7 @@
 				<div class="list-btn">
 					<!-- <a-button type="primary" class="success">导出</a-button> -->
 				</div>
-				<CommonTable :dataSource="state.tableData.data" :columns="columns"> </CommonTable>
+				<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%' }"> </CommonTable>
 
 				<CommonPagination
 					:current="state.tableData.param.pageNo"
@@ -50,61 +50,71 @@ const columns = [
 		title: '门票名称',
 		dataIndex: 'ticketName',
 		key: 'ticketName',
+		width: 120,
 	},
 	{
 		title: '票种',
 		dataIndex: 'verificationType',
 		key: 'verificationType',
+		width: 120,
 	},
 	{
 		title: '归属景区',
 		dataIndex: 'creditCode',
 		key: 'creditCode',
+		width: 120,
 	},
 	{
 		title: '平台上架状态',
 		dataIndex: 'putaway',
 		key: 'putaway',
+		width: 120,
 	},
 	{
 		title: '门票管理',
 		dataIndex: 'ticketType',
 		key: 'ticketType',
+		width: 120,
 	},
 	{
 		title: '下架开始时间',
 		dataIndex: 'addressDetail',
 		key: 'addressDetail',
+		width: 120,
 	},
 	{
 		title: '下架结束日期',
 		dataIndex: 'auditStatus',
 		key: 'auditStatus',
+		width: 120,
 	},
 	{
 		title: '原因',
 		dataIndex: 'derateRule',
 		key: 'derateRule',
+		width: 120,
 	},
 	{
 		title: '申请时间',
 		dataIndex: 'derateRule',
 		key: 'derateRule',
+		width: 120,
 	},
 	{
 		title: '审核时间',
 		dataIndex: 'derateRule',
 		key: 'derateRule',
+		width: 120,
 	},
 	{
 		title: '审核状态',
 		key: 'derateRule',
-		width: 208,
+		width: 120,
 	},
 	{
 		title: '审核结果',
 		key: 'derateRule',
-		width: 208,
+		width: 120,
 	},
 ];
 
@@ -173,18 +183,12 @@ const status: any = {
 	NO_PASS: '审核不通过',
 };
 
-const ticketType: any = {
-	0: '儿童',
-	1: '成人',
-	2: '老人',
-};
-
 const dealData = (params: [any]) => {
 	let res = params.filter((i: any) => {
 		return !i.putaway;
 	});
 	res.map((i: any) => {
-		i.ticketType = ticketType[i.ticketType];
+		// i.ticketType = ticketType[i.ticketType];
 		i.auditStatus = status[i.auditStatus];
 		i.putaway = i.putaway ? '上架' : '下架';
 		i.verificationType = i.verificationType === 'MANY' ? '多点核销' : i.verificationType === 'ONE' ? '单点核销' : '';

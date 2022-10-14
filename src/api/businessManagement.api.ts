@@ -79,7 +79,7 @@ export function resetPassword(data: any) {
 // 获取企业类型
 export function businessTypeDropDown(codeValue: string) {
 	return request({
-		url: `${commonPart3}dropDownQueryListChildByCodeValue?codeValue=${codeValue}`,
+		url: `${commonPart3}companyBusinessDictionary?codeValue=${codeValue}`,
 		method: 'post',
 		showLoading: true
 	});
@@ -93,7 +93,7 @@ export function onOffCompany(data: any) {
 		showLoading: true
 	});
 }
-
+// 根据企业id查询提交审核前、后数据
 export function getChangeBeforeAfterData(companyId: string, type: string) {
 	if (type === 'HOTEL') {
 		// 酒店根据企业id查询提交审核前、后数据
@@ -111,6 +111,11 @@ export function getChangeBeforeAfterData(companyId: string, type: string) {
 		});
 	} else if (type === 'CATERING') {
 		// 餐饮根据企业id查询提交审核前、后数据
+		return request({
+			url: `${commonPath}/catering-service/public/api/catering/post-data/${companyId}`,
+			method: 'post',
+			showLoading: true
+		});
 	} else if (type === 'TICKET') {
 		// 景区根据企业id查询提交审核前、后数据
 	} else if (type === 'SUPERVISE') {
@@ -123,5 +128,51 @@ export function getChangeBeforeAfterData(companyId: string, type: string) {
 		// 文旅局根据企业id查询提交审核前、后数据
 	} else if (type === 'ANCIENT_UYGUR') {
 		// 古维管理部门根据企业id查询提交审核前、后数据
+	}
+}
+type paramsType = {
+	oid: string,
+	businessType: string
+}
+// 根据id获取企业详情
+export function getBusinessDetails({ oid, businessType }: paramsType) {
+	if (businessType === 'HOTEL') {
+		// 酒店根据id获取企业详情
+		return request({
+			url: `${commonPart5}getInfoById/${oid}`,
+			method: 'get',
+			showLoading: true
+		});
+	} else if (businessType === 'TRAVEL') {
+		// 旅行社根据id获取企业详情
+		return request({
+			url: `${commonPart}getCompanyInformation?oid=${oid}`,
+			method: 'post',
+			showLoading: true
+		});
+	} else if (businessType === 'CATERING') {
+		// 餐饮根据id获取企业详情
+		return request({
+			url: `${commonPath}/catering-service/public/api/catering/${oid}`,
+			method: 'get',
+			showLoading: true
+		});
+	} else if (businessType === 'TICKET') {
+		// 景区根据id获取企业详情
+		return request({
+			url: `${commonPath}ticket-service/public/api/scenic/${oid}`,
+			method: 'get',
+			showLoading: true
+		});
+	} else if (businessType === 'SUPERVISE') {
+		// 监理根据id获取企业详情
+	} else if (businessType === 'ASSOCIATION') {
+		// 协会根据id获取企业详情
+	} else if (businessType === 'GROUP') {
+		// 集团根据id获取企业详情
+	} else if (businessType === 'CULTURE_BUREAU') {
+		// 文旅局根据id获取企业详情
+	} else if (businessType === 'ANCIENT_UYGUR') {
+		// 古维管理部门根据id获取企业详情
 	}
 }
