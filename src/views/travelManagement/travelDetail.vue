@@ -1,5 +1,5 @@
 <template>
-  <div class="container" v-if="state.data.oid">
+  <div class="container" v-if="state.data.travelOid">
     <div class="page-title">
       行程详情预览和打印
     </div>

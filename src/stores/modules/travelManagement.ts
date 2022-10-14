@@ -80,7 +80,16 @@ export const useTravelStore = defineStore({
         stateName: '审核未通过',
         descriptions: '信息变更申请被驳回！'
       }
-    ]
+    ],
+    businessTypeOptions: {
+      'TRAVEL': {
+        submitFunc: 'submitInformationAudit'
+      },
+      'HOTEL': {
+        submitFunc: 'editHotelDetailInfo' 
+      }
+
+    }
 	}),
 	getters: {
 		// count(): string {
