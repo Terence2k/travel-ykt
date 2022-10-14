@@ -3,7 +3,7 @@
 		<div class="trave-contaner">
 			<a-tabs v-model:activeKey="activeKey">
 				<a-tab-pane v-for="(item, index) in pages" :key="index" :tab="item.label">
-					<component :is="item.name" v-if="index == activeKey"></component>
+					<component @onSuccess="save" :onCheck="check" :is="item.name" v-if="index == activeKey"></component>
 				</a-tab-pane>
 			</a-tabs>
 			<div class="footer">
@@ -19,6 +19,7 @@ import cicerone from './cicerone/index.vue';
 import travelled from './travelled/index.vue';
 import { ref } from 'vue';
 const activeKey = ref(0);
+const check = ref(false)
 const pages = [
 	{
 		name: baseinfo,
@@ -30,7 +31,7 @@ const pages = [
 	},
 	{
 		name: travelled,
-		label: '形程信息',
+		label: '行程信息',
 	},
 ];
 </script>

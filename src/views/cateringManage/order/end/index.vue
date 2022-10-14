@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<CommonTable :dataSource="state.tableData.data" rowKey="id" :columns="columns">
+		<CommonTable :dataSource="data" rowKey="id" :columns="columns">
 			<template #button>
 				<a-button type="primary">导出</a-button>
 			</template>
@@ -34,7 +34,7 @@
 					<a-input v-model:value="formState.num" placeholder="请输入正确的数量" />
 				</a-form-item>
 				<a-form-item label="改刷凭证">
-					<a-upload></a-upload>
+					<pic></pic>
 				</a-form-item>
 			</a-form>
 			<template v-slot:footer>
@@ -49,6 +49,7 @@
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import BaseModal from '@/components/common/BaseModal.vue';
+import Pic from '@/components/common/imageWrapper.vue';
 import { ref, reactive, onMounted, UnwrapRef } from 'vue';
 import api from '@/api';
 
@@ -73,40 +74,63 @@ const columns = [
 		width: '80px',
 	},
 	{
-		title: '用户姓名',
+		title: '行程单号',
 		dataIndex: 'username',
 		key: 'username',
 	},
 	{
-		title: '手机号',
+		title: '旅行社名称',
 		dataIndex: 'mobile',
 		key: 'mobile',
 	},
 	{
-		title: '所属单位类型',
+		title: '预定时间',
 		dataIndex: 'unitTypeName',
 		key: 'unitTypeName',
 	},
 	{
-		title: '所属单位',
+		title: '就餐日期',
 		dataIndex: 'unitName',
 		key: 'unitName',
 	},
 	{
-		title: '所属角色',
+		title: '产品管理',
 		dataIndex: 'roleList',
 		key: 'roleList',
 	},
 	{
-		title: '状态',
+		title: '单价',
 		dataIndex: 'userStatusName',
 		key: 'userStatusName',
+	},
+	{
+		title: '预定人数',
+		dataIndex: 'ae',
+		key: 'ae',
+	},
+	{
+		title: '费用(元)',
+		dataIndex: 's',
+		key: 's',
 	},
 	{
 		title: '操作',
 		key: 'action',
 		fixed: 'right',
 		width: 208,
+	},
+];
+
+const data = [
+	{
+		username: 'YNLJ135680',
+		mobile: '黑白水旅行社',
+		unitTypeName: '2022.2.25  13:30',
+		unitName: '2022.2.25',
+		roleList: '雪山行午餐包',
+		userStatusName: '30',
+		ae: '30',
+		s: '1100',
 	},
 ];
 

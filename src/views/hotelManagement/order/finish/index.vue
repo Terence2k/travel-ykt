@@ -24,21 +24,21 @@
 					<span>222</span>
 				</a-form-item>
 				<a-form-item label="申请改刷房数">
-					<a-input  placeholder="请输入正确的数量" />
+					<a-input placeholder="请输入正确的数量" />
 				</a-form-item>
 				<a-form-item label="改刷凭证">
-					<a-upload></a-upload>
+					<pic></pic>
 				</a-form-item>
 			</a-form>
 			<template v-slot:footer>
-				<a-button type="primary" style="width:88px">提交申请</a-button>
-				<a-button  style="width:76px" @click="visible = false">取消</a-button>
+				<a-button type="primary" @click="visible = false" style="width: 88px">提交申请</a-button>
+				<a-button style="width: 76px" @click="visible = false">取消</a-button>
 			</template>
 		</BaseModal>
-		<BaseModal :title="'审核'" v-model="Vdetail" >
+		<BaseModal :title="'审核'" v-model="Vdetail">
 			<a-form>
-				<a-form-item label="状态">
-					<a-radio-group >
+				<a-form-item label="状态" >
+					<a-radio-group v-model:value="type">
 						<a-radio value="1">通过</a-radio>
 						<a-radio value="2">不通过</a-radio>
 					</a-radio-group>
@@ -58,6 +58,7 @@
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
+import Pic from '@/components/common/imageWrapper.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import BaseModal from '@/components/common/BaseModal.vue';
@@ -69,6 +70,7 @@ const Vdetail = ref(false);
 
 const router = useRouter();
 const navigatorBar = useNavigatorBar();
+const type = ref('2');
 
 const columns = [
 	{
@@ -77,41 +79,50 @@ const columns = [
 		key: 'a',
 	},
 	{
-		title: '旅行社名称',
+		title: '入住时间',
 		dataIndex: 'b',
 		key: 'b',
 	},
 	{
-		title: '预定时间',
+		title: '离店时间',
 		dataIndex: 'c',
 		key: 'c',
 	},
 	{
-		title: '入住时间',
+		title: '预定人数',
 		dataIndex: 'd',
 		key: 'd',
 	},
 	{
-		title: '离店时间',
+		title: '预定房数',
 		dataIndex: 'e',
 		key: 'e',
 	},
 	{
-		title: '预定房数',
+		title: '减免人数',
 		dataIndex: 'f',
 		key: 'f',
 	},
 	{
-		title: '减免人数',
+		title: '费用（元）',
 		dataIndex: 'g',
 		key: 'g',
 	},
 	{
-		title: '费用(元)',
+		title: '核销房数',
 		dataIndex: 'h',
 		key: 'h',
 	},
-
+	{
+		title: '核销时间',
+		dataIndex: 'i',
+		key: 'i',
+	},
+	{
+		title: '实际费用',
+		dataIndex: 'm',
+		key: 'm',
+	},
 	{
 		title: '操作',
 		dataIndex: 'actions',
@@ -123,14 +134,28 @@ const columns = [
 
 const data = [
 	{
-		a: '1',
-		b: '1',
-		c: '1',
-		d: '1',
-		e: '1',
-		f: '1',
-		g: '1',
-		h: '2',
+		a: 'YNLJ135680',
+		b: '2022.2.23',
+		c: '2022.2.24',
+		d: '30',
+		e: '25',
+		f: '2',
+		g: '1100',
+		h: '20',
+		i: '2022.2.23  19:30',
+		m: '1000',
+	},
+	{
+		a: 'YNLJ135680',
+		b: '2022.2.23',
+		c: '2022.2.24',
+		d: '30',
+		e: '25',
+		f: '2',
+		g: '1100',
+		h: '20',
+		i: '2022.2.23  19:30',
+		m: '1000',
 	},
 ];
 
@@ -184,7 +209,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style  scoped lang="less">
+<style scoped lang="less">
 // table style
 .ant-table-thead > tr > th {
 	border-top: 1px solid #f0f0f0;
