@@ -23,7 +23,7 @@
 			</a-form-item>
 
 			<a-form-item label="演出描述">
-				<a-textarea v-model:value="formData.data.oneExplain" placeholder="演出描述" :rows="4" />
+				<a-textarea v-model:value="formData.data.ticketDesc" placeholder="演出描述" :rows="4" />
 			</a-form-item>
 			<a-form-item label="周期设定" v-bind="validateInfos[`data.ticketType`]">
 				<a-radio-group v-model:value="formData.data.orderTimeRule">
@@ -90,7 +90,7 @@ const formData = reactive({
 		dayStock: null, //门票日库存
 		wateryPrice: null, //水牌价
 		price: null, //售价
-		oneExplain: null, //单票说明
+		ticketDesc: null, //单票说明
 		restsExplain: null, //其他说明
 		itemList: [
 			{
@@ -127,7 +127,7 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 		// 'data.assistId': [{ required: true, message: '请选择市' }],
 		'data.dayStock': [{ required: true, message: '请输入门票库存' }],
 
-		'data.oneExplain': [{ required: true, message: '请输入' }],
+		'data.ticketDesc': [{ required: true, message: '请输入' }],
 		'data.restsExplain': [{ required: true, message: '请输入' }],
 	})
 );
