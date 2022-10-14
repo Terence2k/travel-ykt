@@ -79,7 +79,7 @@ export function resetPassword(data: any) {
 // 获取企业类型
 export function businessTypeDropDown(codeValue: string) {
 	return request({
-		url: `${commonPart3}dropDownQueryListChildByCodeValue?codeValue=${codeValue}`,
+		url: `${commonPart3}companyBusinessDictionary?codeValue=${codeValue}`,
 		method: 'post',
 		showLoading: true
 	});
@@ -111,6 +111,11 @@ export function getChangeBeforeAfterData(companyId: string, type: string) {
 		});
 	} else if (type === 'CATERING') {
 		// 餐饮根据企业id查询提交审核前、后数据
+		return request({
+			url: `${commonPath}/catering-service/public/api/catering/post-data/${companyId}`,
+			method: 'post',
+			showLoading: true
+		});
 	} else if (type === 'TICKET') {
 		// 景区根据企业id查询提交审核前、后数据
 	} else if (type === 'SUPERVISE') {
