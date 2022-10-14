@@ -1,18 +1,15 @@
 <template>
 	<CommonSearch>
 		<SearchItem label="输入搜索">
-			<a-input placeholder="演出名称/关键词" style="width: 200px" />
+			<a-input v-model="state.tableData.param.venueName" placeholder="演出名称/关键词" style="width: 200px" />
 		</SearchItem>
-		<SearchItem label="场馆分类">
-			<a-select ref="select" style="width: 200px" placeholder="请选择">
+		<SearchItem label="归属景区">
+			<a-select ref="select" style="width: 200px" v-model="state.tableData.param.scenicId" placeholder="请选择">
 				<a-select-option value="all">all</a-select-option>
 			</a-select>
 		</SearchItem>
-		<SearchItem label="开始时间">
-			<a-date-picker :show-time="{ format: 'HH:mm:ss' }" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" v-model:value="state.time" />
-		</SearchItem>
 		<template #button>
-			<a-button>查询</a-button>
+			<a-button @click="search">查询</a-button>
 		</template>
 	</CommonSearch>
 	<editModel ref="editModelRef" />
@@ -20,7 +17,7 @@
 		<div class="list-btn">
 			<a-button type="primary" class="success" @click="add()">新增</a-button>
 		</div>
-		<CommonTable :dataSource="dataSource" :columns="columns">
+		<CommonTable :dataSource="state.tableData.data" :columns="columns">
 			<template #bodyCell="{ column, index }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
@@ -49,19 +46,11 @@ import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import editModel from './components/edit.vue';
 import delModal from '@/components/common/DelModal.vue';
+import api from '@/api';
 const route = useRouter();
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
-const dataSource = [
-	{
-		key: '1',
-		name: '1',
-		age: '千古情',
-		address: '西湖区湖底公园1号',
-		address2: '待审核',
-		address3: '上架',
-	},
-];
+
 const columns = [
 	{
 		title: '序号',
@@ -75,8 +64,8 @@ const columns = [
 	},
 	{
 		title: '演出场馆',
-		dataIndex: 'address',
-		key: 'address',
+		dataIndex: 'venueName',
+		key: 'venueName',
 	},
 	{
 		title: '归属景区',
@@ -113,6 +102,8 @@ const state = reactive({
 		total: 400,
 		loading: false,
 		param: {
+			venueName: '',
+			scenicId: '',
 			pageNo: 1,
 			pageSize: 10,
 		},
@@ -140,10 +131,16 @@ const add = () => {
 	// route.push({ path: '/scenic-spot/shows/show-edit' });
 };
 
-const init = () => {
+const init = async () => {
 	// userList(state.tableData.param).then((res) => {
 	// 	console.log(res);
 	// });
+	let res = await api.getShowVenueList(state.tableData.param);
+	state.tableData.data = res.content;
+};
+
+const search = () => {
+	init();
 };
 // 删除提示
 const delShow = ref(false);
@@ -167,6 +164,7 @@ onMounted(() => {
 	// navigatorBar
 	// 重新定义面包屑
 	// navigatorBar.setNavigator(['演出票']);
+	init();
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
