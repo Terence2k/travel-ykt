@@ -220,23 +220,25 @@
 				<tr class="row" v-for="(item,index) in changeKeys" :key="index">
 					<td class="key">{{ keyNameList[item] }}</td>
 
-					<td class="value" v-if="['manageUrl','businessLicenseUrl'].includes(item) && oldArrList[index][item]">
-						<a-image width="200px" :src="oldArrList[index][item]" />
+					<td class="value" v-if="['manageUrl','businessLicenseUrl'].includes(item) && oldArrList[item]">
+						<a-image width="200px" :src="oldArrList[item]" />
 					</td>
 					<td class="value" v-else-if="item === 'regionCode'">
-						<address-selector key="oldadd" style="width:100%" v-model:value="oldArrList[index][item]" disabled>
+						<address-selector v-if="oldArrList[item][0]" key="oldadd" style="width:100%"
+							v-model:value="oldArrList[item]" disabled>
 						</address-selector>
 					</td>
-					<td class="value" v-else>{{ getComputedVal(item, oldArrList[index][item]) }}</td>
+					<td class="value" v-else>{{ getComputedVal(item, oldArrList[item]) }}</td>
 
-					<td class="value" v-if="['manageUrl','businessLicenseUrl'].includes(item) && newArrList[index][item]">
-						<a-image width="200px" :src="newArrList[index][item]" />
+					<td class="value" v-if="['manageUrl','businessLicenseUrl'].includes(item) && newArrList[item]">
+						<a-image width="200px" :src="newArrList[item]" />
 					</td>
 					<td class="value" v-else-if="item === 'regionCode'">
-						<address-selector key="newadd" style="width:100%" v-model:value="newArrList[index][item]" disabled>
+						<address-selector v-if="newArrList[item][0]" key="newadd" style="width:100%"
+							v-model:value="newArrList[item]" disabled>
 						</address-selector>
 					</td>
-					<td class="value" v-else>{{ getComputedVal(item, newArrList[index][item]) }}</td>
+					<td class="value" v-else>{{ getComputedVal(item, newArrList[item]) }}</td>
 				</tr>
 			</table>
 		</div>
@@ -261,11 +263,9 @@ const businessManageOptions = useBusinessManageOption();
 const router = useRouter();
 const route = useRoute();
 const goTo = (value: any, name: string) => {
-	let newObj: any = {}
-	for (const key in value) {
-		if (Object.prototype.hasOwnProperty.call(value, key)) {
-			newObj[key] = encodeURIComponent(JSON.stringify(value[key]));
-		}
+	let newObj: any = {
+		oid: encodeURIComponent(JSON.stringify(value.oid)),
+		businessType: encodeURIComponent(JSON.stringify(value.businessType))
 	}
 	router.push({
 		name: name,
@@ -553,8 +553,8 @@ const keyNameList = {
 	shopPhone: '店铺联系电话',
 	cateringDesc: '其他'
 }
-const newArrList = ref<any[]>([])
-const oldArrList = ref<any[]>([])
+const newArrList = ref<any>({})
+const oldArrList = ref<any>({})
 const changeKeys = ref<string[]>([])
 const regionChange = () => {
 	switch (activeKey.value) {
@@ -695,17 +695,23 @@ const auditEnterprise = async (record: any) => {
 		let keyList = Object.keys(keyNameList)
 		keyList.forEach((key: string) => {
 			if (newList[key] != oldList[key]) {
-				newArrList.value.push({ [key]: newList[key] })
-				oldArrList.value.push({ [key]: oldList[key] })
+				newArrList.value[key] = newList[key]
+				oldArrList.value[key] = oldList[key]
 				changeKeys.value.push(key)
 			}
 		})
-		const newRegion = [newList.provinceId, newList.cityId, newList.areaId]
-		const oldRegion = [oldList.provinceId, oldList.cityId, oldList.areaId]
+		const newRegion = [newList?.provinceId, newList?.cityId, newList?.areaId]
+		const oldRegion = [oldList?.provinceId, oldList?.cityId, oldList?.areaId]
 		if (newRegion.toString() !== oldRegion.toString()) {
-			newArrList.value.push({ regionCode: newRegion })
-			oldArrList.value.push({ regionCode: oldRegion })
+			newArrList.value['regionCode'] = newRegion
+			oldArrList.value['regionCode'] = oldRegion
 			changeKeys.value.push('regionCode')
+			let i = changeKeys.value.indexOf('addressDetail')
+			let j = changeKeys.value.indexOf('regionCode')
+			if (i !== -1 && j !== -1) {
+				changeKeys.value.splice(j, 1)
+				changeKeys.value.splice(i, 0, 'regionCode')
+			}
 		}
 		changeAuditVisible.value = true
 		isRegiste.value = false
@@ -839,8 +845,8 @@ const failConform = () => {
 	})
 }
 const changeAuditCancel = () => {
-	newArrList.value = []
-	oldArrList.value = []
+	newArrList.value = {}
+	oldArrList.value = {}
 	changeKeys.value = []
 }
 onActivated(() => {
