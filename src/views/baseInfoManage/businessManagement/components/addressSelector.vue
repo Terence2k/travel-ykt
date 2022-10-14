@@ -5,6 +5,8 @@
 <script setup lang="ts">
 import api from '@/api';
 import { CascaderProps } from 'ant-design-vue';
+import { useAttrs } from 'vue'
+const attrs = useAttrs()
 const props = defineProps<{
     reproduce?: (number | string)[]
 }>()
@@ -58,16 +60,11 @@ const loadData: CascaderProps['loadData'] = async (selectedOptions) => {
     list.value = [...list.value]
 }
 
-const reproduceOpetion = async () => {
+/* const reproduceOpetion = async () => {
     list.value = await getAllAreaProvice(0)
     if (props.reproduce && props.reproduce.length > 0) {
-        // list.value = await getAllAreaProvice(0)
-        // provinceId: '省',
-        // cityId: '市',
-        // areaId: '县',
-        const provinceId = props.reproduce[0]
-        const cityId = props.reproduce[1]
-        // const areaId = props.reproduce[2]
+        const provinceId = props.reproduce[0]// '省'
+        const cityId = props.reproduce[1]// '市'
         const data = await getAllAreaCity(provinceId)
         for (let i = 0, l = data.length; i < l; i++) {
             const element = data[i];
@@ -84,32 +81,33 @@ const reproduceOpetion = async () => {
                 break
             }
         }
-        /* list.value.forEach((item: any) => {
-            if (item.value === provinceId) {
-                item.children = [...data]
-                item.children.forEach(async (citem: any) => {
-                    if (citem.value === cityId) {
-                        const data1 = await getAllArea(cityId)
-                        citem.children = [...data1]
-                    }
-                })
+    }
+} */
+const reproduceOpetion = async () => {
+    list.value = await getAllAreaProvice(0)
+    const regionCode = attrs.value as number[]
+    if (regionCode && regionCode.length > 0) {
+        const provinceId = regionCode[0]// '省'
+        const cityId = regionCode[1]// '市'
+        const data = await getAllAreaCity(provinceId)
+        for (let i = 0, l = data.length; i < l; i++) {
+            const element = data[i];
+            if (element.value === cityId) {
+                const data = await getAllArea(cityId)
+                element.children = [...data]
+                break;
             }
-        }) */
-        /* const data1 = await getAllArea(cityId)
-        list.value.forEach((item: any) => {
-            if (item.value === provinceId) {
-                item.children.forEach((citem: any) => {
-                    if (citem.value === cityId) {
-                        citem.children = [...data1]
-                    }
-                })
+        }
+        for (let i = 0, l = list.value.length; i < l; i++) {
+            const element = list.value[i];
+            if (element.value === provinceId) {
+                element.children = [...data]
+                break
             }
-        }) */
+        }
     }
 }
-
 onMounted(async () => {
-    // list.value = await getAllAreaProvice(0)
     reproduceOpetion()
 })
 </script>

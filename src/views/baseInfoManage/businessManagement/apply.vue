@@ -224,8 +224,7 @@
 						<a-image width="200px" :src="oldArrList[index][item]" />
 					</td>
 					<td class="value" v-else-if="item === 'regionCode'">
-						<address-selector key="oldadd" style="width:100%" v-model:value="oldArrList[index][item]"
-							:reproduce="oldArrList[index][item]" disabled>
+						<address-selector key="oldadd" style="width:100%" v-model:value="oldArrList[index][item]" disabled>
 						</address-selector>
 					</td>
 					<td class="value" v-else>{{ getComputedVal(item, oldArrList[index][item]) }}</td>
@@ -234,8 +233,7 @@
 						<a-image width="200px" :src="newArrList[index][item]" />
 					</td>
 					<td class="value" v-else-if="item === 'regionCode'">
-						<address-selector key="newadd" style="width:100%" v-model:value="newArrList[index][item]"
-							:reproduce="newArrList[index][item]" disabled>
+						<address-selector key="newadd" style="width:100%" v-model:value="newArrList[index][item]" disabled>
 						</address-selector>
 					</td>
 					<td class="value" v-else>{{ getComputedVal(item, newArrList[index][item]) }}</td>
