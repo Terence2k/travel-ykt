@@ -82,18 +82,7 @@ export default [
 						},
 					},
 					{
-						path: 'check/name/:name/businessType/:businessType/businessTypeName/:businessTypeName/regionName/:regionName/creditCode/:creditCode/businessLicenseUrl/:businessLicenseUrl/contactName/:contactName/phone/:phone/account/:account/uuid/:uuid/roldId/:roldId',
-						component: () => import('@/views/baseInfoManage/businessManagement/check.vue'),
-						name: 'check',
-						meta: {
-							title: '审核',
-							// icon: 'liulanqi',
-							// auth: ["admin"],
-							isDetail: true, // 在左侧的导航栏不会展示
-						},
-					},
-					{
-						path: 'details/name/:name/businessTypeName/:businessTypeName/regionName/:regionName/creditCode/:creditCode/businessLicenseUrl/:businessLicenseUrl/contactName/:contactName/phone/:phone/account/:account',
+						path: 'details/businessType/:businessType/oid/:oid',
 						component: () => import('@/views/baseInfoManage/businessManagement/details.vue'),
 						name: 'details',
 						meta: {

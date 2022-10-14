@@ -10,9 +10,9 @@
     </div>
     <div class="form_body">
       <a-form ref="formRef" :model="form" :rules="formRules" name="add-business" autocomplete="off" labelAlign="left"
-        :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
+        :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }" hideRequiredMark @finish="submit">
         <a-form-item name="businessType" label="企业类型">
-          <a-select v-model:value="form.businessType" placeholder="请选择企业类型" @change="optionChange">
+          <a-select v-model:value="form.businessType" placeholder="请选择企业类型" @change="optionChange" disabled>
             <a-select-option v-for="item in businessTypeOption" :value="item.codeValue" :key="item.codeValue">{{
             item.name }}
             </a-select-option>
@@ -87,10 +87,12 @@
           <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl" @done="uploadDown">
           </img-upload>
         </a-form-item>
-        <a-form-item name="businessLicenseUrl1" label="经营许可证" v-if="form.businessType == 'TRAVEL'">
-          <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl1" @done="uploadDown">
-          </img-upload>
-        </a-form-item>
+        <template v-if="form.businessType == 'TRAVEL'">
+          <a-form-item name="businessLicenseUrl1" label="经营许可证">
+            <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl1" @done="uploadDown">
+            </img-upload>
+          </a-form-item>
+        </template>
         <!-- <div class="fail" v-if="failVisible">
           <div class="header">
             <div class="enterprise_state">信息变更申请被驳回！</div>
@@ -108,10 +110,9 @@
         <a-form-item>
           <a-button
             type="primary"
-            @click="submit"
+            html-type="submit"
             style="margin-right:20px"
-            :loading="loading"
-            v-if="form.informationAuditStatus != 1">
+            :loading="loading">
               提交审核
           </a-button>
         </a-form-item>
@@ -129,11 +130,11 @@ import type { Rule } from 'ant-design-vue/es/form';
 import { message } from 'ant-design-vue';
 import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
+import { getUserInfo } from '@/utils/util';
 
 const formRef = ref()
 const loading = ref(false)
 const enterpriseState = ref()
-const formRules = ref<Record<string, Rule[]>>({})
 // formRules.value = formRules6
 const businessManageOptions = useBusinessManageOption();
 const state = reactive<any>({
@@ -142,10 +143,26 @@ const state = reactive<any>({
 const cityOptions: Ref<Array<any>> = ref([]);
 const { form } = toRefs(state);
 const travelStore = useTravelStore();
+const formRules: Record<string, Rule[]> = {
+  businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
+}
+const userInfo = getUserInfo();
+const submitFunc = ref();
 
 const initOpeion = async () => {
   await businessManageOptions.getBusinessTypeOption();
-  let { accountBalance, delegateGuide, createTime, group, companyBo } = await api.getTravelInformation();
+  submitFunc.value = travelStore.businessTypeOptions[userInfo.sysCompany.businessType].submitFunc;
+  let func = null;
+  console.log('userInfo.sysCompany.businessType:', userInfo.sysCompany.businessType)
+  switch (userInfo.sysCompany.businessType) {
+    case 'TRAVEL':
+    func = api.getTravelInformation();
+    break;
+    case 'HOTEL':
+    func = api.getHotelDetailInfo({}, userInfo.sysCompany.oid);
+    break;
+  }
+  let { accountBalance, delegateGuide, createTime, group, companyBo } = await func;
   state.form = companyBo;
   state.form.accountBalance = accountBalance;
   state.form.delegateGuide = delegateGuide;
@@ -201,14 +218,13 @@ const submit = () => {
     delete queryData.addressIds;
   }
   console.log('提交表单：', queryData)
-  api.submitInformationAudit({companyBo: queryData}).then((res: any) => {
+  api[submitFunc.value]({companyBo: queryData}).then((res: any) => {
     console.log('res:', res);
     message.success('保存成功');
     initOpeion();
   }).catch((err: any) => {
     console.error(err);
   })
-  // formRef.value.validateFields().then(() => { })
 }
 getCityList('0/1', 0).then(res => {
   cityOptions.value = res;
