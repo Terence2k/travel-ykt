@@ -48,14 +48,37 @@ export default [
 					},
 				],
 			},
-			// {
-			// 	path: 'order-manage',
-			// 	component: () => import('@/views/scenicSpot/orderManage/index.vue'),
-			// 	name: 'order-manage',
-			// 	meta: {
-			// 		title: '订单管理',
-			// 	},
-			// },
+			{
+				path: 'order-manage',
+				name: 'order-manage',
+				redirect: '/scenic-spot/order-manage/list',
+				meta: {
+					title: '订单管理',
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/scenicSpot/orderManage/index.vue'),
+						name: 'order-manage-list',
+						meta: {
+							title: '首页',
+							activeMeun: 'order-manage',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'edit',
+						component: () => import('@/views/scenicSpot/orderManage/components/edit.vue'),
+						name: 'order-manage-edit',
+						meta: {
+							title: '编辑',
+							activeMeun: 'order-manage',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
+
 			{
 				path: 'sold-out-history',
 				component: () => import('@/views/scenicSpot/soldOutHistory/index.vue'),
@@ -210,6 +233,26 @@ export default [
 					// 		isDetail: true, // 在左侧的导航栏不会展示
 					// 	},
 					// },
+				],
+			},
+			{
+				path: 'writeOffTime',
+				name: 'writeOffTime',
+				redirect: '/scenic-spot/writeOffTime/list',
+				meta: {
+					title: '核销时间段管理',
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/scenicSpot/writeOffTime/index.vue'),
+						name: 'writeOffTime-list',
+						meta: {
+							title: '首页',
+							activeMeun: 'information',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					}
 				],
 			},
 		],

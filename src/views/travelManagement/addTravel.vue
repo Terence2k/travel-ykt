@@ -18,107 +18,119 @@ import touristInfo from './touristInfo/touristInfo.vue';
 import traveInfo from './traveInfo/traveInfo.vue';
 import trafficInfo from './trafficInfo/trafficInfo.vue';
 import fileInfo from './fileInfo/fileInfo.vue';
+import insurance from './insurance/insurance.vue'
 import { cloneDeep, debounce } from 'lodash';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
-const route = useRoute();
-const travelStore = useTravelStore();
-const activeKey = ref(0);
-const check = ref(false);
-const pages = [
-	{
-		name: baseInfo,
-		label: '基本信息管理',
-	},
-	{
-		name: guideInfo,
-		label: '导游信息',
-	},
-	{
-		name: touristInfo,
-		label: '游客信息',
-	},
-	{
-		name: trafficInfo,
-		label: '交通信息',
-	},
-	{
-		name: traveInfo,
-		label: '行程信息',
-	},
-	{
-		name: fileInfo,
-		label: '附件上传',
-	},
-];
-let rulesPass = reactive<{ [k: string]: any }>([]);
-let obj = reactive({
-	data: {},
-});
-const save = (e: any) => {
-	rulesPass.push(e);
-	for (let i = 0; i < rulesPass.length; i++) {
+	const route = useRoute()
+	const travelStore = useTravelStore();
+	const activeKey = ref(0);
+	const check = ref(false)
+	const pages = [
+		{
+			name: baseInfo,
+			label: '基本信息管理'
+		},
+		{
+			name: guideInfo,
+			label: '导游信息'
+		},
+		{
+			name: touristInfo,
+			label: '游客信息'
+		},
+		{
+			name: trafficInfo,
+			label: '交通信息'
+		},
+		{
+			name: traveInfo,
+			label: '行程信息'
+		},
+		{
+			name: fileInfo,
+			label: '附件上传'
+		},
+		{
+			name: insurance,
+			label: '确认保险'
+		}
+	]
+	let rulesPass = reactive<{[k:string]:any}>([])
+	let obj = reactive({
+		data: {}
+	})
+	const save = (e: any) => {
+		rulesPass.push(e)
+		for (let i = 0; i < rulesPass.length; i++) {
 		obj.data = cloneDeep({
 			...obj.data,
-			...rulesPass[i],
-		});
-	}
-};
-const debounceFun = debounce((val) => {
-	console.log(val);
-	for (let k in val) {
-		if (!val[k]) return;
-	}
-	saveItinerary(val);
-}, 500);
-watch(obj, (newVal) => {
-	debounceFun(newVal.data);
-});
+			...rulesPass[i]
+		})
+		}
 
-// 有id是编辑无id是新增，左下角保存按钮
-const getTraveDetail = () => {
-	if (!route.query.id) return;
-	api.travelManagement
-		.getItineraryDetail({
+	}
+	const debounceFun = debounce((val) => {
+		console.log(val)
+		for (let k in val) {
+		if (!val[k]) return
+		}
+		saveItinerary(val)
+		} ,500)
+	watch(obj, (newVal) => {
+		debounceFun(newVal.data)
+	})
+
+  	const getTraveDetail = () => {
+		if (!route.query.id) {
+			travelStore.setBaseInfo({});
+			travelStore.setGuideList([]);
+			travelStore.setTouristList([]);
+			travelStore.setTrafficList([]);
+			return
+		} 
+		api.travelManagement.getItineraryDetail({
 			oid: route.query.id,
 			pageNo: 1,
-			pageSize: 100000,
-		})
-		.then((res: any) => {
-			res.basic.teamId = res.basic.itineraryNo;
-			res.basic.touristNum = res.basic.touristCount;
-			res.basic.travelOperatorOid = res.basic.travelOperator.oid;
-			res.basic.contactPhone = res.basic.travelOperator.mobile;
-			res.basic.username = res.basic.travelOperator.username;
-			res.basic.subTravelOperatorOid = res.basic.subTravelOperator.oid;
-			res.basic.subTravelContactPhone = res.basic.subTravelOperator.mobile;
+			pageSize: 100000
+		}).then((res: any) => {
+			res.basic.teamId = res.basic.itineraryNo
+			res.basic.touristNum = res.basic.touristCount
+			res.basic.travelOperatorOid = res.basic.travelOperator.oid
+			res.basic.contactPhone = res.basic.travelOperator.mobile
+			res.basic.username = res.basic.travelOperator.username
+			res.basic.subTravelOperatorOid = res.basic.subTravelOperator.oid
+			res.basic.subTravelContactPhone = res.basic.subTravelOperator.mobile
 			travelStore.setBaseInfo(res.basic);
 			travelStore.setGuideList(res.guideList);
 			travelStore.setTouristList(res.touristList.content);
 			travelStore.setTrafficList(res.transportList);
-		});
-};
-const saveItinerary = (val: any) => {
-	let ajax = route.query.id ? api.travelManagement.editItinerary : api.travelManagement.saveItinerary;
-	return ajax({
-		oid: route.query.id,
-		attachmentParam: val.attachmentParam || {
-			receptionAgreement: 'http://test1.jpg',
-			rentCarContract: 'http://test2.jpg',
-			travelContract: 'http://test.jpg',
-		},
-		basicParam: val.basicParam || {},
-		guideList: travelStore.guideList,
-		itineraryInfoParam: {
-			compositeProducts: travelStore.compositeProducts,
-		},
-		touristList: travelStore.touristList,
-		transportList: travelStore.trafficList,
-	}).then((res: any) => {
-		message.success(res.message);
-	});
-};
+		
+		})
+	}
+  const saveItinerary = (val:any) => {
+    let ajax = route.query.id ? api.travelManagement.editItinerary : api.travelManagement.saveItinerary
+		return ajax(
+		{
+        	oid: route.query.id,
+			attachmentParam: val.attachmentParam || {
+			receptionAgreement: "http://test1.jpg",
+			rentCarContract: "http://test2.jpg",
+			travelContract: "http://test.jpg"
+        },
+			basicParam: val.basicParam || {},
+			guideList: travelStore.guideList.filter((it: any) => it.edit),
+			itineraryInfoParam: {
+				compositeProducts: travelStore.compositeProducts
+			},
+				touristList: travelStore.touristList.filter((it: any) => it.edit),
+				transportList: travelStore.trafficList.filter((it: any) => it.edit)
+			}
+		).then((res: any) => {
+			message.success(res.message);
+		})
+	}
 getTraveDetail();
 </script>
 <style lang="less" scoped>

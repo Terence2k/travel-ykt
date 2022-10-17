@@ -4,26 +4,31 @@
 		<div class="body">
 			<a-form ref="formRef" :model="formValidate" :rules="rules" :label-col="{ span: 2 }" :wrapper-col="{ span: 8, offset: 1 }" labelAlign="left">
 				<a-form-item label="演出票名称" name="username">
-					<a-input />
+					<a-input  disabled placeholder="无需填写"/>
 				</a-form-item>
 				<a-form-item label="演出节目选择" name="roleIds">
-					<a-select ref="select" mode="multiple"> </a-select>
+					<a-input  disabled placeholder="无需填写"/>
 				</a-form-item>
 				<a-form-item label="演出描述" name="account">
 					<a-textarea :rows="4" placeholder="请输入内容" :maxlength="6" />
 				</a-form-item>
 				<a-form-item label="归属景区" name="mobile">
-					<a-select allowClear ref="select" style="width: 200px" placeholder="请选择归属景区">
-						<a-select-option :value="-1">未提交</a-select-option>
-						<a-select-option :value="0">待审核 </a-select-option>
-						<a-select-option :value="1"> 审核通过</a-select-option>
-						<a-select-option :value="2"> 审核未通过</a-select-option>
-					</a-select>
+					<a-input  disabled placeholder="无需填写"/>
 				</a-form-item>
-
-				<a-form-item label="价格&库存" name="userStatus">
-					<a-button type="primary" @click="edit()">编辑价格&库存</a-button>
-					<a-span class="span">需配置各个分区的价格</a-span>
+				<a-form-item label="分区" name="mobile">
+					<a-input  disabled placeholder="无需填写"/>
+				</a-form-item>
+				<a-form-item label="库存" name="mobile">
+					<a-input  disabled placeholder="无需填写"/>
+				</a-form-item>
+				<a-form-item label="价格" name="mobile">
+					<a-input  disabled placeholder="无需填写"/>
+				</a-form-item>
+				<a-form-item label="开始时间" name="mobile">
+					<a-input  disabled placeholder="无需填写"/>
+				</a-form-item>
+				<a-form-item label="结束时间" name="mobile">
+					<a-input  disabled placeholder="无需填写"/>
 				</a-form-item>
 				<div class="footer">
 					<div class="tooter-btn">

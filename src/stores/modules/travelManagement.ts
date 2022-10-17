@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { GroupMode, GroupStatus, Gender, GuideType, FeeModel } from '@/enum';
+import { GroupMode, GroupStatus, Gender, GuideType, FeeModel,insuranceType} from '@/enum';
 import api from '@/api/index';
 interface TraveDataItem {
 	groupType: GroupMode.All | GroupMode.TeamGroup |GroupMode.NoTeamGroup;
@@ -38,6 +38,16 @@ export const useTravelStore = defineStore({
 			{
 				name: '女',
 				codeValue: Gender.Madam
+			}
+		],
+		insuranceList: [
+			{
+				name: '旅责险',
+				codeValue: insuranceType.brigade
+			},
+			{
+				name: '意外险',
+				codeValue: insuranceType.accident
 			}
 		],
 		IDCard: [],

@@ -3,23 +3,26 @@ import dayjs from 'dayjs';
 import type { UnwrapRef } from 'vue';
 import api from '@/api';
 import { useTravelStore } from '@/stores/modules/travelManagement';
+import { stat } from 'fs';
 interface DataItem {
 	name: string;
-	name1: string,
-	name2: string,
-	name3: string,
-	name4: string,
-	name5: string,
-	name6: string
+	name1: string;
+	name2: string;
+	name3: string;
+	name4: string;
+	name5: string;
+	name6: string;
 }
 export function useTraveInfo(props: any, emits: any): Record<string, any> {
 	const { onCheck } = toRefs(props);
-	const travelStore = useTravelStore()
-	const state = reactive<{editableData: UnwrapRef<Record<string, DataItem>>, [k:string]: any}>({
+	const travelStore = useTravelStore();
+	const state = reactive<{ editableData: UnwrapRef<Record<string, DataItem>>; [k: string]: any }>({
 		editableData: {},
 		addHotelPop: false,
 		addTicketPop: false,
 		allFeesProducts: [],
+		ticketData: [],
+		holteDate: [],
 		tableData: [
 			{
 				key: '1',
@@ -29,14 +32,20 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				name3: '123',
 				name4: '123',
 				name5: '123',
-				name6: '123'
-			}
+				name6: '123',
+			},
 		],
+		params: {
+			comprehensiveFeeProductName: '',
+			status: 1,
+			pageNo: 1,
+			pageSize: 999,
+		},
 		columns: [
 			{
 				title: ' 序号 ',
 				key: 'index',
-				width: '80px'
+				width: '80px',
 			},
 			{
 				title: '费用名称',
@@ -52,7 +61,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				title: '收费模式',
 				dataIndex: 'feeModel',
 				key: 'feeModel',
-				data: travelStore.feeModel
+				data: travelStore.feeModel,
 			},
 			{
 				title: '是否按天收取',
@@ -78,35 +87,35 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				title: '金额（元）',
 				dataIndex: 'totalMoney',
 				key: 'totalMoney',
-			}
+			},
 		],
-        ticketColumns: [
-            {
+		ticketColumns: [
+			{
 				title: ' 序号 ',
 				key: 'index',
-				width: '80px'
+				width: '80px',
 			},
 			{
 				title: '景区名称',
-				dataIndex: 'name',
-				key: 'name',
+				dataIndex: 'scenicName',
+				key: 'scenicName',
 			},
-            {
+			{
 				title: '日期',
-				dataIndex: 'name',
-				key: 'name',
+				dataIndex: 'startDate',
+				key: 'startDate',
 			},
-            {
+			{
 				title: '单价（元）',
-				dataIndex: 'name',
-				key: 'name',
+				dataIndex: 'unitPrice',
+				key: 'unitPrice',
 			},
-            {
+			{
 				title: '行程人数',
-				dataIndex: 'name',
-				key: 'name',
+				dataIndex: 'peopleCount',
+				key: 'peopleCount',
 			},
-            {
+			{
 				title: '费用预估（元）',
 				dataIndex: 'name',
 				key: 'name',
@@ -114,36 +123,36 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			{
 				title: '操作',
 				key: 'action',
-				fixed: 'right'
-			}
-        ],
-        hotelColumns: [
-            {
+				fixed: 'right',
+			},
+		],
+		hotelColumns: [
+			{
 				title: ' 序号 ',
 				key: 'index',
-				width: '80px'
+				width: '80px',
 			},
 			{
 				title: '酒店类型',
-				dataIndex: 'name',
-				key: 'name',
+				dataIndex: 'hotelType',
+				key: 'hotelType',
 			},
-            {
+			{
 				title: '日期',
-				dataIndex: 'name',
-				key: 'name',
+				dataIndex: 'endDate',
+				key: 'endDate',
 			},
-            {
+			{
 				title: '单价（元）',
-				dataIndex: 'name',
-				key: 'name',
+				dataIndex: 'unitPrice',
+				key: 'unitPrice',
 			},
-            {
+			{
 				title: '人数',
-				dataIndex: 'name',
-				key: 'name',
+				dataIndex: 'peopleCount',
+				key: 'peopleCount',
 			},
-            {
+			{
 				title: '预估金额（元）',
 				dataIndex: 'name',
 				key: 'name',
@@ -151,48 +160,85 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			{
 				title: '操作',
 				key: 'action',
-				fixed: 'right'
-			}
-        ]
+				fixed: 'right',
+			},
+		],
 	});
 
 	const methods = {
 		edit: (key: string) => {
-			const cur = cloneDeep(state.tableData.filter((item:any) => key === item.key)[0])
+			const cur = cloneDeep(state.tableData.filter((item: any) => key === item.key)[0]);
 			cur.name = dayjs(cur.name, 'YYYY-MM-DD HH:mm');
 			state.editableData[key] = cur;
 		},
 		save: (key: string) => {
-			const cur = state.editableData[key]
+			const cur = state.editableData[key];
 			cur.name = dayjs(cur.name).format('YYYY-MM-DD HH:mm');
-			Object.assign(state.tableData.filter((item:any) => key === item.key)[0], state.editableData[key]);
+			Object.assign(state.tableData.filter((item: any) => key === item.key)[0], state.editableData[key]);
 			delete state.editableData[key];
 		},
 		add(key: string) {
 			state[key] = true;
 		},
+		editHolte(key :string)
+		{
+			state[key] = true;
+			console.log(key,'6666666')
+		},
 		async findByIdTeamType() {
-			const formData = new FormData()
-			formData.append('id', travelStore.baseInfo.teamType)
-			const res = await api.travelManagement.findByIdTeamType(formData)
-			for (let i = 0; i < res.products.length; i++) {
-				const result = await api.travelManagement.findProductInfo(res.products[i].productId)
-				result.peopleCount = travelStore.touristList.length;
-				result.unPrice = result.feeNumber;
-				result.isDay = true;
-				result.dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day')
-				result.totalMoney = result.peopleCount * result.dayCount * result.feeNumber
-				state.allFeesProducts.push(result)
+			const formData = new FormData();
+			formData.append('id', travelStore.baseInfo.teamType);
+			if (travelStore.baseInfo.teamType) {
+				// 根据团队类型获取配置酒店景区餐饮数据
+				const res = await api.travelManagement.findByIdTeamType(formData);
+				for (let i = 0; i < res.itemVos.length; i++) {
+					if (res.itemVos[i].itemName == '酒店') {
+						if (res.itemVos[i].productVos.length == 0) {
+							state.holteDate.push([]);
+						} else {
+							state.holteDate.push(res.itemVos[i].productVos);
+						}
+					} else if (res.itemVos[i].itemName == '票务') {
+						if (res.itemVos[i].productVos.length == 0) {
+							state.ticketData.push([]);
+						} else {
+							state.ticketData.push(res.itemVos[i].productVos);
+						}
+					}
+				}
+			}
+			// 请求综费接口
+			const result = await api.travelManagement.comprehensiveFeeProduct(state.params);
+			for (let i = 0; i < result.content.length; i++) {
+				result.content[i].peopleCount = travelStore.touristList.length;
+				result.content[i].dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day');
+				result.content[i].unPrice = result.content[i].feeNumber;
+				result.content[i].totalMoney = result.content[i].peopleCount * result.content[i].dayCount * result.content[i].feeNumber;
+				state.allFeesProducts.push(result.content[i]);
 			}
 			travelStore.setCompositeProducts(state.allFeesProducts);
+
+			// for (let i = 0; i < res.products.length; i++) {
+			// 	const result = await api.travelManagement.findProductInfo(res.products[i].productId)
+			// 	result.peopleCount = travelStore.touristList.length;
+			// 	result.unPrice = result.feeNumber;
+			// 	result.isDay = true;
+			// 	result.dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day')
+			// 	result.totalMoney = result.peopleCount * result.dayCount * result.feeNumber
+			// 	state.allFeesProducts.push(result)
+			// }
+			// travelStore.setCompositeProducts(state.allFeesProducts);
+		},
+	};
+	watch(
+		() => travelStore.teamType,
+		(newVal) => {
+			methods.findByIdTeamType();
 		}
-	}
-	watch(() => travelStore.teamType, (newVal) => {
-		methods.findByIdTeamType()
-	})
-	methods.findByIdTeamType()
+	);
+	methods.findByIdTeamType();
 	return {
 		...toRefs(state),
-		...methods
-	}
+		...methods,
+	};
 }

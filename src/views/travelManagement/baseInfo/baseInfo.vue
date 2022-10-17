@@ -124,7 +124,7 @@ interface TeamType {
 }
 
 const travelStore = useTravelStore();
-const touristCount = computed(() => travelStore.touristList.length ? travelStore.touristList.length : '添加游客名单后自动计算')
+const touristCount = computed(() => travelStore.touristList.length ? travelStore.touristList.length : 0)
 const route = useRoute()
 const page = reactive({
 	teamType: {

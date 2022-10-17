@@ -15,12 +15,6 @@
 					<a-select-option :value="5">协会</a-select-option>
 				</a-select>
 			</a-form-item>
-			<a-form-item label="是否必收费用" name="confirmNeedFeeType">
-				<a-radio-group v-model:value="formData.data.confirmNeedFeeType">
-					<a-radio :value="0">必收</a-radio>
-					<a-radio :value="1">可选</a-radio>
-				</a-radio-group>
-			</a-form-item>
 			<a-form-item label="费用说明" name="feeExplanation">
 				<a-input v-model:value="formData.data.feeExplanation" placeholder="请填写规则说明" />
 			</a-form-item>
@@ -30,7 +24,7 @@
 					<a-radio :value="0">禁用</a-radio>
 				</a-radio-group>
 			</a-form-item>
-			<div class="title">扣费规则</div>
+			<div class="title">收费规则</div>
 			<a-form-item label="收费模式" name="feeModel">
 				<a-radio-group v-model:value="formData.data.feeModel">
 					<a-radio :value="0">人数</a-radio>
@@ -45,6 +39,12 @@
 						</div>
 					</template>
 				</a-input>
+			</a-form-item>
+			<a-form-item label="是否按天收费" name="confirmDailyCharge">
+				<a-radio-group v-model:value="formData.data.confirmDailyCharge">
+					<a-radio :value="1">是</a-radio>
+					<a-radio :value="0">否</a-radio>
+				</a-radio-group>
 			</a-form-item>
 		</a-form>
 		<div class="footer">
@@ -69,7 +69,7 @@ const formref = ref();
 
 const rulesRef = {
 	comprehensiveFeeProductName: [{ required: true, message: '请填写产品名称' }],
-	confirmNeedFeeType: [{ required: true, message: '请选择是否必收费用' }],
+	confirmDailyCharge: [{ required: true, message: '请选择是否必收费用' }],
 	feeExplanation: [{ required: true, message: '请填写规则说明' }],
 	status: [{ required: true, message: '请选择状态' }],
 	feeModel: [{ required: true, message: '请选择收费模式' }],
@@ -90,7 +90,7 @@ const initPage = async (): Promise<void> => {
 	} else {
 		navigatorBar.setNavigator(['结算管理', '综费产品', '新增']);
 		// 新增页面 默认选中
-		formData.data.confirmNeedFeeType = 0; // 费用必收
+		formData.data.confirmDailyCharge = 0; // 是否按天收费 默认选否
 		formData.data.status = 1; // 状态启用
 		formData.data.feeModel = 0; // 收费模式 人数
 	}
@@ -102,7 +102,7 @@ const onSubmit = () => {
 		.then((res: object) => {
 			const Data = {
 				comprehensiveFeeProductName: formData.data.comprehensiveFeeProductName,
-				confirmNeedFeeType: formData.data.confirmNeedFeeType,
+				confirmDailyCharge: formData.data.confirmDailyCharge,
 				feeExplanation: formData.data.feeExplanation,
 				status: formData.data.status,
 				feeModel: formData.data.feeModel,
