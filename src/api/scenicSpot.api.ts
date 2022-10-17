@@ -117,3 +117,12 @@ export async function getShowVenueList(data: any) {
 		data,
 	});
 }
+
+//景区订单 分页查询场馆信
+export async function getViewOrderList(data: any) {
+	return request({
+		url: commonPath + `/ticket-service/public/api/scenic-order/page`,
+		method: 'get',
+		data,
+	});
+}
