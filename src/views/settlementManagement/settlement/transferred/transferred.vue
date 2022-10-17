@@ -26,7 +26,9 @@ import { reactive, onMounted } from 'vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import { Modal } from 'ant-design-vue';
-
+const props = defineProps({
+	params: Object,
+})
 const router = useRouter();
 const columns = [
 	{
@@ -116,11 +118,6 @@ const state = reactive({
 			uniType: '',
 		},
 	},
-	params: {},
-	operationModal: {
-		isAddOrUpdate: false,
-	},
-	optionRoleList: [],
 });
 
 const onHandleCurrentChange = (val: number) => {
@@ -136,12 +133,17 @@ const pageSideChange = (current: number, size: number) => {
 };
 
 const onSearch = () => {
-	// api.userList(state.tableData.param).then((res: any) => {
-	// 	console.log('res:', res);
-	// 	state.tableData.data = res.content;
-	// 	state.tableData.total = res.total;
-	// });
+	// state.tableData.loading = true;
+	// let res = await api.getScenicSpotInformationList(state.tableData.param);
+	// const { total, content } = res;
+	// state.tableData.total = total;
+	// const list: [any] = dealData(content);
+	// state.tableData.data = list;
+	// state.tableData.loading = false;
+	console.log(props.params);
 };
+// 向父组件暴露方法
+defineExpose({ onSearch });
 
 // 查看详情
 const toInfo = (record: any) => {

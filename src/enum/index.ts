@@ -54,3 +54,8 @@ export enum FeeModel {
   Number,
   Price
 }
+// 险种
+export enum insuranceType{
+  accident,
+  brigade
+}

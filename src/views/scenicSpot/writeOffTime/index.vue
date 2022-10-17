@@ -3,7 +3,7 @@
 		<SearchItem label="输入搜索">
 			<a-input placeholder="门票名称/关键词" style="width: 200px" />
 		</SearchItem>
-		<SearchItem label="归属景区">
+		<SearchItem label="门票分类">
 			<a-select ref="select" style="width: 200px" placeholder="请选择">
 				<a-select-option value="all">all</a-select-option>
 			</a-select>
@@ -14,14 +14,10 @@
 	</CommonSearch>
 	<div class="table-area">
 		<CommonTable :dataSource="dataSource" :columns="columns">
-			<template #bodyCell="{ column,index }">
+			<template #bodyCell="{ column, index }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a href="javascript:;" @click="toEditPage()">编辑</a>
-						<a href="javascript:;" @click="del(index)">删除</a>
-						<a href="javascript:;">价格日历</a>
-						<a href="javascript:;">库存日历</a>
-						<a>下架申请</a>
+						<a @click="SetUp()">设置核销时间段</a>
 					</div>
 				</template>
 			</template>
@@ -34,6 +30,7 @@
 			@showSizeChange="pageSideChange"
 		/>
 	</div>
+	<SetUpTime v-model="state.operationModal.isSetUpdate"></SetUpTime>
 </template>
 
 <script setup lang="ts">
@@ -41,45 +38,45 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
+import SetUpTime from './setUpTime.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 const route = useRouter();
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 const dataSource = [
 	{
-		key: '1',
-		name: '1',
-		age: '千古情',
-		address: '西湖区湖底公园1号',
-		address2: '待审核',
-		address3: '上架',
-	}
+		age: '木府',
+		address: '多点核销',
+		address2: '木府',
+		address3: '单票',
+		address4: '待审核',
+	},
 ];
 const columns = [
 	{
-		title: '序号',
-		dataIndex: 'name',
-		key: 'name',
-	},
-	{
-		title: '演出票名称',
+		title: '门票名称',
 		dataIndex: 'age',
 		key: 'age',
 	},
 	{
-		title: '归属景区',
+		title: '票种',
 		dataIndex: 'address',
 		key: 'address',
 	},
 	{
-		title: '审核状态',
+		title: '归属景区',
 		dataIndex: 'address2',
 		key: 'address2',
 	},
 	{
-		title: '平台上下架状态',
-		dataIndex: 'address3',
+		title: '门票分类',
+		dataIndex: 'address4',
 		key: 'address3',
+	},
+	{
+		title: '审核状态',
+		dataIndex: 'address3',
+		key: 'address4',
 	},
 	{
 		title: '操作',
@@ -99,45 +96,14 @@ const state = reactive({
 			pageSize: 10,
 		},
 	},
+	operationModal: {
+		isSetUpdate: false,
+	},
 });
 
-const onHandleCurrentChange = (val: number) => {
-	console.log('change:', val);
-	state.tableData.param.pageNo = val;
-	onSearch();
+const SetUp = () => {
+    state.operationModal.isSetUpdate=true
 };
-
-const pageSideChange = (current: number, size: number) => {
-	console.log('changePageSize:', size);
-	state.tableData.param.pageSize = size;
-	// onSearch();
-};
-//编辑
-const toEditPage = () => {
-	route.push({ path: '/scenic-spot/showTickets/show_edit'});
-};
-//新增
-const add = () => {
-	route.push({ path: '/scenic-spot/showTickets/show_edit'});
-};
-//删除
-const del = (index) => {
-	console.log(index,'111111111')
-};
-const onSearch = () => {
-	// userList(state.tableData.param).then((res) => {
-	// 	console.log(res);
-	// });
-};
-onMounted(() => {
-	// navigatorBar
-	// 重新定义面包屑
-	// navigatorBar.clearNavigator();
-	// navigatorBar.setNavigator(['演出票']);
-});
-onBeforeUnmount(() => {
-	navigatorBar.clearNavigator();
-});
 </script>
 
 <style lang="less" scoped>
@@ -186,7 +152,7 @@ onBeforeUnmount(() => {
 // }
 
 // table style
-.list-btn{
+.list-btn {
 	margin-right: 20px;
 	margin-bottom: 10px;
 }

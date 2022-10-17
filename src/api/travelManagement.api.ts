@@ -104,6 +104,14 @@ export const travelManagement = {
         });
     },
     
+    comprehensiveFeeProduct(data: any){
+        return request({
+            url: `${commonPath}/settlement-service/public/api/comprehensive-fee-product/page`,
+            data,
+            method: 'post',
+            showLoading: true
+        });
+    }
     
     
 }
