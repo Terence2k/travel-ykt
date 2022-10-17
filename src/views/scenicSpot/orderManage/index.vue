@@ -1,58 +1,74 @@
 <template>
-	<CommonSearch>
-		<SearchItem label="入园日期">
-			<a-select ref="select" style="width: 200px" placeholder="请选择审核状态">
-				<a-select-option value="all">all</a-select-option>
-			</a-select>
-		</SearchItem>
-		<SearchItem label="核销日期">
-			<a-select ref="select" style="width: 200px" placeholder="请选择景区等级">
-				<a-select-option value="all">all</a-select-option>
-			</a-select>
-		</SearchItem>
-		<SearchItem label="行程单号">
-			<a-select ref="select" style="width: 200px" placeholder="请选择景区名称">
-				<a-select-option value="all">all</a-select-option>
-			</a-select>
-		</SearchItem>
-		<SearchItem label="旅行社名称">
-			<a-input placeholder="请输入用户姓名/手机号" style="width: 200px" />
-		</SearchItem>
-		<template #button>
-			<a-button>查询</a-button>
-		</template>
-	</CommonSearch>
-	<div class="table-area">
-		<div class="list-btn">
-			<a-button type="primary" class="success">新增</a-button>
-		</div>
-		<CommonTable :dataSource="dataSource" :columns="columns">
-			<template #bodyCell="{ column }">
-				<template v-if="column.key === 'action'">
-					<div class="action-btns">
-						<a>编辑</a>
-						<a>禁用</a>
-						<a>查看</a>
-					</div>
-				</template>
+	<a-spin size="large" :spinning="state.tableData.loading" style="min-height: 50vh">
+		<CommonSearch>
+			<SearchItem label="入园日期">
+				<a-select ref="select" style="width: 200px" placeholder="请选择审核状态">
+					<a-select-option value="all">all</a-select-option>
+				</a-select>
+			</SearchItem>
+			<SearchItem label="核销日期">
+				<a-select ref="select" style="width: 200px" placeholder="请选择景区等级">
+					<a-select-option value="all">all</a-select-option>
+				</a-select>
+			</SearchItem>
+			<SearchItem label="行程单号">
+				<a-select ref="select" style="width: 200px" placeholder="请选择景区名称">
+					<a-select-option value="all">all</a-select-option>
+				</a-select>
+			</SearchItem>
+			<SearchItem label="旅行社名称">
+				<a-input placeholder="请输入用户姓名/手机号" style="width: 200px" />
+			</SearchItem>
+			<template #button>
+				<a-button>查询</a-button>
 			</template>
-		</CommonTable>
-		<CommonPagination
-			:current="state.tableData.param.pageNo"
-			:page-size="state.tableData.param.pageSize"
-			:total="state.tableData.total"
-			@change="onHandleCurrentChange"
-			@showSizeChange="pageSideChange"
-		/>
-	</div>
+		</CommonSearch>
+
+		<a-tabs v-model:activeKey="state.tableData.param.orderState" @tabClick="changePageStatus">
+			<a-tab-pane key="" tab="全部"> </a-tab-pane>
+			<a-tab-pane :key="0" tab="未开始"> </a-tab-pane>
+			<a-tab-pane :key="1" tab="进行中"> </a-tab-pane>
+			<a-tab-pane :key="2" tab="已完成"> </a-tab-pane>
+			<a-tab-pane :key="3" tab="已过期"> </a-tab-pane>
+			<a-tab-pane :key="4" tab="已取消"> </a-tab-pane>
+		</a-tabs>
+		<div class="table-area">
+			<div class="list-btn">
+				<a-button type="primary" class="success">新增</a-button>
+			</div>
+			<CommonTable :dataSource="dataSource" :columns="columns" :scroll="{ x: '100%' }">
+				<template #bodyCell="{ column, record }">
+					<template v-if="column.key === 'action'">
+						<div class="action-btns" v-if="state.tableData.param.orderState !== 2">
+							<a href="javascript:;" @click="toDetail(record)">查看</a>
+							<a href="javascript:;">核销记录</a>
+						</div>
+						<div class="action-btns" v-else>
+							<a href="javascript:;" @click="applyTchange">申请改刷</a>
+							<a href="javascript:;" @click="toDetail(record)">查看</a>
+						</div>
+					</template>
+				</template>
+			</CommonTable>
+			<CommonPagination
+				:current="state.tableData.param.pageNo"
+				:page-size="state.tableData.param.pageSize"
+				:total="state.tableData.total"
+				@change="onHandleCurrentChange"
+				@showSizeChange="pageSideChange"
+			/>
+		</div>
+	</a-spin>
 </template>
 
 <script setup lang="ts">
-import CommonTable from '@/components/common/CommonTable.vue';
-import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
+import CommonTable from '@/components/common/CommonTable.vue';
+import CommonPagination from '@/components/common/CommonPagination.vue';
+import api from '@/api';
+import viewTable from './components/table.vue';
 
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
@@ -87,32 +103,62 @@ const dataSource = [
 ];
 const columns = [
 	{
-		title: '用户姓名',
+		title: '订单编号',
 		dataIndex: 'name',
 		key: 'name',
 	},
 	{
-		title: '手机号',
+		title: '行程单号',
 		dataIndex: 'age',
 		key: 'age',
 	},
 	{
-		title: '所属单位类型',
+		title: '旅行社名称',
 		dataIndex: 'address',
 		key: 'address',
 	},
 	{
-		title: '所属单位',
+		title: '门票',
 		dataIndex: 'address1',
 		key: 'address1',
 	},
 	{
-		title: '所属角色',
+		title: '门票分类',
 		dataIndex: 'address2',
 		key: 'address2',
 	},
 	{
-		title: '状态',
+		title: '入园日期',
+		dataIndex: 'address3',
+		key: 'address3',
+	},
+	{
+		title: '核销时间',
+		dataIndex: 'address3',
+		key: 'address3',
+	},
+	{
+		title: '预定时间',
+		dataIndex: 'address3',
+		key: 'address3',
+	},
+	{
+		title: '核销状态',
+		dataIndex: 'address3',
+		key: 'address3',
+	},
+	{
+		title: '订票人数',
+		dataIndex: 'address3',
+		key: 'address3',
+	},
+	{
+		title: '核销人数',
+		dataIndex: 'address3',
+		key: 'address3',
+	},
+	{
+		title: '订单金额（元）',
 		dataIndex: 'address3',
 		key: 'address3',
 	},
@@ -130,93 +176,69 @@ const state = reactive({
 		total: 400,
 		loading: false,
 		param: {
+			schoolTime: '',
+			verificationTime: '',
+			agencyName: '',
+			orderState: '',
+			itineraryNumber: null,
 			pageNo: 1,
 			pageSize: 10,
 		},
 	},
 });
 
+const tabActive = ref('');
+
+//申请改刷
+const applyTchange = () => {};
+
+//改变状态
+const changePageStatus = (e: any) => {
+	state.tableData.param.orderState = e;
+	init();
+};
+//查看
+const route = useRouter();
+const toDetail = (record: any) => {
+	route.push({ path: '/scenic-spot/order-manage/edit', query: { oid: record.oid } });
+};
+
 const onHandleCurrentChange = (val: number) => {
-	console.log('change:', val);
 	state.tableData.param.pageNo = val;
-	onSearch();
+	init();
 };
 
 const pageSideChange = (current: number, size: number) => {
-	console.log('changePageSize:', size);
 	state.tableData.param.pageSize = size;
-	// onSearch();
+	init();
 };
 
-const onSearch = () => {
-	// userList(state.tableData.param).then((res) => {
-	// 	console.log(res);
-	// });
+const init = async () => {
+	// state.tableData.loading = true;
+	let res = await api.getViewOrderList(state.tableData.param);
+	state.tableData.loading = false;
+	console.log(res);
 };
 onMounted(() => {
-	// navigatorBar
-	navigatorBar.clearNavigator();
-	navigatorBar.setNavigator(['订单管理']);
+	init();
+	// navigatorBar.setNavigator(['订单管理']);
 });
 onBeforeUnmount(() => {
-	navigatorBar.clearNavigator();
+	// navigatorBar.clearNavigator();
 });
 </script>
 
 <style lang="less">
-.search-area {
-	display: flex;
-	flex-wrap: wrap;
-	padding: 24px 52px 24px 20px;
-	border-bottom: 1px #f1f2f5 solid;
-	.search-items {
-		display: flex;
-		align-items: center;
-		margin-right: 32px;
-		.title {
-			color: #1e2226;
-			font-weight: bold;
-			margin-right: 16px;
-		}
-	}
-	.search-button {
-		display: inline-flex;
-		justify-content: flex-end;
-		float: right;
-		text-align: right;
-		flex: 1;
+.trave-contaner {
+	height: 100%;
+	::v-deep(.ant-tabs-nav) {
+		padding: 0 20px;
 	}
 }
-.table-area {
-	overflow: hidden;
-	.list-btn {
-		display: flex;
-		justify-content: flex-end;
-		padding: 24px 52px 16px;
-	}
-	.success {
-		background-color: #36b374;
-		color: #fff;
-	}
-	.action-btns {
-		a {
-			margin: 0 6px;
-			&:first-of-type {
-				margin-left: 0;
-			}
-		}
-	}
+.ant-tabs-top > .ant-tabs-nav {
+	margin: 0;
 }
-
-// table style
-.ant-table-thead > tr > th {
-	border-top: 1px solid #f0f0f0;
-	background-color: #fcfcfc;
-	&::before {
-		height: 100% !important;
-	}
-}
-.ant-table-body {
-	height: 500px;
+.ant-tabs-nav-wrap {
+	margin-left: 20px;
 }
 </style>

@@ -167,6 +167,7 @@ const currencySettlementRuleDetail = async (id: number) => {
 onMounted(() => {
 	init();
 	generaRulesOptions.getTeamTypeList();
+	generaRulesOptions.getPrepaidCompanyList();
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
@@ -200,20 +201,20 @@ const getTypeName = computed(() => (str: string) => {
 		return formState.isPrepaid === 1 ? '是' : '否';
 	}
 	if (str === 'prepaidCompany') {
-		const idx = generaRulesOptions.prepaidCompanyList.findIndex((item: any) => item.value === formState.prepaidCompany);
+		const idx = generaRulesOptions.prepaidCompanyList.findIndex((item: any) => item.codeValue === formState.prepaidCompany);
 		if (idx !== -1) {
 			return generaRulesOptions.prepaidCompanyList[idx]['name'];
 		}
 	}
 	if (str === 'lastCostBelongCompany') {
-		const idx = generaRulesOptions.prepaidCompanyList.findIndex((item: any) => item.value === formState.lastCostBelongCompany);
+		const idx = generaRulesOptions.prepaidCompanyList.findIndex((item: any) => item.codeValue === formState.lastCostBelongCompany);
 		if (idx !== -1) {
 			return generaRulesOptions.prepaidCompanyList[idx]['name'];
 		}
 	}
 });
 const getCompanyTypeName = computed(() => (value: number) => {
-	const idx = generaRulesOptions.prepaidCompanyList.findIndex((item) => item.value === value);
+	const idx = generaRulesOptions.prepaidCompanyList.findIndex((item) => item.codeValue === value);
 	if (idx !== -1) {
 		return generaRulesOptions.prepaidCompanyList[idx]['name'];
 	}

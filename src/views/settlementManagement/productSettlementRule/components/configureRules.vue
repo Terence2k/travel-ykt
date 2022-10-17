@@ -138,13 +138,6 @@ const state = reactive({
 		{ value: 2, name: '酒店' },
 		{ value: 3, name: '餐饮' },
 	],
-	prepaidCompanyList: [
-		{ value: 1, name: '旅行社' },
-		{ value: 2, name: '集团' },
-		{ value: 3, name: '监理公司' },
-		{ value: 4, name: '一卡通' },
-		{ value: 5, name: '协会' },
-	],
 	productSonList: [],
 });
 
