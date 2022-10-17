@@ -235,6 +235,26 @@ export default [
 					// },
 				],
 			},
+			{
+				path: 'writeOffTime',
+				name: 'writeOffTime',
+				redirect: '/scenic-spot/writeOffTime/list',
+				meta: {
+					title: '核销时间段管理',
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/scenicSpot/writeOffTime/index.vue'),
+						name: 'writeOffTime-list',
+						meta: {
+							title: '首页',
+							activeMeun: 'information',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					}
+				],
+			},
 		],
 	},
 ];

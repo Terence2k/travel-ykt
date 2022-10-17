@@ -104,6 +104,10 @@
                 </CommonTable>
 			</div>
 		</a-form>
+		<template v-slot:footer>
+			<a-button type="primary" @click="save">保存</a-button>
+			<a-button @click="dialogVisible = false">取消</a-button>
+		</template>
 	</BaseModal>
 </template>
 
