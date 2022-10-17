@@ -7,22 +7,38 @@
 						<header>行程信息</header>
 						<a-form name="basic" labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
 							<a-form-item label="行程类型"> 标准团 </a-form-item>
-							<a-form-item label="行程单号"> 行程单号 </a-form-item>
-							<a-form-item label="发团旅行社"> 发团旅行社 </a-form-item>
-							<a-form-item label="接团旅行社"> 接团旅行社 </a-form-item>
-							<a-form-item label="行程时间"> 行程时间 </a-form-item>
-							<a-form-item label="行程人数"> 行程人数 </a-form-item>
-							<a-form-item label="预定人数"> 预定人数 </a-form-item>
-							<a-form-item label="预定房数"> 预定房数 </a-form-item>
+							<a-form-item label="行程单号"> YNLJ1569374 </a-form-item>
+							<a-form-item label="发团旅行社"> 黑白水旅行社 </a-form-item>
+							<a-form-item label="接团旅行社"> 白鹿旅行社 </a-form-item>
+							<a-form-item label="行程时间"> 2022.2.23 - 2022.2.25 </a-form-item>
+							<a-form-item label="行程人数"> 30人 </a-form-item>
+							<a-form-item label="预定人数"> 25人 </a-form-item>
+							<a-form-item label="预定房数"> 10标 </a-form-item>
 
 							<div class="title">订房信息</div>
-							<CommonTable :columns="columns" :dataSource="data"> </CommonTable>
+							<CommonTable :columns="columns" :dataSource="data123" :scrollY="false">
+								<template #bodyCell="{ column, index }">
+									<template v-if="column.key === 'index'">
+										<div>
+											{{ index + 1 }}
+										</div>
+									</template></template
+								>
+							</CommonTable>
 						</a-form>
 					</div>
 				</a-tab-pane>
 				<a-tab-pane key="2" tab="人员信息" force-render>
 					<div class="form_pad">
-						<CommonTable :columns="columns2" :dataSource="data2"> </CommonTable>
+						<CommonTable :columns="columns2" :dataSource="data2" :scrollY="false">
+							<template #bodyCell="{ column, index }">
+								<template v-if="column.key === 'index'">
+									<div>
+										{{ index + 1 }}
+									</div>
+								</template></template
+							>
+						</CommonTable>
 					</div>
 				</a-tab-pane>
 			</a-tabs>
@@ -30,7 +46,7 @@
 		<BaseModal :title="'审核'" v-model="visible">
 			<a-form>
 				<a-form-item label="状态">
-					<a-radio-group>
+					<a-radio-group v-model:value="state.tableData.type">
 						<a-radio value="1">通过</a-radio>
 						<a-radio value="2">不通过</a-radio>
 					</a-radio-group>
@@ -40,7 +56,7 @@
 				</a-form-item>
 			</a-form>
 			<template v-slot:footer>
-				<a-button type="primary" @click="visible = false">保存</a-button>
+				<a-button type="primary" @click="success">保存</a-button>
 				<a-button style="width: 76px" @click="visible = false">关闭</a-button>
 			</template>
 		</BaseModal>
@@ -53,21 +69,24 @@
 <script lang="ts" setup>
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 const navigatorBar = useNavigatorBar();
-import { onMounted, reactive, toRaw, UnwrapRef, watch } from 'vue';
+import { onMounted, reactive, toRaw, UnwrapRef, watch, ref } from 'vue';
 import BaseModal from '@/components/common/BaseModal.vue';
+import CommonPagination from '@/components/common/CommonPagination.vue';
 import api from '@/api';
+import { message } from 'ant-design-vue';
 import CommonTable from '@/components/common/CommonTable.vue';
+const router = useRouter();
 
 const route = useRouter();
 const visible = ref(false);
-const activeKey = ref('1');
+const activeKey = ref('2');
 const statusType = ref(0);
 
 const columns = [
 	{
 		title: '序号',
-		dataIndex: 'a',
-		key: 'a',
+		dataIndex: 'index',
+		key: 'index',
 	},
 	{
 		title: '房间类型',
@@ -93,8 +112,8 @@ const columns = [
 const columns2 = [
 	{
 		title: '序号',
-		dataIndex: 'a',
-		key: 'a',
+		dataIndex: 'index',
+		key: 'index',
 	},
 	{
 		title: '证件类型',
@@ -132,30 +151,58 @@ const columns2 = [
 		key: 'h',
 	},
 ];
-const data = [
+const data123 = [
 	{
-		a: '1',
-		b: '1',
-		c: '1',
-		d: '1',
-		e: '1'
+		b: '标准间',
+		c: '150',
+		d: '10',
+		e: '1,500',
+	},
+	{
+		b: '大床房',
+		c: '200',
+		d: '2',
+		e: '400',
 	},
 ];
 const data2 = [
 	{
-		a: '1',
-		b: '1',
-		c: '1',
-		d: '1',
-		e: '1',
-		f: '1',
-		g: '1',
+		b: '身份证',
+		c: '530100196605067895',
+		d: '成人',
+		e: '王某某',
+		f: '女',
+		g: '绿码',
+		h: '待入住',
 	},
 ];
+
+const state = reactive({
+	tableData: {
+		data: [],
+		total: 0,
+		loading: false,
+		param: {
+			pageNo: 1,
+			pageSize: 10,
+			phone: null,
+			name: null,
+			auditStatus: null,
+		},
+		type: '2',
+	},
+});
 
 const auditing = () => {
 	visible.value = true;
 	statusType.value = 0;
+	message.success('审核通过');
+	router.push({ path: '/hotelManagement/hotelOrder/index' });
+};
+const success = () => {
+	visible.value = false;
+	message.error('审核不通过');
+	router.push({ path: '/hotelManagement/hotelOrder/index' });
 };
 const notAuditing = () => {
 	visible.value = true;
@@ -171,7 +218,21 @@ const notAuditing = () => {
 
 onMounted(() => {
 	// initPage();
-	navigatorBar.setNavigator(['订单管理', '审核']);
+	navigatorBar.setNavigator(['订单管理', '查看']);
+	const data123 = ref([
+		{
+			b: '标准间',
+			c: '150',
+			d: '10',
+			e: '1,500',
+		},
+		{
+			b: '大床房',
+			c: '200',
+			d: '2',
+			e: '400',
+		},
+	]);
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
@@ -218,7 +279,6 @@ onBeforeUnmount(() => {
 
 	.form_pad {
 		padding: 0 16px 100px;
-		margin-bottom: 60px;
 	}
 	.footer {
 		position: fixed;

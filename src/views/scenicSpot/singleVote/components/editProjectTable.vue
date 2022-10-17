@@ -31,7 +31,8 @@
 					<template v-if="column.key === 'itemId'">
 						<div class="action-btns">
 							<span style="margin-right: 20px">
-								{{ itemNameCompute(record.itemId) }}
+								{{ record }}
+								<!-- {{ itemNameCompute(record.itemId) }} -->
 							</span>
 							<a v-if="record.itemId && !type" href="javascript:;" @click="change(record)">更换</a>
 							<a href="javascript:;" v-if="isCreate && !type && formValidate.initData[0].init" @click="CreateData">请选择</a>
@@ -215,21 +216,17 @@ const cancel = () => {
 };
 const options = ref([
 	{
-		value: 'jack',
-		label: 'Jack',
+		value: '1',
+		label: '入园',
 	},
 	{
-		value: 'lucy',
-		label: 'Lucy',
+		value: '2',
+		label: '游戏机',
 	},
+
 	{
-		value: 'disabled',
-		label: 'Disabled',
-		disabled: true,
-	},
-	{
-		value: 'yiminghe',
-		label: 'Yiminghe',
+		value: '3',
+		label: '其他',
 	},
 ]);
 // 数据

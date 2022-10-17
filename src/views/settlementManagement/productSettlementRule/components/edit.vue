@@ -254,6 +254,7 @@ const init = async () => {
 	// 由于产品子类别是否存在需要对其进行判断
 	if (productRuleList.content[0].productSonList.length > 0) {
 		cacheData.value.productSonList = productRuleList.content[0].productSonList;
+		cacheData.value.productSonList.unshift({ productSonId: 0, productSonName: '全部子产品' });
 	} else {
 		cacheData.value.productName = productRuleList.content[0].productName;
 		// formState.productSonType = 'SELF';

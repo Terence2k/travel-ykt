@@ -12,14 +12,14 @@ interface DataItem {
 	healthCode: string;
 	sourceAddress: string;
 	gender: string;
+	insuranceType:string;
 	name: string;
 	certificateNo: string;
 	certificatePicture: string;
 	sourceAddressName: string;
 	specialCertificateType: string;
-	addressId: [];
-	specialCertificatePicture: [];
-	edit: boolean
+	addressId: [],
+	specialCertificatePicture: []
 }
 
 const rules:{[k:string]: any} = {
@@ -27,9 +27,10 @@ const rules:{[k:string]: any} = {
 	certificateNo: [{ required: true, message: '请输入证件号码' }],
 	name: [{ required: true, message: '请输入姓名' }],
 	gender: [{ required: true, message: '请选择性别' }],
+	insuranceType: [{ required: true, message: '请选择险种' }],
 	addressId: [{ required: true, message: '请选择客源地' }]
 }
-export function useTouristInfo(props: any, emits: any): Record<string, any> {
+export function useInsurance(props: any, emits: any): Record<string, any> {
 	const travelStore = useTravelStore()
 	const route = useRoute();
 	const { onCheck } = toRefs(props);
@@ -40,7 +41,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 		editableData: {},
 		startRef: {},
 		cityOptions: [],
-		selectKey: ['certificateType', 'gender', 'specialCertificateType'],
+		selectKey: ['certificateType', 'gender', 'specialCertificateType','insuranceType'],
 		inputKey: ['certificateNo', 'name'],
 		rulesRef: {},
         onSelect: (record: DataItem, selected: boolean, selectedRows: DataItem[]) => {
@@ -85,16 +86,73 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 				dataIndex: 'healthCode',
 				key: 'healthCode',
 			},
-			{
-				title: '特殊证件类型',
-				dataIndex: 'specialCertificateType',
-				key: 'specialCertificateType',
-				data: specialId
-			},
             {
 				title: '证件图片',
 				dataIndex: 'specialCertificatePicture',
 				key: 'specialCertificatePicture',
+			},
+			{
+				title: '选择险种',
+				dataIndex: 'insuranceType',
+				key: 'insuranceType',
+				data: travelStore.insuranceList
+			},
+			{
+				title: '操作',
+				key: 'action',
+				fixed: 'right'
+			}
+		],
+		columns2: [
+			{
+				title: ' 序号 ',
+				key: 'index',
+				width: '80px'
+			},
+			{
+				title: '险种',
+				dataIndex: 'certificateType',
+				key: 'certificateType',
+			},
+			{
+				title: '已购人数',
+				dataIndex: 'certificateNo',
+				key: 'certificateNo'
+			},
+			{
+				title: '保障天数',
+				dataIndex: 'name',
+				key: 'name',
+			},
+			{
+				title: '保险生效时间',
+				dataIndex: 'gender',
+				key: 'gender',
+			},
+			{
+				title: '保险失效时间',
+				dataIndex: 'addressId',
+				key: 'addressId',
+			},
+			{
+				title: '单价（元）',
+				dataIndex: 'healthCode',
+				key: 'healthCode',
+			},
+            {
+				title: '全价（元）',
+				dataIndex: 'specialCertificatePicture',
+				key: 'specialCertificatePicture',
+			},
+			{
+				title: '保险购买渠道',
+				dataIndex: 'insuranceType',
+				key: 'insuranceType',
+			},
+			{
+				title: '保单编号',
+				dataIndex: 'insuranceType',
+				key: 'insuranceType',
 			},
 			{
 				title: '操作',
@@ -157,7 +215,6 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			state.editableData[key] = cloneDeep(
 				state.tableData.filter((item:any, index: number) => key === (item.key ? item.key : item.oid))[0]
 			)
-			state.editableData[key].edit = true
 		},
 		del(key: string) {
 			console.log(key)
@@ -189,7 +246,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 		},
 		add: () => {
 			let key = generateGuid();
-			state.tableData.push({key, edit: true});
+			state.tableData.push({key});
 			methods.edit(key);
 			console.log(state.tableData)
 		},
