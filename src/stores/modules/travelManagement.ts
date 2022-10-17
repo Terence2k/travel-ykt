@@ -87,6 +87,9 @@ export const useTravelStore = defineStore({
       },
       'HOTEL': {
         submitFunc: 'editHotelDetailInfo' 
+      },
+      'TICKET': {
+        submitFunc: 'changeScenicSpotInformation' 
       }
 
     }

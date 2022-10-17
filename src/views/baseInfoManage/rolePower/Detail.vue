@@ -134,6 +134,7 @@
     dialogVisible.value = nVal;
     if (dialogVisible.value) {
       await init();
+      await getMenuList();
     }
 	})
   
@@ -141,9 +142,6 @@
     emit('update:modelValue', nVal);
   });
 
-  onMounted(() => {
-    getMenuList();
-  })
 </script>
 
 <style>
