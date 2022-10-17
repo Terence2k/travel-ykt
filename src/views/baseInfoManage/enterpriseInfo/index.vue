@@ -87,10 +87,56 @@
           <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl" @done="uploadDown">
           </img-upload>
         </a-form-item>
+        <!-- 旅行社特殊字段 -->
         <template v-if="form.businessType == 'TRAVEL'">
           <a-form-item name="businessLicenseUrl1" label="经营许可证">
             <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl1" @done="uploadDown">
             </img-upload>
+          </a-form-item>
+        </template>
+        <!-- 酒店特殊字段 -->
+        <template v-if="form.businessType == 'HOTEL'">
+          <a-form-item name="unitStatus" label="开业状态">
+            <a-radio-group v-model:value="form.unitStatus">
+              <a-radio :value="0">开业</a-radio>
+              <a-radio :value="1">停业</a-radio>
+            </a-radio-group>
+          </a-form-item>
+          <a-form-item name="hotelStarId" label="星级">
+            <a-radio-group v-model:value="form.hotelStarId">
+              <a-radio :value="0">开业</a-radio>
+              <a-radio :value="1">停业</a-radio>
+            </a-radio-group>
+          </a-form-item>
+          <a-form-item name="isReduced" label="是否支持减免">
+            <a-radio-group v-model:value="form.isReduced">
+              <a-radio :value="1">是</a-radio>
+              <a-radio :value="0">否</a-radio>
+            </a-radio-group>
+          </a-form-item>
+          <a-form-item name="reduceRule" label="减免规则">
+            <div style="display: flex;align-items: start;">
+              <div style="display: flex;align-items: center;">
+                <span style="margin: 0 5px;">满</span>
+                <a-input 
+                  placeholder="请配置数字" 
+                  style="width: 150px;"
+                  v-model:value="form.full"
+                  oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')"
+                  @change="setReduceRule"/>
+              </div>
+              <a-form-item name="reduceRule">
+                <div style="display: flex;align-items: center;">
+                  <span style="margin: 0 5px;">减</span>
+                  <a-input 
+                    placeholder="请配置数字" 
+                    style="width: 150px;"
+                    v-model:value="form.minus"
+                    oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')" 
+                    @change="setReduceRule"/>
+                </div>
+              </a-form-item>
+            </div>
           </a-form-item>
         </template>
         <!-- <div class="fail" v-if="failVisible">
@@ -112,7 +158,8 @@
             type="primary"
             html-type="submit"
             style="margin-right:20px"
-            :loading="loading">
+            :loading="loading"
+            v-if="form.informationAuditStatus != 1">
               提交审核
           </a-button>
         </a-form-item>
@@ -135,7 +182,6 @@ import { getUserInfo } from '@/utils/util';
 const formRef = ref()
 const loading = ref(false)
 const enterpriseState = ref()
-// formRules.value = formRules6
 const businessManageOptions = useBusinessManageOption();
 const state = reactive<any>({
   form: {}
@@ -159,7 +205,7 @@ const initOpeion = async () => {
     func = api.getTravelInformation();
     break;
     case 'HOTEL':
-    func = api.getScenicById(userInfo.sysCompany.oid);
+    func = api.getInfoByCompanyId(userInfo.sysCompany.oid);
     break;
     case 'TICKET':
     func = api.getScenicById(userInfo.sysCompany.oid);
@@ -175,8 +221,8 @@ const initOpeion = async () => {
   } else {
     state.form = await func;
   }
-  state.form.addressIds = [companyBo.provinceId, companyBo.cityId, companyBo.areaId];
-  enterpriseState.value = travelStore.enterpriseState[state.form.informationAuditStatus].descriptions;
+  if (companyBo?.cityId) state.form.addressIds = [companyBo.provinceId, companyBo.cityId, companyBo.areaId];
+  enterpriseState.value = travelStore.enterpriseState[state.form.informationAuditStatus]?.descriptions;
   console.log('state.form:', state.form)
 };
 const businessTypeOption = computed(() => businessManageOptions.businessTypeOption);
@@ -210,6 +256,10 @@ const loadData = (selectedOptions:any) => {
   })
 }
 
+const setReduceRule = () => {
+  form.value.reduceRule = `满${form.value.full}减${form.value.minus}`;
+}
+
 const handleChange = (val: any, option: any) => {
 			console.log(val, option)
 			// state.editableData[key].sourceAddress = val[val.length - 1];
@@ -217,7 +267,12 @@ const handleChange = (val: any, option: any) => {
 		}
 
 const submit = () => {
-  const queryData = form.value;
+  let queryData = form.value;
+  if (userInfo.sysCompany.businessType == 'TRAVEL') {
+    queryData = {
+      companyBo: queryData
+    }
+  }
   if (queryData.addressIds?.length) {
     queryData.provinceId = queryData.addressIds[0];
     queryData.cityId = queryData.addressIds[1];
@@ -225,7 +280,7 @@ const submit = () => {
     delete queryData.addressIds;
   }
   console.log('提交表单：', queryData)
-  api[submitFunc.value]({companyBo: queryData}).then((res: any) => {
+  api[submitFunc.value](queryData).then((res: any) => {
     console.log('res:', res);
     message.success('保存成功');
     initOpeion();

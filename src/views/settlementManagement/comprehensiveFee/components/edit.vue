@@ -8,11 +8,8 @@
 			</a-form-item>
 			<a-form-item label="费用归属" name="belongCompany">
 				<a-select v-model:value="formData.data.belongCompany" style="width: 100%" placeholder="请选择费用归属" allowClear>
-					<a-select-option :value="1">旅行社</a-select-option>
-					<a-select-option :value="2">集团</a-select-option>
-					<a-select-option :value="3">监理公司</a-select-option>
-					<a-select-option :value="4">一卡通</a-select-option>
-					<a-select-option :value="5">协会</a-select-option>
+					<a-select-option v-for="(item,index) in businessTypeOption" :value="item.codeValue" :key=index>{{ item.name }}
+					</a-select-option>
 				</a-select>
 			</a-form-item>
 			<a-form-item label="费用说明" name="feeExplanation">
@@ -62,6 +59,8 @@ import api from '@/api';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import { isIntegerNotMust } from '@/utils/validator';
 import { message } from 'ant-design-vue';
+import { useBusinessManageOption } from '@/stores/modules/businessManage';
+const businessManageOptions = useBusinessManageOption();
 const navigatorBar = useNavigatorBar();
 const tstyle = { 'font-weight': '700' };
 const route = useRouter();
@@ -79,6 +78,10 @@ const rulesRef = {
 const formData: any = reactive({
 	data: {}
 });
+const initOption = async () => {
+	await businessManageOptions.getBusinessTypeOption();
+};
+const businessTypeOption = computed(() => businessManageOptions.businessTypeOption);
 //初始化页面
 const initPage = async (): Promise<void> => {
 	// 判断编辑还是新增，自定义面包屑
@@ -139,6 +142,7 @@ const reset = async () => {
 
 onMounted(() => {
 	initPage();
+	initOption();
 });
 </script>
 

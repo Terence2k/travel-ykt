@@ -198,7 +198,7 @@
     })
   }
 
-  const getMenuList = () => {
+  const getMenuList = async () => {
     api.menuList().then((res: any) => {
       ///转换树
       menuTreeDate.value = convertTree(res, {
@@ -222,14 +222,11 @@
     }
   }
 
-  onMounted(() => {
-    getMenuList();
-  })
-
   watch(() => props.modelValue, async (nVal) => {
     dialogVisible.value = nVal;
     if (dialogVisible.value) {
       await init();
+      await getMenuList();
     }
 	})
   
