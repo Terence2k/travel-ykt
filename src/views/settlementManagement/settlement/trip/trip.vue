@@ -32,7 +32,9 @@ import { reactive, onMounted } from 'vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import { Modal } from 'ant-design-vue';
-
+const props = defineProps({
+	params: Object,
+})
 const router = useRouter();
 const columns = [
 	{
@@ -123,12 +125,9 @@ const state = reactive({
 		},
 	},
 	selectedRowKeys: [], //当前选择的标识
-	params: {},
-	operationModal: {
-		isAddOrUpdate: false,
-	},
-	optionRoleList: [],
+
 });
+
 // 当前选择列
 const rowSelection = computed(() => {
 	return {
@@ -150,47 +149,17 @@ const pageSideChange = (current: number, size: number) => {
 };
 
 const onSearch = () => {
-	// api.userList(state.tableData.param).then((res: any) => {
-	// 	console.log('res:', res);
-	// 	state.tableData.data = res.content;
-	// 	state.tableData.total = res.total;
-	// });
+	// state.tableData.loading = true;
+	// let res = await api.getScenicSpotInformationList(state.tableData.param);
+	// const { total, content } = res;
+	// state.tableData.total = total;
+	// const list: [any] = dealData(content);
+	// state.tableData.data = list;
+	// state.tableData.loading = false;
+	console.log(props.params);
 };
-
-const cancel = (): any => {
-	state.operationModal.isAddOrUpdate = false;
-};
-
-// const getRoleList = () => {
-// 	api
-// 		.roleList({
-// 			pageNo: 1,
-// 			pageSize: 100000,
-// 		})
-// 		.then((res: any) => {
-// 			console.log('角色列表:', res);
-// 			state.optionRoleList = res.content.map((item: any) => {
-// 				return {
-// 					roleName: item.roleName,
-// 					roleId: item.oid,
-// 				};
-// 			});
-// 		});
-// };
-
-const addOrUpdate = (param: any) => {
-	console.log('state.operationModal.isAddOrUpdate:', state.operationModal.isAddOrUpdate);
-
-	const { row, handle } = param;
-	console.log(row);
-	console.log(handle);
-
-	state.params = {};
-	if (handle === 'update') {
-		state.params = row;
-	}
-	state.operationModal.isAddOrUpdate = true;
-};
+// 向父组件暴露方法
+defineExpose({ onSearch });
 
 // 下团结算
 const settlement = (type: string, record: any) => {

@@ -37,6 +37,9 @@ import { reactive, onMounted } from 'vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import { Modal } from 'ant-design-vue';
+const props = defineProps({
+	params: Object,
+})
 const router = useRouter();
 const columns = [
 	{
@@ -136,11 +139,6 @@ const state = reactive({
 		},
 	},
 	selectedRowKeys: [],
-	params: {},
-	operationModal: {
-		isAddOrUpdate: false,
-	},
-	optionRoleList: [],
 });
 
 // 当前选择列
@@ -165,17 +163,17 @@ const pageSideChange = (current: number, size: number) => {
 };
 
 const onSearch = () => {
-	// api.userList(state.tableData.param).then((res: any) => {
-	// 	console.log('res:', res);
-	// 	state.tableData.data = res.content;
-	// 	state.tableData.total = res.total;
-	// });
+	// state.tableData.loading = true;
+	// let res = await api.getScenicSpotInformationList(state.tableData.param);
+	// const { total, content } = res;
+	// state.tableData.total = total;
+	// const list: [any] = dealData(content);
+	// state.tableData.data = list;
+	// state.tableData.loading = false;
+	console.log(props.params);
 };
-
-const cancel = (): any => {
-	state.operationModal.isAddOrUpdate = false;
-};
-
+// 向父组件暴露方法
+defineExpose({ onSearch })
 
 // 审核通过
 const examine = (type: string, record: any) => {
