@@ -10,21 +10,21 @@
 			<a-form-item label="费用归属">
 				<span>{{ formData.data.belongCompanyName }}</span>
 			</a-form-item>
-			<a-form-item label="是否必收费用">
-				<span>{{ formData.data.confirmNeedFeeTypeName }}</span>
-			</a-form-item>
 			<a-form-item label="费用说明">
 				<span>{{ formData.data.feeExplanation || '' }}</span>
 			</a-form-item>
 			<a-form-item label="状态">
 				<span>{{ formData.data.statusName }}</span>
 			</a-form-item>
-			<div class="title">扣费规则</div>
+			<div class="title">收费规则</div>
 			<a-form-item label="收费模式">
 				<span>{{ formData.data.feeModel == 0 ? '人数' : '价格' }}</span>
 			</a-form-item>
 			<a-form-item label="收费金额">
 				<span>{{ (formData.data.feeNumber || '') + ( formData.data.feeModel == 0 ? ' 元/人' : ' 元' ) }}</span>
+			</a-form-item>
+			<a-form-item label="是否按天收费">
+				<span>{{ formData.data.confirmDailyChargeName }}</span>
 			</a-form-item>
 		</a-form>
 		<div class="footer">

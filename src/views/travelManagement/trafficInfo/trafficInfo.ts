@@ -15,6 +15,7 @@ interface DataItem {
 	time: string,
 	endDate: string,
 	startDate: string
+	edit: boolean
 }
 
 const rules = {
@@ -117,6 +118,7 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 			state.editableData[key] = cloneDeep(
 				state.tableData.filter((item:any, index: number) => key === (item.key ? item.key : item.oid))[0]
 			)
+			state.editableData[key].edit = true
 		},
 		del(key: string) {
 			state.tableData.splice(key, 1)
@@ -140,12 +142,11 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 		},
 		add: () => {
 			let key = generateGuid();
-			state.tableData.push({key});
+			state.tableData.push({key, edit: true});
 			methods.edit(key);
 			console.log(state.tableData)
 		},
 		handleTime(event: any, key: string) {
-			console.log(event, key)
 			state.editableData[key].startDate = event[0];
 			state.editableData[key].endDate = event[1];
 		}
