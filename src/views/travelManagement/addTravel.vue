@@ -109,12 +109,12 @@ const saveItinerary = (val: any) => {
 			travelContract: 'http://test.jpg',
 		},
 		basicParam: val.basicParam || {},
-		guideList: travelStore.guideList,
+		guideList: travelStore.guideList.filter((it:any) => it.edit),
 		itineraryInfoParam: {
 			compositeProducts: travelStore.compositeProducts,
 		},
-		touristList: travelStore.touristList,
-		transportList: travelStore.trafficList,
+		touristList: travelStore.touristList.filter((it:any) => it.edit),
+		transportList: travelStore.trafficList.filter((it:any) => it.edit),
 	}).then((res: any) => {
 		message.success(res.message);
 	});
