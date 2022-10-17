@@ -46,7 +46,7 @@
 				<template #bodyCell="{ column, record ,index}">
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a href="javascript:;" @click="editItem(record,index)">调整费用</a>
+							<!-- <a href="javascript:;" @click="editItem(record,index)">调整费用</a> -->
 							<a href="javascript:;" @click="itemDetail(record.oid)">结算明细</a>
 						</div>
 					</template>
@@ -61,7 +61,7 @@
 		</div>
 	</div>
 	<detail-modal v-model="adjustData.detailShow" :params="adjustData.modalParams" />
-	<adjust-modal v-model="adjustData.editShow" @submit="adjustConfirm" :params="adjustData.modalParams" />
+	<!-- <adjust-modal v-model="adjustData.editShow" @submit="adjustConfirm" :params="adjustData.modalParams" /> -->
 </template>
 
 <script lang="ts" setup>
@@ -201,35 +201,35 @@ const toPass = (() => {
 		onCancel() {},
 	});
 })
-// 调整费用
-const editItem = ((record: any,index: any) => {
-    console.log('调整费用id',record,index);
-	adjustData.value.editIndex = index;
-    adjustData.value.editShow = true;
-	adjustData.value.modalParams = { from: lodash.cloneDeep(record) };
-})
 // 结算明细
 const itemDetail = ((oid: any) => {
-    adjustData.value.detailShow = true;
+	adjustData.value.detailShow = true;
 	adjustData.value.modalParams = { oid };
-})
-// 调整费用模态框关闭回调 此时调用接口
-const adjustConfirm = ((e: any) => {
-    console.log('我回来了');
-    console.log(e.form.price);
-	message.success('保存成功');
-	formData.list[adjustData.value.editIndex].price = e.form.price;
-    // 
 })
 //初始化页面
 const initPage = async (): Promise<void> => {
 	// api.getcomprehensiveFeeDetail(route.currentRoute.value?.query?.oid).then((res: any) => {
-	// 	formData.data = res;
-	// });
+		// 	formData.data = res;
+		// });
 };
 onMounted(() => {
 	initPage();
 })
+// 调整费用
+// const editItem = ((record: any,index: any) => {
+//     console.log('调整费用id',record,index);
+// 	adjustData.value.editIndex = index;
+//     adjustData.value.editShow = true;
+// 	adjustData.value.modalParams = { from: lodash.cloneDeep(record) };
+// })
+// 调整费用模态框关闭回调 此时调用接口
+// const adjustConfirm = ((e: any) => {
+	//     console.log('我回来了');
+	//     console.log(e.form.price);
+	// 	message.success('保存成功');
+	// 	formData.list[adjustData.value.editIndex].price = e.form.price;
+//     // 
+// })
 </script>
 
 <style lang="less" scoped>
