@@ -21,6 +21,7 @@ import touristInfo from './touristInfo/touristInfo.vue';
 import traveInfo from './traveInfo/traveInfo.vue';
 import trafficInfo from './trafficInfo/trafficInfo.vue';
 import fileInfo from './fileInfo/fileInfo.vue';
+import insurance from './insurance/insurance.vue'
 import { cloneDeep, debounce } from 'lodash';
 import api from '@/api';
 import { message } from 'ant-design-vue';
@@ -53,6 +54,10 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
     {
       name: fileInfo,
       label: '附件上传'
+    },
+    {
+      name: insurance,
+      label: '确认保险'
     }
   ]
   let rulesPass = reactive<{[k:string]:any}>([])
@@ -79,8 +84,15 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
   watch(obj, (newVal) => {
     debounceFun(newVal.data)
   })
+  // 保存
   const getTraveDetail = () => {
-    if (!route.query.id) return
+    if (!route.query.id) {
+      travelStore.setBaseInfo({});
+      travelStore.setGuideList([]);
+      travelStore.setTouristList([]);
+      travelStore.setTrafficList([]);
+      return
+    } 
     api.travelManagement.getItineraryDetail({
       oid: route.query.id,
       pageNo: 1,

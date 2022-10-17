@@ -25,8 +25,8 @@
 			</search-item>
 
 			<template #button>
+				<a-button style="margin-right:30px" @click="reset">重置</a-button>
 				<a-button @click="query">查询</a-button>
-				<a-button style="margin-left:30px" @click="reset">重置</a-button>
 			</template>
 		</CommonSearch>
 
