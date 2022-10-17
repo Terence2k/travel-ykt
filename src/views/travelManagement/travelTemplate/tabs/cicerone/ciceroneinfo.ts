@@ -91,6 +91,7 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 
 	const methods = {
 		copyData(key:any) {
+			// Object.assign方法用于将所有可枚举属性的值从一个或多个源对象复制到目标对象
 			Object.assign(
 				state.tableData.filter((item:any) => key === (item.key ? item.key : item.oid))[0], 
 				state.editableData[key]
@@ -105,6 +106,7 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 		},
 		edit: (key: string) => {
 			const cur = cloneDeep(
+				// filter用于对数组进行过滤。创建一个新数组，新数组中的元素是通过检查指定数组中符合条件的所有元素。
 				state.tableData.filter((item:any) => key === (item.key ? item.key : item.oid))[0]
 			);
 			cur.time = cur.startDate && 
@@ -145,6 +147,7 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 		},
 
 		add: () => {
+			// 生成随机id
 			let key = generateGuid();
 			state.tableData.push({key});
 			methods.edit(key);

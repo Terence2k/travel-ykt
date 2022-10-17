@@ -4,31 +4,26 @@
 		<div class="body">
 			<a-form ref="formRef" :model="formValidate" :rules="rules" :label-col="{ span: 2 }" :wrapper-col="{ span: 8, offset: 1 }" labelAlign="left">
 				<a-form-item label="演出票名称" name="username">
-					<a-input  disabled placeholder="无需填写"/>
+					<a-input />
 				</a-form-item>
 				<a-form-item label="演出节目选择" name="roleIds">
-					<a-input  disabled placeholder="无需填写"/>
+					<a-select ref="select" mode="multiple"> </a-select>
 				</a-form-item>
 				<a-form-item label="演出描述" name="account">
 					<a-textarea :rows="4" placeholder="请输入内容" :maxlength="6" />
 				</a-form-item>
 				<a-form-item label="归属景区" name="mobile">
-					<a-input  disabled placeholder="无需填写"/>
+					<a-select allowClear ref="select" style="width: 200px" placeholder="请选择归属景区">
+						<a-select-option :value="-1">未提交</a-select-option>
+						<a-select-option :value="0">待审核 </a-select-option>
+						<a-select-option :value="1"> 审核通过</a-select-option>
+						<a-select-option :value="2"> 审核未通过</a-select-option>
+					</a-select>
 				</a-form-item>
-				<a-form-item label="分区" name="mobile">
-					<a-input  disabled placeholder="无需填写"/>
-				</a-form-item>
-				<a-form-item label="库存" name="mobile">
-					<a-input  disabled placeholder="无需填写"/>
-				</a-form-item>
-				<a-form-item label="价格" name="mobile">
-					<a-input  disabled placeholder="无需填写"/>
-				</a-form-item>
-				<a-form-item label="开始时间" name="mobile">
-					<a-input  disabled placeholder="无需填写"/>
-				</a-form-item>
-				<a-form-item label="结束时间" name="mobile">
-					<a-input  disabled placeholder="无需填写"/>
+
+				<a-form-item label="价格&库存" name="userStatus">
+					<a-button type="primary" @click="edit()">编辑价格&库存</a-button>
+					<a-span class="span">需配置各个分区的价格</a-span>
 				</a-form-item>
 				<div class="footer">
 					<div class="tooter-btn">
@@ -48,7 +43,13 @@
 						{{ record.partition }}
 					</template>
 					<template v-if="column.key === 'stock'">
-						<a-input v-model:value="record.stock" style="width: 150px"  :placeholder="record.stockMax" @change="aa" oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')" />
+						<a-input
+							v-model:value="record.stock"
+							style="width: 150px"
+							:placeholder="record.stockMax"
+							@change="aa"
+							oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')"
+						/>
 					</template>
 					<template v-if="column.key === 'price'">
 						<a-input v-model:value="record.price" style="width: 150px" :placeholder="record.priceMax" />
@@ -97,22 +98,22 @@ const state = reactive({
 				partition: '普通座',
 				stock: '',
 				price: '',
-				stockMax:'最大2000',
-				priceMax:'200元'
+				stockMax: '最大2000',
+				priceMax: '200元',
 			},
 			{
 				partition: 'VIP座',
 				stock: '',
 				price: '',
-				stockMax:'最大1000',
-				priceMax:'200元'
+				stockMax: '最大1000',
+				priceMax: '200元',
 			},
 			{
 				partition: 'SVIP座',
 				stock: '',
 				price: '',
-				stockMax:'最大500',
-				priceMax:'200元'
+				stockMax: '最大500',
+				priceMax: '200元',
 			},
 		],
 	},
@@ -134,23 +135,20 @@ const columns = [
 		key: 'price',
 	},
 ];
-const save=()=>{
-	console.log(state.tableDate.data,'111111')
-}
-const aa=()=>{
-	if(Number(state.tableDate.data[0].stock)>2000)
-	{
-		state.tableDate.data[0].stock='2000'
+const save = () => {
+	console.log(state.tableDate.data, '111111');
+};
+const aa = () => {
+	if (Number(state.tableDate.data[0].stock) > 2000) {
+		state.tableDate.data[0].stock = '2000';
 	}
-	if(Number(state.tableDate.data[1].stock)>1000)
-	{
-		state.tableDate.data[1].stock='1000'
+	if (Number(state.tableDate.data[1].stock) > 1000) {
+		state.tableDate.data[1].stock = '1000';
 	}
-	if(Number(state.tableDate.data[2].stock)>500)
-	{
-		state.tableDate.data[2].stock='500'
+	if (Number(state.tableDate.data[2].stock) > 500) {
+		state.tableDate.data[2].stock = '500';
 	}
-}
+};
 const handleOk = async (callback: Function) => {};
 const edit = () => {
 	dialogVisible.value = true;
@@ -195,7 +193,7 @@ const edit = () => {
 	height: 100px;
 	border: 1px solid red;
 }
-.price{
+.price {
 	margin-left: 20px;
 }
 </style>

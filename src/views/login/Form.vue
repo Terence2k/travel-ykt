@@ -36,6 +36,7 @@
 <script setup lang="ts">
 import { Icon } from '@/components/index';
 import api from '@/api';
+import { message } from 'ant-design-vue';
 
 const loading = ref(false);
 
@@ -89,10 +90,14 @@ const handleFinish = async (values: any) => {
     console.log(res)
     window.localStorage.setItem('authorization', `${res.authorization}`);
     window.localStorage.setItem('userInfo', JSON.stringify(res));
-    router.replace({
-      path: res.sysMenuVos[0].childMenuList[0].url || '/',
-      query: state.otherQuery,
-    });
+    if (res.sysMenuVos[0]) {
+      router.replace({
+        path: res.sysMenuVos[0].childMenuList[0].url || '/',
+        query: state.otherQuery,
+      });
+    } else {
+      message.error('该用户没有菜单列表')
+    }
   }).catch(err => {
     console.log(err)
   })

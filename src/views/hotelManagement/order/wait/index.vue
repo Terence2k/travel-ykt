@@ -22,13 +22,13 @@
 		<BaseModal :title="'审核'" v-model="visible">
 			<a-form>
 				<a-form-item label="状态">
-					<a-radio-group>
+					<a-radio-group v-model:value="state.tableData.type">
 						<a-radio value="1">通过</a-radio>
 						<a-radio value="2">不通过</a-radio>
 					</a-radio-group>
 				</a-form-item>
 				<a-form-item label="">
-					<a-textarea placeholder="审核不通过原因" :rows="4" disabled />
+					<a-textarea placeholder="审核不通过原因" :rows="4" :disabled="state.tableData.type == 1" />
 				</a-form-item>
 			</a-form>
 			<template v-slot:footer>
@@ -59,41 +59,50 @@ const columns = [
 		key: 'a',
 	},
 	{
-		title: '旅行社名称',
+		title: '入住时间',
 		dataIndex: 'b',
 		key: 'b',
 	},
 	{
-		title: '预定时间',
+		title: '离店时间',
 		dataIndex: 'c',
 		key: 'c',
 	},
 	{
-		title: '入住时间',
+		title: '预定人数',
 		dataIndex: 'd',
 		key: 'd',
 	},
 	{
-		title: '离店时间',
+		title: '预定房数',
 		dataIndex: 'e',
 		key: 'e',
 	},
 	{
-		title: '预定房数',
+		title: '减免人数',
 		dataIndex: 'f',
 		key: 'f',
 	},
 	{
-		title: '减免人数',
+		title: '费用（元）',
 		dataIndex: 'g',
 		key: 'g',
 	},
 	{
-		title: '费用(元)',
+		title: '核销房数',
 		dataIndex: 'h',
 		key: 'h',
 	},
-
+	{
+		title: '核销时间',
+		dataIndex: 'i',
+		key: 'i',
+	},
+	{
+		title: '实际费用',
+		dataIndex: 'm',
+		key: 'm',
+	},
 	{
 		title: '操作',
 		dataIndex: 'actions',
@@ -105,14 +114,28 @@ const columns = [
 
 const data = [
 	{
-		a: '1',
-		b: '1',
-		c: '1',
-		d: '1',
-		e: '1',
-		f: '1',
-		g: '1',
-		h: '2',
+		a: 'YNLJ135680',
+		b: '2022.2.23',
+		c: '2022.2.24',
+		d: '30',
+		e: '25',
+		f: '2',
+		g: '1100',
+		h: '20',
+		i: '2022.2.23  19:30',
+		m: '1000',
+	},
+	{
+		a: 'YNLJ135680',
+		b: '2022.2.23',
+		c: '2022.2.24',
+		d: '30',
+		e: '25',
+		f: '2',
+		g: '1100',
+		h: '20',
+		i: '2022.2.23  19:30',
+		m: '1000',
 	},
 ];
 
@@ -128,6 +151,7 @@ const state = reactive({
 			name: null,
 			auditStatus: null,
 		},
+		type: '1',
 	},
 });
 

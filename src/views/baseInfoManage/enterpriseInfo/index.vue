@@ -4,15 +4,15 @@
       <span>
         我的企业基本信息
       </span>
-      <!-- <span class="enterprise_state">
+      <span class="enterprise_state">
         {{ enterpriseState }}
-      </span> -->
+      </span>
     </div>
     <div class="form_body">
       <a-form ref="formRef" :model="form" :rules="formRules" name="add-business" autocomplete="off" labelAlign="left"
-        :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
+        :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }" hideRequiredMark @finish="submit">
         <a-form-item name="businessType" label="企业类型">
-          <a-select v-model:value="form.businessType" placeholder="请选择企业类型" @change="optionChange">
+          <a-select v-model:value="form.businessType" placeholder="请选择企业类型" @change="optionChange" disabled>
             <a-select-option v-for="item in businessTypeOption" :value="item.codeValue" :key="item.codeValue">{{
             item.name }}
             </a-select-option>
@@ -87,10 +87,12 @@
           <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl" @done="uploadDown">
           </img-upload>
         </a-form-item>
-        <a-form-item name="businessLicenseUrl1" label="经营许可证" v-if="form.businessType == 'TRAVEL'">
-          <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl1" @done="uploadDown">
-          </img-upload>
-        </a-form-item>
+        <template v-if="form.businessType == 'TRAVEL'">
+          <a-form-item name="businessLicenseUrl1" label="经营许可证">
+            <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl1" @done="uploadDown">
+            </img-upload>
+          </a-form-item>
+        </template>
         <!-- <div class="fail" v-if="failVisible">
           <div class="header">
             <div class="enterprise_state">信息变更申请被驳回！</div>
@@ -106,7 +108,13 @@
           </div>
         </div> -->
         <a-form-item>
-          <a-button type="primary" @click="submit" style="margin-right:20px" :loading="loading">提交审核</a-button>
+          <a-button
+            type="primary"
+            html-type="submit"
+            style="margin-right:20px"
+            :loading="loading">
+              提交审核
+          </a-button>
         </a-form-item>
       </a-form>
     </div>
@@ -121,11 +129,12 @@ import { useBusinessManageOption } from '@/stores/modules/businessManage';
 import type { Rule } from 'ant-design-vue/es/form';
 import { message } from 'ant-design-vue';
 import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
+import { useTravelStore } from '@/stores/modules/travelManagement';
+import { getUserInfo } from '@/utils/util';
 
 const formRef = ref()
 const loading = ref(false)
-const enterpriseState = ref('信息不完善，待补充。')
-const formRules = ref<Record<string, Rule[]>>({})
+const enterpriseState = ref()
 // formRules.value = formRules6
 const businessManageOptions = useBusinessManageOption();
 const state = reactive<any>({
@@ -133,17 +142,42 @@ const state = reactive<any>({
 })
 const cityOptions: Ref<Array<any>> = ref([]);
 const { form } = toRefs(state);
+const travelStore = useTravelStore();
+const formRules: Record<string, Rule[]> = {
+  businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
+}
+const userInfo = getUserInfo();
+const submitFunc = ref();
 
 const initOpeion = async () => {
   await businessManageOptions.getBusinessTypeOption();
-  let { accountBalance, delegateGuide, createTime, group, companyBo } = await api.getTravelInformation();
-  state.form = companyBo;
-  state.form.accountBalance = accountBalance;
-  state.form.delegateGuide = delegateGuide;
-  state.form.createTime = createTime;
-  state.form.group = group;
+  submitFunc.value = travelStore.businessTypeOptions[userInfo.sysCompany.businessType].submitFunc;
+  let func = null;
+  console.log('userInfo.sysCompany.businessType:', userInfo.sysCompany.businessType)
+  switch (userInfo.sysCompany.businessType) {
+    case 'TRAVEL':
+    func = api.getTravelInformation();
+    break;
+    case 'HOTEL':
+    func = api.getScenicById(userInfo.sysCompany.oid);
+    break;
+    case 'TICKET':
+    func = api.getScenicById(userInfo.sysCompany.oid);
+    break;
+  }
+  let { accountBalance, delegateGuide, createTime, group, companyBo } = await func;
+  if (companyBo) {
+    state.form = companyBo;
+    state.form.accountBalance = accountBalance;
+    state.form.delegateGuide = delegateGuide;
+    state.form.createTime = createTime;
+    state.form.group = group;
+  } else {
+    state.form = await func;
+  }
   state.form.addressIds = [companyBo.provinceId, companyBo.cityId, companyBo.areaId];
-  console.log('state.form.addressIds:', state.form.addressIds)
+  enterpriseState.value = travelStore.enterpriseState[state.form.informationAuditStatus].descriptions;
+  console.log('state.form:', state.form)
 };
 const businessTypeOption = computed(() => businessManageOptions.businessTypeOption);
 const uploadDown = () => {
@@ -191,14 +225,13 @@ const submit = () => {
     delete queryData.addressIds;
   }
   console.log('提交表单：', queryData)
-  api.submitInformationAudit({companyBo: queryData}).then((res: any) => {
+  api[submitFunc.value]({companyBo: queryData}).then((res: any) => {
     console.log('res:', res);
     message.success('保存成功');
     initOpeion();
   }).catch((err: any) => {
     console.error(err);
   })
-  // formRef.value.validateFields().then(() => { })
 }
 getCityList('0/1', 0).then(res => {
   cityOptions.value = res;
