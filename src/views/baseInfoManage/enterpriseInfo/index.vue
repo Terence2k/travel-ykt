@@ -211,17 +211,9 @@ const initOpeion = async () => {
     func = api.getScenicById(userInfo.sysCompany.oid);
     break;
   }
-  let { accountBalance, delegateGuide, createTime, group, companyBo } = await func;
-  if (companyBo) {
-    state.form = companyBo;
-    state.form.accountBalance = accountBalance;
-    state.form.delegateGuide = delegateGuide;
-    state.form.createTime = createTime;
-    state.form.group = group;
-  } else {
-    state.form = await func;
-  }
-  if (companyBo?.cityId) state.form.addressIds = [companyBo.provinceId, companyBo.cityId, companyBo.areaId];
+  let data = await func;
+  state.form = { ...data, ...data.companyBo};
+  if (state.form?.areaId) state.form.addressIds = [state.form.provinceId, state.form.cityId, state.form.areaId];
   enterpriseState.value = travelStore.enterpriseState[state.form.informationAuditStatus]?.descriptions;
   console.log('state.form:', state.form)
 };
@@ -280,6 +272,7 @@ const submit = () => {
     delete queryData.addressIds;
   }
   console.log('提交表单：', queryData)
+  console.log('submitFunc', submitFunc.value)
   api[submitFunc.value](queryData).then((res: any) => {
     console.log('res:', res);
     message.success('保存成功');
