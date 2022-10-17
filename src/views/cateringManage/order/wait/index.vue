@@ -1,10 +1,15 @@
 <template>
 	<div>
-		<CommonTable :dataSource="state.tableData.data" rowKey="id" :columns="columns">
+		<CommonTable :dataSource="data" rowKey="id" :columns="columns">
 			<template #button>
-				<a-button type="primary" >导出</a-button>
+				<a-button type="primary">导出</a-button>
 			</template>
-			<template #bodyCell="{ column }">
+			<template #bodyCell="{ column, index }">
+				<template v-if="column.key === 'index'">
+					<div>
+						{{ index + 1 }}
+					</div>
+				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a @click="opendetailPage">查看</a>
@@ -30,42 +35,69 @@ import api from '@/api';
 
 const router = useRouter();
 const columns = [
-	{ title: '序号', dataIndex: 'oid', width: 70, key: 'arrange' },
 	{
-		title: '用户姓名',
+		title: ' 序号 ',
+		key: 'index',
+		width: '80px',
+	},
+	{
+		title: '行程单号',
 		dataIndex: 'username',
 		key: 'username',
 	},
 	{
-		title: '手机号',
+		title: '旅行社名称',
 		dataIndex: 'mobile',
 		key: 'mobile',
 	},
 	{
-		title: '所属单位类型',
+		title: '预定时间',
 		dataIndex: 'unitTypeName',
 		key: 'unitTypeName',
 	},
 	{
-		title: '所属单位',
+		title: '就餐日期',
 		dataIndex: 'unitName',
 		key: 'unitName',
 	},
 	{
-		title: '所属角色',
+		title: '产品管理',
 		dataIndex: 'roleList',
 		key: 'roleList',
 	},
 	{
-		title: '状态',
+		title: '单价',
 		dataIndex: 'userStatusName',
 		key: 'userStatusName',
+	},
+	{
+		title: '预定人数',
+		dataIndex: 'ae',
+		key: 'ae',
+	},
+	{
+		title: '费用(元)',
+		dataIndex: 's',
+		key: 's',
 	},
 	{
 		title: '操作',
 		key: 'action',
 		fixed: 'right',
 		width: 208,
+	},
+];
+
+const data = [
+	{
+		username: 'YNLJ135680',
+		mobile: '黑白水旅行社',
+		unitTypeName: '2022.2.25  13:30',
+		unitName: '2022.2.25',
+		roleList: '雪山行午餐包',
+		userStatusName: '30',
+		ae: '30',
+		s: '1100',
 	},
 ];
 
@@ -146,7 +178,7 @@ const addOrUpdate = (param: any) => {
 };
 
 const opendetailPage = () => {
-	router.push({ path: '/catering/order_Management/order_detail'});
+	router.push({ path: '/catering/order_Management/order_detail' });
 };
 
 onMounted(() => {

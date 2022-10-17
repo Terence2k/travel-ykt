@@ -95,6 +95,37 @@ export default [
 				],
 			},
 			{
+				path: 'multicast',
+				redirect: '/scenic-spot/multicast/list',
+				name: 'multicast',
+				meta: {
+					title: '联票',
+				},
+				children: [
+					{
+						path: 'edit',
+						// component: () => import('@/views/scenicSpot/multicastTick/components/edit.vue'),
+						component: () => import('@/views/scenicSpot/multicastTick/components/edit.vue'),
+						name: 'multicast-edit',
+						meta: {
+							title: '编辑',
+							activeMeun: 'multicast',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'list',
+						component: () => import('@/views/scenicSpot/multicastTick/index.vue'),
+						name: 'multicast-list',
+						meta: {
+							title: '列表',
+							activeMeun: 'multicast',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
+			{
 				path: 'showTickets',
 				name: 'showTickets',
 				redirect: '/scenic-spot/showTickets/list',

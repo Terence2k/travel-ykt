@@ -2,7 +2,7 @@ export default [
 	{
 		path: '/catering',
 		name: '',
-		redirect: '/catering/basic_Information',
+		redirect: '/catering/product_Management',
 		meta: {
 			title: '餐饮管理',
 		},

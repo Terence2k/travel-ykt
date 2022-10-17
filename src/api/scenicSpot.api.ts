@@ -109,3 +109,11 @@ export async function singleVoteDel(id: number) {
 		method: 'delete',
 	});
 }
+//景区场馆 分页查询场馆信
+export async function getShowVenueList(data: any) {
+	return request({
+		url: commonPath + `/ticket-service/public/api/scenic-venue`,
+		method: 'get',
+		data,
+	});
+}
