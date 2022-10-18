@@ -117,7 +117,14 @@ export async function getShowVenueList(data: any) {
 		data,
 	});
 }
-
+//核销时间段列表
+export async function getWriteOffTimeList(data: any) {
+	return request({
+		url: commonPath + `/ticket-service/public/api/scenic-verif-manage/page`,
+		method: 'get',
+		data,
+	});
+}
 //景区订单 分页查询场馆信
 export async function getViewOrderList(data: any) {
 	return request({
