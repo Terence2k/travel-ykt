@@ -224,8 +224,8 @@ const rowSelection = computed(() => {
 		onSelectAll: (selected: boolean, selectedRows: DataSourceItem[], changeRows: DataSourceItem[]) => {
 			console.log(selected, selectedRows, changeRows);
 		},
-	}
-})
+	};
+});
 
 const tableState = reactive({
 	tableData: {
@@ -281,7 +281,7 @@ const openEditPage = (oid: number) => {
 };
 
 const openDisplayPage = () => {
-	router.push({ path: '/hotelManagement/hotelBaseInfo/hotelStarDisplay', query: { id: '1' } });
+	router.push({ path: '/hotelManagement/hotelBaseInfo/hotelStarDisplay', query: { id: oid } });
 	console.log('open display page');
 };
 
