@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { GroupMode, GroupStatus, Gender, GuideType, FeeModel } from '@/enum';
+import { GroupMode, GroupStatus, Gender, GuideType, FeeModel,insuranceType} from '@/enum';
 import api from '@/api/index';
 interface TraveDataItem {
 	groupType: GroupMode.All | GroupMode.TeamGroup |GroupMode.NoTeamGroup;
@@ -40,6 +40,16 @@ export const useTravelStore = defineStore({
 				codeValue: Gender.Madam
 			}
 		],
+		insuranceList: [
+			{
+				name: '旅责险',
+				codeValue: insuranceType.brigade
+			},
+			{
+				name: '意外险',
+				codeValue: insuranceType.accident
+			}
+		],
 		IDCard: [],
 		specialId: [],
 		trafficType: [],
@@ -62,7 +72,37 @@ export const useTravelStore = defineStore({
 		feeModel: {
 			[FeeModel.Number]: '人数',
 			[FeeModel.Price]: '价格'
-		}
+		},
+    enterpriseState: [
+      {
+        stateName: '未提交',
+        descriptions: '信息不完善，待补充。'
+      },
+      {
+        stateName: '待审核',
+        descriptions: '已提交信息变更审核，请耐心等待。'
+      },
+      {
+        stateName: '审核通过',
+        descriptions: ''
+      },
+      {
+        stateName: '审核未通过',
+        descriptions: '信息变更申请被驳回！'
+      }
+    ],
+    businessTypeOptions: {
+      'TRAVEL': {
+        submitFunc: 'submitInformationAudit'
+      },
+      'HOTEL': {
+        submitFunc: 'editHotelDetailInfo' 
+      },
+      'TICKET': {
+        submitFunc: 'changeScenicSpotInformation' 
+      }
+
+    }
 	}),
 	getters: {
 		// count(): string {

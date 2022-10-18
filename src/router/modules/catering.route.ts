@@ -8,43 +8,43 @@ export default [
 		},
 		component: () => import('@/components/layout/index.vue'),
 		children: [
-			// {
-			// 	path: 'basic_Information',
-			// 	name: 'basicInformation',
-			// 	redirect: '/catering/basic_Information/index',
-			// 	meta: {
-			// 		title: '基础信息管理',
-			// 	},
-			// 	children: [
-			// 		{
-			// 			path: 'index',
-			// 			name: 'index',
-			// 			component: () => import('@/views/cateringManage/basicInformation/index.vue'),
-			// 			meta: {
-			// 				title: '',
-			// 				isDetail: true,
-			// 			},
-			// 		},
-			// 		{
-			// 			path: 'basic_edit',
-			// 			component: () => import('@/views/cateringManage/basicInformation/edit.vue'),
-			// 			name: 'basic_edit',
-			// 			meta: {
-			// 				title: '编辑',
-			// 				isDetail: true,
-			// 			},
-			// 		},
-			// 		{
-			// 			path: 'basic_info',
-			// 			component: () => import('@/views/cateringManage/basicInformation/info.vue'),
-			// 			name: 'basic_info',
-			// 			meta: {
-			// 				title: '查看',
-			// 				isDetail: true,
-			// 			},
-			// 		},
-			// 	],
-			// },
+			{
+				path: 'basic_Information',
+				name: 'basicInformation',
+				redirect: '/catering/basic_Information/index',
+				meta: {
+					title: '基础信息管理',
+				},
+				children: [
+					{
+						path: 'index',
+						name: 'index',
+						component: () => import('@/views/cateringManage/basicInformation/index.vue'),
+						meta: {
+							title: '',
+							isDetail: true,
+						},
+					},
+					{
+						path: 'basic_edit',
+						component: () => import('@/views/cateringManage/basicInformation/edit.vue'),
+						name: 'basic_edit',
+						meta: {
+							title: '编辑',
+							isDetail: true,
+						},
+					},
+					{
+						path: 'basic_info',
+						component: () => import('@/views/cateringManage/basicInformation/info.vue'),
+						name: 'basic_info',
+						meta: {
+							title: '查看',
+							isDetail: true,
+						},
+					},
+				],
+			},
 			{
 				path: 'product_Management',
 				name: 'productManagement',

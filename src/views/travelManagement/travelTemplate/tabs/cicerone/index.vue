@@ -19,7 +19,7 @@
 						<div>
 							<a-form-item 
 								v-if="editableData[record.key ? record.key : record.oid]" 
-								:name="[record.key ? record.key : record.oid, column.key]">
+								:name="[record.key ? record.key : record.oid, 'time']">
 									<a-range-picker
 										v-model:value="editableData[record.key ? record.key : record.oid][column.key]"
 										show-time

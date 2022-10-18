@@ -13,15 +13,14 @@
 		</template>
 	</CommonSearch>
 	<div class="table-area">
-		<div class="list-btn">
-			<a-button type="primary" class="success" @click="add()">新增</a-button>
-		</div>
 		<CommonTable :dataSource="dataSource" :columns="columns">
 			<template #bodyCell="{ column,index }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a href="javascript:;" @click="toEditPage()">编辑</a>
 						<a href="javascript:;" @click="del(index)">删除</a>
+						<a href="javascript:;">价格日历</a>
+						<a href="javascript:;">库存日历</a>
 						<a>下架申请</a>
 					</div>
 				</template>
@@ -86,7 +85,7 @@ const columns = [
 		title: '操作',
 		key: 'action',
 		fixed: 'right',
-		width: 208,
+		widthmin: 350,
 	},
 ];
 

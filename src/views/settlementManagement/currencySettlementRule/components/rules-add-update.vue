@@ -13,7 +13,7 @@
 					ref="select"
 					v-model:value="formValidate.companyType"
 					style="width: 100%"
-					:options="state.prepaidCompanyList.map((item) => ({ value: item.value, label: item.name }))"
+					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.codeValue, label: item.name }))"
 				>
 				</a-select>
 			</a-form-item>
@@ -63,6 +63,8 @@ import { isIntegerNotMust, isBtnZeroToHundred } from '@/utils/validator';
 import { Ref } from 'vue';
 import lodash from 'lodash';
 import { message } from 'ant-design-vue';
+import { useGeneraRules } from '@/stores/modules/GeneraRules';
+const generaRulesOptions = useGeneraRules();
 const props = defineProps({
 	modelValue: {
 		type: Boolean,
@@ -78,13 +80,6 @@ const props = defineProps({
 });
 const { modelValue } = toRefs(props);
 const state: UnwrapRef<any> = reactive({
-	prepaidCompanyList: [
-		{ value: 1, name: '旅行社' },
-		{ value: 2, name: '集团' },
-		{ value: 3, name: '监理公司' },
-		{ value: 4, name: '一卡通' },
-		{ value: 5, name: '协会' },
-	],
 	chargeModelList: [
 		{ value: 1, name: '百分比' },
 		{ value: 2, name: '价格' },
@@ -108,6 +103,7 @@ const rules: any = {
 	// integer: [{ required: formValidate.value.splitModel === 2 ? true : false, validator: isIntegerNotMust, trigger: 'blur' }],
 };
 const init = async () => {
+	generaRulesOptions.getPrepaidCompanyList();
 	if (props.params.add) {
 		options.title = '新增分账规则';
 		formValidate.value = { splitModel: 1 };

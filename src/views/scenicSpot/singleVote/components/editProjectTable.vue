@@ -13,6 +13,7 @@
 					></a-select>
 				</a-form-item>
 			</a-form>
+
 			<template v-slot:footer>
 				<a-button type="primary" @click="apply" style="width: 100px">保存</a-button>
 				<a-button @click="cancel">取消</a-button>
@@ -30,9 +31,10 @@
 					<template v-if="column.key === 'itemId'">
 						<div class="action-btns">
 							<span style="margin-right: 20px">
-								{{ itemNameCompute(record.itemId) }}
+								{{ record }}
+								<!-- {{ itemNameCompute(record.itemId) }} -->
 							</span>
-							<a v-if="record.itemId" href="javascript:;" @click="change(record)">更换</a>
+							<a v-if="record.itemId && !type" href="javascript:;" @click="change(record)">更换</a>
 							<a href="javascript:;" v-if="isCreate && !type && formValidate.initData[0].init" @click="CreateData">请选择</a>
 						</div>
 					</template>
@@ -155,8 +157,10 @@ const change = (value: object) => {
 	console.log(value, type.value);
 	if (type.value) {
 		console.log('多点');
+		modelValue.value = true;
 	} else {
 		console.log('单点');
+		modelValue.value = true;
 	}
 };
 
@@ -212,21 +216,17 @@ const cancel = () => {
 };
 const options = ref([
 	{
-		value: 'jack',
-		label: 'Jack',
+		value: '1',
+		label: '入园',
 	},
 	{
-		value: 'lucy',
-		label: 'Lucy',
+		value: '2',
+		label: '游戏机',
 	},
+
 	{
-		value: 'disabled',
-		label: 'Disabled',
-		disabled: true,
-	},
-	{
-		value: 'yiminghe',
-		label: 'Yiminghe',
+		value: '3',
+		label: '其他',
 	},
 ]);
 // 数据
@@ -252,7 +252,7 @@ const getList = async () => {
 	let arr = formData.data.map((i) => {
 		return { value: i.id, label: i.itemName };
 	});
-	options.value = arr;
+	// options.value = arr;
 };
 
 // 删除提示

@@ -326,3 +326,12 @@ export async function getEnableSystemRoomType() {
 		showLoading: true,
 	});
 }
+
+// 根据企业id查询酒店信息
+export async function getInfoByCompanyId(id: number) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-information/getInfoByCompanyId/${id}`,
+		method: 'get',
+		showLoading: true,
+	});
+}

@@ -17,15 +17,17 @@
 		</CommonSearch>
 		<CommonTable :dataSource="state.tableData.data" rowKey="id" :row-selection="rowSelection" :columns="columns">
 			<template #button>
-				<a-button type="primary" @click="openInfoPage" style="margin-right:16px">新增</a-button>
+				<a-button type="primary" @click="openInfoPage" style="margin-right: 16px">新增</a-button>
 				<a-button type="primary">导出</a-button>
 			</template>
 			<template #bodyCell="{ column, record }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a @click="openInfoPage(record)">查看</a>
-						<a >编辑</a>
-						<a >允许带团</a>
+						<a>编辑</a>
+						<a-popconfirm title="确认是否允许带团" ok-text="确认" cancel-text="取消" @confirm="confirm" @cancel="cancel">
+							<a>允许带团</a>
+						</a-popconfirm>
 					</div>
 				</template>
 			</template>
@@ -46,7 +48,8 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, defineComponent } from 'vue';
+import { message } from 'ant-design-vue';
 import api from '@/api';
 import { useScenicSpotOption } from '@/stores/modules/scenicSpot';
 
@@ -115,6 +118,11 @@ const state = reactive({
 	showDetail: false,
 });
 
+// 气泡框
+const confirm = (e: MouseEvent) => {};
+
+const cancel = (e: MouseEvent) => {};
+
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
 	state.tableData.param.pageNo = val;
@@ -136,8 +144,8 @@ const rowSelection = computed(() => {
 		// onSelectAll: (selected: boolean, selectedRows: DataSourceItem[], changeRows: DataSourceItem[]) => {
 		// 	console.log(selected, selectedRows, changeRows);
 		// },
-	}
-})
+	};
+});
 
 const cateringStoreName = computed(() => scenicSpotOptions.cateringStoreName);
 

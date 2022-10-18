@@ -1,29 +1,27 @@
 <template>
 	<CommonSearch>
 		<SearchItem label="输入搜索">
-			<a-input placeholder="演出名称/关键词" style="width: 200px" />
+			<a-input v-model="state.tableData.param.venueName" placeholder="演出名称/关键词" style="width: 200px" />
 		</SearchItem>
-		<SearchItem label="场馆分类">
-			<a-select ref="select" style="width: 200px" placeholder="请选择">
+		<SearchItem label="归属景区">
+			<a-select ref="select" style="width: 200px" v-model="state.tableData.param.scenicId" placeholder="请选择">
 				<a-select-option value="all">all</a-select-option>
 			</a-select>
 		</SearchItem>
-		<SearchItem label="开始时间">
-			<a-date-picker :show-time="{ format: 'HH:mm:ss' }" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" v-model:value="state.time" />
-		</SearchItem>
 		<template #button>
-			<a-button>查询</a-button>
+			<a-button @click="search">查询</a-button>
 		</template>
 	</CommonSearch>
+	<editModel ref="editModelRef" />
 	<div class="table-area">
 		<div class="list-btn">
 			<a-button type="primary" class="success" @click="add()">新增</a-button>
 		</div>
-		<CommonTable :dataSource="dataSource" :columns="columns">
+		<CommonTable :dataSource="state.tableData.data" :columns="columns">
 			<template #bodyCell="{ column, index }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a href="javascript:;" @click="toEditPage()">编辑</a>
+						<a href="javascript:;" @click="toEditPage()">编辑座位</a>
 						<a href="javascript:;" @click="del(index)">删除</a>
 					</div>
 				</template>
@@ -36,6 +34,7 @@
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
 		/>
+		<delModal :params="{ title: '删除', content: '是否确定该条数据' }" v-model="delShow" @submit="delSubmit" @cancel="delCancel" />
 	</div>
 </template>
 
@@ -45,19 +44,13 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
+import editModel from './components/edit.vue';
+import delModal from '@/components/common/DelModal.vue';
+import api from '@/api';
 const route = useRouter();
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
-const dataSource = [
-	{
-		key: '1',
-		name: '1',
-		age: '千古情',
-		address: '西湖区湖底公园1号',
-		address2: '待审核',
-		address3: '上架',
-	},
-];
+
 const columns = [
 	{
 		title: '序号',
@@ -71,8 +64,8 @@ const columns = [
 	},
 	{
 		title: '演出场馆',
-		dataIndex: 'address',
-		key: 'address',
+		dataIndex: 'venueName',
+		key: 'venueName',
 	},
 	{
 		title: '归属景区',
@@ -109,6 +102,8 @@ const state = reactive({
 		total: 400,
 		loading: false,
 		param: {
+			venueName: '',
+			scenicId: '',
 			pageNo: 1,
 			pageSize: 10,
 		},
@@ -116,38 +111,60 @@ const state = reactive({
 });
 
 const onHandleCurrentChange = (val: number) => {
-	console.log('change:', val);
 	state.tableData.param.pageNo = val;
-	onSearch();
+	init();
 };
 
 const pageSideChange = (current: number, size: number) => {
-	console.log('changePageSize:', size);
 	state.tableData.param.pageSize = size;
-	// onSearch();
+	init();
 };
 //编辑
 const toEditPage = () => {
-	// route.push({ path: '/scenic-spot/showTickets/show_edit' });
+	editModelRef.value.open();
+	// route.push({ path: '/scenic-spot/shows/show-edit' });
 };
+const editModelRef = ref();
 //新增
 const add = () => {
-	route.push({ path: '/scenic-spot/showTickets/show_edit' });
+	editModelRef.value.open();
+	// route.push({ path: '/scenic-spot/shows/show-edit' });
 };
-//删除
-const del = (index) => {
-	console.log(index, '111111111');
-};
-const onSearch = () => {
+
+const init = async () => {
 	// userList(state.tableData.param).then((res) => {
 	// 	console.log(res);
 	// });
+	let res = await api.getShowVenueList(state.tableData.param);
+	state.tableData.data = res.content;
+};
+
+const search = () => {
+	init();
+};
+// 删除提示
+const delShow = ref(false);
+const delOid = ref<null | number>();
+const del = (record: any) => {
+	delShow.value = true;
+	delOid.value = record;
+	// emits('del-verification-obj', index);
+};
+const delSubmit = () => {
+	// emits('del-verification-obj', toRaw(delOid.value));
+	// console.log(delOid.value);
+	// api.singleVoteDel(delOid.value);
+	delCancel();
+};
+const delCancel = () => {
+	delShow.value = false;
+	delOid.value = null;
 };
 onMounted(() => {
 	// navigatorBar
 	// 重新定义面包屑
-	// navigatorBar.clearNavigator();
 	// navigatorBar.setNavigator(['演出票']);
+	init();
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();

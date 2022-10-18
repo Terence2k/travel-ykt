@@ -9,7 +9,10 @@
       </span>
     </div>
     <!-- 旅行社、酒店、景区、餐厅 -->
-    <div class="form_body" v-if="condition1.includes(currentOption)">
+    <!-- 旅游协会、一卡通、监理、古维管理部门 -->
+    <!-- 旅游集团 -->
+    <!-- 文旅局 -->
+    <div class="form_body">
       <a-form ref="formRef" :model="form" :rules="formRules" name="add-business" autocomplete="off" labelAlign="left"
         :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
         <a-form-item name="businessType" label="企业类型">
@@ -19,69 +22,69 @@
             </a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item name="name" label="企业名称">
+        <a-form-item name="name" label="企业名称" v-show="formRules?.name">
           <a-input v-model:value="form.name" placeholder="请输入企业名称">
           </a-input>
         </a-form-item>
-        <a-form-item name="regionCode" label="企业所属地区">
+        <a-form-item name="regionCode" label="企业所属地区" v-show="formRules?.regionCode">
           <address-selector placeholder="请选择所属地区" v-model:value="form.regionCode" @change="regionChange">
           </address-selector>
         </a-form-item>
-        <a-form-item name="addressDetail" label="企业详情地址">
+        <a-form-item name="addressDetail" label="企业详情地址" v-show="formRules?.addressDetail">
           <a-input v-model:value="form.addressDetail" placeholder="请输入企业详情地址">
           </a-input>
         </a-form-item>
-        <a-form-item name="legalPerson" label="法定代表人">
+        <a-form-item name="legalPerson" label="法定代表人" v-show="formRules?.legalPerson">
           <a-input v-model:value="form.legalPerson" placeholder="请输入法定代表人">
           </a-input>
         </a-form-item>
-        <a-form-item name="managementRange" label="经营范围">
+        <a-form-item name="managementRange" label="经营范围" v-show="formRules?.managementRange">
           <a-textarea v-model:value="form.managementRange" placeholder="请输入经营范围" :rows="2">
           </a-textarea>
         </a-form-item>
-        <a-form-item name="registeredCapital" label="注册资本">
+        <a-form-item name="registeredCapital" label="注册资本" v-show="formRules?.registeredCapital">
           <a-input v-model:value="form.registeredCapital" placeholder="请输入注册资本" suffix="万元">
           </a-input>
         </a-form-item>
-        <a-form-item name="establishTime" label="成立日期">
+        <a-form-item name="establishTime" label="成立日期" v-show="formRules?.establishTime">
           <a-date-picker v-model:value="form.establishTime" placeholder="请选择成立日期" style="width:100%"
             :format="dateFormat" :valueFormat="dateFormat" />
         </a-form-item>
-        <a-form-item name="businessTerm" label="营业期限">
+        <a-form-item name="businessTerm" label="营业期限" v-show="formRules?.businessTerm">
           <a-date-picker v-model:value="form.businessTerm" placeholder="请选择营业期限" style="width:100%" :format="dateFormat"
             :valueFormat="dateFormat" />
         </a-form-item>
-        <a-form-item name="contactName" label="联系人">
+        <a-form-item name="contactName" label="联系人" v-show="formRules?.contactName">
           <a-input v-model:value="form.contactName" placeholder="请输入联系人">
           </a-input>
         </a-form-item>
-        <a-form-item name="phone" label="联系电话">
+        <a-form-item name="phone" label="联系电话" v-show="formRules?.phone">
           <a-input v-model:value="form.phone" placeholder="请输入联系电话">
           </a-input>
         </a-form-item>
-        <a-form-item name="accountType" label="公司账户类型">
+        <a-form-item name="accountType" label="公司账户类型" v-show="formRules?.accountType">
           <a-radio-group v-model:value="form.accountType">
             <a-radio :value="1">对公账户</a-radio>
             <a-radio :value="2">对私账户</a-radio>
           </a-radio-group>
         </a-form-item>
-        <a-form-item name="bankAccountName" label="公司账户名称">
+        <a-form-item name="bankAccountName" label="公司账户名称" v-show="formRules?.bankAccountName">
           <a-input v-model:value="form.bankAccountName" placeholder="请输入公司账户名称">
           </a-input>
         </a-form-item>
-        <a-form-item name="bank" label="开户行">
+        <a-form-item name="bank" label="开户行" v-show="formRules?.bank">
           <a-input v-model:value="form.bank" placeholder="请输入开户行">
           </a-input>
         </a-form-item>
-        <a-form-item name="bankAccount" label="公司账号">
+        <a-form-item name="bankAccount" label="公司账号" v-show="formRules?.bankAccount">
           <a-input v-model:value="form.bankAccount" placeholder="请输入公司账号">
           </a-input>
         </a-form-item>
-        <a-form-item name="creditCode" label="统一社会信用代码">
+        <a-form-item name="creditCode" label="统一社会信用代码" v-show="formRules?.creditCode">
           <a-input v-model:value="form.creditCode" placeholder="请输入统一社会信用代码">
           </a-input>
         </a-form-item>
-        <a-form-item name="businessLicenseUrl" label="营业执照">
+        <a-form-item name="businessLicenseUrl" label="营业执照" v-show="formRules?.businessLicenseUrl">
           <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl" @done="uploadDown">
           </img-upload>
         </a-form-item>
@@ -101,170 +104,7 @@
         </a-form-item>
         <a-form-item>
           <a-button type="primary" @click="submit" style="margin-right:20px" :loading="loading">保存</a-button>
-        </a-form-item>
-      </a-form>
-    </div>
-    <!-- 旅游协会、一卡通、监理、古维管理部门 -->
-    <div class="form_body" v-else-if="condition2.includes(currentOption)">
-      <a-form ref="formRef" :model="form" :rules="formRules" name="add-business" autocomplete="off" labelAlign="left"
-        :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
-        <a-form-item name="businessType" label="企业类型">
-          <a-select v-model:value="form.businessType" placeholder="请选择企业类型" @change="optionChange">
-            <a-select-option v-for="item in businessTypeOption" :value="item.codeValue" :key="item.codeValue">{{
-            item.name }}
-            </a-select-option>
-          </a-select>
-        </a-form-item>
-        <a-form-item name="name" label="企业名称">
-          <a-input v-model:value="form.name" placeholder="请输入企业名称">
-          </a-input>
-        </a-form-item>
-        <a-form-item name="regionCode" label="企业所属地区">
-          <address-selector placeholder="请选择所属地区" v-model:value="form.regionCode" @change="regionChange">
-          </address-selector>
-        </a-form-item>
-        <a-form-item name="addressDetail" label="企业详情地址">
-          <a-input v-model:value="form.addressDetail" placeholder="请输入企业详情地址">
-          </a-input>
-        </a-form-item>
-        <a-form-item name="contactName" label="联系人">
-          <a-input v-model:value="form.contactName" placeholder="请输入联系人">
-          </a-input>
-        </a-form-item>
-        <a-form-item name="phone" label="联系电话">
-          <a-input v-model:value="form.phone" placeholder="请输入联系电话">
-          </a-input>
-        </a-form-item>
-        <a-form-item name="accountType" label="公司账户类型">
-          <a-radio-group v-model:value="form.accountType">
-            <a-radio :value="1">对公账户</a-radio>
-            <a-radio :value="2">对私账户</a-radio>
-          </a-radio-group>
-        </a-form-item>
-        <a-form-item name="bankAccountName" label="公司账户名称">
-          <a-input v-model:value="form.bankAccountName" placeholder="请输入公司账户名称">
-          </a-input>
-        </a-form-item>
-        <a-form-item name="bank" label="开户行">
-          <a-input v-model:value="form.bank" placeholder="请输入开户行">
-          </a-input>
-        </a-form-item>
-        <a-form-item name="bankAccount" label="公司账号">
-          <a-input v-model:value="form.bankAccount" placeholder="请输入公司账号">
-          </a-input>
-        </a-form-item>
-        <a-form-item name="creditCode" label="统一社会信用代码">
-          <a-input v-model:value="form.creditCode" placeholder="请输入统一社会信用代码">
-          </a-input>
-        </a-form-item>
-        <a-form-item label="创建超级管理员账号">
-        </a-form-item>
-        <a-form-item name="account" label="超级管理员账号">
-          <a-input v-model:value="form.account" placeholder="请输入超级管理员账号">
-          </a-input>
-        </a-form-item>
-        <a-form-item name="password" label="超级管理员密码" has-feedback>
-          <a-input v-model:value="form.password" placeholder="请输入超级管理员密码" type="password">
-          </a-input>
-        </a-form-item>
-        <a-form-item name="checkPass" label="再输入一遍密码" has-feedback>
-          <a-input v-model:value="form.checkPass" placeholder="请输入再输入一遍密码" type="password">
-          </a-input>
-        </a-form-item>
-        <a-form-item>
-          <a-button type="primary" @click="submit" style="margin-right:20px" :loading="loading">保存</a-button>
-        </a-form-item>
-      </a-form>
-    </div>
-    <!-- 旅游集团 -->
-    <div class="form_body" v-else-if="condition3.includes(currentOption)">
-      <a-form ref="formRef" :model="form" :rules="formRules" name="add-business" autocomplete="off" labelAlign="left"
-        :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
-        <a-form-item name="businessType" label="企业类型">
-          <a-select v-model:value="form.businessType" placeholder="请选择企业类型" @change="optionChange">
-            <a-select-option v-for="item in businessTypeOption" :value="item.codeValue" :key="item.codeValue">{{
-            item.name }}
-            </a-select-option>
-          </a-select>
-        </a-form-item>
-        <a-form-item name="bankAccountName" label="公司账户名称">
-          <a-input v-model:value="form.bankAccountName" placeholder="请输入公司账户名称">
-          </a-input>
-        </a-form-item>
-        <a-form-item name="bank" label="开户行">
-          <a-input v-model:value="form.bank" placeholder="请输入开户行">
-          </a-input>
-        </a-form-item>
-        <a-form-item name="bankAccount" label="公司账号">
-          <a-input v-model:value="form.bankAccount" placeholder="请输入公司账号">
-          </a-input>
-        </a-form-item>
-        <a-form-item label="创建超级管理员账号">
-        </a-form-item>
-        <a-form-item name="account" label="超级管理员账号">
-          <a-input v-model:value="form.account" placeholder="请输入超级管理员账号">
-          </a-input>
-        </a-form-item>
-        <a-form-item name="password" label="超级管理员密码" has-feedback>
-          <a-input v-model:value="form.password" placeholder="请输入超级管理员密码" type="password">
-          </a-input>
-        </a-form-item>
-        <a-form-item name="checkPass" label="再输入一遍密码" has-feedback>
-          <a-input v-model:value="form.checkPass" placeholder="请输入再输入一遍密码" type="password">
-          </a-input>
-        </a-form-item>
-        <a-form-item>
-          <a-button type="primary" @click="submit" style="margin-right:20px" :loading="loading">保存</a-button>
-        </a-form-item>
-      </a-form>
-    </div>
-    <!-- 文旅局 -->
-    <div class="form_body" v-else-if="condition4.includes(currentOption)">
-      <a-form ref="formRef" :model="form" :rules="formRules" name="add-business" autocomplete="off" labelAlign="left"
-        :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
-        <a-form-item name="businessType" label="企业类型">
-          <a-select v-model:value="form.businessType" placeholder="请选择企业类型" @change="optionChange">
-            <a-select-option v-for="item in businessTypeOption" :value="item.codeValue" :key="item.codeValue">{{
-            item.name }}
-            </a-select-option>
-          </a-select>
-        </a-form-item>
-        <a-form-item name="name" label="企业名称">
-          <a-input v-model:value="form.name" placeholder="请输入企业名称">
-          </a-input>
-        </a-form-item>
-        <a-form-item name="regionCode" label="企业所属地区">
-          <address-selector placeholder="请选择所属地区" v-model:value="form.regionCode" @change="regionChange">
-          </address-selector>
-        </a-form-item>
-        <a-form-item name="addressDetail" label="企业详情地址">
-          <a-input v-model:value="form.addressDetail" placeholder="请输入企业详情地址">
-          </a-input>
-        </a-form-item>
-        <a-form-item name="contactName" label="联系人">
-          <a-input v-model:value="form.contactName" placeholder="请输入联系人">
-          </a-input>
-        </a-form-item>
-        <a-form-item name="phone" label="联系电话">
-          <a-input v-model:value="form.phone" placeholder="请输入联系电话">
-          </a-input>
-        </a-form-item>
-        <a-form-item label="创建超级管理员账号">
-        </a-form-item>
-        <a-form-item name="account" label="超级管理员账号">
-          <a-input v-model:value="form.account" placeholder="请输入超级管理员账号">
-          </a-input>
-        </a-form-item>
-        <a-form-item name="password" label="超级管理员密码" has-feedback>
-          <a-input v-model:value="form.password" placeholder="请输入超级管理员密码" type="password">
-          </a-input>
-        </a-form-item>
-        <a-form-item name="checkPass" label="再输入一遍密码" has-feedback>
-          <a-input v-model:value="form.checkPass" placeholder="请输入再输入一遍密码" type="password">
-          </a-input>
-        </a-form-item>
-        <a-form-item>
-          <a-button type="primary" @click="submit" style="margin-right:20px" :loading="loading">保存</a-button>
+          <!-- <a-button @click="rest" style="margin-right:20px" :loading="loading">重置</a-button> -->
         </a-form-item>
       </a-form>
     </div>
@@ -325,25 +165,28 @@ type detailsType = {
   checkPass?: string
 }
 const form = reactive<detailsType>({
+  regionCode: [],
+  businessType: undefined,
   password: '',
   checkPass: '',
   accountType: 1,
   name: undefined,
   businessLicenseUrl: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
 })
+const rest = () => {
+  formRef.value.resetFields()
+}
+const isRefresh = ref('0')
 const back = () => {
   router.push({
     name: 'apply',
     params: {
-      isRefresh: 1
+      isRefresh: isRefresh.value
     }
   })
-  formRef.value.resetFields()
-  // currentOption.value = 'default'
 }
-const currentOption = ref('default')
 // 旅行社、酒店、景区、餐厅
-const condition1 = ['TRAVEL', 'HOTEL', 'TICKET', 'CATERING', 'default']
+const condition1 = ['TRAVEL', 'HOTEL', 'TICKET', 'CATERING']
 // 旅游协会、一卡通、监理、古维管理部门
 const condition2 = ['ASSOCIATION', 'YKT', 'SUPERVISE', 'ANCIENT_UYGUR']
 // 旅游集团
@@ -433,6 +276,14 @@ const formRules8: Record<string, Rule[]> = {
 }
 const formRules = ref<Record<string, Rule[]>>({})
 formRules.value = formRules6
+onActivated(() => {
+  isRefresh.value = '0'
+  formRef.value.clearValidate()
+})
+onDeactivated(() => {
+  formRef.value.resetFields()
+  formRules.value = formRules6
+})
 const businessManageOptions = useBusinessManageOption();
 const initOpeion = async () => {
   await businessManageOptions.getBusinessTypeOption();
@@ -443,7 +294,6 @@ const uploadDown = () => {
 }
 
 const optionChange = (value: string) => {
-  currentOption.value = value
   if (condition1.includes(value)) {
     formRules.value = formRules6
   } else if (condition2.includes(value)) {
@@ -473,6 +323,7 @@ const saveConform = () => {
   loading.value = true;
   api.addCompany(form).then((res: any) => {
     if (res == '企业创建成功！') {
+      isRefresh.value = '1'
       saveVisible.value = false
       tipVisible.value = true
     } else {
