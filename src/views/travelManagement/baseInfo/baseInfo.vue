@@ -51,8 +51,17 @@
 			</a-form-item>
 			<div v-if="teamGroupType === GroupMode.TeamGroup">
 				<a-form-item label="地接旅行社" name="subTravelOid">
-					<a-select v-model:value="formState.subTravelOid" placeholder="请选择地接旅行社" @change="gettravelOperatorList">
-						<a-select-option :value="item.oid" v-for="item in list.subTravelList" :key="item.oid">{{item.name}}</a-select-option>
+					<a-select 
+						v-model:value="formState.subTravelOid" 
+						placeholder="请选择地接旅行社" 
+						@change="(val, option) => gettravelOperatorList(val, option)">
+						<a-select-option 
+							:value="item.oid" 
+							:name="item.name"
+							v-for="item in list.subTravelList" 
+							:key="item.oid">
+							{{item.name}}
+						</a-select-option>
 					</a-select>
 				</a-form-item>
 
@@ -175,7 +184,8 @@ if (route.query.id) {
 		teamType: '',
 		subTravelOid: '',
 		routeType: 1,
-		travelName: userInfo.sysCompany.name
+		travelName: userInfo.sysCompany.name,
+		subTravelName: ''
 	}
 }
 
@@ -216,7 +226,9 @@ const getSubtravelList = async () => {
 	const res = await api.travelManagement.getSubtravelList(page.subTravelList);
 	list.subTravelList = res.content;
 }
-const gettravelOperatorList = async (travelId: number) => {
+const gettravelOperatorList = async (travelId: number, option: any) => {
+
+	formState.value.subTravelName = option.name
 	list.travelOperatorList = await api.travelManagement.gettravelOperatorList({travelId});
 }
 const handleChange = (event: any, option: any) => {

@@ -37,7 +37,7 @@
 				:tab="item.label">
 					
 				<!--  v-if="showAddBtn" -->
-				<div class="d-flex justify-content-end">
+				<div class="d-flex justify-content-end" v-if="showAddBtn">
 					<a-button @click="goToPath(GroupType.Cooperation)" type="primary" style="margin-right: 20px">+协作组团</a-button>
 					<a-button @click="goToPath(GroupType.NonCooperation)" type="primary" style="margin-right: 20px">+非协作组团</a-button>
 				</div>
