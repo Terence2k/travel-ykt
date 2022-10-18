@@ -55,6 +55,10 @@ const auditStatusData = ref([
 		value: 1,
 		label: '无需审核',
 	},
+	{
+		value: null,
+		label: '全部',
+	},
 ]);
 
 const auditStatusOptions = ref<SelectProps['options']>(auditStatusData);
@@ -66,22 +70,17 @@ const clearSearchFilter = () => {
 watch(
 	() => auditStatus.value,
 	(val) => {
-		if (auditStatus.value) {
-			api.getHotelList(val).then((result) => {
-				if (Array.isArray(result)) {
-					hotelOptionsData.value = result?.map((item) => {
-						return {
-							value: item?.hotelId,
-							label: item?.hotelName,
-						};
-					});
-					hotel.value = hotelOptionsData.value[0]?.value || '';
-				}
-			});
-		} else {
-			hotelOptionsData.value = [];
-			hotel.value = undefined;
-		}
+		api.getHotelList(val).then((result) => {
+			if (Array.isArray(result)) {
+				hotelOptionsData.value = result?.map((item) => {
+					return {
+						value: item?.hotelId,
+						label: item?.hotelName,
+					};
+				});
+				hotel.value = hotelOptionsData.value[0]?.value || '';
+			}
+		});
 	},
 	{
 		immediate: true,
