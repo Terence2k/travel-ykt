@@ -43,10 +43,11 @@
 
 			<div class="title titleMargin">结算信息</div>
 			<CommonTable :dataSource="formData.list" :columns="columns" :scrollY="false" :scroll="{ y: '300px' }">
-				<template #bodyCell="{ column, record }">
+				<template #bodyCell="{ column, record ,index}">
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a href="javascript:;" @click="editItem(record)">调整费用</a>
+							<!-- <a href="javascript:;" @click="editItem(record,index)">调整费用</a> -->
+							<a href="javascript:;" @click="itemDetail(record.oid)">结算明细</a>
 						</div>
 					</template>
 				</template>
@@ -59,7 +60,8 @@
 			</div>
 		</div>
 	</div>
-	<adjust-modal v-model="adjustData.rulesShow" @submit="adjustConfirm" :params="adjustData.rulesParams" />
+	<detail-modal v-model="adjustData.detailShow" :params="adjustData.modalParams" />
+	<!-- <adjust-modal v-model="adjustData.editShow" @submit="adjustConfirm" :params="adjustData.modalParams" /> -->
 </template>
 
 <script lang="ts" setup>
@@ -68,6 +70,7 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import { message } from 'ant-design-vue';
 import { Modal } from 'ant-design-vue';
 import AdjustModal from '@/views/settlementManagement/settlement/examine/adjustModal.vue';
+import DetailModal from '@/views/settlementManagement/settlement/examine/detailModal.vue';
 import lodash from 'lodash';
 
 const route = useRouter();
@@ -79,7 +82,7 @@ const onCancel = () => {
 };
 const columns = [
 	{
-		title: '编号',
+		title: '序号',
         customRender: ({ text, record, index }) => {
             return `${ index + 1 }`;
         }
@@ -100,7 +103,12 @@ const columns = [
 		key: 'bank',
 	},
 	{
-		title: '结算费用（元）',
+		title: '预结算费用（元）',
+		dataIndex: 'price',
+		key: 'price',
+	},
+	{
+		title: '实际结算费用（元）',
 		dataIndex: 'price',
 		key: 'price',
 	},
@@ -142,7 +150,7 @@ const formData: any = reactive({
             time: 'test',
         },
         {
-            oid: 1,
+            oid: 2,
             key: 1,
             type: 'John Brown sr.',
             name: 'test',
@@ -151,7 +159,7 @@ const formData: any = reactive({
             time: 'test',
         },
         {
-            oid: 1,
+            oid: 3,
             key: 1,
             type: 'John Brown sr.',
             name: 'test',
@@ -163,11 +171,11 @@ const formData: any = reactive({
 });
 // 缓存编辑表格模态框数据
 const adjustData= ref({
-	delIndex: null,
-	delShow: false,
 	editItem: {},
-	rulesShow: false,
-	rulesParams: {},
+	editShow: false,
+	editIndex: 0,
+	modalParams: {},
+	detailShow: false,
 });
 
 // 审核通过
@@ -193,28 +201,35 @@ const toPass = (() => {
 		onCancel() {},
 	});
 })
-// 调整费用
-const editItem = ((record: any) => {
-    console.log('调整费用id',record);
-    adjustData.value.rulesShow = true;
-	adjustData.value.rulesParams = { from: lodash.cloneDeep(record) };
-})
-// 调整费用模态框关闭回调 此时调用接口
-const adjustConfirm = ((e: any) => {
-    console.log('我回来了');
-    console.log(e);
-	message.success('保存成功');
-    // 
+// 结算明细
+const itemDetail = ((oid: any) => {
+	adjustData.value.detailShow = true;
+	adjustData.value.modalParams = { oid };
 })
 //初始化页面
 const initPage = async (): Promise<void> => {
 	// api.getcomprehensiveFeeDetail(route.currentRoute.value?.query?.oid).then((res: any) => {
-	// 	formData.data = res;
-	// });
+		// 	formData.data = res;
+		// });
 };
 onMounted(() => {
 	initPage();
 })
+// 调整费用
+// const editItem = ((record: any,index: any) => {
+//     console.log('调整费用id',record,index);
+// 	adjustData.value.editIndex = index;
+//     adjustData.value.editShow = true;
+// 	adjustData.value.modalParams = { from: lodash.cloneDeep(record) };
+// })
+// 调整费用模态框关闭回调 此时调用接口
+// const adjustConfirm = ((e: any) => {
+	//     console.log('我回来了');
+	//     console.log(e.form.price);
+	// 	message.success('保存成功');
+	// 	formData.list[adjustData.value.editIndex].price = e.form.price;
+//     // 
+// })
 </script>
 
 <style lang="less" scoped>

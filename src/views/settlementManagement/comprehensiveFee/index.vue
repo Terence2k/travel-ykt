@@ -64,24 +64,24 @@ const columns = [
 		key: 'comprehensiveFeeProductName',
 	},
 	{
-		title: '收费金额',
-		dataIndex: 'feeText',
-		key: 'feeText',
-	},
-	{
 		title: '费用归属',
 		dataIndex: 'belongCompanyName',
 		key: 'belongCompanyName',
 	},
 	{
-		title: '是否必收费用',
-		dataIndex: 'confirmNeedFeeTypeName',
-		key: 'confirmNeedFeeTypeName',
-	},
-	{
 		title: '费用说明',
 		dataIndex: 'feeExplanation',
 		key: 'feeExplanation',
+	},
+	{
+		title: '收费金额',
+		dataIndex: 'feeText',
+		key: 'feeText',
+	},
+	{
+		title: '是否按天收费',
+		dataIndex: 'confirmDailyChargeName',
+		key: 'confirmDailyChargeName',
 	},
 	{
 		title: '状态',

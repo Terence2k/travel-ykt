@@ -7,11 +7,11 @@
 			:label-col="{ span: 5 }"
 			:wrapper-col="{ span: 16, offset: 1 }"
 		>
-			<a-form-item label="扣费模式" required>
+			<a-form-item label="结算方" required>
 				<span>{{ formValidate.type }}</span>
 			</a-form-item>
-			<a-form-item label="分账金额" name="price">
-				<a-input v-model:value="formValidate.price" placeholder="请输入分账金额（单位：元）" style="width: 100%">
+			<a-form-item label="实际结算费用（元）" name="price">
+				<a-input v-model:value="formValidate.price" placeholder="请输入金额（单位：元）" style="width: 100%">
 					<template #addonAfter>
 						<span>元</span>
 					</template>

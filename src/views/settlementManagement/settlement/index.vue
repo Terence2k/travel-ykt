@@ -23,7 +23,8 @@
 		</search-item>
 		<search-item label="预定时间">
 			<a-space direction="vertical">
-				<a-date-picker />
+				<a-date-picker v-model:value="state.tableData.param.time" placeholder="请选择预定时间" style="width:100%" :format="dateFormat"
+            :valueFormat="dateFormat" />
 			</a-space>
 		</search-item>
 		<template #button>
@@ -33,7 +34,12 @@
 	<div>
 		<a-tabs v-model:activeKey="activeKey">
 			<a-tab-pane v-for="(item, index) in pages" :key="index" :tab="item.label">
-				<component :is="item.name" v-if="index == activeKey"></component>
+				<component 
+					ref="listRef" 
+					:is="item.name" 
+					v-if="index == activeKey"
+					:params="state.tableData.param"
+				></component>
 			</a-tab-pane>
 		</a-tabs>
 	</div>
@@ -53,6 +59,7 @@ const navigatorBar = useNavigatorBar();
 const route = useRouter();
 const activeKey = ref(0);
 const check = ref(false);
+const dateFormat = 'YYYY-MM-DD';
 const pages = [
 	{
 		name: trip,
@@ -87,6 +94,7 @@ const state = reactive({
 			scenicLevel: null, //景区等级(字典序号)
 			auditStatus: null, //审核状态（-1未提交  0待审核  1审核通过  2审核未通过）
 			name: '',
+			time:''
 		},
 	},
 });
@@ -103,6 +111,8 @@ const onHandleCurrentChange = (val: number) => {
 // 		console.log(res);
 // 	});
 // };
+const listRef = ref<any>();
+
 const initList = async () => {
 	// state.tableData.loading = true;
 	// let res = await api.getScenicSpotInformationList(state.tableData.param);
@@ -111,6 +121,8 @@ const initList = async () => {
 	// const list: [any] = dealData(content);
 	// state.tableData.data = list;
 	// state.tableData.loading = false;
+	listRef.value[0].onSearch();
+	
 };
 onMounted(() => {
 	initList();

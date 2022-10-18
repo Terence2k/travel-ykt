@@ -17,8 +17,9 @@ interface DataItem {
 	certificatePicture: string;
 	sourceAddressName: string;
 	specialCertificateType: string;
-	addressId: [],
-	specialCertificatePicture: []
+	addressId: [];
+	specialCertificatePicture: [];
+	edit: boolean
 }
 
 const rules:{[k:string]: any} = {
@@ -156,6 +157,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			state.editableData[key] = cloneDeep(
 				state.tableData.filter((item:any, index: number) => key === (item.key ? item.key : item.oid))[0]
 			)
+			state.editableData[key].edit = true
 		},
 		del(key: string) {
 			console.log(key)
@@ -187,7 +189,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 		},
 		add: () => {
 			let key = generateGuid();
-			state.tableData.push({key});
+			state.tableData.push({key, edit: true});
 			methods.edit(key);
 			console.log(state.tableData)
 		},

@@ -10,7 +10,7 @@
 		</search-item>
 		<search-item label="产品类型">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.productSonType" style="width: 180px" placeholder="请选择结算产品">
-				<a-select-option :value="item.value" v-for="item in state.productSonTypeList" :key="item.name">{{ item.name }}</a-select-option>
+				<a-select-option :value="item.value" v-for="item in generaRulesOptions.productSonTypeList" :key="item.name">{{ item.name }}</a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="是否有结算规则">
@@ -118,20 +118,6 @@ const state = reactive({
 		},
 	},
 	scenicList: [],
-	productSonTypeList: [
-		{
-			value: 'UNITE',
-			name: '联票',
-		},
-		{
-			value: 'ONE',
-			name: '单票',
-		},
-		{
-			value: 'SHOW',
-			name: '演出票',
-		},
-	],
 });
 //搜索
 const onHandleCurrentChange = (val: number) => {
@@ -192,9 +178,9 @@ const getEnum = async () => {
 	await productRuleLessInfos();
 };
 const getProductTypeName = computed(() => (value: string) => {
-	const idx = state.productSonTypeList.findIndex((item) => item.value === value);
+	const idx = generaRulesOptions.productSonTypeList.findIndex((item) => item.value === value);
 	if (idx !== -1) {
-		return state.productSonTypeList[idx]['name'];
+		return generaRulesOptions.productSonTypeList[idx]['name'];
 	}
 	return;
 });
