@@ -7,7 +7,7 @@
 		</a-tabs>
 		<div class="footer">
 			<a-button type="primary" @click="check = !check">保存</a-button>
-			<a-button type="primary">发团</a-button>
+			<a-button type="primary">下一步</a-button>
 		</div>
 	</div>
 </template>
@@ -71,13 +71,35 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 		}
 
 	}
+	const saveItinerary = (val:any) => {
+		let ajax = route.query.id ? api.travelManagement.editItinerary : api.travelManagement.saveItinerary
+		return ajax(
+		{
+			oid: route.query.id,
+			attachmentParam: val.attachmentParam || {
+			receptionAgreement: "http://test1.jpg",
+			rentCarContract: "http://test2.jpg",
+			travelContract: "http://test.jpg"
+		},
+			basicParam: val.basicParam || {},
+			guideList: travelStore.guideList.filter((it: any) => it.edit),
+			itineraryInfoParam: {
+				compositeProducts: travelStore.compositeProducts
+			},
+				touristList: travelStore.touristList.filter((it: any) => it.edit),
+				transportList: travelStore.trafficList.filter((it: any) => it.edit)
+			}
+		).then((res: any) => {
+			message.success(res.message);
+		})
+	}
 	const debounceFun = debounce((val) => {
 		console.log(val)
 		for (let k in val) {
-		if (!val[k]) return
+			if (!val[k]) return
 		}
 		saveItinerary(val)
-		} ,500)
+	} ,500)
 	watch(obj, (newVal) => {
 		debounceFun(newVal.data)
 	})
@@ -109,28 +131,7 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 		
 		})
 	}
-  const saveItinerary = (val:any) => {
-    let ajax = route.query.id ? api.travelManagement.editItinerary : api.travelManagement.saveItinerary
-		return ajax(
-		{
-        	oid: route.query.id,
-			attachmentParam: val.attachmentParam || {
-			receptionAgreement: "http://test1.jpg",
-			rentCarContract: "http://test2.jpg",
-			travelContract: "http://test.jpg"
-        },
-			basicParam: val.basicParam || {},
-			guideList: travelStore.guideList.filter((it: any) => it.edit),
-			itineraryInfoParam: {
-				compositeProducts: travelStore.compositeProducts
-			},
-				touristList: travelStore.touristList.filter((it: any) => it.edit),
-				transportList: travelStore.trafficList.filter((it: any) => it.edit)
-			}
-		).then((res: any) => {
-			message.success(res.message);
-		})
-	}
+	
 getTraveDetail();
 </script>
 <style lang="less" scoped>

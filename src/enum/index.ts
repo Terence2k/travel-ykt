@@ -54,6 +54,12 @@ export enum FeeModel {
   Number,
   Price
 }
+
+// 是否按天收费
+export enum ConfirmDailyCharge {
+  NotDay,
+  IsDay
+}
 // 险种
 export enum insuranceType{
   accident,

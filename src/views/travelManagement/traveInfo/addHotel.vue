@@ -68,10 +68,6 @@
 				<a-input v-model:value="formState.enterTime" disabled placeholder="无需填写，订单提交后自动生成" />
 			</a-form-item>
 		</a-form>
-		<template v-slot:footer>
-			<a-button type="primary" @click="save">保存</a-button>
-			<a-button @click="dialogVisible = false">取消</a-button>
-		</template>
 	</BaseModal>
 </template>
 

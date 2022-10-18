@@ -126,6 +126,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			})
 		},
 		copyData(key:any) {
+			console.log(key)
 			Object.assign(
 				state.tableData.filter((item:any) => key === (item.key ? item.key : item.oid))[0], 
 				state.editableData[key]
@@ -189,14 +190,14 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 		},
 		add: () => {
 			let key = generateGuid();
-			state.tableData.push({key, edit: true});
+			state.tableData.push({key, edit: true, oid: null});
 			methods.edit(key);
 			console.log(state.tableData)
 		},
 		handleChange(val: any, option: any, key: string) {
 			console.log(val, option)
 			state.editableData[key].sourceAddress = val[val.length - 1];
-			state.editableData[key].sourceAddressName = option.map((it:any) => it.label).join('')
+			state.editableData[key].sourceAddressName = option.map((it:any) => it.label).join('/')
 		}
 	}
 	watch(onCheck, (newVal) => {
