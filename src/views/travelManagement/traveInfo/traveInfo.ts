@@ -65,8 +65,8 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			},
 			{
 				title: '是否按天收取',
-				dataIndex: 'name5',
-				key: 'name5',
+				dataIndex: 'confirmDailyChargeName',
+				key: 'confirmDailyChargeName',
 			},
 			{
 				title: '单价（元）',
