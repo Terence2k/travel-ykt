@@ -120,10 +120,10 @@ const handleMenuTree = (menuList: any) => {
 }
 
 watchEffect(() => {
-	const modules = permissioStore.getMenuList;
-	if (modules.length > 0) {
-		navs.value = modules;
-	}
+	// const modules = permissioStore.getMenuList;
+	// if (modules.length > 0) {
+	// 	navs.value = modules;
+	// }
   
   userInfo.sysMenuVos = handleMenuTree(userInfo.sysMenuVos);
   userInfo.sysMenuVos.forEach((item: any) => {
