@@ -236,6 +236,14 @@ export default [
 				],
 			},
 			{
+				path: 'verificationManage',
+				name: 'verificationManage',
+				component: () => import('@/views/scenicSpot/verificationManage/index.vue'),
+				meta: {
+					title: '核销管理',
+				},
+			},
+			{
 				path: 'writeOffTime',
 				name: 'writeOffTime',
 				redirect: '/scenic-spot/writeOffTime/list',
@@ -252,7 +260,7 @@ export default [
 							activeMeun: 'information',
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
-					}
+					},
 				],
 			},
 		],

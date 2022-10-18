@@ -96,7 +96,7 @@
 					v-model:value="formState.prepaidCompany"
 					placeholder="请选择垫付单位"
 					allowClear
-					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.value, label: item.name }))"
+					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.codeValue, label: item.name }))"
 				>
 				</a-select>
 			</a-form-item>
@@ -110,7 +110,7 @@
 					v-model:value="formState.lastCostBelongCompany"
 					style="width: 100%"
 					placeholder="请选择剩余费用归属"
-					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.value, label: item.name }))"
+					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.codeValue, label: item.name }))"
 				>
 				</a-select>
 			</a-form-item>
@@ -243,6 +243,7 @@ const init = async () => {
 	const route = useRouter();
 	const query = route.currentRoute.value.query;
 	generaRulesOptions.getTeamTypeList();
+	generaRulesOptions.getPrepaidCompanyList();
 	const { productId, productType, productSonType } = route.currentRoute.value.query;
 	let productRuleList = await api.productRuleList({
 		productId,
@@ -254,6 +255,7 @@ const init = async () => {
 	// 由于产品子类别是否存在需要对其进行判断
 	if (productRuleList.content[0].productSonList.length > 0) {
 		cacheData.value.productSonList = productRuleList.content[0].productSonList;
+		cacheData.value.productSonList.unshift({ productSonId: 0, productSonName: '全部子产品' });
 	} else {
 		cacheData.value.productName = productRuleList.content[0].productName;
 		// formState.productSonType = 'SELF';
@@ -378,8 +380,8 @@ onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
 });
 // 获取表格分账规则分账单位名称
-const getCompanyTypeName = computed(() => (value: number) => {
-	const idx = generaRulesOptions.prepaidCompanyList.findIndex((item) => item.value === value);
+const getCompanyTypeName = computed(() => (value: string) => {
+	const idx = generaRulesOptions.prepaidCompanyList.findIndex((item) => item.codeValue === value);
 	if (idx !== -1) {
 		return generaRulesOptions.prepaidCompanyList[idx]['name'];
 	}

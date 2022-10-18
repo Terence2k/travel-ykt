@@ -1,23 +1,25 @@
 <template>
 	<CommonSearch>
-		<SearchItem label="输入搜索">
-			<a-input placeholder="门票名称/关键词" style="width: 200px" />
+		<SearchItem label="门票名称">
+			<a-input placeholder="输入门票名称" style="width: 200px" v-model:value="state.tableData.param.ticketName" />
 		</SearchItem>
 		<SearchItem label="门票分类">
-			<a-select ref="select" style="width: 200px" placeholder="请选择">
-				<a-select-option value="all">all</a-select-option>
+			<a-select ref="select" style="width: 200px" placeholder="请选择门票分类" v-model:value="state.tableData.param.ticketType">
+				<a-select-option value="0">单票</a-select-option>
+				<a-select-option value="1">演出票</a-select-option>
+				<a-select-option value="2">联票</a-select-option>
 			</a-select>
 		</SearchItem>
 		<template #button>
-			<a-button>查询</a-button>
+			<a-button @click="onSearch()">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
 		<CommonTable :dataSource="dataSource" :columns="columns">
-			<template #bodyCell="{ column, index }">
+			<template #bodyCell="{ column, index, record }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a @click="SetUp()">设置核销时间段</a>
+						<a @click="SetUp({ row: record })">设置核销时间段</a>
 					</div>
 				</template>
 			</template>
@@ -30,7 +32,7 @@
 			@showSizeChange="pageSideChange"
 		/>
 	</div>
-	<SetUpTime v-model="state.operationModal.isSetUpdate"></SetUpTime>
+	<SetUpTime v-model="state.operationModal.isSetUpdate" :params="state.params"></SetUpTime>
 </template>
 
 <script setup lang="ts">
@@ -40,42 +42,57 @@ import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import SetUpTime from './setUpTime.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
+import api from '@/api';
 const route = useRouter();
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 const dataSource = [
 	{
-		age: '木府',
-		address: '多点核销',
-		address2: '木府',
-		address3: '单票',
+		ticketName: '木府',
+		verificationType: '多点核销',
+		scenicName: '木府',
+		ticketDataType: '单票',
+		address4: '待审核',
+	},
+	{
+		ticketName: '木府纳西族演出',
+		verificationType: '单点核销',
+		scenicName: '木府',
+		ticketDataType: '演出票',
+		address4: '待审核',
+	},
+	{
+		ticketName: '古城一票游',
+		verificationType: '多点核销',
+		scenicName: '丽江古城，木府',
+		ticketDataType: '联票',
 		address4: '待审核',
 	},
 ];
 const columns = [
 	{
 		title: '门票名称',
-		dataIndex: 'age',
-		key: 'age',
+		dataIndex: 'ticketName',
+		key: 'ticketName',
 	},
 	{
 		title: '票种',
-		dataIndex: 'address',
-		key: 'address',
+		dataIndex: 'verificationType',
+		key: 'verificationType',
 	},
 	{
 		title: '归属景区',
-		dataIndex: 'address2',
-		key: 'address2',
+		dataIndex: 'scenicName',
+		key: 'scenicName',
 	},
 	{
 		title: '门票分类',
-		dataIndex: 'address4',
-		key: 'address3',
+		dataIndex: 'ticketDataType',
+		key: 'ticketDataType',
 	},
 	{
 		title: '审核状态',
-		dataIndex: 'address3',
+		dataIndex: 'address4',
 		key: 'address4',
 	},
 	{
@@ -92,17 +109,29 @@ const state = reactive({
 		total: 400,
 		loading: false,
 		param: {
+			ticketName: '',
+			ticketType: '',
 			pageNo: 1,
-			pageSize: 10,
+			pageSize: 9999,
 		},
 	},
 	operationModal: {
 		isSetUpdate: false,
 	},
+	params: {},
 });
-
-const SetUp = () => {
-    state.operationModal.isSetUpdate=true
+const onSearch = () => {
+	api.getWriteOffTimeList(state.tableData.param).then((res: any) => {
+		console.log('res:', res);
+		//   state.tableData.data = res.content;
+		//   state.tableData.total = res.total;
+	});
+	console.log(state.tableData.param, '1111111111111');
+};
+const SetUp = (param: any) => {
+	const row = param;
+	state.params = row;
+	state.operationModal.isSetUpdate = true;
 };
 </script>
 
