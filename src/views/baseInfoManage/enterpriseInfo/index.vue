@@ -140,6 +140,52 @@
             </div>
           </a-form-item>
         </template>
+        <!-- 景区特殊字段 -->
+        <template v-if="form.businessType == 'TICKET'">
+          <a-form-item name="unitStatus" label="开业状态">
+            <a-radio-group v-model:value="form.unitStatus">
+              <a-radio :value="true">开业</a-radio>
+              <a-radio :value="false">停业</a-radio>
+            </a-radio-group>
+          </a-form-item>
+          <a-form-item name="scenicLevel" label="等级">
+            <a-select v-model:value="form.scenicLevel" placeholder="请选择景区等级">
+              <a-select-option v-for="item in scenicLevelList" :value="item.value">
+              {{ item.name }}
+              </a-select-option>
+            </a-select>
+          </a-form-item>
+          <a-form-item name="derate" label="是否支持减免">
+            <a-radio-group v-model:value="form.derate">
+              <a-radio :value="true">是</a-radio>
+              <a-radio :value="false">否</a-radio>
+            </a-radio-group>
+          </a-form-item>
+          <a-form-item name="full" label="减免规则">
+            <div style="display: flex;align-items: start;">
+              <div style="display: flex;align-items: center;">
+                <span style="margin: 0 5px;">满</span>
+                <a-input 
+                  placeholder="请配置数字" 
+                  style="width: 150px;"
+                  v-model:value="form.full"
+                  oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')"
+                  @change="setReduceRule"/>
+              </div>
+              <a-form-item name="minus">
+                <div style="display: flex;align-items: center;">
+                  <span style="margin: 0 5px;">减</span>
+                  <a-input 
+                    placeholder="请配置数字" 
+                    style="width: 150px;"
+                    v-model:value="form.minus"
+                    oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')" 
+                    @change="setReduceRule"/>
+                </div>
+              </a-form-item>
+            </div>
+          </a-form-item>
+        </template>
         <!-- <div class="fail" v-if="failVisible">
           <div class="header">
             <div class="enterprise_state">信息变更申请被驳回！</div>
@@ -216,14 +262,20 @@ const initOpeion = async () => {
   }
   let data = await infoFunc;
   state.form = { ...data, ...data.companyBo};
+  state.form.full = state.form.reduceRule?.split(',')[0] || state.form.derateRule?.split(',')[0];
+  state.form.minus = state.form.reduceRule?.split(',')[1] || state.form.derateRule?.split(',')[1];
   if (state.form?.areaId) state.form.addressIds = [state.form.provinceId, state.form.cityId, state.form.areaId];
-  state.form.full = state.form.reduceRule.split(',')[0];
-  state.form.minus = state.form.reduceRule.split(',')[1];
   enterpriseState.value = travelStore.enterpriseState[state.form.informationAuditStatus]?.descriptions;
   console.log('state.form:', state.form)
 };
 const businessTypeOption = computed(() => businessManageOptions.businessTypeOption);
 const hotelStarList = ref();
+const scenicLevelList = [
+  {
+    value: 1,
+    name: '5A'
+  }
+]
 const getHotelStarList = async () => {
   hotelStarList.value = await api.getHotelStarList()
   console.log('hotelStarList:', hotelStarList.value)
@@ -259,7 +311,8 @@ const loadData = (selectedOptions:any) => {
 }
 
 const setReduceRule = () => {
-  form.value.reduceRule = `满${form.value.full}减${form.value.minus}`;
+  form.value.reduceRule = `满${form.value.full}减${form.value.minus}`;// HOTEL
+  form.value.derateRule = `${form.value.full},${form.value.minus}`;// TICKET
 }
 
 const handleChange = (val: any, option: any) => {
