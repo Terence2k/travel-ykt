@@ -70,20 +70,20 @@
 					</template>
 				</a-input-number>
 			</a-form-item>
-
-			<a-form-item label="收费子产品" name="chargeProductSonId" v-if="cacheData.productSonList.length > 0">
-				<a-select
-					v-model:value="formState.chargeProductSonId"
-					placeholder="请选择收费子产品"
-					allowClear
-					:options="cacheData.productSonList.map((item) => ({ value: item.productSonId, label: item.productSonName }))"
-				>
-				</a-select>
-			</a-form-item>
-			<a-form-item v-else label="收费子产品">
-				<span>{{ cacheData.productName }}</span>
-			</a-form-item>
-
+			<template v-if="query.productType === 1">
+				<a-form-item label="收费子产品" name="chargeProductSonId" v-if="cacheData.productSonList.length > 0">
+					<a-select
+						v-model:value="formState.chargeProductSonId"
+						placeholder="请选择收费子产品"
+						allowClear
+						:options="cacheData.productSonList.map((item) => ({ value: item.productSonId, label: item.productSonName }))"
+					>
+					</a-select>
+				</a-form-item>
+				<a-form-item v-else label="收费子产品">
+					<span>{{ cacheData.productName }}</span>
+				</a-form-item>
+			</template>
 			<a-form-item label="是否垫付" name="isPrepaid">
 				<a-radio-group v-model:value="formState.isPrepaid">
 					<a-radio v-for="item in generaRulesOptions.isPrepaidList" :value="item.value" :key="item.name">{{ item.name }}</a-radio>
@@ -237,30 +237,33 @@ const cacheData = ref({
 	productSonList: [],
 	productName: '',
 });
+const route: any = useRouter();
+const query = route.currentRoute.value.query;
 const oid: Ref<any> = ref(null);
 // 初始化
 const init = async () => {
-	const route = useRouter();
-	const query = route.currentRoute.value.query;
 	generaRulesOptions.getTeamTypeList();
 	generaRulesOptions.getPrepaidCompanyList();
-	const { productId, productType, productSonType } = route.currentRoute.value.query;
-	let productRuleList = await api.productRuleList({
-		productId,
-		productType,
-		productSonType,
-		pageNo: 1, //页号
-		pageSize: 10,
-	});
-	// 由于产品子类别是否存在需要对其进行判断
-	if (productRuleList.content[0].productSonList.length > 0) {
-		cacheData.value.productSonList = productRuleList.content[0].productSonList;
-		cacheData.value.productSonList.unshift({ productSonId: 0, productSonName: '全部子产品' });
-	} else {
-		cacheData.value.productName = productRuleList.content[0].productName;
-		// formState.productSonType = 'SELF';
-		formState.chargeProductSonId = Number(query.productId);
+	if (query.productType === 1) {
+		const { productId, productType, productSonType } = route.currentRoute.value.query;
+		let productRuleList = await api.productRuleList({
+			productId,
+			productType,
+			productSonType,
+			pageNo: 1, //页号
+			pageSize: 10,
+		});
+		// 由于产品子类别是否存在需要对其进行判断
+		if (productRuleList.content[0].productSonList.length > 0) {
+			cacheData.value.productSonList = productRuleList.content[0].productSonList;
+			cacheData.value.productSonList.unshift({ productSonId: 0, productSonName: '全部子产品' });
+		} else {
+			cacheData.value.productName = productRuleList.content[0].productName;
+			// formState.productSonType = 'SELF';
+			formState.chargeProductSonId = Number(query.productId);
+		}
 	}
+
 	if (query && query.oid) {
 		oid.value = query.oid;
 		navigatorBar.setNavigator(['编辑']);
@@ -276,13 +279,12 @@ const init = async () => {
 		formState.isPrepaid = 0;
 		// 默认为百分比
 		formState.chargeModel = 1;
-		// 默认为景区
-		formState.productType = 1;
+		// // 默认为景区
+		formState.productType = Number(query.productType);
 		// 从父元素带过来
-		formState.productSonType = String(query.productSonType);
-		// if (formState.productSonType !== 'SELF') {
-
-		// }
+		if (query.productType === 1) {
+			formState.productSonType = String(query.productSonType);
+		}
 	}
 	console.log(formState, `formState`);
 };
@@ -369,7 +371,6 @@ const saveParams = () => {
 		formState.oid = oid.value;
 	}
 };
-const route = useRouter();
 const cancel = () => {
 	route.go(-1);
 };
