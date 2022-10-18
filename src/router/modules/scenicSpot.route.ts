@@ -181,6 +181,14 @@ export default [
 					// },
 				],
 			},
+			{
+				path: 'verificationManage',
+				name: 'verificationManage',
+				component: () => import('@/views/scenicSpot/verificationManage/index.vue'),
+				meta: {
+					title: '核销管理',
+				},
+			},
 		],
 	},
 ];
