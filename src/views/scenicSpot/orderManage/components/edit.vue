@@ -1,34 +1,46 @@
 <template>
 	<div class="editWrapper">
 		<a-tabs v-model:activeKey="activeStatus">
-			<a-tab-pane key="1" tab="订单信息"> </a-tab-pane>
-			<a-tab-pane key="2" tab="人员信息"> </a-tab-pane>
+			<a-tab-pane key="1" tab="订单信息">
+				<a-form class="" ref="formRef" :label-col="{ span: 3 }" labelAlign="left" :wrapper-col="{ span: 6 }" :scrollToFirstError="true">
+					<a-form-item label="行程类型"> 标准团 </a-form-item>
+					<a-form-item label="行程单号"> YNLJ1569374 </a-form-item>
+					<a-form-item label="发团旅行社"> 黑白水旅行社 </a-form-item>
+					<a-form-item label="地接旅行社"> 白鹿旅行社 </a-form-item>
+					<a-form-item label="联系电话"> 18101235678 </a-form-item>
+					<a-form-item label="入园日期"> 2022.7.14 </a-form-item>
+					<a-form-item label="预定时间"> 2022.7.15 15:30:30 </a-form-item>
+					<a-form-item label="核销时间"> 2022.7.15 15:30:30 </a-form-item>
+					<a-form-item label="行程人数"> 30人 </a-form-item>
+					<a-form-item label="订票人数"> 30人 </a-form-item>
+					<a-form-item label="核销人数"> 25人 </a-form-item>
+					<a-form-item label="订单金额"> 2000元 </a-form-item>
+					<a-form-item label="订单编号"> 619351806191367230 </a-form-item>
+					<a-form-item label="门票"> 千古情演出 </a-form-item>
+					<a-form-item label="门票分类">演出票 </a-form-item>
+					<!-- 
+					<div class="footer">
+						<div class="tooter-btn">
+							<a-button type="primary" @click.prevent="onSubmit">保存</a-button>
+							<a-button type="primary" @click="reset">提交审核</a-button>
+						</div>
+					</div> -->
+				</a-form>
+			</a-tab-pane>
+
+			<a-tab-pane key="2" tab="人员信息">
+				<CommonTable :dataSource="dataSource" :columns="columns" :scroll="{ x: '100%' }">
+					<template #bodyCell="{ column }">
+						<template v-if="column.key === 'action'">
+							<div class="action-btns">
+								<a>申请改刷</a>
+								<a>查看</a>
+							</div>
+						</template>
+					</template>
+				</CommonTable>
+			</a-tab-pane>
 		</a-tabs>
-
-		<a-form class="" ref="formRef" :label-col="{ span: 3 }" labelAlign="left" :wrapper-col="{ span: 6 }" :scrollToFirstError="true">
-			<a-form-item label="行程类型"> 标准团 </a-form-item>
-			<a-form-item label="行程单号"> YNLJ1569374 </a-form-item>
-			<a-form-item label="发团旅行社"> 黑白水旅行社 </a-form-item>
-			<a-form-item label="地接旅行社"> 白鹿旅行社 </a-form-item>
-			<a-form-item label="联系电话"> 18101235678 </a-form-item>
-			<a-form-item label="入园日期"> 2022.7.14 </a-form-item>
-			<a-form-item label="预定时间"> 2022.7.15 15:30:30 </a-form-item>
-			<a-form-item label="核销时间"> 2022.7.15 15:30:30 </a-form-item>
-			<a-form-item label="行程人数"> 30人 </a-form-item>
-			<a-form-item label="订票人数"> 30人 </a-form-item>
-			<a-form-item label="核销人数"> 25人 </a-form-item>
-			<a-form-item label="订单金额"> 2000元 </a-form-item>
-			<a-form-item label="订单编号"> 619351806191367230 </a-form-item>
-			<a-form-item label="门票"> 千古情演出 </a-form-item>
-			<a-form-item label="门票分类">演出票 </a-form-item>
-
-			<div class="footer">
-				<div class="tooter-btn">
-					<a-button type="primary" @click.prevent="onSubmit">保存</a-button>
-					<a-button type="primary" @click="reset">提交审核</a-button>
-				</div>
-			</div>
-		</a-form>
 	</div>
 </template>
 
@@ -41,6 +53,7 @@ import { toArray } from 'lodash';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import Pic from '@/components/common/imageWrapper.vue';
+import CommonTable from '@/components/common/CommonTable.vue';
 const route = useRouter();
 
 const useForm = Form.useForm;
@@ -107,6 +120,84 @@ const formData = reactive({
 		registeredCapital: null,
 	},
 });
+
+const dataSource = [
+	{
+		key: '1',
+		name: '王某某',
+		age: 32,
+		address: '西湖区湖底公园1号',
+		address1: '西湖区湖底公园1号',
+		address2: '西湖区湖底公园1号',
+		address3: '西湖区湖底公园1号',
+	},
+	{
+		key: '2',
+		name: '张某某',
+		age: 42,
+		address: '西湖区湖底公园1号',
+		address1: '西湖区湖底公园1号',
+		address2: '西湖区湖底公园1号',
+		address3: '西湖区湖底公园1号',
+	},
+	{
+		key: '3',
+		name: '张某某',
+		age: 42,
+		address: '西湖区湖底公园1号',
+		address1: '西湖区湖底公园1号',
+		address2: '西湖区湖底公园1号',
+		address3: '西湖区湖底公园1号',
+	},
+];
+const columns = [
+	{
+		title: '序号',
+		dataIndex: 'name',
+		key: 'name',
+	},
+	{
+		title: '证件类型',
+		dataIndex: 'age',
+		key: 'age',
+	},
+	{
+		title: '证件号码',
+		dataIndex: 'address',
+		key: 'address',
+	},
+	{
+		title: '身份类型',
+		dataIndex: 'address1',
+		key: 'address1',
+	},
+	{
+		title: '姓名',
+		dataIndex: 'address2',
+		key: 'address2',
+	},
+	{
+		title: '性别',
+		dataIndex: 'address3',
+		key: 'address3',
+	},
+	{
+		title: '健康状态',
+		dataIndex: 'address3',
+		key: 'address3',
+	},
+	{
+		title: '门票类型',
+		dataIndex: 'address3',
+		key: 'address3',
+	},
+	{
+		title: '核销情况',
+		dataIndex: 'address3',
+		key: 'address3',
+	},
+];
+
 // 表单
 const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
 	formData,
@@ -227,58 +318,8 @@ onBeforeUnmount(() => {
 	padding: 0 16px;
 	padding-bottom: 64px;
 }
-header {
-	// width: 64px;
-	// margin-bottom: 8px;
-	height: 56px;
-	line-height: 56px;
-	font-weight: bold;
-	color: #1e2226;
-	// margin: 0 8px 16px;
-	margin-bottom: 16px;
-	border-bottom: 1px solid #f1f2f5;
-}
-.title {
-	height: 56px;
-	line-height: 56px;
-	font-weight: bold;
-	color: #1e2226;
-	// margin: 0 8px 16px;
-	margin-bottom: 16px;
-	border-bottom: 1px solid #f1f2f5;
-}
-.area {
-	margin-bottom: 20px;
-}
-// footer {
-// 	border-top: 1px solid #f1f2f5;
-// 	padding: 16px;
-// 	margin: -16px;
-// 	// position: fixed;
-// 	// bottom: 16px;
-// 	// width: 500%;
-// 	// background-color: #fff;
-// 	// background-color: red;
-// }
-.footer {
-	position: fixed;
-	bottom: 12px;
-	line-height: 64px;
-	height: 64px;
-	width: calc(100% - 288px);
-	border-top: 1px solid #f1f2f5;
-	margin-left: -16px;
-	margin-right: 24px;
-	background-color: #fff;
-	z-index: 99;
 
-	.tooter-btn {
-		width: 60%;
-		// background-color: #fff;
-		margin-left: 16px;
-	}
-	button:first-of-type {
-		margin-right: 16px;
-	}
+.table-area {
+	padding: 0;
 }
 </style>
