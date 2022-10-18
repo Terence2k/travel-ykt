@@ -73,7 +73,7 @@ const route = useRouter();
 const activeKey = ref(1);
 const columns = computed(() => {
 	let column = [];
-	if (state.tableData.param.productType === 1) {
+	if (Number(state.tableData.param.productType) === 1) {
 		column = [
 			{
 				title: '产品名称',
@@ -96,7 +96,7 @@ const columns = computed(() => {
 				key: 'hasProductRule',
 			},
 		];
-	} else if (state.tableData.param.productType === 2) {
+	} else if (Number(state.tableData.param.productType) === 2) {
 		column = [
 			{
 				title: '房型名称',
@@ -114,7 +114,7 @@ const columns = computed(() => {
 				key: 'hasProductRule',
 			},
 		];
-	} else if (state.tableData.param.productType === 3) {
+	} else if (Number(state.tableData.param.productType) === 3) {
 		column = [
 			{
 				title: '餐饮名称',

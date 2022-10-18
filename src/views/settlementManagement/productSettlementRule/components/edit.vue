@@ -70,7 +70,7 @@
 					</template>
 				</a-input-number>
 			</a-form-item>
-			<template v-if="query.productType === 1">
+			<template v-if="showProductSon">
 				<a-form-item label="收费子产品" name="chargeProductSonId" v-if="cacheData.productSonList.length > 0">
 					<a-select
 						v-model:value="formState.chargeProductSonId"
@@ -226,6 +226,7 @@ const rulesRef = {
 	// 人数和金额
 	integer: [{ required: true, validator: isIntegerNotMust, trigger: 'blur' }],
 };
+const route: any = useRouter();
 // 缓存删除编辑数据
 const cacheData = ref({
 	delIndex: null,
@@ -237,15 +238,15 @@ const cacheData = ref({
 	productSonList: [],
 	productName: '',
 });
-const route: any = useRouter();
 const query = route.currentRoute.value.query;
 const oid: Ref<any> = ref(null);
 // 初始化
 const init = async () => {
 	generaRulesOptions.getTeamTypeList();
 	generaRulesOptions.getPrepaidCompanyList();
-	if (query.productType === 1) {
+	if (Number(query.productType) === 1) {
 		const { productId, productType, productSonType } = route.currentRoute.value.query;
+		console.log(productSonType,`productSonType`);
 		let productRuleList = await api.productRuleList({
 			productId,
 			productType,
@@ -254,6 +255,7 @@ const init = async () => {
 			pageSize: 10,
 		});
 		// 由于产品子类别是否存在需要对其进行判断
+		console.log(productRuleList, `productRuleList`);
 		if (productRuleList.content[0].productSonList.length > 0) {
 			cacheData.value.productSonList = productRuleList.content[0].productSonList;
 			cacheData.value.productSonList.unshift({ productSonId: 0, productSonName: '全部子产品' });
@@ -387,6 +389,9 @@ const getCompanyTypeName = computed(() => (value: string) => {
 		return generaRulesOptions.prepaidCompanyList[idx]['name'];
 	}
 	return;
+});
+const showProductSon = computed(() => {
+	return Number(route.currentRoute.value.query.productType) === 1;
 });
 </script>
 

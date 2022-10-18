@@ -204,7 +204,7 @@ onBeforeUnmount(() => {
 const edit = () => {
 	const query = route.currentRoute.value.query;
 	let querySearch = {};
-	if (query.productType === 1) {
+	if (Number(query.productType) === 1) {
 		querySearch = {
 			oid: encodeURIComponent(oid.value),
 			productId: encodeURIComponent(query.productId),

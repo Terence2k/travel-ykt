@@ -156,7 +156,7 @@ const pageSideChange = (current: number, size: number) => {
 //新增
 const toAddPage = () => {
 	let query = {};
-	if (state.tableData.param.productType === 1) {
+	if (Number(state.tableData.param.productType) === 1) {
 		query = {
 			productId: encodeURIComponent(state.tableData.param.productId),
 			productType: encodeURIComponent(state.tableData.param.productType),
@@ -182,7 +182,7 @@ const toAddPage = () => {
 const toEditPage = (record: any) => {
 	console.log(record.oid, encodeURIComponent(record.oid));
 	let query = {};
-	if (state.tableData.param.productType === 1) {
+	if (Number(state.tableData.param.productType) === 1) {
 		query = {
 			oid: encodeURIComponent(record.oid),
 			productId: encodeURIComponent(state.tableData.param.productId),
