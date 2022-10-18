@@ -41,12 +41,12 @@
 				<span>{{ticketPrice}}元</span>
 			</a-form-item>
 
-			<a-form-item label="入园日期" name="startDate" :rules="[{ required: true, message: '请选择入园日期' }]">
+			<a-form-item label="入园日期" name="allDate" :rules="[{ required: true, message: '请选择入园日期' }]">
                 <a-range-picker
-					v-model:value="formState.startDate"
-					:show-time="{ format: 'HH:mm:ss' }" 
-					format="YYYY-MM-DD HH:mm:ss"
-					value-format="YYYY-MM-DD HH:mm:ss"
+					style="width: 100%"
+					v-model:value="formState.allDate"
+					format="YYYY-MM-DD"
+					value-format="YYYY-MM-DD"
 				/>
 			</a-form-item>
 
@@ -104,10 +104,6 @@
                 </CommonTable>
 			</div>
 		</a-form>
-		<template v-slot:footer>
-			<a-button type="primary" @click="save">保存</a-button>
-			<a-button @click="dialogVisible = false">取消</a-button>
-		</template>
 	</BaseModal>
 </template>
 
@@ -116,6 +112,7 @@
 	import BaseModal from '@/components/common/BaseModal.vue';
     import { useTravelStore } from '@/stores/modules/travelManagement';
     import api from '@/api';
+	import { debounce } from 'lodash';
 
     const travelStore = useTravelStore()
     const IDCard = computed(() => travelStore.IDCard)
@@ -181,6 +178,7 @@
 	const formState = reactive<{[k: string]: any}>({
 		travelOperatorOid: '',
 		startDate: '',
+		allDate: [],
 		endData: '',
         count: ''
 	});
@@ -209,6 +207,7 @@
 		
 	};
 
+
     const handleChange = async (event: number) => {
         formState.travelOperatorOid = ''
         ticketData.ticketList = await api.travelManagement.getTicketList(event)
@@ -226,6 +225,26 @@
 		}
 		emits('update:modelValue', newVal)
 	})
+
+	const getStock = (ticketId: number | string, endTime: string, startTime: string) => {
+		api.travelManagement.getStock({
+			ticketId,
+			endTime,
+			startTime
+		})
+	}
+	const debounceFun = debounce((ticketId: number | string, endTime: string, startTime: string) => {
+		getStock(ticketId, endTime, startTime);
+	}, 500);
+
+	watch(
+		() => [formState.travelOperatorOid, formState.allDate],
+		([newHotelId, newallDate]) => {
+			if (newHotelId && newallDate && newallDate.length && newallDate[0] && newallDate[1]) {
+				debounceFun(newHotelId, newallDate[1], newallDate[0]);
+			}
+		}
+	);
     getScenicList();
 </script>
 

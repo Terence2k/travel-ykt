@@ -1,95 +1,46 @@
 <template>
 	<div class="editWrapper">
-		<header>基本信息</header>
-		<a-form class="" ref="formRef" :label-col="{ span: 3 }" labelAlign="left" :wrapper-col="{ span: 6 }" :scrollToFirstError="true">
-			<a-form-item label="企业名称" v-bind="validateInfos[`data.name`]">
-				<a-input v-model:value="formData.data.name" placeholder="请填写景区名字" />
-			</a-form-item>
-			<a-form-item label="企业类型" v-bind="validateInfos[`data.businessType`]">
-				<a-select allowClear v-model:value="formData.data.businessType" placeholder="请选择企业类型">
-					<a-select-option v-for="o in businessTypeOption" :key="o.name" :value="o.oid">{{ o.name }}</a-select-option>
-				</a-select>
-			</a-form-item>
+		<a-tabs v-model:activeKey="activeStatus">
+			<a-tab-pane key="1" tab="订单信息">
+				<a-form class="" ref="formRef" :label-col="{ span: 3 }" labelAlign="left" :wrapper-col="{ span: 6 }" :scrollToFirstError="true">
+					<a-form-item label="行程类型"> 标准团 </a-form-item>
+					<a-form-item label="行程单号"> YNLJ1569374 </a-form-item>
+					<a-form-item label="发团旅行社"> 黑白水旅行社 </a-form-item>
+					<a-form-item label="地接旅行社"> 白鹿旅行社 </a-form-item>
+					<a-form-item label="联系电话"> 18101235678 </a-form-item>
+					<a-form-item label="入园日期"> 2022.7.14 </a-form-item>
+					<a-form-item label="预定时间"> 2022.7.15 15:30:30 </a-form-item>
+					<a-form-item label="核销时间"> 2022.7.15 15:30:30 </a-form-item>
+					<a-form-item label="行程人数"> 30人 </a-form-item>
+					<a-form-item label="订票人数"> 30人 </a-form-item>
+					<a-form-item label="核销人数"> 25人 </a-form-item>
+					<a-form-item label="订单金额"> 2000元 </a-form-item>
+					<a-form-item label="订单编号"> 619351806191367230 </a-form-item>
+					<a-form-item label="门票"> 千古情演出 </a-form-item>
+					<a-form-item label="门票分类">演出票 </a-form-item>
+					<!-- 
+					<div class="footer">
+						<div class="tooter-btn">
+							<a-button type="primary" @click.prevent="onSubmit">保存</a-button>
+							<a-button type="primary" @click="reset">提交审核</a-button>
+						</div>
+					</div> -->
+				</a-form>
+			</a-tab-pane>
 
-			<a-form-item label="景区等级" v-bind="validateInfos[`data.scenicLevel`]">
-				<a-select allowClear v-model:value="formData.data.scenicLevel" placeholder="请选择景区名字">
-					<a-select-option v-for="o in 10" :key="o.name" :value="o">{{ o }}A</a-select-option>
-				</a-select>
-			</a-form-item>
-			<a-form-item label="所属地区" class="area" v-bind="errorInfos" :wrapper-col="{ span: 18 }">
-				<a-select allowClear v-model:value="formData.data.provinceId" placeholder="请选择省" style="width: 120px" @change="selectCity">
-					<a-select-option v-for="item in proviceList" :key="item.oid" :value="item.oid">{{ item.name }}</a-select-option>
-				</a-select>
-				&nbsp;
-				<a-select allowClear v-model:value="formData.data.cityId" placeholder="请选择市" style="width: 120px" @change="selectArea">
-					<a-select-option v-for="item in cityList" :key="item.oid" :value="item.oid">{{ item.name }}</a-select-option>
-				</a-select>
-				&nbsp;
-				<a-select allowClear v-model:value="formData.data.areaId" placeholder="请选择辖区" style="width: 120px">
-					<a-select-option v-for="item in areaList" :key="item.oid" :value="item.oid">{{ item.name }}</a-select-option>
-				</a-select>
-				&nbsp;
-				<a-input v-model:value="formData.data.addressDetail" placeholder="请输入详细地址" style="width: 150px" />
-			</a-form-item>
-			<a-form-item label="统一社会信用代码" v-bind="validateInfos[`data.creditCode`]">
-				<a-input v-model:value="formData.data.creditCode" placeholder="请填写" />
-			</a-form-item>
-			<a-form-item label="营业执照" v-bind="validateInfos[`data.businessLicenseUrl`]">
-				<Pic />
-			</a-form-item>
-			<a-form-item label="联系人姓名" v-bind="validateInfos[`data.contactName`]">
-				<a-input v-model:value="formData.data.contactName" placeholder="请填写" />
-			</a-form-item>
-			<a-form-item label="联系人电话" v-bind="validateInfos[`data.phone`]">
-				<a-input v-model:value="formData.data.phone" placeholder="请填写" />
-			</a-form-item>
-			<a-form-item label="企业状态" v-bind="validateInfos[`data.unitStatus`]">
-				<a-radio-group v-model:value="formData.data.unitStatus">
-					<a-radio :value="true">开业</a-radio>
-					<a-radio :value="false">停业</a-radio>
-				</a-radio-group>
-			</a-form-item>
-
-			<div class="title">减免属性</div>
-			<a-form-item label="是否支持减免" v-bind="validateInfos[`data.derate`]">
-				<a-radio-group v-model:value="formData.data.derate">
-					<a-radio :value="true">是</a-radio>
-					<a-radio :value="false">否</a-radio>
-				</a-radio-group>
-			</a-form-item>
-			<a-form-item label="减免规则" v-bind="formData.data.derate ? validateInfos[`data.derateRule`] : {}">
-				<a-input
-					:disabled="formData.data.derate ? false : true"
-					v-model:value="formData.data.derateRule"
-					placeholder="减免规则详情，逗号隔开满16-9 ：16,9"
-				/>
-			</a-form-item>
-			<div class="title">结算（收款）账户信息</div>
-			<a-form-item label="账户类型" v-bind="validateInfos[`data.accountType`]">
-				<a-radio-group v-model:value="formData.data.accountType">
-					<a-radio :value="1">对公账号</a-radio>
-					<a-radio :value="2">个人账号</a-radio>
-				</a-radio-group>
-			</a-form-item>
-			<a-form-item label="收款账号" v-bind="validateInfos[`data.bankAccount`]">
-				<a-input v-model:value="formData.data.bankAccount" placeholder="银行账号" />
-			</a-form-item>
-			<a-form-item label="账户名" v-bind="validateInfos[`data.bankAccountName`]">
-				<a-input v-model:value="formData.data.bankAccountName" placeholder="请填写" />
-			</a-form-item>
-			<a-form-item label="开户行地址" v-bind="validateInfos[`data.accountAddress`]">
-				<a-input v-model:value="formData.data.accountAddress" placeholder="请填写" />
-			</a-form-item>
-			<a-form-item label="还款行" v-bind="validateInfos[`data.bank`]">
-				<a-input v-model:value="formData.data.bank" placeholder="请填写" />
-			</a-form-item>
-			<div class="footer">
-				<div class="tooter-btn">
-					<a-button type="primary" @click.prevent="onSubmit">保存</a-button>
-					<!-- <a-button type="primary" @click="reset">提交审核</a-button> -->
-				</div>
-			</div>
-		</a-form>
+			<a-tab-pane key="2" tab="人员信息">
+				<CommonTable :dataSource="dataSource" :columns="columns" :scroll="{ x: '100%' }">
+					<template #bodyCell="{ column }">
+						<template v-if="column.key === 'action'">
+							<div class="action-btns">
+								<a>申请改刷</a>
+								<a>查看</a>
+							</div>
+						</template>
+					</template>
+				</CommonTable>
+			</a-tab-pane>
+		</a-tabs>
 	</div>
 </template>
 
@@ -102,11 +53,14 @@ import { toArray } from 'lodash';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import Pic from '@/components/common/imageWrapper.vue';
+import CommonTable from '@/components/common/CommonTable.vue';
 const route = useRouter();
 
 const useForm = Form.useForm;
 const navigatorBar = useNavigatorBar();
 const scenicSpotOptions = useScenicSpotOption();
+
+const activeStatus = ref('1');
 
 // 数据
 const formData = reactive({
@@ -166,6 +120,84 @@ const formData = reactive({
 		registeredCapital: null,
 	},
 });
+
+const dataSource = [
+	{
+		key: '1',
+		name: '王某某',
+		age: 32,
+		address: '西湖区湖底公园1号',
+		address1: '西湖区湖底公园1号',
+		address2: '西湖区湖底公园1号',
+		address3: '西湖区湖底公园1号',
+	},
+	{
+		key: '2',
+		name: '张某某',
+		age: 42,
+		address: '西湖区湖底公园1号',
+		address1: '西湖区湖底公园1号',
+		address2: '西湖区湖底公园1号',
+		address3: '西湖区湖底公园1号',
+	},
+	{
+		key: '3',
+		name: '张某某',
+		age: 42,
+		address: '西湖区湖底公园1号',
+		address1: '西湖区湖底公园1号',
+		address2: '西湖区湖底公园1号',
+		address3: '西湖区湖底公园1号',
+	},
+];
+const columns = [
+	{
+		title: '序号',
+		dataIndex: 'name',
+		key: 'name',
+	},
+	{
+		title: '证件类型',
+		dataIndex: 'age',
+		key: 'age',
+	},
+	{
+		title: '证件号码',
+		dataIndex: 'address',
+		key: 'address',
+	},
+	{
+		title: '身份类型',
+		dataIndex: 'address1',
+		key: 'address1',
+	},
+	{
+		title: '姓名',
+		dataIndex: 'address2',
+		key: 'address2',
+	},
+	{
+		title: '性别',
+		dataIndex: 'address3',
+		key: 'address3',
+	},
+	{
+		title: '健康状态',
+		dataIndex: 'address3',
+		key: 'address3',
+	},
+	{
+		title: '门票类型',
+		dataIndex: 'address3',
+		key: 'address3',
+	},
+	{
+		title: '核销情况',
+		dataIndex: 'address3',
+		key: 'address3',
+	},
+];
+
 // 表单
 const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
 	formData,
@@ -286,58 +318,8 @@ onBeforeUnmount(() => {
 	padding: 0 16px;
 	padding-bottom: 64px;
 }
-header {
-	// width: 64px;
-	// margin-bottom: 8px;
-	height: 56px;
-	line-height: 56px;
-	font-weight: bold;
-	color: #1e2226;
-	// margin: 0 8px 16px;
-	margin-bottom: 16px;
-	border-bottom: 1px solid #f1f2f5;
-}
-.title {
-	height: 56px;
-	line-height: 56px;
-	font-weight: bold;
-	color: #1e2226;
-	// margin: 0 8px 16px;
-	margin-bottom: 16px;
-	border-bottom: 1px solid #f1f2f5;
-}
-.area {
-	margin-bottom: 20px;
-}
-// footer {
-// 	border-top: 1px solid #f1f2f5;
-// 	padding: 16px;
-// 	margin: -16px;
-// 	// position: fixed;
-// 	// bottom: 16px;
-// 	// width: 500%;
-// 	// background-color: #fff;
-// 	// background-color: red;
-// }
-.footer {
-	position: fixed;
-	bottom: 12px;
-	line-height: 64px;
-	height: 64px;
-	width: calc(100% - 288px);
-	border-top: 1px solid #f1f2f5;
-	margin-left: -16px;
-	margin-right: 24px;
-	background-color: #fff;
-	z-index: 99;
 
-	.tooter-btn {
-		width: 60%;
-		// background-color: #fff;
-		margin-left: 16px;
-	}
-	button:first-of-type {
-		margin-right: 16px;
-	}
+.table-area {
+	padding: 0;
 }
 </style>
