@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import type { UnwrapRef } from 'vue';
 
 import { useTravelStore } from '@/stores/modules/travelManagement';
-import { validateRules, validateFields, generateGuid } from '@/utils';
+import { validateRules, validateFields, generateGuid, getAge } from '@/utils';
 import api from '@/api/index';
 import { CODEVALUE } from '@/constant'
 import { message } from 'ant-design-vue';
@@ -19,7 +19,9 @@ interface DataItem {
 	specialCertificateType: string;
 	addressId: [];
 	specialCertificatePicture: [];
-	edit: boolean
+	edit: boolean;
+	emergencyContactName: string;
+	emergencyContactPhone: string;
 }
 
 const rules:{[k:string]: any} = {
@@ -27,7 +29,7 @@ const rules:{[k:string]: any} = {
 	certificateNo: [{ required: true, message: '请输入证件号码' }],
 	name: [{ required: true, message: '请输入姓名' }],
 	gender: [{ required: true, message: '请选择性别' }],
-	addressId: [{ required: true, message: '请选择客源地' }]
+	sourceAddressName: [{ required: true, message: '请选择客源地' }]
 }
 export function useTouristInfo(props: any, emits: any): Record<string, any> {
 	const travelStore = useTravelStore()
@@ -41,7 +43,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 		startRef: {},
 		cityOptions: [],
 		selectKey: ['certificateType', 'gender', 'specialCertificateType'],
-		inputKey: ['certificateNo', 'name'],
+		inputKey: ['certificateNo', 'name', 'emergencyContactName', 'emergencyContactPhone'],
 		rulesRef: {},
         onSelect: (record: DataItem, selected: boolean, selectedRows: DataItem[]) => {
             console.log(record, selected, selectedRows);
@@ -77,13 +79,23 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			},
 			{
 				title: '客源地',
-				dataIndex: 'addressId',
-				key: 'addressId',
+				dataIndex: 'sourceAddressName',
+				key: 'sourceAddressName',
 			},
 			{
 				title: '健康状态',
 				dataIndex: 'healthCode',
 				key: 'healthCode',
+			},
+			{
+				title: '紧急联系人',
+				dataIndex: 'emergencyContactName',
+				key: 'emergencyContactName',
+			},
+			{
+				title: '紧急联系人电话',
+				dataIndex: 'emergencyContactPhone',
+				key: 'emergencyContactPhone',
 			},
 			{
 				title: '特殊证件类型',
@@ -145,6 +157,27 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			}
 			return flag;
 		},
+		// 老人判断
+		isOld(key: any) {
+			let flag: boolean = false;
+			if (state.editableData[key].certificateType !== CODEVALUE.TRAVE_CODE.IDENTITY_CARD) return flag = true;
+
+			const age = getAge(state.editableData[key].certificateNo)
+			if (age < 60) return flag = true;
+
+			if (!state.editableData[key].emergencyContactName) {
+				message.error(`游客中存在60以上的老人，请填写游客${state.editableData[key].name}紧急联系人`)
+				flag = false;
+			} else if (!state.editableData[key].emergencyContactPhone) {
+				message.error(`游客中存在60以上的老人，请填写游客${state.editableData[key].name}紧急联系人电话`)
+				flag = false;
+			} else {
+				flag = true;
+			}
+			
+			return flag;
+			
+		},
 		addRules(key?: any) {
 			state.rulesRef = {}
 			
@@ -171,11 +204,13 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			const res = await validateFields(state.formRef);
 			if (!res) return emits('onSuccess', {touristList: res});
 			if (key) {
+				if (!methods.isOld(key)) return;
 				if (!methods.isUpload(key)) return;
 				methods.copyData(key);
 				delete state.editableData[key];
 			} else {
 				for (let k in state.editableData) {
+					if (!methods.isOld(k)) return;
 					if (!methods.isUpload(k)) return;
 					methods.copyData(k);
 					delete state.editableData[k];

@@ -29,6 +29,7 @@ import api from '@/api';
 import { message } from 'ant-design-vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 	const route = useRoute()
+	const router = useRouter()
 	const travelStore = useTravelStore();
 	const activeKey = ref(0);
 	const check = ref(false)
@@ -95,7 +96,9 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 				transportList: travelStore.trafficList.filter((it: any) => it.edit)
 			}
 		).then((res: any) => {
-			message.success(res.message);
+			let msg = route.query.id ? '编辑成功' : '新增成功'
+			message.success(msg);
+			router.push('/travel/travel_manage/travel_list')
 		})
 	}
 	const debounceFun = debounce((val) => {
