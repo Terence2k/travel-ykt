@@ -113,6 +113,7 @@
 					</a-form-item>
 				</div> -->
 				<a-range-picker
+					style="width: 100%"
 					@change="handleChangeTime"
 					v-model:value="formState.time"
 					show-time
