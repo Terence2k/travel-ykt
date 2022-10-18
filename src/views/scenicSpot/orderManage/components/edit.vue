@@ -29,7 +29,7 @@
 			</a-tab-pane>
 
 			<a-tab-pane key="2" tab="人员信息">
-				<CommonTable :dataSource="dataSource" :columns="columns" :scroll="{ x: '100%' }">
+				<CommonTable :dataSource="dataSource" :columns="columns" :scrollY="false">
 					<template #bodyCell="{ column }">
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
@@ -122,6 +122,69 @@ const formData = reactive({
 });
 
 const dataSource = [
+	{
+		key: '1',
+		name: '王某某',
+		age: 32,
+		address: '西湖区湖底公园1号',
+		address1: '西湖区湖底公园1号',
+		address2: '西湖区湖底公园1号',
+		address3: '西湖区湖底公园1号',
+	},
+	{
+		key: '2',
+		name: '张某某',
+		age: 42,
+		address: '西湖区湖底公园1号',
+		address1: '西湖区湖底公园1号',
+		address2: '西湖区湖底公园1号',
+		address3: '西湖区湖底公园1号',
+	},
+	{
+		key: '3',
+		name: '张某某',
+		age: 42,
+		address: '西湖区湖底公园1号',
+		address1: '西湖区湖底公园1号',
+		address2: '西湖区湖底公园1号',
+		address3: '西湖区湖底公园1号',
+	},
+	{
+		key: '1',
+		name: '王某某',
+		age: 32,
+		address: '西湖区湖底公园1号',
+		address1: '西湖区湖底公园1号',
+		address2: '西湖区湖底公园1号',
+		address3: '西湖区湖底公园1号',
+	},
+	{
+		key: '2',
+		name: '张某某',
+		age: 42,
+		address: '西湖区湖底公园1号',
+		address1: '西湖区湖底公园1号',
+		address2: '西湖区湖底公园1号',
+		address3: '西湖区湖底公园1号',
+	},
+	{
+		key: '2',
+		name: '张某某',
+		age: 42,
+		address: '西湖区湖底公园1号',
+		address1: '西湖区湖底公园1号',
+		address2: '西湖区湖底公园1号',
+		address3: '西湖区湖底公园1号',
+	},
+	{
+		key: '3',
+		name: '张某某',
+		age: 42,
+		address: '西湖区湖底公园1号',
+		address1: '西湖区湖底公园1号',
+		address2: '西湖区湖底公园1号',
+		address3: '西湖区湖底公园1号',
+	},
 	{
 		key: '1',
 		name: '王某某',
