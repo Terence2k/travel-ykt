@@ -158,6 +158,7 @@ if (route.query.id) {
 } else {
 	userInfo = getUserInfo()
 	addParams = {
+		oid: null,
 		username: userInfo.username,
 		groupType: route.query.type,
 		contactPhone: userInfo.mobile,
@@ -231,6 +232,7 @@ watch(() => travelStore.baseInfo, newVal => {
 	formState.value = newVal;
 	if (route.query.id) {
 		list.travelOperatorList = [newVal.subTravelOperator];
+		travelStore.setTeamType(travelStore.baseInfo.teamType);
 	}
 })
 getTeamTypeList();

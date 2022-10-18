@@ -4,13 +4,14 @@ import type { UnwrapRef } from 'vue';
 import api from '@/api';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import { stat } from 'fs';
+import { ConfirmDailyCharge, FeeModel } from '@/enum';
 interface DataItem {
 	name: string;
 	name1: string;
 	name2: string;
 	name3: string;
 	name4: string;
-	name5: string;
+	confirmDailyChargeName: string;
 	name6: string;
 }
 export function useTraveInfo(props: any, emits: any): Record<string, any> {
@@ -31,7 +32,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				name2: '123',
 				name3: '123',
 				name4: '123',
-				name5: '123',
+				confirmDailyChargeName: '123',
 				name6: '123',
 			},
 		],
@@ -185,10 +186,71 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			state[key] = true;
 			console.log(key,'6666666')
 		},
+
+		/**
+		 * 
+		 * @param model 收费模式
+		 * @param price 单价
+		 * @returns count 总价
+		 */
+
+		getPrice(model: any, price: number) {
+			let count = 0
+			switch(model) {
+				case FeeModel.Number :
+					count = price * travelStore.touristList.length
+					break;
+				case FeeModel.Price :
+					count = price
+					break;
+			}
+			return count
+		},
+
+
+		/**
+		 * 
+		 * @param a 是否按天收费
+		 * @param price 单价
+		 * @param model 收费模式
+		 * @returns countPrice 总价
+		 */
+
+		getAmount(a:any, price: number, model: any) {
+			let countPrice = 0
+			switch (a) {
+				case ConfirmDailyCharge.NotDay :
+					countPrice = this.getPrice(model, price)
+					break;
+				case ConfirmDailyCharge.IsDay :
+					const dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day');
+					countPrice = this.getPrice(model, price) * dayCount
+					break;
+			}
+			return countPrice
+		},
+
+		async getProduct() {
+			// 请求综费接口
+			const result = await api.travelManagement.comprehensiveFeeProduct(state.params);
+			for (let i = 0; i < result.content.length; i++) {
+				result.content[i].peopleCount = travelStore.touristList.length;
+				result.content[i].dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day');
+				result.content[i].unPrice = result.content[i].feeNumber;
+				result.content[i].totalMoney = this.getAmount(
+					result.content[i].confirmDailyCharge,
+					result.content[i].feeNumber,
+					result.content[i].feeModel
+				)
+				state.allFeesProducts.push(result.content[i]);
+			}
+			travelStore.setCompositeProducts(state.allFeesProducts);
+		},
 		async findByIdTeamType() {
 			const formData = new FormData();
-			formData.append('id', travelStore.baseInfo.teamType);
-			if (travelStore.baseInfo.teamType) {
+			formData.append('id', travelStore.teamType);
+			console.log(travelStore.teamType)
+			if (travelStore.teamType) {
 				// 根据团队类型获取配置酒店景区餐饮数据
 				const res = await api.travelManagement.findByIdTeamType(formData);
 				for (let i = 0; i < res.itemVos.length; i++) {
@@ -207,27 +269,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 					}
 				}
 			}
-			// 请求综费接口
-			const result = await api.travelManagement.comprehensiveFeeProduct(state.params);
-			for (let i = 0; i < result.content.length; i++) {
-				result.content[i].peopleCount = travelStore.touristList.length;
-				result.content[i].dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day');
-				result.content[i].unPrice = result.content[i].feeNumber;
-				result.content[i].totalMoney = result.content[i].peopleCount * result.content[i].dayCount * result.content[i].feeNumber;
-				state.allFeesProducts.push(result.content[i]);
-			}
-			travelStore.setCompositeProducts(state.allFeesProducts);
-
-			// for (let i = 0; i < res.products.length; i++) {
-			// 	const result = await api.travelManagement.findProductInfo(res.products[i].productId)
-			// 	result.peopleCount = travelStore.touristList.length;
-			// 	result.unPrice = result.feeNumber;
-			// 	result.isDay = true;
-			// 	result.dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day')
-			// 	result.totalMoney = result.peopleCount * result.dayCount * result.feeNumber
-			// 	state.allFeesProducts.push(result)
-			// }
-			// travelStore.setCompositeProducts(state.allFeesProducts);
+			
 		},
 	};
 	watch(
@@ -236,6 +278,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			methods.findByIdTeamType();
 		}
 	);
+	methods.getProduct()
 	methods.findByIdTeamType();
 	return {
 		...toRefs(state),

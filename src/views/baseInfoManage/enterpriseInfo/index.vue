@@ -103,10 +103,11 @@
             </a-radio-group>
           </a-form-item>
           <a-form-item name="hotelStarId" label="星级">
-            <a-radio-group v-model:value="form.hotelStarId">
-              <a-radio :value="0">开业</a-radio>
-              <a-radio :value="1">停业</a-radio>
-            </a-radio-group>
+            <a-select v-model:value="form.hotelStarId" placeholder="请选择酒店星级">
+              <a-select-option v-for="item in hotelStarList" :value="item.oid" :key="item.oid">
+              {{ item.starCode }}
+              </a-select-option>
+            </a-select>
           </a-form-item>
           <a-form-item name="isReduced" label="是否支持减免">
             <a-radio-group v-model:value="form.isReduced">
@@ -114,7 +115,7 @@
               <a-radio :value="0">否</a-radio>
             </a-radio-group>
           </a-form-item>
-          <a-form-item name="reduceRule" label="减免规则">
+          <a-form-item name="full" label="减免规则">
             <div style="display: flex;align-items: start;">
               <div style="display: flex;align-items: center;">
                 <span style="margin: 0 5px;">满</span>
@@ -125,7 +126,7 @@
                   oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')"
                   @change="setReduceRule"/>
               </div>
-              <a-form-item name="reduceRule">
+              <a-form-item name="minus">
                 <div style="display: flex;align-items: center;">
                   <span style="margin: 0 5px;">减</span>
                   <a-input 
@@ -197,27 +198,36 @@ const submitFunc = ref();
 
 const initOpeion = async () => {
   await businessManageOptions.getBusinessTypeOption();
+  // submitFunc:提交编辑审核函数名
   submitFunc.value = travelStore.businessTypeOptions[userInfo.sysCompany.businessType].submitFunc;
-  let func = null;
-  console.log('userInfo.sysCompany.businessType:', userInfo.sysCompany.businessType)
+  // infoFunc:获取企业基本信息函数名
+  let infoFunc = null;
+  console.log('userInfo.sysCompany.businessType:', userInfo.sysCompany.businessType);
   switch (userInfo.sysCompany.businessType) {
     case 'TRAVEL':
-    func = api.getTravelInformation();
+    infoFunc = api.getTravelInformation();
     break;
     case 'HOTEL':
-    func = api.getInfoByCompanyId(userInfo.sysCompany.oid);
+    infoFunc = api.getInfoByCompanyId(userInfo.sysCompany.oid);
     break;
     case 'TICKET':
-    func = api.getScenicById(userInfo.sysCompany.oid);
+    infoFunc = api.getScenicById(userInfo.sysCompany.oid);
     break;
   }
-  let data = await func;
+  let data = await infoFunc;
   state.form = { ...data, ...data.companyBo};
   if (state.form?.areaId) state.form.addressIds = [state.form.provinceId, state.form.cityId, state.form.areaId];
+  state.form.full = state.form.reduceRule.split(',')[0];
+  state.form.minus = state.form.reduceRule.split(',')[1];
   enterpriseState.value = travelStore.enterpriseState[state.form.informationAuditStatus]?.descriptions;
   console.log('state.form:', state.form)
 };
 const businessTypeOption = computed(() => businessManageOptions.businessTypeOption);
+const hotelStarList = ref();
+const getHotelStarList = async () => {
+  hotelStarList.value = await api.getHotelStarList()
+  console.log('hotelStarList:', hotelStarList.value)
+}
 const uploadDown = () => {
   // form.businessLicenseUrl = form.businessLicenseUrl ? form.businessLicenseUrl[0] : undefined
 }
@@ -253,10 +263,8 @@ const setReduceRule = () => {
 }
 
 const handleChange = (val: any, option: any) => {
-			console.log(val, option)
-			// state.editableData[key].sourceAddress = val[val.length - 1];
-			// state.editableData[key].sourceAddressName = option.map((it:any) => it.label).join('')
-		}
+  console.log(val, option)
+}
 
 const submit = () => {
   let queryData = form.value;
@@ -281,12 +289,15 @@ const submit = () => {
     console.error(err);
   })
 }
+
 getCityList('0/1', 0).then(res => {
   cityOptions.value = res;
   console.log('cityOptions:', cityOptions.value);
 })
+
 onMounted(() => {
-  initOpeion()
+  initOpeion();
+  getHotelStarList();
 })
 </script>
 

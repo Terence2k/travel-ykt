@@ -111,7 +111,18 @@ export const travelManagement = {
             method: 'post',
             showLoading: true
         });
+    },
+
+    getStock(data: any){
+        return request({
+            url: `${commonPath}/ticket-service/public/api/scenic-travel-itinerary/get-stock`,
+            data,
+            method: 'get',
+            showLoading: false
+        });
     }
+
+    
     
     
 }

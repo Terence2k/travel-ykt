@@ -24,10 +24,11 @@
 		</template>
 	</CommonSearch>
 	<div class="table-area">
-		<a-tabs v-model:activeKey="state.tableData.param.productType">
+		<a-tabs v-model:activeKey="state.tableData.param.productType" @change="tabsChange">
 			<a-tab-pane :key="1" tab="景区"></a-tab-pane>
 			<a-tab-pane :key="2" tab="酒店" force-render></a-tab-pane>
 			<a-tab-pane :key="3" tab="餐饮"></a-tab-pane>
+			<a-tab-pane :key="4" tab="综费产品"></a-tab-pane>
 		</a-tabs>
 		<a-spin size="large" :spinning="state.tableData.loading">
 			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%' }">
@@ -70,34 +71,91 @@ const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 const route = useRouter();
 const activeKey = ref(1);
-const columns = [
-	{
-		title: '产品名称',
-		dataIndex: 'productName',
-		key: 'productName',
-	},
-	{
-		title: '归属景区',
-		dataIndex: 'scenicName',
-		key: 'scenicName',
-	},
-	{
-		title: '产品类型',
-		dataIndex: 'productSonType',
-		key: 'productSonType',
-	},
-	{
-		title: '是否有结算规则',
-		dataIndex: 'hasProductRule',
-		key: 'hasProductRule',
-	},
-	{
+const columns = computed(() => {
+	let column = [];
+	if (Number(state.tableData.param.productType) === 1) {
+		column = [
+			{
+				title: '产品名称',
+				dataIndex: 'productName',
+				key: 'productName',
+			},
+			{
+				title: '归属景区',
+				dataIndex: 'scenicName',
+				key: 'scenicName',
+			},
+			{
+				title: '产品类型',
+				dataIndex: 'productSonType',
+				key: 'productSonType',
+			},
+			{
+				title: '是否有结算规则',
+				dataIndex: 'hasProductRule',
+				key: 'hasProductRule',
+			},
+		];
+	} else if (Number(state.tableData.param.productType) === 2) {
+		column = [
+			{
+				title: '房型名称',
+				dataIndex: 'productName',
+				key: 'productName',
+			},
+			{
+				title: '酒店名称',
+				dataIndex: 'scenicName',
+				key: 'scenicName',
+			},
+			{
+				title: '是否有产品规划',
+				dataIndex: 'hasProductRule',
+				key: 'hasProductRule',
+			},
+		];
+	} else if (Number(state.tableData.param.productType) === 3) {
+		column = [
+			{
+				title: '餐饮名称',
+				dataIndex: 'productName',
+				key: 'productName',
+			},
+			{
+				title: '门店名称',
+				dataIndex: 'scenicName',
+				key: 'scenicName',
+			},
+			{
+				title: '是否有产品规划',
+				dataIndex: 'hasProductRule',
+				key: 'hasProductRule',
+			},
+		];
+	} else {
+		column = [
+			{
+				title: '产品名称',
+				dataIndex: 'productName',
+				key: 'productName',
+			},
+			{
+				title: '是否有产品规划',
+				dataIndex: 'hasProductRule',
+				key: 'hasProductRule',
+			},
+		];
+	}
+
+	const action = {
 		title: '操作',
 		key: 'action',
 		fixed: 'right',
 		width: 208,
-	},
-];
+	};
+	column.push(action);
+	return column;
+});
 const state = reactive({
 	tableData: {
 		data: [
@@ -137,13 +195,22 @@ const generaRulesOptions = useGeneraRules();
 //查看
 const toConfigure = (record: any) => {
 	console.log(record, `record`);
-	route.push({
-		path: '/settlementManagement/productSettlementRule/configureRules',
-		query: {
+	let query = {};
+	if (state.tableData.param.productType === 1) {
+		query = {
 			productId: encodeURIComponent(record.productId),
 			productType: encodeURIComponent(record.productType),
 			productSonType: encodeURIComponent(record.productSonType),
-		},
+		};
+	} else {
+		query = {
+			productId: encodeURIComponent(record.productId),
+			productType: encodeURIComponent(record.productType),
+		};
+	}
+	route.push({
+		path: '/settlementManagement/productSettlementRule/configureRules',
+		query,
 	});
 };
 // const onSearch = () => {
@@ -188,6 +255,9 @@ const getProductTypeName = computed(() => (value: string) => {
 const productRuleLessInfos = async () => {
 	const result = await api.productRuleLessInfos();
 	state.scenicList = result;
+};
+const tabsChange = () => {
+	initList();
 };
 </script>
 
