@@ -49,29 +49,30 @@
 			<a-form-item label="组团社计调电话" name="contactPhone">
 				<a-input v-model:value="formState.contactPhone" disabled />
 			</a-form-item>
+			<div v-if="teamGroupType === GroupMode.TeamGroup">
+				<a-form-item label="地接旅行社" name="subTravelOid">
+					<a-select v-model:value="formState.subTravelOid" placeholder="请选择地接旅行社" @change="gettravelOperatorList">
+						<a-select-option :value="item.oid" v-for="item in list.subTravelList" :key="item.oid">{{item.name}}</a-select-option>
+					</a-select>
+				</a-form-item>
 
-			<a-form-item label="地接旅行社" name="subTravelOid">
-				<a-select v-model:value="formState.subTravelOid" placeholder="请选择地接旅行社" @change="gettravelOperatorList">
-					<a-select-option :value="item.oid" v-for="item in list.subTravelList" :key="item.oid">{{item.name}}</a-select-option>
-				</a-select>
-			</a-form-item>
+				<a-form-item label="地接计调" name="subTravelOperatorOid">
+					<a-select v-model:value="formState.subTravelOperatorOid" @change="handleChange" placeholder="请选择地接做团人">
+						<a-select-option 
+							:value="item.oid" 
+							v-for="item in list.travelOperatorList" 
+							:key="item.oid"
+							:phone="item.mobile"
+							>
+							{{item.username}}
+						</a-select-option>
+					</a-select>
+				</a-form-item>
 
-			<a-form-item label="地接计调" name="subTravelOperatorOid">
-				<a-select v-model:value="formState.subTravelOperatorOid" @change="handleChange" placeholder="请选择地接做团人">
-					<a-select-option 
-						:value="item.oid" 
-						v-for="item in list.travelOperatorList" 
-						:key="item.oid"
-						:phone="item.mobile"
-						>
-						{{item.username}}
-					</a-select-option>
-				</a-select>
-			</a-form-item>
-
-			<a-form-item label="地接社计调电话" name="subTravelContactPhone">
-				<a-input v-model:value="formState.subTravelContactPhone" placeholder="选定地接社计调后自动读出" disabled />
-			</a-form-item>
+				<a-form-item label="地接社计调电话" name="subTravelContactPhone">
+					<a-input v-model:value="formState.subTravelContactPhone" placeholder="选定地接社计调后自动读出" disabled />
+				</a-form-item>
+			</div>
 
 			<a-form-item label="游客人数" name="touristNum">
 				<a-input v-model:value="formState.touristNum" placeholder="添加游客名单后自动计算"  disabled/>
@@ -113,7 +114,7 @@
 
 <script lang="ts" setup>
 import { getUserInfo } from '@/utils/util';
-import { RouteType } from '@/enum';
+import { GroupMode, RouteType } from '@/enum';
 import api from '@/api/index';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 
@@ -150,7 +151,7 @@ const props = defineProps({
 })
 
 const emits = defineEmits(['onSuccess'])
-
+const teamGroupType = computed(() => Number(route.query.type)) //协作类型
 let userInfo: any = {}
 let addParams: any = {}
 if (route.query.id) {
@@ -160,7 +161,7 @@ if (route.query.id) {
 	addParams = {
 		oid: null,
 		username: userInfo.username,
-		groupType: route.query.type,
+		groupType: teamGroupType.value,
 		contactPhone: userInfo.mobile,
 		subTravelOperatorOid: '',
 		travelOid: userInfo.sysCompany.oid,

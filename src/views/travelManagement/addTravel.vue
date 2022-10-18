@@ -165,6 +165,7 @@ getTraveDetail();
 	position: relative;
 	top: -48px;
 	right: 20px;
+	cursor: pointer;
 }
 
 .footer {
