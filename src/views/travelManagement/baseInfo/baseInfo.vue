@@ -94,8 +94,8 @@
 				</a-radio-group>
 			</a-form-item> -->
 
-			<a-form-item label="* 行程时间">
-				<div class="d-flex align-item-center">
+			<a-form-item label="行程时间" name="time">
+				<!-- <div class="d-flex align-item-center">
 					<a-form-item name="startDate" style="margin-bottom: 0">
 						<a-date-picker 
 							:show-time="{ format: 'HH:mm:ss' }" 
@@ -111,7 +111,14 @@
 							value-format="YYYY-MM-DD HH:mm:ss"
 							v-model:value="formState.endDate" />
 					</a-form-item>
-				</div>
+				</div> -->
+				<a-range-picker
+					@change="handleChangeTime"
+					v-model:value="formState.time"
+					show-time
+					format="YYYY-MM-DD HH:mm:ss"
+					value-format="YYYY-MM-DD HH:mm:ss"
+				/>
 			</a-form-item>
 
 			<a-form-item label="行程单号" name="teamId">
@@ -199,8 +206,9 @@ const rulesRef = {
 	touristNum: [{ required: true, message: '请输入行程人数' }],
 	// routeType: [{ required: true, message: '请选择线路类型' }],
 	routeName: [{ required: true, message: '请选择或输入线路名称' }],
-	startDate: [{ required: true, message: '请选择行程开始时间' }],
-	endDate: [{ required: true, message: '请选择行程结束时间' }],
+	// startDate: [{ required: true, message: '请选择行程开始时间' }],
+	// endDate: [{ required: true, message: '请选择行程结束时间' }],
+	time: [{ required: true, message: '请选择行程时间' }],
 	subTravelOperatorOid: [{ required: true, message: '请选择计调' }],
 	subTravelOid: [{ required: true, message: '请选择地接旅行社'}]
 };
@@ -234,6 +242,17 @@ const gettravelOperatorList = async (travelId: number, option: any) => {
 const handleChange = (event: any, option: any) => {
 	formState.value.subTravelContactPhone = option.phone
 }
+const handleChangeTime = (event: any) => {
+	if (event) {
+		formState.value.startDate = event[0];
+		formState.value.endDate = event[1];
+	} else {
+		formState.value.startDate = '';
+		formState.value.endDate = '';
+	}
+	
+}
+
 const changeRadio = (event:any) =>  {
 	travelStore.setTeamType(event.target.value);
 
