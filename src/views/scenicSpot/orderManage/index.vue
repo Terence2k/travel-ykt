@@ -2,25 +2,37 @@
 	<a-spin size="large" :spinning="state.tableData.loading" style="min-height: 50vh">
 		<CommonSearch>
 			<SearchItem label="入园日期">
-				<a-select ref="select" style="width: 200px" placeholder="请选择审核状态">
+				<!-- <a-select ref="select" style="width: 200px" placeholder="请选择审核状态">
 					<a-select-option value="all">all</a-select-option>
-				</a-select>
+				</a-select> -->
+				<a-date-picker format="YYYY-MM-DD " value-format="YYYY-MM-DD " v-model:value="state.tableData.schoolTime" placeholder="入园日期" />
+				<!-- <a-time-picker
+					v-model:value="state.tableData.schoolTime"
+					:show-time="{ format: 'YYYY-MM-DD HH:mm:ss' }"
+					format="YYYY-MM-DD HH:mm:ss"
+					value-format="YYYY-MM-DD HH:mm:ss"
+					placeholder="入园日期"
+				/> -->
 			</SearchItem>
 			<SearchItem label="核销日期">
-				<a-select ref="select" style="width: 200px" placeholder="请选择景区等级">
-					<a-select-option value="all">all</a-select-option>
-				</a-select>
+				<a-date-picker
+					v-model:value="state.tableData.verificationTime"
+					:show-time="{ format: 'HH:mm:ss' }"
+					format="YYYY-MM-DD HH:mm:ss"
+					value-format="YYYY-MM-DD HH:mm:ss"
+					placeholder="核销日期"
+					style="width: 120px"
+				/>
 			</SearchItem>
 			<SearchItem label="行程单号">
-				<a-select ref="select" style="width: 200px" placeholder="请选择景区名称">
-					<a-select-option value="all">all</a-select-option>
-				</a-select>
+				<a-input v-model:value="state.tableData.itineraryNo" placeholder="请输入行程单号" style="width: 200px" />
 			</SearchItem>
 			<SearchItem label="旅行社名称">
-				<a-input placeholder="请输入用户姓名/手机号" style="width: 200px" />
+				<a-input v-model:value="state.tableData.agencyName" placeholder="请输入行程单号" style="width: 200px" />
+				<!-- <a-input placeholder="请输入用户姓名/手机号" style="width: 200px" /> -->
 			</SearchItem>
 			<template #button>
-				<a-button>查询</a-button>
+				<a-button @click="search">查询</a-button>
 			</template>
 		</CommonSearch>
 
@@ -33,10 +45,7 @@
 			<a-tab-pane :key="4" tab="已取消"> </a-tab-pane>
 		</a-tabs>
 		<div class="table-area">
-			<div class="list-btn">
-				<a-button type="primary" class="success">新增</a-button>
-			</div>
-			<CommonTable :dataSource="dataSource" :columns="columns" :scroll="{ x: '100%' }">
+			<CommonTable :dataSource="dataSource" :columns="columns">
 				<template #bodyCell="{ column, record }">
 					<template v-if="column.key === 'action'">
 						<div class="action-btns" v-if="state.tableData.param.orderState !== 2">
@@ -57,7 +66,16 @@
 				@change="onHandleCurrentChange"
 				@showSizeChange="pageSideChange"
 			/>
+
+			<div class="footer">
+				<div class="tooter-btn">
+					<!-- <a-button type="primary" @click.prevent="onSubmit">保存</a-button> -->
+					<a-button type="primary" @click="exportBtn">导出</a-button>
+				</div>
+			</div>
 		</div>
+
+		<ApplyChange ref="applyTchangeRef" />
 	</a-spin>
 </template>
 
@@ -69,6 +87,7 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import api from '@/api';
 import viewTable from './components/table.vue';
+import ApplyChange from './components/applyChange.vue';
 
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
@@ -93,6 +112,78 @@ const dataSource = [
 	},
 	{
 		key: '3',
+		name: '张某某',
+		age: 42,
+		address: '西湖区湖底公园1号',
+		address1: '西湖区湖底公园1号',
+		address2: '西湖区湖底公园1号',
+		address3: '西湖区湖底公园1号',
+	},
+	{
+		key: '4',
+		name: '张某某',
+		age: 42,
+		address: '西湖区湖底公园1号',
+		address1: '西湖区湖底公园1号',
+		address2: '西湖区湖底公园1号',
+		address3: '西湖区湖底公园1号',
+	},
+	{
+		key: '1',
+		name: '王某某',
+		age: 32,
+		address: '西湖区湖底公园1号',
+		address1: '西湖区湖底公园1号',
+		address2: '西湖区湖底公园1号',
+		address3: '西湖区湖底公园1号',
+	},
+	{
+		key: '2',
+		name: '张某某',
+		age: 42,
+		address: '西湖区湖底公园1号',
+		address1: '西湖区湖底公园1号',
+		address2: '西湖区湖底公园1号',
+		address3: '西湖区湖底公园1号',
+	},
+	{
+		key: '3',
+		name: '张某某',
+		age: 42,
+		address: '西湖区湖底公园1号',
+		address1: '西湖区湖底公园1号',
+		address2: '西湖区湖底公园1号',
+		address3: '西湖区湖底公园1号',
+	},
+	{
+		key: '4',
+		name: '张某某',
+		age: 42,
+		address: '西湖区湖底公园1号',
+		address1: '西湖区湖底公园1号',
+		address2: '西湖区湖底公园1号',
+		address3: '西湖区湖底公园1号',
+	},
+	{
+		key: '5',
+		name: '张某某',
+		age: 42,
+		address: '西湖区湖底公园1号',
+		address1: '西湖区湖底公园1号',
+		address2: '西湖区湖底公园1号',
+		address3: '西湖区湖底公园1号',
+	},
+	{
+		key: '6',
+		name: '张某某',
+		age: 42,
+		address: '西湖区湖底公园1号',
+		address1: '西湖区湖底公园1号',
+		address2: '西湖区湖底公园1号',
+		address3: '西湖区湖底公园1号',
+	},
+	{
+		key: '7',
 		name: '张某某',
 		age: 42,
 		address: '西湖区湖底公园1号',
@@ -190,7 +281,10 @@ const state = reactive({
 const tabActive = ref('');
 
 //申请改刷
-const applyTchange = () => {};
+const applyTchangeRef = ref();
+const applyTchange = () => {
+	applyTchangeRef.value.open();
+};
 
 //改变状态
 const changePageStatus = (e: any) => {
@@ -203,11 +297,16 @@ const toDetail = (record: any) => {
 	route.push({ path: '/scenic-spot/order-manage/edit', query: { oid: record.oid } });
 };
 
+//导出
+const exportBtn = () => {};
 const onHandleCurrentChange = (val: number) => {
 	state.tableData.param.pageNo = val;
 	init();
 };
-
+//搜索
+const search = () => {
+	init();
+};
 const pageSideChange = (current: number, size: number) => {
 	state.tableData.param.pageSize = size;
 	init();
@@ -228,17 +327,52 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="less">
-.trave-contaner {
-	height: 100%;
-	::v-deep(.ant-tabs-nav) {
-		padding: 0 20px;
-	}
+<style lang="scss" scoped>
+.table-area {
+	// padding-bottom: 16px;
+}
+// .trave-contaner {
+// 	height: 100%;
+// 	::v-deep(.ant-tabs-nav) {
+// 		padding: 0 20px;
+// 	}
+// }
+::v-deep .ant-table-body {
+	// max-height: 38vh !important;
 }
 .ant-tabs-top > .ant-tabs-nav {
 	margin: 0;
 }
-.ant-tabs-nav-wrap {
+
+.footer {
+	position: fixed;
+	bottom: 12px;
+	line-height: 64px;
+	height: 64px;
+	// width: calc(100% - 292px);
+	width: 100px;
+	// border-top: 1px solid #f1f2f5;
+	margin-left: -16px;
+	margin-right: 24px;
+	// background-color: #fff;
+	background-color: transparent;
+	z-index: 101;
+
+	.tooter-btn {
+		width: 60%;
+		// background-color: #fff;
+		margin-left: 16px;
+	}
+	button:first-of-type {
+		margin-right: 16px;
+	}
+}
+::v-deep .ant-tabs-nav-wrap {
 	margin-left: 20px;
+}
+.ant-pagination {
+	// display: flex;
+	// justify-content: right;
+	// padding: 0;
 }
 </style>

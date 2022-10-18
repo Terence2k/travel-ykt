@@ -2,12 +2,12 @@
 	<div class="trave-contaner">
 		<CommonSearch>
 			<search-item label="关键词搜索">
-				<a-input v-model:value="params.keyWord" placeholder="请输入游客姓名、导游姓名、旅行社名称、线路名称等关键字"/>
+				<a-input v-model:value="travelStore.traveList[chart].params.keyWord" placeholder="请输入游客姓名、导游姓名、旅行社名称、线路名称等关键字"/>
 			</search-item>
 
 			<search-item label="组团模式">
 				<a-select
-					v-model:value="params.groupType">
+					v-model:value="travelStore.traveList[chart].params.groupType">
 					<a-select-option 
 						v-for="(value, key) in travelStore.groupMode" 
 						:key="key" 
@@ -17,16 +17,16 @@
 
 			<search-item label="行程时间">
 				<a-range-picker
-					v-model:value="params.time"
+					v-model:value="travelStore.traveList[chart].params.time"
 					show-time
-					format="YYYY-MM-DD HH:mm"
-					value-format="YYYY-MM-DD HH:mm"
+					format="YYYY-MM-DD HH:mm:ss"
+					value-format="YYYY-MM-DD HH:mm:ss"
 				/>
 			</search-item>
 
 			<template #button>
 				<a-button style="margin-right:30px" @click="reset">重置</a-button>
-				<a-button @click="query">查询</a-button>
+				<a-button @click="onSearch">查询</a-button>
 			</template>
 		</CommonSearch>
 
@@ -59,11 +59,13 @@
 	import waitingChange from './travelList/waitingChange.vue';
 	import cancellation from './travelList/cancellation.vue';
 
-	import { useTravelStore } from '@/stores/modules/travelManagement';
+	import { traveListParams, useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupStatus, GroupType } from '@/enum';
 	import { getUserInfo } from '@/utils/util';
 	import { ROLE } from '@/constant'
 	import api from '@/api';
+	import { Field } from '@/type';
+	import { cloneDeep } from 'lodash';
 
 	const userInfo = getUserInfo();
 	const travelStore = useTravelStore();
@@ -77,16 +79,19 @@
 		startDate: '',
 		endDate: ''
 	})
+	
 	const pages = [
 		{
 			name: drafts,
 			label: travelStore.groupStatus[GroupStatus.Drafts],
-			value: GroupStatus.Drafts
+			value: GroupStatus.Drafts,
+			chart: 'drafts'
 		},
 		{
 			name: waitingGroup,
 			label: travelStore.groupStatus[GroupStatus.WaitingGroup],
-			value: GroupStatus.WaitingGroup
+			value: GroupStatus.WaitingGroup,
+			chart: 'waitingGroup'
 		},
 		// {
 		// 	name: waitRegiment,
@@ -96,32 +101,38 @@
 		{
 			name: haveABall,
 			label: travelStore.groupStatus[GroupStatus.HaveABall],
-			value: GroupStatus.HaveABall
+			value: GroupStatus.HaveABall,
+			chart: 'haveABall'
 		},
 		{
 			name: refuseGroup,
 			label: travelStore.groupStatus[GroupStatus.RefuseGroup],
-			value: GroupStatus.RefuseGroup
+			value: GroupStatus.RefuseGroup,
+			chart: 'refuseGroup'
 		},
 		{
 			name: closeAnAccount,
 			label: travelStore.groupStatus[GroupStatus.CloseAnAccount],
-			value: GroupStatus.CloseAnAccount
+			value: GroupStatus.CloseAnAccount,
+			chart: 'closeAnAccount'
 		},
 		{
 			name: waitingChange,
 			label: travelStore.groupStatus[GroupStatus.WaitingChange],
-			value: GroupStatus.WaitingChange
+			value: GroupStatus.WaitingChange,
+			chart: 'waitingChange'
 		},
 		{
 			name: cancellation,
 			label: travelStore.groupStatus[GroupStatus.Cancellation],
-			value: GroupStatus.Cancellation
+			value: GroupStatus.Cancellation,
+			chart: 'cancellation'
 		},
 		{
 			name: overtime,
 			label: travelStore.groupStatus[GroupStatus.Overtime],
-			value: GroupStatus.Unpaid
+			value: GroupStatus.Overtime,
+			chart: 'overtime'
 		}
 	]
 	
@@ -133,15 +144,28 @@
 			}
 		})
 	}
+
+	const chart = computed(() =>  pages.filter((it: any) => it.value === activeKey.value)[0].chart as Field)
+	
 	//查询
-	const query=()=>{
-		console.log(GroupStatus.Cancellation,'11111111')
+	const onSearch = async () => {
+		let chartField:Field = chart.value
+		let storeParams = travelStore.traveList[chartField].params
+		travelStore.traveList[chartField].params.status = activeKey.value
+		travelStore.traveList[chartField].params.startDate = storeParams.time[0]
+		travelStore.traveList[chartField].params.endDate = storeParams.time[1]
+		let params = cloneDeep(travelStore.traveList[chartField].params)
+		params.groupType = params.groupType === '0' ? '' : params.groupType
+		const res = await travelStore.getTravelList(params);
+
+		travelStore.setTraveList(res, chartField)
 	}
 	//重置
 	const reset =()=>{
-		params.keyWord='',
-		params.time='',
-		params.groupType=''
+		let chartField:Field = chart.value
+
+		travelStore.traveList[chartField].params = cloneDeep(traveListParams.params)
+		onSearch()
 	}
 	watch(() => params.time, newVal => {
 		if (newVal) {

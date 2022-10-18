@@ -41,13 +41,13 @@
 
 	const travelStore = useTravelStore();
 	const state = reactive({
-		total: 0,
+		total: computed(() => travelStore.traveList.cancellation.total),
 		params: {
 				pageNo: 1,
 				pageSize: 10,
 				status: 1
 		},
-		tableData: [],
+		tableData: computed(() => travelStore.traveList.cancellation.list),
 		columns: [
 			{
 					title: ' 序号 ',
@@ -102,9 +102,10 @@
 		]
 	})
 	const onSearch = async () => {
-		const res = await travelStore.getTravelList({pageNo: 1, pageSize: 10, status: GroupStatus.Cancellation});
-		state.tableData = res.content
-		state.total = res.total;
+		travelStore.traveList.cancellation.params.status = GroupStatus.Cancellation
+		const res = await travelStore.getTravelList(travelStore.traveList.cancellation.params);
+		
+		travelStore.setTraveList(res, 'cancellation')
 	}
 	const onHandleCurrentChange = () => {
 

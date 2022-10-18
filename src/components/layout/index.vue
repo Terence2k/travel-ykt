@@ -26,7 +26,7 @@
 				<div class="header_right">
 					<a-dropdown>
 						<a class="ant-dropdown-link" @click.prevent>
-							<span>{{userInfo.username}} &nbsp;</span>
+							<span>{{ userInfo.username }} &nbsp;</span>
 							<user-outlined />
 							<DownOutlined />
 						</a>
@@ -108,31 +108,31 @@ const goBack = () => {
 };
 
 const handleMenuTree = (menuList: any) => {
-  menuList = menuList.map((item: any) => {
-    return {
-      children: item.childMenuList,
-      keys: item.url,
-      path: item.url,
-      title: item.menuName
-    }
-  });
-  return menuList;
-}
+	menuList = menuList.map((item: any) => {
+		return {
+			children: item.childMenuList,
+			keys: item.url,
+			path: item.url,
+			title: item.menuName,
+		};
+	});
+	return menuList;
+};
 
 watchEffect(() => {
-	// const modules = permissioStore.getMenuList;
-	// if (modules.length > 0) {
-	// 	navs.value = modules;
-	// }
-  
-  userInfo.sysMenuVos = handleMenuTree(userInfo.sysMenuVos);
-  userInfo.sysMenuVos.forEach((item: any) => {
-    if (item.children?.length) {
-      item.children = handleMenuTree(item.children);
-    } else {
-      delete item.children;
-    }
-  });
+	const modules = permissioStore.getMenuList;
+	if (modules.length > 0) {
+		navs.value = modules;
+	}
+
+	userInfo.sysMenuVos = handleMenuTree(userInfo.sysMenuVos);
+	userInfo.sysMenuVos.forEach((item: any) => {
+		if (item.children?.length) {
+			item.children = handleMenuTree(item.children);
+		} else {
+			delete item.children;
+		}
+	});
 });
 const state = reactive({
 	routeList: [],
@@ -277,7 +277,7 @@ onMounted(() => {
 }
 .hidden_wrapper {
 	overflow-y: auto;
-	height: 100vh;
+	height: calc(100vh - 64px);
 	width: 256px;
 	overflow-x: hidden;
 	padding-bottom: 16px;
