@@ -155,38 +155,84 @@ const pageSideChange = (current: number, size: number) => {
 };
 //新增
 const toAddPage = () => {
+	let query = {};
+	if (state.tableData.param.productType === 1) {
+		query = {
+			productId: encodeURIComponent(state.tableData.param.productId),
+			productType: encodeURIComponent(state.tableData.param.productType),
+			productSonType: encodeURIComponent(state.tableData.param.productSonType),
+		};
+	} else {
+		query = {
+			productId: encodeURIComponent(state.tableData.param.productId),
+			productType: encodeURIComponent(state.tableData.param.productType),
+		};
+	}
 	route.push({
 		path: '/settlementManagement/productSettlementRule/edit',
-		query: {
-			productId: encodeURIComponent(state.tableData.param['productId']),
-			productType: encodeURIComponent(state.tableData.param['productType']),
-			productSonType: encodeURIComponent(state.tableData.param['productSonType']),
-		},
+		query,
+		// query: {
+		// 	productId: encodeURIComponent(state.tableData.param['productId']),
+		// 	productType: encodeURIComponent(state.tableData.param['productType']),
+		// 	productSonType: encodeURIComponent(state.tableData.param['productSonType']),
+		// },
 	});
 };
 //编辑
 const toEditPage = (record: any) => {
 	console.log(record.oid, encodeURIComponent(record.oid));
+	let query = {};
+	if (state.tableData.param.productType === 1) {
+		query = {
+			oid: encodeURIComponent(record.oid),
+			productId: encodeURIComponent(state.tableData.param.productId),
+			productType: encodeURIComponent(state.tableData.param.productType),
+			productSonType: encodeURIComponent(state.tableData.param.productSonType),
+		};
+	} else {
+		query = {
+			oid: encodeURIComponent(record.oid),
+			productId: encodeURIComponent(state.tableData.param.productId),
+			productType: encodeURIComponent(state.tableData.param.productType),
+		};
+	}
 	route.push({
 		path: '/settlementManagement/productSettlementRule/edit',
-		query: {
-			oid: encodeURIComponent(record.oid),
-			productId: encodeURIComponent(state.tableData.param['productId']),
-			productType: encodeURIComponent(state.tableData.param['productType']),
-			productSonType: encodeURIComponent(state.tableData.param['productSonType']),
-		},
+		query,
+		// query: {
+		// 	oid: encodeURIComponent(record.oid),
+		// 	productId: encodeURIComponent(state.tableData.param['productId']),
+		// 	productType: encodeURIComponent(state.tableData.param['productType']),
+		// 	productSonType: encodeURIComponent(state.tableData.param['productSonType']),
+		// },
 	});
 };
 //查看
 const toCheck = (record: any) => {
+	let query = {};
+	if (state.tableData.param.productType === 1) {
+		query = {
+			oid: encodeURIComponent(record.oid),
+			productId: encodeURIComponent(state.tableData.param.productId),
+			productType: encodeURIComponent(state.tableData.param.productType),
+			productSonType: encodeURIComponent(state.tableData.param.productSonType),
+		};
+	} else {
+		query = {
+			oid: encodeURIComponent(record.oid),
+			productId: encodeURIComponent(state.tableData.param.productId),
+			productType: encodeURIComponent(state.tableData.param.productType),
+		};
+	}
 	route.push({
 		path: '/settlementManagement/productSettlementRule/info',
-		query: {
-			oid: encodeURIComponent(record.oid),
-			productId: encodeURIComponent(state.tableData.param['productId']),
-			productType: encodeURIComponent(state.tableData.param['productType']),
-			productSonType: encodeURIComponent(state.tableData.param['productSonType']),
-		},
+		query,
+		// {
+		// 	oid: encodeURIComponent(record.oid),
+		// 	productId: encodeURIComponent(state.tableData.param['productId']),
+		// 	productType: encodeURIComponent(state.tableData.param['productType']),
+		// 	productSonType: encodeURIComponent(state.tableData.param['productSonType']),
+		// },
 	});
 };
 // const onSearch = () => {
