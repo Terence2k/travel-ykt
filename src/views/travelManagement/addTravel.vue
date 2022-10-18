@@ -5,9 +5,14 @@
 				<component @onSuccess="save" :onCheck="check" :is="item.name"></component>
 			</a-tab-pane>
 		</a-tabs>
-		<div class="footer">
-			<a-button type="primary" @click="check = !check">保存</a-button>
-			<a-button type="primary">下一步</a-button>
+		<div class="footer d-flex justify-content-between">
+			<div class="footer-btn">
+				<a-button type="primary" @click="check = !check">保存</a-button>
+				<a-button type="primary" @click="activeKey = activeKey + 1">下一步</a-button>
+			</div>
+			<div class="submit-btn">
+				提交发团
+			</div>
 		</div>
 	</div>
 </template>
@@ -144,8 +149,23 @@ getTraveDetail();
 	//   padding: 0 20px;
 	// }
 }
+.submit-btn {
+	width: 90px;
+	height: 90px;
+	background: linear-gradient(143deg, #40F3CB 0%, #36B374 100%);
+	box-shadow: 2px 6px 20px rgba(54,179,116,0.34);
+	border-radius: 50%;
+	text-align: center;
+	line-height: 90px;
+	color: #fff;
+	font-size: 16px;
+	position: relative;
+	top: -48px;
+	right: 20px;
+}
 
 .footer {
+	margin-top: 100px;
 	position: sticky;
 	bottom: 0;
 	line-height: 64px;
