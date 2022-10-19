@@ -277,7 +277,7 @@ onMounted(() => {
 }
 .hidden_wrapper {
 	overflow-y: auto;
-	height: 100vh;
+	height: calc(100vh - 48px);
 	width: 256px;
 	overflow-x: hidden;
 	padding-bottom: 16px;
