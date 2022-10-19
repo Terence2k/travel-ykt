@@ -232,3 +232,19 @@ export async function getPrepaidCompanyList() {
 		showLoading: true,
 	});
 }
+// 获取门店下拉列表
+export async function getShopList() {
+	return request({
+		url: `${commonPath}/catering-service/public/api/catering-product/get-shop-list`,
+		method: 'get',
+		showLoading: true,
+	});
+}
+// 获取酒店名称下拉列表
+export async function getAllOpenHotelNameList() {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-information/getAllOpenHotelName`,
+		method: 'get',
+		showLoading: true,
+	});
+}
