@@ -109,6 +109,8 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 			cur.time = cur.startDate && 
 						cur.endDate && 
 						[cur.startDate, cur.endDate] || [];
+			// 标记该数据是否编辑
+			cur.edit = true;
 			state.editableData[key] = cur;
 		},
 		del(key: string) {
@@ -145,7 +147,7 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 
 		add: () => {
 			let key = generateGuid();
-			state.tableData.push({key});
+			state.tableData.push({key, edit: true, oid: null});
 			methods.edit(key);
 			console.log(state.tableData)
 		},

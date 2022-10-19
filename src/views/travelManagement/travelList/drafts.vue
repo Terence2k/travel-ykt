@@ -1,5 +1,6 @@
 <template>
   <div>
+	
 		<CommonTable :row-selection="{onSelect}" :dataSource="state.tableData" :columns="state.columns">
       <template #button>
       </template>
@@ -29,8 +30,8 @@
 			</template>
 		</CommonTable>
 		<CommonPagination
-			:current="state.params.pageNo"
-			:page-size="state.params.pageSize"
+			:current="travelStore.traveList.drafts.params.pageNo"
+			:page-size="travelStore.traveList.drafts.params.pageSize"
 			:total="state.total"
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
@@ -49,13 +50,13 @@
 	const travelStore = useTravelStore();
 	const router = useRouter()
 	const state = reactive({
-		total: 0,
+		total:  computed(() => travelStore.traveList.drafts.total),
 		params: {
 			pageNo: 1,
 			pageSize: 10,
 			status: 1
 		},
-		tableData: [],
+		tableData: computed(() => travelStore.traveList.drafts.list),
 		columns: [
 			{
 				title: ' 序号 ',
@@ -105,12 +106,13 @@
 		]
 	})
 	const onSearch = async () => {
-		const res = await travelStore.getTravelList({pageNo: state.params.pageNo, pageSize: state.params.pageSize, status: GroupStatus.Drafts});
-		state.tableData = res.content
-		state.total = res.total;
+		travelStore.traveList.drafts.params.status = GroupStatus.Drafts
+		const res = await travelStore.getTravelList(travelStore.traveList.drafts.params);
+
+		travelStore.setTraveList(res, 'drafts')
 	}
 	const onHandleCurrentChange = (e:any) => {
-		state.params.pageNo = e
+		travelStore.traveList.drafts.params.pageNo = e
 		onSearch()
 	}
 	const pageSideChange = () => {

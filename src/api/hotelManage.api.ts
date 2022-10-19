@@ -159,11 +159,19 @@ export async function getCompanyType() {
 
 // 获取酒店列表
 export async function getHotelList(auditStatus: any) {
-	return request({
-		url: `${commonPath}/hotel-service/public/api/hotel-room-stock/listHotel?auditStatus=${auditStatus}`,
-		method: 'get',
-		// showLoading: true,
-	});
+	if (auditStatus !== null) {
+		return request({
+			url: `${commonPath}/hotel-service/public/api/hotel-room-stock/listHotel?auditStatus=${auditStatus}`,
+			method: 'get',
+			// showLoading: true,
+		});
+	} else {
+		return request({
+			url: `${commonPath}/hotel-service/public/api/hotel-room-stock/listHotel`,
+			method: 'get',
+			// showLoading: true,
+		});
+	}
 }
 
 // 获取未来一段时间酒店房间库存数据
@@ -314,6 +322,15 @@ export async function disableSystemRoomType(id: number) {
 export async function getEnableSystemRoomType() {
 	return request({
 		url: `${commonPath}/hotel-service/public/api/hotel-sys-room-type/list`,
+		method: 'get',
+		showLoading: true,
+	});
+}
+
+// 根据企业id查询酒店信息
+export async function getInfoByCompanyId(id: number) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-information/getInfoByCompanyId/${id}`,
 		method: 'get',
 		showLoading: true,
 	});

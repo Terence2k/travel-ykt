@@ -5,11 +5,11 @@ export interface FormState {
 	teamTypeId?: number | null;
 	ruleStatus?: number | null;
 	productId?: number | null;
-	prepaidCompany?: number | null;
+	prepaidCompany?: number | null | string;
 	chargeProductSonId?: number | null;
 	chargeCount?: number | null;
 	isPrepaid?: number | null;
-	lastCostBelongCompany?: number | null;
+	lastCostBelongCompany?: number | null | string;
 	chargeModel?: number | null;
 	level?: number | null;
 	productSonType?: string | null;
@@ -18,7 +18,7 @@ export interface FormState {
 	charCount?: number | string | null;
 }
 export interface splitListType {
-	companyType?: number | null;
+	companyType?: number | null | string;
 	splitModel?: number | null;
 	splitCount?: number | null;
 	level?: number | null;

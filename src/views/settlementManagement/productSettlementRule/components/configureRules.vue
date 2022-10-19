@@ -19,12 +19,23 @@
 					</template>
 					<!-- 产品类型 -->
 					<template v-if="column.key === 'productType'">
-						<span>{{ getProductName(record.productSonType, record.chargeProductSonId) }}</span>
+						<span v-if="state.tableData.param['productSonType'] === 'ONE'">单票</span>
+						<span v-if="state.tableData.param['productSonType'] === 'SHOW'">演出票</span>
+						<span v-if="state.tableData.param['productSonType'] === 'UNITE'">{{
+							getProductName(record.productSonType, record.chargeProductSonId)
+						}}</span>
 					</template>
 					<!-- 优先级 -->
 					<template v-if="column.key === 'ruleStatus'">
 						<span v-if="record.ruleStatus === 0">禁用</span>
 						<span v-if="record.ruleStatus === 1">启用</span>
+					</template>
+					<!-- 收费名称 -->
+					<template v-if="column.key === 'chargeCount'">
+						<span> {{ record.chargeCount }}</span>
+						<span v-if="record.chargeModel === 1">%</span>
+						<span v-if="record.chargeModel === 2">人</span>
+						<span v-if="record.chargeModel === 3">元</span>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
@@ -127,13 +138,6 @@ const state = reactive({
 		{ value: 2, name: '酒店' },
 		{ value: 3, name: '餐饮' },
 	],
-	prepaidCompanyList: [
-		{ value: 1, name: '旅行社' },
-		{ value: 2, name: '集团' },
-		{ value: 3, name: '监理公司' },
-		{ value: 4, name: '一卡通' },
-		{ value: 5, name: '协会' },
-	],
 	productSonList: [],
 });
 
@@ -151,38 +155,84 @@ const pageSideChange = (current: number, size: number) => {
 };
 //新增
 const toAddPage = () => {
+	let query = {};
+	if (Number(state.tableData.param.productType) === 1) {
+		query = {
+			productId: encodeURIComponent(state.tableData.param.productId),
+			productType: encodeURIComponent(state.tableData.param.productType),
+			productSonType: encodeURIComponent(state.tableData.param.productSonType),
+		};
+	} else {
+		query = {
+			productId: encodeURIComponent(state.tableData.param.productId),
+			productType: encodeURIComponent(state.tableData.param.productType),
+		};
+	}
 	route.push({
 		path: '/settlementManagement/productSettlementRule/edit',
-		query: {
-			productId: encodeURIComponent(state.tableData.param['productId']),
-			productType: encodeURIComponent(state.tableData.param['productType']),
-			productSonType: encodeURIComponent(state.tableData.param['productSonType']),
-		},
+		query,
+		// query: {
+		// 	productId: encodeURIComponent(state.tableData.param['productId']),
+		// 	productType: encodeURIComponent(state.tableData.param['productType']),
+		// 	productSonType: encodeURIComponent(state.tableData.param['productSonType']),
+		// },
 	});
 };
 //编辑
 const toEditPage = (record: any) => {
 	console.log(record.oid, encodeURIComponent(record.oid));
+	let query = {};
+	if (Number(state.tableData.param.productType) === 1) {
+		query = {
+			oid: encodeURIComponent(record.oid),
+			productId: encodeURIComponent(state.tableData.param.productId),
+			productType: encodeURIComponent(state.tableData.param.productType),
+			productSonType: encodeURIComponent(state.tableData.param.productSonType),
+		};
+	} else {
+		query = {
+			oid: encodeURIComponent(record.oid),
+			productId: encodeURIComponent(state.tableData.param.productId),
+			productType: encodeURIComponent(state.tableData.param.productType),
+		};
+	}
 	route.push({
 		path: '/settlementManagement/productSettlementRule/edit',
-		query: {
-			oid: encodeURIComponent(record.oid),
-			productId: encodeURIComponent(state.tableData.param['productId']),
-			productType: encodeURIComponent(state.tableData.param['productType']),
-			productSonType: encodeURIComponent(state.tableData.param['productSonType']),
-		},
+		query,
+		// query: {
+		// 	oid: encodeURIComponent(record.oid),
+		// 	productId: encodeURIComponent(state.tableData.param['productId']),
+		// 	productType: encodeURIComponent(state.tableData.param['productType']),
+		// 	productSonType: encodeURIComponent(state.tableData.param['productSonType']),
+		// },
 	});
 };
 //查看
 const toCheck = (record: any) => {
+	let query = {};
+	if (state.tableData.param.productType === 1) {
+		query = {
+			oid: encodeURIComponent(record.oid),
+			productId: encodeURIComponent(state.tableData.param.productId),
+			productType: encodeURIComponent(state.tableData.param.productType),
+			productSonType: encodeURIComponent(state.tableData.param.productSonType),
+		};
+	} else {
+		query = {
+			oid: encodeURIComponent(record.oid),
+			productId: encodeURIComponent(state.tableData.param.productId),
+			productType: encodeURIComponent(state.tableData.param.productType),
+		};
+	}
 	route.push({
 		path: '/settlementManagement/productSettlementRule/info',
-		query: {
-			oid: encodeURIComponent(record.oid),
-			productId: encodeURIComponent(state.tableData.param['productId']),
-			productType: encodeURIComponent(state.tableData.param['productType']),
-			productSonType: encodeURIComponent(state.tableData.param['productSonType']),
-		},
+		query,
+		// {
+		// 	oid: encodeURIComponent(record.oid),
+		// 	productId: encodeURIComponent(state.tableData.param['productId']),
+		// 	productType: encodeURIComponent(state.tableData.param['productType']),
+		// 	productSonType: encodeURIComponent(state.tableData.param['productSonType']),
+		// },
 	});
 };
 // const onSearch = () => {

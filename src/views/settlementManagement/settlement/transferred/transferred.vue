@@ -26,48 +26,55 @@ import { reactive, onMounted } from 'vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import { Modal } from 'ant-design-vue';
-
+const props = defineProps({
+	params: Object,
+})
 const router = useRouter();
 const columns = [
 	{
 		title: '团队类型',
-		dataIndex: 'aaa',
-		key: 'aaa',
+		dataIndex: 'teamTypeName',
+		key: 'teamTypeName',
 	},
 	{
 		title: '行程单号',
-		dataIndex: 'bbb',
-		key: 'bbb',
+		dataIndex: 'itineraryNo',
+		key: 'itineraryNo',
 	},
 	{
 		title: '线路名称',
-		dataIndex: 'ccc',
-		key: 'ccc',
+		dataIndex: 'routeName',
+		key: 'routeName',
 	},
 	{
 		title: '组团社',
-		dataIndex: 'ddd',
-		key: 'ddd',
+		dataIndex: 'travelName',
+		key: 'travelName',
 	},
 	{
 		title: '地接社',
-		dataIndex: 'eee',
-		key: 'eee',
+		dataIndex: 'subTravelName',
+		key: 'subTravelName',
 	},
 	{
 		title: '行程人数',
-		dataIndex: 'fff',
-		key: 'fff',
+		dataIndex: 'touristNum',
+		key: 'touristNum',
 	},
 	{
 		title: '行程费用',
-		dataIndex: 'ggg',
-		key: 'ggg',
+		dataIndex: 'totalFee',
+		key: 'totalFee',
 	},
 	{
 		title: '行程时间',
-		dataIndex: 'hhh',
-		key: 'hhh',
+		dataIndex: 'timeText',
+		key: 'timeText',
+	},
+	{
+		title: '结算总额',
+		dataIndex: 'accountingFee',
+		key: 'accountingFee',
 	},
 	{
 		title: '操作',
@@ -79,48 +86,21 @@ const columns = [
 
 const state = reactive({
 	tableData: {
-		data: [
-			{
-				oid: 1,
-				key: 1,
-				aaa: 'John Brown sr.',
-				bbb: 'test',
-				ccc: 'test',
-				ddd: 'test',
-				eee: 'test',
-				fff: 'test',
-				ggg: 'test',
-				hhh: 'test',
-			},
-			{
-				oid: 2,
-				key: 2,
-				aaa: 'Joe Black',
-				bbb: 'test',
-				ccc: 'test',
-				ddd: 'test',
-				eee: 'test',
-				fff: 'test',
-				ggg: 'test',
-				hhh: 'test',
-			},
-		],
+		data: [],
 		total: 0,
 		loading: false,
 		param: {
 			pageNo: 1,
 			pageSize: 10,
-			keyWord: '',
-			roleName: '',
-			status: null,
-			uniType: '',
+			teamTypeId: null,
+			itineraryNo: null,
+			travelId: null,
+			subTravelId: null,
+			startDate: null,
+			endDate: null,
+			accountingStatus: 4, //1行程中 2结算审核 3已结算 4已申请转账
 		},
 	},
-	params: {},
-	operationModal: {
-		isAddOrUpdate: false,
-	},
-	optionRoleList: [],
 });
 
 const onHandleCurrentChange = (val: number) => {
@@ -135,13 +115,34 @@ const pageSideChange = (current: number, size: number) => {
 	onSearch();
 };
 
-const onSearch = () => {
-	// api.userList(state.tableData.param).then((res: any) => {
-	// 	console.log('res:', res);
-	// 	state.tableData.data = res.content;
-	// 	state.tableData.total = res.total;
-	// });
+// 数据处理
+const dealData = (params: [any]) => {
+	params.map((i: any) => {
+		i.timeText = i.startDate + ' - ' + i.endDate
+		return i;
+	});
+	return params;
 };
+
+const onSearch = async() => {
+	// 处理父组件传递筛选条件
+	state.tableData.param.teamTypeId = props.params?.teamTypeId
+	state.tableData.param.itineraryNo = props.params?.itineraryNo
+	state.tableData.param.travelId = props.params?.travelId
+	state.tableData.param.subTravelId = props.params?.subTravelId
+	state.tableData.param.startDate = props.params?.time ? props.params?.time[0] :  null
+	state.tableData.param.endDate = props.params?.time ? props.params?.time[1] :  null
+	state.tableData.loading = true;
+	let res = await api.getItinerarySettlement(state.tableData.param);
+	const { total, content } = res;
+	state.tableData.total = total;
+	const list: [any] = dealData(content);
+	state.tableData.data = list;
+	state.tableData.loading = false;
+	console.log(state.tableData.param);
+};
+// 向父组件暴露方法
+defineExpose({ onSearch });
 
 // 查看详情
 const toInfo = (record: any) => {

@@ -187,7 +187,7 @@ export default [
 			},
 			{
 				path: 'transferManagement',
-				component: () => import('@/views/settlementManagement/transferManagement/index.vue'),
+				redirect: '/settlementManagement/transferManagement/list',
 				name: 'transferManagement',
 				meta: {
 					title: '转账管理',
@@ -195,6 +195,26 @@ export default [
 					// auth: ["admin"],
 					isDetail: false, // 在左侧的导航栏不会展示
 				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/settlementManagement/transferManagement/index.vue'),
+						name: 'transferManagementList',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'tripList',
+						component: () => import('@/views/settlementManagement/transferManagement/tripList.vue'),
+						name: 'transferManagementTripList',
+						meta: {
+							title: '行程单列表',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
 			},
 			{
 				path: 'changeManagement',

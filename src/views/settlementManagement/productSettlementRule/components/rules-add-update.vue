@@ -13,7 +13,7 @@
 					ref="select"
 					v-model:value="formValidate.companyType"
 					style="width: 100%"
-					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.value, label: item.name }))"
+					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.codeValue, label: item.name }))"
 				>
 				</a-select>
 			</a-form-item>
@@ -102,6 +102,7 @@ const rules: any = {
 	integer: [{ required: true, validator: isIntegerNotMust, trigger: 'blur' }],
 };
 const init = async () => {
+	generaRulesOptions.getPrepaidCompanyList();
 	if (props.params.add) {
 		options.title = '新增分账规则';
 		formValidate.value = { splitModel: 1 };

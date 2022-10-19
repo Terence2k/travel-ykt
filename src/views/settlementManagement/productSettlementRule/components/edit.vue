@@ -70,20 +70,20 @@
 					</template>
 				</a-input-number>
 			</a-form-item>
-
-			<a-form-item label="收费子产品" name="chargeProductSonId" v-if="cacheData.productSonList.length > 0">
-				<a-select
-					v-model:value="formState.chargeProductSonId"
-					placeholder="请选择收费子产品"
-					allowClear
-					:options="cacheData.productSonList.map((item) => ({ value: item.productSonId, label: item.productSonName }))"
-				>
-				</a-select>
-			</a-form-item>
-			<a-form-item v-else label="收费子产品">
-				<span>{{ cacheData.productName }}</span>
-			</a-form-item>
-
+			<template v-if="showProductSon">
+				<a-form-item label="收费子产品" name="chargeProductSonId" v-if="cacheData.productSonList.length > 0">
+					<a-select
+						v-model:value="formState.chargeProductSonId"
+						placeholder="请选择收费子产品"
+						allowClear
+						:options="cacheData.productSonList.map((item) => ({ value: item.productSonId, label: item.productSonName }))"
+					>
+					</a-select>
+				</a-form-item>
+				<a-form-item v-else label="收费子产品">
+					<span>{{ cacheData.productName }}</span>
+				</a-form-item>
+			</template>
 			<a-form-item label="是否垫付" name="isPrepaid">
 				<a-radio-group v-model:value="formState.isPrepaid">
 					<a-radio v-for="item in generaRulesOptions.isPrepaidList" :value="item.value" :key="item.name">{{ item.name }}</a-radio>
@@ -96,7 +96,7 @@
 					v-model:value="formState.prepaidCompany"
 					placeholder="请选择垫付单位"
 					allowClear
-					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.value, label: item.name }))"
+					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.codeValue, label: item.name }))"
 				>
 				</a-select>
 			</a-form-item>
@@ -110,7 +110,7 @@
 					v-model:value="formState.lastCostBelongCompany"
 					style="width: 100%"
 					placeholder="请选择剩余费用归属"
-					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.value, label: item.name }))"
+					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.codeValue, label: item.name }))"
 				>
 				</a-select>
 			</a-form-item>
@@ -226,6 +226,7 @@ const rulesRef = {
 	// 人数和金额
 	integer: [{ required: true, validator: isIntegerNotMust, trigger: 'blur' }],
 };
+const route: any = useRouter();
 // 缓存删除编辑数据
 const cacheData = ref({
 	delIndex: null,
@@ -237,28 +238,34 @@ const cacheData = ref({
 	productSonList: [],
 	productName: '',
 });
+const query = route.currentRoute.value.query;
 const oid: Ref<any> = ref(null);
 // 初始化
 const init = async () => {
-	const route = useRouter();
-	const query = route.currentRoute.value.query;
 	generaRulesOptions.getTeamTypeList();
-	const { productId, productType, productSonType } = route.currentRoute.value.query;
-	let productRuleList = await api.productRuleList({
-		productId,
-		productType,
-		productSonType,
-		pageNo: 1, //页号
-		pageSize: 10,
-	});
-	// 由于产品子类别是否存在需要对其进行判断
-	if (productRuleList.content[0].productSonList.length > 0) {
-		cacheData.value.productSonList = productRuleList.content[0].productSonList;
-	} else {
-		cacheData.value.productName = productRuleList.content[0].productName;
-		// formState.productSonType = 'SELF';
-		formState.chargeProductSonId = Number(query.productId);
+	generaRulesOptions.getPrepaidCompanyList();
+	if (Number(query.productType) === 1) {
+		const { productId, productType, productSonType } = route.currentRoute.value.query;
+		console.log(productSonType,`productSonType`);
+		let productRuleList = await api.productRuleList({
+			productId,
+			productType,
+			productSonType,
+			pageNo: 1, //页号
+			pageSize: 10,
+		});
+		// 由于产品子类别是否存在需要对其进行判断
+		console.log(productRuleList, `productRuleList`);
+		if (productRuleList.content[0].productSonList.length > 0) {
+			cacheData.value.productSonList = productRuleList.content[0].productSonList;
+			cacheData.value.productSonList.unshift({ productSonId: 0, productSonName: '全部子产品' });
+		} else {
+			cacheData.value.productName = productRuleList.content[0].productName;
+			// formState.productSonType = 'SELF';
+			formState.chargeProductSonId = Number(query.productId);
+		}
 	}
+
 	if (query && query.oid) {
 		oid.value = query.oid;
 		navigatorBar.setNavigator(['编辑']);
@@ -274,13 +281,12 @@ const init = async () => {
 		formState.isPrepaid = 0;
 		// 默认为百分比
 		formState.chargeModel = 1;
-		// 默认为景区
-		formState.productType = 1;
+		// // 默认为景区
+		formState.productType = Number(query.productType);
 		// 从父元素带过来
-		formState.productSonType = String(query.productSonType);
-		// if (formState.productSonType !== 'SELF') {
-
-		// }
+		if (query.productType === 1) {
+			formState.productSonType = String(query.productSonType);
+		}
 	}
 	console.log(formState, `formState`);
 };
@@ -367,7 +373,6 @@ const saveParams = () => {
 		formState.oid = oid.value;
 	}
 };
-const route = useRouter();
 const cancel = () => {
 	route.go(-1);
 };
@@ -378,12 +383,15 @@ onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
 });
 // 获取表格分账规则分账单位名称
-const getCompanyTypeName = computed(() => (value: number) => {
-	const idx = generaRulesOptions.prepaidCompanyList.findIndex((item) => item.value === value);
+const getCompanyTypeName = computed(() => (value: string) => {
+	const idx = generaRulesOptions.prepaidCompanyList.findIndex((item) => item.codeValue === value);
 	if (idx !== -1) {
 		return generaRulesOptions.prepaidCompanyList[idx]['name'];
 	}
 	return;
+});
+const showProductSon = computed(() => {
+	return Number(route.currentRoute.value.query.productType) === 1;
 });
 </script>
 

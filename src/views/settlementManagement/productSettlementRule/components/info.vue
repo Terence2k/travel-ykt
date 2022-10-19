@@ -56,12 +56,15 @@
 					<span v-if="formState.chargeModel === 3">元</span>
 				</div>
 			</a-form-item>
-			<a-form-item label="收费子产品" name="chargeProductSonId" v-if="productSonList.length > 0">
-				<span>{{ getChargeProductSonName }}</span>
-			</a-form-item>
-			<a-form-item v-else label="收费子产品">
-				<span>{{ productName }}</span>
-			</a-form-item>
+			<template v-if="query.productType === 1">
+				<a-form-item label="收费子产品" name="chargeProductSonId" v-if="productSonList.length > 0">
+					<span>{{ getChargeProductSonName }}</span>
+				</a-form-item>
+				<a-form-item v-else label="收费子产品">
+					<span>{{ productName }}</span>
+				</a-form-item>
+			</template>
+
 			<a-form-item label="是否垫付" name="isPayment">
 				<div>
 					<span>{{ getTypeName('isPrepaid') }}</span>
@@ -155,6 +158,7 @@ const columns = ref([
 const route = useRouter();
 const productSonList = ref([]);
 const productName = ref('');
+const query = route.currentRoute.value.query;
 // 缓存删除编辑数据
 const init = async () => {
 	navigatorBar.setNavigator(['查看']);
@@ -162,19 +166,21 @@ const init = async () => {
 	// await getTeamType();
 	await productRuleDetail(id);
 	const { productId, productType, productSonType } = route.currentRoute.value.query;
-	let productRuleList = await api.productRuleList({
-		productId,
-		productType,
-		productSonType,
-		pageNo: 1, //页号
-		pageSize: 10,
-	});
-	// 由于产品子类别是否存在需要对其进行判断
-	if (productRuleList.content[0].productSonList.length > 0) {
-		productSonList.value = productRuleList.content[0].productSonList;
-	} else {
-		productName.value = productRuleList.content[0].productName;
-		formState.chargeProductSonId = Number(productId);
+	if (query.productType === 1) {
+		let productRuleList = await api.productRuleList({
+			productId,
+			productType,
+			productSonType,
+			pageNo: 1, //页号
+			pageSize: 10,
+		});
+		// 由于产品子类别是否存在需要对其进行判断
+		if (productRuleList.content[0].productSonList.length > 0) {
+			productSonList.value = productRuleList.content[0].productSonList;
+		} else {
+			productName.value = productRuleList.content[0].productName;
+			formState.chargeProductSonId = Number(productId);
+		}
 	}
 };
 const oid = ref('');
@@ -190,20 +196,37 @@ const productRuleDetail = async (id: number) => {
 onMounted(() => {
 	init();
 	generaRulesOptions.getTeamTypeList();
+	generaRulesOptions.getPrepaidCompanyList();
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
 });
 const edit = () => {
 	const query = route.currentRoute.value.query;
-	route.push({
-		path: '/settlementManagement/productSettlementRule/edit',
-		query: {
+	let querySearch = {};
+	if (Number(query.productType) === 1) {
+		querySearch = {
 			oid: encodeURIComponent(oid.value),
 			productId: encodeURIComponent(query.productId),
 			productType: encodeURIComponent(query.productType),
 			productSonType: encodeURIComponent(query.productSonType),
-		},
+		};
+	} else {
+		querySearch = {
+			oid: encodeURIComponent(oid.value),
+			productId: encodeURIComponent(query.productId),
+			productType: encodeURIComponent(query.productType),
+		};
+	}
+	route.push({
+		path: '/settlementManagement/productSettlementRule/edit',
+		query: querySearch,
+		// {
+		// 	oid: encodeURIComponent(oid.value),
+		// 	productId: encodeURIComponent(query.productId),
+		// 	productType: encodeURIComponent(query.productType),
+		// 	productSonType: encodeURIComponent(query.productSonType),
+		// },
 	});
 };
 const getTypeName = computed(() => (str: string) => {
@@ -232,13 +255,13 @@ const getTypeName = computed(() => (str: string) => {
 		return formState.isPrepaid === 1 ? '是' : '否';
 	}
 	if (str === 'prepaidCompany') {
-		const idx = generaRulesOptions.prepaidCompanyList.findIndex((item: any) => item.value === formState.prepaidCompany);
+		const idx = generaRulesOptions.prepaidCompanyList.findIndex((item: any) => item.codeValue === formState.prepaidCompany);
 		if (idx !== -1) {
 			return generaRulesOptions.prepaidCompanyList[idx]['name'];
 		}
 	}
 	if (str === 'lastCostBelongCompany') {
-		const idx = generaRulesOptions.prepaidCompanyList.findIndex((item: any) => item.value === formState.lastCostBelongCompany);
+		const idx = generaRulesOptions.prepaidCompanyList.findIndex((item: any) => item.codeValue === formState.lastCostBelongCompany);
 		if (idx !== -1) {
 			return generaRulesOptions.prepaidCompanyList[idx]['name'];
 		}
@@ -251,8 +274,8 @@ const getTypeName = computed(() => (str: string) => {
 	}
 });
 // 获取表格分账规则分账单位名称
-const getCompanyTypeName = computed(() => (value: number) => {
-	const idx = generaRulesOptions.prepaidCompanyList.findIndex((item) => item.value === value);
+const getCompanyTypeName = computed(() => (value: string) => {
+	const idx = generaRulesOptions.prepaidCompanyList.findIndex((item) => item.codeValue === value);
 	if (idx !== -1) {
 		return generaRulesOptions.prepaidCompanyList[idx]['name'];
 	}

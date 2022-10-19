@@ -1,9 +1,25 @@
 import { defineStore } from 'pinia';
-import { GroupMode, GroupStatus, Gender, GuideType, FeeModel } from '@/enum';
+import { GroupMode, GroupStatus, Gender, GuideType, FeeModel,insuranceType} from '@/enum';
 import api from '@/api/index';
+import { cloneDeep } from 'lodash';
+import { Field } from '@/type';
 interface TraveDataItem {
 	groupType: GroupMode.All | GroupMode.TeamGroup |GroupMode.NoTeamGroup;
 	[k: string]: any
+}
+export const traveListParams = {
+	total: 0,
+	list: [],
+	params: {
+		pageNo: 1,
+		pageSize: 10,
+		status: 0,
+		startDate: '',
+		endDate: '',
+		keyWord: '',
+		groupType: '',
+		time: []
+	}
 }
 export const useTravelStore = defineStore({
 	id: 'travel',
@@ -40,6 +56,16 @@ export const useTravelStore = defineStore({
 				codeValue: Gender.Madam
 			}
 		],
+		insuranceList: [
+			{
+				name: '旅责险',
+				codeValue: insuranceType.brigade
+			},
+			{
+				name: '意外险',
+				codeValue: insuranceType.accident
+			}
+		],
 		IDCard: [],
 		specialId: [],
 		trafficType: [],
@@ -63,33 +89,46 @@ export const useTravelStore = defineStore({
 			[FeeModel.Number]: '人数',
 			[FeeModel.Price]: '价格'
 		},
-    enterpriseState: [
-      {
-        stateName: '未提交',
-        descriptions: '信息不完善，待补充。'
-      },
-      {
-        stateName: '待审核',
-        descriptions: '已提交信息变更审核，请耐心等待。'
-      },
-      {
-        stateName: '审核通过',
-        descriptions: ''
-      },
-      {
-        stateName: '审核未通过',
-        descriptions: '信息变更申请被驳回！'
-      }
-    ],
-    businessTypeOptions: {
-      'TRAVEL': {
-        submitFunc: 'submitInformationAudit'
-      },
-      'HOTEL': {
-        submitFunc: 'editHotelDetailInfo' 
-      }
+		traveList: {
+			drafts: cloneDeep(traveListParams),
+			waitingGroup: cloneDeep(traveListParams),
+			haveABall: cloneDeep(traveListParams),
+			refuseGroup: cloneDeep(traveListParams),
+			waitingChange: cloneDeep(traveListParams),
+			closeAnAccount: cloneDeep(traveListParams),
+			cancellation: cloneDeep(traveListParams),
+			overtime: cloneDeep(traveListParams)
+		},
+		enterpriseState: [
+			{
+				stateName: '未提交',
+				descriptions: '信息不完善，待补充。'
+			},
+			{
+				stateName: '待审核',
+				descriptions: '已提交信息变更审核，请耐心等待。'
+			},
+			{
+				stateName: '审核通过',
+				descriptions: ''
+			},
+			{
+				stateName: '审核未通过',
+				descriptions: '信息变更申请被驳回！'
+			}
+		],
+		businessTypeOptions: {
+			'TRAVEL': {
+				submitFunc: 'submitInformationAudit'
+			},
+			'HOTEL': {
+				submitFunc: 'editHotelDetailInfo' 
+			},
+			'TICKET': {
+				submitFunc: 'changeScenicSpotInformation' 
+			}
 
-    }
+		}
 	}),
 	getters: {
 		// count(): string {
@@ -146,6 +185,10 @@ export const useTravelStore = defineStore({
 		},
 		setTeamType(data: any) {
 			this.teamType = data;
+		},
+		setTraveList(data: any, key: Field) {
+			this.traveList[key].list = data.content
+			this.traveList[key].total = data.total
 		}
 	},
 });
