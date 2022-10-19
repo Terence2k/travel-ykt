@@ -72,8 +72,8 @@ const columns = [
 	},
 	{
 		title: '票种',
-		dataIndex: 'verificationType',
-		key: 'verificationType',
+		dataIndex: 'verificationTypeName',
+		key: 'verificationTypeName',
 		width: 120,
 	},
 	{
@@ -110,7 +110,7 @@ const open = (value) => {
 const toEdit = (record: any) => {
 	console.log(record);
 
-	route.push({ path: '/scenic-spot/singleVote/edit', query: { t: record.ticketType, oid: record.oid } });
+	route.push({ path: '/scenic-spot/singleVote/edit', query: { t: record.verificationType, oid: record.oid } });
 };
 // 删除提示
 const delShow = ref(false);
@@ -173,7 +173,8 @@ const dealData = (params: [any]) => {
 	params.map((i: any) => {
 		i.auditStatus = status[i.auditStatus];
 		i.putaway = i.putaway ? '上架' : '下架';
-		i.verificationType = i.verificationType === 1 ? '多点核销' : i.verificationType === 0 ? '单点核销' : '';
+		// i.verificationType = i.verificationType === 1 ? '多点核销' : i.verificationType === 0 ? '单点核销' : '';
+		i.verificationTypeName = i.verificationType === 1 ? '多点核销' : i.verificationType === 0 ? '单点核销' : '';
 		return i;
 	});
 
