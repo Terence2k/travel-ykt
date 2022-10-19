@@ -3,7 +3,8 @@
         <div class="action-btn">
             <a-button type="primary">模板下载</a-button>
             <a-button type="primary">批量导入</a-button>
-            <a-button type="primary">同步健康码</a-button>
+            <a-button type="primary">中高风险地区一键检查</a-button>
+			<a-button type="primary">健康码一键检查</a-button>
         </div>
 		<a-form
 			ref="formRef"
@@ -12,6 +13,7 @@
 			autocomplete="off"
 			labelAlign="left"
 		>
+		
 			<CommonTable :row-selection="{onSelect}" :columns="columns" :dataSource="tableData" :scrollY="false">
 				
 				<template #bodyCell="{ column, text, index, record }">
@@ -61,13 +63,14 @@
 								</template>
 							</div>
 						</template>
-						<template v-if="column.key === 'addressId'">
+						<template v-if="column.key === 'sourceAddressName'">
 							<a-form-item
 								v-if="editableData[record.key ? record.key : record.oid]"
 								:name="[record.key ? record.key : record.oid, column.key]">
 								<a-cascader
 									v-if="editableData[record.key ? record.key : record.oid]"
 									:load-data="loadData"
+									:placeholder="record.sourceAddressName"
 									v-model:value="editableData[record.key ? record.key : record.oid][column.key]" 
 									:options="cityOptions"
 									@change="(val, option) => handleChange(val, option, record.key ? record.key : record.oid)" />
@@ -99,6 +102,25 @@
 		<div class="footer-btn">
 			<a-button type="primary" @click="add">添加</a-button>
 			<a-button>批量删除</a-button>
+		</div>
+		<div class="">
+			<div>
+				<a-row type="flex" justify="center">
+					<!-- <a-col style="text-align: center" span="3"><a-button type="primary">中高风险地区一键检查</a-button></a-col> -->
+					<a-col style="text-align: center" span="3"><a-button class="btn" type="danger">有中高风险地区！</a-button></a-col>
+					<a-col style="text-align: center" span="3"><a-button class="btn" type="danger">有黄码或红码！</a-button></a-col>
+				</a-row>
+				
+				
+			</div>
+			<div style="margin-top: 36px; margin-bottom: 36px;">
+				<a-row type="flex" justify="center">
+					<!-- <a-col style="text-align: center" span="3"><a-button type="primary">健康码一键检查</a-button></a-col> -->
+					<a-col style="text-align: center" span="3"><a-button class="btn" type="primary">无中高风险地区！</a-button></a-col>
+					<a-col style="text-align: center" span="3"><a-button class="btn" type="primary">全员绿码！</a-button></a-col>
+				</a-row>
+				
+			</div>
 		</div>
     </div>
 </template>
@@ -151,6 +173,9 @@ const {
 		color: #777;
 		font-size: 16px;
 	}
+	::v-deep(.ant-select-selection-placeholder) {
+		color: #333;
+	}
 	.footer-btn {
 		display: flex;
 		justify-content: flex-end;
@@ -158,5 +183,14 @@ const {
 		button:first-of-type {
 			margin-right: 16px;
 		}
+	}
+	.btn {
+		width: 189px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 40px;
+		line-height: 40px;
+		box-shadow: 2px 3px 10px rgba(1,5,22,0.16);
 	}
 </style>

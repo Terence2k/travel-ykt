@@ -42,13 +42,13 @@
 
 	const travelStore = useTravelStore();
 	const state = reactive({
-		total: 0,
+		total: computed(() => travelStore.traveList.haveABall.total),
 		params: {
 				pageNo: 1,
 				pageSize: 10,
 				status: 1
 		},
-		tableData: [],
+		tableData: computed(() => travelStore.traveList.haveABall.list),
 		columns: [
 			{
 					title: ' 序号 ',
@@ -103,9 +103,10 @@
 		]
 	})
 	const onSearch = async () => {
-		const res = await travelStore.getTravelList({pageNo: 1, pageSize: 10, status: GroupStatus.HaveABall});
-		state.tableData = res.content
-		state.total = res.total;
+		travelStore.traveList.haveABall.params.status = GroupStatus.HaveABall
+		const res = await travelStore.getTravelList(travelStore.traveList.haveABall.params);
+	
+		travelStore.setTraveList(res, 'haveABall')
 	}
 	const onHandleCurrentChange = () => {
 

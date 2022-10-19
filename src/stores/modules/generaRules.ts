@@ -23,18 +23,12 @@ export const useGeneraRules = defineStore('menuManage', {
 			{ value: 1, name: '是' },
 			{ value: 0, name: '否' },
 		],
-		prepaidCompanyList: [
-			{ value: 1, name: '旅行社' },
-			{ value: 2, name: '集团' },
-			{ value: 3, name: '监理公司' },
-			{ value: 4, name: '一卡通' },
-			{ value: 5, name: '协会' },
-		],
+		prepaidCompanyList: [],
 		productSonTypeList: [
-			{ value: 'ONE', name: '单票' },
-			{ value: 'UNITE', name: '联票' },
-			{ value: 'SHOW', name: '演出票' },
-			{ value: 'SELF', name: '没有子产品，即产品本身' },
+			{ value: 1, name: '单票', type: 'ONE' },
+			{ value: 0, name: '联票', type: 'UNITE' },
+			{ value: 2, name: '演出票', type: 'SHOW' },
+			// { value: 'SELF', name: '没有子产品，即产品本身' },
 		],
 	}),
 	getters: {},
@@ -44,6 +38,16 @@ export const useGeneraRules = defineStore('menuManage', {
 			if (!this.teamTypeList.length) {
 				api.productRuleTeamType().then((res: any) => {
 					this.teamTypeList = res;
+				});
+			}
+		},
+		// 获取企业业态
+		getPrepaidCompanyList() {
+			if (!this.prepaidCompanyList.length) {
+				api.getPrepaidCompanyList().then((res: any) => {
+					this.prepaidCompanyList = res.filter((item: any) => {
+						return item.oid !== 202;
+					});
 				});
 			}
 		},

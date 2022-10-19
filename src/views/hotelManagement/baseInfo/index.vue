@@ -44,7 +44,7 @@
 							<template v-if="column.dataIndex === 'actions'">
 								<div class="cell-actions">
 									<span @click="openEditPage(record?.oid)" class="item">编辑</span>
-									<span @click="openDisplayPage" class="item">审核</span>
+									<span @click="openDisplayPage(record?.oid)" class="item">审核</span>
 								</div>
 							</template>
 						</template>
@@ -224,8 +224,8 @@ const rowSelection = computed(() => {
 		onSelectAll: (selected: boolean, selectedRows: DataSourceItem[], changeRows: DataSourceItem[]) => {
 			console.log(selected, selectedRows, changeRows);
 		},
-	}
-})
+	};
+});
 
 const tableState = reactive({
 	tableData: {
@@ -280,9 +280,11 @@ const openEditPage = (oid: number) => {
 	}
 };
 
-const openDisplayPage = () => {
-	router.push({ path: '/hotelManagement/hotelBaseInfo/hotelStarDisplay', query: { id: '1' } });
-	console.log('open display page');
+const openDisplayPage = (oid: number) => {
+	if (oid) {
+		router.push({ path: '/hotelManagement/hotelBaseInfo/hotelStarDisplay', query: { id: oid } });
+		console.log('open display page');
+	}
 };
 
 const getHotelStarList = () => {

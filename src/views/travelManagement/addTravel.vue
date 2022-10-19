@@ -5,9 +5,14 @@
 				<component @onSuccess="save" :onCheck="check" :is="item.name"></component>
 			</a-tab-pane>
 		</a-tabs>
-		<div class="footer">
-			<a-button type="primary" @click="check = !check">保存</a-button>
-			<a-button type="primary">发团</a-button>
+		<div class="footer d-flex justify-content-between">
+			<div class="footer-btn">
+				<a-button type="primary" @click="check = !check">保存</a-button>
+				<a-button type="primary" @click="activeKey = activeKey + 1">下一步</a-button>
+			</div>
+			<div class="submit-btn">
+				提交发团
+			</div>
 		</div>
 	</div>
 </template>
@@ -24,6 +29,7 @@ import api from '@/api';
 import { message } from 'ant-design-vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 	const route = useRoute()
+	const router = useRouter()
 	const travelStore = useTravelStore();
 	const activeKey = ref(0);
 	const check = ref(false)
@@ -71,13 +77,37 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 		}
 
 	}
+	const saveItinerary = (val:any) => {
+		let ajax = route.query.id ? api.travelManagement.editItinerary : api.travelManagement.saveItinerary
+		return ajax(
+		{
+			oid: route.query.id,
+			attachmentParam: val.attachmentParam || {
+			receptionAgreement: "http://test1.jpg",
+			rentCarContract: "http://test2.jpg",
+			travelContract: "http://test.jpg"
+		},
+			basicParam: val.basicParam || {},
+			guideList: travelStore.guideList.filter((it: any) => it.edit),
+			itineraryInfoParam: {
+				compositeProducts: travelStore.compositeProducts
+			},
+				touristList: travelStore.touristList.filter((it: any) => it.edit),
+				transportList: travelStore.trafficList.filter((it: any) => it.edit)
+			}
+		).then((res: any) => {
+			let msg = route.query.id ? '编辑成功' : '新增成功'
+			message.success(msg);
+			router.push('/travel/travel_manage/travel_list')
+		})
+	}
 	const debounceFun = debounce((val) => {
 		console.log(val)
 		for (let k in val) {
-		if (!val[k]) return
+			if (!val[k]) return
 		}
 		saveItinerary(val)
-		} ,500)
+	} ,500)
 	watch(obj, (newVal) => {
 		debounceFun(newVal.data)
 	})
@@ -109,28 +139,7 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 		
 		})
 	}
-  const saveItinerary = (val:any) => {
-    let ajax = route.query.id ? api.travelManagement.editItinerary : api.travelManagement.saveItinerary
-		return ajax(
-		{
-        	oid: route.query.id,
-			attachmentParam: val.attachmentParam || {
-			receptionAgreement: "http://test1.jpg",
-			rentCarContract: "http://test2.jpg",
-			travelContract: "http://test.jpg"
-        },
-			basicParam: val.basicParam || {},
-			guideList: travelStore.guideList.filter((it: any) => it.edit),
-			itineraryInfoParam: {
-				compositeProducts: travelStore.compositeProducts
-			},
-				touristList: travelStore.touristList.filter((it: any) => it.edit),
-				transportList: travelStore.trafficList.filter((it: any) => it.edit)
-			}
-		).then((res: any) => {
-			message.success(res.message);
-		})
-	}
+	
 getTraveDetail();
 </script>
 <style lang="less" scoped>
@@ -143,8 +152,24 @@ getTraveDetail();
 	//   padding: 0 20px;
 	// }
 }
+.submit-btn {
+	width: 90px;
+	height: 90px;
+	background: linear-gradient(143deg, #40F3CB 0%, #36B374 100%);
+	box-shadow: 2px 6px 20px rgba(54,179,116,0.34);
+	border-radius: 50%;
+	text-align: center;
+	line-height: 90px;
+	color: #fff;
+	font-size: 16px;
+	position: relative;
+	top: -48px;
+	right: 20px;
+	cursor: pointer;
+}
 
 .footer {
+	margin-top: 100px;
 	position: sticky;
 	bottom: 0;
 	line-height: 64px;

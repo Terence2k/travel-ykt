@@ -41,13 +41,13 @@
 
 	const travelStore = useTravelStore();
 	const state = reactive({
-		total: 0,
+		total: computed(() => travelStore.traveList.closeAnAccount.total),
 		params: {
 				pageNo: 1,
 				pageSize: 10,
 				status: 1
 		},
-		tableData: [],
+		tableData: computed(() => travelStore.traveList.closeAnAccount.list),
 		columns: [
 			{
 					title: ' 序号 ',
@@ -102,9 +102,10 @@
 		]
 	})
 	const onSearch = async () => {
-		const res = await travelStore.getTravelList({pageNo: 1, pageSize: 10, status: GroupStatus.CloseAnAccount});
-		state.tableData = res.content
-		state.total = res.total;
+		travelStore.traveList.closeAnAccount.params.status = GroupStatus.CloseAnAccount
+		const res = await travelStore.getTravelList(travelStore.traveList.closeAnAccount.params);
+		
+		travelStore.setTraveList(res, 'closeAnAccount')
 	}
 	const onHandleCurrentChange = () => {
 

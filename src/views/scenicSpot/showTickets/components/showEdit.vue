@@ -86,9 +86,6 @@ const formValidate: Ref<Record<string, any>> = ref({});
 const options = reactive({ title: '新增用户' });
 const rules: any = {
 	username: [{ required: true, trigger: 'blur', message: '请输入演出票名称' }],
-	mobile: [{ required: true, trigger: 'blur', message: '请选择演出节目' }],
-	account: [{ required: true, trigger: 'blur', message: '请输入账号' }],
-	roleIds: [{ required: true, trigger: 'blur', message: '请选择归属景区' }],
 };
 const state = reactive({
 	tableDate: {

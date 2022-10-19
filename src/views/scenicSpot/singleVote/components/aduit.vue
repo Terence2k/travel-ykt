@@ -127,6 +127,7 @@ const open = (id) => {
 const cancel = () => {
 	modelValue.value = false;
 	formRef.value.resetFields();
+	formValidate.data.dateList = [{ startDateTime: '', endDateTime: '', time: [] }];
 	console.log(modelValue.value, 'modelValue');
 };
 

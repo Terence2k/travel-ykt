@@ -83,7 +83,7 @@
 					v-model:value="formState.prepaidCompany"
 					placeholder="请选择垫付单位"
 					allowClear
-					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.value, label: item.name }))"
+					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.codeValue, label: item.name }))"
 				>
 				</a-select>
 			</a-form-item>
@@ -97,7 +97,7 @@
 					v-model:value="formState.lastCostBelongCompany"
 					style="width: 100%"
 					placeholder="请选择剩余费用归属"
-					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.value, label: item.name }))"
+					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.codeValue, label: item.name }))"
 				>
 				</a-select>
 			</a-form-item>
@@ -226,6 +226,7 @@ const init = () => {
 	const route = useRouter();
 	const query = route.currentRoute.value.query;
 	generaRulesOptions.getTeamTypeList();
+	generaRulesOptions.getPrepaidCompanyList();
 	if (query && query.oid) {
 		oid.value = query.oid;
 		navigatorBar.setNavigator(['编辑']);
@@ -335,7 +336,7 @@ onBeforeUnmount(() => {
 });
 // 获取表格分账规则分账单位名称
 const getCompanyTypeName = computed(() => (value: number) => {
-	const idx = generaRulesOptions.prepaidCompanyList.findIndex((item) => item.value === value);
+	const idx = generaRulesOptions.prepaidCompanyList.findIndex((item) => item.codeValue === value);
 	if (idx !== -1) {
 		return generaRulesOptions.prepaidCompanyList[idx]['name'];
 	}

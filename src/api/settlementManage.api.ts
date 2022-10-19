@@ -224,3 +224,11 @@ export async function getItinerarySettlement(data: any) {
 		showLoading: true,
 	});
 }
+// 企业业态字典下拉列表
+export async function getPrepaidCompanyList() {
+	return request({
+		url: `${commonPath}/customer-service/public/api/dictionary/dropDownQueryListChildByCodeValue?codeValue=BUSINESS_TYPE`,
+		method: 'post',
+		showLoading: true,
+	});
+}

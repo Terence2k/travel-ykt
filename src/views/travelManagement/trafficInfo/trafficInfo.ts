@@ -142,7 +142,7 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 		},
 		add: () => {
 			let key = generateGuid();
-			state.tableData.push({key, edit: true});
+			state.tableData.push({key, edit: true, oid: null});
 			methods.edit(key);
 			console.log(state.tableData)
 		},
