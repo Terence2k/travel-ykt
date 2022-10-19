@@ -1,10 +1,10 @@
 <template>
-	<BaseModal title="下架票审核" v-model="modelValue" @close="handleOk" :width="1000">
+	<BaseModal title="下架票审核" v-model="modelValue" @close="handleOk" :width="800">
 		<a-row>
 			<a-col :span="3">门票</a-col>
 			<a-col :span="5">
 				<a-form-item name="downReason">
-					<a-input disabled></a-input>
+					<a-input disabled class="aaa" v-model:value="state.tableData.data"></a-input>
 				</a-form-item>
 			</a-col>
 			<a-col :span="2" class="center">门票ID</a-col>
@@ -66,6 +66,7 @@ const state = reactive({
 	tableData: {
 		startTime: '',
 		endTime: '',
+		data:'11111111111111111111'
 	},
 });
 const init = async () => {
@@ -108,8 +109,16 @@ watch(dialogVisible, (nVal) => {
 }
 .center {
 	text-align: center;
+	margin: 0px 10px;
 }
 .height{
 	line-height: -10px;
+}
+.aaa{
+	overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 </style>
