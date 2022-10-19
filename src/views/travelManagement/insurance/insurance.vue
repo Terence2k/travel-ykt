@@ -77,9 +77,8 @@
 		</div>
 
 		<a-radio v-model:checked="checked" class="tips">已在他处购买保险，填写即可：</a-radio>
-		<a-form ref="formRef" :rules="rulesRef" :model="editableData" autocomplete="off" labelAlign="left">
-			<p class="check">请勾选待购买保险的游客</p>
-			<CommonTable :row-selection="{ onSelect }" :columns="columns2" :dataSource="tableData" :scrollY="false">
+		<a-form ref="formRef" :rules="rulesRef" :model="editableData2" autocomplete="off" labelAlign="left">
+			<CommonTable :row-selection="{ onSelect }" :columns="columns2" :dataSource="tableData2" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
 					<!-- formRef -->
 
@@ -88,10 +87,10 @@
 							{{ index + 1 }}
 						</div>
 					</template>
-					<template v-if="inputKey.includes(column.key)">
+					<template v-if="inputKey2.includes(column.key)">
 						<div>
-							<a-form-item v-if="editableData[record.key ? record.key : record.oid]" :name="[record.key ? record.key : record.oid, column.key]">
-								<a-input v-model:value="editableData[record.key ? record.key : record.oid][column.key]" placeholder="请输入" />
+							<a-form-item v-if="editableData2[record.key ? record.key : record.oid]" :name="[record.key ? record.key : record.oid, column.key]">
+								<a-input v-model:value="editableData2[record.key ? record.key : record.oid][column.key]" placeholder="请输入" />
 							</a-form-item>
 
 							<template v-else>
@@ -101,7 +100,7 @@
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a class="item" v-if="!editableData[record.key ? record.key : record.oid]" @click="edit(record.key ? record.key : record.oid)">编辑</a>
+							<a class="item" v-if="!editableData2[record.key ? record.key : record.oid]" @click="edit(record.key ? record.key : record.oid)">编辑</a>
 							<a class="item" v-else @click="save(record.key ? record.key : record.oid)">确定</a>
 							<a class="item" @click="del(index)">删除</a>
 						</div>
@@ -131,12 +130,15 @@ const {
 	columns,
 	columns2,
 	tableData,
+	tableData2,
 	editableData,
+	editableData2,
 	edit,
 	save,
 	onSelect,
 	selectKey,
 	inputKey,
+	inputKey2,
 	cityOptions,
 	add,
 	del,

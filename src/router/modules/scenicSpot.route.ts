@@ -303,7 +303,7 @@ export default [
 				children: [
 					{
 						path: 'travelEnterpriseInfo',
-						component: () => import('@/views/enterpriseInfoManagement/travelEnterpriseInfo.vue'),
+						component: () => import('@/views/baseInfoManage/enterpriseInfo/index.vue'),
 						name: 'enterpriseInfoManagement-travelEnterpriseInfo',
 						meta: {
 							title: '首页',
