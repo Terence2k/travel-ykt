@@ -16,9 +16,10 @@
 			</p>
 			<p v-if="formValidate.row.ticketDataType == '单票'">
 				<a-span class="span">有效核销时间段为当天</a-span>
-				<a-time-picker v-model:value="state.tableData.startTime" format="HH:mm" valueFormat="HH:mm" :placeholder="state.tableData.startTime" />
+				<a-time-range-picker format="HH:mm" valueFormat="HH:mm" v-model:value="state.tableData.Time"/>
+				<!-- <a-time-picker v-model:value="state.tableData.startTime" format="HH:mm" valueFormat="HH:mm" :placeholder="state.tableData.startTime" />
 				<span class="span_width">至</span>
-				<a-time-picker v-model:value="state.tableData.endTime" format="HH:mm" valueFormat="HH:mm" :placeholder="state.tableData.endTime" />
+				<a-time-picker v-model:value="state.tableData.endTime" format="HH:mm" valueFormat="HH:mm" :placeholder="state.tableData.endTime" /> -->
 			</p>
 		</a-form>
 		<template v-slot:footer>
@@ -34,7 +35,6 @@ import BaseModal from '@/components/common/BaseModal.vue';
 import type { FormInstance } from 'ant-design-vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
-
 const props = defineProps({
 	modelValue: {
 		type: Boolean,
@@ -48,7 +48,7 @@ const formRef = ref<FormInstance>();
 const formValidate: Ref<Record<string, any>> = ref({});
 const state = reactive({
 	tableData: {
-		
+		Time:[],
 		startTime: '',
 		endTime: '',
 	},
@@ -58,14 +58,18 @@ const init = async () => {
 	formValidate.value = {};
 	formValidate.value = { ...props.params };
 };
-const save =()=>{
-	console.log(state.tableData,'11111111111111')
-}
-const cancel=()=>{
-	dialogVisible.value = false
-	state.tableData.startTime='',
-	state.tableData.endTime=''
-}
+const save = () => {
+	message.success('设置成功');
+	state.tableData.endTime=state.tableData.Time[0]
+	state.tableData.startTime=state.tableData.Time[1]
+	cancel()
+};
+const cancel = () => {
+	dialogVisible.value = false;
+	state.tableData.Time =[];
+	state.tableData.endTime='',
+	state.tableData.startTime=''
+};
 watch(
 	() => props.modelValue,
 	async (nVal) => {
@@ -89,7 +93,7 @@ watch(dialogVisible, (nVal) => {
 .span_width {
 	margin: 0 20px;
 }
-.span{
+.span {
 	margin-right: 10px;
 }
 </style>
