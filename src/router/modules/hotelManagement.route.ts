@@ -104,6 +104,7 @@ export default [
 						name: 'orderEdit',
 						component: () => import('@/views/hotelManagement/order/Edit/index.vue'),
 						meta: {
+							activeMeun: 'hotelOrder',
 							title: '编辑',
 							isDetail: true,
 						},
