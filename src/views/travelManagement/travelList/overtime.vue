@@ -41,13 +41,13 @@
 
 	const travelStore = useTravelStore();
 	const state = reactive({
-		total: 0,
+		total: computed(() => travelStore.traveList.overtime.total),
 		params: {
 				pageNo: 1,
 				pageSize: 10,
 				status: 1
 		},
-		tableData: [],
+		tableData: computed(() => travelStore.traveList.overtime.list),
 		columns: [
 			{
 					title: ' 序号 ',
@@ -92,9 +92,10 @@
 		]
 	})
 	const onSearch = async () => {
-		const res = await travelStore.getTravelList({pageNo: 1, pageSize: 10, status: GroupStatus.Unpaid});
-		state.tableData = res.content
-		state.total = res.total;
+		travelStore.traveList.overtime.params.status = GroupStatus.Overtime
+		const res = await travelStore.getTravelList(travelStore.traveList.overtime.params);
+		
+		travelStore.setTraveList(res, 'overtime')
 	}
 	const onHandleCurrentChange = () => {
 
