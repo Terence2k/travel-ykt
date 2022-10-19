@@ -2,9 +2,9 @@
 	<div class="verificationManage-modal-wrapper">
 		<BaseModal :title="options.title" v-model="modelValue" @close="handleOk">
 			<a-form :model="formValidate" :rules="rules" :label-col="{ span: 5 }" :wrapper-col="{ span: 16, offset: 1 }" labelAlign="left">
-				<a-form-item label="归属景区" name="scenicSpot">
+				<a-form-item label="归属景区" name="scenicId">
 					<a-select
-						v-model:value="formValidate.scenicSpot"
+						v-model:value="formValidate.scenicId"
 						class="select-scenicSpot item"
 						:showArrow="true"
 						:options="modalState.scenicSpotOptions"
@@ -12,11 +12,14 @@
 					>
 					</a-select>
 				</a-form-item>
-				<a-form-item label="核销项目ID" name="writeOffId">
-					<a-input v-model:value="formValidate.price" />
+				<a-form-item label="核销项目ID" name="oid">
+					<a-input :disabled="true" v-if="props.params?.oid" v-model:value="formValidate.oid" />
+					<template v-else>
+						<a-input :disabled="true" placeholder="系统自动生成" v-model:value="formValidate.oid" />
+					</template>
 				</a-form-item>
-				<a-form-item label="核销项目名称" name="writeOffName">
-					<a-input v-model:value="formValidate.writeOffName" />
+				<a-form-item label="核销项目名称" name="itemName">
+					<a-input v-model:value="formValidate.itemName" />
 				</a-form-item>
 			</a-form>
 			<template v-slot:footer>
@@ -42,7 +45,7 @@ const props = defineProps({
 	methods: Object,
 });
 
-let scenicSpotOptionsData = [];
+let scenicSpotOptionsData = ref([]);
 const modalState = reactive({
 	scenicSpotOptions: ref<SelectProps['options']>(scenicSpotOptionsData),
 });
@@ -54,43 +57,35 @@ const options = reactive({
 	title: '新增核销项目',
 });
 const rules: any = {
-	scenicSpot: [{ required: true, trigger: 'change', message: '请输入酒店星级' }],
-	writeOffId: [{ required: true, trigger: 'blur', message: '请输入核销项目ID' }],
-	writeOffName: [{ required: true, trigger: 'change', message: '请输入核销项目名称' }],
+	scenicId: [{ required: true, trigger: 'change', message: '请输入酒店星级' }],
+	oid: [{ required: true, trigger: 'blur', message: '请输入核销项目ID' }],
+	itemName: [{ required: true, trigger: 'change', message: '请输入核销项目名称' }],
 };
 
 const save = () => {
 	console.log('formValidate:', formValidate.value);
-	// if (props.params?.oid) {
-	// 	api
-	// 		.editHotelStarData({
-	// 			oid: formValidate.value.oid,
-	// 			price: formValidate.value.price * 100,
-	// 			starCode: formValidate.value.starCode,
-	// 			ratedStatus: formValidate.value.ratedStatus,
-	// 		})
-	// 		.then((res: any) => {
-	// 			console.log('res:', res);
-	// 			dialogVisible.value = false;
-	// 			message.success('修改成功');
-	// 			props.methods?.success();
-	// 		})
-	// 		.catch((err: any) => {
-	// 			console.log(err);
-	// 		});
-	// } else {
-	// 	api
-	// 		.addHotelStarData(formValidate.value)
-	// 		.then((res: any) => {
-	// 			console.log('res:', res);
-	// 			dialogVisible.value = false;
-	// 			message.success('新增成功');
-	// 			props.methods?.success();
-	// 		})
-	// 		.catch((err: any) => {
-	// 			console.log(err);
-	// 		});
-	// }
+	if (!formValidate.value?.oid) {
+		formValidate.value = {
+			...formValidate.value,
+			oid: null,
+		};
+	}
+	api
+		.editWriteOffItem(formValidate.value)
+		.then((res: any) => {
+			console.log('res:', res);
+			dialogVisible.value = false;
+			if (formValidate.value?.oid) {
+				message.success('编辑成功');
+			} else {
+				message.success('新增成功');
+			}
+
+			props.methods?.success();
+		})
+		.catch((err: any) => {
+			console.log(err);
+		});
 };
 
 const init = async () => {
@@ -108,6 +103,15 @@ watch(
 	() => props.modelValue,
 	async (nVal) => {
 		console.log('props.modelValue->', nVal);
+		api.getViewList().then((res) => {
+			console.log(res);
+			scenicSpotOptionsData.value = res.map((item) => {
+				return {
+					value: item.ticketId,
+					label: item.ticketName,
+				};
+			});
+		});
 		dialogVisible.value = nVal;
 		if (dialogVisible.value) {
 			await init();

@@ -180,7 +180,7 @@ const errorPriceInfos = computed(() => {
 	return mergeValidateInfo(toArray(validateInfos).splice(2, 3));
 });
 
-const tickerType = computed(() => (route.currentRoute.value?.query?.t === '1' ? '单票：单点核销' : '单票：多点核销'));
+const tickerType = computed(() => (route.currentRoute.value?.query?.t === '0' ? '单票：单点核销' : '单票：多点核销'));
 // 提交
 const onSubmit = async () => {
 	validate()
@@ -245,12 +245,12 @@ const initEditPage = async () => {
 	navigatorBar.setNavigator(['景区信息管理', '编辑']);
 	let res = await api.getScenicSpotSignleDetail(route.currentRoute.value?.query?.oid);
 	formData.data = res;
-	console.log();
 };
 
 const initCreatePage = () => {
 	navigatorBar.setNavigator(['景区信息管理', '新增']);
-	formData.data.verificationType = route.currentRoute.value?.query?.t === '1' ? 0 : 1;
+
+	// formData.data.verificationType = route.currentRoute.value?.query?.t === '0' ? 0 : 1;
 };
 
 onMounted(() => {

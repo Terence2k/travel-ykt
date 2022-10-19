@@ -55,7 +55,7 @@ watch(
 	() => route.query,
 	(res) => {
 		const id = res.id;
-		if (id) {
+		if (id || id === 0) {
 			api.getHotelDetailInfo({}, id).then((res) => {
 				hotelInfo.value = res;
 				console.info(`id${id}酒店信息:`, res);

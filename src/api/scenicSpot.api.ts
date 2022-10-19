@@ -141,3 +141,29 @@ export async function getScenicLevels() {
 		method: 'get',
 	});
 }
+
+// 分页获取核销项目列表
+export async function getWriteOffItemList(data: any) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-verif-item/page`,
+		method: 'get',
+		data,
+	});
+}
+
+//ticket-service/public/api/scenic-verif-item/save
+export async function editWriteOffItem(data: any) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-verif-item/save`,
+		method: 'post',
+		data,
+	});
+}
+
+// /ticket-service/public/api/scenic-verif-item/id
+export async function deleteWriteOffItem(id: number) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-verif-item/${id}`,
+		method: 'delete',
+	});
+}
