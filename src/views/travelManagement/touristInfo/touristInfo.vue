@@ -13,6 +13,7 @@
 			autocomplete="off"
 			labelAlign="left"
 		>
+		
 			<CommonTable :row-selection="{onSelect}" :columns="columns" :dataSource="tableData" :scrollY="false">
 				
 				<template #bodyCell="{ column, text, index, record }">

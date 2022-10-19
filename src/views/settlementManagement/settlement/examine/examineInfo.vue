@@ -4,37 +4,31 @@
 		<div class="title">基本信息</div>
 
 		<a-form labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
-			<a-form-item label="预结算状态" required>
+			<a-form-item label="结算状态" required>
 				<span>{{ formData.data.aaa }}</span>
 			</a-form-item>
-			<a-form-item label="团单类型" required>
+			<a-form-item label="团队类型" required>
 				<span>{{ formData.data.bbb }}</span>
 			</a-form-item>
 			<a-form-item label="行程单号" required>
 				<span>{{ formData.data.ccc || '' }}</span>
 			</a-form-item>
-			<a-form-item label="自编团号" required>
-				<span>{{ formData.data.ddd }}</span>
-			</a-form-item>
             <a-form-item label="线路名称" required>
 				<span>{{ formData.data.eee }}</span>
 			</a-form-item>
-            <a-form-item label="发团旅行社" required>
+            <a-form-item label="组团社" required>
 				<span>{{ formData.data.fff }}</span>
 			</a-form-item>
-            <a-form-item label="接团旅行社" required>
+            <a-form-item label="地接社" required>
 				<span>{{ formData.data.ggg }}</span>
 			</a-form-item>
             <a-form-item label="行程时间" required>
 				<span>{{ formData.data.hhh }}</span>
 			</a-form-item>
-            <a-form-item label="导游" required>
-				<span>{{ formData.data.iii }}</span>
-			</a-form-item>
             <a-form-item label="游客人数" required>
 				<span>{{ formData.data.jjj }}</span>
 			</a-form-item>
-            <a-form-item label="费用合计" required>
+            <a-form-item label="行程费用" required>
 				<span>{{ formData.data.kkk }}</span>
 			</a-form-item>
             <a-form-item label="结算费用" required>
@@ -103,12 +97,7 @@ const columns = [
 		key: 'bank',
 	},
 	{
-		title: '预结算费用（元）',
-		dataIndex: 'price',
-		key: 'price',
-	},
-	{
-		title: '实际结算费用（元）',
+		title: '结算费用（元）',
 		dataIndex: 'price',
 		key: 'price',
 	},
@@ -211,6 +200,8 @@ const initPage = async (): Promise<void> => {
 	// api.getcomprehensiveFeeDetail(route.currentRoute.value?.query?.oid).then((res: any) => {
 		// 	formData.data = res;
 		// });
+	console.log(route.currentRoute.value?.query.oid);
+	
 };
 onMounted(() => {
 	initPage();

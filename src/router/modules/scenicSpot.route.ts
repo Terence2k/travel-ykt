@@ -240,8 +240,34 @@ export default [
 				name: 'verificationManage',
 				component: () => import('@/views/scenicSpot/verificationManage/index.vue'),
 				meta: {
-					title: '核销管理',
+					title: '核销项目管理',
 				},
+			},
+			{
+				path: 'verificationRecord',
+				name: 'verificationRecord',
+				meta: {
+					title: '核销记录',
+				},
+				children: [
+					{
+						path: '',
+						component: () => import('@/views/scenicSpot/verificationRecord/index.vue'),
+						meta: {
+							title: '基础信息',
+							isDetail: true,
+						},
+					},
+					{
+						path: 'verificationRecordDisplay',
+						name: 'verificationRecordDisplay',
+						component: () => import('@/views/scenicSpot/verificationRecord/pages/verificationRecord-display/verificationRecord-display.vue'),
+						meta: {
+							title: '查看',
+							isDetail: true,
+						},
+					},
+				],
 			},
 			{
 				path: 'writeOffTime',

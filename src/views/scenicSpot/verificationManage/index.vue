@@ -4,11 +4,18 @@
 			<div class="search-bar">
 				<div class="item">
 					<span class="field-input item">输入搜索</span>
-					<a-input class="input-search item" v-model:value="hotelName" placeholder="门票名称/关键词" />
+					<a-input class="input-search item" v-model:value="tableState.tableData.param.searchKeyWords" placeholder="门票名称/关键词" />
 				</div>
 				<div class="item">
-					<span class="field-select item">门票分类</span>
-					<a-select class="select-status item" :showArrow="true" :options="statusOptions" v-model:value="status" placeholder="请选择状态"> </a-select>
+					<span class="field-select item">归属景区</span>
+					<a-select
+						v-model:value="tableState.tableData.scenicSpot"
+						class="select-status item"
+						:showArrow="true"
+						:options="tableState.scenicSpotOptions"
+						placeholder="请选择状态"
+					>
+					</a-select>
 				</div>
 				<a-button @click="searchByFilter" class="button-search item">查询</a-button>
 			</div>
@@ -33,7 +40,7 @@
 							<template v-if="column.dataIndex === 'actions'">
 								<div class="cell-actions">
 									<span class="item" @click="addOrUpdate({ row: record, handle: 'update' })">编辑</span>
-									<span class="item" @click="toggleHotelStarStatus(record)">{{ record?.ratedStatus === 0 ? '启用' : '禁用' }}</span>
+									<span class="item" @click="toggleHotelStarStatus(record)">删除</span>
 								</div>
 							</template>
 						</template>
@@ -47,7 +54,8 @@
 						@showSizeChange="pageSideChange"
 					>
 					</CommonPagination>
-					<!-- <HotelStarAddUpdate v-model="tableState.operationModal.isAddOrUpdate" :params="tableState.params" :methods="methods"> </HotelStarAddUpdate> -->
+					<VerificationManageAddUpdate v-model="tableState.operationModal.isAddOrUpdate" :params="tableState.params" :methods="methods">
+					</VerificationManageAddUpdate>
 				</div>
 			</div>
 		</div>
@@ -60,21 +68,8 @@ import type { SelectProps } from 'ant-design-vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
+import VerificationManageAddUpdate from './components/verificationManage-add-update/verificationManage-add-update.vue';
 import api from '@/api';
-
-const status = ref('');
-let statusOptionsData = [
-	{
-		value: 1,
-		label: '启用',
-	},
-	{
-		value: 0,
-		label: '禁用',
-	},
-];
-
-const statusOptions = ref<SelectProps['options']>(statusOptionsData);
 
 const columns: TableColumnsType = [
 	{
@@ -84,23 +79,29 @@ const columns: TableColumnsType = [
 		width: 100,
 	},
 	{
-		title: '酒店星级',
-		dataIndex: 'starCode',
-		key: 'starCode',
-		width: '25%',
-	},
-	{
-		title: '诚信指导价',
-		dataIndex: 'price',
-		key: 'price',
+		title: '演出票名称',
+		dataIndex: 'ticketName',
+		key: 'ticketName',
 		width: 150,
 	},
 	{
-		title: '状态',
+		title: '归属景区',
+		dataIndex: 'scenicSpot',
+		key: 'scenicSpot',
+		width: 150,
+	},
+	{
+		title: '审核状态',
 		dataIndex: 'ratedStatusName',
 		key: 'ratedStatusName',
 		width: '40%',
 	},
+	// {
+	// 	title: '平台上架状态',
+	// 	dataIndex: 'platformLaunchStatus',
+	// 	key: 'platformLaunchStatus',
+	// 	width: '40%',
+	// },
 	{
 		title: '操作',
 		dataIndex: 'actions',
@@ -110,6 +111,7 @@ const columns: TableColumnsType = [
 	},
 ];
 
+let scenicSpotOptionsData = [];
 const tableState = reactive({
 	tableData: {
 		data: ref([]),
@@ -118,16 +120,32 @@ const tableState = reactive({
 		param: {
 			pageNo: 1,
 			pageSize: 10,
-			ratedStatus: status,
+			searchKeyWords: '',
+			scenicSpot: '',
 		},
 	},
+	scenicSpotOptions: ref<SelectProps['options']>(scenicSpotOptionsData),
 	params: {},
 	operationModal: {
 		isAddOrUpdate: false,
 	},
 });
 
-const dataSource = computed(() => tableState.tableData.data);
+let dataSource = [
+	{
+		oid: 1,
+		ticketName: '入园',
+		scenicSpot: '木府',
+		ratedStatusName: '待审核',
+	},
+	{
+		oid: 2,
+		ticketName: '入园',
+		scenicSpot: '玉龙雪山',
+		ratedStatusName: '待审核',
+	},
+];
+// const dataSource = computed(() => tableState.tableData.data);
 
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
@@ -142,6 +160,7 @@ const pageSideChange = (current: number, size: number) => {
 };
 
 const onSearch = () => {
+	console.log('search params:', tableState.tableData.param);
 	// api
 	// 	.getHotelStarTableInfo(tableState.tableData.param)
 	// 	.then((res: any) => {
@@ -173,27 +192,6 @@ const addOrUpdate = (param: any) => {
 
 const toggleHotelStarStatus = (param: any) => {
 	console.info(param);
-	if (param.ratedStatus === 0) {
-		api
-			.enableHotelStar({}, param.oid)
-			.then((res) => {
-				console.log(res);
-				onSearch();
-			})
-			.catch((err: any) => {
-				console.log(err);
-			});
-	} else {
-		api
-			.disableHotelStar({}, param.oid)
-			.then((res) => {
-				console.log(res);
-				onSearch();
-			})
-			.catch((err: any) => {
-				console.log(err);
-			});
-	}
 };
 
 const methods = reactive({
