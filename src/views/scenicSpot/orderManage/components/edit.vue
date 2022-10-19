@@ -3,21 +3,21 @@
 		<a-tabs v-model:activeKey="activeStatus">
 			<a-tab-pane key="1" tab="订单信息">
 				<a-form class="" ref="formRef" :label-col="{ span: 3 }" labelAlign="left" :wrapper-col="{ span: 6 }" :scrollToFirstError="true">
-					<a-form-item label="行程类型"> 标准团 </a-form-item>
-					<a-form-item label="行程单号"> YNLJ1569374 </a-form-item>
-					<a-form-item label="发团旅行社"> 黑白水旅行社 </a-form-item>
-					<a-form-item label="地接旅行社"> 白鹿旅行社 </a-form-item>
-					<a-form-item label="联系电话"> 18101235678 </a-form-item>
-					<a-form-item label="入园日期"> 2022.7.14 </a-form-item>
-					<a-form-item label="预定时间"> 2022.7.15 15:30:30 </a-form-item>
-					<a-form-item label="核销时间"> 2022.7.15 15:30:30 </a-form-item>
-					<a-form-item label="行程人数"> 30人 </a-form-item>
-					<a-form-item label="订票人数"> 30人 </a-form-item>
-					<a-form-item label="核销人数"> 25人 </a-form-item>
-					<a-form-item label="订单金额"> 2000元 </a-form-item>
-					<a-form-item label="订单编号"> 619351806191367230 </a-form-item>
-					<a-form-item label="门票"> 千古情演出 </a-form-item>
-					<a-form-item label="门票分类">演出票 </a-form-item>
+					<a-form-item label="行程类型"> {{ formData.data.orderInfo.travelType }} </a-form-item>
+					<a-form-item label="行程单号"> {{ formData.data.orderInfo.itineraryNo }} </a-form-item>
+					<a-form-item label="发团旅行社"> {{ formData.data.orderInfo.sendTravelName }} </a-form-item>
+					<a-form-item label="地接旅行社"> {{ formData.data.orderInfo.localTravelName }} </a-form-item>
+					<a-form-item label="联系电话"> {{ formData.data.orderInfo.travelPhone }} </a-form-item>
+					<a-form-item label="入园日期"> {{ formData.data.orderInfo.schoolTime }} </a-form-item>
+					<a-form-item label="预定时间"> {{ formData.data.orderInfo.bookTime }}</a-form-item>
+					<a-form-item label="核销时间"> {{ formData.data.orderInfo.verificationTime }} </a-form-item>
+					<a-form-item label="行程人数"> {{ formData.data.orderInfo.travelCount }} </a-form-item>
+					<a-form-item label="订票人数"> {{ formData.data.orderInfo.bookCount }} </a-form-item>
+					<a-form-item label="核销人数"> {{ formData.data.orderInfo.verificationCount }} </a-form-item>
+					<a-form-item label="订单金额"> {{ formData.data.orderInfo.orderAmount }} </a-form-item>
+					<a-form-item label="订单编号"> {{ formData.data.orderInfo.orderNo }} </a-form-item>
+					<a-form-item label="门票"> {{ formData.data.orderInfo.ticketName }} </a-form-item>
+					<a-form-item label="门票分类"> {{ formData.data.orderInfo.ticketType }} </a-form-item>
 					<!-- 
 					<div class="footer">
 						<div class="tooter-btn">
@@ -29,8 +29,11 @@
 			</a-tab-pane>
 
 			<a-tab-pane key="2" tab="人员信息">
-				<CommonTable :dataSource="dataSource" :columns="columns" :scrollY="false">
-					<template #bodyCell="{ column }">
+				<CommonTable :dataSource="formData.data.orderPersonInfo" :columns="columns" :scrollY="false">
+					<template #bodyCell="{ column, index }">
+						<template v-if="column.key === 'index'">
+							{{ index + 1 }}
+						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
 								<a>申请改刷</a>
@@ -69,55 +72,36 @@ const formData = reactive({
 		name: '',
 	},
 	data: {
-		oid: 1, //oid
-
-		// name: '测试景点编辑', //景区名称
-		// scenicLevel: 1, //景区等级(字典序号)
-
-		// creditCode: 'abc123', //统一社会行用代码
-		// phone: '18756235566', //手机号
-		// contactName: '张三', //联系人姓名
-		// provinceId: 1, //省id
-		// cityId: 2, //市id
-		// areaId: 3, //县区id
-		// addressDetail: '昆明市官渡区', //详细地址
-		// businessLicenseUrl: '/jpg/img.jpg', //营业执照图片地址
-
-		// derate: true, //是否支持减免: true支持，false不支持
-		// derateRule: '16,9', //减免规则详情，逗号隔开满16-9 ：16,9
-
-		// accountType: 1, //账户类型，具体类型未确定
-		// bankAccount: 12312124124, //银行账号
-		// accountAddress: '广东省', //开户地址
-		// businessType: 117, //企业业态（注册时，根据字典配置，景区、酒店、旅行社等）
-		// bankAccountName: 'zhangdawei', //银行账户名
-		// unitStatus: true, //企业状态 true-开业 false-停业
-
-		// bank: null, //收款行
-		name: null,
-		scenicLevel: null,
-
-		creditCode: null,
-		phone: null,
-		contactName: null,
-		provinceId: null,
-		cityId: null,
-		areaId: null,
-		addressDetail: null,
-		businessLicenseUrl: null,
-		derate: null,
-		derateRule: null,
-		accountType: null,
-		bankAccount: null,
-		accountAddress: null,
-		businessType: null,
-		bankAccountName: null,
-		unitStatus: null,
-		bank: null,
-		managementRange: null,
-		legalPerson: null,
-		establishTime: null,
-		registeredCapital: null,
+		orderInfo: {
+			travelType: '行程类型', //行程类型名称
+			itineraryNo: '行程单号', //行程单号
+			sendTravelName: '发团社名称', //发团旅行社
+			localTravelName: '地接社名称', //地接旅行社
+			travelPhone: '联系电话', //联系电话
+			schoolTime: '2022-7-14', //入园日期(yyyy-MM-dd)
+			verificationTime: '2022-7-12 17:50:45', //核销时间(yyyy-MM-dd HH:mm:ss)
+			bookTime: '2022-7-12 17:50:45', //预定时间
+			travelCount: 50, //行程人数
+			bookCount: 35, //订票人数
+			verificationCount: 20, //核销人数
+			orderAmount: 25061, //订单金额: 250.61
+			settleAmount: 20000, //结算金额: 200.00
+			orderNo: '订单号', //订单号
+			ticketName: '门票名称', //门票名称
+			ticketType: '门票分类名称', //门票类型:0-儿童,1-成人,2-老人
+		}, //订单详情信息
+		orderPersonInfo: [
+			{
+				certificateTypeName: '证件类型名称', //证件类型名称
+				certificateNo: '证件号', //证件号
+				gender: '性别', //性别: true 男 false 女
+				personName: '人员名称', //人员名称
+				sourceAddress: '客源地', //客源地
+				specialNo: '特殊证件号', //特殊证件号
+				specialPic: '特殊证件图片', //特殊证件图片.jpg/png...
+				specialType: '特殊证件类型名称', //特殊证件类型(按照字典175)
+			},
+		],
 	},
 });
 
@@ -216,18 +200,18 @@ const dataSource = [
 const columns = [
 	{
 		title: '序号',
-		dataIndex: 'name',
-		key: 'name',
+		dataIndex: 'index',
+		key: 'index',
 	},
 	{
 		title: '证件类型',
-		dataIndex: 'age',
-		key: 'age',
+		dataIndex: 'certificateTypeName',
+		key: 'certificateTypeName',
 	},
 	{
 		title: '证件号码',
-		dataIndex: 'address',
-		key: 'address',
+		dataIndex: 'certificateNo',
+		key: 'certificateNo',
 	},
 	{
 		title: '身份类型',
@@ -236,13 +220,13 @@ const columns = [
 	},
 	{
 		title: '姓名',
-		dataIndex: 'address2',
-		key: 'address2',
+		dataIndex: 'personName',
+		key: 'personName',
 	},
 	{
 		title: '性别',
-		dataIndex: 'address3',
-		key: 'address3',
+		dataIndex: 'gender',
+		key: 'gender',
 	},
 	{
 		title: '健康状态',

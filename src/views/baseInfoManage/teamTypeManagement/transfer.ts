@@ -31,57 +31,61 @@ const onChecked = (
   }
 };
 
-function formattingData(arr: any, keys: { parentKey: any, childrenKey: any }) {
+function formattingData(arr: any) {
   // 先定义一个空对象和空数组；
   let map: any = {};
   let res: any = [];
   // 循环需要筛选的数组
-  for (let i = 0; i < arr.length; i++) {
+  for (let i = 0, l = arr.length; i < l; i++) {
     let ai = arr[i];
     // 将需要筛选的属性的值作为新对象的键，并且判断是否已经存在
-    if (!map[ai[keys.parentKey]]) {
+    if (!map[ai['itemId']]) {
       // 不存在的话就在map对象中创建一个属性的值作为键名，键值为空数组的新对象，并且把arr[i]放入
-      map[ai[keys.parentKey]] = [ai.productId];
+      map[ai['itemId']] = { itemId: ai.itemId, itemName: ai.itemName, products: ai.products ? ai.products : undefined };
     } else {
       // 如果已经存在就直接把arr[i]放入
-      map[ai[keys.parentKey]].push(ai.productId);
+      map[ai['itemId']]['products'].push(...ai.products);
     }
   }
   // 循环后对map进行处理生成分组的数组
   Object.keys(map).forEach((key) => {
-    res.push({
-      [keys.parentKey]: Number(key),
-      [keys.childrenKey]: map[key],
-    });
+    res.push(map[key]);
   });
   return res;
 }
 
-const format = (arr: any, tArr: TransferProps['dataSource'], keys: { parentKey: any, childrenKey: any }) => {
+const format = (arr: any, tArr: TransferProps['dataSource']) => {
   let ret: any = []
-  for (let i = arr.length - 1; i >= 0; i--) {
+  for (let i = 0, l = arr.length; i < l; i++) {
     const element = arr[i];
-    for (let j = tArr.length - 1; j >= 0; j--) {
+    for (let j = 0, l = tArr?.length!; j < l; j++) {
       const telement = tArr[j];
-      if (telement?.children) {
-        for (let k = telement.children.length - 1; k >= 0; k--) {
-          const celement = telement.children[k];
-          if (element === celement?.key) {
-            ret.push({
-              [keys.parentKey]: telement.key, //项目id
-              [keys.childrenKey]: element //产品id
-            })
-            /* ret.push({
-              itemId: telement.key, //项目id
-              productId: element //产品id
-            }) */
+      if (element === telement.key) {
+        ret.push({
+          itemId: telement.key, //项目id
+          itemName: telement.title //项目name
+        })
+      } else {
+        if (telement.children) {
+          for (let k = 0, l = telement.children.length; k < l; k++) {
+            const celement = telement.children[k];
+            if (element === celement.key) {
+              ret.push({
+                itemId: telement.key, //项目id
+                itemName: telement.title, //项目name
+                products: [{
+                  productId: celement.key,
+                  productName: celement.title
+                }]
+              })
+            }
           }
         }
       }
     }
   }
   if (ret.length > 0) {
-    return formattingData(ret, keys)
+    return formattingData(ret)
   }
 }
 /* function handleTreeData(data: TransferProps['dataSource'], targetKeys: string[] = []) {

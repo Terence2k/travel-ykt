@@ -4,12 +4,12 @@
 			<div class="search-bar">
 				<div class="item">
 					<span class="field-input item">输入搜索</span>
-					<a-input class="input-search item" v-model:value="tableState.tableData.param.searchKeyWords" placeholder="门票名称/关键词" />
+					<a-input class="input-search item" v-model:value="tableState.tableData.param.itemName" placeholder="门票名称/关键词" />
 				</div>
 				<div class="item">
 					<span class="field-select item">归属景区</span>
 					<a-select
-						v-model:value="tableState.tableData.scenicSpot"
+						v-model:value="tableState.tableData.param.scenicId"
 						class="select-status item"
 						:showArrow="true"
 						:options="tableState.scenicSpotOptions"
@@ -32,15 +32,20 @@
 							</div>
 						</template> -->
 						<template #bodyCell="{ column, record }">
-							<template v-if="column.dataIndex === 'price'">
-								<div class="cell-price">
-									<span class="item">{{ record.price / 100 }}</span>
+							<template v-if="column.dataIndex === 'scenicId'">
+								<div class="cell-scenicId">
+									<span class="item">{{ getScenicSpotNameById(record.scenicId) }}</span>
+								</div>
+							</template>
+							<template v-if="column.dataIndex === 'auditStatus'">
+								<div class="cell-auditStatus">
+									<span class="item">{{ getAuditStatusNameById(record.auditStatus) }}</span>
 								</div>
 							</template>
 							<template v-if="column.dataIndex === 'actions'">
 								<div class="cell-actions">
 									<span class="item" @click="addOrUpdate({ row: record, handle: 'update' })">编辑</span>
-									<span class="item" @click="toggleHotelStarStatus(record)">删除</span>
+									<span class="item" @click="deleteWriteOffItem(record?.oid)">删除</span>
 								</div>
 							</template>
 						</template>
@@ -66,6 +71,7 @@
 import { ref } from 'vue';
 import type { SelectProps } from 'ant-design-vue';
 import type { TableColumnsType } from 'ant-design-vue';
+import { message } from 'ant-design-vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import VerificationManageAddUpdate from './components/verificationManage-add-update/verificationManage-add-update.vue';
@@ -80,20 +86,20 @@ const columns: TableColumnsType = [
 	},
 	{
 		title: '演出票名称',
-		dataIndex: 'ticketName',
-		key: 'ticketName',
+		dataIndex: 'itemName',
+		key: 'itemName',
 		width: 150,
 	},
 	{
 		title: '归属景区',
-		dataIndex: 'scenicSpot',
-		key: 'scenicSpot',
+		dataIndex: 'scenicId',
+		key: 'scenicId',
 		width: 150,
 	},
 	{
 		title: '审核状态',
-		dataIndex: 'ratedStatusName',
-		key: 'ratedStatusName',
+		dataIndex: 'auditStatus',
+		key: 'auditStatus',
 		width: '40%',
 	},
 	// {
@@ -111,7 +117,7 @@ const columns: TableColumnsType = [
 	},
 ];
 
-let scenicSpotOptionsData = [];
+let scenicSpotOptionsData = ref([]);
 const tableState = reactive({
 	tableData: {
 		data: ref([]),
@@ -120,8 +126,8 @@ const tableState = reactive({
 		param: {
 			pageNo: 1,
 			pageSize: 10,
-			searchKeyWords: '',
-			scenicSpot: '',
+			itemName: undefined,
+			scenicId: undefined,
 		},
 	},
 	scenicSpotOptions: ref<SelectProps['options']>(scenicSpotOptionsData),
@@ -131,21 +137,7 @@ const tableState = reactive({
 	},
 });
 
-let dataSource = [
-	{
-		oid: 1,
-		ticketName: '入园',
-		scenicSpot: '木府',
-		ratedStatusName: '待审核',
-	},
-	{
-		oid: 2,
-		ticketName: '入园',
-		scenicSpot: '玉龙雪山',
-		ratedStatusName: '待审核',
-	},
-];
-// const dataSource = computed(() => tableState.tableData.data);
+const dataSource = computed(() => tableState.tableData.data);
 
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
@@ -161,16 +153,16 @@ const pageSideChange = (current: number, size: number) => {
 
 const onSearch = () => {
 	console.log('search params:', tableState.tableData.param);
-	// api
-	// 	.getHotelStarTableInfo(tableState.tableData.param)
-	// 	.then((res: any) => {
-	// 		console.log('res:', res);
-	// 		tableState.tableData.data = res.content;
-	// 		tableState.tableData.total = res.total;
-	// 	})
-	// 	.catch((err: any) => {
-	// 		console.log(err);
-	// 	});
+	api
+		.getWriteOffItemList(tableState.tableData.param)
+		.then((res: any) => {
+			console.log('res:', res);
+			tableState.tableData.data = res.content;
+			tableState.tableData.total = res.total;
+		})
+		.catch((err: any) => {
+			console.log(err);
+		});
 };
 
 const searchByFilter = () => {
@@ -190,16 +182,56 @@ const addOrUpdate = (param: any) => {
 	tableState.operationModal.isAddOrUpdate = true;
 };
 
-const toggleHotelStarStatus = (param: any) => {
-	console.info(param);
+const deleteWriteOffItem = (id: number) => {
+	if (id || id === 0) {
+		api.deleteWriteOffItem(id).then((res) => {
+			message.success('删除成功');
+			onSearch();
+		});
+	}
 };
 
 const methods = reactive({
 	success: searchByFilter,
 });
 
+const getScenicSpotNameById = (id: number) => {
+	if (id || id === 0) {
+		return scenicSpotOptionsData.value?.find((item) => item.value === id)?.label || '';
+	}
+};
+
+const getAuditStatusNameById = (id: number) => {
+	let result = '';
+	switch (
+		id //0.未提交  1.待审核  2.审核通过  3.审核未通过
+	) {
+		case 0:
+			result = '未提交';
+			break;
+		case 1:
+			result = '待审核';
+			break;
+		case 2:
+			result = '审核通过';
+			break;
+		case 3:
+			result = '审核未通过';
+			break;
+	}
+	return result;
+};
 onMounted(() => {
 	onSearch();
+	api.getViewList().then((res) => {
+		console.log(res);
+		scenicSpotOptionsData.value = res.map((item) => {
+			return {
+				value: item.ticketId,
+				label: item.ticketName,
+			};
+		});
+	});
 });
 </script>
 

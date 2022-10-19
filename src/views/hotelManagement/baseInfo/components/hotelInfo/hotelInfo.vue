@@ -314,7 +314,7 @@ watch(
 	() => route.query,
 	(res) => {
 		const id = route?.query?.id;
-		if (id) {
+		if (id || id === 0) {
 			api.getHotelDetailInfo({}, id).then((res) => {
 				console.info(`id${id}酒店信息:`, res);
 

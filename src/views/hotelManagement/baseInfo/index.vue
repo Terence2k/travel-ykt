@@ -274,14 +274,14 @@ const pageSideChange = (current: number, size: number) => {
 };
 
 const openEditPage = (oid: number) => {
-	if (oid) {
+	if (oid || oid === 0) {
 		console.log('open edit page, id is:', oid);
 		router.push({ path: '/hotelManagement/hotelBaseInfo/hotelStarEdit', query: { id: oid } });
 	}
 };
 
 const openDisplayPage = (oid: number) => {
-	if (oid) {
+	if (oid || oid === 0) {
 		router.push({ path: '/hotelManagement/hotelBaseInfo/hotelStarDisplay', query: { id: oid } });
 		console.log('open display page');
 	}

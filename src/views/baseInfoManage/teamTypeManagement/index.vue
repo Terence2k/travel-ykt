@@ -41,17 +41,21 @@
         <a-input v-model:value="teamForm.name" placeholder="给团队类型取个名字，20字以内…" />
       </a-form-item>
       <a-form-item label="必购项目">
-        <a-transfer v-model:target-keys="targetKeys" class="tree-transfer" :data-source="dataSource"
-          :render="(item: any) => item.title" :show-select-all="false" :titles="['必购项目', '必购项目已选中']">
+        <a-transfer v-model:target-keys="checkedKeys" class="tree-transfer" :data-source="dataSource"
+          :render="(item: any) => item.title" :show-select-all="false" @change="transferChange"
+          :titles="['必购项目', '必购项目已选中']" :list-style="{
+            width: '300px',
+            height: '350px',
+          }">
           <template #children="{ direction, selectedKeys, onItemSelect }">
-            <a-tree v-if="direction === 'left'" block-node checkable default-expand-all
-              :checked-keys="[...selectedKeys, ...targetKeys]" :tree-data="tData" @check="
+            <a-tree v-if="direction === 'left'" block-node checkable check-strictly default-expand-all
+              :checked-keys="[...selectedKeys, ...checkedKeys]" :tree-data="tData" @check="
                 (_, props) => {
-                  onChecked(props, [...selectedKeys, ...targetKeys], onItemSelect);
+                  onChecked(props, [...selectedKeys, ...checkedKeys], onItemSelect);
                 }
               " @select="
                 (_, props) => {
-                  onChecked(props, [...selectedKeys, ...targetKeys], onItemSelect);
+                  onChecked(props, [...selectedKeys, ...checkedKeys], onItemSelect);
                 }
               " />
           </template>
@@ -74,8 +78,9 @@ import CommonPagination from '@/components/common/CommonPagination.vue'
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
-import type { TransferProps } from 'ant-design-vue';
-import { flatten, onChecked, format } from '@/views/baseInfoManage/teamTypeManagement/transfer'
+import type { TransferProps, TreeProps } from 'ant-design-vue';
+import { flatten, format } from '@/views/baseInfoManage/teamTypeManagement/transfer'
+import { any } from 'vue-types';
 const columns = [
   {
     title: '序号',
@@ -150,9 +155,136 @@ const state = reactive({
 const { tableData } = toRefs(state)
 const modalVisible = ref<boolean>(false)
 const title = ref<string>('新增团队类型')
+
+let tData = ref<TransferProps['dataSource']>([])
+let dataSource = ref<TransferProps['dataSource']>([])
 /* 穿梭框相关 */
-const targetKeys = ref<number[]>([]);
-const tData: TransferProps['dataSource'] = [
+const checkedKeys = ref<any[]>([]);
+const selectedKeys1 = ref<any[]>([]);
+// 记录被选中父元素key
+let checkedParentKeys: (string | number)[] = []
+// 如果父元素被选中则子元素不能选中，父元素取消选中子元素可被选中
+function disabledChildKeys(data: TransferProps['dataSource'], parentKeys: any[] = []) {
+  data.forEach(item => {
+    // 子元素不可选
+    if (parentKeys.includes(item.key)) {
+      item.children.forEach((citem: any) => {
+        citem['disabled'] = true;
+      });
+    } else {
+      // 子元素可选
+      item.children.forEach((citem: any) => {
+        citem['disabled'] = false;
+      });
+    }
+  });
+  return data as TransferProps['dataSource'];
+}
+// 如果右侧穿梭框取消父元素选中，则启用父元素下禁用的子选项
+function enableChildKeys(data: TransferProps['dataSource'], parentKeys: any[] = []) {
+  data.forEach(item => {
+    if (parentKeys.includes(item.key)) {
+      // 更新父元素列表，取消选中右侧穿梭框的父元素，删除父元素列表中的元素
+      let index = checkedParentKeys.indexOf(item.key as string)
+      if (index !== -1) {
+        checkedParentKeys.splice(index, 1)
+      }
+      item.children.forEach((citem: any) => {
+        citem['disabled'] = false;
+      });
+    }
+  });
+  return data as TransferProps['dataSource'];
+}
+// 获取选中的父元素
+function setChosedKeys(checked: boolean, eventKey: any) {
+  if (checked) {
+    checkedParentKeys.push(eventKey)
+  } else {
+    // 如果key选中到穿梭框右侧则不能删除
+    if (checkedKeys.value.includes(eventKey)) return
+    let index = checkedParentKeys.indexOf(eventKey)
+    if (index !== -1) {
+      checkedParentKeys.splice(index, 1)
+    }
+  }
+}
+function isChecked(selectedKeys: (string | number)[], eventKey: any) {
+  return selectedKeys.indexOf(eventKey) !== -1;
+}
+const onChecked = (
+  e: Parameters<TreeProps['onCheck']>[1] | Parameters<TreeProps['onSelect']>[1],
+  checkedKeys: any[],
+  onItemSelect: (n: any, c: boolean) => void,
+) => {
+  const { checked, node: { eventKey } } = e
+  if (e.node.children) {
+    setChosedKeys(checked, eventKey)
+    tData.value = disabledChildKeys(tData.value, checkedParentKeys);
+  }
+  onItemSelect(eventKey, !isChecked(checkedKeys, eventKey));
+};
+const transferChange = (targetKeys: any[], direction: string, moveKeys: (string | number)[]) => {
+  if (direction === 'left') {
+    tData.value = enableChildKeys(tData.value, moveKeys)
+  }
+  // 如果选中的左侧父元素添加到右侧，和右边的子元素存在父子关系则删除对应的子元素（全选）
+  if (direction === 'right') {
+    for (let j = 0, l = tData.value?.length!; j < l; j++) {
+      const item = tData.value[j];
+      let index = moveKeys.indexOf(item.key)
+      if (index === -1) {
+        continue
+      } else {
+        for (let k = 0, l = item.children.length; k < l; k++) {
+          const citem = item.children[k];
+          let cindex = checkedKeys.value.indexOf(citem.key)
+          if (cindex !== -1) {
+            checkedKeys.value.splice(cindex, 1)
+          } else {
+            continue
+          }
+        }
+      }
+    }
+  }
+  /* if (targetKeys.length > 0) {
+    auditRef.value.resetFields('sysAuditNodeVos')
+  } */
+  nextTick(() => {
+    if (direction === 'right') {
+      setTitle()
+    }
+  })
+}// 设置穿梭框右侧的元素名称
+const setTitle = () => {
+  const childrenList = Array.from(document.querySelectorAll('.ant-transfer-list-content-item-text'))
+  if (childrenList.length === 0) return
+  /* for (let i = 0, l = checkedKeys.value.length; i < l; i++) {
+    const item = checkedKeys.value[i];
+    for (let j = 0, l = tData.value?.length!; j < l; j++) {
+      const citem = tData.value[j];
+      for (let k = 0, l = citem.children.length; k < l; k++) {
+        const element = citem.children[k];
+        if (item === element.key) {
+          childrenList[i].innerHTML = `${citem.title}：${element.title}`
+        }
+      }
+    }
+  } */
+
+  for (let j = 0, l = tData.value?.length!; j < l; j++) {
+    const citem = tData.value[j];
+    for (let k = 0, l = citem.children.length; k < l; k++) {
+      const element = citem.children[k];
+      if (checkedKeys.value.includes(element.key)) {
+        const i = checkedKeys.value.indexOf(element.key)
+        childrenList[i].innerHTML = `${citem.title}：${element.title}`
+      }
+    }
+  }
+}
+/* const tData: TransferProps['dataSource'] = [
   {
     key: '11',
     title: 'test11',
@@ -176,8 +308,8 @@ const tData: TransferProps['dataSource'] = [
       { key: 7, title: 'test7' },
     ],
   },
-];
-const dataSource = ref(flatten(tData));
+]; */
+// const dataSource = ref(flatten(tData));
 
 interface addInterface {
   row?: any
@@ -194,7 +326,15 @@ const addOrUpdate = ({ row, handle }: addInterface) => {
     teamForm.name = name;
     teamForm.state = state;
     teamForm.oid = oid;
-    targetKeys.value = productIds;
+    tData.value.map((item: any) => {
+      if (productIds.includes(item.key)) {
+        checkedParentKeys.push(productIds[productIds.indexOf(item.key)])
+      }
+    })
+    console.log(checkedParentKeys, '#######');
+
+    tData.value = disabledChildKeys(tData.value, checkedParentKeys);
+    checkedKeys.value = productIds;
     normalProductIds = productIds;
     isAdd = false
   }
@@ -227,19 +367,40 @@ const pageSideChange = (current: number, size: number) => {
 }
 const onSearch = async () => {
   let res = await api.selectTeamTypeList(state.tableData.param)
+  res.content.forEach((key: any) => {
+    key.products = []
+    key.productIds = []
+    key.teamTypeItemBos.forEach((item: any) => {
+      if (item?.products) {
+        item.products.forEach((citem: any) => {
+          key.productIds.push(citem.productId)
+          key.products.push(citem.productName)
+        })
+      } else {
+        key.productIds.push(item.itemId)
+        key.products.push(item.itemName)
+      }
+    })
+  })
+
   state.tableData.data = res.content
   state.tableData.total = res.total
 }
 const closeModal = () => {
   modalVisible.value = false
   teamRef.value.resetFields()
-  targetKeys.value = []
+  teamForm.name = undefined
+  teamForm.oid = undefined
+  teamForm.state = 1
+  checkedKeys.value = []
+  checkedParentKeys.splice(0, checkedParentKeys.length)
+  tData.value = disabledChildKeys(tData.value, checkedParentKeys);
 }
-const teamTypeKeys = { parentKey: 'itemId', childrenKey: 'productId' }
+
 const save = () => {
   teamRef.value.validate().then(async (val: any) => {
     if (isAdd) {
-      let teamTypeItemBos = format(targetKeys.value, tData, teamTypeKeys);
+      let teamTypeItemBos = format(checkedKeys.value, tData.value);
       let res = await api.addTeamType({ ...toRaw(teamForm), teamTypeItemBos });
       if (res === "添加成功") {
         message.success('新增团队类型成功！')
@@ -250,8 +411,9 @@ const save = () => {
       }
     } else {
       let teamTypeItemBos
-      if (targetKeys.value !== normalProductIds) {
-        teamTypeItemBos = format(targetKeys.value, tData, teamTypeKeys);
+      // 判断是否修改必购项目如果没有修改则不传该参数
+      if (checkedKeys.value.toString() !== normalProductIds.toString()) {
+        teamTypeItemBos = format(checkedKeys.value, tData.value);
       } else {
         teamTypeItemBos = undefined
       }
@@ -264,16 +426,39 @@ const save = () => {
         message.error('编辑团队类型失败！')
       }
     }
-  }).catch((err: string) => {
+  }).catch((err: Error) => {
     console.log(err);
   })
 }
+const getProductsList = async () => {
+  let res = await api.getItem()
+  let data: TransferProps['dataSource']
+  data = res.map((item: any) => {
+    return {
+      key: item.itemId,
+      title: item.itemName,
+      children: item.productVos.map((citem: any) => {
+        return {
+          key: citem.productId,
+          title: citem.productName
+        }
+      })
+    }
+  })
+  tData.value = data
+  dataSource.value = flatten(tData.value);
+}
 onMounted(() => {
   onSearch()
+  getProductsList()
 })
 </script>
 
 <style scoped lang="scss">
+::v-deep(.ant-transfer-list-body) {
+  overflow: auto;
+}
+
 .tip {
   margin-top: 10px;
   font-size: 14px;
