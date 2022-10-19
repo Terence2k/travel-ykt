@@ -39,15 +39,18 @@ export function useInsurance(props: any, emits: any): Record<string, any> {
 	const state = reactive<{editableData: UnwrapRef<Record<string, DataItem>>, [k:string]: any}>({
 		formRef: null,
 		editableData: {},
+		editableData2:{},
 		startRef: {},
 		cityOptions: [],
 		selectKey: ['certificateType', 'gender', 'specialCertificateType','insuranceType'],
 		inputKey: ['certificateNo', 'name'],
+		inputKey2:[''],
 		rulesRef: {},
         onSelect: (record: DataItem, selected: boolean, selectedRows: DataItem[]) => {
             console.log(record, selected, selectedRows);
         },
 		tableData: route.query.id ? travelStore.touristList : [],
+		tableData2:[],
 		columns: [
 			{
 				title: ' 序号 ',
@@ -212,6 +215,7 @@ export function useInsurance(props: any, emits: any): Record<string, any> {
 			}
 		},
 		edit: (key: string) => {
+			console.log(key,'111111111111');
 			state.editableData[key] = cloneDeep(
 				state.tableData.filter((item:any, index: number) => key === (item.key ? item.key : item.oid))[0]
 			)
@@ -219,7 +223,7 @@ export function useInsurance(props: any, emits: any): Record<string, any> {
 		del(key: string) {
 			console.log(key)
 			state.tableData.splice(key, 1);
-			// state.tableData = state.tableData.filter((item: any) => key !== (item.key ? item.key : item.oid));
+			state.tableData = state.tableData.filter((item: any) => key !== (item.key ? item.key : item.oid));
 		},
 		save: async (key?: string) => {
 			
@@ -238,9 +242,6 @@ export function useInsurance(props: any, emits: any): Record<string, any> {
 				}
 				emits('onSuccess', {touristList: state.tableData});
 			}
-			
-			
-			
 			travelStore.setTouristList(state.tableData)
 			
 		},
@@ -251,7 +252,7 @@ export function useInsurance(props: any, emits: any): Record<string, any> {
 			console.log(state.tableData)
 		},
 		handleChange(val: any, option: any, key: string) {
-			console.log(val, option)
+			console.log(val, option,)
 			state.editableData[key].sourceAddress = val[val.length - 1];
 			state.editableData[key].sourceAddressName = option.map((it:any) => it.label).join('')
 		}

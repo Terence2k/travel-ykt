@@ -54,6 +54,7 @@
                 <a-time-picker
                     style="width: 100%"
 					v-model:value="formState.startDate"
+					format="HH:mm" valueFormat="HH:mm"
 				/>
 			</a-form-item>
 

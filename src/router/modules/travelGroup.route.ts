@@ -71,8 +71,8 @@ export default [
 				children: [
 					{
 						path: 'travelEnterpriseInfo',
-						component: () => import('@/views/enterpriseInfoManagement/travelEnterpriseInfo.vue'),
-						name: 'travelEnterpriseInfo',
+						component: () => import('@/views/baseInfoManage/enterpriseInfo/index.vue'),
+						name: 'enterpriseInfoManagement',
 						meta: {
 							title: '企业信息',
 							// icon: 'liulanqi',
@@ -138,14 +138,14 @@ export default [
 					// auth: ["admin"],
 					// isDetail: true, // 在左侧的导航栏不会展示
 				},
-				redirect: '/travel/travelTtemplate',
+				redirect: '/travel/travelTtemplate/list',
 				children: [
 					{
-						path: 'templateList',
+						path: 'list',
 						component: () => import('@/views/travelManagement/travelTemplate/index.vue'),
-						name: 'templateList',
 						meta: {
 							title: '基础信息',
+							activeMeun: 'travelTtemplate',
 							// icon: 'liulanqi',
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
@@ -157,6 +157,7 @@ export default [
 						name: 'info',
 						meta: {
 							title: '查看',
+							activeMeun: 'travelTtemplate',
 							// icon: 'liulanqi',
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示

@@ -91,10 +91,9 @@ export default [
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
-						props: true
+						props: true,
 					},
-
-				]
+				],
 			},
 			{
 				path: 'enterpriseUserManagement',

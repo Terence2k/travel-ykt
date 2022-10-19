@@ -142,7 +142,7 @@ interface TeamType {
 }
 
 const travelStore = useTravelStore();
-const touristCount = computed(() => travelStore.touristList.length ? travelStore.touristList.length : 0)
+const touristCount = computed(() => travelStore.touristList.length ? travelStore.touristList.length.toString() : 0)
 const route = useRoute()
 const page = reactive({
 	teamType: {

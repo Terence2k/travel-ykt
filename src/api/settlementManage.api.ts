@@ -199,11 +199,52 @@ export async function currencySettlementDisenableRule(oid: number) {
 		showLoading: true,
 	});
 }
+// 查询旅行社基本信息
+export async function getTravelInfo(id: any) {
+	return request({
+		url: `${commonPath}/travel-agency-service/public/api/itinerary/getTravelInfo/${id}`,
+		method: 'get',
+		showLoading: false,
+	});
+}
+// 查询团队类型
+export async function getTeamTypes() {
+	return request({
+		url: `${commonPath}/travel-agency-service/public/api/team/getTeamTypes`,
+		method: 'get',
+		showLoading: false,
+	});
+}
+// 查询结算行程单列表
+export async function getItinerarySettlement(data: any) {
+	return request({
+		url: `${commonPath}/travel-agency-service/public/api/itinerary/getItinerarySettlement`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
 // 企业业态字典下拉列表
 export async function getPrepaidCompanyList() {
 	return request({
 		url: `${commonPath}/customer-service/public/api/dictionary/dropDownQueryListChildByCodeValue?codeValue=BUSINESS_TYPE`,
 		method: 'post',
+		showLoading: true,
+	});
+}
+// 获取门店下拉列表
+export async function getShopList() {
+	return request({
+		url: `${commonPath}/catering-service/public/api/catering-product/get-shop-list`,
+		method: 'get',
+		showLoading: true,
+	});
+}
+// 获取酒店名称下拉列表
+export async function getAllOpenHotelNameList() {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-information/getAllOpenHotelName`,
+		method: 'get',
 		showLoading: true,
 	});
 }

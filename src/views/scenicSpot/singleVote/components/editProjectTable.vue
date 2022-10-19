@@ -31,8 +31,7 @@
 					<template v-if="column.key === 'itemId'">
 						<div class="action-btns">
 							<span style="margin-right: 20px">
-								{{ record }}
-								<!-- {{ itemNameCompute(record.itemId) }} -->
+								{{ itemNameCompute(Number(record.itemId)) }}
 							</span>
 							<a v-if="record.itemId && !type" href="javascript:;" @click="change(record)">更换</a>
 							<a href="javascript:;" v-if="isCreate && !type && formValidate.initData[0].init" @click="CreateData">请选择</a>
@@ -149,8 +148,11 @@ const columns = ref([
 	},
 ]);
 const itemNameCompute = (id: number) => {
-	let rN = formData.data.filter((i) => i.id === id);
-	return rN[0]?.itemName || '';
+	let rN = formData.data.filter((i) => i.id === id),
+		optionN = options.value.filter((i) => i.id === id);
+	console.log(optionN, 'optionN');
+
+	return rN[0]?.itemName || optionN[0]?.label || '';
 };
 
 const change = (value: object) => {
@@ -218,15 +220,18 @@ const options = ref([
 	{
 		value: '1',
 		label: '入园',
+		id: 1,
 	},
 	{
 		value: '2',
 		label: '游戏机',
+		id: 2,
 	},
 
 	{
 		value: '3',
 		label: '其他',
+		id: 3,
 	},
 ]);
 // 数据
@@ -252,7 +257,8 @@ const getList = async () => {
 	let arr = formData.data.map((i) => {
 		return { value: i.id, label: i.itemName };
 	});
-	// options.value = arr;
+
+	options.value = arr.length ? arr : options.value;
 };
 
 // 删除提示

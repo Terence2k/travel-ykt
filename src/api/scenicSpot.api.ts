@@ -109,7 +109,7 @@ export async function singleVoteDel(id: number) {
 		method: 'delete',
 	});
 }
-//景区场馆 分页查询场馆信
+//景区场馆 分页查询
 export async function getShowVenueList(data: any) {
 	return request({
 		url: commonPath + `/ticket-service/public/api/scenic-venue`,
@@ -125,7 +125,7 @@ export async function getWriteOffTimeList(data: any) {
 		data,
 	});
 }
-//景区订单 分页查询场馆信
+//景区订单 分页查询
 export async function getViewOrderList(data: any) {
 	return request({
 		url: commonPath + `/ticket-service/public/api/scenic-order/page`,

@@ -14,14 +14,15 @@
 	</CommonSearch>
 	<div class="table-area">
 		<CommonTable :dataSource="dataSource" :columns="columns">
-			<template #bodyCell="{ column,index }">
+			<template #bodyCell="{ column,index,record }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a href="javascript:;" @click="toEditPage()">编辑</a>
 						<a href="javascript:;" @click="del(index)">删除</a>
 						<a href="javascript:;">价格日历</a>
 						<a href="javascript:;">库存日历</a>
-						<a>下架申请</a>
+						<a @click="open(record)">下架申请</a>
+						<a @click="Examines()">下架审核</a>
 					</div>
 				</template>
 			</template>
@@ -33,7 +34,10 @@
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
 		/>
+
 	</div>
+	<Apply ref="auditRef"></Apply>
+	<Examine v-model="state.operationModal.isExaminedate"></Examine>
 </template>
 
 <script setup lang="ts">
@@ -41,6 +45,8 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
+import Apply from './components/apply.vue';
+import Examine from './components/examine.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 const route = useRouter();
 const navigatorBar = useNavigatorBar();
@@ -99,6 +105,10 @@ const state = reactive({
 			pageSize: 10,
 		},
 	},
+	operationModal: {
+		isApplydate: false,
+		isExaminedate:false
+	},
 });
 
 const onHandleCurrentChange = (val: number) => {
@@ -106,18 +116,23 @@ const onHandleCurrentChange = (val: number) => {
 	state.tableData.param.pageNo = val;
 	onSearch();
 };
-
+const auditRef = ref();
+const open = (value) => {
+	auditRef.value.open(value.oid);
+};
 const pageSideChange = (current: number, size: number) => {
 	console.log('changePageSize:', size);
 	state.tableData.param.pageSize = size;
 	// onSearch();
 };
+const Applys =()=>{
+	state.operationModal.isApplydate=true
+}
+const Examines =()=>{
+	state.operationModal.isExaminedate=true
+}
 //编辑
 const toEditPage = () => {
-	route.push({ path: '/scenic-spot/showTickets/show_edit'});
-};
-//新增
-const add = () => {
 	route.push({ path: '/scenic-spot/showTickets/show_edit'});
 };
 //删除

@@ -7,6 +7,7 @@ import gouvyRoute from './modules/gouvy.route';
 import settlementRoute from './modules/settlement.route';
 import cateringManageRoute from './modules/catering.route';
 import scenicSpot from './modules/scenicSpot.route';
+import reportManagement from './modules/reportManagement.route';
 export const basicRouter = [
 	// {
 	// 	path: '/',
@@ -35,8 +36,16 @@ export const basicRouter = [
 	},
 ];
 
-export const accessRoutes: RouteRecordRaw[] = [...travelGroupRoute, ...hotelManagementRoute, ...baseInfoRoute, ...scenicSpot, ...cateringManageRoute, ...gouvyRoute, ...settlementRoute,];
-
+export const accessRoutes: RouteRecordRaw[] = [
+	...travelGroupRoute,
+	...hotelManagementRoute,
+	...baseInfoRoute,
+	...scenicSpot,
+	...cateringManageRoute,
+	...gouvyRoute,
+	...settlementRoute,
+	...reportManagement,
+];
 
 export const constantRoutes: RouteRecordRaw[] = [
 	{
@@ -54,8 +63,8 @@ export const constantRoutes: RouteRecordRaw[] = [
 				path: 'businessLogin',
 				name: 'businessLogin',
 				component: () => import('@/views/login/businessLogin.vue'),
-			}
-		]
+			},
+		],
 	},
 ];
 

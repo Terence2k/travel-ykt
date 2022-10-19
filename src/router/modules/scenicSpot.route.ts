@@ -289,6 +289,17 @@ export default [
 					},
 				],
 			},
+			{
+				path: 'enterpriseInfoManagementPage',
+				name: 'enterpriseInfoManagementPage',
+				component: () => import('@/views/baseInfoManage/enterpriseInfo/index.vue'),
+				meta: {
+					title: '企业信息管理',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					// isDetail: true, // 在左侧的导航栏不会展示
+				},
+			},
 		],
 	},
 ];
