@@ -17,6 +17,7 @@ export const traveListParams = {
 		startDate: '',
 		endDate: '',
 		keyWord: '',
+		keyWordType: 1,
 		groupType: '',
 		time: []
 	}
