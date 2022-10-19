@@ -94,14 +94,14 @@ const columns: TableColumnsType = [
 		title: '审核状态',
 		dataIndex: 'ratedStatusName',
 		key: 'ratedStatusName',
-		width: 150,
-	},
-	{
-		title: '平台上架状态',
-		dataIndex: 'platformLaunchStatus',
-		key: 'platformLaunchStatus',
 		width: '40%',
 	},
+	// {
+	// 	title: '平台上架状态',
+	// 	dataIndex: 'platformLaunchStatus',
+	// 	key: 'platformLaunchStatus',
+	// 	width: '40%',
+	// },
 	{
 		title: '操作',
 		dataIndex: 'actions',
@@ -131,7 +131,21 @@ const tableState = reactive({
 	},
 });
 
-const dataSource = computed(() => tableState.tableData.data);
+let dataSource = [
+	{
+		oid: 1,
+		ticketName: '入园',
+		scenicSpot: '木府',
+		ratedStatusName: '待审核',
+	},
+	{
+		oid: 2,
+		ticketName: '入园',
+		scenicSpot: '玉龙雪山',
+		ratedStatusName: '待审核',
+	},
+];
+// const dataSource = computed(() => tableState.tableData.data);
 
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
@@ -146,6 +160,7 @@ const pageSideChange = (current: number, size: number) => {
 };
 
 const onSearch = () => {
+	console.log('search params:', tableState.tableData.param);
 	// api
 	// 	.getHotelStarTableInfo(tableState.tableData.param)
 	// 	.then((res: any) => {
