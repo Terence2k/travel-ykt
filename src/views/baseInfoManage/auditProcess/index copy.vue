@@ -32,17 +32,17 @@
       </a-form-item>
       <a-form-item label="参与审核的部门或角色" name="sysAuditNodeVos">
         <!-- <a-form-item label="参与审核的部门或角色"> -->
-        <a-transfer v-model:target-keys="checkedKeys" v-model:selected-keys="selectedKeys1" class="tree-transfer"
-          :data-source="dataSource" :render="(item: any) => item.title" :show-select-all="false"
-          @change="transferChange" :titles="['部门角色', '部门角色已选中']" :list-style="{
+        <a-transfer ref="treeRef" v-model:target-keys="checkedKeys" v-model:selected-keys="selectedKeys1"
+          class="tree-transfer" :data-source="dataSource" :render="(item: any) => item.title" :show-select-all="false"
+          @change="transferChange" @selectChange="selectChange" :titles="['部门角色', '部门角色已选中']" :list-style="{
             width: '300px',
-            height: '350px',
+            maxHeight: '350px',
           }">
           <template #children="{ direction, selectedKeys, onItemSelect }">
             <a-tree v-if="direction === 'left'" block-node checkable check-strictly default-expand-all
-              :checked-keys="[...selectedKeys, ...checkedKeys]" :tree-data="tData" @check="
+              v-model:checked-keys="leftSelectedKeys" :tree-data="tData" @check="
                 (_, props) => {
-                  onChecked(props, [...selectedKeys, ...checkedKeys], onItemSelect);
+                  onChecked(props, [...selectedKeys, ...checkedKeys], onItemSelect, selectedKeys);
                 }
               " @select="
                 (_, props) => {
@@ -64,7 +64,6 @@ import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModa
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import type { TransferProps, TreeProps } from 'ant-design-vue';
-import { flatten } from '@/views/baseInfoManage/auditProcess/transfer'
 const columns = [
   {
     title: '序号',
@@ -130,18 +129,31 @@ const auditForm = reactive({
 /* 穿梭框相关 */
 const checkedKeys = ref<any[]>([]);
 const selectedKeys1 = ref<any[]>([]);
+const leftSelectedKeys = ref<any[]>([]);
+const treeRef = ref()
 // 记录被选中父元素key
-const checkedParentKeys: (string | number)[] = []
+const chosedKeys: (string | number)[] = []
+function flatten(data: TransferProps['dataSource'] = []) {
+  const transferDataSource: TransferProps['dataSource'] = [];
+  /* 扁平化 */
+  function flat(list: TransferProps['dataSource'] = []) {
+    list.forEach(item => {
+      transferDataSource.push(item);
+      flat(item.children);
+    });
+  }
+  flat(JSON.parse(JSON.stringify(data)));
+  return transferDataSource
+}
+
 // 如果父元素被选中则子元素不能选中，父元素取消选中子元素可被选中
 function disabledChildKeys(data: TransferProps['dataSource'], parentKeys: any[] = []) {
   data.forEach(item => {
-    // 子元素不可选
     if (parentKeys.includes(item.key)) {
       item.children.forEach((citem: any) => {
         citem['disabled'] = true;
       });
     } else {
-      // 子元素可选
       item.children.forEach((citem: any) => {
         citem['disabled'] = false;
       });
@@ -149,15 +161,11 @@ function disabledChildKeys(data: TransferProps['dataSource'], parentKeys: any[] 
   });
   return data as TransferProps['dataSource'];
 }
-// 如果右侧穿梭框取消父元素选中，则启用父元素下禁用的子选项
+
+// 如果右侧穿梭框取消选中，启用父元素下禁用的子选项
 function enableChildKeys(data: TransferProps['dataSource'], parentKeys: any[] = []) {
   data.forEach(item => {
     if (parentKeys.includes(item.key)) {
-      // 更新父元素列表，取消选中右侧穿梭框的父元素，删除父元素列表中的元素
-      let index = checkedParentKeys.indexOf(item.key as string)
-      if (index !== -1) {
-        checkedParentKeys.splice(index, 1)
-      }
       item.children.forEach((citem: any) => {
         citem['disabled'] = false;
       });
@@ -165,33 +173,156 @@ function enableChildKeys(data: TransferProps['dataSource'], parentKeys: any[] = 
   });
   return data as TransferProps['dataSource'];
 }
-// 获取选中的父元素
-function setChosedKeys(checked: boolean, eventKey: any) {
+
+function getKeys(arr: any[]) {
+  let temp = arr.map((item: any) => {
+    return item.key
+  })
+  return temp
+}
+
+function isChecked(selectedKeys: (string | number)[], eventKey: string | number) {
+  return selectedKeys.indexOf(eventKey) !== -1;
+}
+
+function setChosedKeys(e: Parameters<TreeProps['onCheck']>[1] | Parameters<TreeProps['onSelect']>[1]) {
+  const { checked, node: { eventKey } } = e
   if (checked) {
-    checkedParentKeys.push(eventKey)
+    chosedKeys.push(eventKey)
   } else {
     // 如果key选中到穿梭框右侧则不能删除
     if (checkedKeys.value.includes(eventKey)) return
-    let index = checkedParentKeys.indexOf(eventKey)
+    let index = chosedKeys.indexOf(eventKey)
     if (index !== -1) {
-      checkedParentKeys.splice(index, 1)
+      chosedKeys.splice(index, 1)
     }
   }
 }
-function isChecked(selectedKeys: (string | number)[], eventKey: any) {
-  return selectedKeys.indexOf(eventKey) !== -1;
+
+function handleTreeData(data: TransferProps['dataSource'], disabledKeys: number | string, index: number) {
+  const item = data[index]
+  item.children.forEach(citem => {
+    if (citem.key === disabledKeys) {
+      citem['isAll'] = true
+    }
+  })
+  return data as TransferProps['dataSource'];
+}
+function clearIsAll(data: TransferProps['dataSource'], disabledKeys: number | string, index: number) {
+  const item = data[index]
+  item.children.forEach(citem => {
+    if (citem.key === disabledKeys) {
+      citem['isAll'] = false
+    }
+  })
+  return data as TransferProps['dataSource'];
+}
+let temp: (any)[] = []
+let flag = false
+function getIsAllParent(data: TransferProps['dataSource'], index: number, checkedKey: number | string, checkedKeys: any[]) {
+  const item = data[index]
+  if (item.children) {
+    const isAllList = []
+    item.children.forEach(citem => {
+      if (citem.isAll) {
+        isAllList.push(citem.isAll)
+      }
+    })
+    if (item.children.length === isAllList.length) {
+      const arr = [...checkedKeys]
+      item.children.forEach(citem => {
+        const index = arr.indexOf(citem.key)
+        arr.splice(index, 1)
+      })
+      arr.unshift(item.key)
+      temp = [item.key]
+      // chosedKeys.push(item.key)
+      // tData.value = disabledChildKeys(tData.value, chosedKeys);
+      leftSelectedKeys.value = arr
+      // selectedKeys1.value = arr
+    }
+  }
+
+}
+const selectChange = (newVal, oldVal) => {
+  // console.log(newVal, oldVal);
+
 }
 const onChecked = (
   e: Parameters<TreeProps['onCheck']>[1] | Parameters<TreeProps['onSelect']>[1],
   checkedKeys: any[],
   onItemSelect: (n: any, c: boolean) => void,
+  selectedKeys: any[],
 ) => {
-  const { checked, node: { eventKey } } = e
-  if (e.node.children) {
-    setChosedKeys(checked, eventKey)
-    tData.value = disabledChildKeys(tData.value, checkedParentKeys);
+  const { checked } = e.node
+  let { eventKey } = e.node;
+  const a = new Set([...temp, ...checkedKeys])
+  checkedKeys = Array.from(a)
+  if (checked) {
+    if (flag) {
+      if (checkedKeys.includes(temp[0])) {
+        checkedKeys.splice(checkedKeys.indexOf(temp[0]), 1)
+      }
+      flag = true
+    } else {
+      flag = true
+    }
+  } else {
+    if (flag) {
+      if (checkedKeys.includes(temp[0])) {
+        checkedKeys.splice(checkedKeys.indexOf(temp[0]), 1)
+      }
+      flag = false
+    } else {
+      flag = false
+    }
   }
-  onItemSelect(eventKey, !isChecked(checkedKeys, eventKey));
+  temp = [eventKey]
+  /* 点击父节点 */
+  if (e.node.children) {
+    onItemSelect(eventKey, !isChecked(checkedKeys, eventKey));
+    setChosedKeys(e)
+    tData.value = disabledChildKeys(tData.value, chosedKeys);
+  } else {
+    /* 点击子节点 */
+    if (e.node.parent) {
+      const index = e.node.parent.index
+      if (e.checked) {
+        tData.value = handleTreeData(tData.value, eventKey, index)
+        // getIsAllParent(tData.value, index, eventKey, checkedKeys)
+        const item = tData.value[index]
+        if (item.children) {
+          const isAllList = []
+          item.children.forEach(citem => {
+            if (citem.isAll) {
+              isAllList.push(citem.isAll)
+            }
+          })
+          if (item.children.length === isAllList.length) {
+            const arr = [...checkedKeys]
+            item.children.forEach(citem => {
+              const index = arr.indexOf(citem.key)
+              arr.splice(index, 1)
+            })
+            // arr.unshift(item.key)
+            temp = [item.key]
+            // chosedKeys.push(item.key)
+            // tData.value = disabledChildKeys(tData.value, chosedKeys);
+            leftSelectedKeys.value = [item.key, ...arr]
+            checkedKeys = arr
+            eventKey = item.key
+            // selectedKeys1.value = arr
+          }
+        }
+      } else {
+        tData.value = clearIsAll(tData.value, eventKey, index)
+      }
+    }
+    console.log(eventKey, checkedKeys);
+    // console.log(selectedKeys1.value);
+    onItemSelect(eventKey, !isChecked(checkedKeys, eventKey));
+  }
+  // console.log(e, 'RRRRRRRR');
 };
 // draggable
 const draggable = (dragelist: any[]) => {
@@ -318,10 +449,20 @@ const draggable = (dragelist: any[]) => {
   }
 }
 const transferChange = (targetKeys: any[], direction: string, moveKeys: (string | number)[]) => {
+  console.log(targetKeys, direction, moveKeys);
+  // leftSelectedKeys
   if (direction === 'left') {
+    leftSelectedKeys.value = targetKeys
     tData.value = enableChildKeys(tData.value, moveKeys)
+    // 更新父元素列表
+    for (let i = 0; i < moveKeys.length; i++) {
+      let index = chosedKeys.indexOf(moveKeys[i])
+      if (index !== -1) {
+        chosedKeys.splice(index, 1)
+      }
+    }
   }
-  // 如果选中的左侧父元素添加到右侧，和右边的子元素存在父子关系则删除对应的子元素（全选）
+  // 如果选中的左侧父元素添加到右侧，和右边的元素存在父子关系则删除对应的子元素
   if (direction === 'right') {
     for (let j = 0, l = tData.value?.length!; j < l; j++) {
       const item = tData.value[j];
@@ -355,7 +496,7 @@ const transferChange = (targetKeys: any[], direction: string, moveKeys: (string 
 const setTitle = () => {
   const childrenList = Array.from(document.querySelectorAll('.ant-transfer-list-content-item-text'))
   if (childrenList.length === 0) return
-  /* for (let i = 0, l = checkedKeys.value.length; i < l; i++) {
+  for (let i = 0, l = checkedKeys.value.length; i < l; i++) {
     const item = checkedKeys.value[i];
     for (let j = 0, l = tData.value?.length!; j < l; j++) {
       const citem = tData.value[j];
@@ -364,17 +505,6 @@ const setTitle = () => {
         if (item === element.key) {
           childrenList[i].innerHTML = `${citem.title}：${element.title}`
         }
-      }
-    }
-  } */
-
-  for (let j = 0, l = tData.value?.length!; j < l; j++) {
-    const citem = tData.value[j];
-    for (let k = 0, l = citem.children.length; k < l; k++) {
-      const element = citem.children[k];
-      if (checkedKeys.value.includes(element.key)) {
-        const i = checkedKeys.value.indexOf(element.key)
-        childrenList[i].innerHTML = `${citem.title}：${element.title}`
       }
     }
   }
@@ -394,15 +524,14 @@ const addOrUpdate = async ({ row, handle }: addInterface) => {
     auditForm.oid = oid
     checkedKeys.value = auditModelDetailVos.map((item: any) => {
       if (item.roleId) {
-        // 选中的子元素
         return item.roleId
       } else {
-        // 选中的父级元素
-        checkedParentKeys.push(item.businessType)
+        chosedKeys.push(item.businessType)
         return item.businessType
       }
     })
-    tData.value = disabledChildKeys(tData.value, checkedParentKeys);
+    leftSelectedKeys.value = checkedKeys.value
+    tData.value = disabledChildKeys(tData.value, chosedKeys);
     nextTick(() => {
       setTitle()
       draggable(checkedKeys.value)
@@ -422,7 +551,7 @@ const closeModal = () => {
   modalVisible.value = false
   auditRef.value.resetFields()
   checkedKeys.value = []
-  checkedParentKeys.splice(0, checkedParentKeys.length)
+  chosedKeys.splice(0, chosedKeys.length)
   selectedKeys1.value = []
   getRolesList()
 }
@@ -430,7 +559,7 @@ const formatAudit = (arr: any, tArr: TransferProps['dataSource']) => {
   let ret: any = []
   for (let i = 0, l = arr.length; i < l; i++) {
     const element = arr[i];
-    for (let j = 0, l = tArr?.length!; j < l; j++) {
+    for (let j = 0, l = tArr.length; j < l; j++) {
       const telement = tArr[j];
       if (element === telement?.key) {
         ret.push({

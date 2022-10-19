@@ -28,3 +28,11 @@ export function updataTeamType(data: any) {
 		showLoading: true
 	});
 }
+// 获取项目产品树结构
+export function getItem() {
+	return request({
+		url: `${commonPart}getItem`,
+		method: 'post',
+		showLoading: true
+	});
+}
