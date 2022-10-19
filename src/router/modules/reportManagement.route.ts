@@ -26,6 +26,15 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
+					{
+						path: 'tripList',
+						component: () => import('@/views/reportManagement/scenicSpotTransferReport/components/tripList.vue'),
+						name: 'scenicSpotTransferReportTripList',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
 				],
 			},
 		],
