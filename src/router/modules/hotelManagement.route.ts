@@ -129,6 +129,41 @@ export default [
 					title: '系统房型管理',
 				},
 			},
+			{
+				path: 'hotelManagement-enterpriseInfoManagement',
+				name: 'hotelManagement-enterpriseInfoManagement',
+				redirect: '/hotelManagement/hotelManagement-enterpriseInfoManagement/travelEnterpriseInfo',
+				meta: {
+					title: '企业信息管理',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					// isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'travelEnterpriseInfo',
+						component: () => import('@/views/baseInfoManage/enterpriseInfo/index.vue'),
+						name: 'travelEnterpriseInfo',
+						meta: {
+							title: '企业信息',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'modifyEnterpriseInfo/name/:name/addressDetail/:addressDetail/legalPerson/:legalPerson/managementRange/:managementRange/registeredCapital/:registeredCapital/establishTime/:establishTime/businessTerm/:businessTerm/contactName/:contactName/phone/:phone/accountType/:accountType/bankAccountName/:bankAccountName/accountAddress/:accountAddress/bankAccount/:bankAccount/businessLicenseUrl/:businessLicenseUrl/manageUrl/:manageUrl/oid/:oid',
+						component: () => import('@/views/enterpriseInfoManagement/modifyEnterpriseInfo.vue'),
+						name: 'modifyEnterpriseInfo',
+						meta: {
+							title: '修改企业信息',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
 		],
 	},
 ];

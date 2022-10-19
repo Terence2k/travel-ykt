@@ -289,6 +289,41 @@ export default [
 					},
 				],
 			},
+			{
+				path: 'enterpriseInfoManagementPage',
+				name: 'enterpriseInfoManagementPage',
+				// redirect: '/scenic-spot/enterpriseInfoManagement/travelEnterpriseInfo',
+				redirect: '/scenic-spot/enterpriseInfoManagementPage/travelEnterpriseInfo',
+				meta: {
+					title: '企业信息管理',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					// isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'travelEnterpriseInfo',
+						component: () => import('@/views/baseInfoManage/enterpriseInfo/index.vue'),
+						name: 'enterpriseInfoManagement-travelEnterpriseInfo',
+						meta: {
+							title: '首页',
+							activeMeun: 'information',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'modifyEnterpriseInfo/name/:name/addressDetail/:addressDetail/legalPerson/:legalPerson/managementRange/:managementRange/registeredCapital/:registeredCapital/establishTime/:establishTime/businessTerm/:businessTerm/contactName/:contactName/phone/:phone/accountType/:accountType/bankAccountName/:bankAccountName/accountAddress/:accountAddress/bankAccount/:bankAccount/businessLicenseUrl/:businessLicenseUrl/manageUrl/:manageUrl/oid/:oid',
+						component: () => import('@/views/enterpriseInfoManagement/modifyEnterpriseInfo.vue'),
+						name: 'scenic-spot-modifyEnterpriseInfo',
+						meta: {
+							title: '修改企业信息',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
 		],
 	},
 ];

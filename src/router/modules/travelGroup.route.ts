@@ -71,7 +71,7 @@ export default [
 				children: [
 					{
 						path: 'travelEnterpriseInfo',
-						component: () => import('@/views/enterpriseInfoManagement/travelEnterpriseInfo.vue'),
+						component: () => import('@/views/baseInfoManage/enterpriseInfo/index.vue'),
 						name: 'travelEnterpriseInfo',
 						meta: {
 							title: '企业信息',
