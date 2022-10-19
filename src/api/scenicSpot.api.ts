@@ -133,3 +133,11 @@ export async function getViewOrderList(data: any) {
 		data,
 	});
 }
+
+// 获取景区等级数据
+export async function getScenicLevels() {
+	return request({
+		url: commonPath + `/ticket-service/public/api/scenic/scenicLevels`,
+		method: 'get',
+	});
+}
