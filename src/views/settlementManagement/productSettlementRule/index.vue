@@ -1,20 +1,36 @@
 <template>
 	<CommonSearch>
-		<search-item label="归属景区">
+		<search-item label="归属景区" v-if="state.tableData.param.productType === 1">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.scenicId" style="width: 180px" placeholder="请选择归属景区">
 				<a-select-option v-for="item in state.scenicList" :value="item['ticketId']" :key="item['ticketName']">{{ item.ticketName }}</a-select-option>
+			</a-select>
+		</search-item>
+		<search-item label="酒店名称" v-if="state.tableData.param.productType === 2">
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.scenicId" style="width: 180px" placeholder="请选择归属景区">
+				<a-select-option v-for="item in state.hotelNameList" :value="item['oid']" :key="item['oid']">{{ item.hotelName }}</a-select-option>
+			</a-select>
+		</search-item>
+		<search-item label="门店名称" v-if="state.tableData.param.productType === 3">
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.scenicId" style="width: 180px" placeholder="请选择归属景区">
+				<a-select-option v-for="item in state.shopList" :value="item['shopId']" :key="item['shopId']">{{ item.shopName }}</a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="产品名称">
 			<a-input v-model:value="state.tableData.param.productName" placeholder="请输入费用名称" allowClear style="width: 180px" />
 		</search-item>
-		<search-item label="产品类型">
+		<search-item label="产品类型" v-if="state.tableData.param.productType === 1">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.productSonType" style="width: 180px" placeholder="请选择结算产品">
 				<a-select-option :value="item.value" v-for="item in generaRulesOptions.productSonTypeList" :key="item.name">{{ item.name }}</a-select-option>
 			</a-select>
 		</search-item>
-		<search-item label="是否有结算规则">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.hasProductRule" style="width: 180px" placeholder="请选择结算产品">
+		<search-item :label="state.tableData.param.productType === 1 ? '是否有结算规则' : '是否有产品规划'">
+			<a-select
+				allowClear
+				ref="select"
+				v-model:value="state.tableData.param.hasProductRule"
+				style="width: 180px"
+				:placeholder="state.tableData.param.productType === 1 ? '请选择结算产品' : '请选择产品规划'"
+			>
 				<a-select-option :value="true">是</a-select-option>
 				<a-select-option :value="false">否</a-select-option>
 			</a-select>
@@ -176,6 +192,8 @@ const state = reactive({
 		},
 	},
 	scenicList: [],
+	shopList: [],
+	hotelNameList: [],
 });
 //搜索
 const onHandleCurrentChange = (val: number) => {
@@ -239,10 +257,12 @@ onMounted(() => {
 	initList();
 	getEnum();
 });
-
+// 统一获取枚举
 const getEnum = async () => {
 	await generaRulesOptions.getTeamTypeList();
 	await productRuleLessInfos();
+	await getShopList();
+	await getAllOpenHotelNameList();
 };
 const getProductTypeName = computed(() => (value: string) => {
 	const idx = generaRulesOptions.productSonTypeList.findIndex((item) => item.value === value);
@@ -256,7 +276,18 @@ const productRuleLessInfos = async () => {
 	const result = await api.productRuleLessInfos();
 	state.scenicList = result;
 };
+// 门店下拉枚举
+const getShopList = async () => {
+	const result = await api.getShopList();
+	state.shopList = result;
+};
+// 酒店下拉枚举
+const getAllOpenHotelNameList = async () => {
+	const result = await api.getAllOpenHotelNameList();
+	state.hotelNameList = result;
+};
 const tabsChange = () => {
+	state.tableData.param.scenicId = null;
 	initList();
 };
 </script>
