@@ -340,7 +340,7 @@ const layout = {
 };
 const formRef = ref()
 const formState = reactive({
-	componyId: '',
+	oid: '',
 	pass: '',
 	checkPass: '',
 })
@@ -747,7 +747,7 @@ const addOrUpdate = ({ row, handle }: addInterface) => {
 	})
 }
 const resetPassword = async (oid: string) => {
-	formState.componyId = oid
+	formState.oid = oid
 	resetPasswordVisible.value = true
 }
 const resetPasswordCancel = () => {
@@ -756,7 +756,7 @@ const resetPasswordCancel = () => {
 }
 const resetPasswordConform = () => {
 	formRef.value.validateFields().then(async () => {
-		let res = await api.resetPassword({ componyId: formState.componyId, newPassword: formState.pass })
+		let res = await api.resetPassword({ oid: formState.oid, newPassword: formState.pass })
 		if (res == '重置成功') {
 			message.success('重置密码成功！');
 			onSearch();

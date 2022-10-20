@@ -125,7 +125,8 @@
 					</template>
 					<template v-if="column.key === 'splitCount'">
 						<span v-if="record.splitModel === 1">{{ record.splitCount }}%</span>
-						<span v-if="record.splitModel === 2">{{ record.splitCount }}元</span>
+						<!-- 金额显示需要除以100 -->
+						<span v-if="record.splitModel === 2">{{ (record.splitCount / 100).toFixed(2) }}元</span>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
@@ -246,7 +247,7 @@ const init = async () => {
 	generaRulesOptions.getPrepaidCompanyList();
 	if (Number(query.productType) === 1) {
 		const { productId, productType, productSonType } = route.currentRoute.value.query;
-		console.log(productSonType,`productSonType`);
+		console.log(productSonType, `productSonType`);
 		let productRuleList = await api.productRuleList({
 			productId,
 			productType,
@@ -294,7 +295,11 @@ const productRuleDetail = async (id: number) => {
 	const result = await api.productRuleDetail(id);
 	for (let key in formState) {
 		if (result[key] || result[key] === 0) {
-			formState[key] = result[key];
+			if (key === 'chargeCount' && Number(result['chargeModel']) === 3) {
+				formState['chargeCount'] = result['chargeCount'] / 100;
+			} else {
+				formState[key] = result[key];
+			}
 		}
 	}
 };
@@ -371,6 +376,9 @@ const saveParams = () => {
 	// }
 	if (oid.value) {
 		formState.oid = oid.value;
+	}
+	if (formState.chargeModel === 3) {
+		formState.chargeCount = Number(formState.chargeCount) * 100;
 	}
 };
 const cancel = () => {
