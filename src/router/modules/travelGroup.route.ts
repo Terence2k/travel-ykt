@@ -72,7 +72,7 @@ export default [
 					{
 						path: 'travelEnterpriseInfo',
 						component: () => import('@/views/baseInfoManage/enterpriseInfo/index.vue'),
-						name: 'travelEnterpriseInfo',
+						name: 'enterpriseInfoManagement',
 						meta: {
 							title: '企业信息',
 							// icon: 'liulanqi',

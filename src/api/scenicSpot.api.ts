@@ -109,7 +109,7 @@ export async function singleVoteDel(id: number) {
 		method: 'delete',
 	});
 }
-//景区场馆 分页查询场馆信
+//景区场馆 分页查询
 export async function getShowVenueList(data: any) {
 	return request({
 		url: commonPath + `/ticket-service/public/api/scenic-venue`,
@@ -125,11 +125,45 @@ export async function getWriteOffTimeList(data: any) {
 		data,
 	});
 }
-//景区订单 分页查询场馆信
+//景区订单 分页查询
 export async function getViewOrderList(data: any) {
 	return request({
 		url: commonPath + `/ticket-service/public/api/scenic-order/page`,
 		method: 'get',
 		data,
+	});
+}
+
+// 获取景区等级数据
+export async function getScenicLevels() {
+	return request({
+		url: commonPath + `/ticket-service/public/api/scenic/scenicLevels`,
+		method: 'get',
+	});
+}
+
+// 分页获取核销项目列表
+export async function getWriteOffItemList(data: any) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-verif-item/page`,
+		method: 'get',
+		data,
+	});
+}
+
+//ticket-service/public/api/scenic-verif-item/save
+export async function editWriteOffItem(data: any) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-verif-item/save`,
+		method: 'post',
+		data,
+	});
+}
+
+// /ticket-service/public/api/scenic-verif-item/id
+export async function deleteWriteOffItem(id: number) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-verif-item/${id}`,
+		method: 'delete',
 	});
 }

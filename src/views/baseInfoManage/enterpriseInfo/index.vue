@@ -150,8 +150,8 @@
           </a-form-item>
           <a-form-item name="scenicLevel" label="等级">
             <a-select v-model:value="form.scenicLevel" placeholder="请选择景区等级">
-              <a-select-option v-for="item in scenicLevelList" :value="item.value">
-              {{ item.name }}
+              <a-select-option v-for="item in scenicLevelList" :value="item.levelId">
+              {{ item.levelName }}
               </a-select-option>
             </a-select>
           </a-form-item>
@@ -270,15 +270,14 @@ const initOpeion = async () => {
 };
 const businessTypeOption = computed(() => businessManageOptions.businessTypeOption);
 const hotelStarList = ref();
-const scenicLevelList = [
-  {
-    value: 1,
-    name: '5A'
-  }
-]
+const scenicLevelList = ref();
 const getHotelStarList = async () => {
-  hotelStarList.value = await api.getHotelStarList()
-  console.log('hotelStarList:', hotelStarList.value)
+  hotelStarList.value = await api.getHotelStarList();
+  console.log('hotelStarList:', hotelStarList.value);
+}
+const getScenicLevels = async () => {
+  scenicLevelList.value = await api.getScenicLevels();
+  console.log('scenicLevelList:', scenicLevelList.value);
 }
 const uploadDown = () => {
   // form.businessLicenseUrl = form.businessLicenseUrl ? form.businessLicenseUrl[0] : undefined
@@ -351,6 +350,7 @@ getCityList('0/1', 0).then(res => {
 onMounted(() => {
   initOpeion();
   getHotelStarList();
+  getScenicLevels();
 })
 </script>
 

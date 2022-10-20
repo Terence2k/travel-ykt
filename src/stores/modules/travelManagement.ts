@@ -17,6 +17,7 @@ export const traveListParams = {
 		startDate: '',
 		endDate: '',
 		keyWord: '',
+		keyWordType: 1,
 		groupType: '',
 		time: []
 	}
@@ -74,7 +75,8 @@ export const useTravelStore = defineStore({
 			subTravelOperator: {},
 			teamType: '',
 			startDate: '',
-			endDate: ''
+			endDate: '',
+			groupType: ''
 		},
 		guideList: [],
 		touristList: [],
