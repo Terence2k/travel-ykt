@@ -21,7 +21,7 @@
 	</div>
 	<div>
 		<a-spin size="large" :spinning="state.tableData.loading">
-			<CommonTable :dataSource="state.tableData.data" :columns="columns" rowKey="oid" :row-selection="rowSelection">
+			<CommonTable :dataSource="state.tableData.data" :scroll="{ x: '100%',y: '100%' }" :columns="columns" rowKey="oid" :row-selection="rowSelection" >
 				<template #bodyCell="{ column, record }">
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">

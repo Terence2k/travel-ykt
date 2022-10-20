@@ -57,6 +57,26 @@ export default [
 					},
 				],
 			},
+			{
+				path: 'travelAgencyReport',
+				name: 'travelAgencyReport',
+				redirect: '/reportManagement/travelAgencyReport/list',
+				meta: {
+					title: '旅行社结算报表',
+					isDetail: false, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/reportManagement/travelAgencyReport/index.vue'),
+						name: 'travelAgencyReportList',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
 		],
 	},
 ];
