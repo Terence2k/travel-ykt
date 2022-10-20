@@ -25,6 +25,7 @@ onMounted(() => {
 		color: #1e2226;
 		font-weight: bold;
 		margin-right: 16px;
+		min-width: 80px;
 	}
 }
 .red {

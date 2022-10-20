@@ -33,7 +33,7 @@
 				:columns="columns"
 				rowKey="oid"
 				:row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
-				:scroll="{ x: '100%' }"
+				:scroll="{ x: '100%', y: '100%' }"
 			>
 				<template #bodyCell="{ column, record, index }">
 					<!-- 团队类型 -->
@@ -48,6 +48,12 @@
 					<template v-if="column.key === 'ruleStatus'">
 						<span v-if="record.ruleStatus === 0">禁用</span>
 						<span v-if="record.ruleStatus === 1">启用</span>
+					</template>
+					<!-- 收费名称 -->
+					<template v-if="column.key === 'charCount'">
+						<span v-if="record.chargeModel === 1">{{ record.charCount }}%</span>
+						<span v-if="record.chargeModel === 2">{{ record.charCount }}人</span>
+						<span v-if="record.chargeModel === 3">{{ (record.charCount / 100).toFixed(2) }}元</span>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
