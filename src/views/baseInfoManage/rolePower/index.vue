@@ -18,8 +18,8 @@
         allowClear
         v-model:value="state.tableData.param.availableRange"
       >
-        <a-select-option v-for="item in roleManage.businessType" :value="item.value">
-          {{ item.title }}
+        <a-select-option v-for="item in businessTypeOption" :value="item.codeValue">
+          {{ item.name }}
         </a-select-option>
       </a-select>
     </search-item>
@@ -55,7 +55,7 @@
   <AddUpdate 
     v-model="state.operationModal.isAddOrUpdate"
     :params="state.params"
-    :optionTypeList="roleManage.businessType"
+    :optionTypeList="businessTypeOption"
     @onSearch="onSearch"
     @cancel="cancel"/>
   <Detail
@@ -73,7 +73,7 @@
   import Detail from './Detail.vue';
   import api from '@/api';
   import { message } from 'ant-design-vue';
-  import { useRoleManage } from '@/stores/modules/roleManage';
+  import { useBusinessManageOption } from '@/stores/modules/businessManage';
   
   const columns = [
     {
@@ -136,9 +136,9 @@
       isAddOrUpdate: false,
       showDetails: false
     },
-    optionTypeList: [] as any
   });
-  const roleManage = useRoleManage();
+  const businessManageOptions = useBusinessManageOption();
+  const businessTypeOption = computed(() => businessManageOptions.businessTypeOption);
 
   const onHandleCurrentChange = (val: number) => {
     console.log('change:', val);
@@ -193,8 +193,13 @@
     state.params = row;
     state.operationModal.showDetails = true;
   }
+  
+  const initOpeion = async () => {
+    await businessManageOptions.getBusinessTypeOption();
+  };
 
   onMounted(() => {
+    initOpeion();
     onSearch();
   })
 </script>

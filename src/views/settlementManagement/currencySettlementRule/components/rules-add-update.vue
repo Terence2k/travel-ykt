@@ -110,6 +110,9 @@ const init = async () => {
 	} else {
 		options.title = '编辑分账规则';
 		formValidate.value = props.params.from;
+		if (props.params.from.splitModel === 2) {
+			formValidate.value.splitCount = props.params.splitCount / 100;
+		}
 	}
 	console.log('params', props.params);
 };
@@ -118,6 +121,10 @@ const save = () => {
 	formRef.value
 		.validate()
 		.then(() => {
+			// 价格 * 100
+			if (formValidate.value.splitModel === 2) {
+				formValidate.value.splitCount = formValidate.value.splitCount * 100;
+			}
 			const params = { params: props.params, form: lodash.cloneDeep(formValidate.value) };
 			emit('submit', params);
 			formValidate.value = {};

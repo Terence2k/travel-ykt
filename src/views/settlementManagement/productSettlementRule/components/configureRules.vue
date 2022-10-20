@@ -10,7 +10,7 @@
 				:columns="columns"
 				:row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
 				rowKey="oid"
-				:scroll="{ x: '100%' }"
+				:scroll="{ x: '100%', y: '100%' }"
 			>
 				<template #bodyCell="{ column, record, index }">
 					<!-- 团队类型 -->
@@ -32,10 +32,9 @@
 					</template>
 					<!-- 收费名称 -->
 					<template v-if="column.key === 'chargeCount'">
-						<span> {{ record.chargeCount }}</span>
-						<span v-if="record.chargeModel === 1">%</span>
-						<span v-if="record.chargeModel === 2">人</span>
-						<span v-if="record.chargeModel === 3">元</span>
+						<span v-if="record.chargeModel === 1">{{ record.chargeCount }}%</span>
+						<span v-if="record.chargeModel === 2">{{ record.chargeCount }}人</span>
+						<span v-if="record.chargeModel === 3">{{ (record.chargeCount / 100).toFixed(2) }}元</span>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
@@ -357,7 +356,12 @@ const getTeamType = async () => {
 
 // 计算属性
 const getTeamTypeName = computed(() => (value: number) => {
-	return state.teamTypeList.find((item) => item.oid === value)['name'];
+	const idx = state.teamTypeList.findIndex((item) => item.oid === value);
+	if (idx !== -1) {
+		return state.teamTypeList[idx]['name'];
+	} else {
+		return '';
+	}
 });
 const getProductTypeName = computed(() => (value: number) => {
 	return state.productTypeList.find((item) => item.value === value)['name'];

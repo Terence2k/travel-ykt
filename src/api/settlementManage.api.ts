@@ -248,3 +248,30 @@ export async function getAllOpenHotelNameList() {
 		showLoading: true,
 	});
 }
+// 转账单列表
+export async function getTransferAccountList(data: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/transfer-account/page`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
+// 转账单列表
+export async function getTransferAccountDetails(data: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/transfer-account/pageDetails`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
+// 审核转账单
+export async function transferAccountAudit(data: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/transfer-account/audit`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}

@@ -115,26 +115,24 @@
               <a-radio :value="0">否</a-radio>
             </a-radio-group>
           </a-form-item>
-          <a-form-item name="full" label="减免规则">
+          <a-form-item name="fullRule" label="减免规则">
             <div style="display: flex;align-items: start;">
               <div style="display: flex;align-items: center;">
                 <span style="margin: 0 5px;">满</span>
                 <a-input 
                   placeholder="请配置数字" 
                   style="width: 150px;"
-                  v-model:value="form.full"
-                  oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')"
-                  @change="setReduceRule"/>
+                  v-model:value="form.fullRule"
+                  oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')"/>
               </div>
-              <a-form-item name="minus">
+              <a-form-item name="reduceRule">
                 <div style="display: flex;align-items: center;">
                   <span style="margin: 0 5px;">减</span>
                   <a-input 
                     placeholder="请配置数字" 
                     style="width: 150px;"
-                    v-model:value="form.minus"
-                    oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')" 
-                    @change="setReduceRule"/>
+                    v-model:value="form.reduceRule"
+                    oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')"/>
                 </div>
               </a-form-item>
             </div>
@@ -161,26 +159,24 @@
               <a-radio :value="false">否</a-radio>
             </a-radio-group>
           </a-form-item>
-          <a-form-item name="full" label="减免规则">
+          <a-form-item name="fullRule" label="减免规则">
             <div style="display: flex;align-items: start;">
               <div style="display: flex;align-items: center;">
                 <span style="margin: 0 5px;">满</span>
                 <a-input 
                   placeholder="请配置数字" 
                   style="width: 150px;"
-                  v-model:value="form.full"
-                  oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')"
-                  @change="setReduceRule"/>
+                  v-model:value="form.fullRule"
+                  oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')"/>
               </div>
-              <a-form-item name="minus">
+              <a-form-item name="reduceRule">
                 <div style="display: flex;align-items: center;">
                   <span style="margin: 0 5px;">减</span>
                   <a-input 
                     placeholder="请配置数字" 
                     style="width: 150px;"
-                    v-model:value="form.minus"
-                    oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')" 
-                    @change="setReduceRule"/>
+                    v-model:value="form.reduceRule"
+                    oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')"/>
                 </div>
               </a-form-item>
             </div>
@@ -244,8 +240,6 @@ const submitFunc = ref();
 
 const initOpeion = async () => {
   await businessManageOptions.getBusinessTypeOption();
-  // submitFunc:提交编辑审核函数名
-  submitFunc.value = travelStore.businessTypeOptions[userInfo.sysCompany.businessType].submitFunc;
   // infoFunc:获取企业基本信息函数名
   let infoFunc = null;
   console.log('userInfo.sysCompany.businessType:', userInfo.sysCompany.businessType);
@@ -259,13 +253,20 @@ const initOpeion = async () => {
     case 'TICKET':
     infoFunc = api.getScenicById(userInfo.sysCompany.oid);
     break;
+    default:
+    infoFunc = api.getCompanyInformation(userInfo.sysCompany.oid);
+    break;
   }
   let data = await infoFunc;
   state.form = { ...data, ...data.companyBo};
-  state.form.full = state.form.reduceRule?.split(',')[0] || state.form.derateRule?.split(',')[0];
-  state.form.minus = state.form.reduceRule?.split(',')[1] || state.form.derateRule?.split(',')[1];
   if (state.form?.areaId) state.form.addressIds = [state.form.provinceId, state.form.cityId, state.form.areaId];
   enterpriseState.value = travelStore.enterpriseState[state.form.informationAuditStatus]?.descriptions;
+  // submitFunc:提交编辑审核函数名
+  if (Object.keys(travelStore.businessTypeOptions).includes(userInfo.sysCompany.businessType)) {
+    submitFunc.value = travelStore.businessTypeOptions[userInfo.sysCompany.businessType].submitFunc;
+  } else {
+    submitFunc.value = 'submitFunc';
+  }
   console.log('state.form:', state.form)
 };
 const businessTypeOption = computed(() => businessManageOptions.businessTypeOption);
@@ -307,11 +308,6 @@ const loadData = (selectedOptions:any) => {
     targetOption.children = res
     targetOption.loading = false;
   })
-}
-
-const setReduceRule = () => {
-  form.value.reduceRule = `满${form.value.full}减${form.value.minus}`;// HOTEL
-  form.value.derateRule = `${form.value.full},${form.value.minus}`;// TICKET
 }
 
 const handleChange = (val: any, option: any) => {

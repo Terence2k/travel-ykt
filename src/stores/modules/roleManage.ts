@@ -5,7 +5,7 @@ export const useRoleManage = defineStore('roleManage', {
 	state: () => ({
 		businessType: [
       {
-        title:"所有",
+        title:"全部",
         value:"ALL",
       },
       {
