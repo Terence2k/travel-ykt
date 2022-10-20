@@ -23,8 +23,8 @@
           placeholder="请选择可用范围"
           v-model:value="formValidate.availableRange"
         >
-          <a-select-option v-for="item in optionTypeList" :value="item.value">
-            {{ item.title }}
+          <a-select-option v-for="item in optionTypeList" :value="item.codeValue">
+            {{ item.name }}
           </a-select-option>
         </a-select>
       </a-form-item>
@@ -85,7 +85,7 @@
   import { ref, Ref, computed, watch, toRefs, reactive } from 'vue';
 	import BaseModal from '@/components/common/BaseModal.vue';
   import type { FormInstance } from 'ant-design-vue';
-  import { convertTree } from '@/utils/util';
+  import { convertTree, checkList } from '@/utils/util';
   import api from '@/api';
   import { message } from 'ant-design-vue';
   import type { TreeProps } from 'ant-design-vue';
@@ -95,9 +95,12 @@
   const menuIdsInfo: Ref<Array<any>> = ref([]);
 
   watch(checkedKeys, () => {
-    console.log('checkedKeys:', checkedKeys.value);
-    
-    formValidate.value.menuIds = Object.values(checkedKeys.value);
+    // 处理通过子级id查找返回父级id（只要选了子级就要返回父级无论有无选中父级）
+    let arr = new Set();
+    checkedKeys.value.forEach((item: any) => {
+      checkList( menuTreeDate.value, item ).forEach((it: any) => arr.add(it));
+    });
+    formValidate.value.menuIds = Array.from(arr);
   });
   
   const props = defineProps({
@@ -172,8 +175,6 @@
   }
 
   const getDetail = (id: number) => {
-    checkedKeys.value = [];
-    menuIdsInfo.value = [];
     api.roleDetail(id).then((res: any) => {
       formValidate.value = res;
       getDetailMenuIds(res.roleMenu);
@@ -210,6 +211,8 @@
   }
 
   const init = async () => {
+    checkedKeys.value = [];
+    menuIdsInfo.value = [];
     console.log('params', props.params);
     formValidate.value = {
       roleStatus: 1

@@ -1,27 +1,27 @@
 <template>
 	<CommonSearch>
 		<search-item label="申请日期">
-			<a-date-picker v-model:value="state.tableData.param.applicationDate" />
+			<a-range-picker v-model:value="state.times" @change="timeChange" />
 		</search-item>
 		<search-item label="申请人">
-			<a-input v-model:value="state.tableData.param.applicationName" placeholder="请输入费用名称" allowClear style="width: 180px" />
+			<a-input v-model:value="state.tableData.param.createName" placeholder="请输入费用名称" allowClear style="width: 180px" />
 		</search-item>
 		<template #button>
 			<a-button @click="initList">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
-		<a-tabs v-model:activeKey="state.tableData.param.productType" @change="tabsChange">
+		<a-tabs v-model:activeKey="state.tableData.param.status" @change="tabsChange">
 			<a-tab-pane :key="1" tab="待审核"></a-tab-pane>
 			<a-tab-pane :key="2" tab="转账完成" force-render></a-tab-pane>
 			<a-tab-pane :key="3" tab="审核不通过"></a-tab-pane>
 		</a-tabs>
 		<a-spin size="large" :spinning="state.tableData.loading">
-			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%' }">
+			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }">
 				<template #bodyCell="{ column, record }">
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a href="javascript:;" @click="toHandle(record)">处理</a>
+							<a href="javascript:;" @click="toHandle(record)" v-if="state.tableData.param.status === 1">处理</a>
 							<a href="javascript:;" @click="toDetails(record)">详情</a>
 							<a href="javascript:;" @click="lookTrip(record)">查看行程单</a>
 						</div>
@@ -37,7 +37,7 @@
 			@showSizeChange="pageSideChange"
 		/>
 	</div>
-	<Detail v-model="cacheData.showDetail" :params="cacheData.detailParams"></Detail>
+	<Detail v-model="cacheData.showDetail" :params="cacheData.detailParams" @submit="detailSubmit"></Detail>
 </template>
 <script lang="ts" setup>
 import CommonTable from '@/components/common/CommonTable.vue';
@@ -45,31 +45,47 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import Detail from './detail.vue';
+import api from '@/api';
 const columns = [
 	{
 		title: '转账单号',
-		dataIndex: 'productName',
-		key: 'productName',
+		dataIndex: 'transferAccountsNo',
+		key: 'transferAccountsNo',
+	},
+	{
+		title: '转账流水号',
+		dataIndex: 'transferAccountsSerialNumber',
+		key: 'transferAccountsSerialNumber',
+	},
+	{
+		title: '申请人',
+		dataIndex: 'createName',
+		key: 'createName',
 	},
 	{
 		title: '申请时间',
-		dataIndex: 'scenicName',
-		key: 'scenicName',
+		dataIndex: 'createTime',
+		key: 'createTime',
 	},
 	{
 		title: '所含团数',
-		dataIndex: 'productSonType',
-		key: 'productSonType',
+		dataIndex: 'travelNumber',
+		key: 'travelNumber',
 	},
 	{
 		title: '结算总额（元）',
-		dataIndex: 'hasProductRule',
-		key: 'hasProductRule',
+		dataIndex: 'settlementCost',
+		key: 'settlementCost',
 	},
 	{
-		title: '转账申请人',
-		dataIndex: 'hasProductRule',
-		key: 'hasProductRule',
+		title: '转账审核人',
+		dataIndex: 'checkName',
+		key: 'checkName',
+	},
+	{
+		title: '审核时间',
+		dataIndex: 'checkTime',
+		key: 'checkTime',
 	},
 	{
 		title: '操作',
@@ -81,20 +97,18 @@ const columns = [
 const state = reactive({
 	tableData: {
 		param: {
-			applicationDate: null,
-			applicationName: null,
-			productType: 1,
-			pageSize: 10,
-			pageNo: 1,
+			createName: null, //申请人
+			startTime: null, //申请开始日期
+			endTime: null, //申请结束日期
+			status: 1, //转账单状态 1-待审核 2-转账完成 3-审核不通过
+			pageNo: 1, //页号
+			pageSize: 10, //页大小
 		},
-		data: [
-			{
-				name: 123456,
-			},
-		],
-		total: 11,
+		data: [],
+		total: 1,
 		loading: false,
 	},
+	times: [],
 });
 const cacheData = ref({
 	showDetail: false,
@@ -102,13 +116,14 @@ const cacheData = ref({
 });
 // 查询
 const initList = async () => {
-	// state.tableData.loading = true;
-	// let res = await api.productRuleList(state.tableData.param);
-	// const { total, content } = res;
-	// state.tableData.total = total;
+	state.tableData.loading = true;
+	let res = await api.getTransferAccountList(state.tableData.param);
+	console.log(res, `res`);
+	const { total, content } = res;
+	state.tableData.total = total;
 	// const list: [any] = dealData(content);
-	// state.tableData.data = list;
-	// state.tableData.loading = false;
+	state.tableData.data = content;
+	state.tableData.loading = false;
 };
 //搜索
 const onHandleCurrentChange = (val: number) => {
@@ -127,11 +142,11 @@ const pageSideChange = (current: number, size: number) => {
 // 处理
 const toHandle = (record: any) => {
 	cacheData.value.showDetail = true;
-	cacheData.value.detailParams = { handle: true };
+	cacheData.value.detailParams = { handle: true, transferAccountsId: record.oid, settlementCost: record.settlementCost };
 };
 const toDetails = (record: any) => {
 	cacheData.value.showDetail = true;
-	cacheData.value.detailParams = { handle: false };
+	cacheData.value.detailParams = { handle: false, transferAccountsId: record.oid, settlementCost: record.settlementCost };
 };
 const route = useRouter();
 const lookTrip = (record: any) => {
@@ -140,6 +155,21 @@ const lookTrip = (record: any) => {
 	});
 };
 const tabsChange = (e: any) => {
-	console.log(e);
+	initList();
 };
+const timeChange = (arr: any) => {
+	if (arr && arr.length > 0) {
+		state.tableData.param.startTime = arr[0]['$d'];
+		state.tableData.param.endTime = arr[1]['$d'];
+	} else {
+		state.tableData.param.startTime = null;
+		state.tableData.param.endTime = null;
+	}
+};
+const detailSubmit = () => {
+	initList();
+}
+onMounted(() => {
+	initList();
+});
 </script>

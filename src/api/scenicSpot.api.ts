@@ -60,7 +60,8 @@ export async function getCompandType() {
 // 获取核销项目列表
 export async function getVariflist() {
 	return request({
-		url: `${commonPath}/ticket-service/public/api/scenic-one-ticket/varif-list?id=2`,
+		// url: `${commonPath}/ticket-service/public/api/scenic-one-ticket/varif-list?id=2`,
+		url: `${commonPath}/ticket-service/public/api/scenic-one-ticket/varif-list`,
 		method: 'get',
 	});
 }
@@ -134,6 +135,14 @@ export async function getViewOrderList(data: any) {
 	});
 }
 
+// 获取景区等级数据
+export async function getScenicLevels() {
+	return request({
+		url: commonPath + `/ticket-service/public/api/scenic/scenicLevels`,
+		method: 'get',
+	});
+}
+
 // 分页获取核销项目列表
 export async function getWriteOffItemList(data: any) {
 	return request({
@@ -153,9 +162,18 @@ export async function editWriteOffItem(data: any) {
 }
 
 // /ticket-service/public/api/scenic-verif-item/id
+
 export async function deleteWriteOffItem(id: number) {
 	return request({
 		url: `${commonPath}/ticket-service/public/api/scenic-verif-item/${id}`,
 		method: 'delete',
+	});
+}
+// 联票 列表
+export async function getMultipleList(data: any) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-unite`,
+		method: 'get',
+		data,
 	});
 }
