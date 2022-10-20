@@ -1,7 +1,7 @@
 <template>
 	<BaseModal :title="state.title" v-model="modelValue" width="70%" @cancel="dialogVisible = false">
-		<h3 style="margin: 0px 0 20px 30px">合计4500元</h3>
-		<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%' }"></CommonTable>
+		<h3 style="margin: 0px 0 20px 30px">合计 {{ state.settlementCost / 100 }} 元</h3>
+		<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }"></CommonTable>
 		<CommonPagination
 			:current="state.tableData.param.pageNo"
 			:page-size="state.tableData.param.pageSize"
@@ -11,11 +11,11 @@
 		/>
 		<div class="" style="margin: 0px 0 10px 30px" v-if="state.isHandle">
 			<h4 style="margin: 0px 0 10px 0">备注说明</h4>
-			<a-textarea v-model:value="state.remarks" placeholder="请输入备注" :rows="4" />
+			<a-textarea v-model:value="state.audit.remark" placeholder="请输入备注" :rows="4" />
 		</div>
 		<template v-slot:footer v-if="state.isHandle">
-			<a-button type="primary" style="width: 100px">发起转账</a-button>
-			<a-button style="width: 110px">审核不通过</a-button>
+			<a-button type="primary" style="width: 100px" @click="submit">发起转账</a-button>
+			<a-button style="width: 110px" @click="refuse">审核不通过</a-button>
 		</template>
 	</BaseModal>
 </template>
@@ -26,6 +26,7 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import { Ref } from 'vue';
 import lodash from 'lodash';
 import { message } from 'ant-design-vue';
+import api from '@/api';
 const props = defineProps({
 	modelValue: {
 		type: Boolean,
@@ -42,28 +43,33 @@ const props = defineProps({
 const columns = [
 	{
 		title: '转账单号',
-		dataIndex: 'productName',
-		key: 'productName',
+		dataIndex: 'transferAccountsNo',
+		key: 'transferAccountsNo',
 	},
 	{
-		title: '申请时间',
-		dataIndex: 'scenicName',
-		key: 'scenicName',
+		title: '转账单位',
+		dataIndex: 'transferAccountsCompanyName',
+		key: 'transferAccountsCompanyName',
 	},
 	{
-		title: '所含团数',
-		dataIndex: 'productSonType',
-		key: 'productSonType',
+		title: '转账账户',
+		dataIndex: 'transferAccountsAccount',
+		key: 'transferAccountsAccount',
 	},
 	{
-		title: '结算总额（元）',
-		dataIndex: 'hasProductRule',
-		key: 'hasProductRule',
+		title: '转账金额（元）',
+		dataIndex: 'transferAccountsMoney',
+		key: 'transferAccountsMoney',
 	},
 	{
-		title: '转账申请人',
-		dataIndex: 'hasProductRule',
-		key: 'hasProductRule',
+		title: '收款单位',
+		dataIndex: 'collectionCompanyName',
+		key: 'collectionCompanyName',
+	},
+	{
+		title: '收款账户',
+		dataIndex: 'collectionAccount',
+		key: 'collectionAccount',
 	},
 ];
 const emit = defineEmits(['update:modelValue', 'submit']);
@@ -73,13 +79,20 @@ const state = reactive({
 	tableData: {
 		data: [],
 		param: {
-			pageNo: 1,
-			pageSize: 10,
+			transferAccountsId: 1, //转账单id
+			pageNo: 1, //页号
+			pageSize: 10, //页大小
 		},
 		total: 111,
+		loading: false,
 	},
-	remarks: '',
 	isHandle: true,
+	settlementCost: 0,
+	audit: {
+		remark: '', //备注
+		oid: null, //oid
+		status: 2, //转账单状态 1-待审核 2-转账完成 3-审核不通过
+	},
 });
 const init = () => {
 	console.log(`我进来啦`);
@@ -93,13 +106,15 @@ const init = () => {
 };
 // 查询
 const initList = async () => {
-	// state.tableData.loading = true;
-	// let res = await api.productRuleList(state.tableData.param);
-	// const { total, content } = res;
-	// state.tableData.total = total;
+	state.tableData.param.transferAccountsId = props.params.transferAccountsId;
+	state.audit.oid = props.params.transferAccountsId;
+	state.settlementCost = props.params.settlementCost;
+	const result = await api.getTransferAccountDetails(state.tableData.param);
+	const { total, content } = result;
+	state.tableData.total = total;
 	// const list: [any] = dealData(content);
-	// state.tableData.data = list;
-	// state.tableData.loading = false;
+	state.tableData.data = content;
+	state.tableData.loading = false;
 };
 //搜索
 const onHandleCurrentChange = (val: number) => {
@@ -115,6 +130,25 @@ const pageSideChange = (current: number, size: number) => {
 	// onSearch();
 	initList();
 };
+const submit = () => {
+	state.audit.status = 2;
+	transferAccountAudit();
+};
+const refuse = () => {
+	state.audit.status = 3;
+	transferAccountAudit();
+};
+const transferAccountAudit = async () => {
+	try {
+		await api.transferAccountAudit(state.audit);
+		dialogVisible.value = false;
+		message.success('操作成功');
+		emit('submit');
+	} catch (error) {
+		console.log(error);
+		message.error(`${error}`);
+	}
+};
 watch(
 	() => props.modelValue,
 	async (nVal) => {
@@ -122,6 +156,7 @@ watch(
 		dialogVisible.value = nVal;
 		if (dialogVisible.value) {
 			await init();
+			await initList();
 		}
 	}
 );

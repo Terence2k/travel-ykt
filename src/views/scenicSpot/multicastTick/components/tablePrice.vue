@@ -1,35 +1,39 @@
 <template>
 	<div class="wrapper">
 		<CommonTable :dataSource="tableList" :columns="columnsCount" :scrollY="false" bordered class="left">
-			<template #bodyCell="{ column, record, index }">
-				<template v-if="column.key === 'certifId'">
-					<!-- {{ certifIdType[record.certifId] }} -->
-					{{ certifIdList(record.certifId) }}
-				</template>
-				<template v-if="column.key === 'discount'">
-					<span v-if="record.discount">{{ record.discount / 10 }}</span>
-				</template>
+			<template #bodyCell="{ column, record }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a href="javascript:;" @click="del(index)">删除</a>
+						<a href="javascript:;" @click="CreateData(record)">编辑价格日历</a>
 					</div>
 				</template>
 			</template>
 		</CommonTable>
-		<a-button type="primary" class="btn" @click="CreateData"> 新增减免规则</a-button>
-		<BaseModal :modelValue="modelValue" title="设置减免规则" width="600px" @cancel="cancel">
-			<a-form :model="formValidate" :label-col="{ span: 3 }" :wrapper-col="{ span: 12, offset: 1 }" labelAlign="left">
-				<a-form-item label="规则名称" class="fz14" v-bind="validateInfos.ruleName">
-					<a-input v-model:value="formValidate.ruleName" placeholder="规则名称" />
-				</a-form-item>
-				<a-form-item label="选择必选项" class="fz14" v-bind="validateInfos.certifId">
-					<a-checkbox-group v-model:value="formValidate.certifId" :options="options" />
-				</a-form-item>
-				<a-form-item label="折扣" class="fz14" v-bind="validateInfos.discount">
-					<!-- <a-input v-model:value="formValidate.discount" /> -->
-					<a-input-number v-model:value="formValidate.discount" placeholder="折扣" />
-				</a-form-item>
-			</a-form>
+
+		<BaseModal :modelValue="modelValue" title="设置减免规则" @cancel="cancel" width="1210px">
+			<header class="tips">
+				<p>说明：点击后编辑每日库存，不编辑默认库存为默认</p>
+				<p>说明：点击后编辑每日价格，不编辑则默认价格为默认价格，价格为默认价格时不可保存价格日历</p>
+			</header>
+
+			<article class="calendar-wrap">
+				value {{ value }}
+				<div :style="{ width: '800px', border: '1px solid #d9d9d9', borderRadius: '4px' }">
+					<a-calendar v-model:value="value" :fullscreen="false" @panelChange="onPanelChange">
+						<template v-slot:dateCellRender="{ current }">
+							<span class="price_tips">￥{{ shijianYMD(current) }}</span>
+						</template>
+					</a-calendar>
+				</div>
+				<div :style="{ width: '800px', border: '1px solid #d9d9d9', borderRadius: '4px' }">
+					<a-calendar v-model:value="value" :fullscreen="false" @panelChange="onPanelChange">
+						<template v-slot:dateCellRender="{ current }">
+							<span class="price_tips">￥{{ shijianYMD(current) }}</span>
+						</template>
+					</a-calendar>
+				</div>
+			</article>
+
 			<template v-slot:footer>
 				<a-button type="primary" @click="apply" style="width: 100px">保存</a-button>
 				<a-button @click="cancel">取消</a-button>
@@ -43,7 +47,7 @@
 import CommonTable from '@/components/common/CommonTable.vue';
 import BaseModal from '@/components/common/BaseModal.vue';
 import DelModal from '@/components/common/DelModal.vue';
-
+import dayjs, { Dayjs } from 'dayjs';
 import { Form } from 'ant-design-vue';
 
 import api from '@/api';
@@ -59,31 +63,41 @@ const props = defineProps({
 	// params: Object,
 	// tableList: Array,
 });
+const value = ref<Dayjs>();
+const valueNext = ref<Dayjs>();
+const onPanelChange = (value: Dayjs, mode: string) => {
+	console.log(value, mode);
+};
+
+const getMonths = (value: Dayjs) => {
+	const localeData = value.localeData();
+	const months = [];
+	for (let i = 0; i < 12; i++) {
+		months.push(localeData.monthsShort(value.month(i)));
+	}
+	return months;
+};
+
+const getYears = (value: Dayjs) => {
+	const year = value.year();
+	const years = [];
+	for (let i = year - 10; i < year + 10; i += 1) {
+		years.push(i);
+	}
+	return years;
+};
+
+const shijianYMD = (timestamp: any) => {
+	let time = new Date(timestamp);
+	let year = time.getFullYear();
+	const month = (time.getMonth() + 1).toString().padStart(2, '0');
+	const date = time.getDate().toString().padStart(2, '0');
+	// return year + '-' + month + '-' + date;
+	return date;
+};
+
 const route = useRouter();
 
-const certifIdType = { 140: '学生证', 141: '军官证', 142: '医护证', 143: '教师资格证', 144: '导游证', 145: '导游证' };
-
-const certifIdList = (certifId: array) => {
-	let all = '',
-		len = certifId.length;
-	console.log(props.tableList);
-
-	certifId.map((i, index) => {
-		all += certifIdType[i];
-
-		if (index < len - 1) all += ',';
-		return i;
-	});
-	return all;
-};
-const options = [
-	{ label: '学生证', value: 140 },
-	{ label: '军官证', value: 141 },
-	{ label: '医护证', value: 142 },
-	{ label: '教师资格证', value: 143 },
-	{ label: '导游证', value: 144 },
-	{ label: '导游证', value: 145 },
-];
 const useForm = Form.useForm;
 // 新增减免规则
 const formValidate = reactive({
@@ -94,23 +108,18 @@ const formValidate = reactive({
 
 const columnsCount = ref([
 	{
-		title: '减免规则',
-		dataIndex: 'ruleName',
-		key: 'ruleName',
+		title: '子票',
+		dataIndex: 'sonName',
+		key: 'sonName',
 		width: 200,
 	},
 	{
-		title: '证件类型',
-		dataIndex: 'certifId',
-		key: 'certifId',
+		title: '联票价格估算',
+		dataIndex: 'reckon',
+		key: 'reckon',
 		width: 200,
 	},
-	{
-		title: '折扣',
-		dataIndex: 'discount',
-		key: 'discount',
-		width: 200,
-	},
+
 	{
 		title: '操作',
 		key: 'action',
@@ -179,23 +188,24 @@ onMounted(() => {});
 	.left {
 		flex: 1;
 	}
-	.btn {
-		position: absolute;
-		right: -126px;
-		bottom: -10px;
-		margin-bottom: 10px;
-		// top: 12px;
-	}
+	// .btn {
+	// 	position: relative;
+	// 	right: calc(-100% + 116px);
+	// 	margin-bottom: 10px;
+	// 	// top: 12px;
+	// }
 }
 .table-area {
-	margin: 0 10px 0 0;
+	// margin: 0 10px 0 0;
 	padding: 0;
 }
-.btn {
-	position: absolute;
-	right: -126px;
-	bottom: -10px;
-	margin-bottom: 10px;
-	// top: 12px;
+
+.calendar-wrap {
+	display: flex;
+	.price_tips {
+		display: block;
+		border: 1px solid red;
+		color: orange;
+	}
 }
 </style>

@@ -7,10 +7,15 @@
       <template v-if="column.key === 'index'">
         {{ index + 1 }}
       </template>
+      <template v-if="column.key === 'roleList'">
+        <span v-for="item, index in record.roleList">
+          {{`${item.roleName}${index == record.roleList.length - 1? '' : '，' }`}}
+        </span>
+      </template>
       <template v-if="column.key === 'action'">
         <div class="action-btns">
           <a @click="addOrUpdate({ row:record, handle: 'update' })">编辑</a>
-          <a @click="resetPassword">重制密码</a>
+          <a @click="resetPassword(record.oid)">重制密码</a>
           <a @click="disable(0, record.oid)" v-show="record.state === 1">禁用</a>
           <a @click="disable(1, record.oid)" v-show="record.state === 0">启用</a>
         </div>
@@ -22,28 +27,41 @@
     <CommonPagination v-model:current="tableData.param.pageNo" v-model:page-size="tableData.param.pageSize"
       :total="tableData.total" @change="onHandleCurrentChange" @showSizeChange="pageSideChange" />
   </div>
-
   <CommonModal :title="title" v-model:visible="modalVisible" @close="closeModal" @cancel="closeModal" @conform="save">
     <a-form ref="teamRef" :model="form" :rules="formRules" name="addTeam" autocomplete="off" :label-col="{ span: 6 }"
       :wrapper-col="{ span: 18 }">
-      <a-form-item name="businessType" label="管理员角色">
-        <a-select v-model:value="form.businessType" placeholder="请选择管理员角色">
-          <a-select-option v-for="item in roleOption" :value="item.codeValue" :key="item.codeValue">{{
-          item.name }}
+      <a-form-item name="roleIds" label="管理员角色">
+        <a-select v-model:value="form.roleIds" mode="multiple" placeholder="请选择管理员角色">
+          <a-select-option v-for="item in roleOption" :value="item.roleId" :key="item.roleId">{{
+          item.roleName }}
           </a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item name="name" label="管理员姓名">
-        <a-input v-model:value="form.name" placeholder="请输入管理员姓名">
+      <a-form-item name="username" label="管理员姓名">
+        <a-input v-model:value="form.username" placeholder="请输入管理员姓名">
         </a-input>
       </a-form-item>
-      <a-form-item name="name" label="管理员手机号">
-        <a-input v-model:value="form.name" placeholder="请输入管理员手机号">
+      <a-form-item name="mobile" label="管理员手机号">
+        <a-input v-model:value="form.mobile" placeholder="请输入管理员手机号">
         </a-input>
       </a-form-item>
-      <a-form-item name="name" label="管理员密码">
-        <a-input v-model:value="form.name" placeholder="请输入管理员密码" type="password">
+      <a-form-item name="password" label="管理员密码" v-if="state.isAdd">
+        <a-input v-model:value="form.password" placeholder="请输入管理员密码">
         </a-input>
+      </a-form-item>
+    </a-form>
+  </CommonModal>
+  <CommonModal title="强制重置密码" v-model:visible="resetPasswordVisible" @cancel="resetPasswordCancel"
+    @close="resetPasswordCancel" @conform="resetPasswordConform" :conform-text="'确认'">
+    <a-form ref="formRef" name="reset-password" :model="formState" :rules="rules" v-bind="layout">
+      <a-form-item has-feedback label="输入原始密码" name="oldPass">
+        <a-input v-model:value="formState.oldPass" type="password" autocomplete="off" />
+      </a-form-item>
+      <a-form-item has-feedback label="输入新密码" name="pass">
+        <a-input v-model:value="formState.pass" type="password" autocomplete="off" />
+      </a-form-item>
+      <a-form-item has-feedback label="再输入一次" name="checkPass">
+        <a-input v-model:value="formState.checkPass" type="password" autocomplete="off" />
       </a-form-item>
     </a-form>
   </CommonModal>
@@ -55,6 +73,7 @@ import CommonPagination from '@/components/common/CommonPagination.vue'
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
+import type { Rule } from 'ant-design-vue/es/form';
 const columns = [
   {
     title: '序号',
@@ -63,18 +82,18 @@ const columns = [
   },
   {
     title: '管理员姓名',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'username',
+    key: 'username',
   },
   {
     title: '管理员手机号（登录账号）',
-    dataIndex: 'productsLength',
-    key: 'productsLength',
+    dataIndex: 'mobile',
+    key: 'mobile',
   },
   {
     title: '管理员角色',
-    dataIndex: 'stateName',
-    key: 'stateName',
+    dataIndex: 'roleList',
+    key: 'roleList',
   },
   {
     title: '账号创建时间',
@@ -93,8 +112,8 @@ const columns = [
   },
   {
     title: '当前状态',
-    dataIndex: 'lastUpdaterName',
-    key: 'lastUpdaterName',
+    dataIndex: 'userStatusName',
+    key: 'userStatusName',
   },
   {
     title: '操作',
@@ -103,18 +122,63 @@ const columns = [
     width: 208
   },
 ]
-let isAdd = true
 const teamRef = ref()
+const formRef = ref()
+const resetPasswordVisible = ref(false)
 const form = reactive({
-  businessType: '',
-  name: '',
+  oid: '',
+  roleIds: [],
+  companyId: '',
+  password: '',
+  mobile: '',
+  account: '',
+  userStatus: 1,
+  username: '',
 })
-const formRules: any = {
-  name: [{ required: true, trigger: 'blur', message: '名字不能为空' }],
-  state: [{ required: true, trigger: 'blur', message: '是否启用' }],
+const formState = reactive({
+  oid: '',
+  pass: '',
+  oldPass: '',
+  checkPass: '',
+})
+let validatePass = async (_rule: Rule, value: string) => {
+  if (value === '') {
+    return Promise.reject('请输入密码！');
+  } else {
+    if (formState.checkPass !== '') {
+      formRef.value.validateFields('checkPass');
+    }
+    return Promise.resolve();
+  }
 };
-const roleOption = []
+let validatePass2 = async (_rule: Rule, value: string) => {
+  if (value === '') {
+    return Promise.reject('请再次输入密码！');
+  } else if (value !== formState.pass) {
+    return Promise.reject("两次输入的密码不一致！");
+  } else {
+    return Promise.resolve();
+  }
+};
+const rules: Record<string, Rule[]> = {
+  pass: [{ required: true, validator: validatePass, trigger: 'change' }],
+  checkPass: [{ validator: validatePass2, trigger: 'change' }],
+  oldPass: [{ required: true, trigger: 'blur', message: '请输入原始密码' }]
+};
+const formRules: any = {
+  roleIds: [{ required: true, trigger: 'blur', message: '请选择管理员角色' }],
+  username: [{ required: true, trigger: 'blur', message: '请输入管理员姓名' }],
+  mobile: [{ required: true, trigger: 'blur', message: '请输入管理员手机号' }],
+  password: [{ required: true, trigger: 'blur', message: '请输入管理员密码' }],
+};
+const layout = {
+  labelCol: { span: 6 },
+  wrapperCol: { span: 18 },
+};
+const roleOption = ref<any[]>([])
 const state = reactive({
+  isAdd: true,
+  companyId: '',
   tableData: {
     data: [],
     total: 0,
@@ -144,21 +208,46 @@ const addOrUpdate = ({ row, handle }: addInterface) => {
   modalVisible.value = true
   if (handle === 'add') {
     title.value = '添加管理员用户'
-    isAdd = true
+    form.companyId = state.companyId
+    form.account = form.mobile
+    state.isAdd = true
   } else if (handle === 'update') {
     title.value = '编辑管理员用户'
-    /* const { name, state, productIds, oid } = row
-    teamForm.name = name;
-    teamForm.state = state;
-    teamForm.oid = oid;
-    normalProductIds = productIds; */
-    isAdd = false
+    const { oid, roleList, password, mobile, account, userStatus, username } = row
+    form.oid = oid;
+    form.password = password;
+    form.mobile = mobile;
+    form.account = account;
+    form.userStatus = userStatus;
+    form.username = username;
+    form.companyId = '';
+    const roleIds = roleList.map((item: any) => {
+      return item.oid
+    })
+    form.roleIds = roleIds;
+    state.isAdd = false
   }
 }
-const onSearch = async () => {
-  // let res = await api.selectTeamTypeList(state.tableData.param)
-  // state.tableData.data = res.content
-  // state.tableData.total = res.total
+const onSearch = () => {
+  api.userList(state.tableData.param).then((res: any) => {
+    state.tableData.data = res.content;
+    state.tableData.total = res.total;
+  })
+}
+const getRoleList = () => {
+  form.roleIds = [];
+  let userInfo = window.localStorage.getItem('userInfo');
+  userInfo = JSON.parse(userInfo as string)
+  const { sysCompany: { businessType, oid } } = userInfo
+  state.companyId = oid
+  api.getRoleListByType(businessType).then((res: any) => {
+    roleOption.value = res.map((item: any) => {
+      return {
+        roleName: item.roleName,
+        roleId: item.oid
+      }
+    });
+  })
 }
 const closeModal = () => {
   modalVisible.value = false
@@ -166,16 +255,44 @@ const closeModal = () => {
 }
 const save = () => {
   teamRef.value.validate().then(async (val: any) => {
-    if (isAdd) {
-
+    if (state.isAdd) {
+      api.addUser(toRaw(form)).then(res => {
+        message.success('添加管理员成功！');
+        onSearch();
+        closeModal();
+      })
     } else {
+      api.editUser(toRaw(form)).then(res => {
+        message.success('编辑管理员成功！');
+        onSearch();
+        closeModal();
+      })
     }
   }).catch((err: string) => {
     console.log(err);
   })
 }
-const resetPassword = () => { }
+const resetPasswordCancel = () => {
+  resetPasswordVisible.value = false
+  formRef.value.resetFields();
+}
+const resetPasswordConform = () => {
+  formRef.value.validateFields().then(() => {
+    api.editPassWord({ oid: formState.oid, newPassword: formState.pass, oldPassword: formState.oldPass }).then((res) => {
+      message.success('重置密码成功！');
+      resetPasswordCancel();
+    })
+  })
+}
+const resetPassword = (oid: string) => {
+  formState.oid = oid
+  resetPasswordVisible.value = true
+}
 const disable = () => { }
+onMounted(() => {
+  onSearch();
+  getRoleList();
+})
 </script>
 
 <style scoped lang="scss">

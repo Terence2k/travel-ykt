@@ -1,174 +1,237 @@
 <template>
-	<div>
-		<h3 class="header">基本信息</h3>
-		<div class="body">
-			<a-form ref="formRef" :model="formValidate" :rules="rules" :label-col="{ span: 2 }" :wrapper-col="{ span: 8, offset: 1 }" labelAlign="left">
-				<a-form-item label="演出票名称" name="username">
-					<a-input />
-				</a-form-item>
-				<a-form-item label="演出节目选择" name="roleIds">
-					<a-select ref="select" mode="multiple"> </a-select>
-				</a-form-item>
-				<a-form-item label="演出描述" name="account">
-					<a-textarea :rows="4" placeholder="请输入内容" :maxlength="6" />
-				</a-form-item>
-				<a-form-item label="归属景区" name="mobile">
-					<a-select allowClear ref="select" style="width: 200px" placeholder="请选择归属景区">
-						<a-select-option :value="-1">未提交</a-select-option>
-						<a-select-option :value="0">待审核 </a-select-option>
-						<a-select-option :value="1"> 审核通过</a-select-option>
-						<a-select-option :value="2"> 审核未通过</a-select-option>
-					</a-select>
-				</a-form-item>
+	<div class="editWrapper">
+		<header>基本信息</header>
+		<a-form class="" ref="formRef" :label-col="{ span: 3 }" labelAlign="left" :wrapper-col="{ span: 8 }" :scrollToFirstError="true">
+			<a-form-item label="联票名称" v-bind="validateInfos[`data.name`]">
+				<a-input v-model:value="formData.data.name" placeholder="请填写景区名字" />
+			</a-form-item>
+			<a-form-item label="子票选择" v-bind="validateInfos[`data.businessType`]">
+				<a-select allowClear v-model:value="formData.data.businessType" placeholder="请选择企业类型">
+					<a-select-option v-for="o in businessTypeOption" :key="o.name" :value="o.oid">{{ o.name }}</a-select-option>
+				</a-select>
+			</a-form-item>
 
-				<a-form-item label="价格&库存" name="userStatus">
-					<a-button type="primary" @click="edit()">编辑价格&库存</a-button>
-					<a-span class="span">需配置各个分区的价格</a-span>
-				</a-form-item>
-				<div class="footer">
-					<div class="tooter-btn">
-						<a-button type="primary" @click.prevent="onSubmit">保存</a-button>
-						<a-button type="primary" @click="reset">提交审核</a-button>
-					</div>
+			<a-form-item label="联票描述" v-bind="validateInfos[`data.creditCode`]">
+				<a-textarea v-model:value="formData.data.creditCode" placeholder="请输入其他说明" :rows="4" />
+			</a-form-item>
+			<a-form-item label="联票减扣规则" v-bind="validateInfos[`data.businessLicenseUrl`]">
+				<TableRule :tableList="formData.data.discountList" @del-rule-obj="delRuleObj" @add-rule-obj="addRuleObj" />
+			</a-form-item>
+			<a-form-item label="设置价格" v-bind="validateInfos[`data.businessLicenseUrl`]">
+				<TablePrice :tableList="formData.data.priceList" @del-rule-obj="delRuleObj" @add-rule-obj="addRuleObj" />
+			</a-form-item>
+			<a-form-item label="联票价格说明" v-bind="validateInfos[`data.businessLicenseUrl`]" :wrapper-col="{ span: 14 }">
+				<div class="tips">
+					<p>1、联票的“库存”每日动态调整，以预定当日所有子票中的最低库存量为准；</p>
+					<p>2、联票的“票价”每日动态调整，以预定当日所有子票中的价格总和为准，故会产生浮动区间；</p>
+					<p>3、联票中的每张子票，其可核销项目、次数、可核销时间段、是否含必核项，以子票本身的规定为准；</p>
+
+					<p>
+						4、联票中所包含的子票如果包含有必核销项，则该子票一经核销即视为已被使用，不可退票退款；如该子票
+						未发生实际核销，或者只核销了部分游客，则结算时以实际核销数量为准，未核销的有系统自动退款；
+					</p>
+					<p>
+						5、联票预定时先按原价进行资金计算、预冻结，如符合减免条件，则由核销人员在验票时进行减免结算。联
+						票可能会涉及到多个景区的门票，则每张子票均由所属的景区工作人员进行核销，不可越权核销。
+					</p>
 				</div>
-			</a-form>
-		</div>
-		<BaseModal title="审核" v-model="dialogVisible" :onOk="handleOk">
-			<div>
-				<p class="price">*票价</p>
+			</a-form-item>
+
+			<div class="footer">
+				<div class="tooter-btn">
+					<a-button type="primary" @click.prevent="onSubmit">保存</a-button>
+					<a-button type="primary" @click="onSubmit">提交审核</a-button>
+				</div>
 			</div>
-			<CommonTable :dataSource="state.tableDate.data" :columns="columns" :scrollY="false">
-				<template #bodyCell="{ column, record, text }">
-					<template v-if="column.key === 'partition'">
-						{{ record.partition }}
-					</template>
-					<template v-if="column.key === 'stock'">
-						<a-input
-							v-model:value="record.stock"
-							style="width: 150px"
-							:placeholder="record.stockMax"
-							@change="aa"
-							oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')"
-						/>
-					</template>
-					<template v-if="column.key === 'price'">
-						<a-input v-model:value="record.price" style="width: 150px" :placeholder="record.priceMax" />
-					</template>
-				</template>
-			</CommonTable>
-			<template v-slot:footer>
-				<a-button type="primary" @click="save">保存</a-button>
-				<a-button @click="dialogVisible = false">取消</a-button>
-			</template>
-		</BaseModal>
+		</a-form>
 	</div>
 </template>
 
-<script lang="ts" setup>
-import { ref, Ref, computed, watch, toRefs, reactive } from 'vue';
-import type { FormInstance } from 'ant-design-vue';
+<script setup lang="ts">
+import { useNavigatorBar } from '@/stores/modules/navigatorBar';
+import { useScenicSpotOption } from '@/stores/modules/scenicSpot';
+import { Form } from 'ant-design-vue';
+import { RadioGroupProps } from 'ant-design-vue';
+import { toArray } from 'lodash';
 import api from '@/api';
 import { message } from 'ant-design-vue';
-import BaseModal from '@/components/common/BaseModal.vue';
-import CommonTable from '@/components/common/CommonTable.vue';
+import Pic from '@/components/common/imageWrapper.vue';
+import TableRule from './tableRule.vue';
+import TablePrice from './tablePrice.vue';
+const route = useRouter();
 
-const props = defineProps({
-	modelValue: {
-		type: Boolean,
-		default: false,
+const useForm = Form.useForm;
+const navigatorBar = useNavigatorBar();
+const scenicSpotOptions = useScenicSpotOption();
+
+// 数据
+const formData = reactive({
+	name: '',
+	sub: {
+		name: '',
 	},
-	params: Object,
-	roleList: Array,
-});
-const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
-const dialogVisible = ref(false);
-const formRef = ref<FormInstance>();
-const formValidate: Ref<Record<string, any>> = ref({});
-const options = reactive({ title: '新增用户' });
-const rules: any = {
-	username: [{ required: true, trigger: 'blur', message: '请输入演出票名称' }],
-	mobile: [{ required: true, trigger: 'blur', message: '请选择演出节目' }],
-	account: [{ required: true, trigger: 'blur', message: '请输入账号' }],
-	roleIds: [{ required: true, trigger: 'blur', message: '请选择归属景区' }],
-};
-const state = reactive({
-	tableDate: {
-		data: [
+	data: {
+		oid: 1, //oid
+		discountList: [],
+		priceList: [
 			{
-				partition: '普通座',
-				stock: '',
-				price: '',
-				stockMax: '最大2000',
-				priceMax: '200元',
+				sonName: '入园',
+				reckon: '200',
 			},
 			{
-				partition: 'VIP座',
-				stock: '',
-				price: '',
-				stockMax: '最大1000',
-				priceMax: '200元',
-			},
-			{
-				partition: 'SVIP座',
-				stock: '',
-				price: '',
-				stockMax: '最大500',
-				priceMax: '200元',
+				sonName: '游戏机',
+				reckon: '200',
 			},
 		],
 	},
 });
-const columns = [
-	{
-		title: '分区',
-		dataIndex: 'partition',
-		key: 'partition',
-	},
-	{
-		title: '库存',
-		dataIndex: 'stock',
-		key: 'stock',
-	},
-	{
-		title: '价格',
-		dataIndex: 'price',
-		key: 'price',
-	},
-];
-const save = () => {
-	console.log(state.tableDate.data, '111111');
+// 表单
+const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
+	formData,
+	reactive({
+		'data.provinceId': [{ required: true, message: '请选择省份' }],
+	})
+);
+
+//删除
+const delRuleObj = (index: number) => {
+	formData.data.discountList.splice(index, 1);
 };
-const aa = () => {
-	if (Number(state.tableDate.data[0].stock) > 2000) {
-		state.tableDate.data[0].stock = '2000';
+const addRuleObj = (obj: object) => {
+	if (String(formData.data.discountList) === 'null') {
+		formData.data.discountList = [];
 	}
-	if (Number(state.tableDate.data[1].stock) > 1000) {
-		state.tableDate.data[1].stock = '1000';
-	}
-	if (Number(state.tableDate.data[2].stock) > 500) {
-		state.tableDate.data[2].stock = '500';
+	formData.data.discountList.push(obj);
+};
+//初始化下拉列表
+const initOpeion = async () => {
+	await scenicSpotOptions.getBusinessTypeOption();
+	await scenicSpotOptions.getAllAreaProvice(0);
+};
+// 下拉选择
+const popupScroll = () => {
+	console.log('popupScroll');
+};
+
+//下拉列表
+const businessTypeOption = computed(() => scenicSpotOptions.businessTypeOption);
+const proviceList = computed(() => scenicSpotOptions.proviceList);
+const cityList = computed(() => scenicSpotOptions.cityList);
+const areaList = computed(() => scenicSpotOptions.areaList);
+
+const selectCity = async (id: any) => {
+	if (id) {
+		await scenicSpotOptions.getAllAreaCity(id);
+	} else {
+		scenicSpotOptions.cleanCity();
+		formData.data.cityId = null;
+		formData.data.areaId = null;
 	}
 };
-const handleOk = async (callback: Function) => {};
-const edit = () => {
-	dialogVisible.value = true;
+const selectArea = async (id: any) => {
+	if (id) {
+		await scenicSpotOptions.getAllArea(id);
+	} else {
+		scenicSpotOptions.cleanArae();
+		formData.data.areaId = null;
+	}
 };
+
+// 提交
+const onSubmit = async () => {
+	validate()
+		.then((res) => {
+			console.log(toRaw(formData.data), 'psss');
+			// save(toRaw(formData.data));
+			route.push('/scenic-spot/multicast/list');
+		})
+		.catch((err) => {
+			console.log('error', err);
+		});
+
+	// try {
+	// 	const values = await validate();
+	// 	console.log('Success:', values);
+	// } catch (errorInfo) {
+	// 	//返回报错信息，滚动到第一个报错的位置
+	// 	formRef.scrollToField(errorInfo.errorFields[0].name.toString());
+	// }
+};
+const save = async (params: object) => {
+	let res = await api.changeScenicSpotInformation(params);
+	if (res) {
+		message.success('保存成功');
+		route.push({ path: '/scenic-spot/information/list' });
+	}
+};
+//合并错误提示
+const errorInfos = computed(() => {
+	return mergeValidateInfo(toArray(validateInfos).splice(0, 4));
+});
+// 重置
+const reset = (): void => {
+	resetFields();
+};
+//初始化页面
+const initPage = async (): Promise<void> => {
+	let res = await api.getScenicById(route.currentRoute.value?.query?.oid);
+	formData.data = res;
+	formData.data.oid = parseInt(route.currentRoute.value?.query?.oid);
+	// formData.data.cityId && selectCity(formData.data.cityId);
+	// formData.data.areaId && selectArea(formData.data.areaId);
+};
+
+// 自定义面包屑
+onMounted(async () => {
+	navigatorBar.setNavigator(['景区信息管理', '编辑']);
+	await initOpeion();
+	await initPage();
+	await selectCity(formData.data.provinceId);
+	await selectArea(formData.data.cityId);
+});
+onBeforeUnmount(() => {
+	navigatorBar.clearNavigator();
+});
 </script>
 
 <style lang="scss" scoped>
-.header {
-	margin-left: 30px;
+.editWrapper {
+	padding: 0 16px;
+	padding-bottom: 64px;
+}
+header {
+	// width: 64px;
+	// margin-bottom: 8px;
+	height: 56px;
+	line-height: 56px;
 	font-weight: bold;
-	margin-top: 10px;
+	color: #1e2226;
+	// margin: 0 8px 16px;
+	margin-bottom: 16px;
+	border-bottom: 1px solid #f1f2f5;
 }
-.body {
-	padding: 10px 20px;
+.title {
+	height: 56px;
+	line-height: 56px;
+	font-weight: bold;
+	color: #1e2226;
+	// margin: 0 8px 16px;
+	margin-bottom: 16px;
+	border-bottom: 1px solid #f1f2f5;
 }
-.span {
-	font-size: 12px;
-	margin-left: 20px;
-	color: rgb(235, 235, 235);
+.area {
+	margin-bottom: 20px;
 }
+// footer {
+// 	border-top: 1px solid #f1f2f5;
+// 	padding: 16px;
+// 	margin: -16px;
+// 	// position: fixed;
+// 	// bottom: 16px;
+// 	// width: 500%;
+// 	// background-color: #fff;
+// 	// background-color: red;
+// }
 .footer {
 	position: fixed;
 	bottom: 12px;
@@ -180,20 +243,17 @@ const edit = () => {
 	margin-right: 24px;
 	background-color: #fff;
 	z-index: 99;
+
 	.tooter-btn {
 		width: 60%;
+		// background-color: #fff;
 		margin-left: 16px;
 	}
 	button:first-of-type {
 		margin-right: 16px;
 	}
 }
-.aa {
-	width: 100px;
-	height: 100px;
-	border: 1px solid red;
-}
-.price {
-	margin-left: 20px;
+.tips {
+	color: #71747a;
 }
 </style>
