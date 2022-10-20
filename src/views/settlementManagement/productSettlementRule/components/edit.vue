@@ -295,7 +295,7 @@ const productRuleDetail = async (id: number) => {
 	const result = await api.productRuleDetail(id);
 	for (let key in formState) {
 		if (result[key] || result[key] === 0) {
-			if (Number(result['chargeModel']) === 3) {
+			if (key === 'chargeCount' && Number(result['chargeModel']) === 3) {
 				formState['chargeCount'] = result['chargeCount'] / 100;
 			} else {
 				formState[key] = result[key];

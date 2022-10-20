@@ -49,6 +49,12 @@
 						<span v-if="record.ruleStatus === 0">禁用</span>
 						<span v-if="record.ruleStatus === 1">启用</span>
 					</template>
+					<!-- 收费名称 -->
+					<template v-if="column.key === 'charCount'">
+						<span v-if="record.chargeModel === 1">{{ record.charCount }}%</span>
+						<span v-if="record.chargeModel === 2">{{ record.charCount }}人</span>
+						<span v-if="record.chargeModel === 3">{{ (record.charCount / 100).toFixed(2) }}元</span>
+					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a href="javascript:;" @click="toCheck(record)">查看</a>

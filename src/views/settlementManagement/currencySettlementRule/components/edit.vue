@@ -112,7 +112,8 @@
 					</template>
 					<template v-if="column.key === 'splitCount'">
 						<span v-if="record.splitModel === 1">{{ record.splitCount }}%</span>
-						<span v-if="record.splitModel === 2">{{ record.splitCount }}元</span>
+						<!-- 金额显示需要除以100 -->
+						<span v-if="record.splitModel === 2">{{ (record.splitCount / 100).toFixed(2) }}元</span>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
@@ -246,7 +247,9 @@ const init = () => {
 const currencySettlementRuleDetail = async (id: number) => {
 	const result = await api.currencySettlementRuleDetail(id);
 	for (let key in formState) {
-		if (result[key] || result[key] === 0) {
+		if (key === 'charCount' && Number(result['chargeModel']) === 3) {
+			formState['charCount'] = result['charCount'] / 100;
+		} else {
 			formState[key] = result[key];
 		}
 	}
@@ -319,6 +322,9 @@ const edit = async () => {
 const saveParams = () => {
 	if (formState.productSonType === 'SELF') {
 		formState.chargeProductSonId = formState.productId;
+	}
+	if (formState.chargeModel === 3) {
+		formState.charCount = Number(formState.charCount) * 100;
 	}
 	if (oid.value) {
 		formState.oid = oid.value;
