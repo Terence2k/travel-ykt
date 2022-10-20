@@ -280,30 +280,6 @@ const popupScroll = () => {
 	console.log('popupScroll');
 };
 
-//下拉列表
-const businessTypeOption = computed(() => scenicSpotOptions.businessTypeOption);
-const proviceList = computed(() => scenicSpotOptions.proviceList);
-const cityList = computed(() => scenicSpotOptions.cityList);
-const areaList = computed(() => scenicSpotOptions.areaList);
-
-const selectCity = async (id: any) => {
-	if (id) {
-		await scenicSpotOptions.getAllAreaCity(id);
-	} else {
-		scenicSpotOptions.cleanCity();
-		formData.data.cityId = null;
-		formData.data.areaId = null;
-	}
-};
-const selectArea = async (id: any) => {
-	if (id) {
-		await scenicSpotOptions.getAllArea(id);
-	} else {
-		scenicSpotOptions.cleanArae();
-		formData.data.areaId = null;
-	}
-};
-
 // 提交
 const onSubmit = async () => {
 	validate()
@@ -349,14 +325,14 @@ const initPage = async (): Promise<void> => {
 
 // 自定义面包屑
 onMounted(async () => {
-	navigatorBar.setNavigator(['景区信息管理', '编辑']);
-	await initOpeion();
-	await initPage();
-	await selectCity(formData.data.provinceId);
-	await selectArea(formData.data.cityId);
+	// navigatorBar.setNavigator(['景区信息管理', '编辑']);
+	// await initOpeion();
+	// await initPage();
+	// await selectCity(formData.data.provinceId);
+	// await selectArea(formData.data.cityId);
 });
 onBeforeUnmount(() => {
-	navigatorBar.clearNavigator();
+	// navigatorBar.clearNavigator();
 });
 </script>
 
