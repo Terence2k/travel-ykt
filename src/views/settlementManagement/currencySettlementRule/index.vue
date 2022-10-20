@@ -33,7 +33,7 @@
 				:columns="columns"
 				rowKey="oid"
 				:row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
-				:scroll="{ x: '100%' }"
+				:scroll="{ x: '100%', y: '100%' }"
 			>
 				<template #bodyCell="{ column, record, index }">
 					<!-- 团队类型 -->

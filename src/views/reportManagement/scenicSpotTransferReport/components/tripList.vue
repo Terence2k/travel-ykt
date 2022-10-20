@@ -1,5 +1,5 @@
 <template>
-	<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%' }"> </CommonTable>
+	<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }" style="margin-top: 10px"> </CommonTable>
 
 	<CommonPagination
 		:current="state.tableData.param.pageNo"
