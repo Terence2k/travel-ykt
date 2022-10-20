@@ -70,7 +70,7 @@ interface DataSourceItem {
 	tickStatus: string;
 }
 
-const tempDataSource = ref(useRoomStatus.getBaseInfoDataSource);
+const tempDataSource = ref([]);
 
 const columns: TableColumnsType = [
 	{
@@ -168,18 +168,21 @@ const rowSelection = computed(() => {
 
 const dataSource = computed(() => {
 	if (Array.isArray(tableState.tableData.data)) {
-		return tableState.tableData.data.map((item) => {
+		console.log('eeeeeeeeeeeeeeeeeellllllllll', tableState.tableData.data);
+		const result = tableState.tableData.data.map((item) => {
 			return {
 				...item,
 				key: item?.id,
 			};
 		});
+		console.log('result', result);
+		return result;
 	}
 });
 
 const tableState = reactive({
 	tableData: {
-		data: tempDataSource,
+		data: ref(tempDataSource),
 		total: 1,
 		loading: false,
 		param: {
@@ -216,7 +219,9 @@ const openEditPage = () => {
 	router.push({ path: '/hotelManagement/roomStatus/roomStatusEdit', query: { id: 1 } });
 };
 onMounted(() => {
-	console.log('props', props);
+	//console.log('props----------------------', props, useRoomStatus.getBaseInfoDataSource);
+	tableState.tableData.data = useRoomStatus.getBaseInfoDataSource;
+	console.log('useRoomStatus.getBaseInfoDataSource', useRoomStatus.getBaseInfoDataSource);
 });
 </script>
 

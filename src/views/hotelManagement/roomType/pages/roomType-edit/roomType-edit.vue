@@ -21,11 +21,16 @@
 				</template>
 				<template v-if="['roomNum'].includes(column.dataIndex)">
 					<div>
-						<a-input-number v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]" :controls="false">
+						<a-input-number
+							:disabled="editableData[record.key]?.operationType !== 0"
+							v-if="editableData[record.key]"
+							v-model:value="editableData[record.key][column.dataIndex]"
+							:controls="false"
+						>
 							<template #addonBefore>
 								<a-select
-									@change="minusNumOptionsChange($event, record.key)"
-									v-model:value="state.minusNum"
+									@change="minusNumOptionsChange($event, record)"
+									v-model:value="editableData[record.key].minusNum"
 									:options="minusNumOptions"
 									style="width: 60px"
 								>
@@ -36,8 +41,8 @@
 							</template>
 							<template #addonAfter>
 								<a-select
-									@change="plusNumOptionsChange($event, record.key)"
-									v-model:value="state.plusNum"
+									@change="plusNumOptionsChange($event, record)"
+									v-model:value="editableData[record.key].plusNum"
 									:options="plusNumOptions"
 									style="width: 60px"
 								>
@@ -162,13 +167,13 @@ const columns = [
 		title: '系统房型',
 		dataIndex: 'roomTypeCode',
 		key: 'roomTypeCode',
-		width: '12%',
+		width: '10%',
 	},
 	{
 		title: '诚信指导价',
 		dataIndex: 'price',
 		key: 'price',
-		width: '8%',
+		width: '10%',
 	},
 	{
 		title: '房间数量',
@@ -204,35 +209,33 @@ interface DataSourceItem {
 	roomOccupancyNum: number;
 }
 
-let minusNumOptions = ref<SelectProps['options']>([
-	{
-		value: 1,
-		label: '-1',
-	},
-	{
-		value: 2,
-		label: '-2',
-	},
-	{
-		value: 3,
-		label: '-3',
-	},
-]);
+const userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
 
-let plusNumOptions = ref<SelectProps['options']>([
-	{
-		value: 1,
-		label: '+1',
-	},
-	{
-		value: 2,
-		label: '+2',
-	},
-	{
-		value: 3,
-		label: '+3',
-	},
-]);
+let minusNumOptions = ref<SelectProps['options']>(
+	(() => {
+		const result = [];
+		for (let i = -1; i > -1000; i--) {
+			result.push({
+				value: i,
+				label: i.toString(),
+			});
+		}
+		return result;
+	})()
+);
+
+let plusNumOptions = ref<SelectProps['options']>(
+	(() => {
+		const result = [];
+		for (let i = 1; i < 1000; i++) {
+			result.push({
+				value: i,
+				label: `+${i.toString()}`,
+			});
+		}
+		return result;
+	})()
+);
 
 const dataSource: DataSourceItem[] = ref([]);
 
@@ -240,19 +243,20 @@ const systemRoomData = ref([]);
 const systemRoomNameOptions = ref<SelectProps['options']>(systemRoomData);
 
 const state = reactive({
-	hotelId: 0,
+	hotelId: undefined,
 	isAuditStatus: false,
 	systemRoomAllData: [],
 	roomInfoResponse: [],
 	roomInfoRequest: [],
-	minusNum: 0,
-	plusNum: 0,
+	roomOperateData: {},
 });
 
 const edit = (key: string) => {
-	state.plusNum = 0;
-	state.minusNum = 0;
 	if (editableData[key]) {
+		//如果是新增之后取消编辑，那麽直接删除该条数据
+		if (editableData[key]?.operationType === 0) {
+			dataSource.value = dataSource.value.filter((item) => key !== item.key);
+		}
 		delete editableData[key];
 	} else {
 		editableData[key] = cloneDeep(dataSource.value.filter((item) => key === item.key)[0]);
@@ -278,9 +282,19 @@ const initPage = () => {
 	for (let property in editableData) {
 		delete editableData[`${property}`];
 	}
+
+	const companyId = userInfo?.sysCompany?.oid;
+
+	if (companyId || companyId === 0) {
+		api.getHotelInfoByCompanyId(companyId).then((res) => {
+			console.log('根据企业id获得的酒店信息为：', res);
+		});
+	}
+
 	api
-		.getRoomDetailInfo({}, state.hotelId)
+		.getHotelListInEdit()
 		.then((res) => {
+			// state.hotelId = res?.
 			console.info(`id${state.hotelId}房型信息:`, res);
 
 			if (Array.isArray(res) && res.length > 0) {
@@ -317,18 +331,18 @@ const initPage = () => {
 	});
 };
 
-watch(
-	() => route.query,
-	(res) => {
-		state.hotelId = route?.query?.id;
-		if (state.hotelId) {
-			initPage();
-		}
-	},
-	{
-		immediate: true,
-	}
-);
+// watch(
+// 	() => route.query,
+// 	(res) => {
+// 		state.hotelId = route?.query?.id;
+// 		if (state.hotelId) {
+// 			initPage();
+// 		}
+// 	},
+// 	{
+// 		immediate: true,
+// 	}
+// );
 
 const saveRoomInfo = () => {
 	console.info('editableData :', editableData, toRaw(editableData));
@@ -341,26 +355,28 @@ const saveRoomInfo = () => {
 	const result = editableArray
 		?.filter((item) => JSON.stringify(item) !== '{}')
 		.map((item) => {
-			console.log('item', item);
+			console.log('item-ppppppppppppppppppppppppp', item);
 			if (item.oid) {
 				return {
 					oid: item.oid,
-					hotelId: parseInt(item.hotelId),
+					hotelId: item.hotelId ? parseInt(item.hotelId) : undefined,
 					roomTypeName: item.roomTypeName,
 					roomTypeCode: item.roomTypeCode,
 					roomNum: parseInt(item.roomNum),
 					roomOccupancyNum: parseInt(item.roomOccupancyNum),
 					operationType: parseInt(item.operationType),
+					roomOperateNum: parseInt(item.roomOperateNum),
 				};
 			} else {
 				if (item?.key) {
 					return {
-						hotelId: parseInt(item.hotelId),
+						hotelId: item.hotelId ? parseInt(item.hotelId) : undefined,
 						roomTypeName: item.roomTypeName,
 						roomTypeCode: item.roomTypeCode,
 						roomNum: parseInt(item.roomNum),
 						roomOccupancyNum: parseInt(item.roomOccupancyNum),
 						operationType: parseInt(item.operationType),
+						roomOperateNum: parseInt(item.roomOperateNum),
 					};
 				}
 			}
@@ -385,16 +401,16 @@ const add = () => {
 		key: `NEW_${Date.now().toString()}`,
 		auditOrderId: '',
 		auditStatus: 1,
-		hotelId: parseInt(state.hotelId),
+		hotelId: state.hotelId ? parseInt(state.hotelId) : undefined,
 		roomTypeCode: systemRoomData?.value[0]?.value || 1,
 		roomNum: 0,
 		roomOccupancyNum: 0,
 		operationType: 0,
+		roomOperateNum: 0,
 		price: '',
 	};
 	dataSource.value.push(newData);
 	if (editableData[newData.key]) {
-		console.log('aaaaaaaaa');
 		editableData[newData.key].operationType = 0;
 	} else {
 		editableData[newData.key] = cloneDeep(dataSource.value.filter((item) => newData.key === item.key)[0]);
@@ -409,19 +425,34 @@ const add = () => {
 
 const changeRoomOccupancyNum = (target) => {
 	target.roomOccupancyNum = state.systemRoomAllData.find((item) => item.oid === target.roomTypeCode)?.roomOccupancyNum;
+	console.log('当前房型Id为：', target.roomTypeCode);
+	console.log('target:', target);
+	if (target?.operationType !== 0) {
+		api.getMaxMinusCountOfRoom(parseInt(target.roomTypeCode)).then((res) => {
+			console.log('当前房型的最大可减小数量为：', res);
+		});
+	}
 };
 
 const minusNumOptionsChange = (val, option) => {
-	editableData[option].roomNum -= parseInt(val) + parseInt(state.plusNum);
-	state.plusNum = 0;
 	console.log('minusNumOptionsChange', val, option);
+	editableData[option.key].plusNum = 0;
+	const originalRoomNum = dataSource?.value?.find((item) => item.key === option.key)?.roomNum;
+	editableData[option.key].roomNum = originalRoomNum + parseInt(editableData[option.key].minusNum);
+	editableData[option.key].roomOperateNum = parseInt(editableData[option.key].minusNum);
 };
 
 const plusNumOptionsChange = (val, option) => {
 	console.log('plusNumOptionsChange', val, option);
-	editableData[option].roomNum += parseInt(val) + parseInt(state.minusNum);
-	state.minusNum = 0;
+	editableData[option.key].minusNum = 0;
+	const originalRoomNum = dataSource?.value?.find((item) => item.key === option.key)?.roomNum;
+	editableData[option.key].roomNum = originalRoomNum + parseInt(editableData[option.key].plusNum);
+	editableData[option.key].roomOperateNum = parseInt(editableData[option.key].plusNum);
 };
+
+onMounted(() => {
+	initPage();
+});
 </script>
 
 <style lang="less" scoped>

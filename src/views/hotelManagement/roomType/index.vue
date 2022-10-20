@@ -55,9 +55,7 @@
 							</template>
 							<template v-if="column.dataIndex === 'actions'">
 								<div class="cell-actions">
-									<span @click="openNewPageByAction(record?.hotelId, record?.unitStatus)" class="item">
-										{{ getActionText(record?.unitStatus) }}
-									</span>
+									<span @click="openNewPageByAction(record?.hotelId, record?.unitStatus)" class="item"> 进入审核 </span>
 								</div>
 							</template>
 						</template>
@@ -268,8 +266,11 @@ const onSearch = () => {
 			.catch((err: any) => {
 				console.log(err);
 			});
-	} else {
+	} else if (Array.isArray(sysRoles) && sysRoles.map((item) => item?.roleCode).includes('HOTEL_SUPER_ADMIN')) {
 		console.log('我是酒店超级管理员');
+		router.push({ path: '/hotelManagement/roomType/roomTypeEdit' });
+	} else {
+		console.log('什么角色都不是');
 	}
 };
 
@@ -308,26 +309,10 @@ const getHotelStarList = () => {
 		});
 };
 
-const getActionText = (unitStatus: number) => {
-	let actionText = '';
-	switch (unitStatus) {
-		case 1:
-			actionText = '进入审核';
-			break;
-		default:
-			actionText = '编辑';
-	}
-	return actionText;
-};
-
 const openNewPageByAction = (oid: number, unitStatus: number) => {
 	if (oid || oid === 0) {
 		console.log('open edit page, id is:', oid);
-		if (unitStatus === 1) {
-			router.push({ path: '/hotelManagement/roomType/roomTypeCheck', query: { id: oid } });
-		} else {
-			router.push({ path: '/hotelManagement/roomType/roomTypeEdit', query: { id: oid } });
-		}
+		router.push({ path: '/hotelManagement/roomType/roomTypeCheck', query: { id: oid } });
 	}
 };
 

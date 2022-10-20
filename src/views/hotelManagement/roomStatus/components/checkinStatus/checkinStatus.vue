@@ -70,12 +70,14 @@
 </template>
 
 <script setup lang="ts">
+import dayjs from 'dayjs';
 import api from '@/api';
 import { useRoomStatusStore } from '@/stores/modules/roomStatus';
 
 const useRoomStatus = useRoomStatusStore();
 
 const route = useRoute();
+const router = useRouter();
 
 const formValidate: Ref<Record<string, any>> = ref({});
 
@@ -108,7 +110,7 @@ watch(
 
 			const result = toRaw(useRoomStatus.getBaseInfoDataSource)?.find((item) => item?.id == id);
 			console.info('入住情况资料：', result);
-			formValidate.value.date = result?.reportDate;
+			formValidate.value.date = dayjs(result?.reportDate).format('YYYY-MM-DD');
 			formValidate.value.roomTotal = result?.roomTotal;
 			formValidate.value.fit = 10; //散客
 			formValidate.value.cr = 10; // 会议接待
@@ -134,7 +136,9 @@ watch(
 );
 
 const save = () => {
-	useRoomStatus.setBaseInfoDataSource(formValidate.value);
+	useRoomStatus.setBaseInfoDataSource({ ...formValidate.value });
+	console.info('toRaw(useRoomStatus.getBaseInfoDataSource)', toRaw(useRoomStatus.getBaseInfoDataSource));
+	router.push({ path: '/hotelManagement/roomStatus' });
 };
 
 const submitAudit = () => {};
