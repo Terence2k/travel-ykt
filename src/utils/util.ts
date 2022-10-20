@@ -139,3 +139,17 @@ export function getAge(identityCard: any) {
   }
   return age;
 }
+
+export const checkList = (list: any, code: any, path = []):any => {
+  if (!list) return []
+  for (const data of list) {
+    path.push(data.value)
+    if (data.value == code) return path
+    if (data.children && data.children.length) {
+      const findchildren = checkList(data.children, code, path)
+      if (findchildren.length) return findchildren
+    }
+    path.pop()
+  }
+  return []
+}
