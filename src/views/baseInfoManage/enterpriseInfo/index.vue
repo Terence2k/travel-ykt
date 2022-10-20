@@ -240,8 +240,6 @@ const submitFunc = ref();
 
 const initOpeion = async () => {
   await businessManageOptions.getBusinessTypeOption();
-  // submitFunc:提交编辑审核函数名
-  submitFunc.value = travelStore.businessTypeOptions[userInfo.sysCompany.businessType].submitFunc;
   // infoFunc:获取企业基本信息函数名
   let infoFunc = null;
   console.log('userInfo.sysCompany.businessType:', userInfo.sysCompany.businessType);
@@ -255,11 +253,20 @@ const initOpeion = async () => {
     case 'TICKET':
     infoFunc = api.getScenicById(userInfo.sysCompany.oid);
     break;
+    default:
+    infoFunc = api.getCompanyInformation(userInfo.sysCompany.oid);
+    break;
   }
   let data = await infoFunc;
   state.form = { ...data, ...data.companyBo};
   if (state.form?.areaId) state.form.addressIds = [state.form.provinceId, state.form.cityId, state.form.areaId];
   enterpriseState.value = travelStore.enterpriseState[state.form.informationAuditStatus]?.descriptions;
+  // submitFunc:提交编辑审核函数名
+  if (Object.keys(travelStore.businessTypeOptions).includes(userInfo.sysCompany.businessType)) {
+    submitFunc.value = travelStore.businessTypeOptions[userInfo.sysCompany.businessType].submitFunc;
+  } else {
+    submitFunc.value = 'submitFunc';
+  }
   console.log('state.form:', state.form)
 };
 const businessTypeOption = computed(() => businessManageOptions.businessTypeOption);
