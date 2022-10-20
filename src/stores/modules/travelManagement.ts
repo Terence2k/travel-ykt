@@ -75,7 +75,8 @@ export const useTravelStore = defineStore({
 			subTravelOperator: {},
 			teamType: '',
 			startDate: '',
-			endDate: ''
+			endDate: '',
+			groupType: ''
 		},
 		guideList: [],
 		touristList: [],

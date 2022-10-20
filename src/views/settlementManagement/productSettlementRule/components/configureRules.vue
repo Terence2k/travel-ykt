@@ -357,7 +357,12 @@ const getTeamType = async () => {
 
 // 计算属性
 const getTeamTypeName = computed(() => (value: number) => {
-	return state.teamTypeList.find((item) => item.oid === value)['name'];
+	const idx = state.teamTypeList.findIndex((item) => item.oid === value);
+	if (idx !== -1) {
+		return state.teamTypeList[idx]['name'];
+	} else {
+		return '';
+	}
 });
 const getProductTypeName = computed(() => (value: number) => {
 	return state.productTypeList.find((item) => item.value === value)['name'];

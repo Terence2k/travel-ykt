@@ -24,12 +24,15 @@
 			>
 			<!-- <a-input v-model:value="formState.username" /> -->
 			
-			<a-radio-group v-model:value="formState.teamType" name="radioGroup" @change="changeRadio">
+			<a-radio-group 
+				v-model:value="formState.teamType" 
+				name="radioGroup" 
+				@change="changeRadio" 
+				style="width: 100%">
 				<a-row type="flex">
 					<a-col :span="8" v-for="item in list.teamType" :key="item.oid" class="mb-2">
 						<a-radio :value="item.oid">{{item.name}}</a-radio>
 					</a-col>
-					
 				</a-row>
 			</a-radio-group>
 				
@@ -168,7 +171,13 @@ const props = defineProps({
 })
 
 const emits = defineEmits(['onSuccess'])
-const teamGroupType = computed(() => Number(route.query.type)) //协作类型
+const teamGroupType = computed(() => {
+	if (route.query.type) {
+		return Number(route.query.type)
+	} else {
+		return travelStore.baseInfo.groupType
+	}
+}) //协作类型
 let userInfo: any = {}
 let addParams: any = {}
 if (route.query.id) {

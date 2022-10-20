@@ -126,6 +126,7 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 			pageSize: 100000
 		}).then((res: any) => {
 			res.basic.teamId = res.basic.itineraryNo
+			res.basic.time = [res.basic.startDate, res.basic.endDate]
 			res.basic.touristNum = res.basic.touristCount
 			res.basic.travelOperatorOid = res.basic.travelOperator.oid
 			res.basic.contactPhone = res.basic.travelOperator.mobile
