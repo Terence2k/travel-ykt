@@ -23,8 +23,8 @@
           placeholder="请选择可用范围"
           v-model:value="formValidate.availableRange"
         >
-          <a-select-option v-for="item in optionTypeList" :value="item.value">
-            {{ item.title }}
+          <a-select-option v-for="item in optionTypeList" :value="item.codeValue">
+            {{ item.name }}
           </a-select-option>
         </a-select>
       </a-form-item>
