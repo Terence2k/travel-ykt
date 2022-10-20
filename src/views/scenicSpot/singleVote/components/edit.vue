@@ -1,6 +1,7 @@
 <template>
 	<div class="editWrapper">
 		<header class="title">基本信息</header>
+		{{ formData.data.itemList }}formData.data.itemList
 		<a-form class="" ref="formRef" :model="formData" :label-col="{ span: 3 }" labelAlign="left" :wrapper-col="{ span: 7 }" :scrollToFirstError="true">
 			<a-form-item label="归属景区">
 				<!-- <a-input v-model:value="formData.data.scenicId" placeholder="请填写景区名字" /> -->
@@ -50,18 +51,15 @@
 			<div class="title">核销规则</div>
 
 			<a-form-item label="核销项目" :wrapper-col="{ span: 12 }">
-				<div :class="type === '2' ? 'table-wrapper-long' : 'table-wrapper'">
-					<EditProjectTable
-						@del-verification-obj="delVerificationObj"
-						@add-verification-obj="addVerificationObj"
-						:tableList="formData.data.itemList"
-					/>
-				</div>
+				<EditProjectTable
+					@del-verification-obj="delVerificationObj"
+					@add-verification-obj="addVerificationObj"
+					:tableList="formData.data.itemList"
+					@add-verification-obj-sign="addVerificationObjSign"
+				/>
 			</a-form-item>
 			<a-form-item label="可核销账号" :wrapper-col="{ span: 12 }">
-				<div class="table-wrapper">
-					<EditCountTable :tableList="[{ assistId: formData.data.assistId }]" />
-				</div>
+				<EditCountTable :tableList="[{ assistId: formData.data.assistId }]" />
 			</a-form-item>
 
 			<div class="title">票价</div>
@@ -69,9 +67,7 @@
 				<a-input v-model:value="formData.data.dayStock" placeholder="输入每日库存" />
 			</a-form-item>
 			<a-form-item label="票价" :wrapper-col="{ span: 12 }" v-bind="errorPriceInfos" style="margin-bottom: 10px">
-				<div class="table-wrapper">
-					<EditPriceTable :tableList="[{ wateryPrice: formData.data.wateryPrice, price: formData.data.price }]" @change-price="changePrice" />
-				</div>
+				<EditPriceTable :tableList="[{ wateryPrice: formData.data.wateryPrice, price: formData.data.price }]" @change-price="changePrice" />
 			</a-form-item>
 			<a-form-item label="费用包含">
 				<a-textarea v-model:value="formData.data.ticketDesc" placeholder="请输入费用包含" :rows="4" />
@@ -81,9 +77,7 @@
 			</a-form-item>
 			<div class="title">减免规则</div>
 			<a-form-item label="减免规则" :wrapper-col="{ span: 12 }">
-				<div class="table-wrapper-long">
-					<EditRuleTable :tableList="formData.data.discountList" @del-rule-obj="delRuleObj" @add-rule-obj="addRuleObj" />
-				</div>
+				<EditRuleTable :tableList="formData.data.discountList" @del-rule-obj="delRuleObj" @add-rule-obj="addRuleObj" />
 			</a-form-item>
 
 			<div class="footer">
@@ -226,8 +220,15 @@ const delVerificationObj = (index: number) => {
 	formData.data.itemList.splice(index, 1);
 };
 const addVerificationObj = (obj: object) => {
-	console.log(obj, 'addVerificationObj');
-	formData.data.itemList.push(toRaw(obj));
+	if (!formData.data.itemList) {
+		formData.data.itemList = [];
+	}
+	formData.data.itemList = obj;
+
+	// formData.data.itemList.push(obj);
+};
+const addVerificationObjSign = (obj: object) => {
+	formData.data.itemList = obj;
 };
 // 重置
 const reset = (): void => {
@@ -249,8 +250,7 @@ const initEditPage = async () => {
 
 const initCreatePage = () => {
 	navigatorBar.setNavigator(['景区信息管理', '新增']);
-
-	// formData.data.verificationType = route.currentRoute.value?.query?.t === '0' ? 0 : 1;
+	formData.data.verificationType = route.currentRoute.value?.query?.t === '0' ? 0 : 1;
 };
 
 onMounted(() => {
@@ -268,10 +268,17 @@ onBeforeUnmount(() => {
 	padding-bottom: 64px;
 	position: relative;
 	.btn {
-		position: relative;
-		// top: 10px;
-		left: 940px;
+		position: absolute;
+		top: 10px;
+		// left: 940px;
+		// margin-bottom: 10px;
+	}
+	.btn {
+		position: absolute;
+		right: -126px;
+		bottom: -10px;
 		margin-bottom: 10px;
+		// top: 12px;
 	}
 	.title {
 		height: 56px;
