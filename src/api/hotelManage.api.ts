@@ -335,3 +335,12 @@ export async function getInfoByCompanyId(id: number) {
 		showLoading: true,
 	});
 }
+
+// hotel-service/public/api/hotel-information/getAllUnAuditRoomTypeHotel
+export async function getHotelListInAudit() {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-information/getAllUnAuditRoomTypeHotel`,
+		method: 'get',
+		showLoading: true,
+	});
+}
