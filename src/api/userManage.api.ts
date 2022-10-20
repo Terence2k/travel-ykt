@@ -53,11 +53,20 @@ export async function userInfo(id: any) {
 export async function editStatus(data: any) {
 	return request({
 		url: `${commonPath}/customer-service/public/api/sys-user/editStatus`,
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
 		method: 'post',
-    data,
+		data,
+		showLoading: true
+	});
+}
+
+// 修改密码
+export async function editPassWord(data: any) {
+	return request({
+		url: `${commonPath}/customer-service/public/api/sys-user/editPassWord?oid=${data.oid}&oldPassword=${data.oldPassword}&newPassword=${data.newPassword}`,
+		method: 'post',
 		showLoading: true
 	});
 }
