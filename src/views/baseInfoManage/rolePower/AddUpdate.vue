@@ -175,8 +175,6 @@
   }
 
   const getDetail = (id: number) => {
-    checkedKeys.value = [];
-    menuIdsInfo.value = [];
     api.roleDetail(id).then((res: any) => {
       formValidate.value = res;
       getDetailMenuIds(res.roleMenu);
@@ -213,6 +211,8 @@
   }
 
   const init = async () => {
+    checkedKeys.value = [];
+    menuIdsInfo.value = [];
     console.log('params', props.params);
     formValidate.value = {
       roleStatus: 1
