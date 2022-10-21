@@ -19,11 +19,13 @@
 		<a-spin size="large" :spinning="state.tableData.loading">
 			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }">
 				<template #bodyCell="{ column, record }">
+					<template v-if="column.key === 'settlementCost'">
+						<span>{{ (record.settlementCost / 100).toFixed(2) }}元</span>
+					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a href="javascript:;" @click="toHandle(record)" v-if="state.tableData.param.status === 1">处理</a>
 							<a href="javascript:;" @click="toDetails(record)">详情</a>
-							<a href="javascript:;" @click="lookTrip(record)">查看行程单</a>
 						</div>
 					</template>
 				</template></CommonTable
@@ -53,9 +55,19 @@ const columns = [
 		key: 'transferAccountsNo',
 	},
 	{
-		title: '转账流水号',
-		dataIndex: 'transferAccountsSerialNumber',
-		key: 'transferAccountsSerialNumber',
+		title: '行程单号',
+		dataIndex: 'itineraryNo',
+		key: 'itineraryNo',
+	},
+	{
+		title: '转账单位',
+		dataIndex: 'transferAccountsCompanyName',
+		key: 'transferAccountsCompanyName',
+	},
+	{
+		title: '结算总额（元）',
+		dataIndex: 'settlementCost',
+		key: 'settlementCost',
 	},
 	{
 		title: '申请人',
@@ -66,26 +78,6 @@ const columns = [
 		title: '申请时间',
 		dataIndex: 'createTime',
 		key: 'createTime',
-	},
-	{
-		title: '所含团数',
-		dataIndex: 'travelNumber',
-		key: 'travelNumber',
-	},
-	{
-		title: '结算总额（元）',
-		dataIndex: 'settlementCost',
-		key: 'settlementCost',
-	},
-	{
-		title: '转账审核人',
-		dataIndex: 'checkName',
-		key: 'checkName',
-	},
-	{
-		title: '审核时间',
-		dataIndex: 'checkTime',
-		key: 'checkTime',
 	},
 	{
 		title: '操作',
@@ -168,7 +160,7 @@ const timeChange = (arr: any) => {
 };
 const detailSubmit = () => {
 	initList();
-}
+};
 onMounted(() => {
 	initList();
 });

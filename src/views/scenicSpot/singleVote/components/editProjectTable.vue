@@ -5,7 +5,7 @@
 				<a-form-item label="核销项目" class="fz14" v-bind="validateInfos.proj">
 					<a-select
 						v-model:value="formValidate.proj"
-						mode="multiple"
+						:mode="type ? 'multiple' : ''"
 						style="width: 100%"
 						placeholder="请选择"
 						:options="options"
@@ -20,13 +20,7 @@
 			</template>
 		</BaseModal>
 		<div class="inner-wrapper">
-			<CommonTable
-				:dataSource="isCreate && !type ? formValidate.initData : tableList"
-				:columns="type ? columns : column"
-				:scrollY="false"
-				bordered
-				class="left"
-			>
+			<CommonTable :dataSource="!type ? formValidate.initData : tableList" :columns="type ? columns : column" :scrollY="false" bordered class="left">
 				<template #bodyCell="{ column, record, index }">
 					<template v-if="column.key === 'itemId'">
 						<div class="action-btns">
@@ -34,7 +28,7 @@
 								{{ itemNameCompute(Number(record.itemId)) }}
 							</span>
 							<a v-if="record.itemId && !type" href="javascript:;" @click="change(record)">更换</a>
-							<a href="javascript:;" v-if="isCreate && !type && formValidate.initData[0].init" @click="CreateData">请选择</a>
+							<a href="javascript:;" v-if="!type && formValidate.initData[0].init" @click="CreateData">请选择</a>
 						</div>
 					</template>
 					<template v-if="column.key === 'verificationNumber'">
@@ -46,7 +40,7 @@
 						/>
 					</template>
 					<template v-if="column.key === 'ifVerification'">
-						{{ record.verificationNumber ? '是' : '否' }}
+						{{ record.ifVerification ? '是' : '否' }}
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
@@ -76,10 +70,10 @@ import { message } from 'ant-design-vue';
 const route = useRouter();
 
 const type = computed(() => {
-	return route.currentRoute.value?.query?.t === '2' ? true : false;
+	return route.currentRoute.value?.query?.t === '1' ? true : false;
 });
 const isCreate = computed(() => {
-	return route.currentRoute.value?.query?.s;
+	return route.currentRoute.value?.query?.s ? true : false;
 });
 const useForm = Form.useForm;
 
@@ -94,14 +88,15 @@ const props = defineProps({
 });
 //总数
 const ifVerificationNum = computed(() => {
-	let res = props.tableList.filter((i) => !i.ifVerification);
+	let res = props.tableList?.filter((i) => !i.ifVerification) || 0;
 	return res.length || 0;
 });
+
 //次数
 const times = computed(() => {
 	let num = 0;
-	let res = props.tableList.filter((i) => !i.ifVerification);
-	res.map((i) => {
+	let res = props.tableList?.filter((i) => !i.ifVerification);
+	res?.map((i) => {
 		num = num + Number(i.verificationNumber);
 		return i;
 	});
@@ -150,9 +145,10 @@ const columns = ref([
 const itemNameCompute = (id: number) => {
 	let rN = formData.data.filter((i) => i.id === id),
 		optionN = options.value.filter((i) => i.id === id);
-	console.log(optionN, 'optionN');
+	// console.log(optionN, 'optionN');
 
 	return rN[0]?.itemName || optionN[0]?.label || '';
+	// return optionN[0]?.label || '';
 };
 
 const change = (value: object) => {
@@ -171,7 +167,7 @@ const formValidate = reactive({
 	proj: [],
 	initData: [{ init: true }],
 });
-const emits = defineEmits(['del-verification-obj', 'add-verification-obj']);
+const emits = defineEmits(['del-verification-obj', 'add-verification-obj', 'add-verification-obj-sign']);
 const del = (index: number | null) => {
 	delShow.value = true;
 	delIndex.value = index;
@@ -190,15 +186,16 @@ const apply = () => {
 		.then((res) => {
 			console.log(isCreate.value, type.value, '099');
 
-			if (isCreate.value && !type.value) {
+			if (!type.value) {
 				console.log('formValidate.initData');
 
-				formValidate.initData = [{ itemId: formValidate.proj[0], ifVerification: null, verificationNumber: null }];
+				formValidate.initData = [{ itemId: formValidate.proj, ifVerification: formValidate.proj === '1' ? true : false, verificationNumber: null }];
+				emits('add-verification-obj-sign', formValidate.initData);
 			} else {
-				toRaw(formValidate.proj).map((i) => {
-					emits('add-verification-obj', { itemId: i, ifVerification: null, verificationNumber: null });
-					return i;
+				let arr = formValidate.proj.map((i) => {
+					return { itemId: i, ifVerification: i === '1' ? true : false, verificationNumber: null };
 				});
+				emits('add-verification-obj', arr);
 			}
 
 			cancel();
@@ -240,7 +237,7 @@ const formData = reactive({
 });
 
 const handleChange = (value) => {
-	console.log(value);
+	console.log(value, 'asdasd');
 	formValidate.proj = value;
 };
 // 表单
@@ -282,5 +279,12 @@ onMounted(() => {
 .table-area {
 	margin: 0 10px 0 0;
 	padding: 0;
+}
+.btn {
+	position: absolute;
+	right: -126px;
+	bottom: -10px;
+	margin-bottom: 10px;
+	// top: 12px;
 }
 </style>

@@ -43,8 +43,8 @@
           v-model:value="formValidate.businessType"
           @change="getRoleList"
         >
-          <a-select-option v-for="item in roleManage.businessType" :value="item.value">
-            {{ item.title }}
+          <a-select-option v-for="item in businessTypeOption" :value="item.codeValue">
+            {{ item.name }}
           </a-select-option>
         </a-select>
       </a-form-item>
@@ -88,7 +88,7 @@
   import api from '@/api';
   import { message } from 'ant-design-vue';
   import { getUserInfo } from '@/utils/util';
-  import { useRoleManage } from '@/stores/modules/roleManage';
+  import { useBusinessManageOption } from '@/stores/modules/businessManage';
 
   const props = defineProps({
       modelValue: {
@@ -112,7 +112,8 @@
   };
   const userInfo = getUserInfo();
   const roleList: Ref<Array<any>> = ref([]);
-  const roleManage = useRoleManage();
+  const businessManageOptions = useBusinessManageOption();
+  const businessTypeOption = computed(() => businessManageOptions.businessTypeOption);
 
 	const handleOk = () => {
     emit('cancel');
@@ -183,6 +184,14 @@
   watch(dialogVisible, nVal => {
     emit('update:modelValue', nVal);
   });
+  
+  const initOpeion = async () => {
+    await businessManageOptions.getBusinessTypeOption();
+  };
+
+  onMounted(() => {
+    initOpeion();
+  })
 </script>
 
 <style>
