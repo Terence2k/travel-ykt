@@ -265,11 +265,14 @@ const getEnum = async () => {
 	await getAllOpenHotelNameList();
 };
 const getProductTypeName = computed(() => (value: string) => {
-	const idx = generaRulesOptions.productSonTypeList.findIndex((item) => item.value === value);
-	if (idx !== -1) {
-		return generaRulesOptions.productSonTypeList[idx]['name'];
+	if (generaRulesOptions.productTypeList) {
+		const idx = generaRulesOptions.productSonTypeList.findIndex((item) => item.value === value);
+		if (idx !== -1) {
+			return generaRulesOptions.productSonTypeList[idx]['name'];
+		}
+		return '';
 	}
-	return;
+	return '';
 });
 // 景区下拉枚举
 const productRuleLessInfos = async () => {

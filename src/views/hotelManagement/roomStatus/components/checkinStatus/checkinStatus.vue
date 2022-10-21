@@ -1,6 +1,7 @@
 <template>
 	<div class="wrapper-tab-checkinStatus">
 		<a-form
+			ref="formRef"
 			:model="formValidate"
 			:rules="rules"
 			:scrollToFirstError="true"
@@ -73,8 +74,11 @@
 import dayjs from 'dayjs';
 import api from '@/api';
 import { useRoomStatusStore } from '@/stores/modules/roomStatus';
+import { message } from 'ant-design-vue';
 
 const useRoomStatus = useRoomStatusStore();
+
+const formRef = ref<FormInstance>() as any;
 
 const route = useRoute();
 const router = useRouter();
@@ -136,12 +140,22 @@ watch(
 );
 
 const save = () => {
-	useRoomStatus.setBaseInfoDataSource({ ...formValidate.value });
-	console.info('toRaw(useRoomStatus.getBaseInfoDataSource)', toRaw(useRoomStatus.getBaseInfoDataSource));
-	router.push({ path: '/hotelManagement/roomStatus' });
+	formRef.value.validateFields().then((result) => {
+		//console.info('检车结果：', result);
+		console.log('formValidate.value', formValidate);
+		const tempData = ref({ ...formValidate.value });
+		useRoomStatus.setBaseInfoDataSource(tempData);
+
+		message.success('保存成功');
+		router.push({ path: '/hotelManagement/roomStatus' });
+		console.info('toRaw(useRoomStatus.getBaseInfoDataSource)', toRaw(useRoomStatus.getBaseInfoDataSource));
+	});
 };
 
-const submitAudit = () => {};
+const submitAudit = () => {
+	message.success('审核成功');
+	router.push({ path: '/hotelManagement/roomStatus' });
+};
 </script>
 
 <style lang="less" scoped>

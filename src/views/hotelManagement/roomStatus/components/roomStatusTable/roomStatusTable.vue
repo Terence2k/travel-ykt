@@ -168,7 +168,7 @@ const rowSelection = computed(() => {
 
 const dataSource = computed(() => {
 	if (Array.isArray(tableState.tableData.data)) {
-		console.log('eeeeeeeeeeeeeeeeeellllllllll', tableState.tableData.data);
+		//console.log('eeeeeeeeeeeeeeeeeellllllllll', tableState.tableData.data);
 		const result = tableState.tableData.data.map((item) => {
 			return {
 				...item,

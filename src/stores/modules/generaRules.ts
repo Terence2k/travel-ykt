@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { store } from '../index';
 import api from '@/api';
 // 产品规则和通用规则的数据
-export const useGeneraRules = defineStore('menuManage', {
+export const useGeneraRules = defineStore('generaRules', {
 	state: () => ({
 		teamTypeList: [],
 		productTypeList: [
@@ -46,7 +46,7 @@ export const useGeneraRules = defineStore('menuManage', {
 			if (!this.prepaidCompanyList.length) {
 				api.getPrepaidCompanyList().then((res: any) => {
 					this.prepaidCompanyList = res.filter((item: any) => {
-						return item.oid !== 202;
+						return item.oid !== 202 && item.oid !== 116 && item.oid !== 117 && item.oid !== 118;
 					});
 				});
 			}

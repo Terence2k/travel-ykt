@@ -48,7 +48,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
         onSelect: (record: DataItem, selected: boolean, selectedRows: DataItem[]) => {
             console.log(record, selected, selectedRows);
         },
-		tableData: route.query.id ? travelStore.touristList : [],
+		tableData: computed(() => travelStore.touristList),
 		columns: [
 			{
 				title: ' 序号 ',
@@ -202,7 +202,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			
 			await methods.addRules(key)
 			const res = await validateFields(state.formRef);
-			if (!res) return emits('onSuccess', {touristList: res});
+			if (!res) return emits('onSuccess', {touristList: {valid: res, message: '请填写完整游客信息', index: 2}});
 			if (key) {
 				if (!methods.isOld(key)) return;
 				if (!methods.isUpload(key)) return;

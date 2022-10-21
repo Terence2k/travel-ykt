@@ -26,6 +26,7 @@
 			<div class="table-bar">
 				<div class="flex-container">
 					<span>房态管理</span>
+					<span class="end-item">双击剩下房间数量可进行预定管理</span>
 				</div>
 				<div class="table-container">
 					<RoomBookingTable :hotelId="hotel"> </RoomBookingTable>
@@ -44,7 +45,7 @@ const hotelOptionsData = ref([]);
 
 const hotelOptions = ref<SelectProps['options']>(hotelOptionsData);
 
-const auditStatus = ref(1);
+const auditStatus = ref(null);
 
 const auditStatusData = ref([
 	{
@@ -78,6 +79,7 @@ watch(
 						label: item?.hotelName,
 					};
 				});
+				console.log('eeeeeeeeeeeeeeeeeeeee', hotelOptionsData.value[0]?.value);
 				hotel.value = hotelOptionsData.value[0]?.value || '';
 			}
 		});

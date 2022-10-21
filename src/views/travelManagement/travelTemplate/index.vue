@@ -2,9 +2,7 @@
 	<div>
 		<CommonSearch>
 			<search-item label="模板名称">
-				<a-select allowClear v-model:value="state.tableData.param.shopId" placeholder="请输入模板名称">
-					<a-select-option v-for="i in cateringStoreName" :key="i.shopId" :value="i.shopId">{{ i.shopName }}</a-select-option>
-				</a-select>
+				<a-input placeholder="请输入模板名称"></a-input>
 			</search-item>
 			<search-item label="团队类型">
 				<a-select allowClear v-model:value="state.tableData.param.shopId" placeholder="请选择团队类型">
@@ -15,16 +13,16 @@
 				<a-button @click="getList">查询</a-button>
 			</template>
 		</CommonSearch>
-		<CommonTable :dataSource="state.tableData.data" rowKey="id" :row-selection="rowSelection" :columns="columns">
+		<CommonTable :dataSource="data" rowKey="id" :row-selection="rowSelection" :columns="columns">
 			<template #button>
-				<a-button type="primary" @click="openInfoPage" style="margin-right: 16px">新增</a-button>
+				<a-button type="primary" @click="AddPage(2)" style="margin-right: 16px">新增</a-button>
 				<a-button type="primary">导出</a-button>
 			</template>
 			<template #bodyCell="{ column, record }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a @click="openInfoPage(record)">查看</a>
-						<a>编辑</a>
+						<a @click="openeditPage(record)">编辑</a>
 						<a-popconfirm title="确认是否允许带团" ok-text="确认" cancel-text="取消" @confirm="confirm" @cancel="cancel">
 							<a>允许带团</a>
 						</a-popconfirm>
@@ -101,6 +99,16 @@ const columns = [
 	},
 ];
 
+const data = [
+	{
+		cateringName:'王某某',
+		orderNum:'13567345698',
+		price:'NKQ7960F',
+		status:'丽江黑白水旅行社',
+		companyName:'暂停带团'
+	}
+]
+
 const state = reactive({
 	tableData: {
 		data: [],
@@ -119,7 +127,9 @@ const state = reactive({
 });
 
 // 气泡框
-const confirm = (e: MouseEvent) => {};
+const confirm = (e: MouseEvent) => {
+	message.success('允许带团')
+};
 
 const cancel = (e: MouseEvent) => {};
 
@@ -150,11 +160,11 @@ const rowSelection = computed(() => {
 const cateringStoreName = computed(() => scenicSpotOptions.cateringStoreName);
 
 const getList = async (): Promise<void> => {
-	api.getProductPage(state.tableData.param).then((res: any) => {
-		state.tableData.total = res.total;
-		const list: [any] = dealData(res.content);
-		state.tableData.data = list;
-	});
+	// api.getProductPage(state.tableData.param).then((res: any) => {
+	// 	state.tableData.total = res.total;
+	// 	const list: [any] = dealData(res.content);
+	// 	state.tableData.data = list;
+	// });
 	await scenicSpotOptions.getCateringStoreName();
 };
 const status = {
@@ -169,14 +179,14 @@ const dealData = (params: [any]) => {
 	return params;
 };
 
-const openEditPage = (record: any) => {
-	router.push({ path: '/catering/product_Management/product_edit', query: { id: record.oid } });
-};
-const openInfoPage = (record: any) => {
+const openeditPage = (record: any) => {
 	router.push({ path: '/travel/travelTtemplate/info', query: { id: record.oid } });
 };
-const openAddPage = (record: any) => {
-	router.push({ path: '/catering/product_Management/product_add' });
+const openInfoPage = (record: any) => {
+	router.push({ path: '/travel/travelTtemplate/info', query: { typei: 1 } });
+};
+const AddPage = (id: any) => {
+	router.push({ path: '/travel/travelTtemplate/info', query: { id: 1 } });
 };
 
 onMounted(() => {

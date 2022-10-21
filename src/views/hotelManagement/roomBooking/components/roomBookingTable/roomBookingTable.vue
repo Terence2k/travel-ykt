@@ -506,7 +506,7 @@ const getHotelRoomTypeStockTableInfo = (hotelId) => {
 			.getHotelRoomStockInFuture({
 				startTime: startTime.format('YYYY-MM-DD'),
 				endTime: startTime.add(1, 'month').subtract(1, 'day').format('YYYY-MM-DD'),
-				hotelId: 1,
+				hotelId: props.hotelId,
 			})
 			.then((result) => {
 				tableState.tableData.data = result;

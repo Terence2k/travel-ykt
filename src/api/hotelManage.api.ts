@@ -359,7 +359,7 @@ export async function getMaxMinusCountOfRoom(roomTypeId: number) {
 	return request({
 		url: `${commonPath}/hotel-service/public/api/hotel-room-type/getMostReduceRoomNum/${roomTypeId}`,
 		method: 'get',
-		showLoading: true,
+		showLoading: false,
 	});
 }
 
@@ -367,6 +367,16 @@ export async function getMaxMinusCountOfRoom(roomTypeId: number) {
 export async function getHotelInfoByCompanyId(companyId: number) {
 	return request({
 		url: `${commonPath}/hotel-service/public/api/hotel-information/getInfoByCompanyId/${companyId}`,
+		method: 'get',
+		showLoading: true,
+	});
+}
+
+// /hotel-service/public/api/hotel-information/getGuidePriceByHotelId/{hotelId}
+
+export async function getPriceByHotelId(hotelId: number) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-information/getGuidePriceByHotelId/${hotelId}`,
 		method: 'get',
 		showLoading: true,
 	});

@@ -5,12 +5,30 @@
   max-height: calc(100vh - 130px);
   :deep{ 
 
+    .ant-input-number-input{
+      min-width: 40px;
+    }
+
+    .ant-select-selector {
+      background-color: #fff !important;
+      border: 1px solid #d9d9d9 !important;
+      border-radius: 2px;
+    }
+  
+    .ant-select-disabled.ant-select:not(.ant-select-customize-input) .ant-select-selector{
+      background-color:#f5f5f5 !important;
+    }
+
+    .ant-input-number-group-addon{
+      border: none !important;
+    }
+
     .ant-select-arrow{
       pointer-events:all !important;
       user-select:all !important;
     }
     .ant-table-body{
-      overflow: hidden scroll !important;
+      overflow: scroll !important;
       height: calc(100vh - 250px) !important;
       border-bottom:1px solid #f5f4f7;
     }

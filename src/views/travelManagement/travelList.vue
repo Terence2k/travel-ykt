@@ -180,6 +180,7 @@
 	const showAddBtn = computed(() => {
 		return userInfo.sysRoles.some((it: any) => it.roleCode === ROLE.TRAVE_CODE);
 	})
+	sessionStorage.removeItem('traveList');
 </script>
 <style lang="less" scoped>
 	.trave-contaner {
