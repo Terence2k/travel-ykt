@@ -18,6 +18,11 @@
 							<span>{{ text }}</span>
 						</div>
 					</template>
+					<template v-if="['roomOperateNum'].includes(column.dataIndex)">
+						<div>
+							<span>{{ text }}</span>
+						</div>
+					</template>
 					<template v-if="column.dataIndex === 'actions'">
 						<div class="cell-actions">
 							<span>{{ getActionText(record.operationType) }}</span>
@@ -68,8 +73,8 @@ const columns = [
 	},
 	{
 		title: '房间变更数量',
-		dataIndex: 'roomChangeNum',
-		key: 'roomChangeNum',
+		dataIndex: 'roomOperateNum',
+		key: 'roomOperateNum',
 		width: '8%',
 	},
 	{

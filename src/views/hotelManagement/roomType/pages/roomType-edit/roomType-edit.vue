@@ -382,7 +382,7 @@ const saveRoomInfo = () => {
 					hotelId: item.hotelId ? parseInt(item.hotelId) : undefined,
 					roomTypeName: item.roomTypeName,
 					roomTypeCode: item.roomTypeCode,
-					roomNum: parseInt(item.roomNum) + parseInt(item.operationType),
+					roomNum: parseInt(item.roomNum) - parseInt(item.roomOperateNum),
 					roomOccupancyNum: parseInt(item.roomOccupancyNum),
 					operationType: parseInt(item.operationType),
 					roomOperateNum: parseInt(item.roomOperateNum),

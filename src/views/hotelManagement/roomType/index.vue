@@ -50,7 +50,7 @@
 						<template #bodyCell="{ column, record }">
 							<template v-if="column.dataIndex === 'unitStatus'">
 								<div class="cell-unitStatus">
-									<span class="item">{{ getunitStatusName(record?.unitStatus) }}</span>
+									<span class="item">待审核</span>
 								</div>
 							</template>
 							<template v-if="column.dataIndex === 'actions'">
