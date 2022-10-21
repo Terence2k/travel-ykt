@@ -335,3 +335,39 @@ export async function getInfoByCompanyId(id: number) {
 		showLoading: true,
 	});
 }
+
+// hotel-service/public/api/hotel-information/getAllUnAuditRoomTypeHotel
+export async function getHotelListInAudit() {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-information/getAllUnAuditRoomTypeHotel`,
+		method: 'get',
+		showLoading: true,
+	});
+}
+
+// /hotel-service/public/api/hotel-room-type/getRoomTypeByRole
+export async function getHotelListInEdit() {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-room-type/getRoomTypeByRole`,
+		method: 'get',
+		showLoading: true,
+	});
+}
+
+// /hotel-service/public/api/hotel-room-type/getMostReduceRoomNum/{roomTypeId}
+export async function getMaxMinusCountOfRoom(roomTypeId: number) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-room-type/getMostReduceRoomNum/${roomTypeId}`,
+		method: 'get',
+		showLoading: true,
+	});
+}
+
+// /hotel-service/public/api/hotel-information/getInfoByCompanyId/
+export async function getHotelInfoByCompanyId(companyId: number) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-information/getInfoByCompanyId/${companyId}`,
+		method: 'get',
+		showLoading: true,
+	});
+}

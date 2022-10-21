@@ -307,7 +307,7 @@ const getProductTypeName = computed(() => (value: number) => {
 	if (idx !== -1) {
 		return generaRulesOptions.productTypeList[idx]['name'];
 	}
-	return;
+	return '';
 });
 </script>
 

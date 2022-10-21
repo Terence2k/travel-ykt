@@ -14,6 +14,7 @@
 <script setup lang="ts">
 import CheckinStatus from '../../components/checkinStatus/checkinStatus.vue';
 import GroupOrderDetails from '../../components/groupOrderDetails/groupOrderDetails.vue';
+
 const activeTabKey = ref('1');
 </script>
 
