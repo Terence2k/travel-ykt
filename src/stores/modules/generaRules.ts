@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { store } from '../index';
 import api from '@/api';
 // 产品规则和通用规则的数据
-export const useGeneraRules = defineStore('menuManage', {
+export const useGeneraRules = defineStore('generaRules', {
 	state: () => ({
 		teamTypeList: [],
 		productTypeList: [

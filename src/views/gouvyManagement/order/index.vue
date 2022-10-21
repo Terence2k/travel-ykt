@@ -26,8 +26,8 @@
 	</CommonSearch>
 	<div class="table-area">
 		<div class="list-btn">
-			<a-button type="primary" class="success" >导出</a-button>
-			<a-button type="primary"  class="btn">批量打印票据</a-button>
+			<a-button type="primary" class="success">导出</a-button>
+			<a-button type="primary" class="btn">批量打印票据</a-button>
 		</div>
 		<CommonTable :dataSource="dataSource" :columns="columns">
 			<template #bodyCell="{ column, index }">
@@ -35,7 +35,7 @@
 					<div class="action-btns">
 						<a href="javascript:;" @click="toSee">查看</a>
 						<a href="javascript:;" @click="toExamine">审核</a>
-						<a href="javascript:;" >打印票据</a>
+						<a href="javascript:;" @click="print">打印票据</a>
 					</div>
 				</template>
 			</template>
@@ -56,8 +56,9 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
-import { ref,reactive} from 'vue';
-import { useRouter } from 'vue-router'
+import { ref, reactive } from 'vue';
+import { useRouter } from 'vue-router';
+import { message } from 'ant-design-vue';
 const route = useRouter();
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
@@ -66,13 +67,13 @@ const dataSource = [
 		key: '1',
 		name: 'YNLJ135680',
 		age: '黑白水旅行社',
-		add:'白鹿旅行社',
+		add: '白鹿旅行社',
 		address: '2022.2.23~2022.2.25',
 		address2: '30',
 		address3: '40',
 		address4: '5',
 		address6: '是',
-		status:'待审核'
+		status: '待审核',
 	},
 ];
 const columns = [
@@ -159,11 +160,14 @@ const onHandleCurrentChange = (val: number) => {
 };
 //查看
 const toSee = () => {
-	route.push({ path: '/gouvyManagement/order/order_edit'});
+	route.push({ path: '/gouvyManagement/order/order_edit' });
 };
 //审核
 const toExamine = () => {
-	route.push({ path: '/gouvyManagement/order/order_edit',query:{index:1}});
+	route.push({ path: '/gouvyManagement/order/order_edit', query: { index: 1 } });
+};
+const print = () => {
+	message.success('已打印');
 };
 const pageSideChange = (current: number, size: number) => {
 	console.log('changePageSize:', size);
@@ -225,7 +229,7 @@ onBeforeUnmount(() => {
 .ant-table-body {
 	height: 500px;
 }
-.btn{
+.btn {
 	margin-left: 50px;
 }
 </style>

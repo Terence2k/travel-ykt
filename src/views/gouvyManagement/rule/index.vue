@@ -13,7 +13,7 @@
 			<a-row>
 				<a-col :span="12"></a-col>
 				<a-col :span="10"></a-col>
-				<a-col :span="2"> <a-button type="primary">保存</a-button></a-col>
+				<a-col :span="2"> <a-button type="primary" @click="save">保存</a-button></a-col>
 			</a-row>
 		</a-form>
 		<p class="top-p">减免规则</p>
@@ -24,10 +24,15 @@
 		</a-row>
 		<CommonTable :dataSource="dataSource" :columns="columns">
 			<template #bodyCell="{ column, index, record }">
+				<template v-if="column.key === 'status'">
+					<a-span v-if="record.status==1">启用</a-span>
+					<a-span v-else>禁用</a-span>
+				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a href="javascript:;" @click="add({  row: record,  handle: 'update'})">编辑</a>
-						<a href="javascript:;">禁用</a>
+						<a href="javascript:;" @click="disable" v-if="record.status==1">禁用</a>
+						<a href="javascript:;" @click="enable" v-else>启用</a>
 					</div>
 				</template>
 			</template>
@@ -53,6 +58,7 @@ import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import BaseModal from '@/components/common/BaseModal.vue';
 import Edit from './edit.vue';
+import { message } from 'ant-design-vue';
 const route = useRouter();
 const dialogVisible = ref(false);
 const value = ref<string>('1');
@@ -67,7 +73,16 @@ const dataSource = [
 		address: '特殊证件',
 		address2: '军官证、士官证',
 		address3: '0.5',
-		address4: '启用',
+		status: '1',
+	},
+	{
+		key: '1',
+		name: '1',
+		age: '军人减免规则',
+		address: '特殊证件',
+		address2: '军官证、士官证',
+		address3: '0.5',
+		status: '2',
 	},
 ];
 const columns = [
@@ -93,8 +108,8 @@ const columns = [
 	},
 	{
 		title: '状态',
-		dataIndex: 'address4',
-		key: 'address4',
+		dataIndex: 'status',
+		key: 'status',
 	},
 	{
 		title: '操作',
@@ -144,6 +159,15 @@ const add = (param: any) => {
 	}
 	state.operationModal.isEditdate = true;
 };
+const disable=()=>{
+	message.error('已禁用');
+}
+const enable=()=>{
+	message.success('已启用');
+}
+const save =()=>{
+	message.success('保存成功');
+}
 const onSearch = () => {
 	// userList(state.tableData.param).then((res) => {
 	// 	console.log(res);
