@@ -4,7 +4,9 @@
       <span>
         我的企业基本信息
       </span>
-      <span class="enterprise_state">
+      <span
+        class="enterprise_state"
+        v-if="['TRAVEL', 'HOTEL', 'TICKET'].includes(userInfo.sysCompany.businessType)">
         {{ enterpriseState }}
       </span>
     </div>
@@ -58,6 +60,14 @@
             <a-input v-model:value="form.phone" placeholder="请输入联系电话">
             </a-input>
           </a-form-item>
+          <a-form-item name="creditCode" label="统一社会信用代码">
+            <a-input v-model:value="form.creditCode" placeholder="请输入统一社会信用代码">
+            </a-input>
+          </a-form-item>
+          <a-form-item name="businessLicenseUrl" label="营业执照">
+            <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl">
+            </img-upload>
+          </a-form-item>
         </template>
         <!-- 旅行社、酒店、景区、监理、古维 -->
         <template v-if="['TRAVEL', 'HOTEL', 'TICKET', 'SUPERVISE', 'ANCIENT_UYGUR'].includes(userInfo.sysCompany.businessType)">
@@ -80,14 +90,6 @@
             </a-input>
           </a-form-item>
         </template>
-        <a-form-item name="creditCode" label="统一社会信用代码">
-          <a-input v-model:value="form.creditCode" placeholder="请输入统一社会信用代码">
-          </a-input>
-        </a-form-item>
-        <a-form-item name="businessLicenseUrl" label="营业执照">
-          <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl">
-          </img-upload>
-        </a-form-item>
         <!-- 旅行社特殊字段 -->
         <template v-if="userInfo.sysCompany.businessType == 'TRAVEL'">
           <a-form-item name="businessLicenseUrl1" label="经营许可证">
@@ -197,14 +199,20 @@
           </div>
         </div> -->
         <a-form-item>
-          <a-button
-            type="primary"
-            html-type="submit"
-            style="margin-right:20px"
-            :loading="loading"
-            v-if="form.informationAuditStatus != 1">
-              提交审核
-          </a-button>
+            <a-button
+              type="primary"
+              html-type="submit"
+              style="margin-right:20px"
+              :loading="loading"
+              v-if="form.informationAuditStatus != 1">
+              <!-- 除酒店、景点、旅行社外不提交审核 -->
+              <template v-if="['TRAVEL', 'HOTEL', 'TICKET'].includes(userInfo.sysCompany.businessType)">
+                提交审核
+              </template>
+              <template v-else>
+                保存
+              </template>
+            </a-button>
         </a-form-item>
       </a-form>
     </div>
@@ -266,7 +274,7 @@ const initOpeion = async () => {
   if (Object.keys(travelStore.businessTypeOptions).includes(userInfo.sysCompany.businessType)) {
     submitFunc.value = travelStore.businessTypeOptions[userInfo.sysCompany.businessType].submitFunc;
   } else {
-    submitFunc.value = 'submitFunc';
+    submitFunc.value = 'editCompany';
   }
   console.log('state.form:', state.form)
 };
