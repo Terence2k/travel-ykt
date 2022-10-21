@@ -70,6 +70,9 @@
 import CommonTable from '@/components/common/CommonTable.vue';
 import addHotel from './addHotel.vue';
 import addTicket from './addTicket.vue';
+import { useNavigatorBar } from '@/stores/modules/navigatorBar';
+const navigatorBar = useNavigatorBar();
+const route = useRouter();
 import { useTraveInfo } from './traveInfo';
 const props = defineProps({
 	onCheck: {
@@ -89,7 +92,16 @@ const {
     edit, 
     save, 
     add } = useTraveInfo(props, emits);
-
+    onMounted(() => {
+	if (route.currentRoute.value?.query?.id) {
+		navigatorBar.setNavigator(['行程模板管理', '新增']);
+	} else {
+		navigatorBar.setNavigator(['行程模板管理', '查看']);
+	}
+});
+onBeforeUnmount(() => {
+	navigatorBar.clearNavigator();
+});
 </script>
 <style lang="less" scoped>
 	.select-guide {
