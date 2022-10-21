@@ -73,8 +73,8 @@ watch(obj, (newVal) => {
 
 // 初始化
 const initPage = async (): Promise<void> => {
-	console.log(route.currentRoute.value?.query?.typei);
-	typei.value = route.currentRoute.value?.query?.typei;
+	console.log(route.query?.typei);
+	typei.value = route.query?.typei;
 };
 
 onMounted(() => {

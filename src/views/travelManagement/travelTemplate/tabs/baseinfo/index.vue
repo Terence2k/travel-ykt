@@ -3,18 +3,14 @@
 		<div class="form_pad">
 			<!-- 查看 -->
 			<a-form v-if="route.query?.typei" labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
-				<a-form-item label="所属门店" name="name"> {{ formData.data.companyName }} </a-form-item>
-				<a-form-item label="餐饮名称"> {{ formData.data.cateringName }} </a-form-item>
-				<a-form-item label="可预订数量"> {{ formData.data.orderNum }} </a-form-item>
-				<a-form-item label="单价"> {{ formData.data.price }} </a-form-item>
-				<a-form-item label="图片">
-					<img :width="200" :src="formData.data.imgUrl" />
-				</a-form-item>
-				<a-form-item label="状态">
-					{{ formData.data.status == 1 ? '启用' : '禁用' }}
-				</a-form-item>
-				<a-form-item label="供餐时间"> {{ formData.data.provideStart }} 至 {{ formData.data.provideEnd }} </a-form-item>
-				<a-form-item label="其他"> {{ formData.data.cateringDesc }} </a-form-item>
+				<a-form-item label="行程类型" name="teamType"> 标准团 </a-form-item>
+				<a-form-item label="发团旅行社" name="a"> 黑白水国际旅行社 </a-form-item>
+				<a-form-item label="做团人" name="a"> tutu发团人 </a-form-item>
+				<a-form-item label="联系电话" name="a"> 133333333 </a-form-item>
+				<a-form-item label="地接旅行社" name="a"> 地接旅行社 </a-form-item>
+				<a-form-item label="地接计调" name="a"> 地接做团人 </a-form-item>
+				<a-form-item label="联系电话" name="a"> 133333333 </a-form-item>
+				<a-form-item label="模板名称" name="a"> 模板1 </a-form-item>
 			</a-form>
 			<!-- 新增 -->
 			<a-form v-else labelAlign="left" ref="formRef" :model="formState" :rules="rulesRef" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
@@ -67,44 +63,39 @@ const formRef = ref();
 
 const props = defineProps({
 	onCheck: {
-		type: Boolean
-	}
-})
+		type: Boolean,
+	},
+});
 // 行程类型枚举
 const travaType = [
 	{ label: '标准团', value: '1' },
 	{ label: '散客网点团', value: '2' },
 	{ label: '休闲通道团', value: '3' },
 ];
-let addParams: any = {}
+let addParams: any = {};
 if (route.query.id) {
-	
 } else {
 	addParams = {
 		oid: null,
-		teamType: '',
-	}
+		teamType: '1',
+	};
 }
 
 const type = ref('');
-const emits = defineEmits(['onSuccess'])
-const formState = ref<{[k:string]: any}>(addParams);
+const emits = defineEmits(['onSuccess']);
+const formState = ref<{ [k: string]: any }>(addParams);
 
 const onSubmit = async () => {
 	try {
-		const values = await formRef.value.validateFields()
-		emits('onSuccess', {basicParam: formState.value});
+		const values = await formRef.value.validateFields();
+		emits('onSuccess', { basicParam: formState.value });
 	} catch (errorInfo) {
-		emits('onSuccess', {basicParam: false});
+		emits('onSuccess', { basicParam: false });
 	}
 };
 
-
-
-
 // 初始化
-const initPage = async (): Promise<void> => {
-};
+const initPage = async (): Promise<void> => {};
 
 const rulesRef = {
 	teamType: [{ required: true, message: '请选择行程类型' }],
@@ -133,9 +124,12 @@ onMounted(() => {
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
 });
-watch(() => props.onCheck, (newVal) => {
-	onSubmit()
-})
+watch(
+	() => props.onCheck,
+	(newVal) => {
+		onSubmit();
+	}
+);
 </script>
 
 <style scoped lang="less">

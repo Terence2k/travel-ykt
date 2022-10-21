@@ -16,8 +16,8 @@
 		</CommonTable>
 		<div class="footer-container">
 			<div class="form-item footer-item">
-				<a-button html-type="submit" class="button">保存</a-button>
-				<a-button class="button">提交</a-button>
+				<a-button html-type="submit" @click="save" class="button">保存</a-button>
+				<a-button class="button" @click="submit">提交</a-button>
 			</div>
 		</div>
 	</div>
@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import CommonTable from '@/components/common/CommonTable.vue';
-
+import { message } from 'ant-design-vue';
 interface DataSourceItem {
 	id: string | number;
 	travelAgencyName: string;
@@ -63,6 +63,8 @@ const columns: TableColumnsType = [
 		width: 200,
 	},
 ];
+
+const router = useRouter();
 
 const dataSource: Array<DataSourceItem> = ref([
 	{
@@ -114,6 +116,16 @@ const tableState = reactive({
 		},
 	},
 });
+
+const save = () => {
+	message.success('保存成功');
+	router.push({ path: '/hotelManagement/roomStatus' });
+};
+
+const submit = () => {
+	message.success('提交成功');
+	router.push({ path: '/hotelManagement/roomStatus' });
+};
 </script>
 
 <style lang="less" scoped>

@@ -359,7 +359,7 @@ export async function getMaxMinusCountOfRoom(roomTypeId: number) {
 	return request({
 		url: `${commonPath}/hotel-service/public/api/hotel-room-type/getMostReduceRoomNum/${roomTypeId}`,
 		method: 'get',
-		showLoading: true,
+		showLoading: false,
 	});
 }
 

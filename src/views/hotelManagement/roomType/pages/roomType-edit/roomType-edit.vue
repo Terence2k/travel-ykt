@@ -30,6 +30,7 @@
 							<template #addonBefore>
 								<a-select
 									:class="{ 'item-new': editableData[record.key]?.operationType === 0 }"
+									@click="getMaxMinusCount(record)"
 									@change="minusNumOptionsChange($event, record)"
 									v-model:value="editableData[record.key].minusNum"
 									:options="minusNumOptions"
@@ -381,7 +382,7 @@ const saveRoomInfo = () => {
 					hotelId: item.hotelId ? parseInt(item.hotelId) : undefined,
 					roomTypeName: item.roomTypeName,
 					roomTypeCode: item.roomTypeCode,
-					roomNum: parseInt(item.roomNum),
+					roomNum: parseInt(item.roomNum) + parseInt(item.operationType),
 					roomOccupancyNum: parseInt(item.roomOccupancyNum),
 					operationType: parseInt(item.operationType),
 					roomOperateNum: parseInt(item.roomOperateNum),
@@ -444,13 +445,14 @@ const add = () => {
 
 const changeRoomOccupancyNum = (target) => {
 	target.roomOccupancyNum = state.systemRoomAllData.find((item) => item.oid === target.roomTypeCode)?.roomOccupancyNum;
-	console.log('当前房型Id为：', target.roomTypeCode);
+	console.log('当前房型Id为：', target.oid);
 	console.log('target:', target);
-	if (target?.operationType !== 0) {
-		api.getMaxMinusCountOfRoom(parseInt(target.roomTypeCode)).then((res) => {
-			console.log('当前房型的最大可减小数量为：', res);
-		});
-	}
+	// if (target?.operationType !== 0) {
+	// 	api.getMaxMinusCountOfRoom(target.oid).then((res) => {
+	// 		console.log('当前房型的最大可减小数量为：', res);
+	// 		editableData[target?.key].maxMinusCountOfRoom = res;
+	// 	});
+	// }
 };
 
 const minusNumOptionsChange = (val, option) => {
@@ -500,6 +502,25 @@ const getAuditStatusText = (auditStatus: number) => {
 	return result;
 };
 
+const getMaxMinusCount = (target: string) => {
+	if (target?.operationType !== 0) {
+		api.getMaxMinusCountOfRoom(target.oid).then((res) => {
+			console.log('当前房型的最大可减小数量为：', res);
+			editableData[target?.oid].maxMinusCountOfRoom = res;
+			const maxCount = ~res;
+			minusNumOptions.value = (() => {
+				const result = [];
+				for (let i = -1; i > maxCount; i--) {
+					result.push({
+						value: i,
+						label: i.toString(),
+					});
+				}
+				return result;
+			})();
+		});
+	}
+};
 onMounted(() => {
 	initPage();
 });

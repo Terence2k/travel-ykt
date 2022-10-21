@@ -44,7 +44,7 @@ const hotelOptionsData = ref([]);
 
 const hotelOptions = ref<SelectProps['options']>(hotelOptionsData);
 
-const auditStatus = ref(1);
+const auditStatus = ref(null);
 
 const auditStatusData = ref([
 	{
@@ -78,6 +78,7 @@ watch(
 						label: item?.hotelName,
 					};
 				});
+				console.log('eeeeeeeeeeeeeeeeeeeee', hotelOptionsData.value[0]?.value);
 				hotel.value = hotelOptionsData.value[0]?.value || '';
 			}
 		});
