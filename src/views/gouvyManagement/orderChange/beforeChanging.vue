@@ -1,6 +1,9 @@
 <template>
 	<div class="warp">
 		<header>行程信息2</header>
+		<div class="go-div">
+			<a-button type="primary" @click="go">返回上一级</a-button>
+		</div>
 		<a-form labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
 			<a-form-item label="行程类型">
 				<span>标准团</span>
@@ -27,19 +30,30 @@
 				<span>30人</span>
 			</a-form-item>
 			<div v-if="state.tableData.index.index == '1'">
-				<a-button type="primary" class="success">审核通过</a-button>
-				<a-button type="primary" class="btn">审核不通过</a-button>
+				<a-button type="primary" class="success" @click="adopt">审核通过</a-button>
+				<a-button type="primary" class="btn" @click="dialogVisible = true">审核不通过</a-button>
 			</div>
 			<div class="title">人员信息</div>
 			<CommonTable :dataSource="dataSource" :columns="columns">
 				<template #bodyCell="{ column, index }">
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a href="javascript:;">下载证明</a>
+							<a href="javascript:;" @click="download">下载证明</a>
 						</div>
 					</template>
 				</template>
 			</CommonTable>
+			<BaseModal title="审核不通过说明" v-model="dialogVisible">
+			<a-form>
+				<a-form-item label="">
+					<a-textarea placeholder="审核不通过原因" :rows="4" />
+				</a-form-item>
+			</a-form>
+			<template v-slot:footer>
+				<a-button type="primary"  @click="cancel">关闭</a-button>
+				<a-button type="primary" style="width:120px" @click="Fail">确认审核不通过</a-button>
+			</template>
+		</BaseModal>
 		</a-form>
 	</div>
 </template>
@@ -47,9 +61,12 @@
 <script lang="ts" setup>
 import CommonTable from '@/components/common/CommonTable.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
-import { reactive } from 'vue';
+import BaseModal from '@/components/common/BaseModal.vue';
+import { reactive,ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { message } from 'ant-design-vue';
 const route = useRouter();
+const dialogVisible = ref(false);
 const navigatorBar = useNavigatorBar();
 const tstyle = { 'font-weight': '700' };
 const dataSource = [
@@ -128,6 +145,25 @@ const columns = [
 		width: 208,
 	},
 ];
+const go =()=>{
+	route.push({ path: '/gouvyManagement/orderChange/list'});
+}
+const cancel =()=>{
+	dialogVisible.value = false
+}
+const Fail =()=>{
+	message.error('审核未通过');
+	dialogVisible.value = false
+	go()
+}
+const adopt =()=>{
+	message.success('审核已通过');
+	go()
+}
+const download =()=>{
+	message.success('下载成功');
+	go()
+}
 onMounted(() => {
 	state.tableData.index = route.currentRoute.value?.query;
 });
@@ -159,5 +195,9 @@ onMounted(() => {
 	.btn {
 		margin-left: 50px;
 	}
+	.go-div{
+	width: 100%;
+	text-align: right;
+}
 }
 </style>
