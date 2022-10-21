@@ -1,6 +1,7 @@
 <template>
 	<div class="wrapper-tab-checkinStatus">
 		<a-form
+			ref="formRef"
 			:model="formValidate"
 			:rules="rules"
 			:scrollToFirstError="true"
@@ -77,6 +78,8 @@ import { message } from 'ant-design-vue';
 
 const useRoomStatus = useRoomStatusStore();
 
+const formRef = ref<FormInstance>() as any;
+
 const route = useRoute();
 const router = useRouter();
 
@@ -137,12 +140,16 @@ watch(
 );
 
 const save = () => {
-	console.log('formValidate.value', formValidate);
-	const tempData = ref({ ...formValidate.value });
-	useRoomStatus.setBaseInfoDataSource(tempData);
-	router.push({ path: '/hotelManagement/roomStatus' });
-	console.info('toRaw(useRoomStatus.getBaseInfoDataSource)', toRaw(useRoomStatus.getBaseInfoDataSource));
-	message.success('保存成功');
+	formRef.value.validateFields().then((result) => {
+		//console.info('检车结果：', result);
+		console.log('formValidate.value', formValidate);
+		const tempData = ref({ ...formValidate.value });
+		useRoomStatus.setBaseInfoDataSource(tempData);
+
+		message.success('保存成功');
+		router.push({ path: '/hotelManagement/roomStatus' });
+		console.info('toRaw(useRoomStatus.getBaseInfoDataSource)', toRaw(useRoomStatus.getBaseInfoDataSource));
+	});
 };
 
 const submitAudit = () => {
