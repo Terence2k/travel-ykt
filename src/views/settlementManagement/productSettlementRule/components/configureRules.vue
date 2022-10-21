@@ -69,6 +69,7 @@ import DelModal from '@/components/common/DelModal.vue';
 import { message } from 'ant-design-vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import api from '@/api';
+import { useGeneraRules } from '@/stores/modules/GeneraRules';
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 const route = useRouter();
@@ -353,18 +354,24 @@ const getTeamType = async () => {
 	const result = await api.productRuleTeamType();
 	state.teamTypeList = result;
 };
-
+const generaRulesOptions = useGeneraRules();
 // 计算属性
 const getTeamTypeName = computed(() => (value: number) => {
-	const idx = state.teamTypeList.findIndex((item) => item.oid === value);
-	if (idx !== -1) {
-		return state.teamTypeList[idx]['name'];
-	} else {
+	if (generaRulesOptions.productTypeList) {
+		const idx = state.teamTypeList.findIndex((item) => item.oid === value);
+		if (idx !== -1) {
+			return state.teamTypeList[idx]['name'];
+		}
 		return '';
 	}
+	return '';
 });
 const getProductTypeName = computed(() => (value: number) => {
-	return state.productTypeList.find((item) => item.value === value)['name'];
+	const idx = state.productTypeList.findIndex((item: any) => item.value === value);
+	if (idx !== -1) {
+		return state.productTypeList['name'];
+	}
+	return '';
 });
 const getProductName = computed(() => (productSonType: string, chargeProductSonId: numebr) => {
 	if (state.productSonList.length > 0) {
