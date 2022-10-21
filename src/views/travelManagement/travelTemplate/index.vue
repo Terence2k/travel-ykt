@@ -127,7 +127,9 @@ const state = reactive({
 });
 
 // 气泡框
-const confirm = (e: MouseEvent) => {};
+const confirm = (e: MouseEvent) => {
+	message.success('允许带团')
+};
 
 const cancel = (e: MouseEvent) => {};
 

@@ -296,16 +296,22 @@ const getEnum = async () => {
 };
 // 计算属性
 const getTeamTypeName = computed(() => (value: number) => {
-	const idx = generaRulesOptions.teamTypeList.findIndex((item) => item.oid === value);
-	if (idx !== -1) {
-		return generaRulesOptions.teamTypeList[idx]['name'];
+	if (generaRulesOptions.productTypeList) {
+		const idx = generaRulesOptions.teamTypeList.findIndex((item) => item.oid === value);
+		if (idx !== -1) {
+			return generaRulesOptions.teamTypeList[idx]['name'];
+		}
+		return '';
 	}
-	return;
+	return '';
 });
 const getProductTypeName = computed(() => (value: number) => {
-	const idx = generaRulesOptions.productTypeList.findIndex((item) => item.value === value);
-	if (idx !== -1) {
-		return generaRulesOptions.productTypeList[idx]['name'];
+	if (generaRulesOptions.productTypeList) {
+		const idx = generaRulesOptions.productTypeList.findIndex((item) => item.value === value);
+		if (idx !== -1) {
+			return generaRulesOptions.productTypeList[idx]['name'];
+		}
+		return '';
 	}
 	return '';
 });

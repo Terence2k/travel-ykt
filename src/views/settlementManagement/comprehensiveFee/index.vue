@@ -52,13 +52,16 @@ import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import { message } from 'ant-design-vue';
 import { Modal } from 'ant-design-vue';
-import { useBusinessManageOption } from '@/stores/modules/businessManage';
 import api from '@/api';
-const businessManageOptions = useBusinessManageOption();
-const businessTypeOption = computed(() => businessManageOptions.businessTypeOption);
+import { settlementOptions } from '@/stores/modules/settlement';
 const navigatorBar = useNavigatorBar();
 const route = useRouter();
+const useOptions = settlementOptions();
+const initOption = async () => {
+	await useOptions.getBusinessTypeOptionList();
+};
 
+const option = computed(() => useOptions.businessTypeOption);
 const columns = [
 	{
 		title: '综费产品',
@@ -223,7 +226,6 @@ const initList = async () => {
 		.catch((err) => {
 			state.tableData.loading = false;
 		});
-		console.log(businessTypeOption.value);
 		
 };
 // 数据处理
@@ -232,19 +234,14 @@ const dealData = (params: [any]) => {
 		// feeModel 收费模式: 0-人数 1-价格
 		// feeNumber 收费数量
 		i.feeText = i.feeModel == 0 ? `${i.feeNumber} 元/人` : `${i.feeNumber} 元`;	
-		const list = businessTypeOption.value;
-		list.forEach(item => {
-			if (i.belongCompany == item.codeValue) {
-				i.belongCompanyName = item.name
-			}
-		});
+		i.belongCompanyName = option.value[i.belongCompany]
 		return i;
 	});
 
 	return params;
 };
 onMounted(() => {
-	businessManageOptions.getBusinessTypeOption();
+	initOption();
 	initList();
 	navigatorBar.setNavigator(['结算管理', '综费产品']);
 });

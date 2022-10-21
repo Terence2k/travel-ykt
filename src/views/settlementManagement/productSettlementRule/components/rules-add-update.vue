@@ -9,9 +9,8 @@
 			placeholder="请选择分账单位"
 		>
 			<a-form-item label="分账单位" name="companyType">
-				<a-select ref="select" v-model:value="formValidate.companyType" style="width: 100%">
-					<!-- :options="params.prepaidCompanyList.map((item) => ({ value: item.codeValue, label: item.name }))" -->
-					<a-select-option v-for="item in params.prepaidCompanyList" :value="item.codeValue" :key="item.codeValue">{{ item.name }}</a-select-option>
+				<a-select ref="select" v-model:value="formValidate.companyType" style="width: 100%"
+					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.codeValue, label: item.name }))">
 				</a-select>
 			</a-form-item>
 			<a-form-item label="扣款模式">

@@ -96,7 +96,7 @@
 					v-model:value="formState.prepaidCompany"
 					placeholder="请选择垫付单位"
 					allowClear
-					:options="getPrepaidList.map((item) => ({ value: item.codeValue, label: item.name }))"
+					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.codeValue, label: item.name }))"
 				>
 				</a-select>
 			</a-form-item>
@@ -110,7 +110,7 @@
 					v-model:value="formState.lastCostBelongCompany"
 					style="width: 100%"
 					placeholder="请选择剩余费用归属"
-					:options="getPrepaidCompanyList.map((item) => ({ value: item.codeValue, label: item.name }))"
+					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.codeValue, label: item.name }))"
 				>
 				</a-select>
 			</a-form-item>
@@ -400,47 +400,6 @@ const getCompanyTypeName = computed(() => (value: string) => {
 });
 const showProductSon = computed(() => {
 	return Number(route.currentRoute.value.query.productType) === 1;
-});
-// 计算属性 -- 当产品为景区 则该下拉框删除酒店和餐饮
-const getPrepaidCompanyList = computed(() => {
-	const array: any = [];
-	if (Number(query.productType) === 1) {
-		// 景区
-		generaRulesOptions.prepaidCompanyList.forEach((item: any) => {
-			if (item.name !== '酒店' && item.name !== '餐饮') {
-				array.push(item);
-			}
-		});
-	} else if (Number(query.productType) === 2) {
-		// 酒店
-		generaRulesOptions.prepaidCompanyList.forEach((item: any) => {
-			if (item.name !== '景区' && item.name !== '餐饮') {
-				array.push(item);
-			}
-		});
-	} else if (Number(query.productType) === 3) {
-		// 餐饮
-		generaRulesOptions.prepaidCompanyList.forEach((item: any) => {
-			if (item.name !== '景区' && item.name !== '酒店') {
-				array.push(item);
-			}
-		});
-	} else {
-		generaRulesOptions.prepaidCompanyList.forEach((item: any) => {
-			array.push(item);
-		});
-	}
-	cacheData.value.rulesParams.prepaidCompanyList = array;
-	return array;
-});
-const getPrepaidList = computed(() => {
-	const array: any = [];
-	generaRulesOptions.prepaidCompanyList.forEach((item: any) => {
-		if (item.name !== '景区' && item.name !== '餐饮' && item.name !== '酒店') {
-			array.push(item);
-		}
-	});
-	return array;
 });
 </script>
 

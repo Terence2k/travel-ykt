@@ -1,13 +1,10 @@
 <template>
 	<CommonSearch>
 		<search-item label="转账单号" style="width: 280px">
-			<a-input v-model:value="state.tableData.param.applicationName" placeholder="请输入费用名称" allowClear style="width: 180px" />
+			<a-input v-model:value="state.tableData.param.transferAccountsNo" placeholder="请输入转账单号" allowClear style="width: 180px" />
 		</search-item>
 		<search-item label="行程单号" style="width: 280px">
-			<a-input v-model:value="state.tableData.param.applicationName" placeholder="请输入费用名称" allowClear style="width: 180px" />
-		</search-item>
-		<search-item label="订单号" style="width: 280px">
-			<a-input v-model:value="state.tableData.param.applicationName" placeholder="请输入费用名称" allowClear style="width: 180px" />
+			<a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入行程单号" allowClear style="width: 180px" />
 		</search-item>
 		<search-item label="团队类型" style="width: 280px">
 			<a-input v-model:value="state.tableData.param.applicationName" placeholder="请输入费用名称" allowClear style="width: 180px" />
@@ -16,22 +13,22 @@
 			<a-input v-model:value="state.tableData.param.applicationName" placeholder="请输入费用名称" allowClear style="width: 180px" />
 		</search-item>
 		<search-item label="地接社" style="width: 280px">
-			<a-date-picker v-model:value="state.tableData.param.applicationDate" style="width: 180px" />
+			<a-input v-model:value="state.tableData.param.applicationName" placeholder="请输入费用名称" allowClear style="width: 180px" />
 		</search-item>
 		<search-item label="景区名称" style="width: 280px">
 			<a-input v-model:value="state.tableData.param.applicationName" placeholder="请输入费用名称" allowClear style="width: 180px" />
 		</search-item>
-		<search-item label="票名称" style="width: 280px">
+		<search-item label="转账单位" style="width: 280px">
 			<a-input v-model:value="state.tableData.param.applicationName" placeholder="请输入费用名称" allowClear style="width: 180px" />
 		</search-item>
-		<search-item label="预定时间" style="width: 280px">
+		<search-item label="转账时间" style="width: 280px">
 			<a-date-picker v-model:value="state.tableData.param.applicationDate" style="width: 180px" />
 		</search-item>
-		<search-item label="入园时间" style="width: 280px">
-			<a-date-picker v-model:value="state.tableData.param.applicationDate" style="width: 180px" />
+		<search-item label="收款单位" style="width: 280px">
+			<a-input v-model:value="state.tableData.param.applicationName" placeholder="请输入费用名称" allowClear style="width: 180px" />
 		</search-item>
-		<search-item label="结算时间" style="width: 280px">
-			<a-date-picker v-model:value="state.tableData.param.applicationDate" style="width: 180px" />
+		<search-item label="银行流水号" style="width: 280px">
+			<a-input v-model:value="state.tableData.param.applicationName" placeholder="请输入费用名称" allowClear style="width: 180px" />
 		</search-item>
 		<template #button>
 			<a-button @click="initList">查询</a-button>

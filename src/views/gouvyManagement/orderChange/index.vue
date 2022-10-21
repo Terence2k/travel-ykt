@@ -35,7 +35,7 @@
 					<div class="action-btns">
 						<a href="javascript:;" @click="toSee">查看</a>
 						<a href="javascript:;" @click="toExamine">审核</a>
-						<a href="javascript:;" >打印票据</a>
+						<a href="javascript:;" @click="print">打印票据</a>
 					</div>
 				</template>
 			</template>
@@ -58,6 +58,8 @@ import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import { reactive} from 'vue';
 import { useRouter } from 'vue-router'
+import { message } from 'ant-design-vue';
+
 const route = useRouter();
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
@@ -171,6 +173,9 @@ const toSee = () => {
 const toExamine = () => {
 	route.push({ path: '/gouvyManagement/orderChange/order-change_edit' ,query:{index:1}});
 };
+const print =()=>{
+	message.success('已打印');
+}
 const pageSideChange = (current: number, size: number) => {
 	console.log('changePageSize:', size);
 	// state.tableData.param.pageSize = size;
