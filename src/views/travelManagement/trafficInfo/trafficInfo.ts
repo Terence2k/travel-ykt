@@ -48,7 +48,7 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
         onSelect: (record: DataItem, selected: boolean, selectedRows: DataItem[]) => {
             console.log(record, selected, selectedRows);
         },
-		tableData: route.query.id ? travelStore.trafficList : [],
+		tableData: computed(() => travelStore.trafficList),
 		columns: [
 			{
 				title: ' 序号 ',
@@ -127,7 +127,7 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 			await methods.addRules(key)
 			const res = await validateFields(state.formRef);
 			
-			if (!res) return emits('onSuccess', {transportList: res});
+			if (!res) return emits('onSuccess', {transportList: {valid: res, message: '请填写完整交通信息', index: 3}});
 			if (key) {
 				methods.copyData(key);
 				delete state.editableData[key];
