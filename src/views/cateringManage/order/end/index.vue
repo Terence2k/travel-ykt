@@ -12,7 +12,7 @@
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a>查看</a>
+						<a @click="opendetailPage">查看</a>
 						<a @click="visible = true">申请改刷</a>
 					</div>
 				</template>
@@ -52,6 +52,7 @@ import BaseModal from '@/components/common/BaseModal.vue';
 import Pic from '@/components/common/imageWrapper.vue';
 import { ref, reactive, onMounted, UnwrapRef } from 'vue';
 import api from '@/api';
+const router = useRouter();
 
 const visible = ref(false);
 const handleOk = async (callback: Function) => {
@@ -211,6 +212,10 @@ const addOrUpdate = (param: any) => {
 	state.operationModal.isAddOrUpdate = true;
 };
 
+const opendetailPage = () => {
+	router.push({ path: '/catering/order_Management/order_detail' });
+};
+
 onMounted(() => {
 	getRoleList();
 	onSearch();
@@ -228,4 +233,5 @@ onMounted(() => {
 .ant-table-body {
 	height: 500px;
 }
+
 </style>

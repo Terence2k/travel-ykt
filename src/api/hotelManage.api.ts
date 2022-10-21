@@ -371,3 +371,13 @@ export async function getHotelInfoByCompanyId(companyId: number) {
 		showLoading: true,
 	});
 }
+
+// /hotel-service/public/api/hotel-information/getGuidePriceByHotelId/{hotelId}
+
+export async function getPriceByHotelId(hotelId: number) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-information/getGuidePriceByHotelId/${hotelId}`,
+		method: 'get',
+		showLoading: true,
+	});
+}
