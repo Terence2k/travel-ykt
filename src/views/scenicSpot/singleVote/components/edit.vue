@@ -1,7 +1,6 @@
 <template>
 	<div class="editWrapper">
 		<header class="title">基本信息</header>
-		{{ formData.data.itemList }}formData.data.itemList
 		<a-form class="" ref="formRef" :model="formData" :label-col="{ span: 3 }" labelAlign="left" :wrapper-col="{ span: 7 }" :scrollToFirstError="true">
 			<a-form-item label="归属景区">
 				<!-- <a-input v-model:value="formData.data.scenicId" placeholder="请填写景区名字" /> -->

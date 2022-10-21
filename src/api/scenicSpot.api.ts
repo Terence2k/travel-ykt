@@ -177,3 +177,10 @@ export async function getMultipleList(data: any) {
 		data,
 	});
 }
+// 联票 详情
+export async function getMultipleDetail(id: number) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-unite/${id}`,
+		method: 'get',
+	});
+}

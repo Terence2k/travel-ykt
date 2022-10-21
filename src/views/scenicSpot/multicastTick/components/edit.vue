@@ -2,17 +2,19 @@
 	<div class="editWrapper">
 		<header>基本信息</header>
 		<a-form class="" ref="formRef" :label-col="{ span: 3 }" labelAlign="left" :wrapper-col="{ span: 8 }" :scrollToFirstError="true">
-			<a-form-item label="联票名称" v-bind="validateInfos[`data.name`]">
-				<a-input v-model:value="formData.data.name" placeholder="请填写景区名字" />
+			<a-form-item label="联票名称" v-bind="validateInfos[`data.ticketName`]">
+				<a-input v-model:value="formData.data.ticketName" placeholder="请填写景区名字" />
 			</a-form-item>
-			<a-form-item label="子票选择" v-bind="validateInfos[`data.businessType`]">
-				<a-select allowClear v-model:value="formData.data.businessType" placeholder="请选择企业类型">
-					<a-select-option v-for="o in businessTypeOption" :key="o.name" :value="o.oid">{{ o.name }}</a-select-option>
+			<a-form-item label="子票选择" v-bind="validateInfos[`data.scenicTicketListId`]">
+				<a-select mode="multiple" allowClear v-model:value="formData.data.scenicTicketListId" placeholder="子票选择">
+					<a-select-option v-for="o in formData.data.scenicTicketList" :key="o.ticketSonName" :value="o.ticketId">
+						{{ o.ticketSonName }}
+					</a-select-option>
 				</a-select>
 			</a-form-item>
 
-			<a-form-item label="联票描述" v-bind="validateInfos[`data.creditCode`]">
-				<a-textarea v-model:value="formData.data.creditCode" placeholder="请输入其他说明" :rows="4" />
+			<a-form-item label="联票描述" v-bind="validateInfos[`data.ticketDesc`]">
+				<a-textarea v-model:value="formData.data.ticketDesc" placeholder="请输入其他说明" :rows="4" />
 			</a-form-item>
 			<a-form-item label="联票减扣规则" v-bind="validateInfos[`data.businessLicenseUrl`]">
 				<TableRule :tableList="formData.data.discountList" @del-rule-obj="delRuleObj" @add-rule-obj="addRuleObj" />
@@ -104,37 +106,13 @@ const addRuleObj = (obj: object) => {
 	formData.data.discountList.push(obj);
 };
 //初始化下拉列表
-const initOpeion = async () => {
-	await scenicSpotOptions.getBusinessTypeOption();
-	await scenicSpotOptions.getAllAreaProvice(0);
+const initOption = async () => {
+	// await scenicSpotOptions.getBusinessTypeOption();
+	// await scenicSpotOptions.getAllAreaProvice(0);
 };
 // 下拉选择
 const popupScroll = () => {
 	console.log('popupScroll');
-};
-
-//下拉列表
-const businessTypeOption = computed(() => scenicSpotOptions.businessTypeOption);
-const proviceList = computed(() => scenicSpotOptions.proviceList);
-const cityList = computed(() => scenicSpotOptions.cityList);
-const areaList = computed(() => scenicSpotOptions.areaList);
-
-const selectCity = async (id: any) => {
-	if (id) {
-		await scenicSpotOptions.getAllAreaCity(id);
-	} else {
-		scenicSpotOptions.cleanCity();
-		formData.data.cityId = null;
-		formData.data.areaId = null;
-	}
-};
-const selectArea = async (id: any) => {
-	if (id) {
-		await scenicSpotOptions.getAllArea(id);
-	} else {
-		scenicSpotOptions.cleanArae();
-		formData.data.areaId = null;
-	}
 };
 
 // 提交
@@ -164,33 +142,33 @@ const save = async (params: object) => {
 		route.push({ path: '/scenic-spot/information/list' });
 	}
 };
+
 //合并错误提示
 const errorInfos = computed(() => {
 	return mergeValidateInfo(toArray(validateInfos).splice(0, 4));
 });
+
 // 重置
 const reset = (): void => {
 	resetFields();
 };
 //初始化页面
 const initPage = async (): Promise<void> => {
-	let res = await api.getScenicById(route.currentRoute.value?.query?.oid);
-	formData.data = res;
-	formData.data.oid = parseInt(route.currentRoute.value?.query?.oid);
-	// formData.data.cityId && selectCity(formData.data.cityId);
-	// formData.data.areaId && selectArea(formData.data.areaId);
+	let statisStatus = route.currentRoute.value?.query?.t === '1';
+	if (statisStatus) {
+		let res = await api.getMultipleDetail(route.currentRoute.value?.query?.o);
+		formData.data = res;
+	}
 };
 
 // 自定义面包屑
 onMounted(async () => {
-	navigatorBar.setNavigator(['景区信息管理', '编辑']);
-	await initOpeion();
+	// navigatorBar.setNavigator(['景区信息管理', '编辑']);
+	await initOption();
 	await initPage();
-	await selectCity(formData.data.provinceId);
-	await selectArea(formData.data.cityId);
 });
 onBeforeUnmount(() => {
-	navigatorBar.clearNavigator();
+	// navigatorBar.clearNavigator();
 });
 </script>
 
