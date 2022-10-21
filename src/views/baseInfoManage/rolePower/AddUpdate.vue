@@ -23,8 +23,8 @@
           placeholder="请选择可用范围"
           v-model:value="formValidate.availableRange"
         >
-          <a-select-option v-for="item in optionTypeList" :value="item.value">
-            {{ item.title }}
+          <a-select-option v-for="item in optionTypeList" :value="item.codeValue">
+            {{ item.name }}
           </a-select-option>
         </a-select>
       </a-form-item>
@@ -175,8 +175,6 @@
   }
 
   const getDetail = (id: number) => {
-    checkedKeys.value = [];
-    menuIdsInfo.value = [];
     api.roleDetail(id).then((res: any) => {
       formValidate.value = res;
       getDetailMenuIds(res.roleMenu);
@@ -213,6 +211,8 @@
   }
 
   const init = async () => {
+    checkedKeys.value = [];
+    menuIdsInfo.value = [];
     console.log('params', props.params);
     formValidate.value = {
       roleStatus: 1

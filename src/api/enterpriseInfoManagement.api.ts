@@ -18,3 +18,11 @@ export function submitInformationAudit(data: any) {
     showLoading: true
   });
 }
+// 根据id查询企业信息
+export function getCompanyInformation(id: any) {
+  return request({
+    url: `/customer-service/public/api/company/getCompanyInformation?oid=${id}`,
+    method: 'post',
+    showLoading: true
+  });
+}

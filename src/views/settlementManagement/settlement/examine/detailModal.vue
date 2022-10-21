@@ -1,6 +1,6 @@
 <template>
 	<BaseModal :title="options.title" v-model="modelValue" :width="1000">
-		<CommonTable :dataSource="formData.list" :columns="columns" :scrollY="false" :scroll="{ y: '300px' }">
+		<CommonTable :dataSource="formData.list" :columns="columns" :scrollY="false">
 
 		</CommonTable>
 		<template v-slot:footer>
