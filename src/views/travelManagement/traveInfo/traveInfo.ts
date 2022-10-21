@@ -247,6 +247,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			travelStore.setCompositeProducts(state.allFeesProducts);
 		},
 		async findByIdTeamType() {
+			if (!travelStore.teamType) return
 			const formData = new FormData();
 			formData.append('id', travelStore.teamType);
 			console.log(travelStore.teamType)

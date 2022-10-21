@@ -26,8 +26,8 @@ const rules = {
 
 export function useGuideInfo(props: any, emits: any): Record<string, any> {
 	const { onCheck } = toRefs(props);
-	const travelStore = useTravelStore()
-	const route = useRoute()
+	const travelStore = useTravelStore();
+	const route = useRoute();
 	const state = reactive<{editableData: UnwrapRef<Record<string, DataItem>>, [k:string]: any}>({
 		editableData: {},
 		guideParams: {
@@ -36,7 +36,7 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 			queryType: 2
 		},
 		guideData: [],
-		tableData: route.query.id ? travelStore.guideList : [],
+		tableData: computed(() => travelStore.guideList),
 		columns: [
 			{
 				title: ' 序号 ',
@@ -127,7 +127,7 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 			}
 			const res = await validateFields(state.formRef);
 			
-			if (!res) return emits('onSuccess', {guideList: res});
+			if (!res) return emits('onSuccess', {guideList: {valid: res, message: '请填写完整导游信息', index: 1}});
 			if (key) {
 				state.editableData[key].startDate = state.editableData[key].time[0]
 				state.editableData[key].endDate = state.editableData[key].time[1]

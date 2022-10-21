@@ -120,9 +120,15 @@ export const travelManagement = {
             method: 'get',
             showLoading: false
         });
+    },
+    reserveHotel(data: any){
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/reserveHotel`,
+            data,
+            method: 'post',
+            showLoading: true
+        });
     }
 
-    
-    
     
 }

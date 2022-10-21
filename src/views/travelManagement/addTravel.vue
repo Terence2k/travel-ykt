@@ -1,6 +1,6 @@
 <template>
 	<div class="trave-contaner">
-		<a-tabs v-model:activeKey="activeKey">
+		<a-tabs v-model:activeKey="activeKey" @change="changeTab">
 			<a-tab-pane v-for="(item, index) in pages" :key="index" :tab="item.label">
 				<component @onSuccess="save" :onCheck="check" :is="item.name"></component>
 			</a-tab-pane>
@@ -28,6 +28,7 @@ import { cloneDeep, debounce } from 'lodash';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
+	const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any )
 	const route = useRoute()
 	const router = useRouter()
 	const travelStore = useTravelStore();
@@ -70,41 +71,44 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 	const save = (e: any) => {
 		rulesPass.push(e)
 		for (let i = 0; i < rulesPass.length; i++) {
-		obj.data = cloneDeep({
-			...obj.data,
-			...rulesPass[i]
-		})
+			obj.data = cloneDeep({
+				...obj.data,
+				...rulesPass[i]
+			})
 		}
 
 	}
 	const saveItinerary = (val:any) => {
-		let ajax = route.query.id ? api.travelManagement.editItinerary : api.travelManagement.saveItinerary
+		console.log(travelStore.touristList)
+		let ajax = (route.query.id || traveListData.oid) ? 
+					api.travelManagement.editItinerary : 
+					api.travelManagement.saveItinerary
 		return ajax(
-		{
-			oid: route.query.id,
-			attachmentParam: val.attachmentParam || {
-			receptionAgreement: "http://test1.jpg",
-			rentCarContract: "http://test2.jpg",
-			travelContract: "http://test.jpg"
-		},
-			basicParam: val.basicParam || {},
-			guideList: travelStore.guideList.filter((it: any) => it.edit),
-			itineraryInfoParam: {
-				compositeProducts: travelStore.compositeProducts
-			},
+			{
+				oid: route.query.id,
+				attachmentParam: travelStore.fileInfo || {},
+				basicParam: val.basicParam || {},
+				guideList: travelStore.guideList.filter((it: any) => it.edit),
+				itineraryInfoParam: {
+					compositeProducts: travelStore.compositeProducts
+				},
 				touristList: travelStore.touristList.filter((it: any) => it.edit),
 				transportList: travelStore.trafficList.filter((it: any) => it.edit)
 			}
 		).then((res: any) => {
-			let msg = route.query.id ? '编辑成功' : '新增成功'
-			message.success(msg);
-			router.push('/travel/travel_manage/travel_list')
+			res && sessionStorage.setItem('traveList', JSON.stringify(res));
+			getTraveDetail();
+			// let msg = route.query.id ? '编辑成功' : '新增成功'
+			// message.success(msg);
+			// router.push('/travel/travel_manage/travel_list')
 		})
 	}
 	const debounceFun = debounce((val) => {
-		console.log(val)
 		for (let k in val) {
-			if (!val[k]) return
+			if (val[k].valid === false) {
+				activeKey.value = val[k].index
+				return message.error(val[k].message)
+			}
 		}
 		saveItinerary(val)
 	} ,500)
@@ -113,7 +117,7 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 	})
 
   	const getTraveDetail = () => {
-		if (!route.query.id) {
+		if (!route.query.id && !traveListData) {
 			travelStore.setBaseInfo({});
 			travelStore.setGuideList([]);
 			travelStore.setTouristList([]);
@@ -121,7 +125,7 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 			return
 		} 
 		api.travelManagement.getItineraryDetail({
-			oid: route.query.id,
+			oid: route.query.id || traveListData.oid,
 			pageNo: 1,
 			pageSize: 100000
 		}).then((res: any) => {
@@ -137,11 +141,19 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 			travelStore.setGuideList(res.guideList);
 			travelStore.setTouristList(res.touristList.content);
 			travelStore.setTrafficList(res.transportList);
+			travelStore.setFileInfo(res.attachment);
 		
 		})
 	}
-	
-getTraveDetail();
+	const changeTab = (event: number) => {
+		if (event === 4) {
+			
+			check.value = !check.value
+			
+		}
+	}
+	getTraveDetail();
+// !route.query.id && saveItinerary({})
 </script>
 <style lang="less" scoped>
 .trave-contaner {
