@@ -22,7 +22,7 @@ export default [
 				path: 'hotelBaseInfo',
 				name: 'hotelBaseInfo',
 				meta: {
-					title: '房型管理',
+					title: '基础信息管理',
 				},
 				children: [
 					{
@@ -46,6 +46,41 @@ export default [
 						path: 'hotelStarDisplay',
 						name: 'hotelStarDisplay',
 						component: () => import('@/views/hotelManagement/baseInfo/pages/hotelStar-display/hotelStar-display.vue'),
+						meta: {
+							title: '审核',
+							isDetail: true,
+						},
+					},
+				],
+			},
+			{
+				path: 'roomType',
+				name: 'roomType',
+				meta: {
+					title: '房型管理',
+				},
+				children: [
+					{
+						path: '',
+						component: () => import('@/views/hotelManagement/roomType/index.vue'),
+						meta: {
+							title: '基础信息',
+							isDetail: true,
+						},
+					},
+					{
+						path: 'roomTypeEdit',
+						name: 'roomTypeEdit',
+						component: () => import('@/views/hotelManagement/roomType/pages/roomType-edit/roomType-edit.vue'),
+						meta: {
+							title: '编辑',
+							isDetail: true,
+						},
+					},
+					{
+						path: 'roomTypeCheck',
+						name: 'roomTypeCheck',
+						component: () => import('@/views/hotelManagement/roomType/pages/roomType-check/roomType-check.vue'),
 						meta: {
 							title: '审核',
 							isDetail: true,

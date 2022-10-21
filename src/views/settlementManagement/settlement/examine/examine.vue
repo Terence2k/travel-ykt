@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<CommonTable :dataSource="state.tableData.data" rowKey="oid" :columns="columns" :row-selection="rowSelection">
+		<CommonTable :dataSource="state.tableData.data" :scroll="{ x: '100%',y: '100%' }" rowKey="oid" :columns="columns" :row-selection="rowSelection">
 			<template #button>
 				<div class="btn">
 					<a-button type="primary" @click="examine('all', null)">审核通过</a-button>

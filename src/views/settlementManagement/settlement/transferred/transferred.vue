@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<CommonTable :dataSource="state.tableData.data" :columns="columns" >
+		<CommonTable :dataSource="state.tableData.data" :scroll="{ x: '100%',y: '100%' }" :columns="columns" >
 			<template #bodyCell="{ column, record }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">

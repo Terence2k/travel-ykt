@@ -188,14 +188,7 @@ onMounted(() => {});
 	}
 }
 .table-area {
-	margin: 0 10px 0 0;
+	// margin: 0 10px 0 0;
 	padding: 0;
-}
-.btn {
-	position: absolute;
-	right: -126px;
-	bottom: -10px;
-	margin-bottom: 10px;
-	// top: 12px;
 }
 </style>
