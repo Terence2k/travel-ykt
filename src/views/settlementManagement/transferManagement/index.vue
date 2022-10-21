@@ -13,7 +13,7 @@
 	<div class="table-area">
 		<a-tabs v-model:activeKey="state.tableData.param.status" @change="tabsChange">
 			<a-tab-pane :key="1" tab="待审核"></a-tab-pane>
-			<a-tab-pane :key="2" tab="转账完成" force-render></a-tab-pane>
+			<a-tab-pane :key="2" tab="已转账" force-render></a-tab-pane>
 			<a-tab-pane :key="3" tab="审核不通过"></a-tab-pane>
 		</a-tabs>
 		<a-spin size="large" :spinning="state.tableData.loading">

@@ -1,15 +1,33 @@
 <template>
 	<CommonSearch>
-		<search-item label="转账单号">
+		<search-item label="转账单号" style="width: 280px">
+			<a-input v-model:value="state.tableData.param.transferAccountsNo" placeholder="请输入转账单号" allowClear style="width: 180px" />
+		</search-item>
+		<search-item label="行程单号" style="width: 280px">
+			<a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入行程单号" allowClear style="width: 180px" />
+		</search-item>
+		<search-item label="团队类型" style="width: 280px">
 			<a-input v-model:value="state.tableData.param.applicationName" placeholder="请输入费用名称" allowClear style="width: 180px" />
 		</search-item>
-		<search-item label="转账单位">
+		<search-item label="组团社" style="width: 280px">
 			<a-input v-model:value="state.tableData.param.applicationName" placeholder="请输入费用名称" allowClear style="width: 180px" />
 		</search-item>
-		<search-item label="转账时间">
+		<search-item label="地接社" style="width: 280px">
+			<a-input v-model:value="state.tableData.param.applicationName" placeholder="请输入费用名称" allowClear style="width: 180px" />
+		</search-item>
+		<search-item label="景区名称" style="width: 280px">
+			<a-input v-model:value="state.tableData.param.applicationName" placeholder="请输入费用名称" allowClear style="width: 180px" />
+		</search-item>
+		<search-item label="转账单位" style="width: 280px">
+			<a-input v-model:value="state.tableData.param.applicationName" placeholder="请输入费用名称" allowClear style="width: 180px" />
+		</search-item>
+		<search-item label="转账时间" style="width: 280px">
 			<a-date-picker v-model:value="state.tableData.param.applicationDate" style="width: 180px" />
 		</search-item>
-		<search-item label="收款单位">
+		<search-item label="收款单位" style="width: 280px">
+			<a-input v-model:value="state.tableData.param.applicationName" placeholder="请输入费用名称" allowClear style="width: 180px" />
+		</search-item>
+		<search-item label="银行流水号" style="width: 280px">
 			<a-input v-model:value="state.tableData.param.applicationName" placeholder="请输入费用名称" allowClear style="width: 180px" />
 		</search-item>
 		<template #button>
@@ -25,7 +43,7 @@
 				<template #bodyCell="{ column, record, index }">
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a href="javascript:;" @click="toTrip(record)">查看行程单</a>
+							<!-- <a href="javascript:;" @click="toTrip(record)">查看行程单</a> -->
 							<a href="javascript:;">查看订单</a>
 						</div>
 					</template>
@@ -60,24 +78,54 @@ const columns = [
 		key: 'itineraryNo',
 	},
 	{
-		title: '行程单数',
+		title: '行程单号',
 		dataIndex: 'routeName',
 		key: 'routeName',
 	},
 	{
-		title: '转账单位',
+		title: '团队类型',
+		dataIndex: 'routeName',
+		key: 'routeName',
+	},
+	{
+		title: '组团社',
+		dataIndex: 'routeName',
+		key: 'routeName',
+	},
+	{
+		title: '地接社',
+		dataIndex: 'routeName',
+		key: 'routeName',
+	},
+	{
+		title: '游客人数',
 		dataIndex: 'subTravelName',
 		key: 'subTravelName',
 	},
 	{
-		title: '转账金额（元）',
+		title: '结算时间',
+		dataIndex: 'subTravelName',
+		key: 'subTravelName',
+	},
+	{
+		title: '结算金额（元）',
 		dataIndex: 'time',
 		key: 'time',
 	},
 	{
-		title: '转账账户',
+		title: '转账单位',
 		dataIndex: 'groupTypeStr',
 		key: 'groupTypeStr',
+	},
+	{
+		title: '转账金额（元）',
+		dataIndex: 'guides',
+		key: 'guides',
+	},
+	{
+		title: '转账账户',
+		dataIndex: 'guides',
+		key: 'guides',
 	},
 	{
 		title: '转账时间',
@@ -91,6 +139,11 @@ const columns = [
 	},
 	{
 		title: '收款账户',
+		dataIndex: 'touristCount',
+		key: 'touristCount',
+	},
+	{
+		title: '银行流水号',
 		dataIndex: 'touristCount',
 		key: 'touristCount',
 	},

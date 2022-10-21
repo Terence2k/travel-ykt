@@ -46,7 +46,7 @@ export const useGeneraRules = defineStore('generaRules', {
 			if (!this.prepaidCompanyList.length) {
 				api.getPrepaidCompanyList().then((res: any) => {
 					this.prepaidCompanyList = res.filter((item: any) => {
-						return item.oid !== 202;
+						return item.oid !== 202 && item.oid !== 116 && item.oid !== 117 && item.oid !== 118;
 					});
 				});
 			}
