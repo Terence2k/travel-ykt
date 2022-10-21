@@ -19,7 +19,7 @@
 				<div class="list-btn">
 					<a-button type="primary" class="success" @click="createNewProject">新增门票</a-button>
 				</div>
-				<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%' }">
+				<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }">
 					<template #bodyCell="{ column, record }">
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">

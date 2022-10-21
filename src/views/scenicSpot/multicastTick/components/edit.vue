@@ -158,17 +158,18 @@ const initPage = async (): Promise<void> => {
 	if (statisStatus) {
 		let res = await api.getMultipleDetail(route.currentRoute.value?.query?.o);
 		formData.data = res;
+	} else {
+		navigatorBar.setNavigator(['景区管理', '票仓服务-联票', '新增']);
 	}
 };
 
 // 自定义面包屑
 onMounted(async () => {
-	// navigatorBar.setNavigator(['景区信息管理', '编辑']);
 	await initOption();
 	await initPage();
 });
 onBeforeUnmount(() => {
-	// navigatorBar.clearNavigator();
+	navigatorBar.clearNavigator();
 });
 </script>
 
