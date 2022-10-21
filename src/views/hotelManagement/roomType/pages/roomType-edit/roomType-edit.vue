@@ -29,6 +29,7 @@
 						>
 							<template #addonBefore>
 								<a-select
+									:class="{ 'item-new': editableData[record.key]?.operationType === 0 }"
 									@change="minusNumOptionsChange($event, record)"
 									v-model:value="editableData[record.key].minusNum"
 									:options="minusNumOptions"
@@ -41,6 +42,7 @@
 							</template>
 							<template #addonAfter>
 								<a-select
+									:class="{ 'item-new': editableData[record.key]?.operationType === 0 }"
 									@change="plusNumOptionsChange($event, record)"
 									v-model:value="editableData[record.key].plusNum"
 									:options="plusNumOptions"
@@ -55,14 +57,14 @@
 						<template v-else>
 							<a-input-number :disabled="true" :defaultValue="text">
 								<template #addonBefore>
-									<a-select style="width: 60px">
+									<a-select :disabled="true" style="width: 60px">
 										<template #suffixIcon>
 											<minus-outlined />
 										</template>
 									</a-select>
 								</template>
 								<template #addonAfter>
-									<a-select style="width: 60px">
+									<a-select :disabled="true" style="width: 60px">
 										<template #suffixIcon>
 											<plus-outlined />
 										</template>
@@ -104,6 +106,14 @@
 						/>
 						<template v-else>
 							<a-input style="width: 16%" :disabled="true" :defaultValue="text" />
+						</template>
+					</div>
+				</template>
+				<template v-if="['auditStatus'].includes(column.dataIndex)">
+					<div class="cell-auditStatus">
+						<span v-if="editableData[record.key]">{{ getAuditStatusText(editableData[record.key]?.auditStatus) }}</span>
+						<template v-else>
+							<span>{{ getAuditStatusText(parseInt(text)) }}</span>
 						</template>
 					</div>
 				</template>
@@ -182,10 +192,16 @@ const columns = [
 		width: '13%',
 	},
 	{
+		title: '审核状态',
+		dataIndex: 'auditStatus',
+		key: 'auditStatus',
+		width: '11%',
+	},
+	{
 		title: '房间可入住人数',
 		dataIndex: 'roomOccupancyNum',
 		key: 'roomOccupancyNum',
-		width: '39%',
+		width: '28%',
 	},
 	{
 		title: '操作',
@@ -214,7 +230,7 @@ const userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
 let minusNumOptions = ref<SelectProps['options']>(
 	(() => {
 		const result = [];
-		for (let i = -1; i > -1000; i--) {
+		for (let i = -1; i > -500; i--) {
 			result.push({
 				value: i,
 				label: i.toString(),
@@ -227,7 +243,7 @@ let minusNumOptions = ref<SelectProps['options']>(
 let plusNumOptions = ref<SelectProps['options']>(
 	(() => {
 		const result = [];
-		for (let i = 1; i < 1000; i++) {
+		for (let i = 1; i < 500; i++) {
 			result.push({
 				value: i,
 				label: `+${i.toString()}`,
@@ -249,6 +265,7 @@ const state = reactive({
 	roomInfoResponse: [],
 	roomInfoRequest: [],
 	roomOperateData: {},
+	price: undefined,
 });
 
 const edit = (key: string) => {
@@ -288,37 +305,40 @@ const initPage = () => {
 	if (companyId || companyId === 0) {
 		api.getHotelInfoByCompanyId(companyId).then((res) => {
 			console.log('根据企业id获得的酒店信息为：', res);
+			state.hotelId = res?.oid;
+
+			api.getPriceByHotelId(state.hotelId).then((res) => {
+				console.log('诚信指导价：', res);
+				state.price = res / 100 || '';
+			});
+			api
+				.getHotelListInEdit()
+				.then((res) => {
+					// state.hotelId = res?.
+					console.info(`id${state.hotelId}房型信息:`, res);
+
+					if (Array.isArray(res) && res.length > 0) {
+						state.roomInfoResponse.value = res;
+						dataSource.value = res.map((item) => {
+							if (item.auditStatus === 1) {
+								state.isAuditStatus = true;
+							}
+							return {
+								...item,
+								price: item.price / 100,
+								key: item?.oid,
+							};
+						});
+					} else {
+						state.roomInfoResponse.value = [];
+						dataSource.value = [];
+					}
+				})
+				.catch((err) => {
+					console.error(err);
+				});
 		});
 	}
-
-	api
-		.getHotelListInEdit()
-		.then((res) => {
-			// state.hotelId = res?.
-			console.info(`id${state.hotelId}房型信息:`, res);
-
-			if (Array.isArray(res) && res.length > 0) {
-				state.roomInfoResponse.value = res;
-				dataSource.value = res
-					.filter((item) => item.auditStatus !== 3)
-					.map((item) => {
-						if (item.auditStatus === 1) {
-							state.isAuditStatus = true;
-						}
-						return {
-							...item,
-							price: item.price / 100,
-							key: item?.oid,
-						};
-					});
-			} else {
-				state.roomInfoResponse.value = [];
-				dataSource.value = [];
-			}
-		})
-		.catch((err) => {
-			console.error(err);
-		});
 
 	api.getEnableSystemRoomType().then((res) => {
 		state.systemRoomAllData = res;
@@ -355,7 +375,6 @@ const saveRoomInfo = () => {
 	const result = editableArray
 		?.filter((item) => JSON.stringify(item) !== '{}')
 		.map((item) => {
-			console.log('item-ppppppppppppppppppppppppp', item);
 			if (item.oid) {
 				return {
 					oid: item.oid,
@@ -383,31 +402,31 @@ const saveRoomInfo = () => {
 		});
 	console.info('保存的房型信息：', result);
 
-	// api
-	// 	.editRoomDetailInfo(result)
-	// 	.then((res) => {
-	// 		console.info('编辑房型信息返回：', res);
-	// 		initPage();
-	// 		message.success('保存成功');
-	// 	})
-	// 	.catch((err) => {
-	// 		message.error(err);
-	// 		console.error(err);
-	// 	});
+	api
+		.editRoomDetailInfo(result)
+		.then((res) => {
+			console.info('编辑房型信息返回：', res);
+			initPage();
+			message.success('保存成功');
+		})
+		.catch((err) => {
+			message.error(err);
+			console.error(err);
+		});
 };
 
 const add = () => {
 	const newData = {
 		key: `NEW_${Date.now().toString()}`,
 		auditOrderId: '',
-		auditStatus: 1,
+		auditStatus: 0,
 		hotelId: state.hotelId ? parseInt(state.hotelId) : undefined,
 		roomTypeCode: systemRoomData?.value[0]?.value || 1,
 		roomNum: 0,
 		roomOccupancyNum: 0,
 		operationType: 0,
 		roomOperateNum: 0,
-		price: '',
+		price: state.price,
 	};
 	dataSource.value.push(newData);
 	if (editableData[newData.key]) {
@@ -448,6 +467,37 @@ const plusNumOptionsChange = (val, option) => {
 	const originalRoomNum = dataSource?.value?.find((item) => item.key === option.key)?.roomNum;
 	editableData[option.key].roomNum = originalRoomNum + parseInt(editableData[option.key].plusNum);
 	editableData[option.key].roomOperateNum = parseInt(editableData[option.key].plusNum);
+};
+
+const getAuditStatusText = (auditStatus: number) => {
+	let result = '';
+	switch (auditStatus) {
+		case 0:
+			result = '未提交';
+			break;
+		case 1:
+			result = '待审核';
+			break;
+		case 2:
+			result = '新增审核通过';
+			break;
+		case 3:
+			result = '新增审核不通过';
+			break;
+		case 4:
+			result = '编辑审核通过';
+			break;
+		case 5:
+			result = '编辑审核不通过';
+			break;
+		case 6:
+			result = '删除审核通过';
+			break;
+		case 7:
+			result = '删除审核不通过';
+			break;
+	}
+	return result;
 };
 
 onMounted(() => {

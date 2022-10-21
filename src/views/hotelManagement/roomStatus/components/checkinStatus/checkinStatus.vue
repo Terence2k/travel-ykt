@@ -73,6 +73,7 @@
 import dayjs from 'dayjs';
 import api from '@/api';
 import { useRoomStatusStore } from '@/stores/modules/roomStatus';
+import { message } from 'ant-design-vue';
 
 const useRoomStatus = useRoomStatusStore();
 
@@ -136,12 +137,18 @@ watch(
 );
 
 const save = () => {
-	useRoomStatus.setBaseInfoDataSource({ ...formValidate.value });
-	console.info('toRaw(useRoomStatus.getBaseInfoDataSource)', toRaw(useRoomStatus.getBaseInfoDataSource));
+	console.log('formValidate.value', formValidate);
+	const tempData = ref({ ...formValidate.value });
+	useRoomStatus.setBaseInfoDataSource(tempData);
 	router.push({ path: '/hotelManagement/roomStatus' });
+	console.info('toRaw(useRoomStatus.getBaseInfoDataSource)', toRaw(useRoomStatus.getBaseInfoDataSource));
+	message.success('保存成功');
 };
 
-const submitAudit = () => {};
+const submitAudit = () => {
+	message.success('审核成功');
+	router.push({ path: '/hotelManagement/roomStatus' });
+};
 </script>
 
 <style lang="less" scoped>
