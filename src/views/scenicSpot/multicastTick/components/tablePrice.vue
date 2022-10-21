@@ -11,22 +11,25 @@
 		</CommonTable>
 
 		<BaseModal :modelValue="modelValue" title="设置减免规则" @cancel="cancel" width="1210px">
+			<p>valueNext {{ valueNext }}</p>
+			<p>nextDay{{ nextDay }}</p>
+			<p>value{{ value }}</p>
+			<p>preDay{{ preDay }}</p>
 			<header class="tips">
 				<p>说明：点击后编辑每日库存，不编辑默认库存为默认</p>
 				<p>说明：点击后编辑每日价格，不编辑则默认价格为默认价格，价格为默认价格时不可保存价格日历</p>
 			</header>
 
 			<article class="calendar-wrap">
-				value {{ value }}
 				<div :style="{ width: '800px', border: '1px solid #d9d9d9', borderRadius: '4px' }">
 					<a-calendar v-model:value="value" :fullscreen="false" @panelChange="onPanelChange">
 						<template v-slot:dateCellRender="{ current }">
-							<span class="price_tips">￥{{ shijianYMD(current) }}</span>
+							<span :class="isCurrentDay(current) ? 'price_tips default' : 'price_tips'">￥{{ isCurrentDay(current) }}</span>
 						</template>
 					</a-calendar>
 				</div>
 				<div :style="{ width: '800px', border: '1px solid #d9d9d9', borderRadius: '4px' }">
-					<a-calendar v-model:value="value" :fullscreen="false" @panelChange="onPanelChange">
+					<a-calendar v-model:value="valueNext" :fullscreen="false" @panelChange="onPanelChange">
 						<template v-slot:dateCellRender="{ current }">
 							<span class="price_tips">￥{{ shijianYMD(current) }}</span>
 						</template>
@@ -63,37 +66,53 @@ const props = defineProps({
 	// params: Object,
 	// tableList: Array,
 });
-const value = ref<Dayjs>();
-const valueNext = ref<Dayjs>();
+const value = ref<Dayjs>(dayjs('2022-10-6 9:00:00'));
+const valueNext = ref<Dayjs>(dayjs('2022-11-6 9:00:00'));
 const onPanelChange = (value: Dayjs, mode: string) => {
 	console.log(value, mode);
 };
 
-const getMonths = (value: Dayjs) => {
-	const localeData = value.localeData();
-	const months = [];
-	for (let i = 0; i < 12; i++) {
-		months.push(localeData.monthsShort(value.month(i)));
-	}
-	return months;
-};
+const arr = ['2022-10-20', '2022-10-21'];
 
-const getYears = (value: Dayjs) => {
-	const year = value.year();
-	const years = [];
-	for (let i = year - 10; i < year + 10; i += 1) {
-		years.push(i);
-	}
-	return years;
-};
+const preDay = computed(() => {
+	let time = new Date(value.value);
 
+	let year = Number(time.getFullYear());
+	let month = Number((time.getMonth() + 1).toString().padStart(2, '0'));
+	const date = time.getDate().toString().padStart(2, '0');
+	month - 1 === 0 ? year-- : (month -= 1);
+	let day = year + '-' + month + '-' + date;
+	return dayjs(day);
+});
+const nextDay = computed(() => {
+	let time = new Date(value.value);
+
+	let year = time.getFullYear();
+	let month = Number((time.getMonth() + 1).toString().padStart(2, '0'));
+	const date = time.getDate().toString().padStart(2, '0');
+	month + 1 === 13 ? year++ : (month += 1);
+	let day = year + '-' + month + '-' + date;
+	return dayjs(day);
+});
+const styleColor = ref(false);
 const shijianYMD = (timestamp: any) => {
 	let time = new Date(timestamp);
+
 	let year = time.getFullYear();
 	const month = (time.getMonth() + 1).toString().padStart(2, '0');
 	const date = time.getDate().toString().padStart(2, '0');
-	// return year + '-' + month + '-' + date;
-	return date;
+
+	return year + '-' + month + '-' + date;
+};
+
+const isCurrentDay = (timestamp: any) => {
+	let day = shijianYMD(timestamp);
+
+	if (arr.includes(day)) {
+		return true;
+	} else {
+		return false;
+	}
 };
 
 const route = useRouter();
@@ -180,32 +199,21 @@ onMounted(() => {});
 </script>
 
 <style lang="scss" scoped>
-.wrapper {
-	position: relative;
-	// width: 100%;
-	display: flex;
-	align-items: flex-end;
-	.left {
-		flex: 1;
-	}
-	// .btn {
-	// 	position: relative;
-	// 	right: calc(-100% + 116px);
-	// 	margin-bottom: 10px;
-	// 	// top: 12px;
-	// }
-}
-.table-area {
-	// margin: 0 10px 0 0;
-	padding: 0;
+.tips {
+	color: #71747a;
 }
 
 .calendar-wrap {
 	display: flex;
 	.price_tips {
 		display: block;
-		border: 1px solid red;
-		color: orange;
+		color: #ff9f3f;
 	}
+	.price_tips.default {
+		color: #ddd;
+	}
+}
+.table-area {
+	padding: 0;
 }
 </style>

@@ -143,12 +143,12 @@ const columns = ref([
 	},
 ]);
 const itemNameCompute = (id: number) => {
-	//  rN = formData.data.filter((i) => i.id === id)
-	let optionN = options.value.filter((i) => i.id === id);
-	console.log(optionN, 'optionN');
+	let rN = formData.data.filter((i) => i.id === id),
+		optionN = options.value.filter((i) => i.id === id);
+	// console.log(optionN, 'optionN');
 
-	// return rN[0]?.itemName || optionN[0]?.label || '';
-	return optionN[0]?.label || '';
+	return rN[0]?.itemName || optionN[0]?.label || '';
+	// return optionN[0]?.label || '';
 };
 
 const change = (value: object) => {

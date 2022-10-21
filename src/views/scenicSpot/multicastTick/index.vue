@@ -18,7 +18,7 @@
 		<div class="list-btn">
 			<a-button type="primary" class="success" @click="add()">新增</a-button>
 		</div>
-		<CommonTable :dataSource="dataSource" :columns="columns" :scroll="{ x: '100%' }">
+		<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%' }">
 			<template #bodyCell="{ column, index, record }">
 				<template v-if="column.key === 'index'">
 					{{ index + 1 }}
@@ -31,7 +31,7 @@
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a href="javascript:;" @click="toEditPage()">编辑</a>
+						<a href="javascript:;" @click="toEditPage(record)">编辑</a>
 						<a href="javascript:;" @click="outDown(index)">
 							{{ !record.putaway ? '上架' : '下架' }}
 						</a>
@@ -57,6 +57,7 @@ import SearchItem from '@/components/common/CommonSearchItem.vue';
 import api from '@/api';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import { useCommonEnum } from '@/stores/modules/commonEnum';
+import { message } from 'ant-design-vue';
 const route = useRouter();
 const navigatorBar = useNavigatorBar();
 const commonEnum = useCommonEnum();
@@ -139,19 +140,19 @@ const pageSideChange = (current: number, size: number) => {
 	initPage();
 };
 //编辑
-const toEditPage = () => {
-	route.push({ path: '/scenic-spot/multicast/edit' });
+const toEditPage = (value: any) => {
+	route.push({ path: '/scenic-spot/multicast/edit', query: { t: 1, o: value.oid } });
 };
 //下架
 const outDown = (index) => {
 	console.log(index);
-	dataSource.value[index].putaway = !dataSource.value[index].putaway;
-
+	state.tableData.data[index].putaway = !state.tableData.data[index].putaway;
+	message.success('成功');
 	// route.push({ path: '/scenic-spot/multicast/edit' });
 };
 //新增
 const add = () => {
-	route.push({ path: '/scenic-spot/multicast/edit' });
+	route.push({ path: '/scenic-spot/multicast/edit', query: { t: 0 } });
 };
 
 const initPage = async () => {
@@ -159,6 +160,8 @@ const initPage = async () => {
 	// 	console.log(res);
 	// });
 	let res = await api.getMultipleList(state.tableData.param);
+	state.tableData.data = res.content || dataSource;
+	state.tableData.total = res.total;
 	console.log('res', res);
 };
 onMounted(() => {
