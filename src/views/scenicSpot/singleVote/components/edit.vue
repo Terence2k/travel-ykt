@@ -151,7 +151,7 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 		'data.orderTimeRule': [{ required: true, message: '请选择可预定时间' }],
 		'data.wateryPrice': [{ required: true, message: '请输入降水价' }],
 		'data.price': [{ required: true, message: '请输入价格' }],
-		'data.verificationType': [{ required: true, message: 'verificationType' }],
+		// 'data.verificationType': [{ required: true, message: 'verificationType' }],
 		'data.scenicId': [{ required: true, message: '请选择归属景区' }],
 		'data.ticketName': [{ required: true, message: '请输入门票名称' }],
 		// 'data.ticketType': [{ required: true, message: '请选择门票分类' }],
