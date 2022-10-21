@@ -2,7 +2,7 @@
 	<div class="warp">
 		<div class="form_pad">
 			<!-- 查看 -->
-			<a-form v-if="route.currentRoute.value?.query?.id" labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
+			<a-form v-if="route.query?.typei" labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
 				<a-form-item label="所属门店" name="name"> {{ formData.data.companyName }} </a-form-item>
 				<a-form-item label="餐饮名称"> {{ formData.data.cateringName }} </a-form-item>
 				<a-form-item label="可预订数量"> {{ formData.data.orderNum }} </a-form-item>
@@ -17,9 +17,9 @@
 				<a-form-item label="其他"> {{ formData.data.cateringDesc }} </a-form-item>
 			</a-form>
 			<!-- 新增 -->
-			<a-form v-else labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
-				<a-form-item label="行程类型" name="a">
-					<a-radio-group :options="travaType" />
+			<a-form v-else labelAlign="left" ref="formRef" :model="formState" :rules="rulesRef" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
+				<a-form-item label="行程类型" name="teamType">
+					<a-radio-group :options="travaType" v-model:value="formState.teamType" />
 				</a-form-item>
 				<a-form-item label="发团旅行社" name="a">
 					<a-input placeholder="发团旅行社" disabled />
@@ -30,7 +30,7 @@
 					</a-select>
 				</a-form-item>
 				<a-form-item label="联系电话" name="a">
-					<a-input placeholder="请输入联系电话"  />
+					<a-input placeholder="请输入联系电话" />
 				</a-form-item>
 				<a-form-item label="地接旅行社" name="a">
 					<a-select ref="select" placeholder="请选择地接旅行社">
@@ -43,10 +43,10 @@
 					</a-select>
 				</a-form-item>
 				<a-form-item label="联系电话" name="a">
-					<a-input placeholder="请输入联系电话"  />
+					<a-input placeholder="请输入联系电话" />
 				</a-form-item>
 				<a-form-item label="模板名称" name="a">
-					<a-input   />
+					<a-input />
 				</a-form-item>
 			</a-form>
 		</div>
@@ -60,45 +60,82 @@
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import api from '@/api';
-import { computed, reactive, toRaw, UnwrapRef, watch } from 'vue';
-
+import { computed, reactive, ref, UnwrapRef, watch } from 'vue';
+const route = useRoute();
 const navigatorBar = useNavigatorBar();
-const route = useRouter();
+const formRef = ref();
 
-const formData = reactive({
-	data: [],
-});
-
-// 新增
+const props = defineProps({
+	onCheck: {
+		type: Boolean
+	}
+})
 // 行程类型枚举
 const travaType = [
 	{ label: '标准团', value: '1' },
 	{ label: '散客网点团', value: '2' },
 	{ label: '休闲通道团', value: '3' },
 ];
+let addParams: any = {}
+if (route.query.id) {
+	
+} else {
+	addParams = {
+		oid: null,
+		teamType: '',
+	}
+}
 
-// 查看
+const type = ref('');
+const emits = defineEmits(['onSuccess'])
+const formState = ref<{[k:string]: any}>(addParams);
 
-// 初始化
-const initPage = async (): Promise<void> => {
-	if (route.currentRoute.value?.query?.id) {
-		api.getProductInfo(route.currentRoute.value?.query?.id).then((res: any) => {
-			formData.data = res;
-		});
+const onSubmit = async () => {
+	try {
+		const values = await formRef.value.validateFields()
+		emits('onSuccess', {basicParam: formState.value});
+	} catch (errorInfo) {
+		emits('onSuccess', {basicParam: false});
 	}
 };
 
+
+
+
+// 初始化
+const initPage = async (): Promise<void> => {
+};
+
+const rulesRef = {
+	teamType: [{ required: true, message: '请选择行程类型' }],
+	// travelName: [{ required: true, message: '请输入发团旅行社' }],
+	contactPhone: [{ required: true, message: '请输入组团社联系电话' }],
+	subTravelContactPhone: [{ required: true, message: '请输入地接社联系电话' }],
+	travelOid: [{ required: true, message: '请选择组团社社' }],
+	touristNum: [{ required: true, message: '请输入行程人数' }],
+	// routeType: [{ required: true, message: '请选择线路类型' }],
+	routeName: [{ required: true, message: '请选择或输入线路名称' }],
+	// startDate: [{ required: true, message: '请选择行程开始时间' }],
+	// endDate: [{ required: true, message: '请选择行程结束时间' }],
+	time: [{ required: true, message: '请选择行程时间' }],
+	subTravelOperatorOid: [{ required: true, message: '请选择计调' }],
+	subTravelOid: [{ required: true, message: '请选择地接旅行社' }],
+};
+
 onMounted(() => {
-	if (route.currentRoute.value?.query?.id) {
-		navigatorBar.setNavigator(['行程模板管理', '查看']);
-	} else {
+	if (route.query?.id) {
 		navigatorBar.setNavigator(['行程模板管理', '新增']);
+	} else {
+		navigatorBar.setNavigator(['行程模板管理', '查看']);
 	}
 	initPage();
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
 });
+watch(() => props.onCheck, (newVal) => {
+	onSubmit()
+})
 </script>
 
 <style scoped lang="less">

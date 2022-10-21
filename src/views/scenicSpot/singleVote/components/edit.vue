@@ -1,7 +1,6 @@
 <template>
 	<div class="editWrapper">
 		<header class="title">基本信息</header>
-		{{ formData.data.itemList }}formData.data.itemList
 		<a-form class="" ref="formRef" :model="formData" :label-col="{ span: 3 }" labelAlign="left" :wrapper-col="{ span: 7 }" :scrollToFirstError="true">
 			<a-form-item label="归属景区">
 				<!-- <a-input v-model:value="formData.data.scenicId" placeholder="请填写景区名字" /> -->
@@ -152,7 +151,7 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 		'data.orderTimeRule': [{ required: true, message: '请选择可预定时间' }],
 		'data.wateryPrice': [{ required: true, message: '请输入降水价' }],
 		'data.price': [{ required: true, message: '请输入价格' }],
-		'data.verificationType': [{ required: true, message: 'verificationType' }],
+		// 'data.verificationType': [{ required: true, message: 'verificationType' }],
 		'data.scenicId': [{ required: true, message: '请选择归属景区' }],
 		'data.ticketName': [{ required: true, message: '请输入门票名称' }],
 		// 'data.ticketType': [{ required: true, message: '请选择门票分类' }],

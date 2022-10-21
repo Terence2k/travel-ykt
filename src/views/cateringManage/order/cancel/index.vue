@@ -12,7 +12,7 @@
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a>查看</a>
+						<a @click="opendetailPage">查看</a>
 					</div>
 				</template>
 			</template>
@@ -32,6 +32,7 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import { reactive, onMounted } from 'vue';
 import api from '@/api';
+const router = useRouter();
 
 const columns = [
 	{
@@ -174,6 +175,10 @@ const addOrUpdate = (param: any) => {
 		state.params = row;
 	}
 	state.operationModal.isAddOrUpdate = true;
+};
+
+const opendetailPage = () => {
+	router.push({ path: '/catering/order_Management/order_detail' });
 };
 
 onMounted(() => {

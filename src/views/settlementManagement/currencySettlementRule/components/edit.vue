@@ -83,7 +83,7 @@
 					v-model:value="formState.prepaidCompany"
 					placeholder="请选择垫付单位"
 					allowClear
-					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.codeValue, label: item.name }))"
+					:options="getPrepaidList.map((item) => ({ value: item.codeValue, label: item.name }))"
 				>
 				</a-select>
 			</a-form-item>
@@ -97,7 +97,7 @@
 					v-model:value="formState.lastCostBelongCompany"
 					style="width: 100%"
 					placeholder="请选择剩余费用归属"
-					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.codeValue, label: item.name }))"
+					:options="getPrepaidCompanyList.map((item) => ({ value: item.codeValue, label: item.name }))"
 				>
 				</a-select>
 			</a-form-item>
@@ -223,9 +223,9 @@ const cacheData = ref({
 });
 const oid = ref(null);
 // 初始化
+const route = useRouter();
+const query = route.currentRoute.value.query;
 const init = () => {
-	const route = useRouter();
-	const query = route.currentRoute.value.query;
 	generaRulesOptions.getTeamTypeList();
 	generaRulesOptions.getPrepaidCompanyList();
 	if (query && query.oid) {
@@ -330,7 +330,6 @@ const saveParams = () => {
 		formState.oid = oid.value;
 	}
 };
-const route = useRouter();
 const cancel = () => {
 	route.go(-1);
 };
@@ -347,6 +346,51 @@ const getCompanyTypeName = computed(() => (value: number) => {
 		return generaRulesOptions.prepaidCompanyList[idx]['name'];
 	}
 	return;
+});
+// 计算属性 -- 当产品为景区 则该下拉框删除酒店和餐饮
+const getPrepaidCompanyList = computed(() => {
+	const array: any = [];
+	if (!Number(formState.productType)) {
+		cacheData.value.rulesParams.prepaidCompanyList = generaRulesOptions.prepaidCompanyList;
+		return generaRulesOptions.prepaidCompanyList;
+	}
+	if (Number(formState.productType) === 1) {
+		// 景区
+		generaRulesOptions.prepaidCompanyList.forEach((item: any) => {
+			if (item.name !== '酒店' && item.name !== '餐饮') {
+				array.push(item);
+			}
+		});
+	} else if (Number(formState.productType) === 2) {
+		// 酒店
+		generaRulesOptions.prepaidCompanyList.forEach((item: any) => {
+			if (item.name !== '景区' && item.name !== '餐饮') {
+				array.push(item);
+			}
+		});
+	} else if (Number(formState.productType) === 3) {
+		// 餐饮
+		generaRulesOptions.prepaidCompanyList.forEach((item: any) => {
+			if (item.name !== '景区' && item.name !== '酒店') {
+				array.push(item);
+			}
+		});
+	} else {
+		generaRulesOptions.prepaidCompanyList.forEach((item: any) => {
+			array.push(item);
+		});
+	}
+	cacheData.value.rulesParams.prepaidCompanyList = array;
+	return array;
+});
+const getPrepaidList = computed(() => {
+	const array: any = [];
+	generaRulesOptions.prepaidCompanyList.forEach((item: any) => {
+		if (item.name !== '景区' && item.name !== '餐饮' && item.name !== '酒店') {
+			array.push(item);
+		}
+	});
+	return array;
 });
 </script>
 
