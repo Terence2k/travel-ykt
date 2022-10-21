@@ -40,9 +40,10 @@ const route = useRouter();
 const tstyle = { 'font-weight': '700' };
 import api from '@/api';
 import { useBusinessManageOption } from '@/stores/modules/businessManage';
+import { settlementOptions } from '@/stores/modules/settlement';
+const useOptions = settlementOptions();
+const option = computed(() => useOptions.businessTypeOption);
 
-const businessManageOptions = useBusinessManageOption();
-const businessTypeOption = computed(() => businessManageOptions.businessTypeOption);
 // 跳转编辑页
 const toEdit = () => {
 	route.go(-1)
@@ -57,16 +58,11 @@ const formData: any = reactive({
 const initPage = async (): Promise<void> => {
 	api.getcomprehensiveFeeDetail(route.currentRoute.value?.query?.oid).then((res: any) => {
 		formData.data = res;
-		const list = businessTypeOption.value;
-		list.forEach(item => {
-			if (formData.data.belongCompany == item.codeValue) {
-				formData.data.belongCompanyName = item.name
-			}
-		});
+		formData.data.belongCompanyName = option.value[formData.data.belongCompany]
 	});
 };
 onMounted(() => {
-	businessManageOptions.getBusinessTypeOption();
+	useOptions.getBusinessTypeOptionList();
 	initPage();
 })
 </script>
