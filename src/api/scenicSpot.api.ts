@@ -95,7 +95,16 @@ export async function getViewList() {
 		method: 'get',
 	});
 }
-// 获取景区下架
+// localhost:8003/ticket-service/public/api/scenic-ticket-down?ticketName=&ticketType=&pageNo=1&pageSize=10
+// 景区下架列表
+export async function scenicTicketDownList(data: any) {
+	return request({
+		url: commonPath + `/ticket-service/public/api/scenic-ticket-down`,
+		method: 'get',
+		data,
+	});
+}
+// 景区下架
 export async function scenicTicketDown(data: any) {
 	return request({
 		url: commonPath + `/ticket-service/public/api/scenic-ticket-down`,
@@ -177,6 +186,7 @@ export async function getMultipleList(data: any) {
 		data,
 	});
 }
+
 // 联票 详情
 export async function getMultipleDetail(id: number) {
 	return request({

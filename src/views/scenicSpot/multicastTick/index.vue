@@ -18,7 +18,7 @@
 		<div class="list-btn">
 			<a-button type="primary" class="success" @click="add()">新增</a-button>
 		</div>
-		<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%' }">
+		<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }">
 			<template #bodyCell="{ column, index, record }">
 				<template v-if="column.key === 'index'">
 					{{ index + 1 }}
