@@ -274,7 +274,11 @@ watch(() => props.onCheck, (newVal) => {
 watch(() => travelStore.baseInfo, newVal => {
 	formState.value = newVal;
 	if (route.query.id) {
-		list.travelOperatorList = [newVal.subTravelOperator];
+		list.travelOperatorList = [{
+			oid: newVal.subTravelOperatorId,
+			username: newVal.subTravelOperatorName,
+			mobile: newVal.subTravelOperatorPhone
+		}];
 		travelStore.setTeamType(travelStore.baseInfo.teamType);
 	}
 })
