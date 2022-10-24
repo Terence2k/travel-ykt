@@ -56,25 +56,27 @@
 		<div class="list-btn">
 			<a-button type="primary" class="success">导出</a-button>
 		</div>
-		<a-spin size="large" :spinning="state.tableData.loading">
-			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: 4000 }">
-				<template #bodyCell="{ column, record, index }">
-					<template v-if="column.key === 'action'">
-						<div class="action-btns">
-							<a href="javascript:;" @click="toDetail(record)">结算详情</a>
-						</div>
-					</template>
-				</template>
-			</CommonTable>
-		</a-spin>
-		<CommonPagination
-			:current="state.tableData.param.pageNo"
-			:page-size="state.tableData.param.pageSize"
-			:total="state.tableData.total"
-			@change="onHandleCurrentChange"
-			@showSizeChange="pageSideChange"
-		/>
 	</div>
+    <div>
+        <a-spin size="large" :spinning="state.tableData.loading">
+            <CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x:4000,y:'100%'}">
+                <template #bodyCell="{ column, record, index }">
+                    <template v-if="column.key === 'action'">
+                        <div class="action-btns">
+                            <a href="javascript:;" @click="toDetail(record)">结算详情</a>
+                        </div>
+                    </template>
+                </template>
+            </CommonTable>
+        </a-spin>
+        <CommonPagination
+            :current="state.tableData.param.pageNo"
+            :page-size="state.tableData.param.pageSize"
+            :total="state.tableData.total"
+            @change="onHandleCurrentChange"
+            @showSizeChange="pageSideChange"
+        />
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -334,7 +336,7 @@ const state = reactive({
 				name: 123456,
 			},
 		],
-		total: 10,
+		total: 20,
 		loading: false,
 	},
 
