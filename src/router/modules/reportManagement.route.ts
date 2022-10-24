@@ -13,7 +13,7 @@ export default [
 				name: 'scenicSpotTransferReport',
 				redirect: '/reportManagement/scenicSpotTransferReport/list',
 				meta: {
-					title: '景区转账报表',
+					title: '景区行程单报表',
 					isDetail: false, // 在左侧的导航栏不会展示
 				},
 				children: [
@@ -62,7 +62,7 @@ export default [
 				name: 'travelAgencyReport',
 				redirect: '/reportManagement/travelAgencyReport/list',
 				meta: {
-					title: '旅行社结算报表',
+					title: '行程单结算总表',
 					isDetail: false, // 在左侧的导航栏不会展示
 				},
 				children: [
@@ -72,6 +72,35 @@ export default [
 						name: 'travelAgencyReportList',
 						meta: {
 							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
+			{
+				path: 'hotelItineraryReport',
+				name: 'hotelItineraryReport',
+				redirect: '/reportManagement/hotelItineraryReport/list',
+				meta: {
+					title: '酒店行程单结算表',
+					isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/reportManagement/scenicSpotTransferReport/index.vue'),
+						name: 'hotelItineraryReportList',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'orderList',
+						component: () => import('@/views/reportManagement/scenicSpotTransferReport/components/tripList.vue'),
+						name: 'scenicSpotTransferReportTripList',
+						meta: {
+							title: '查看订单',
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},

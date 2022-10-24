@@ -24,7 +24,7 @@
           <a-input v-model:value="form.name" placeholder="请输入企业名称">
           </a-input>
         </a-form-item>
-        <a-form-item name="region" label="企业所属地区">
+        <a-form-item name="addressIds" label="企业所属地区">
           <address-selector placeholder="请选择所属地区" v-model:value="form.addressIds">
           </address-selector>
         </a-form-item>
@@ -241,7 +241,34 @@ const cityOptions: Ref<Array<any>> = ref([]);
 const { form } = toRefs(state);
 const travelStore = useTravelStore();
 const formRules: Record<string, Rule[]> = {
-  businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
+  businessType: [{ required: true, trigger: 'change', message: '请选择企业类型' }],
+  name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
+  addressIds: [{ required: true, trigger: 'change', message: '请选择所属地区' }],
+  addressDetail: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
+  legalPerson: [{ required: true, trigger: 'blur', message: '请输入法定代表人' }],
+  managementRange: [{ required: true, trigger: 'blur', message: '请输入经营范围' }],
+  registeredCapital: [{ required: true, trigger: 'blur', message: '请输入注册资本' }],
+  establishTime: [{ required: true, trigger: 'change', message: '请选择成立日期' }],
+  businessTerm: [{ required: true, trigger: 'change', message: '请选择营业期限' }],
+  contactName: [{ required: true, trigger: 'blur', message: '请输入联系人' }],
+  phone: [{ required: true, trigger: 'blur', message: '请输入联系电话' }],
+  creditCode: [{ required: true, trigger: 'blur', message: '请输入统一社会信用代码' }],
+  businessLicenseUrl: [{ required: true, trigger: 'change', message: '请上传营业执照' }],
+  accountType: [{ required: true, trigger: 'change', message: '请选择公司账户类型' }],
+  bankAccountName: [{ required: true, trigger: 'blur', message: '请输入公司账户名称' }],
+  bank: [{ required: true, trigger: 'blur', message: '请输入开户行' }],
+  bankAccount: [{ required: true, trigger: 'blur', message: '请输入公司账号' }],
+  businessLicenseUrl1: [{ required: true, trigger: 'change', message: '请上传经营许可' }],
+  unitStatus: [{ required: true, trigger: 'change', message: '请选择开业状态' }],
+  hotelStarId: [{ required: true, trigger: 'change', message: '请选择酒店星级' }],
+  isReduced: [{ required: true, trigger: 'change', message: '请选择是否支持减免' }],
+  scenicLevel: [{ required: true, trigger: 'change', message: '请选择景区等级' }],
+  derate: [{ required: true, trigger: 'change', message: '请选择是否支持减免' }],
+  rangeTime: [{ required: true, trigger: 'change', message: '请选择营业时间' }],
+  shopPhone: [{ required: true, trigger: 'blur', message: '请输入店铺联系电话' }],
+  cateringDesc: [{ required: true, trigger: 'blur', message: '请输入其他描述' }],
+  fullRule: [{ required: true, trigger: 'blur', message: '请输入减免规则' }],
+  reduceRule: [{ required: true, trigger: 'blur', message: '请输入减免规则' }],
 }
 const userInfo = getUserInfo();
 const submitFunc = ref();
@@ -269,7 +296,6 @@ const initOpeion = async () => {
   let data = await infoFunc;
   state.form = { ...data, ...data.companyBo};
   if (state.form?.areaId) state.form.addressIds = [state.form.provinceId, state.form.cityId, state.form.areaId];
-  enterpriseState.value = travelStore.enterpriseState[state.form.informationAuditStatus]?.descriptions;
   // submitFunc:提交编辑审核函数名
   if (Object.keys(travelStore.businessTypeOptions).includes(userInfo.sysCompany.businessType)) {
     submitFunc.value = travelStore.businessTypeOptions[userInfo.sysCompany.businessType].submitFunc;
@@ -277,6 +303,14 @@ const initOpeion = async () => {
     submitFunc.value = 'editCompany';
   }
   console.log('state.form:', state.form)
+  // 右上角文字描述判断
+  formRef.value.validate().then((res: any) => {
+    enterpriseState.value = travelStore.enterpriseState[state.form.informationAuditStatus]?.descriptions;
+	}).catch((err: any) => {
+    enterpriseState.value = '信息不完善，待补充。';
+    formRef.value.clearValidate();
+  });
+
 };
 const businessTypeOption = computed(() => businessManageOptions.businessTypeOption);
 const hotelStarList = ref();

@@ -20,14 +20,14 @@
 			<a-input placeholder="请输入行程单号" style="width: 200px" />
 		</SearchItem>
 		<template #button>
-			<a-button>重置</a-button>
-			<a-button class="btn">查询</a-button>
+			<a-button @click="reset">重置</a-button>
+			<a-button class="btn" @click="onSearch">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
 		<div class="list-btn">
-			<a-button type="primary" class="success" >导出</a-button>
-			<a-button type="primary"  class="btn">批量打印票据</a-button>
+			<a-button type="primary" class="success" @click="download">导出</a-button>
+			<a-button type="primary"  class="btn" @click="print">批量打印票据</a-button>
 		</div>
 		<CommonTable :dataSource="dataSource" :columns="columns">
 			<template #bodyCell="{ column, index }">
@@ -186,6 +186,12 @@ const onSearch = () => {
 	// 	console.log(res);
 	// });
 };
+const reset =()=>{
+	
+}
+const download =()=>{
+	message.success('下载成功');
+}
 onMounted(() => {
 	// navigatorBar
 	// 重新定义面包屑
