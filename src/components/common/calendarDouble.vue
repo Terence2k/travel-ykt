@@ -20,7 +20,7 @@
 						<div v-if="current.month() === value.month()">
 							<div :class="current.date() === value.date() && currentPoint === '1' ? 'date-wrap current' : 'date-wrap'">
 								<div>{{ current.date() }}</div>
-								<span class="price_tips">￥{{ isCurrentDay(current) ? isCurrentDay(current) : setAllValue }} </span>
+								<span class="price_tips">{{ isCurrentDay(current) ? '￥' + isCurrentDay(current) : '￥' + setAllValue }} </span>
 							</div>
 						</div>
 					</template>
@@ -63,6 +63,8 @@
  *  @setCurrentValue 自定义当前值
  *  @setAllValue     全局默认值
  *  @setList         显示列表
+ *  @fistDate      初始化日期
+ *
  *
  * @emits
  *  @getCurrentDay    获取当前选择日期 string '2022-1-2'
@@ -97,22 +99,11 @@ const props = defineProps({
 		default: () => [],
 		require: true,
 	},
+	fistDate: {
+		type: String,
+		defaule: new Date(),
+	},
 });
-
-//日历
-const currentPrict = ref(null);
-const allPrice = ref(20);
-
-const setDayPriceList = ref([
-	{ day: '2022-10-20', price: '30' },
-	{ day: '2022-10-21', price: '13' },
-]);
-
-const value = ref<Dayjs>(dayjs('2022-12-6'));
-const valueNext = ref<Dayjs>(dayjs('2023-01-6'));
-const onPanelChange = (value: Dayjs, mode: string) => {
-	console.log(value, mode);
-};
 
 //前一个月
 const preMonth = (day: any) => {
@@ -190,6 +181,11 @@ const bindSetDatePriceSec = (e: Dayjs) => {
 
 	emits('get-current-day', time);
 };
+
+//日历
+const value = ref<Dayjs>(dayjs(props.fistDate));
+const valueNext = ref<Dayjs>(dayjs(nextMonth(value.value)));
+
 //点击左边
 const turnLeft = () => {
 	console.log('turnLeft');
