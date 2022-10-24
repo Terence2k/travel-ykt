@@ -2,7 +2,7 @@
 	<div class="editWrapper">
 		<header class="title">基本信息</header>
 		<a-form class="" ref="formRef" :model="formData" :label-col="{ span: 3 }" labelAlign="left" :wrapper-col="{ span: 7 }" :scrollToFirstError="true">
-			<a-form-item label="归属景区">
+			<a-form-item label="归属景区" v-bind="validateInfos[`data.scenicId`]">
 				<!-- <a-input v-model:value="formData.data.scenicId" placeholder="请填写景区名字" /> -->
 				<a-select allowClear v-model:value="formData.data.scenicId" placeholder="请选择">
 					<a-select-option :value="vlItem.old" v-for="vlItem in viewList" :key="vlItem.ticketId">{{ vlItem.ticketName }}</a-select-option>
@@ -170,7 +170,7 @@ const errorInfos = computed(() => {
 	return mergeValidateInfo(toArray(validateInfos).splice(0, 2));
 });
 const errorPriceInfos = computed(() => {
-	return mergeValidateInfo(toArray(validateInfos).splice(2, 3));
+	return mergeValidateInfo(toArray(validateInfos).splice(2, 2));
 });
 
 const tickerType = computed(() => (route.currentRoute.value?.query?.t === '0' ? '单票：单点核销' : '单票：多点核销'));
