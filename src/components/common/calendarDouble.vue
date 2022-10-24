@@ -111,14 +111,14 @@ const preMonth = (day: any) => {
 		year = Number(time.getFullYear()),
 		month = Number((time.getMonth() + 1).toString().padStart(2, '0')),
 		date = time.getDate().toString().padStart(2, '0');
-	console.log('FN:month pre', month);
 
 	if (month - 1 === 0) {
 		year--;
 		month = 12;
 	} else {
-		month--;
+		month -= 1;
 	}
+
 	return dayjs(year + '-' + month + '-' + date);
 };
 
@@ -135,7 +135,7 @@ const nextMonth = (day: any) => {
 		month += 1;
 	}
 
-	return dayjs(year + '-' + month + '-' + 1);
+	return dayjs(year + '-' + month + '-' + date);
 };
 
 const shijianYMD = (timestamp: any) => {
@@ -144,7 +144,7 @@ const shijianYMD = (timestamp: any) => {
 		month = (time.getMonth() + 1).toString().padStart(2, '0'),
 		date = time.getDate().toString().padStart(2, '0');
 
-	return year + '-' + month + '-' + 1;
+	return year + '-' + month + '-' + date;
 };
 
 //获取是否在在自定义价格列表
@@ -165,7 +165,7 @@ const currentPoint = ref<null | string>(null);
 //设置当前日期
 const bindSetDatePriceFirst = (e: Dayjs) => {
 	let time = shijianYMD(e),
-		nextValue = nextMonth(time);
+		nextValue = nextMonth(e);
 
 	valueNext.value = nextValue;
 	currentPoint.value = '1';
@@ -174,10 +174,11 @@ const bindSetDatePriceFirst = (e: Dayjs) => {
 };
 const bindSetDatePriceSec = (e: Dayjs) => {
 	let time = shijianYMD(e),
-		preValue = preMonth(time);
-	console.log(time, shijianYMD(preValue));
+		preValue = preMonth(e);
+
 	value.value = preValue;
 	currentPoint.value = '2';
+
 	emits('get-current-day', time);
 };
 
