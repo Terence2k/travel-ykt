@@ -195,19 +195,21 @@ export async function editHotelRoomStock(data: any) {
 }
 
 //酒店库存更改审核通过
-export async function hotelRoomStockPass(id: number) {
+export async function hotelRoomStockPass(data: any) {
 	return request({
-		url: `${commonPath}/hotel-service/public/api/hotel-room-stock/auditAdopt/${id}`,
-		method: 'get',
+		url: `${commonPath}/hotel-service/public/api/hotel-room-stock/auditAdopt`,
+		data,
+		method: 'post',
 		showLoading: true,
 	});
 }
 
 //酒店库存更改审核失败 /hotel-service/public/api/hotel-room-stock/auditFailed/10
-export async function hotelRoomStockFailed(id: number) {
+export async function hotelRoomStockFailed(data: any) {
 	return request({
-		url: `${commonPath}/hotel-service/public/api/hotel-room-stock/auditFailed/${id}`,
-		method: 'get',
+		url: `${commonPath}/hotel-service/public/api/hotel-room-stock/auditFailed`,
+		data,
+		method: 'post',
 		showLoading: true,
 	});
 }

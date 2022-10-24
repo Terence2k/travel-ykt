@@ -45,7 +45,7 @@
 							<template v-if="column.dataIndex === 'actions'">
 								<div class="cell-actions">
 									<span class="item" @click="addOrUpdate({ row: record, handle: 'update' })">编辑</span>
-									<span class="item" @click="deleteWriteOffItem(record?.oid)">删除</span>
+									<span class="item" @click="openDelModal(record?.oid)">删除</span>
 								</div>
 							</template>
 						</template>
@@ -59,6 +59,12 @@
 						@showSizeChange="pageSideChange"
 					>
 					</CommonPagination>
+					<DelModal
+						:params="{ title: '删除', content: '是否确定该条数据' }"
+						v-model="tableState.delShow"
+						@submit="deleteWriteOffItem"
+						@cancel="delCancel"
+					/>
 					<VerificationManageAddUpdate v-model="tableState.operationModal.isAddOrUpdate" :params="tableState.params" :methods="methods">
 					</VerificationManageAddUpdate>
 				</div>
@@ -72,6 +78,7 @@ import { ref } from 'vue';
 import type { SelectProps } from 'ant-design-vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import { message } from 'ant-design-vue';
+import DelModal from '@/components/common/DelModal.vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import VerificationManageAddUpdate from './components/verificationManage-add-update/verificationManage-add-update.vue';
@@ -132,6 +139,8 @@ const tableState = reactive({
 	},
 	scenicSpotOptions: ref<SelectProps['options']>(scenicSpotOptionsData),
 	params: {},
+	delItemId: undefined,
+	delShow: false,
 	operationModal: {
 		isAddOrUpdate: false,
 	},
@@ -182,13 +191,21 @@ const addOrUpdate = (param: any) => {
 	tableState.operationModal.isAddOrUpdate = true;
 };
 
-const deleteWriteOffItem = (id: number) => {
-	if (id || id === 0) {
-		api.deleteWriteOffItem(id).then((res) => {
-			message.success('删除成功');
-			onSearch();
-		});
+const deleteWriteOffItem = () => {
+	tableState.delShow = false;
+	if (tableState.delItemId || tableState.delItemId) {
+		api
+			.deleteWriteOffItem(tableState.delItemId)
+			.then((res) => {
+				message.success('删除成功');
+				onSearch();
+			})
+			.catch((err: any) => {
+				message.error(err || '删除失败');
+			});
 	}
+
+	tableState.delItemId = undefined;
 };
 
 const methods = reactive({
@@ -221,6 +238,17 @@ const getAuditStatusNameById = (id: number) => {
 	}
 	return result;
 };
+
+const openDelModal = (id: number) => {
+	tableState.delShow = true;
+	tableState.delItemId = id;
+};
+
+const delCancel = () => {
+	tableState.delShow = false;
+	tableState.delItemId = undefined;
+};
+
 onMounted(() => {
 	onSearch();
 	api.getViewList().then((res) => {

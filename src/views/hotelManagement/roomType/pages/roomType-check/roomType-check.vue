@@ -153,16 +153,28 @@ const auditPass = () => {
 		if (Array.isArray(res) && res[0]?.roleId === null && res[0]?.auditBusinessType) {
 			const roleId = userInfo.sysRoles[0].oid;
 			console.log('任选当前一个用户身份,当前roleId为：', roleId);
-			api.auditRoomDetailInfo(state.auditOrderId, roleId, res[0]?.auditBusinessType, true).then((res) => {
-				console.log('房型审核通过返回：', res);
-				initPage();
-			});
+			api
+				.auditRoomDetailInfo(state.auditOrderId, roleId, res[0]?.auditBusinessType, true)
+				.then((res) => {
+					console.log('房型审核通过返回：', res);
+					message.success('审核成功');
+					initPage();
+				})
+				.catch((err: any) => {
+					message.error(err || '审核失败');
+				});
 		} else if (Array.isArray(res) && res[0]?.roleId && res[0]?.auditBusinessType) {
 			console.log('当前roleId为：', res[0]?.roleId);
-			api.auditRoomDetailInfo(state.auditOrderId, res[0]?.roleId, res[0]?.auditBusinessType, true).then((res) => {
-				console.log('房型审核通过返回：', res);
-				initPage();
-			});
+			api
+				.auditRoomDetailInfo(state.auditOrderId, res[0]?.roleId, res[0]?.auditBusinessType, true)
+				.then((res) => {
+					console.log('房型审核通过返回：', res);
+					message.success('审核成功');
+					initPage();
+				})
+				.catch((err: any) => {
+					message.error(err || '审核失败');
+				});
 		} else {
 			console.log('获取role失败');
 		}
@@ -177,12 +189,14 @@ const auditFail = () => {
 			console.log('任选当前一个用户身份,当前roleId为：', roleId);
 			api.auditRoomDetailInfo(state.auditOrderId, roleId, res[0].auditBusinessType, false).then((res) => {
 				console.log('房型审核通过返回：', res);
+				message.success('审核成功');
 				initPage();
 			});
 		} else if (res[0]?.roleId && res[0]?.auditBusinessType) {
 			console.log('当前roleId为：', res[0]?.roleId);
 			api.auditRoomDetailInfo(state.auditOrderId, res[0].roleId, res[0].auditBusinessType, false).then((res) => {
 				console.log('房型审核通过返回：', res);
+				message.success('审核成功');
 				initPage();
 			});
 		} else {
