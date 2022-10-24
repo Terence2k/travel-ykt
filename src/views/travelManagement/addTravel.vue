@@ -80,7 +80,7 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 	}
 	const saveItinerary = (val:any) => {
 		console.log(travelStore.touristList)
-		let ajax = (route.query.id || traveListData.oid) ? 
+		let ajax = (route.query.id || traveListData) ? 
 					api.travelManagement.editItinerary : 
 					api.travelManagement.saveItinerary
 		return ajax(
