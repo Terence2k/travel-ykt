@@ -1,46 +1,6 @@
 <template>
 	<div class="roomType-wrapper">
 		<div class="content-container">
-			<div class="search-bar">
-				<div class="item">
-					<span class="field-select item">审核状态</span>
-					<a-select
-						class="select-status select item"
-						:showArrow="true"
-						:options="tableState.statusOptions"
-						v-model:value="tableState.tableData.param.unitStatus"
-						placeholder="请选择状态"
-					>
-					</a-select>
-				</div>
-
-				<div class="item">
-					<span class="field-select item">星级星标</span>
-					<a-select
-						class="select-star select item"
-						:showArrow="true"
-						:options="tableState.starOptions"
-						v-model:value="tableState.tableData.param.starCode"
-						placeholder="请选择星级星标"
-					>
-					</a-select>
-				</div>
-
-				<div class="item">
-					<span class="field-input item">酒店名称</span>
-					<a-input class="input-hotel-name item" v-model:value="tableState.tableData.param.hotelName" placeholder="请输入酒店名称" />
-				</div>
-
-				<div class="item">
-					<span class="field-input item">联系电话</span>
-					<a-input class="input-hotel-name item" v-model:value="tableState.tableData.param.phone" placeholder="请输入联系电话" />
-				</div>
-
-				<div class="item button-search-wrapper">
-					<a-button @click="searchByFilter" class="button-search item">查询</a-button>
-				</div>
-			</div>
-
 			<div class="table-bar">
 				<div class="flex-container">
 					<a-button class="button-create-item">导出</a-button>
@@ -50,7 +10,7 @@
 						<template #bodyCell="{ column, record }">
 							<template v-if="column.dataIndex === 'unitStatus'">
 								<div class="cell-unitStatus">
-									<span class="item">{{ getunitStatusName(record?.unitStatus) }}</span>
+									<span class="item">待审核</span>
 								</div>
 							</template>
 							<template v-if="column.dataIndex === 'actions'">

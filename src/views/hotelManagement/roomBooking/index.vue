@@ -26,6 +26,7 @@
 			<div class="table-bar">
 				<div class="flex-container">
 					<span>房态管理</span>
+					<span class="end-item">双击剩下房间数量可进行预定管理</span>
 				</div>
 				<div class="table-container">
 					<RoomBookingTable :hotelId="hotel"> </RoomBookingTable>
