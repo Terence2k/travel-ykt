@@ -86,7 +86,7 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 		return ajax(
 			{
 				oid: route.query.id,
-				attachmentParam: travelStore.fileInfo || {},
+				attachmentParam: travelStore.fileInfo || [],
 				basicParam: val.basicParam || {},
 				guideList: travelStore.guideList.filter((it: any) => it.edit),
 				itineraryInfoParam: {
@@ -135,7 +135,7 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 			res.basic.travelOperatorOid = res.basic.travelOperatorId
 			res.basic.contactPhone = res.basic.travelOperatorPhone
 			res.basic.username = res.basic.travelOperatorName
-			res.basic.subTravelOperatorOid = res.basic.subTravelOid
+			res.basic.subTravelOperatorOid = res.basic.subTravelOperatorId
 			res.basic.subTravelContactPhone = res.basic.subTravelOperatorPhone
 			travelStore.setBaseInfo(res.basic);
 			travelStore.setGuideList(res.guideList);
