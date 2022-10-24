@@ -18,7 +18,31 @@
 				<div class="list-btn">
 					<!-- <a-button type="primary" class="success">导出</a-button> -->
 				</div>
-				<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%' }"> </CommonTable>
+				<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }">
+					<template #bodyCell="{ column, record }">
+						<template v-if="column.key === 'ticketDataType'">
+							{{ ticketDataTypeList[record.ticketDataType] }}
+						</template>
+						<template v-if="column.key === 'ticketType'">
+							{{ ticketTypeList[record.ticketType] }}
+						</template>
+						<template v-if="column.key === 'endDateTime'">
+							{{ shijianc(record.endDateTime) }}
+						</template>
+						<template v-if="column.key === 'startDateTime'">
+							{{ shijianc(record.startDateTime) }}
+						</template>
+						<template v-if="column.key === 'auditResult'">
+							{{ record.auditResult === 1 ? '生效' : record.auditResult === 0 ? '不生效' : '' }}
+						</template>
+						<template v-if="column.key === 'auditStatus'">
+							{{ commonEnum.auditStatus[record.auditStatus] }}
+						</template>
+						<template v-if="column.key === 'auditDate'">
+							<span v-if="record.auditDate">{{ shijianc(record.auditDate) }} </span></template
+						>
+					</template>
+				</CommonTable>
 
 				<CommonPagination
 					:current="state.tableData.param.pageNo"
@@ -38,10 +62,22 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
+import { shijianc, shijiancTOYMD } from '@/utils/formatTIme';
+import { useCommonEnum } from '@/stores/modules/commonEnum';
 import api from '@/api';
+
+const commonEnum = useCommonEnum();
+
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 const route = useRouter();
+
+const ticketDataTypeList = ['联票', '单票', '演出票'];
+const ticketTypeList = {
+	UNITE: '联票',
+	ONE: '单票',
+	SHOW: '演出票',
+};
 
 const modelValue = ref<boolean>(false);
 
@@ -54,38 +90,33 @@ const columns = [
 	},
 	{
 		title: '票种',
-		dataIndex: 'verificationType',
-		key: 'verificationType',
+		dataIndex: 'ticketDataType',
+		key: 'ticketDataType',
 		width: 120,
 	},
 	{
 		title: '归属景区',
-		dataIndex: 'creditCode',
-		key: 'creditCode',
+		dataIndex: 'scenicNames',
+		key: 'scenicNames',
 		width: 120,
 	},
+
 	{
-		title: '平台上架状态',
-		dataIndex: 'putaway',
-		key: 'putaway',
-		width: 120,
-	},
-	{
-		title: '门票管理',
+		title: '门票分类',
 		dataIndex: 'ticketType',
 		key: 'ticketType',
 		width: 120,
 	},
 	{
 		title: '下架开始时间',
-		dataIndex: 'addressDetail',
-		key: 'addressDetail',
+		dataIndex: 'startDateTime',
+		key: 'startDateTime',
 		width: 120,
 	},
 	{
-		title: '下架结束日期',
-		dataIndex: 'auditStatus',
-		key: 'auditStatus',
+		title: '下架结束时间',
+		dataIndex: 'endDateTime',
+		key: 'endDateTime',
 		width: 120,
 	},
 	{
@@ -102,18 +133,18 @@ const columns = [
 	},
 	{
 		title: '审核时间',
-		dataIndex: 'derateRule',
-		key: 'derateRule',
+		dataIndex: 'auditDate',
+		key: 'auditDate',
 		width: 120,
 	},
 	{
 		title: '审核状态',
-		key: 'derateRule',
+		key: 'auditStatus',
 		width: 120,
 	},
 	{
 		title: '审核结果',
-		key: 'derateRule',
+		key: 'auditResult',
 		width: 120,
 	},
 ];
@@ -169,7 +200,7 @@ const toCheck = (record: any) => {
 
 const initList = async () => {
 	state.tableData.loading = true;
-	let res = await api.getSingleVoteList(state.tableData.param);
+	let res = await api.scenicTicketDownList(state.tableData.param);
 	const { total, content } = res;
 	state.tableData.total = total;
 	const list: any = dealData(content);
@@ -189,7 +220,7 @@ const dealData = (params: [any]) => {
 	});
 	res.map((i: any) => {
 		// i.ticketType = ticketType[i.ticketType];
-		i.auditStatus = status[i.auditStatus];
+		// i.auditStatus = status[i.auditStatus];
 		i.putaway = i.putaway ? '上架' : '下架';
 		i.verificationType = i.verificationType === 'MANY' ? '多点核销' : i.verificationType === 'ONE' ? '单点核销' : '';
 		return i;

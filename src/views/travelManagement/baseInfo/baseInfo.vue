@@ -52,7 +52,8 @@
 			<a-form-item label="组团社计调电话" name="contactPhone">
 				<a-input v-model:value="formState.contactPhone" disabled />
 			</a-form-item>
-			<div v-if="teamGroupType === GroupMode.TeamGroup">
+			<!--  v-if="teamGroupType === GroupMode.TeamGroup" -->
+			<div>
 				<a-form-item label="地接旅行社" name="subTravelOid">
 					<a-select 
 						v-model:value="formState.subTravelOid" 
@@ -225,7 +226,7 @@ const rulesRef = {
 
 
 
-const formState = ref<{[k:string]: any}>(route.query.id ? travelStore.baseInfo : addParams);
+const formState = ref<{[k:string]: any}>(route.query.id ? computed(() => travelStore.baseInfo) : addParams);
 
 const onSubmit = async () => {
 	try {
@@ -233,7 +234,7 @@ const onSubmit = async () => {
 		formState.value.touristNum = touristCount.value
 		emits('onSuccess', {basicParam: formState.value});
 	} catch (errorInfo) {
-		emits('onSuccess', {basicParam: false});
+		emits('onSuccess', {basicParam: {valid: false, message: '请先填写基础信息', index: 0} });
 	}
 };
 const getTeamTypeList = async () => {
@@ -273,7 +274,11 @@ watch(() => props.onCheck, (newVal) => {
 watch(() => travelStore.baseInfo, newVal => {
 	formState.value = newVal;
 	if (route.query.id) {
-		list.travelOperatorList = [newVal.subTravelOperator];
+		list.travelOperatorList = [{
+			oid: newVal.subTravelOperatorId,
+			username: newVal.subTravelOperatorName,
+			mobile: newVal.subTravelOperatorPhone
+		}];
 		travelStore.setTeamType(travelStore.baseInfo.teamType);
 	}
 })

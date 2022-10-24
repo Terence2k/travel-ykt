@@ -195,19 +195,21 @@ export async function editHotelRoomStock(data: any) {
 }
 
 //酒店库存更改审核通过
-export async function hotelRoomStockPass(id: number) {
+export async function hotelRoomStockPass(data: any) {
 	return request({
-		url: `${commonPath}/hotel-service/public/api/hotel-room-stock/auditAdopt/${id}`,
-		method: 'get',
+		url: `${commonPath}/hotel-service/public/api/hotel-room-stock/auditAdopt`,
+		data,
+		method: 'post',
 		showLoading: true,
 	});
 }
 
 //酒店库存更改审核失败 /hotel-service/public/api/hotel-room-stock/auditFailed/10
-export async function hotelRoomStockFailed(id: number) {
+export async function hotelRoomStockFailed(data: any) {
 	return request({
-		url: `${commonPath}/hotel-service/public/api/hotel-room-stock/auditFailed/${id}`,
-		method: 'get',
+		url: `${commonPath}/hotel-service/public/api/hotel-room-stock/auditFailed`,
+		data,
+		method: 'post',
 		showLoading: true,
 	});
 }
@@ -331,6 +333,52 @@ export async function getEnableSystemRoomType() {
 export async function getInfoByCompanyId(id: number) {
 	return request({
 		url: `${commonPath}/hotel-service/public/api/hotel-information/getInfoByCompanyId/${id}`,
+		method: 'get',
+		showLoading: true,
+	});
+}
+
+// hotel-service/public/api/hotel-information/getAllUnAuditRoomTypeHotel
+export async function getHotelListInAudit() {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-information/getAllUnAuditRoomTypeHotel`,
+		method: 'get',
+		showLoading: true,
+	});
+}
+
+// /hotel-service/public/api/hotel-room-type/getRoomTypeByRole
+export async function getHotelListInEdit() {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-room-type/getRoomTypeByRole`,
+		method: 'get',
+		showLoading: true,
+	});
+}
+
+// /hotel-service/public/api/hotel-room-type/getMostReduceRoomNum/{roomTypeId}
+export async function getMaxMinusCountOfRoom(roomTypeId: number) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-room-type/getMostReduceRoomNum/${roomTypeId}`,
+		method: 'get',
+		showLoading: false,
+	});
+}
+
+// /hotel-service/public/api/hotel-information/getInfoByCompanyId/
+export async function getHotelInfoByCompanyId(companyId: number) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-information/getInfoByCompanyId/${companyId}`,
+		method: 'get',
+		showLoading: true,
+	});
+}
+
+// /hotel-service/public/api/hotel-information/getGuidePriceByHotelId/{hotelId}
+
+export async function getPriceByHotelId(hotelId: number) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-information/getGuidePriceByHotelId/${hotelId}`,
 		method: 'get',
 		showLoading: true,
 	});

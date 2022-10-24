@@ -21,7 +21,7 @@
 	</div>
 	<div>
 		<a-spin size="large" :spinning="state.tableData.loading">
-			<CommonTable :dataSource="state.tableData.data" :columns="columns" rowKey="oid" :row-selection="rowSelection">
+			<CommonTable :dataSource="state.tableData.data" :scroll="{ x: '100%',y: '100%' }" :columns="columns" rowKey="oid" :row-selection="rowSelection" >
 				<template #bodyCell="{ column, record }">
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
@@ -53,10 +53,15 @@ import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import { message } from 'ant-design-vue';
 import { Modal } from 'ant-design-vue';
 import api from '@/api';
-
+import { settlementOptions } from '@/stores/modules/settlement';
 const navigatorBar = useNavigatorBar();
 const route = useRouter();
+const useOptions = settlementOptions();
+const initOption = async () => {
+	await useOptions.getBusinessTypeOptionList();
+};
 
+const option = computed(() => useOptions.businessTypeOption);
 const columns = [
 	{
 		title: '综费产品',
@@ -221,6 +226,7 @@ const initList = async () => {
 		.catch((err) => {
 			state.tableData.loading = false;
 		});
+		
 };
 // 数据处理
 const dealData = (params: [any]) => {
@@ -228,12 +234,14 @@ const dealData = (params: [any]) => {
 		// feeModel 收费模式: 0-人数 1-价格
 		// feeNumber 收费数量
 		i.feeText = i.feeModel == 0 ? `${i.feeNumber} 元/人` : `${i.feeNumber} 元`;	
+		i.belongCompanyName = option.value[i.belongCompany]
 		return i;
 	});
 
 	return params;
 };
 onMounted(() => {
+	initOption();
 	initList();
 	navigatorBar.setNavigator(['结算管理', '综费产品']);
 });

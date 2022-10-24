@@ -21,9 +21,19 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		editableData: {},
 		addHotelPop: false,
 		addTicketPop: false,
+		selectPersonnelPop:false,
 		allFeesProducts: [],
 		ticketData: [],
 		holteDate: [],
+		gouvyDate:[{
+			comprehensiveFeeProductName:'古维管理费',
+			numberOfTourists:'6',
+			NumberOfPersonsPayable:'6',
+			money:'100',
+			name1:'否',
+			name2:'否',
+			name3:'未冻结',
+		}],
 		tableData: [
 			{
 				key: '1',
@@ -90,6 +100,48 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				key: 'totalMoney',
 			},
 		],
+		gouvyColumns:[
+			{
+				title:'费用名称',
+				dataIndex: 'comprehensiveFeeProductName',
+				key: 'comprehensiveFeeProductName',
+			},
+			{
+				title:'团队游客人数',
+				dataIndex: 'numberOfTourists',
+				key: 'numberOfTourists',
+			},
+			{
+				title:'应缴人数',
+				dataIndex: 'NumberOfPersonsPayable',
+				key: 'NumberOfPersonsPayable',
+			},
+			{
+				title:'应缴总金额',
+				dataIndex: 'money',
+				key: 'money',
+			},
+			{
+				title:'是否发起过减免申请',
+				dataIndex: 'name1',
+				key: 'name1',
+			},
+			{
+				title:'减免申请是否通过',
+				dataIndex: 'name2',
+				key: 'name2',
+			},
+			{
+				title:'款项状态',
+				dataIndex: 'name3',
+				key: 'name3',
+			},
+			{
+				title: '操作',
+				key: 'action',
+				fixed: 'right',
+			},
+	],
 		ticketColumns: [
 			{
 				title: ' 序号 ',
@@ -180,13 +232,18 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		},
 		add(key: string) {
 			state[key] = true;
+			console.log(key,'6666666')
 		},
 		editHolte(key :string)
 		{
 			state[key] = true;
-			console.log(key,'6666666')
 		},
-
+		choice(key :string)
+		{
+			state[key]=true
+			console.log(key)
+		},
+		
 		/**
 		 * 
 		 * @param model 收费模式
@@ -247,6 +304,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			travelStore.setCompositeProducts(state.allFeesProducts);
 		},
 		async findByIdTeamType() {
+			if (!travelStore.teamType) return
 			const formData = new FormData();
 			formData.append('id', travelStore.teamType);
 			console.log(travelStore.teamType)

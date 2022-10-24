@@ -9,12 +9,8 @@
 			placeholder="请选择分账单位"
 		>
 			<a-form-item label="分账单位" name="companyType">
-				<a-select
-					ref="select"
-					v-model:value="formValidate.companyType"
-					style="width: 100%"
-					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.codeValue, label: item.name }))"
-				>
+				<a-select ref="select" v-model:value="formValidate.companyType" style="width: 100%"
+					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.codeValue, label: item.name }))">
 				</a-select>
 			</a-form-item>
 			<a-form-item label="扣款模式">
@@ -73,7 +69,11 @@ const props = defineProps({
 	params: {
 		type: Object,
 		default: () => {
-			return {};
+			return {
+				add: false,
+				prepaidCompanyList: [{}],
+				from: {},
+			};
 		},
 	},
 	methods: Object,

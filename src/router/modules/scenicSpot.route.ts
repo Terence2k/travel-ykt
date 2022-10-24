@@ -92,7 +92,7 @@ export default [
 				redirect: '/scenic-spot/singleVote/list',
 				name: 'singleVote',
 				meta: {
-					title: '单票',
+					title: '票仓服务-单票',
 				},
 				children: [
 					{
@@ -122,7 +122,7 @@ export default [
 				redirect: '/scenic-spot/multicast/list',
 				name: 'multicast',
 				meta: {
-					title: '联票',
+					title: '票仓服务-联票',
 				},
 				children: [
 					{

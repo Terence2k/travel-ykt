@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<CommonTable :dataSource="state.tableData.data" rowKey="oid" :columns="columns" :row-selection="rowSelection">
+		<CommonTable :dataSource="state.tableData.data" :scroll="{ x: '100%',y: '100%' }" rowKey="oid" :columns="columns" :row-selection="rowSelection">
 			<template #button>
 				<div class="btn">
 					<a-button type="primary" @click="settlement('all', null)">下团结算</a-button>
@@ -117,13 +117,13 @@ const rowSelection = computed(() => {
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
 	state.tableData.param.pageNo = val;
-	onSearch();
+	// onSearch();
 };
 
 const pageSideChange = (current: number, size: number) => {
 	console.log('changePageSize:', size);
 	state.tableData.param.pageSize = size;
-	onSearch();
+	// onSearch();
 };
 
 // 数据处理

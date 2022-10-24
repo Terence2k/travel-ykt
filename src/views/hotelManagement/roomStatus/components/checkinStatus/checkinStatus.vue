@@ -1,6 +1,7 @@
 <template>
 	<div class="wrapper-tab-checkinStatus">
 		<a-form
+			ref="formRef"
 			:model="formValidate"
 			:rules="rules"
 			:scrollToFirstError="true"
@@ -61,8 +62,8 @@
 			</div>
 			<div class="footer-container">
 				<div class="form-item footer-item">
-					<a-button html-type="submit" class="button">保存</a-button>
-					<a-button class="button">提交审核</a-button>
+					<a-button html-type="submit" @click="save" class="button">保存</a-button>
+					<a-button class="button" @click="submitAudit">提交审核</a-button>
 				</div>
 			</div>
 		</a-form>
@@ -70,9 +71,17 @@
 </template>
 
 <script setup lang="ts">
+import dayjs from 'dayjs';
 import api from '@/api';
+import { useRoomStatusStore } from '@/stores/modules/roomStatus';
+import { message } from 'ant-design-vue';
+
+const useRoomStatus = useRoomStatusStore();
+
+const formRef = ref<FormInstance>() as any;
 
 const route = useRoute();
+const router = useRouter();
 
 const formValidate: Ref<Record<string, any>> = ref({});
 
@@ -102,6 +111,22 @@ watch(
 		const id = route?.query?.id;
 		if (id) {
 			console.info('房态上报id：', id);
+
+			const result = toRaw(useRoomStatus.getBaseInfoDataSource)?.find((item) => item?.id == id);
+			console.info('入住情况资料：', result);
+			formValidate.value.date = dayjs(result?.reportDate).format('YYYY-MM-DD');
+			formValidate.value.roomTotal = result?.roomTotal;
+			formValidate.value.fit = 10; //散客
+			formValidate.value.cr = 10; // 会议接待
+			formValidate.value.supervisionFee = result?.supervisionFee;
+			formValidate.value.accompany = 10;
+			formValidate.value.free = 10;
+			formValidate.value.groupGuest = 10;
+			formValidate.value.groupGuest_ex = 10;
+			formValidate.value.emptyRoomTotal = result?.emptyRoomTotal;
+			formValidate.value.occupancyRate = result?.occupancyRate;
+			formValidate.value.hotelName = '';
+			formValidate.value.filer = result?.filer;
 			// api.getHotelDetailInfo({}, id).then((res) => {
 			// 	console.info(`id${id}酒店信息:`, res);
 			// 	// //表单初始化赋值
@@ -113,6 +138,24 @@ watch(
 		immediate: true,
 	}
 );
+
+const save = () => {
+	formRef.value.validateFields().then((result) => {
+		//console.info('检车结果：', result);
+		console.log('formValidate.value', formValidate);
+		const tempData = ref({ ...formValidate.value });
+		useRoomStatus.setBaseInfoDataSource(tempData);
+
+		message.success('保存成功');
+		router.push({ path: '/hotelManagement/roomStatus' });
+		console.info('toRaw(useRoomStatus.getBaseInfoDataSource)', toRaw(useRoomStatus.getBaseInfoDataSource));
+	});
+};
+
+const submitAudit = () => {
+	message.success('审核成功');
+	router.push({ path: '/hotelManagement/roomStatus' });
+};
 </script>
 
 <style lang="less" scoped>

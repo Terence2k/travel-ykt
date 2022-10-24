@@ -223,9 +223,9 @@ const cacheData = ref({
 });
 const oid = ref(null);
 // 初始化
+const route = useRouter();
+const query = route.currentRoute.value.query;
 const init = () => {
-	const route = useRouter();
-	const query = route.currentRoute.value.query;
 	generaRulesOptions.getTeamTypeList();
 	generaRulesOptions.getPrepaidCompanyList();
 	if (query && query.oid) {
@@ -330,7 +330,6 @@ const saveParams = () => {
 		formState.oid = oid.value;
 	}
 };
-const route = useRouter();
 const cancel = () => {
 	route.go(-1);
 };

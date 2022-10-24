@@ -72,7 +72,9 @@ export const useTravelStore = defineStore({
 		trafficType: [],
 		trafficColor: [],
 		baseInfo: {
-			subTravelOperator: {},
+			subTravelOperatorId: '',
+			subTravelOperatorName: '',
+			subTravelOperatorPhone: '',
 			teamType: '',
 			startDate: '',
 			endDate: '',
@@ -82,7 +84,7 @@ export const useTravelStore = defineStore({
 		touristList: [],
 		trafficList: [],
 		traveInfo: {},
-		fileInfo: {},
+		fileInfo: [],
 		compositeProducts: [],
 		hotels: [],
 		scenicTickets: [],
@@ -104,7 +106,7 @@ export const useTravelStore = defineStore({
 		enterpriseState: [
 			{
 				stateName: '未提交',
-				descriptions: '信息不完善，待补充。'
+				descriptions: ''
 			},
 			{
 				stateName: '待审核',

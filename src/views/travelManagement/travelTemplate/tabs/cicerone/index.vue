@@ -118,9 +118,9 @@ const initPage = async (): Promise<void> => {
 
 onMounted(() => {
 	if (route.currentRoute.value?.query?.id) {
-		navigatorBar.setNavigator(['行程模板管理', '查看']);
-	} else {
 		navigatorBar.setNavigator(['行程模板管理', '新增']);
+	} else {
+		navigatorBar.setNavigator(['行程模板管理', '查看']);
 	}
 	initPage();
 });

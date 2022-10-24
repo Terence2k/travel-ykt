@@ -52,3 +52,20 @@ export function travelRetreat(data: any) {
     showLoading: true
   });
 }
+// 根据id查询企业信息
+export function getCompanyInformation(id: any) {
+  return request({
+    url: `${commonPath}/customer-service/public/api/company/getCompanyInformation?oid=${id}`,
+    method: 'post',
+    showLoading: true
+  });
+}
+// 企业信息编辑（除了酒店、景区、旅行社业态）
+export function editCompany(data: any) {
+  return request({
+    url: `${commonPath}/customer-service/public/api/company/editCompany`,
+    method: 'post',
+    data,
+    showLoading: true
+  });
+}

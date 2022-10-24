@@ -88,7 +88,7 @@
 						>取消</a-button
 					>
 				</div>
-				<div v-if="modalState.baseInfo.auditStatus === 0">
+				<div v-if="modalState.baseInfo.auditStatus === 0 && (tableState.roleId || tableState.roleId === 0)">
 					<a-button style="width: 100px; font-size: 14px; background-color: #36b374ff; color: #ffffffff" @click="passModalInfo">审核通过</a-button>
 					<a-button style="width: 100px; font-size: 14px; background-color: #ffffffff; color: #54565cff" @click="failModalInfo">审核不通过</a-button>
 				</div>
@@ -460,6 +460,7 @@ const dataSource = computed(() => {
 							roomStatusName: innerItem.roomStatusName,
 							stockNum: innerItem.stockNum,
 							roomTypeName: result.roomType,
+							uuid: innerItem.uuid,
 						};
 						columns.value[index + 1] = {
 							...columns.value[index + 1],
@@ -492,6 +493,8 @@ const tableState = reactive({
 	params: {
 		currentTimeDetailText: '',
 	},
+	roleId: null,
+	auditBusinessType: '',
 });
 
 const getHotelRoomTypeStockTableInfo = (hotelId) => {
@@ -506,7 +509,7 @@ const getHotelRoomTypeStockTableInfo = (hotelId) => {
 			.getHotelRoomStockInFuture({
 				startTime: startTime.format('YYYY-MM-DD'),
 				endTime: startTime.add(1, 'month').subtract(1, 'day').format('YYYY-MM-DD'),
-				hotelId: 1,
+				hotelId: props.hotelId,
 			})
 			.then((result) => {
 				tableState.tableData.data = result;
@@ -551,9 +554,23 @@ watch(
 );
 
 const openRoomStatusDetailsModal = (data: any) => {
-	modalState.visible = true;
-	modalState.baseInfo = cloneDeep(data);
-	modalState.cacheInfo = cloneDeep(data);
+	console.log('当前单元格数据：', data);
+	if (data?.auditStatus === 0 && data?.uuid) {
+		api.getRoleId({ uuid: data?.uuid }).then((res) => {
+			console.log('sssss', res);
+			if (Array.isArray(res)) {
+				tableState.roleId = res[0]?.roleId;
+				tableState.auditBusinessType = res[0].auditBusinessType;
+			}
+			modalState.visible = true;
+			modalState.baseInfo = cloneDeep(data);
+			modalState.cacheInfo = cloneDeep(data);
+		});
+	} else {
+		modalState.visible = true;
+		modalState.baseInfo = cloneDeep(data);
+		modalState.cacheInfo = cloneDeep(data);
+	}
 };
 
 const addStockNum = () => {
@@ -585,21 +602,38 @@ const saveModalInfo = () => {
 
 const passModalInfo = () => {
 	if (modalState.baseInfo?.oid) {
-		api.hotelRoomStockPass(modalState.baseInfo?.oid).then((res: any) => {
-			console.log('审核通过 返回：', res);
-			modalState.visible = false;
-			getHotelRoomTypeStockTableInfo(props?.hotelId);
-		});
+		// console.info({
+		// 	oid: modalState.baseInfo?.oid,
+		// 	roleId: tableState?.roleId,
+		// 	auditBusinessType: tableState?.auditBusinessType,
+		// });
+		api
+			.hotelRoomStockPass({
+				oid: modalState.baseInfo?.oid,
+				roleId: tableState?.roleId,
+				auditBusinessType: tableState?.auditBusinessType,
+			})
+			.then((res: any) => {
+				console.log('审核通过 返回：', res);
+				modalState.visible = false;
+				getHotelRoomTypeStockTableInfo(props?.hotelId);
+			});
 	}
 };
 
 const failModalInfo = () => {
 	if (modalState.baseInfo?.oid) {
-		api.hotelRoomStockFailed(modalState.baseInfo?.oid).then((res: any) => {
-			console.log('审核不通过 返回：', res);
-			modalState.visible = false;
-			getHotelRoomTypeStockTableInfo(props?.hotelId);
-		});
+		api
+			.hotelRoomStockFailed({
+				oid: modalState.baseInfo?.oid,
+				roleId: tableState?.roleId,
+				auditBusinessType: tableState?.auditBusinessType,
+			})
+			.then((res: any) => {
+				console.log('审核不通过 返回：', res);
+				modalState.visible = false;
+				getHotelRoomTypeStockTableInfo(props?.hotelId);
+			});
 	}
 };
 

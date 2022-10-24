@@ -179,15 +179,23 @@ onMounted(() => {});
 	.left {
 		flex: 1;
 	}
-	// .btn {
-	// 	position: relative;
-	// 	right: calc(-100% + 116px);
-	// 	margin-bottom: 10px;
-	// 	// top: 12px;
-	// }
+	.btn {
+		position: absolute;
+		right: -126px;
+		bottom: -10px;
+		margin-bottom: 10px;
+		// top: 12px;
+	}
 }
 .table-area {
 	margin: 0 10px 0 0;
 	padding: 0;
+}
+.btn {
+	position: absolute;
+	right: -126px;
+	bottom: -10px;
+	margin-bottom: 10px;
+	// top: 12px;
 }
 </style>

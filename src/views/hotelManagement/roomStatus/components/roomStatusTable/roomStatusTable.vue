@@ -40,7 +40,9 @@
 <script setup lang="ts">
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
+import { useRoomStatusStore } from '@/stores/modules/roomStatus';
 
+const useRoomStatus = useRoomStatusStore();
 const router = useRouter();
 const props = defineProps({
 	role: {
@@ -68,36 +70,7 @@ interface DataSourceItem {
 	tickStatus: string;
 }
 
-const tempDataSource = ref([
-	{
-		id: 1,
-		key: 1,
-		date: '2022.3.14',
-		roomTotal: 50,
-		byOneCard: 35,
-		byOffline: 10,
-		supervisionFee: 10,
-		emptyRoomTotal: 300,
-		occupancyRate: '87%',
-		filer: '李某某',
-		reportDate: '2022.3.14 12:30',
-		tickStatus: '异常',
-	},
-	{
-		id: 2,
-		key: 2,
-		date: '2022.3.13',
-		roomTotal: 20,
-		byOneCard: 15,
-		byOffline: 10,
-		supervisionFee: 10,
-		emptyRoomTotal: 300,
-		occupancyRate: '87%',
-		filer: '王某',
-		reportDate: '2022.3.14 12:30',
-		tickStatus: '无',
-	},
-]);
+const tempDataSource = ref([]);
 
 const columns: TableColumnsType = [
 	{
@@ -190,23 +163,26 @@ const rowSelection = computed(() => {
 		onSelectAll: (selected: boolean, selectedRows: DataSourceItem[], changeRows: DataSourceItem[]) => {
 			console.log(selected, selectedRows, changeRows);
 		},
-	}
-})
+	};
+});
 
 const dataSource = computed(() => {
 	if (Array.isArray(tableState.tableData.data)) {
-		return tableState.tableData.data.map((item) => {
+		//console.log('eeeeeeeeeeeeeeeeeellllllllll', tableState.tableData.data);
+		const result = tableState.tableData.data.map((item) => {
 			return {
 				...item,
 				key: item?.id,
 			};
 		});
+		console.log('result', result);
+		return result;
 	}
 });
 
 const tableState = reactive({
 	tableData: {
-		data: tempDataSource,
+		data: ref(tempDataSource),
 		total: 1,
 		loading: false,
 		param: {
@@ -243,7 +219,9 @@ const openEditPage = () => {
 	router.push({ path: '/hotelManagement/roomStatus/roomStatusEdit', query: { id: 1 } });
 };
 onMounted(() => {
-	console.log('props', props);
+	//console.log('props----------------------', props, useRoomStatus.getBaseInfoDataSource);
+	tableState.tableData.data = useRoomStatus.getBaseInfoDataSource;
+	console.log('useRoomStatus.getBaseInfoDataSource', useRoomStatus.getBaseInfoDataSource);
 });
 </script>
 
