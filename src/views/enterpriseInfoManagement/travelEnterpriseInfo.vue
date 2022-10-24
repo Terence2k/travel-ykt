@@ -10,10 +10,9 @@
       <div class="list_item">
         <div class="list_item_top">
           <div class="list_item_name">所属集团</div>
-          <div class="list_item_operate">申请入会</div>
+          <div class="list_item_operate" @click="membership">{{ btnName }}</div>
         </div>
-        <div class="list_item_bottom" v-if="!baseInfo.group">暂无</div>
-        <div class="active" v-else>{{ baseInfo.group }}</div>
+        <div class="list_item_bottom">{{ groupName }}</div>
       </div>
       <div class="split_line"></div>
       <div class="list_item">
@@ -69,7 +68,8 @@
       </tr>
       <tr class="row">
         <td class="key">公司联系方式</td>
-        <td class="value">{{ details.contactName +"&nbsp;&nbsp"+ details.phone }}</td>
+        <td class="value"><span v-if="details.contactName&&details.phone">{{ details.contactName +"&nbsp;&nbsp"+
+        details.phone }}</span></td>
       </tr>
       <tr class="row">
         <td class="key">公司账户类型</td>
@@ -103,9 +103,9 @@
         </td>
       </tr>
     </table>
-    <div class="btn_box">
+    <!-- <div class="btn_box">
       <span class="btn" @click="goTo">信息有变更，立即更新</span>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -138,7 +138,8 @@ type stateType = {
     accountBalance?: string | number,
     delegateGuide?: string | number,
     createTime?: string,
-    group?: string
+    group?: string,
+    groupState?: number
   }
   details: detailsType
 }
@@ -148,11 +149,12 @@ const state = reactive<stateType>({
 })
 const { baseInfo, details } = toRefs(state)
 const initOpeion = async () => {
-  let { accountBalance, delegateGuide, createTime, group, companyBo } = await api.getTravelInformation()
+  let { accountBalance, delegateGuide, createTime, group, companyBo, groupState } = await api.getTravelInformation()
   state.baseInfo.accountBalance = accountBalance
   state.baseInfo.delegateGuide = delegateGuide
   state.baseInfo.createTime = createTime
   state.baseInfo.group = group
+  state.baseInfo.groupState = groupState
   state.details = companyBo
   state.details.manageUrl = "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
 }
@@ -169,6 +171,69 @@ const goTo = () => {
     params: newObj
   })
 }
+type paramsType = {
+  id: string | number,
+  contactName: string,
+  phone: string
+}
+const membership = () => {
+  const params: paramsType = {
+    id: state.details.oid as number,
+    contactName: state.details.contactName as string,
+    phone: state.details.phone as string
+  }
+  let key: keyof paramsType
+  for (key in params) {
+    if (Object.prototype.hasOwnProperty.call(params, key)) {
+      params[key] = encodeURIComponent(JSON.stringify(params[key]));
+    }
+  }
+  router.push({
+    name: 'membershipManagement',
+    params
+  })
+}
+/* （1.入会待审核2.入会通过 3.入会拒绝 4 .退会待审核  5.退会拒绝  6.退会通过） */
+const btnName = computed(() => {
+  let val
+  switch (state.baseInfo.groupState) {
+    case 0:
+    case 1:
+    case 3:
+    case 6:
+      val = '申请入会'
+      break;
+    case 2:
+    case 4:
+    case 5:
+      val = '查看详情'
+      break;
+    default:
+      val = '申请入会'
+      break
+  }
+  return val
+})
+const groupName = computed(() => {
+  let val
+  switch (state.baseInfo.groupState) {
+    case 0:
+    case 1:
+    case 3:
+    case 6:
+      val = '暂无'
+      break;
+    case 2:
+    case 4:
+    case 5:
+      val = state.baseInfo.group
+      break;
+    default:
+      val = '暂无'
+      break
+  }
+  return val
+})
 onMounted(() => {
   initOpeion()
 })

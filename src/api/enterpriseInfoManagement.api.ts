@@ -18,3 +18,37 @@ export function submitInformationAudit(data: any) {
     showLoading: true
   });
 }
+// 根据旅行社id查询入会数据
+export function findTravelIdByJoinData(id: any) {
+  return request({
+    url: `${commonPart}findTravelIdByJoinData?tid=${id}`,
+    method: 'post',
+    showLoading: true
+  });
+}
+// 集团下拉
+export function findGroup() {
+  return request({
+    url: `${commonPart}findGroup`,
+    method: 'post',
+    showLoading: true
+  });
+}
+// 旅行社申请入会
+export function travelApplyJoin(data: any) {
+  return request({
+    url: `${commonPart}travelApplyJoin`,
+    method: 'post',
+    data,
+    showLoading: true
+  });
+}
+// 旅行社申请退会
+export function travelRetreat(data: any) {
+  return request({
+    url: `${commonPart}travelRetreat`,
+    method: 'post',
+    data,
+    showLoading: true
+  });
+}
