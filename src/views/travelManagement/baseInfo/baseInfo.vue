@@ -272,6 +272,7 @@ watch(() => props.onCheck, (newVal) => {
 	onSubmit()
 })
 watch(() => travelStore.baseInfo, newVal => {
+	console.log(newVal,'11111111111111111111111')
 	formState.value = newVal;
 	if (route.query.id) {
 		list.travelOperatorList = [newVal.subTravelOperator];
