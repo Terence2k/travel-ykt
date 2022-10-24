@@ -30,6 +30,7 @@
 						>
 							<template #addonBefore>
 								<a-select
+									class="icon-before-container"
 									:disabled="editableData[record.key]?.operationType === 0"
 									@click="getMaxMinusCount(record)"
 									@change="minusNumOptionsChange($event, record)"
@@ -38,7 +39,7 @@
 									style="width: 60px"
 								>
 									<template #suffixIcon>
-										<minus-outlined />
+										<span class="icon-minus">-</span>
 									</template>
 								</a-select>
 							</template>
@@ -51,7 +52,7 @@
 									style="width: 60px"
 								>
 									<template #suffixIcon>
-										<plus-outlined />
+										<span class="icon-plus">+</span>
 									</template>
 								</a-select>
 							</template>
@@ -59,16 +60,16 @@
 						<template v-else>
 							<a-input-number :disabled="true" :defaultValue="text">
 								<template #addonBefore>
-									<a-select :disabled="true" style="width: 60px">
+									<a-select class="icon-before-container" :disabled="true" style="width: 60px">
 										<template #suffixIcon>
-											<minus-outlined />
+											<span class="icon-minus">-</span>
 										</template>
 									</a-select>
 								</template>
 								<template #addonAfter>
 									<a-select :disabled="true" style="width: 60px">
 										<template #suffixIcon>
-											<plus-outlined />
+											<span class="icon-plus">+</span>
 										</template>
 									</a-select>
 								</template>
@@ -161,7 +162,6 @@
 <script setup lang="ts">
 import { toRaw } from 'vue';
 import { cloneDeep } from 'lodash-es';
-import { MinusOutlined, PlusOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue/es';
 import api from '@/api';
 import CommonTable from '@/components/common/CommonTable.vue';
