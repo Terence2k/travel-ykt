@@ -80,7 +80,7 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 	}
 	const saveItinerary = (val:any) => {
 		console.log(travelStore.touristList)
-		let ajax = (route.query.id || traveListData.oid) ? 
+		let ajax = (route.query.id || traveListData) ? 
 					api.travelManagement.editItinerary : 
 					api.travelManagement.saveItinerary
 		return ajax(
@@ -132,11 +132,11 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 			res.basic.teamId = res.basic.itineraryNo
 			res.basic.time = [res.basic.startDate, res.basic.endDate]
 			res.basic.touristNum = res.basic.touristCount
-			res.basic.travelOperatorOid = res.basic.travelOperator.oid
-			res.basic.contactPhone = res.basic.travelOperator.mobile
-			res.basic.username = res.basic.travelOperator.username
-			res.basic.subTravelOperatorOid = res.basic.subTravelOperator.oid
-			res.basic.subTravelContactPhone = res.basic.subTravelOperator.mobile
+			res.basic.travelOperatorOid = res.basic.travelOperatorId
+			res.basic.contactPhone = res.basic.travelOperatorPhone
+			res.basic.username = res.basic.travelOperatorName
+			res.basic.subTravelOperatorOid = res.basic.subTravelOid
+			res.basic.subTravelContactPhone = res.basic.subTravelOperatorPhone
 			travelStore.setBaseInfo(res.basic);
 			travelStore.setGuideList(res.guideList);
 			travelStore.setTouristList(res.touristList.content);

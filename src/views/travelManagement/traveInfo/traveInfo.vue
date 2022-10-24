@@ -1,6 +1,25 @@
 <template>
 	<div class="table-container">
 		<div>
+			<p class="title">古维管理费</p>
+			<CommonTable :columns="gouvyColumns" :dataSource="gouvyDate" :scrollY="false">
+				<template #bodyCell="{ column, text, index, record }">
+					<template v-if="column.key === 'action'">
+						<div class="action-btns">
+							<a class="item" disabled>提交申请</a>
+						</div>
+					</template>
+					<template v-if="column.key === 'NumberOfPersonsPayable'">
+						<div class="action-btns">
+							{{record.NumberOfPersonsPayable}}
+							<a class="item" @click="choice('selectPersonnelPop')">选择人数</a>
+						</div>
+					</template>
+					
+				</template>
+			</CommonTable>
+		</div>
+		<div>
 			<p class="title">综费产品</p>
 			<CommonTable :columns="columns" :dataSource="allFeesProducts" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
@@ -61,11 +80,13 @@
 	</div>
 	<addHotel v-model="addHotelPop" />
 	<addTicket v-model="addTicketPop" />
+	<Personnel v-model="selectPersonnelPop" />
 </template>
 <script lang="ts" setup>
 import CommonTable from '@/components/common/CommonTable.vue';
 import addHotel from './addHotel.vue';
 import addTicket from './addTicket.vue';
+import Personnel from './selectPersonnel.vue';
 import { useTraveInfo } from './traveInfo';
 const props = defineProps({
 	onCheck: {
@@ -76,8 +97,10 @@ const emits = defineEmits(['onSuccess']);
 const {
 	columns,
 	ticketColumns,
+	gouvyColumns,
 	addHotelPop,
 	addTicketPop,
+	selectPersonnelPop,
 	hotelColumns,
 	tableData,
 	allFeesProducts,
@@ -87,8 +110,10 @@ const {
 	add,
 	holteDate,
 	ticketData,
+	gouvyDate,
 	del,
-	editHolte
+	editHolte,
+	choice
 } = useTraveInfo(props, emits);
 </script>
 <style lang="less" scoped>

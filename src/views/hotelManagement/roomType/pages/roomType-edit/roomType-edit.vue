@@ -22,6 +22,7 @@
 				<template v-if="['roomNum'].includes(column.dataIndex)">
 					<div>
 						<a-input-number
+							type="number"
 							:disabled="editableData[record.key]?.operationType !== 0"
 							v-if="editableData[record.key]"
 							v-model:value="editableData[record.key][column.dataIndex]"
@@ -29,7 +30,8 @@
 						>
 							<template #addonBefore>
 								<a-select
-									:class="{ 'item-new': editableData[record.key]?.operationType === 0 }"
+									class="icon-before-container"
+									:disabled="editableData[record.key]?.operationType === 0"
 									@click="getMaxMinusCount(record)"
 									@change="minusNumOptionsChange($event, record)"
 									v-model:value="editableData[record.key].minusNum"
@@ -37,20 +39,20 @@
 									style="width: 60px"
 								>
 									<template #suffixIcon>
-										<minus-outlined />
+										<span class="icon-minus">-</span>
 									</template>
 								</a-select>
 							</template>
 							<template #addonAfter>
 								<a-select
-									:class="{ 'item-new': editableData[record.key]?.operationType === 0 }"
+									:disabled="editableData[record.key]?.operationType === 0"
 									@change="plusNumOptionsChange($event, record)"
 									v-model:value="editableData[record.key].plusNum"
 									:options="plusNumOptions"
 									style="width: 60px"
 								>
 									<template #suffixIcon>
-										<plus-outlined />
+										<span class="icon-plus">+</span>
 									</template>
 								</a-select>
 							</template>
@@ -58,16 +60,16 @@
 						<template v-else>
 							<a-input-number :disabled="true" :defaultValue="text">
 								<template #addonBefore>
-									<a-select :disabled="true" style="width: 60px">
+									<a-select class="icon-before-container" :disabled="true" style="width: 60px">
 										<template #suffixIcon>
-											<minus-outlined />
+											<span class="icon-minus">-</span>
 										</template>
 									</a-select>
 								</template>
 								<template #addonAfter>
 									<a-select :disabled="true" style="width: 60px">
 										<template #suffixIcon>
-											<plus-outlined />
+											<span class="icon-plus">+</span>
 										</template>
 									</a-select>
 								</template>
@@ -84,6 +86,7 @@
 				<template v-if="['roomTypeCode'].includes(column.dataIndex)">
 					<div>
 						<a-select
+							class="systemRoomType-select"
 							@change="changeRoomOccupancyNum(editableData[record.key])"
 							v-if="editableData[record.key]"
 							v-model:value="editableData[record.key][column.dataIndex]"
@@ -92,7 +95,7 @@
 						</a-select>
 
 						<template v-else>
-							<a-select :disabled="true" :value="text" :options="systemRoomNameOptions"> </a-select>
+							<a-select class="systemRoomType-select" :disabled="true" :value="text" :options="systemRoomNameOptions"> </a-select>
 						</template>
 					</div>
 				</template>
@@ -159,7 +162,6 @@
 <script setup lang="ts">
 import { toRaw } from 'vue';
 import { cloneDeep } from 'lodash-es';
-import { MinusOutlined, PlusOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue/es';
 import api from '@/api';
 import CommonTable from '@/components/common/CommonTable.vue';
@@ -504,21 +506,35 @@ const getAuditStatusText = (auditStatus: number) => {
 
 const getMaxMinusCount = (target: string) => {
 	if (target?.operationType !== 0) {
-		api.getMaxMinusCountOfRoom(target.oid).then((res) => {
-			console.log('当前房型的最大可减小数量为：', res);
-			editableData[target?.oid].maxMinusCountOfRoom = res;
-			const maxCount = ~res;
-			minusNumOptions.value = (() => {
-				const result = [];
-				for (let i = -1; i > maxCount; i--) {
+		api
+			.getMaxMinusCountOfRoom(target.oid)
+			.then((res) => {
+				console.log('当前房型的最大可减小数量为：', res);
+				editableData[target?.oid].maxMinusCountOfRoom = res;
+				const maxCount = ~res;
+				minusNumOptions.value = (() => {
+					const result = [];
+					for (let i = -1; i > maxCount; i--) {
+						result.push({
+							value: i,
+							label: i.toString(),
+						});
+					}
+					return result;
+				})();
+			})
+			.catch((err: any) => {
+				minusNumOptions.value = (() => {
+					const result = [];
 					result.push({
-						value: i,
-						label: i.toString(),
+						value: 0,
+						label: '0',
 					});
-				}
-				return result;
-			})();
-		});
+
+					return result;
+				})();
+				message.error(err || '获取最大可减少房间数失败');
+			});
 	}
 };
 onMounted(() => {

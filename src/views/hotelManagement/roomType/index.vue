@@ -3,6 +3,11 @@
 		<div class="content-container">
 			<div class="table-bar">
 				<div class="flex-container">
+					<span v-if="tableState.pageIsShow" class="title"
+						>共<span class="tip">{{ tableState.inAuditRecordNum }}</span
+						>条待审核的消息</span
+					>
+					<template v-else><span class="title">暂无权限查看此页面</span></template>
 					<a-button class="button-create-item">导出</a-button>
 				</div>
 				<div class="table-container">
@@ -142,6 +147,8 @@ const tableState = reactive({
 			phone: undefined,
 		},
 	},
+	pageIsShow: false,
+	inAuditRecordNum: 0,
 	statusOptions: ref<SelectProps['options']>(statusOptionsData),
 	starOptions: ref<SelectProps['options']>(starOptionsData),
 });
@@ -215,12 +222,14 @@ const onSearch = () => {
 	);
 	if (Array.isArray(sysRoles) && sysRoles.map((item) => item?.roleCode).includes('ASSOCIATION_SUPER_ADMIN')) {
 		console.log('我是协会超级管理员');
+		tableState.pageIsShow = true;
 		api
 			.getHotelListInAudit()
 			.then((res: any) => {
+				tableState.inAuditRecordNum = res?.length || 0;
 				console.log('res------------------------:', res);
 				tableState.tableData.data = res?.content || res;
-				tableState.tableData.total = res.total;
+				tableState.tableData.total = res?.total;
 				getHotelStarList();
 			})
 			.catch((err: any) => {
