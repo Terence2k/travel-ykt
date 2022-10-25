@@ -26,7 +26,11 @@
 			<section>
 				<div class="set-wrap">
 					<p>
-						批量设置
+						<span class="label">时间：</span>
+						<a-range-picker v-model:value="dateRange" />
+					</p>
+					<p>
+						<span class="label">批量设置:</span>
 						<a-input-number
 							:min="0"
 							:max="9999999999"
@@ -38,7 +42,7 @@
 						/>
 					</p>
 					<p>
-						按日设置
+						<span class="label">按日设置</span>
 						<a-input-number
 							:min="0"
 							:max="9999999999"
@@ -104,6 +108,7 @@ const setDayPriceList = ref([
 //日历
 const currentPrict = ref(null);
 const allPrice = ref(40);
+const dateRange = ref([dayjs('2022-10-20'), dayjs('2022-10-25')]);
 
 //getCurrentDay
 const currentDay = ref();
@@ -119,7 +124,17 @@ const clearCurrentDay = () => {
 };
 
 const createDateItem = () => {
-	if (!currentDay.value) {
+	let timeRange = dateRange.value,
+		arr: string[] = [],
+		isEdit = false;
+
+	// if (timeRange) {
+	// 	let arr = getAllDateCN(new Date(shijianYMD(timeRange[0])), new Date(shijianYMD(timeRange[1])));
+	// 	console.log(arr, 'range Date');
+	// 	return
+	// }
+
+	if (!currentDay.value && !timeRange) {
 		message.error('请选择日期');
 		return;
 	}
@@ -128,25 +143,72 @@ const createDateItem = () => {
 		message.error('请填写价格');
 		return;
 	}
-	console.log('createDateItem', currentPrict.value, currentDay.value);
+	console.log(timeRange, 'timeRange');
 
-	let obj = { day: currentDay.value, price: currentPrict.value },
-		isEdit = false;
+	if (timeRange) {
+		console.log('???');
 
-	setDayPriceList.value.map((i, index) => {
-		if (i.day === currentDay.value) {
-			isEdit = true;
-			editItem(index, obj);
+		arr = getAllDateCN(new Date(shijianYMD(timeRange[0])), new Date(shijianYMD(timeRange[1])));
+		// let obj = { day: currentDay.value, price: currentPrict.value };
+
+		setDayPriceList.value.map((i, index) => {
+			let arrindex = arr.indexOf(i.day),
+				obj = { day: i.day, price: currentPrict.value };
+			console.log(arrindex, i.day, arr);
+
+			if (arrindex > -1) {
+				console.log(arrindex, 'arrindex');
+				arr.splice(arrindex, 1);
+				editItem(index, obj);
+			}
+			return i;
+		});
+		console.log(arr, 'arr');
+
+		arr.map((i) => {
+			createItem({ day: i, price: currentPrict.value });
+		});
+	} else {
+		let obj = { day: currentDay.value, price: currentPrict.value };
+
+		setDayPriceList.value.map((i, index) => {
+			if (i.day === currentDay.value) {
+				isEdit = true;
+				editItem(index, obj);
+			}
+			return i;
+		});
+
+		if (!isEdit) {
+			createItem(obj);
 		}
-		return i;
-	});
-
-	if (!isEdit) {
-		createItem(obj);
+		console.log('createDateItem', currentPrict.value, currentDay.value);
 	}
 
 	message.success('成功');
 	clearCurrentDay();
+	isEdit = false;
+};
+const shijianYMD = (timestamp: any) => {
+	let time = new Date(timestamp),
+		year = time.getFullYear(),
+		month = (time.getMonth() + 1).toString().padStart(2, '0'),
+		date = time.getDate().toString().padStart(2, '0');
+
+	return year + '-' + month + '-' + date;
+};
+const getAllDateCN = (startTime: Date, endTime: Date) => {
+	var date_all = [];
+	var i = 0;
+	while (endTime.getTime() - startTime.getTime() >= 0) {
+		var year = startTime.getFullYear();
+		var month = startTime.getMonth() + 1;
+		var day = startTime.getDate();
+		date_all[i] = year + '-' + month + '-' + day;
+		startTime.setDate(startTime.getDate() + 1);
+		i += 1;
+	}
+	return date_all;
 };
 
 const createItem = (obj: any) => {
@@ -154,7 +216,9 @@ const createItem = (obj: any) => {
 };
 
 const editItem = (index: number, obj: any) => {
-	setDayPriceList.value[index] = obj;
+	const { day, price } = obj;
+	setDayPriceList.value[index].day = day;
+	setDayPriceList.value[index].price = price;
 };
 //弹窗部分
 const modelValue = ref(false);
@@ -166,21 +230,20 @@ const CreateData = () => {
 
 const cancel = () => {
 	modelValue.value = false;
-	resetFields();
+	// resetFields();
 };
 
 const apply = () => {
-	validate()
-		.then((res) => {
-			cancel();
-			resetFields();
-			console.log(formValidate, res);
-
-			// emits('add-rule-obj', toRaw(res));
-		})
-		.catch((err) => {
-			console.log('error', err);
-		});
+	// validate()
+	// 	.then((res) => {
+	// 		cancel();
+	// 		resetFields();
+	// 		console.log(formValidate, res);
+	// 		// emits('add-rule-obj', toRaw(res));
+	// 	})
+	// 	.catch((err) => {
+	// 		console.log('error', err);
+	// 	});
 };
 
 onMounted(() => {});
@@ -190,91 +253,8 @@ onMounted(() => {});
 .tips {
 	color: #71747a;
 }
-
-.calendar-wrap {
-	display: flex;
-	height: 100%;
-	position: relative;
-	padding: 20px;
-	.turn-left {
-		position: absolute;
-		left: 0;
-		top: 50%;
-		width: 20px;
-		height: 20px;
-		text-align: center;
-		// background-color: red;
-		cursor: pointer;
-	}
-	.turn-right {
-		position: absolute;
-		right: 0;
-		top: 50%;
-		width: 20px;
-		height: 20px;
-		text-align: center;
-		// background-color: red;
-		cursor: pointer;
-	}
-	.wrap {
-		position: relative;
-		width: 568px;
-		border: 1px solid #f1f2f5;
-		.price_tips {
-			color: #ff9f3f;
-		}
-		.price_tips.default {
-			color: #ddd;
-		}
-		.calendar-header {
-			text-align: center;
-			height: 40px;
-			line-height: 40px;
-			font-size: 16px;
-			font-weight: bold;
-			border: none;
-		}
-		.date-wrap {
-			padding-top: 6px;
-			width: 82px;
-			height: 50px;
-			line-height: 18px;
-			font-size: 14px;
-			text-align: center;
-		}
-	}
-}
-.table-area {
-	padding: 0;
-}
-
-::v-deep .ant-picker-calendar .ant-picker-panel {
-	border-top: none;
-}
-::v-deep thead {
-	padding: 10px;
-	height: 44px;
-	border-bottom: 1px solid #f1f2f5 !important;
-}
-::v-deep thead tr th::before {
-	content: '周';
-	font-size: 14px;
-	font-weight: 400;
-}
-::v-deep thead tr th {
-	font-size: 14px;
-	font-weight: 400;
-}
-::v-deep tbody tr:first-child {
-	padding-top: 10px;
-	margin-top: 10px;
-}
-
-::v-deep .ant-picker-cell.ant-picker-cell-in-view {
-	padding: 0;
-}
-::v-deep .ant-picker-body {
-	padding: 0 !important;
-	margin: 0;
+.label {
+	display: inline-block;
+	min-width: 70px;
 }
 </style>
