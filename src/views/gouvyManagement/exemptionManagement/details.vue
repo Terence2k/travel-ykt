@@ -1,9 +1,6 @@
 <template>
 	<div class="warp">
 		<header>行程信息</header>
-		<div class="go-div">
-			<a-button type="primary" @click="go">返回上一级</a-button>
-		</div>
 		<a-form labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
 			<a-form-item label="行程类型">
 				<span>标准团</span>
@@ -29,10 +26,14 @@
 			<a-form-item label="减免人数">
 				<span>30人</span>
 			</a-form-item>
-			<!-- <div v-if="state.tableData.index.index=='1'">
+			<div class="center">
+				<p class="p" v-if="state.tableData.index.index != '1'">审核结果：<span class="span">本次审核已于 2022.10.23 18:00:56 由管理员康小宏 执行驳回;
+					驳回理由：游客杨某某的身份证明照片显示证件已过期</span></p>
+			</div>
+			<div class="center" v-if="state.tableData.index.index == '1'">
 				<a-button type="primary" class="success" @click="adopt">审核通过</a-button>
 				<a-button type="primary" class="btn" @click="dialogVisible = true">审核不通过</a-button>
-			</div> -->
+			</div>
 			<div class="title">申请减免人员</div>
 			<CommonTable :dataSource="dataSource" :columns="columns">
 				<template #bodyCell="{ column, index }">
@@ -43,17 +44,17 @@
 					</template>
 				</template>
 			</CommonTable>
-			<!-- <BaseModal title="审核不通过说明" v-model="dialogVisible">
-			<a-form>
-				<a-form-item label="">
-					<a-textarea placeholder="审核不通过原因" :rows="4" />
-				</a-form-item>
-			</a-form>
-			<template v-slot:footer>
-				<a-button type="primary"  @click="cancel">关闭</a-button>
-				<a-button type="primary" style="width:120px" @click="Fail">确认审核不通过</a-button>
-			</template>
-		</BaseModal> -->
+			<BaseModal title="审核不通过说明" v-model="dialogVisible">
+				<a-form>
+					<a-form-item label="">
+						<a-textarea placeholder="审核不通过原因" :rows="4" />
+					</a-form-item>
+				</a-form>
+				<template v-slot:footer>
+					<a-button type="primary" @click="cancel">关闭</a-button>
+					<a-button type="primary" style="width: 120px" @click="Fail">确认审核不通过</a-button>
+				</template>
+			</BaseModal>
 		</a-form>
 	</div>
 </template>
@@ -62,8 +63,8 @@
 import CommonTable from '@/components/common/CommonTable.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import BaseModal from '@/components/common/BaseModal.vue';
-import { ref,reactive} from 'vue';
-import { useRouter } from 'vue-router'
+import { ref, reactive } from 'vue';
+import { useRouter } from 'vue-router';
 import { message } from 'ant-design-vue';
 const route = useRouter();
 const dialogVisible = ref(false);
@@ -84,8 +85,8 @@ const dataSource = [
 ];
 const state = reactive({
 	tableData: {
-		index:{},
-		type:'2'
+		index: {},
+		type: '2',
 	},
 });
 const columns = [
@@ -146,27 +147,24 @@ const columns = [
 		width: 208,
 	},
 ];
-const go =()=>{
-	route.push({ path: '/gouvyManagement/order/list'});
-}
-const cancel =()=>{
-	dialogVisible.value = false
-}
-// const Fail =()=>{
-// 	message.error('审核未通过');
-// 	dialogVisible.value = false
-// 	go()
-// }
-// const adopt =()=>{
-// 	message.success('审核已通过');
-// 	go()
-// }
-const download =()=>{
+const cancel = () => {
+	dialogVisible.value = false;
+};
+const Fail = () => {
+	message.error('审核未通过');
+	dialogVisible.value = false;
+	go();
+};
+const adopt = () => {
+	message.success('审核已通过');
+	go();
+};
+const download = () => {
 	message.success('下载成功');
-	go()
-}
+	go();
+};
 onMounted(() => {
-	state.tableData.index=route.currentRoute.value?.query
+	state.tableData.index = route.currentRoute.value?.query;
 });
 </script>
 
@@ -193,12 +191,23 @@ onMounted(() => {
 		margin-bottom: 16px;
 		border-bottom: 1px solid #f1f2f5;
 	}
-.btn{
-	margin-left: 50px;
-}
-.go-div{
-	width: 100%;
-	text-align: right;
-}
+	.btn {
+		margin-left: 50px;
+	}
+	.go-div {
+		width: 100%;
+		text-align: right;
+	}
+	.p {
+		font-size: 18px;
+		color: rgb(215, 215, 215);
+		margin-top: 20px;
+	}
+	.span {
+		color: #1e2226;
+	}
+	.center{
+		text-align: center;
+	}
 }
 </style>
