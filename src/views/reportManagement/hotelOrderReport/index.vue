@@ -6,6 +6,9 @@
 		<search-item label="行程单号" style="width: 280px">
 			<a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入行程单号" allowClear style="width: 180px" />
 		</search-item>
+        <search-item label="订单号" style="width: 280px">
+			<a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入订单号" allowClear style="width: 180px" />
+		</search-item>
 		<search-item label="团队类型">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.teamTypeId" style="width: 200px" placeholder="请选择团队类型">
 				<a-select-option v-for="(item,index) in options.teamTypesLists" :value="item.oid" :key=index>{{ item.name }}
@@ -24,27 +27,17 @@
 				</a-select-option>
 			</a-select>
 		</search-item>
-		<search-item label="景区名称" style="width: 280px">
-			<a-input v-model:value="state.tableData.param.applicationName" placeholder="请输入景区名称" allowClear style="width: 180px" />
-		</search-item>
-		<search-item label="转账单位" style="width: 280px">
-			<!-- <a-input v-model:value="state.tableData.param.applicationName" placeholder="请选择转账单位" allowClear style="width: 180px" /> -->
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.applicationName" style="width: 200px" placeholder="请选择转账单位">
-				<a-select-option v-for="(item,index) in 5" :value="item" :key=index>{{ item }}
+		<search-item label="酒店名称" style="width: 280px">
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.travelId" style="width: 200px" placeholder="请选择酒店名称">
+				<a-select-option v-for="(item,index) in options.groupSocietyList" :value="item.travelAgencyId" :key=index>{{ item.travelAgencyName }}
 				</a-select-option>
 			</a-select>
 		</search-item>
-		<search-item label="转账时间" style="width: 280px">
+		<search-item label="预订时间" style="width: 280px">
 			<a-date-picker v-model:value="state.tableData.param.applicationDate" style="width: 180px" />
 		</search-item>
-		<search-item label="收款单位" style="width: 280px">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.applicationName" style="width: 200px" placeholder="请选择收款单位">
-				<a-select-option v-for="(item,index) in 5" :value="item" :key=index>{{ item }}
-				</a-select-option>
-			</a-select>
-		</search-item>
-		<search-item label="银行流水号" style="width: 280px">
-			<a-input v-model:value="state.tableData.param.applicationName" placeholder="请输入银行流水号" allowClear style="width: 180px" />
+        <search-item label="结算时间" style="width: 280px">
+			<a-date-picker v-model:value="state.tableData.param.applicationDate" style="width: 180px" />
 		</search-item>
 		<template #button>
 			<a-button @click="initList">查询</a-button>
@@ -57,12 +50,11 @@
 	</div>
 	<div>
 		<a-spin size="large" :spinning="state.tableData.loading">
-			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%' }">
+			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: 2800 }">
 				<template #bodyCell="{ column, record, index }">
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<!-- <a href="javascript:;" @click="toTrip(record)">查看行程单</a> -->
-							<a href="javascript:;" @click="toOrder(record)">查看订单</a>
+							<a href="javascript:;" @click="toDetail(record)">查看详情</a>
 						</div>
 					</template>
 				</template>
@@ -100,6 +92,11 @@ const columns = [
 		dataIndex: 'routeName',
 		key: 'routeName',
 	},
+    {
+		title: '订单号',
+		dataIndex: 'routeName',
+		key: 'routeName',
+	},
 	{
 		title: '团队类型',
 		dataIndex: 'routeName',
@@ -115,57 +112,90 @@ const columns = [
 		dataIndex: 'routeName',
 		key: 'routeName',
 	},
+    {
+		title: '酒店名称',
+		dataIndex: 'routeName',
+		key: 'routeName',
+	},
 	{
-		title: '游客人数',
+		title: '预订人数',
 		dataIndex: 'subTravelName',
 		key: 'subTravelName',
 	},
 	{
-		title: '结算时间',
+		title: '预订时间',
+		dataIndex: 'subTravelName',
+		key: 'subTravelName',
+	},
+    {
+		title: '预订房数',
+		dataIndex: 'subTravelName',
+		key: 'subTravelName',
+	},
+    {
+		title: '入住时间',
+		dataIndex: 'subTravelName',
+		key: 'subTravelName',
+	},
+    {
+		title: '离店时间',
+		dataIndex: 'subTravelName',
+		key: 'subTravelName',
+	},
+    {
+		title: '减免人数',
+		dataIndex: 'subTravelName',
+		key: 'subTravelName',
+	},
+    {
+		title: '订单金额(元)',
+		dataIndex: 'subTravelName',
+		key: 'subTravelName',
+	},
+    {
+		title: '减免金额(元)',
 		dataIndex: 'subTravelName',
 		key: 'subTravelName',
 	},
 	{
-		title: '结算金额(元)',
+		title: '实际金额（元）',
 		dataIndex: 'time',
 		key: 'time',
-		width: 105
 	},
 	{
-		title: '转账单位',
+		title: '核销时间',
+		dataIndex: 'groupTypeStr',
+		key: 'groupTypeStr',
+	},
+    {
+		title: '核销房数',
+		dataIndex: 'groupTypeStr',
+		key: 'groupTypeStr',
+	},
+    {
+		title: '结算时间',
 		dataIndex: 'groupTypeStr',
 		key: 'groupTypeStr',
 	},
 	{
-		title: '转账金额(元)',
-		dataIndex: 'guides',
-		key: 'guides',
-		width: 105
-	},
-	{
-		title: '转账账户',
+		title: '未消费费用(元)',
 		dataIndex: 'guides',
 		key: 'guides',
 	},
-	{
-		title: '转账时间',
+    {
+		title: '收入费用(元)',
 		dataIndex: 'guides',
 		key: 'guides',
 	},
-	{
-		title: '收款单位',
-		dataIndex: 'touristCount',
-		key: 'touristCount',
+    {
+		title: '扣除费用(元)',
+		dataIndex: 'guides',
+		key: 'guides',
 	},
-	{
-		title: '收款账户',
-		dataIndex: 'touristCount',
-		key: 'touristCount',
-	},
-	{
-		title: '银行流水号',
-		dataIndex: 'touristCount',
-		key: 'touristCount',
+    {
+		title: '结算费用(元)',
+		dataIndex: 'guides',
+		key: 'guides',
 	},
 	{
 		title: '操作',
@@ -207,46 +237,6 @@ const initList = async () => {
 	// state.tableData.data = list;
 	// state.tableData.loading = false;
 };
-// 清空筛选项
-const initOption = () => {
-	state.tableData.param = {
-		applicationDate: null,
-		applicationName: null,
-		productType: 1,
-		pageSize: 10,
-		pageNo: 1,
-		teamTypeId: null,
-		travelId: null,
-		subTravelId: null,
-		transferAccountsNo: null,
-		itineraryNo: null,
-	}
-}
-// 根据路由更改不同列表枚举
-const typeChange = (val)=> {
-	let type = null;
-	switch(val) {
-		case '景区行程单结算表': 
-			type = 1;
-			break;
-		case '酒店行程单结算表': 
-			type = 2;
-			break;
-		case '集团行程单结算表': 
-			type = 3;
-			break;
-		case '协会行程单结算表': 
-			type = 4;
-			break;
-		case '监理行程单结算表': 
-			type = 5;
-			break;
-		case '一卡通行程单结算表': 
-			type = 6;
-			break;
-	}
-	return type;
-}
 //搜索
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
@@ -259,33 +249,18 @@ const pageSideChange = (current: number, size: number) => {
 	state.tableData.param.pageSize = size;
 	initList();
 };
-// 跳转订单详情
-const toOrder = (record: any) => {
-	// 保存当前路由name
-	let routerName = router.currentRoute.value.matched[1].name;
-	// 跳转该路由下的订单列表 自动匹配面包屑
-	route.push({
-		path: `/reportManagement/${String(routerName)}/orderList`,
-	});
+// 跳转结算详情
+const toDetail = (record: any) => {
+	// route.push({
+	// 	path: `/reportManagement/${String(routerName)}/orderList`,
+	// });
 };
-watch(
-	// 监听路由信息
-	() => router.currentRoute.value.matched[1].meta.title, (val) => {
-		// 清除筛选项
-		initOption();
-		// 更改不同路由所需枚举
-		state.tableData.param.type = typeChange(val);
-		initList();
-	}
-)
+
 onMounted(() => {
-	// 首次渲染需判断 其它未切换公用文件路由进入监听
-	state.tableData.param.type = typeChange(router.currentRoute.value.matched[1].meta.title);
 	options.getTeamTypeList();
 	options.getGroupSocietyList();
 	options.getEarthContactAgencyList();
 	initList();
-	
 })
 </script>
 <style scoped lang="less"></style>
