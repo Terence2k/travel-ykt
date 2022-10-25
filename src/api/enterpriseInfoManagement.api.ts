@@ -69,3 +69,12 @@ export function editCompany(data: any) {
     showLoading: true
   });
 }
+// 查询入会审核列表
+export function findByStateTravelMembershipList(data: any) {
+  return request({
+    url: `${commonPart}findByStateTravelMembershipList`,
+    method: 'post',
+    data,
+    showLoading: true
+  });
+}

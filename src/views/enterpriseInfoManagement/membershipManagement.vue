@@ -340,7 +340,6 @@ const findGroup = async () => {
     }
   })
   console.log(res);
-
 }
 const init = () => {
   form.contactName = JSON.parse(decodeURIComponent(props.contactName))
