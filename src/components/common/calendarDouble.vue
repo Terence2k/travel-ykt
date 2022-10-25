@@ -74,9 +74,7 @@ import BaseModal from '@/components/common/BaseModal.vue';
 
 import dayjs, { Dayjs } from 'dayjs';
 import _ from 'lodash';
-import api from '@/api';
 import { message } from 'ant-design-vue';
-import { log } from 'console';
 
 const emits = defineEmits(['get-current-day', 'clear-current-day', 'get-data']);
 
@@ -110,7 +108,7 @@ const preMonth = (day: any) => {
 	let time = new Date(day),
 		year = Number(time.getFullYear()),
 		month = Number((time.getMonth() + 1).toString().padStart(2, '0')),
-		date = time.getDate().toString().padStart(2, '0');
+		date = Number(time.getDate().toString().padStart(2, '0'));
 
 	if (month - 1 === 0) {
 		year--;
@@ -119,7 +117,16 @@ const preMonth = (day: any) => {
 		month -= 1;
 	}
 
-	return dayjs(year + '-' + month + '-' + date);
+	let dateStr = year + '-' + month + '-' + date,
+		// 获取日期天数
+		d = new Date(year, month, 0),
+		days = d.getDate();
+
+	if (days < date) {
+		dateStr = year + '-' + month + '-' + days;
+	}
+
+	return dayjs(dateStr);
 };
 
 //后一个月
@@ -127,7 +134,7 @@ const nextMonth = (day: any) => {
 	let time = new Date(day),
 		year = time.getFullYear(),
 		month = Number((time.getMonth() + 1).toString().padStart(2, '0')),
-		date = time.getDate().toString().padStart(2, '0');
+		date = Number(time.getDate().toString().padStart(2, '0'));
 	if (month + 1 === 13) {
 		year++;
 		month = 1;
@@ -135,7 +142,16 @@ const nextMonth = (day: any) => {
 		month += 1;
 	}
 
-	return dayjs(year + '-' + month + '-' + date);
+	let dateStr = year + '-' + month + '-' + date,
+		// 获取日期天数
+		d = new Date(year, month, 0),
+		days = d.getDate();
+
+	if (days < date) {
+		dateStr = year + '-' + month + '-' + days;
+	}
+
+	return dayjs(dateStr);
 };
 
 const shijianYMD = (timestamp: any) => {
@@ -152,9 +168,7 @@ const isCurrentDay = (timestamp: Dayjs) => {
 	let day = shijianYMD(timestamp),
 		// isHad = setDayPriceList.value.filter((i) => i.day == day);
 		isHad = props.setList.filter((i) => i.day == day);
-	// nextTick(() => {
-	// 	console.log('test', props.setList);
-	// });
+
 	if (isHad.length > 0) {
 		return isHad[0].price;
 	} else {
@@ -165,7 +179,7 @@ const currentPoint = ref<null | string>(null);
 //设置当前日期
 const bindSetDatePriceFirst = (e: Dayjs) => {
 	let time = shijianYMD(e),
-		nextValue = nextMonth(e);
+		nextValue = nextMonth(time);
 
 	valueNext.value = nextValue;
 	currentPoint.value = '1';
@@ -256,6 +270,7 @@ defineExpose({
 		text-align: center;
 		cursor: pointer;
 	}
+
 	.wrap {
 		position: relative;
 		width: 568px;

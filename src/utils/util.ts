@@ -153,3 +153,19 @@ export const checkList = (list: any, code: any, path = []):any => {
   }
   return []
 }
+
+export function getStyles(elem: any, prop: any) {
+  if (window.getComputedStyle) {
+    if (prop) {
+      return parseInt(window.getComputedStyle(elem, null)[prop])
+    } else {
+      return window.getComputedStyle(elem, null)
+    }
+  } else {
+    if (prop) {
+      return parseInt(elem.currentStyle[prop])
+    } else {
+      return elem.currentStyle
+    }
+  }
+}

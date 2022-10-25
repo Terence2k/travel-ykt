@@ -82,7 +82,7 @@ export async function getVerifUser() {
 // 新增或 编辑单票信息
 export async function saveSingleVoteInfo(data: any) {
 	return request({
-		url: commonPath + `/ticket-service/public/api/scenic-one-ticket/audit`,
+		url: commonPath + `/ticket-service/public/api/scenic-one-ticket/save`,
 		method: 'post',
 		data,
 	});
