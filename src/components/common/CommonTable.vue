@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import { useSlots } from 'vue';
-import { getElementPos } from '@/utils/util';
+import { getElementPos, getStyles } from '@/utils/util';
 
 const props = defineProps({
 	// 如果不需要表格自适应高度为false
@@ -40,11 +40,11 @@ const slotButton = !!useSlots().button;
 
 const computeTableHeight = () => {
 	if (props.scrollY) {
-		nextTick(() => {
+    setTimeout(() => {
 			// table-header
-			const tableHeader = document.getElementsByClassName('ant-table-header')[0]?.offsetHeight || 0;
+			const tableHeader = getStyles(document.getElementsByClassName('ant-table-header')[0], 'height');
 			// 分页
-			const paginationHeight = document.getElementsByClassName('ant-pagination')[0]?.offsetHeight || 0;
+			const paginationHeight = getStyles(document.getElementsByClassName('ant-pagination')[0], 'height');
 			// common-table
 			const commonTableHeight = document.getElementsByClassName('common-table')[0];
 			// 计算总高度vh-除表格内容外高度
@@ -53,8 +53,8 @@ const computeTableHeight = () => {
 			// console.log('a-table-height:', num);
 			// console.log('antheight:', antTableBody.offsetTop);`
 			// console.log('getElementPos:', getElementPos(commonTableHeight).y);
-			antTableBody.style.height = `calc(100vh - ${num + 25}px)`; // num + 微调
-		});
+      antTableBody.style.height = `calc(100vh - ${num + 25}px)`; // num + 微调
+    }, 0);
 	}
 };
 
