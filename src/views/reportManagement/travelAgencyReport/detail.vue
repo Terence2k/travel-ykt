@@ -114,9 +114,6 @@ const formData: any = reactive({
 });
 // 缓存编辑表格模态框数据
 const adjustData= ref({
-	editItem: {},
-	editShow: false,
-	editIndex: 0,
 	modalParams: {},
 	detailShow: false,
 });
@@ -181,32 +178,6 @@ onMounted(() => {
 			margin-right: 16px;
 		}
 	}
-}
-.ant-form-item {
-	font-size: 14px;
-	font-family: Microsoft YaHei UI;
-	font-weight: 400;
-	color: #1e2226;
-	margin-top: 6px;
-	margin-bottom: 0;
-	height: 32px;
-}
-.ant-form-item:first-child {
-    margin-top: 13px;
-}
-::v-deep(.ant-form-item-control-input) {
-	height: 18px;
-}
-::v-deep(.ant-form-item-label > label) {
-	position: relative;
-	display: inline-flex;
-	align-items: center;
-	max-width: 100%;
-	height: 32px;
-	font-size: 14px;
-	font-family: Microsoft YaHei UI;
-	font-weight: 400;
-	color: #1e2226;
 }
 .table-area {
     padding: 0;
