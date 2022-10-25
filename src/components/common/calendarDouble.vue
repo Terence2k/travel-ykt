@@ -74,9 +74,7 @@ import BaseModal from '@/components/common/BaseModal.vue';
 
 import dayjs, { Dayjs } from 'dayjs';
 import _ from 'lodash';
-import api from '@/api';
 import { message } from 'ant-design-vue';
-import { log } from 'console';
 
 const emits = defineEmits(['get-current-day', 'clear-current-day', 'get-data']);
 
