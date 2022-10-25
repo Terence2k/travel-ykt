@@ -7,20 +7,21 @@
 			<a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入行程单号" allowClear style="width: 180px" />
 		</search-item>
 		<search-item label="团队类型">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.teamTypeId" style="width: 200px" placeholder="请选择团队类型">
-				<a-select-option v-for="(item,index) in options.teamTypesLists" :value="item.oid" :key=index>{{ item.name }}
-				</a-select-option>
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.teamTypeId" style="width: 180px" placeholder="请选择团队类型">
+				<a-select-option v-for="(item, index) in options.teamTypesLists" :value="item.oid" :key="index">{{ item.name }} </a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="组团社">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.travelId" style="width: 200px" placeholder="请选择旅行社名称">
-				<a-select-option v-for="(item,index) in options.groupSocietyList" :value="item.travelAgencyId" :key=index>{{ item.travelAgencyName }}
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.travelId" style="width: 180px" placeholder="请选择旅行社名称">
+				<a-select-option v-for="(item, index) in options.groupSocietyList" :value="item.travelAgencyId" :key="index"
+					>{{ item.travelAgencyName }}
 				</a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="地接社">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.subTravelId" style="width: 200px" placeholder="请选择旅行社名称">
-				<a-select-option v-for="(item,index) in options.earthContactAgencyList" :value="item.travelAgencyId" :key=index>{{ item.travelAgencyName }}
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.subTravelId" style="width: 180px" placeholder="请选择旅行社名称">
+				<a-select-option v-for="(item, index) in options.earthContactAgencyList" :value="item.travelAgencyId" :key="index"
+					>{{ item.travelAgencyName }}
 				</a-select-option>
 			</a-select>
 		</search-item>
@@ -29,18 +30,16 @@
 		</search-item>
 		<search-item label="转账单位" style="width: 280px">
 			<!-- <a-input v-model:value="state.tableData.param.applicationName" placeholder="请选择转账单位" allowClear style="width: 180px" /> -->
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.applicationName" style="width: 200px" placeholder="请选择转账单位">
-				<a-select-option v-for="(item,index) in 5" :value="item" :key=index>{{ item }}
-				</a-select-option>
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.applicationName" style="width: 180px" placeholder="请选择转账单位">
+				<a-select-option v-for="(item, index) in 5" :value="item" :key="index">{{ item }} </a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="转账时间" style="width: 280px">
 			<a-date-picker v-model:value="state.tableData.param.applicationDate" style="width: 180px" />
 		</search-item>
 		<search-item label="收款单位" style="width: 280px">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.applicationName" style="width: 200px" placeholder="请选择收款单位">
-				<a-select-option v-for="(item,index) in 5" :value="item" :key=index>{{ item }}
-				</a-select-option>
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.applicationName" style="width: 180px" placeholder="请选择收款单位">
+				<a-select-option v-for="(item, index) in 5" :value="item" :key="index">{{ item }} </a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="银行流水号" style="width: 280px">
@@ -79,7 +78,7 @@
 </template>
 
 <script setup lang="ts">
-  import { watch } from 'vue';
+import { watch } from 'vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
@@ -220,33 +219,33 @@ const initOption = () => {
 		subTravelId: null,
 		transferAccountsNo: null,
 		itineraryNo: null,
-	}
-}
+	};
+};
 // 根据路由更改不同列表枚举
-const typeChange = (val)=> {
+const typeChange = (val: any) => {
 	let type = null;
-	switch(val) {
-		case '景区行程单结算表': 
+	switch (val) {
+		case '景区行程单结算表':
 			type = 1;
 			break;
-		case '酒店行程单结算表': 
+		case '酒店行程单结算表':
 			type = 2;
 			break;
-		case '集团行程单结算表': 
+		case '集团行程单结算表':
 			type = 3;
 			break;
-		case '协会行程单结算表': 
+		case '协会行程单结算表':
 			type = 4;
 			break;
-		case '监理行程单结算表': 
+		case '监理行程单结算表':
 			type = 5;
 			break;
-		case '一卡通行程单结算表': 
+		case '一卡通行程单结算表':
 			type = 6;
 			break;
 	}
 	return type;
-}
+};
 //搜索
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
@@ -270,14 +269,15 @@ const toOrder = (record: any) => {
 };
 watch(
 	// 监听路由信息
-	() => router.currentRoute.value.matched[1].meta.title, (val) => {
+	() => router.currentRoute.value.matched[1].meta.title,
+	(val) => {
 		// 清除筛选项
 		initOption();
 		// 更改不同路由所需枚举
 		state.tableData.param.type = typeChange(val);
 		initList();
 	}
-)
+);
 onMounted(() => {
 	// 首次渲染需判断 其它未切换公用文件路由进入监听
 	state.tableData.param.type = typeChange(router.currentRoute.value.matched[1].meta.title);
@@ -285,7 +285,6 @@ onMounted(() => {
 	options.getGroupSocietyList();
 	options.getEarthContactAgencyList();
 	initList();
-	
-})
+});
 </script>
 <style scoped lang="less"></style>
