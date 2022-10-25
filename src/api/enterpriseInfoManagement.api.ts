@@ -78,3 +78,12 @@ export function findByStateTravelMembershipList(data: any) {
     showLoading: true
   });
 }
+// 审核退入会
+export function reviewRetreatApplyJoin(data: any) {
+  return request({
+    url: `${commonPart}reviewRetreatApplyJoin`,
+    method: 'post',
+    data,
+    showLoading: true
+  });
+}
