@@ -119,10 +119,9 @@ const preMonth = (day: any) => {
 		month -= 1;
 	}
 
-	let dateStr = year + '-' + month + '-' + date;
-
-	// 获取日期天数
-	let d = new Date(year, month, 0),
+	let dateStr = year + '-' + month + '-' + date,
+		// 获取日期天数
+		d = new Date(year, month, 0),
 		days = d.getDate();
 
 	if (days < date) {
@@ -145,10 +144,9 @@ const nextMonth = (day: any) => {
 		month += 1;
 	}
 
-	let dateStr = year + '-' + month + '-' + date;
-
-	// 获取日期天数
-	let d = new Date(year, month, 0),
+	let dateStr = year + '-' + month + '-' + date,
+		// 获取日期天数
+		d = new Date(year, month, 0),
 		days = d.getDate();
 
 	if (days < date) {
@@ -172,9 +170,7 @@ const isCurrentDay = (timestamp: Dayjs) => {
 	let day = shijianYMD(timestamp),
 		// isHad = setDayPriceList.value.filter((i) => i.day == day);
 		isHad = props.setList.filter((i) => i.day == day);
-	// nextTick(() => {
-	// 	console.log('test', props.setList);
-	// });
+
 	if (isHad.length > 0) {
 		return isHad[0].price;
 	} else {
@@ -189,7 +185,6 @@ const bindSetDatePriceFirst = (e: Dayjs) => {
 
 	valueNext.value = nextValue;
 	currentPoint.value = '1';
-	console.log('nextValue', nextValue);
 
 	emits('get-current-day', time);
 };
@@ -277,6 +272,7 @@ defineExpose({
 		text-align: center;
 		cursor: pointer;
 	}
+
 	.wrap {
 		position: relative;
 		width: 568px;
