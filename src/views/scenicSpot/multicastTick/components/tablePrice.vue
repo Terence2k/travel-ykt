@@ -68,7 +68,6 @@ import Calendar from '@/components/common/calendarDouble.vue';
 
 import api from '@/api';
 import { message } from 'ant-design-vue';
-import { log } from 'console';
 
 // 数据
 const props = defineProps({
@@ -101,8 +100,8 @@ const columnsCount = ref([
 
 //自定义价格列表
 const setDayPriceList = ref([
-	{ day: '2022-10-20', price: '30' },
-	{ day: '2022-10-21', price: '13' },
+	{ stockDate: '2022-10-20', ticketPrice: '30', setDayPriceList: '30' },
+	{ stockDate: '2022-10-21', ticketPrice: '13', setDayPriceList: '30' },
 ]);
 
 //日历
@@ -152,9 +151,9 @@ const createDateItem = () => {
 		// let obj = { day: currentDay.value, price: currentPrict.value };
 
 		setDayPriceList.value.map((i, index) => {
-			let arrindex = arr.indexOf(i.day),
-				obj = { day: i.day, price: currentPrict.value };
-			console.log(arrindex, i.day, arr);
+			let arrindex = arr.indexOf(i.stockDate),
+				obj = { stockDate: i.stockDate, ticketPrice: currentPrict.value, stock: currentPrict.value };
+			console.log(arrindex, i.stockDate, arr);
 
 			if (arrindex > -1) {
 				console.log(arrindex, 'arrindex');
@@ -166,13 +165,13 @@ const createDateItem = () => {
 		console.log(arr, 'arr');
 
 		arr.map((i) => {
-			createItem({ day: i, price: currentPrict.value });
+			createItem({ stockDate: i, ticketPrice: currentPrict.value });
 		});
 	} else {
-		let obj = { day: currentDay.value, price: currentPrict.value };
+		let obj = { stockDate: currentDay.value, ticketPrice: currentPrict.value };
 
 		setDayPriceList.value.map((i, index) => {
-			if (i.day === currentDay.value) {
+			if (i.stockDate === currentDay.value) {
 				isEdit = true;
 				editItem(index, obj);
 			}
@@ -198,6 +197,8 @@ const shijianYMD = (timestamp: any) => {
 	return year + '-' + month + '-' + date;
 };
 const getAllDateCN = (startTime: Date, endTime: Date) => {
+	console.log(startTime, endTime, 'endTime');
+
 	var date_all = [];
 	var i = 0;
 	while (endTime.getTime() - startTime.getTime() >= 0) {
@@ -216,9 +217,10 @@ const createItem = (obj: any) => {
 };
 
 const editItem = (index: number, obj: any) => {
-	const { day, price } = obj;
-	setDayPriceList.value[index].day = day;
-	setDayPriceList.value[index].price = price;
+	const { stockDate, ticketPrice, stock } = obj;
+	setDayPriceList.value[index].stockDate = stockDate;
+	setDayPriceList.value[index].ticketPrice = ticketPrice;
+	setDayPriceList.value[index].stock = stock;
 };
 //弹窗部分
 const modelValue = ref(false);

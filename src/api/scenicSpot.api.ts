@@ -194,3 +194,12 @@ export async function getMultipleDetail(id: number) {
 		method: 'get',
 	});
 }
+
+// 单票库存
+export async function getInevntoryDetail(data: any) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-one-ticket/get-stock`,
+		method: 'get',
+		data,
+	});
+}

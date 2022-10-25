@@ -1,8 +1,7 @@
 <template>
-	<BaseModal :modelValue="modelValue" title="设置减免规则" @cancel="cancel" width="1212px">
+	<BaseModal :modelValue="modelValue" :title="title" @cancel="cancel" width="1212px">
 		<!-- 外部 -->
 		<slot> </slot>
-
 		<article class="calendar-wrap">
 			<div class="turn-left" @click="turnLeft">
 				<img src="@/assets/svg/turn-left.svg" alt="" />
@@ -20,7 +19,10 @@
 						<div v-if="current.month() === value.month()">
 							<div :class="current.date() === value.date() && currentPoint === '1' ? 'date-wrap current' : 'date-wrap'">
 								<div>{{ current.date() }}</div>
-								<span class="price_tips">{{ isCurrentDay(current) ? '￥' + isCurrentDay(current) : '￥' + setAllValue }} </span>
+								<span class="price_tips" v-show="setAllValue"> ￥{{ isCurrentDay(current) ? isCurrentDay(current) : setAllValue }} </span>
+								<span class="inventory" v-show="setAllInventory"
+									>{{ isCurrentDayInventpry(current) ? isCurrentDayInventpry(current) : setAllInventory }}
+								</span>
 							</div>
 						</div>
 					</template>
@@ -35,7 +37,10 @@
 						<div v-if="current.month() === valueNext.month()">
 							<div :class="current.date() === valueNext.date() && currentPoint === '2' ? 'date-wrap current' : 'date-wrap'">
 								<div>{{ current.date() }}</div>
-								<span class="price_tips">￥{{ isCurrentDay(current) ? isCurrentDay(current) : setAllValue }} </span>
+								<span class="price_tips" v-show="setAllValue"> ￥{{ isCurrentDay(current) ? isCurrentDay(current) : setAllValue }} </span>
+								<span class="inventory" v-show="setAllInventory"
+									>{{ isCurrentDayInventpry(current) ? +isCurrentDayInventpry(current) : setAllInventory }}
+								</span>
 							</div>
 						</div>
 					</template>
@@ -91,15 +96,35 @@ const props = defineProps({
 		default: null,
 		// require: true,
 	},
+	// 默认库存
+	setAllInventory: {
+		type: Number || null,
+		default: null,
+		// require: true,
+	},
+	/***
+	 * @setList
+	 * {
+	 * "oid": null, //有就传
+	 * "stockDate": "2023-10-25", //库存日期
+	 * "stock": "999", //库存数量
+	 * "ticketPrice": "299" //价钱
+	 * }
+	 */
 	//设置自定义的价格列表
 	setList: {
 		type: Array,
 		default: () => [],
 		require: true,
 	},
+
 	fistDate: {
+		type: Date,
+		default: new Date(),
+	},
+	title: {
 		type: String,
-		defaule: new Date(),
+		default: '设置减免规则',
 	},
 });
 
@@ -167,10 +192,22 @@ const shijianYMD = (timestamp: any) => {
 const isCurrentDay = (timestamp: Dayjs) => {
 	let day = shijianYMD(timestamp),
 		// isHad = setDayPriceList.value.filter((i) => i.day == day);
-		isHad = props.setList.filter((i) => i.day == day);
+		isHad = props.setList.filter((i) => i.stockDate == day);
 
 	if (isHad.length > 0) {
-		return isHad[0].price;
+		return isHad[0].ticketPrice;
+	} else {
+		return false;
+	}
+};
+//获取是否在在自定义价格列表
+const isCurrentDayInventpry = (timestamp: Dayjs) => {
+	let day = shijianYMD(timestamp),
+		// isHad = setDayPriceList.value.filter((i) => i.day == day);
+		isHad = props.setList.filter((i) => i.stockDate == day);
+
+	if (isHad.length > 0) {
+		return isHad[0].stock;
 	} else {
 		return false;
 	}
@@ -254,7 +291,7 @@ defineExpose({
 	.turn-left {
 		position: absolute;
 		left: 0;
-		top: 172px;
+		top: 50%;
 		width: 20px;
 		height: 20px;
 		text-align: center;
@@ -263,8 +300,7 @@ defineExpose({
 	.turn-right {
 		position: absolute;
 		right: 0;
-		top: 172px;
-
+		top: 50%;
 		width: 20px;
 		height: 20px;
 		text-align: center;
@@ -276,7 +312,12 @@ defineExpose({
 		width: 568px;
 		border: 1px solid #f1f2f5;
 		.price_tips {
+			display: block;
 			color: #ff9f3f;
+		}
+		.inventory {
+			// display: block;
+			color: #6cf;
 		}
 		.price_tips.default {
 			color: #ddd;
@@ -292,7 +333,7 @@ defineExpose({
 		.date-wrap {
 			padding-top: 6px;
 			width: 80px;
-			height: 50px;
+			height: 60px;
 			line-height: 18px;
 			font-size: 14px;
 			text-align: center;
