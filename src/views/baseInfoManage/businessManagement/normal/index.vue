@@ -56,13 +56,13 @@
       </a-tab-pane>
     </a-tabs>
   </div>
-  <CommonModal title="审核企业注册信息" v-model:visible="auditVisible" @close="auditClose" @conform="auditConform"
-    :conform-text="'同意入驻'" :cancel-text="'驳回注册'" width="50%">
+  <CommonModal :title="modalTitle" v-model:visible="auditVisible" @close="auditClose" @conform="auditConform"
+    :conform-text="conformText" :cancel-text="cancelText" width="50%">
     <div class="table_box">
       <table class="info_table" cellpadding="16px" border="1">
         <tr class="row">
-          <td class="key">注册时间</td>
-          <td class="value">{{ details.lastUpdateTime }}</td>
+          <td class="key">入会申请时间</td>
+          <td class="value">{{ details.submitTime }}</td>
         </tr>
         <tr class="row">
           <td class="key">企业类型</td>
@@ -94,16 +94,22 @@
             <a-image width="200px" :src="details.businessLicenseUrl" />
           </td>
         </tr>
+        <tr class="row">
+          <td class="key">{{ keyName }}</td>
+          <td class="value">{{ details.applicationRemarks }}</td>
+        </tr>
       </table>
+      <div class="tip" v-if="isRegiste">该企业已正式入驻一卡通平台，当前无挂靠集团。如您同意其入会，则与贵集团缔结挂靠关系。</div>
+      <div class="tip" v-else>该企业申请退会。如您同意其退会，则与贵集团取消挂靠关系。</div>
     </div>
   </CommonModal>
   <CommonModal :title="registerAuditTitle" v-model:visible="registerAuditVisible" @close="registerAuditClose"
     @conform="registerAuditConform" :conform-text="'确定'">
     <span v-if="isRegiste">
-      您即将批准 {{ details.name }} 的注册申请，批准后该企业管理员将可以登录一卡通后台继续完善信息
+      您即将批准 {{ details.name }} 的入会挂靠申请，是否确认？
     </span>
     <span v-else>
-      您即将批准 {{ details.name }} 的企业信息变更申请，是否已检查无误？
+      您即将批准 {{ details.name }} 的退会申请，是否确认？
     </span>
   </CommonModal>
   <CommonModal :title="failTitle" v-model:visible="failVisible" @close="failClose" @cancel="failClose"
@@ -111,7 +117,7 @@
     <a-form ref="failFormRef" :model="failForm" :rules="failFormRules" name="fail-form" autocomplete="off"
       labelAlign="left" :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
       <a-form-item name="auditRemark" label="驳回原因">
-        <a-textarea v-model:value="failForm.auditRemark" placeholder="请输入驳回原因" :rows="2">
+        <a-textarea v-model:value="failForm.rejectReason" placeholder="请输入驳回原因" :rows="2">
         </a-textarea>
       </a-form-item>
     </a-form>
@@ -166,7 +172,7 @@ const router = useRouter();
 const route = useRoute();
 const goTo = (value: any, name: string) => {
   let newObj: any = {
-    oid: encodeURIComponent(JSON.stringify(value.oid)),
+    oid: encodeURIComponent(JSON.stringify(value.travelId)),
     businessType: encodeURIComponent(JSON.stringify(value.businessType))
   }
   router.push({
@@ -184,13 +190,27 @@ const failVisible = ref(false)
 const changeAuditVisible = ref(false)
 const isRegiste = ref(true)
 const failFormRules: Record<string, Rule[]> = {
-  auditRemark: [{ required: true, trigger: 'blur', message: '请输入驳回原因' }],
+  rejectReason: [{ required: true, trigger: 'blur', message: '请输入驳回原因' }],
 }
 const registerAuditTitle = computed(() => {
-  return isRegiste.value ? '企业注册审核确认' : '企业信息变更审核确认'
+  return isRegiste.value ? '旅行社入会确认' : '旅行社退会确认'
 })
 const failTitle = computed(() => {
-  return isRegiste.value ? '驳回企业注册' : '驳回企业信息变更'
+  return isRegiste.value ? '驳回旅行社入会' : '驳回旅行社退会'
+})
+
+
+const keyName = computed(() => {
+  return isRegiste.value ? '入会申请理由' : '退会申请理由'
+})
+const modalTitle = computed(() => {
+  return isRegiste.value ? '旅行社入会申请' : '旅行社退会申请'
+})
+const conformText = computed(() => {
+  return isRegiste.value ? '同意入会' : '同意退会'
+})
+const cancelText = computed(() => {
+  return isRegiste.value ? '驳回入会' : '驳回退会'
 })
 const getComputedVal = computed(() => (key: string, val: any) => {
   if (key === 'accountType') {
@@ -204,37 +224,33 @@ const getComputedVal = computed(() => (key: string, val: any) => {
   }
 })
 const failForm = reactive({
-  auditTypeCode: 1,
-  auditRemark: '',
-  uuid: '',
-  roleId: '',
-  businessType: '',
-  /* 
-  2 审核通过
-  3 审核不通过
-   */
-  auditStatus: 2
+  oid: '',
+  // 入会通过 2  入会拒绝3  退会通过6  退回拒绝5
+  state: 2,
+  rejectReason: ''
 })
 const failFormRef = ref()
 type detailsType = {
-  lastUpdateTime?: string,
+  submitTime?: string,
   businessTypeName?: string,
   name?: string,
   creditCode?: string | number,
   contactName?: string,
   phone?: string | number,
   regionName?: string,
-  businessLicenseUrl?: string
+  businessLicenseUrl?: string,
+  applicationRemarks?: string,
 }
 const details = reactive<detailsType>({
-  lastUpdateTime: undefined,
+  submitTime: undefined,
   businessTypeName: undefined,
   name: undefined,
   creditCode: undefined,
   contactName: undefined,
   phone: undefined,
   regionName: undefined,
-  businessLicenseUrl: undefined
+  businessLicenseUrl: undefined,
+  applicationRemarks: undefined
 })
 const layout = {
   labelCol: { span: 6 },
@@ -466,65 +482,20 @@ const tabsChange = (val: string) => {
 }
 
 const auditEnterprise = async (record: any) => {
-  failForm.uuid = record.uuid
-  failForm.roleId = record.roleId
-  failForm.businessType = record.auditBusinessType
+  failForm.oid = record.oid
   details.name = record.name
-  if (record.source === '企业注册') {
+  auditVisible.value = true
+  let key: keyof detailsType
+  for (key in details) {
+    if (Object.prototype.hasOwnProperty.call(details, key)) {
+      details[key] = record[key];
+    }
+  }
+  if (record.informationSources === '入会申请') {
     isRegiste.value = true
-    auditVisible.value = true
-    let key: keyof detailsType
-    for (key in details) {
-      if (Object.prototype.hasOwnProperty.call(details, key)) {
-        details[key] = record[key];
-      }
-    }
-  } else if (record.source === '信息变更') {
-    const res = await api.getChangeBeforeAfterData(record.oid, record.businessType)
-    const newList = flat(res?.new)
-    const oldList = flat(res?.old)
-    let keyList = Object.keys(keyNameList)
-    keyList.forEach((key: string) => {
-      if (newList[key] != oldList[key]) {
-        newArrList.value[key] = newList[key]
-        oldArrList.value[key] = oldList[key]
-        changeKeys.value.push(key)
-      }
-    })
-    const newRegion = [newList?.provinceId, newList?.cityId, newList?.areaId]
-    const oldRegion = [oldList?.provinceId, oldList?.cityId, oldList?.areaId]
-    if (newRegion.toString() !== oldRegion.toString()) {
-      newArrList.value['regionCode'] = newRegion
-      oldArrList.value['regionCode'] = oldRegion
-      changeKeys.value.push('regionCode')
-      let i = changeKeys.value.indexOf('addressDetail')
-      let j = changeKeys.value.indexOf('regionCode')
-      if (i !== -1 && j !== -1) {
-        changeKeys.value.splice(j, 1)
-        changeKeys.value.splice(i, 0, 'regionCode')
-      }
-    }
-    changeAuditVisible.value = true
+  } else if (record.informationSources === '退会申请') {
     isRegiste.value = false
   }
-}
-
-const flat = (target: any) => {
-  let obj: any = {};
-  let process = (_target: any) => {
-    if (Object.prototype.toString.call(_target) === '[object Object]') {
-      let keys = Object.keys(_target)
-      keys.forEach(item => {
-        if (Object.prototype.toString.call(_target[item]) === '[object Object]') {
-          process(_target[item])
-        } else {
-          obj[item] = _target[item]
-        }
-      })
-    }
-  }
-  process(target)
-  return obj
 }
 
 
@@ -539,9 +510,14 @@ const registerAuditClose = () => {
   registerAuditVisible.value = false
 }
 const registerAuditConform = async () => {
-  // 审核通过
-  failForm.auditStatus = 2
-  let res = await api.auditCompany(toRaw(failForm))
+  if (isRegiste.value) {
+    // 入会通过2
+    failForm.state = 2
+  } else {
+    // 退会通过6
+    failForm.state = 6
+  }
+  let res = await api.reviewRetreatApplyJoin(toRaw(failForm))
   if (res) {
     message.success('审核成功！')
     auditVisible.value = false
@@ -559,9 +535,14 @@ const failClose = () => {
 }
 const failConform = () => {
   failFormRef.value.validateFields().then(async () => {
-    // 审核不通过
-    failForm.auditStatus = 3
-    let res = await api.auditCompany(toRaw(failForm))
+    if (isRegiste.value) {
+      // 入会拒绝3
+      failForm.state = 3
+    } else {
+      // 退回拒绝5
+      failForm.state = 5
+    }
+    let res = await api.reviewRetreatApplyJoin(toRaw(failForm))
     if (res) {
       message.success('驳回成功！')
       auditVisible.value = false
@@ -611,6 +592,10 @@ onMounted(() => {
   max-height: 80vh;
   padding: 1px 0;
   overflow: auto;
+
+  .tip {
+    margin-top: 20px;
+  }
 
   .row {
     width: 100%;
