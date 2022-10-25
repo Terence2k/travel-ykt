@@ -11,10 +11,10 @@
       </div>
       <div class="table_box">
         <table class="change_table" cellpadding="16px" border="1">
-          <tr class="row" v-for="(item,index) in changeKeys" :key="item">
+          <tr class="row" v-for="(item, index) in changeKeys" :key="item">
             <td class="key">{{ keyNameList[item] }}</td>
 
-            <td class="value" v-if="['manageUrl','businessLicenseUrl'].includes(item) && detailsArrList[item]">
+            <td class="value" v-if="['manageUrl', 'businessLicenseUrl'].includes(item) && detailsArrList[item]">
               <a-image width="200px" :src="detailsArrList[item]" />
             </td>
             <td class="value" v-else-if="item === 'regionCode'">
@@ -152,7 +152,7 @@ const getData = async () => {
     }
   }
 }
-onActivated(() => {
+onMounted(() => {
   if (props.oid) {
     let key: keyof queryParamsType;
     for (key in props) {
