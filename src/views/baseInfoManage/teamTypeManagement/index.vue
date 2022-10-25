@@ -20,7 +20,7 @@
       </template>
       <template v-if="column.key === 'action'">
         <div class="action-btns">
-          <a @click="addOrUpdate({ row:record, handle: 'update' })">编辑</a>
+          <a @click="addOrUpdate({ row: record, handle: 'update' })">编辑</a>
           <a-popconfirm title="是否删除该团队类型？删除后，旅行社将无法填写该类型的行程单，请谨慎操作！" ok-text="确认" cancel-text="取消"
             @confirm="deleteTeam(record.oid)">
             <a>删除</a>
@@ -50,14 +50,12 @@
           <template #children="{ direction, selectedKeys, onItemSelect }">
             <a-tree v-if="direction === 'left'" block-node checkable check-strictly default-expand-all
               :checked-keys="[...selectedKeys, ...checkedKeys]" :tree-data="tData" @check="
-                (_, props) => {
-                  onChecked(props, [...selectedKeys, ...checkedKeys], onItemSelect);
-                }
-              " @select="
-                (_, props) => {
-                  onChecked(props, [...selectedKeys, ...checkedKeys], onItemSelect);
-                }
-              " />
+              (_, props) => {
+                onChecked(props, [...selectedKeys, ...checkedKeys], onItemSelect);
+              }" @select="
+  (_, props) => {
+    onChecked(props, [...selectedKeys, ...checkedKeys], onItemSelect);
+  }" />
           </template>
         </a-transfer>
         <p class="tip">创建行程单时，是否有必购的项目？不选择即代表无必购项目。</p>
@@ -284,32 +282,6 @@ const setTitle = () => {
     }
   }
 }
-/* const tData: TransferProps['dataSource'] = [
-  {
-    key: '11',
-    title: 'test11',
-    children: [
-      { key: 1, title: 'test1' },
-      { key: 2, title: 'test2' },
-    ],
-  },
-  {
-    key: '12',
-    title: 'test12',
-    children: [
-      { key: 5, title: 'test5' },
-      { key: 6, title: 'test6' },
-    ],
-  },
-  {
-    key: '13',
-    title: 'test13',
-    children: [
-      { key: 7, title: 'test7' },
-    ],
-  },
-]; */
-// const dataSource = ref(flatten(tData));
 
 interface addInterface {
   row?: any
@@ -331,8 +303,6 @@ const addOrUpdate = ({ row, handle }: addInterface) => {
         checkedParentKeys.push(productIds[productIds.indexOf(item.key)])
       }
     })
-    console.log(checkedParentKeys, '#######');
-
     tData.value = disabledChildKeys(tData.value, checkedParentKeys);
     checkedKeys.value = productIds;
     normalProductIds = productIds;
@@ -373,7 +343,7 @@ const onSearch = async () => {
     key.teamTypeItemBos?.forEach((item: any) => {
       if (item?.products) {
         item.products.forEach((citem: any) => {
-          key.productIds.push(citem.productId)
+          key.productIds.push(item.itemId + '_' + citem.productId)
           key.products.push(citem.productName)
         })
       } else {
@@ -439,7 +409,8 @@ const getProductsList = async () => {
       title: item.itemName,
       children: item.productVos.map((citem: any) => {
         return {
-          key: citem.productId,
+          key: item.itemId + '_' + citem.productId,
+          realKey: citem.productId,
           title: citem.productName
         }
       })

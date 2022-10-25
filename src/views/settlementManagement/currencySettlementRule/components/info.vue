@@ -48,9 +48,9 @@
 					<span>{{ getTypeName('chargeModel') }}</span>
 				</div>
 			</a-form-item>
-			<a-form-item label="收费数量" name="charCount">
+			<a-form-item label="收费数量" name="chargeCount">
 				<div>
-					<span>{{ formState.charCount }}</span>
+					<span>{{ formState.chargeCount }}</span>
 					<span v-if="formState.chargeModel === 1">%</span>
 					<span v-if="formState.chargeModel === 2">人</span>
 					<span v-if="formState.chargeModel === 3">元</span>
@@ -122,7 +122,6 @@ const formState: UnwrapRef<FormState> = reactive({
 	costExplanation: null,
 	level: null,
 	productType: null,
-	charCount: null,
 });
 const columns = ref([
 	{

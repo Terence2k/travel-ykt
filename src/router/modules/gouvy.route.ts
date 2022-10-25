@@ -38,7 +38,7 @@ export default [
 					},
 					{
 						path: 'order_edit',
-						component: () => import('@/views/gouvyManagement/order/details.vue'),
+						component: () => import('@/views/gouvyManagement/exemptionManagement/details.vue'),
 						name: 'order_edit',
 						meta: {
 							title: '查看',
@@ -72,6 +72,38 @@ export default [
 						path: 'order-change_edit',
 						component: () => import('@/views/gouvyManagement/orderChange/changeDetails.vue'),
 						name: 'order-change_edit',
+						meta: {
+							title: '查看',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
+			{
+				path: 'exemptionManagement',
+				name: 'exemptionManagement',
+				redirect: '/gouvyManagement/exemptionManagement/list',
+				meta: {
+					title: '古维减免管理',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					isDetail: false, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/gouvyManagement/exemptionManagement/index.vue'),
+						name: 'exemption-management-list',
+						meta: {
+							title: '古维减免管理',
+							activeMeun: 'information',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'exemption-management_edit',
+						component: () => import('@/views/gouvyManagement/exemptionManagement/details.vue'),
+						name: 'exemption-management_edit',
 						meta: {
 							title: '查看',
 							isDetail: true, // 在左侧的导航栏不会展示

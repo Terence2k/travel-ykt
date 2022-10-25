@@ -266,6 +266,14 @@ export async function getTransferAccountDetails(data: any) {
 		showLoading: true,
 	});
 }
+// 单条数据申请转账
+export async function transferAccountsDetail(oid: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/transfer-account/transferAccount/:${oid}`,
+		method: 'get',
+		showLoading: true,
+	});
+}
 // 审核转账单
 export async function transferAccountAudit(data: any) {
 	return request({

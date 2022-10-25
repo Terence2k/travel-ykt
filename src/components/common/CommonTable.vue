@@ -49,7 +49,7 @@ const computeTableHeight = () => {
 			const commonTableHeight = document.getElementsByClassName('common-table')[0];
 			// 计算总高度vh-除表格内容外高度
 			let num = getElementPos(commonTableHeight).y + tableHeader + paginationHeight;
-			const antTableBody = document.getElementsByClassName('ant-table-body')[0];
+			const antTableBody = document.getElementsByClassName('ant-table-body')[0] as HTMLElement;
 			// console.log('a-table-height:', num);
 			// console.log('antheight:', antTableBody.offsetTop);`
 			// console.log('getElementPos:', getElementPos(commonTableHeight).y);

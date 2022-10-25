@@ -6,11 +6,10 @@
 					<a-input v-model:value="formValidate.age" placeholder="请输入规则名称" />
 				</a-form-item>
 				<a-form-item label=" 减免模式" name="account">
-					<a-radio-group name="radioGroup" v-model:value="state.tableData.pattern">
-						<a-radio value="1">游客年龄</a-radio>
-						<a-radio value="2">特殊证件</a-radio>
-						<a-radio value="3">游客数量</a-radio>
-					</a-radio-group>
+					<a-select ref="select" placeholder="请选择特殊证件类型" v-model:value="state.tableData.pattern">
+						<a-select-option value="1">游客年龄</a-select-option>
+						<a-select-option value="2">特殊证件</a-select-option>
+					</a-select>
 				</a-form-item>
 				<a-form-item name="account">
 					<a-row v-if="state.tableData.pattern == '1'">
@@ -35,21 +34,6 @@
 							</a-select>
 						</a-col>
 						<a-col :span="8"> </a-col>
-					</a-row>
-					<a-row v-if="state.tableData.pattern == '3'">
-						<a-col :span="6"></a-col>
-						<a-col :span="4">
-							<a-span class="d-span">满</a-span>
-						</a-col>
-						<a-col :span="6">
-							<a-input class="input" placeholder="请输入数量"></a-input>
-						</a-col>
-						<a-col :span="4">
-							<a-span class="d-span">减</a-span>
-						</a-col>
-						<a-col :span="4">
-							<a-input class="input" placeholder="请输入数量"></a-input>
-						</a-col>
 					</a-row>
 				</a-form-item>
 				<a-form-item label=" 减免折扣" name="account">
@@ -124,7 +108,7 @@ const cancel = () => {
 	dialogVisible.value = false;
 };
 const save = () => {
-	if ((state.title == '编辑减免规则')) {
+	if (state.title == '编辑减免规则') {
 		message.success('编辑成功');
 	} else {
 		message.success('添加成功');

@@ -49,22 +49,22 @@
 					<a-radio v-for="item in generaRulesOptions.chargeModelList" :value="item.value" :key="item.name">{{ item.name }}</a-radio>
 				</a-radio-group>
 			</a-form-item>
-			<a-form-item label="收费数量" name="charCount" v-if="formState.chargeModel === 1" :rules="rulesRef.percentage">
-				<a-input-number v-model:value="formState.charCount" placeholder="请输入收费数量（单位：%）" style="width: 100%">
+			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 1" :rules="rulesRef.percentage">
+				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入收费数量（单位：%）" style="width: 100%">
 					<template #addonAfter>
 						<span>%</span>
 					</template>
 				</a-input-number>
 			</a-form-item>
-			<a-form-item label="收费数量" name="charCount" v-if="formState.chargeModel === 3" :rules="rulesRef.integer">
-				<a-input-number v-model:value="formState.charCount" placeholder="请输入收费数量（单位：元）" style="width: 100%">
+			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 3" :rules="rulesRef.integer">
+				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入收费数量（单位：元）" style="width: 100%">
 					<template #addonAfter>
 						<span>元</span>
 					</template>
 				</a-input-number>
 			</a-form-item>
-			<a-form-item label="收费数量" name="charCount" v-if="formState.chargeModel === 2" :rules="rulesRef.integer">
-				<a-input-number v-model:value="formState.charCount" placeholder="请输入收费数量（单位：人）" style="width: 100%">
+			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 2" :rules="rulesRef.integer">
+				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入收费数量（单位：人）" style="width: 100%">
 					<template #addonAfter>
 						<span>人</span>
 					</template>
@@ -160,7 +160,7 @@ const formState: UnwrapRef<FormState> = reactive({
 	splitList: [],
 	ruleStatus: null,
 	chargeProductSonId: null,
-	charCount: null,
+	chargeCount: null,
 	isPrepaid: null,
 	lastCostBelongCompany: null,
 	chargeModel: null,
@@ -247,8 +247,8 @@ const init = () => {
 const currencySettlementRuleDetail = async (id: number) => {
 	const result = await api.currencySettlementRuleDetail(id);
 	for (let key in formState) {
-		if (key === 'charCount' && Number(result['chargeModel']) === 3) {
-			formState['charCount'] = result['charCount'] / 100;
+		if (key === 'chargeCount' && Number(result['chargeModel']) === 3) {
+			formState['chargeCount'] = result['chargeCount'] / 100;
 		} else {
 			formState[key] = result[key];
 		}
@@ -324,7 +324,7 @@ const saveParams = () => {
 		formState.chargeProductSonId = formState.productId;
 	}
 	if (formState.chargeModel === 3) {
-		formState.charCount = Number(formState.charCount) * 100;
+		formState.chargeCount = Number(formState.chargeCount) * 100;
 	}
 	if (oid.value) {
 		formState.oid = oid.value;
