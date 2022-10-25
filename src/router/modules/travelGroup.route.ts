@@ -56,8 +56,6 @@ export default [
 					},
 				],
 			},
-
-			// Enterprise Information Management
 			{
 				path: 'enterpriseInfoManagement',
 				name: 'enterpriseInfoManagement',
@@ -104,6 +102,42 @@ export default [
 						},
 					},
 				],
+			},
+			// fundManagement
+			{
+				path: 'fund',
+				name: 'fund',
+				redirect: '/travel/fund/fundManagement',
+				meta: {
+					title: '资金管理',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					// isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'fundManagement',
+						component: () => import('@/views/fundManagement/index.vue'),
+						name: 'fundManagement',
+						meta: {
+							title: '',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'recharge',
+						component: () => import('@/views/fundManagement/recharge.vue'),
+						name: 'recharge',
+						meta: {
+							title: '充值',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				]
 			},
 			// tourGuideManage
 			{

@@ -50,14 +50,12 @@
           <template #children="{ direction, selectedKeys, onItemSelect }">
             <a-tree v-if="direction === 'left'" block-node checkable check-strictly default-expand-all
               :checked-keys="[...selectedKeys, ...checkedKeys]" :tree-data="tData" @check="
-                (_, props) => {
-                  onChecked(props, [...selectedKeys, ...checkedKeys], onItemSelect);
-                }
-              " @select="
+              (_, props) => {
+                onChecked(props, [...selectedKeys, ...checkedKeys], onItemSelect);
+              }" @select="
   (_, props) => {
     onChecked(props, [...selectedKeys, ...checkedKeys], onItemSelect);
-  }
-" />
+  }" />
           </template>
         </a-transfer>
         <p class="tip">创建行程单时，是否有必购的项目？不选择即代表无必购项目。</p>
