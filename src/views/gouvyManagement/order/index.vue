@@ -34,8 +34,8 @@
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a href="javascript:;" @click="toSee">查看</a>
-						<a href="javascript:;" @click="toExamine">审核</a>
-						<a href="javascript:;" @click="print">打印票据</a>
+						<!-- <a href="javascript:;" @click="toExamine">审核</a> -->
+						<!-- <a href="javascript:;" @click="print">打印票据</a> -->
 					</div>
 				</template>
 			</template>
