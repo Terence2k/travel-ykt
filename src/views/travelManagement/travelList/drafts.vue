@@ -1,15 +1,15 @@
 <template>
   <div>
 	
-		<CommonTable :row-selection="{onSelect}" :dataSource="state.tableData" :columns="state.columns">
+		<CommonTable :row-selection="{onSelect}" :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
       <template #button>
       </template>
       <template #bodyCell="{ column, text, index,record }">
-		 <template v-if="column.key === 'itineraryNo'">
-					<div>
-					  <a @click="goToDetail(record)">{{text}}</a>
-					</div>
-		</template>
+        <!-- <template v-if="column.key === 'itineraryNo'">
+          <div>
+            <a @click="goToDetail(record)">{{text}}</a>
+          </div>
+        </template> -->
         <template v-if="column.key === 'index'">
 					<div>
 						{{(state.params.pageNo - 1) * (state.params.pageSize) + (index + 1)}}
