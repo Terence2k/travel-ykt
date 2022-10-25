@@ -370,7 +370,7 @@ const onSearch = async () => {
   res.content.forEach((key: any) => {
     key.products = []
     key.productIds = []
-    key.teamTypeItemBos.forEach((item: any) => {
+    key.teamTypeItemBos?.forEach((item: any) => {
       if (item?.products) {
         item.products.forEach((citem: any) => {
           key.productIds.push(citem.productId)

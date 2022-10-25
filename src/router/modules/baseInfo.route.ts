@@ -49,7 +49,7 @@ export default [
 			},
 			{
 				path: 'businessManagement',
-				component: () => import('@/views/baseInfoManage/businessManagement/index.vue'),
+				// component: () => import('@/views/baseInfoManage/businessManagement/index.vue'),
 				name: 'businessManagement',
 				redirect: '/baseInfo/businessManagement/apply',
 				meta: {
@@ -61,7 +61,7 @@ export default [
 				children: [
 					{
 						path: 'apply',
-						component: () => import('@/views/baseInfoManage/businessManagement/apply.vue'),
+						component: () => import('@/views/baseInfoManage/businessManagement/index.vue'),
 						name: 'apply',
 						meta: {
 							title: '',
@@ -72,7 +72,7 @@ export default [
 					},
 					{
 						path: 'addBusinessAccount',
-						component: () => import('@/views/baseInfoManage/businessManagement/add.vue'),
+						component: () => import('@/views/baseInfoManage/businessManagement/super/add.vue'),
 						name: 'addBusinessAccount',
 						meta: {
 							title: '新增',
@@ -83,7 +83,7 @@ export default [
 					},
 					{
 						path: 'details/businessType/:businessType/oid/:oid',
-						component: () => import('@/views/baseInfoManage/businessManagement/details.vue'),
+						component: () => import('@/views/baseInfoManage/businessManagement/super/details.vue'),
 						name: 'details',
 						meta: {
 							title: '详情',
