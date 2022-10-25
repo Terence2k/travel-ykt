@@ -22,9 +22,15 @@
 					<template v-if="column.key === 'settlementCost'">
 						<span>{{ (record.settlementCost / 100).toFixed(2) }}元</span>
 					</template>
+					<template v-if="column.key === 'status'">
+						<span v-if="record.status === 1" style="color: red">待审核</span>
+						<span v-if="record.status === 2" style="color: green">全部完成</span>
+						<span v-if="record.status === 3" style="color: red">审核不通过</span>
+						<span v-if="record.status === 4" style="color: red">部分完成</span>
+					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a href="javascript:;" @click="toHandle(record)" v-if="state.tableData.param.status === 1">处理</a>
+							<a href="javascript:;" @click="toHandle(record)" v-if="state.tableData.param.status === 1 || record.status === 4">处理</a>
 							<a href="javascript:;" @click="toDetails(record)">详情</a>
 						</div>
 					</template>
@@ -61,8 +67,8 @@ const columns = [
 	},
 	{
 		title: '转账单位',
-		dataIndex: 'transferAccountsCompanyName',
-		key: 'transferAccountsCompanyName',
+		dataIndex: 'travelName',
+		key: 'travelName',
 	},
 	{
 		title: '结算总额（元）',
@@ -70,14 +76,19 @@ const columns = [
 		key: 'settlementCost',
 	},
 	{
+		title: '申请时间',
+		dataIndex: 'createTime',
+		key: 'createTime',
+	},
+	{
 		title: '申请人',
 		dataIndex: 'createName',
 		key: 'createName',
 	},
 	{
-		title: '申请时间',
-		dataIndex: 'createTime',
-		key: 'createTime',
+		title: '转账状态',
+		dataIndex: 'status',
+		key: 'status',
 	},
 	{
 		title: '操作',
@@ -134,11 +145,21 @@ const pageSideChange = (current: number, size: number) => {
 // 处理
 const toHandle = (record: any) => {
 	cacheData.value.showDetail = true;
-	cacheData.value.detailParams = { handle: true, transferAccountsId: record.oid, settlementCost: record.settlementCost };
+	cacheData.value.detailParams = {
+		handle: true,
+		transferAccountsId: record.oid,
+		settlementCost: record.settlementCost,
+		status: record.status,
+	};
 };
 const toDetails = (record: any) => {
 	cacheData.value.showDetail = true;
-	cacheData.value.detailParams = { handle: false, transferAccountsId: record.oid, settlementCost: record.settlementCost };
+	cacheData.value.detailParams = {
+		handle: false,
+		transferAccountsId: record.oid,
+		settlementCost: record.settlementCost,
+		status: null,
+	};
 };
 const route = useRouter();
 const lookTrip = (record: any) => {

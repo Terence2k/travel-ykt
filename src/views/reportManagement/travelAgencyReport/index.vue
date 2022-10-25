@@ -63,7 +63,7 @@
                 <template #bodyCell="{ column, record, index }">
                     <template v-if="column.key === 'action'">
                         <div class="action-btns">
-                            <a href="javascript:;" @click="toDetail(record)">结算详情</a>
+                            <a href="javascript:;" @click="toDetail(record)">结算明细</a>
                         </div>
                     </template>
                 </template>
@@ -307,17 +307,7 @@ const columns: TableColumnsType = [
 		width: 208,
 	},
 ];
-const data = [...Array(100)].map((_, i) => ({
-  key: i,
-  name: 'John Brown',
-  age: i + 1,
-  street: 'Lake Park',
-  building: 'C',
-  number: 2035,
-  companyAddress: 'Lake Street 42',
-  companyName: 'SoftLake Co',
-  gender: 'M',
-}));
+
 const state = reactive({
 	tableData: {
 		param: {
@@ -333,7 +323,7 @@ const state = reactive({
 		},
 		data: [
 			{
-				name: 123456,
+				comprehensiveFeeProductName: 123456,
 			},
 		],
 		total: 20,
@@ -356,21 +346,19 @@ const initList = async () => {
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
 	state.tableData.param.pageNo = val;
-	// onSearch();
 	initList();
 };
 //翻页
 const pageSideChange = (current: number, size: number) => {
 	console.log('changePageSize:', size);
 	state.tableData.param.pageSize = size;
-	// onSearch();
 	initList();
 };
 // 跳转详情
 const toDetail = (record: any) => {
-	// route.push({
-	// 	path: '/reportManagement/scenicSpotTransferReport/tripList',
-	// });
+	route.push({
+		path: '/reportManagement/travelAgencyReport/detail',
+	});
 };
 onMounted(() => {
     options.getTeamTypeList();

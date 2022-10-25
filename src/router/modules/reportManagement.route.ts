@@ -35,6 +35,15 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
+					{
+						path: 'orderList',
+						component: () => import('@/views/reportManagement/components/orderList.vue'),
+						name: 'scenicSpotTransferReportOrderList',
+						meta: {
+							title: '查看订单',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
 				],
 			},
 			{
@@ -75,6 +84,15 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
+					{
+						path: 'detail',
+						component: () => import('@/views/reportManagement/travelAgencyReport/detail.vue'),
+						name: 'travelAgencyReportDetail',
+						meta: {
+							title: '结算明细',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
 				],
 			},
 			{
@@ -97,7 +115,7 @@ export default [
 					},
 					{
 						path: 'orderList',
-						component: () => import('@/views/reportManagement/scenicSpotTransferReport/components/tripList.vue'),
+						component: () => import('@/views/reportManagement/components/orderList.vue'),
 						name: 'hotelItineraryReportOrderList',
 						meta: {
 							title: '查看订单',
@@ -126,7 +144,7 @@ export default [
 					},
 					{
 						path: 'orderList',
-						component: () => import('@/views/reportManagement/scenicSpotTransferReport/components/tripList.vue'),
+						component: () => import('@/views/reportManagement/components/orderList.vue'),
 						name: 'groupItineraryReportOrderList',
 						meta: {
 							title: '查看订单',
@@ -155,7 +173,7 @@ export default [
 					},
 					{
 						path: 'orderList',
-						component: () => import('@/views/reportManagement/scenicSpotTransferReport/components/tripList.vue'),
+						component: () => import('@/views/reportManagement/components/orderList.vue'),
 						name: 'associationItineraryReportOrderList',
 						meta: {
 							title: '查看订单',
@@ -184,7 +202,7 @@ export default [
 					},
 					{
 						path: 'orderList',
-						component: () => import('@/views/reportManagement/scenicSpotTransferReport/components/tripList.vue'),
+						component: () => import('@/views/reportManagement/components/orderList.vue'),
 						name: 'supervisorItineraryReportOrderList',
 						meta: {
 							title: '查看订单',
@@ -213,10 +231,50 @@ export default [
 					},
 					{
 						path: 'orderList',
-						component: () => import('@/views/reportManagement/scenicSpotTransferReport/components/tripList.vue'),
+						component: () => import('@/views/reportManagement/components/orderList.vue'),
 						name: 'yktItineraryReportOrderList',
 						meta: {
 							title: '查看订单',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
+			{
+				path: 'yktFinanceReport',
+				name: 'yktFinanceReport',
+				redirect: '/reportManagement/yktFinanceReport/list',
+				meta: {
+					title: '一卡通财务对账表',
+					isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/reportManagement/yktFinanceReport/index.vue'),
+						name: 'yktFinanceReportList',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
+			{
+				path: 'hotelOrderReport',
+				name: 'hotelOrderReport',
+				redirect: '/reportManagement/hotelOrderReport/list',
+				meta: {
+					title: '酒店订单结算表',
+					isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/reportManagement/hotelOrderReport/index.vue'),
+						name: 'hotelOrderReportList',
+						meta: {
+							title: '首页',
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},

@@ -74,7 +74,7 @@ const format = (arr: any, tArr: TransferProps['dataSource']) => {
                 itemId: telement.key, //项目id
                 itemName: telement.title, //项目name
                 products: [{
-                  productId: celement.key,
+                  productId: celement.realKey,
                   productName: celement.title
                 }]
               })

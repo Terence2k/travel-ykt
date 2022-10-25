@@ -7,9 +7,15 @@
 				</div>
 			</template>
 			<template #bodyCell="{ column, record }">
+				<!-- 结算状态 -->
 				<template v-if="column.key === 'accountingIsNormal'">
-					<div class="red" v-if="!record.accountingIsNormal">异常</div>
-					<div v-else>正常</div>
+					<div class="red" v-if="record.accountingIsNormal == 0">异常</div>
+					<div v-else-if="record.accountingIsNormal == 1">正常</div>
+					<div v-else>-</div>
+				</template>
+				<!-- 行程费用 单位转成元-->
+				<template v-if="column.key === 'totalFee'">
+					{{ (record.totalFee / 100) > 0 ? (record.totalFee / 100).toFixed(2) : 0}}
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
@@ -72,7 +78,7 @@ const columns = [
 		key: 'touristNum',
 	},
 	{
-		title: '行程费用',
+		title: '行程费用(元)',
 		dataIndex: 'totalFee',
 		key: 'totalFee',
 	},
@@ -108,7 +114,7 @@ const state = reactive({
 			subTravelId: null,
 			startDate: null,
 			endDate: null,
-			accountingStatus: 2, //1行程中 2结算审核 3已结算 4已申请转账
+			status: 12, //10行程中 12预结算 13已结算 14已申请转账
 		},
 	},
 	selectedRowKeys: [],

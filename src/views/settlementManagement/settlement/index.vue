@@ -72,7 +72,7 @@ const pages = [
 	},
 	{
 		name: examine,
-		label: '结算审核',
+		label: '预结算',
 	},
 	{
 		name: settlement,

@@ -2,6 +2,14 @@
 	<div>
 		<CommonTable :dataSource="state.tableData.data" :scroll="{ x: '100%',y: '100%' }" :columns="columns" >
 			<template #bodyCell="{ column, record }">
+				<!-- 行程费用 单位转成元-->
+				<template v-if="column.key === 'totalFee'">
+					{{ (record.totalFee / 100) > 0 ? (record.totalFee / 100).toFixed(2) : 0}}
+				</template>
+				<!-- 结算总额 单位转成元-->
+				<template v-if="column.key === 'accountingFee'">
+					{{ (record.accountingFee / 100) > 0 ? (record.accountingFee / 100).toFixed(2) : 0}}
+				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a @click="toInfo(record)">查看</a>
@@ -62,7 +70,7 @@ const columns = [
 		key: 'touristNum',
 	},
 	{
-		title: '行程费用',
+		title: '行程费用(元)',
 		dataIndex: 'totalFee',
 		key: 'totalFee',
 	},
@@ -72,7 +80,7 @@ const columns = [
 		key: 'timeText',
 	},
 	{
-		title: '结算总额',
+		title: '结算总额(元)',
 		dataIndex: 'accountingFee',
 		key: 'accountingFee',
 	},
@@ -98,7 +106,7 @@ const state = reactive({
 			subTravelId: null,
 			startDate: null,
 			endDate: null,
-			accountingStatus: 4, //1行程中 2结算审核 3已结算 4已申请转账
+			status: 14, //10行程中 12预结算 13已结算 14已申请转账
 		},
 	},
 });

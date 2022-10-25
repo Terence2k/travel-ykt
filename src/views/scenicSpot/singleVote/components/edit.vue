@@ -55,6 +55,8 @@
 					@add-verification-obj="addVerificationObj"
 					:tableList="formData.data.itemList"
 					@add-verification-obj-sign="addVerificationObjSign"
+					@get-optional-verification="getOptionalVerificationCount"
+					@change-iv="changeIv"
 				/>
 			</a-form-item>
 			<a-form-item label="可核销账号" :wrapper-col="{ span: 12 }">
@@ -121,8 +123,8 @@ const formData = reactive({
 		dayStock: null, //门票日库存
 		wateryPrice: null, //水牌价
 		price: null, //售价
-		ticketDesc: null, //单票说明
-		restsExplain: null, //其他说明
+		ticketDesc: '', //单票说明
+		restsExplain: '', //其他说明
 		itemList: [
 			{
 				itemId: 1, //itemId
@@ -149,17 +151,17 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 	reactive({
 		'data.orderTime': [{ required: true, message: '请选择当日最晚可定票时间' }],
 		'data.orderTimeRule': [{ required: true, message: '请选择可预定时间' }],
-		'data.wateryPrice': [{ required: true, message: '请输入降水价' }],
+		'data.wateryPrice': [{ required: true, message: '请输入水牌价' }],
 		'data.price': [{ required: true, message: '请输入价格' }],
-		// 'data.verificationType': [{ required: true, message: 'verificationType' }],
 		'data.scenicId': [{ required: true, message: '请选择归属景区' }],
 		'data.ticketName': [{ required: true, message: '请输入门票名称' }],
+		'data.validTime': [{ required: true, message: '请选择有效时间' }],
+		'data.dayStock': [{ required: true, message: '请输入门票库存' }],
+		// 'data.verificationType': [{ required: true, message: 'verificationType' }],
 		// 'data.ticketType': [{ required: true, message: '请选择门票分类' }],
 
-		'data.validTime': [{ required: true, message: '请选择有效时间' }],
 		// 'data.optionalVerificationCount': [{ required: true, message: '请选择有效期' }],
 		// 'data.assistId': [{ required: true, message: '请选择市' }],
-		'data.dayStock': [{ required: true, message: '请输入门票库存' }],
 
 		// 'data.ticketDesc': [{ required: true, message: '请输入' }],
 		// 'data.restsExplain': [{ required: true, message: '请输入' }],
@@ -199,6 +201,10 @@ const changePrice = (val: interfaceType) => {
 	formData.data.wateryPrice = wateryPrice;
 	formData.data.price = price;
 };
+const getOptionalVerificationCount = (val: number) => {
+	formData.data.optionalVerificationCount = val;
+	// console.log('getOptionalVerificationCount', val, formData.data.optionalVerificationCount);
+};
 // 保存
 const save = async (params: object) => {
 	let res = await api.saveSingleVoteInfo(params);
@@ -225,6 +231,10 @@ const addVerificationObj = (obj: object) => {
 	formData.data.itemList = obj;
 
 	// formData.data.itemList.push(obj);
+};
+
+const changeIv = (index: number) => {
+	formData.data.itemList[index].ifVerification = !formData.data.itemList[index].ifVerification;
 };
 const addVerificationObjSign = (obj: object) => {
 	formData.data.itemList = obj;
