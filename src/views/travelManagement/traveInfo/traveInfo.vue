@@ -80,13 +80,13 @@
 	</div>
 	<addHotel v-model="addHotelPop" />
 	<addTicket v-model="addTicketPop" />
-	<select v-model="selectPersonnelPop" />
+	<Personnel v-model="selectPersonnelPop" />
 </template>
 <script lang="ts" setup>
 import CommonTable from '@/components/common/CommonTable.vue';
 import addHotel from './addHotel.vue';
 import addTicket from './addTicket.vue';
-import select from './selectPersonnel.vue';
+import Personnel from './selectPersonnel.vue';
 import { useTraveInfo } from './traveInfo';
 const props = defineProps({
 	onCheck: {

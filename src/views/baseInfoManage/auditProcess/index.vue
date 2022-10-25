@@ -100,9 +100,9 @@ const columns = [
 ]
 const formRules: any = {
   auditTypeName: [{ required: true, trigger: 'blur', message: '审核流程名称不能为空' }],
-  auditTypeExplain: [{ required: true, trigger: 'blur', message: '流程说明释义不能为空' }],
-  auditTypePage: [{ required: true, trigger: 'blur', message: '事件触发的操作页面不能为空' }],
-  sysAuditNodeVos: [{ required: true, trigger: 'blur', message: '参与审核的部门或角色不能为空' }],
+  // auditTypeExplain: [{ required: true, trigger: 'blur', message: '流程说明释义不能为空' }],
+  // auditTypePage: [{ required: true, trigger: 'blur', message: '事件触发的操作页面不能为空' }],
+  // sysAuditNodeVos: [{ required: true, trigger: 'blur', message: '参与审核的部门或角色不能为空' }],
 };
 const state = reactive({
   tableData: {

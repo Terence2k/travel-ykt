@@ -44,7 +44,7 @@
 						<a-select-option :value="item.oid" v-for="item in hotelData.roomType" :name="item.roomTypeName" :key="item.oid">{{ item.roomTypeName }}</a-select-option>
 					</a-select>
 				</a-form-item>
-				<a-form-item label="订房数量" :name="['roomTypeList', index, 'roomCount']" :rules="[{ required: true, message: '请选择订房数量' }]">
+				<a-form-item label="订房数量" :name="['roomTypeList', index, 'reserveNumber']" :rules="[{ required: true, message: '请选择订房数量' }]">
 					<a-input v-model:value="room.reserveNumber" />
 				</a-form-item>
 				<a-form-item
