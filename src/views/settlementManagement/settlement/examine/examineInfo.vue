@@ -13,31 +13,31 @@
 			<a-form-item label="行程单号" required>
 				<span>{{ formData.data.ccc || '' }}</span>
 			</a-form-item>
-            <a-form-item label="线路名称" required>
+			<a-form-item label="线路名称" required>
 				<span>{{ formData.data.eee }}</span>
 			</a-form-item>
-            <a-form-item label="组团社" required>
+			<a-form-item label="组团社" required>
 				<span>{{ formData.data.fff }}</span>
 			</a-form-item>
-            <a-form-item label="地接社" required>
+			<a-form-item label="地接社" required>
 				<span>{{ formData.data.ggg }}</span>
 			</a-form-item>
-            <a-form-item label="行程时间" required>
+			<a-form-item label="行程时间" required>
 				<span>{{ formData.data.hhh }}</span>
 			</a-form-item>
-            <a-form-item label="游客人数" required>
+			<a-form-item label="游客人数" required>
 				<span>{{ formData.data.jjj }}</span>
 			</a-form-item>
-            <a-form-item label="行程费用" required>
+			<a-form-item label="行程费用" required>
 				<span>{{ formData.data.kkk }}</span>
 			</a-form-item>
-            <a-form-item label="结算费用" required>
+			<a-form-item label="结算费用" required>
 				<span>{{ formData.data.lll }}</span>
 			</a-form-item>
 
 			<div class="title titleMargin">结算信息</div>
 			<CommonTable :dataSource="formData.list" :columns="columns" :scrollY="false" :scroll="{ y: '300px' }">
-				<template #bodyCell="{ column, record ,index}">
+				<template #bodyCell="{ column, record, index }">
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<!-- <a href="javascript:;" @click="editItem(record,index)">调整费用</a> -->
@@ -50,7 +50,7 @@
 		<div class="footer">
 			<div class="tooter-btn">
 				<a-button type="primary" @click.prevent="toPass">审核通过</a-button>
-				<a-button  @click.prevent="onCancel">取消</a-button>
+				<a-button @click.prevent="onCancel">取消</a-button>
 			</div>
 		</div>
 	</div>
@@ -72,14 +72,14 @@ const tstyle = { 'font-weight': '700' };
 
 // 取消
 const onCancel = () => {
-	route.push({ path: '/settlementManagement/settlement/list' ,query: { edit: 1, oid: route.currentRoute.value?.query?.oid } });
+	route.push({ path: '/settlementManagement/settlement/list', query: { edit: 1, oid: route.currentRoute.value?.query?.oid } });
 };
 const columns = [
 	{
 		title: '序号',
-        customRender: ({ text, record, index }) => {
-            return `${ index + 1 }`;
-        }
+		customRender: ({ text, record, index }) => {
+			return `${index + 1}`;
+		},
 	},
 	{
 		title: '结算方类别',
@@ -116,50 +116,50 @@ const columns = [
 const formData: any = reactive({
 	data: {
 		aaa: 'test',
-        bbb: 'test',
-        ccc: 'test',
-        ddd: 'test',
-        eee: 'test',
-        fff: 'test',
-        ggg: 'test',
-        hhh: 'test',
-        iii: 'test',
-        jjj: 'test',
-        kkk: 'test',
-        lll: 'test',
+		bbb: 'test',
+		ccc: 'test',
+		ddd: 'test',
+		eee: 'test',
+		fff: 'test',
+		ggg: 'test',
+		hhh: 'test',
+		iii: 'test',
+		jjj: 'test',
+		kkk: 'test',
+		lll: 'test',
 	},
-    list: [
-        {
-            oid: 1,
-            key: 1,
-            type: 'John Brown sr.',
-            name: 'test',
-            bank: 'test',
-            price: '1001',
-            time: 'test',
-        },
-        {
-            oid: 2,
-            key: 1,
-            type: 'John Brown sr.',
-            name: 'test',
-            bank: 'test',
-            price: '1001',
-            time: 'test',
-        },
-        {
-            oid: 3,
-            key: 1,
-            type: 'John Brown sr.',
-            name: 'test',
-            bank: 'test',
-            price: '1001',
-            time: 'test',
-        },
-    ],
+	list: [
+		{
+			oid: 1,
+			key: 1,
+			type: 'John Brown sr.',
+			name: 'test',
+			bank: 'test',
+			price: '1001',
+			time: 'test',
+		},
+		{
+			oid: 2,
+			key: 1,
+			type: 'John Brown sr.',
+			name: 'test',
+			bank: 'test',
+			price: '1001',
+			time: 'test',
+		},
+		{
+			oid: 3,
+			key: 1,
+			type: 'John Brown sr.',
+			name: 'test',
+			bank: 'test',
+			price: '1001',
+			time: 'test',
+		},
+	],
 });
 // 缓存编辑表格模态框数据
-const adjustData= ref({
+const adjustData = ref({
 	editItem: {},
 	editShow: false,
 	editIndex: 0,
@@ -168,8 +168,8 @@ const adjustData= ref({
 });
 
 // 审核通过
-const toPass = (() => {
-    Modal.confirm({
+const toPass = () => {
+	Modal.confirm({
 		title: '审核通过',
 		width: 560,
 		closable: true,
@@ -180,8 +180,8 @@ const toPass = (() => {
 			// api
 			// 	.comprehensiveFeeEnable(record.oid)
 			// 	.then((res: any) => {
-					message.success('操作成功');
-					onCancel();
+			message.success('操作成功');
+			onCancel();
 			// 	})
 			// 	.catch((err: any) => {
 			// 		message.error(err || '操作失败');
@@ -189,23 +189,22 @@ const toPass = (() => {
 		},
 		onCancel() {},
 	});
-})
+};
 // 结算明细
-const itemDetail = ((oid: any) => {
+const itemDetail = (oid: any) => {
 	adjustData.value.detailShow = true;
 	adjustData.value.modalParams = { oid };
-})
+};
 //初始化页面
 const initPage = async (): Promise<void> => {
 	// api.getcomprehensiveFeeDetail(route.currentRoute.value?.query?.oid).then((res: any) => {
-		// 	formData.data = res;
-		// });
+	// 	formData.data = res;
+	// });
 	console.log(route.currentRoute.value?.query.oid);
-	
 };
 onMounted(() => {
 	initPage();
-})
+});
 // 调整费用
 // const editItem = ((record: any,index: any) => {
 //     console.log('调整费用id',record,index);
@@ -215,11 +214,11 @@ onMounted(() => {
 // })
 // 调整费用模态框关闭回调 此时调用接口
 // const adjustConfirm = ((e: any) => {
-	//     console.log('我回来了');
-	//     console.log(e.form.price);
-	// 	message.success('保存成功');
-	// 	formData.list[adjustData.value.editIndex].price = e.form.price;
-//     // 
+//     console.log('我回来了');
+//     console.log(e.form.price);
+// 	message.success('保存成功');
+// 	formData.list[adjustData.value.editIndex].price = e.form.price;
+//     //
 // })
 </script>
 
@@ -240,10 +239,10 @@ onMounted(() => {
 		color: #1e2226;
 		box-sizing: content-box;
 	}
-    .titleMargin{
+	.titleMargin {
 		margin-top: 24px;
-	    margin-bottom: 20px;
-    }
+		margin-bottom: 20px;
+	}
 	.footer {
 		position: fixed;
 		bottom: 12px;
@@ -275,12 +274,12 @@ onMounted(() => {
 	height: 32px;
 }
 .ant-form-item:first-child {
-    margin-top: 13px;
+	margin-top: 13px;
 }
-::v-deep(.ant-form-item-control-input) {
+:v-deep(.ant-form-item-control-input) {
 	height: 18px;
 }
-::v-deep(.ant-form-item-label > label) {
+:v-deep(.ant-form-item-label > label) {
 	position: relative;
 	display: inline-flex;
 	align-items: center;
@@ -292,7 +291,7 @@ onMounted(() => {
 	color: #1e2226;
 }
 .table-area {
-    padding: 0;
-    margin-bottom: 16px;
+	padding: 0;
+	margin-bottom: 16px;
 }
 </style>

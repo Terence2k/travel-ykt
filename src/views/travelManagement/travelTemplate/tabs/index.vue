@@ -17,7 +17,7 @@
 import baseinfo from './baseinfo/index.vue';
 import cicerone from './cicerone/index.vue';
 import travelled from './travelled/index.vue';
-import { ref, onMounted ,reactive} from 'vue';
+import { ref, onMounted, reactive } from 'vue';
 import { cloneDeep, debounce } from 'lodash';
 import { message } from 'ant-design-vue';
 const route = useRoute();
@@ -83,10 +83,10 @@ onMounted(() => {
 </script>
 <style lang="less" scoped>
 .trave-contaner {
-	::v-deep(.ant-tabs-nav) {
+	:v-deep(.ant-tabs-nav) {
 		padding: 16px 20px;
 	}
-	::v-deep(.ant-tabs-content-holder) {
+	:v-deep(.ant-tabs-content-holder) {
 		padding: 0 20px;
 	}
 }

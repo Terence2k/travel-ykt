@@ -2,10 +2,9 @@
 	<div class="wrapper">
 		<CommonTable :dataSource="tableList" :columns="columnsCount" :scrollY="false" bordered class="left">
 			<template #bodyCell="{ column, record, index }">
-				<template v-if="column.key === 'certifId'">
-					<!-- {{ certifIdType[record.certifId] }} -->
+				<!-- <template v-if="column.key === 'certifId'">
 					{{ certifIdList(record.certifId) }}
-				</template>
+				</template> -->
 				<template v-if="column.key === 'discount'">
 					<span v-if="record.discount">{{ record.discount / 10 }}</span>
 				</template>
@@ -22,9 +21,9 @@
 				<a-form-item label="规则名称" class="fz14" v-bind="validateInfos.ruleName">
 					<a-input v-model:value="formValidate.ruleName" placeholder="规则名称" />
 				</a-form-item>
-				<a-form-item label="选择必选项" class="fz14" v-bind="validateInfos.certifId">
+				<!-- <a-form-item label="选择必选项" class="fz14" v-bind="validateInfos.certifId">
 					<a-checkbox-group v-model:value="formValidate.certifId" :options="options" />
-				</a-form-item>
+				</a-form-item> -->
 				<a-form-item label="折扣" class="fz14" v-bind="validateInfos.discount">
 					<!-- <a-input v-model:value="formValidate.discount" /> -->
 					<a-input-number v-model:value="formValidate.discount" placeholder="折扣" />
@@ -61,33 +60,33 @@ const props = defineProps({
 });
 const route = useRouter();
 
-const certifIdType = { 140: '学生证', 141: '军官证', 142: '医护证', 143: '教师资格证', 144: '导游证', 145: '导游证' };
+// const certifIdType = { 140: '学生证', 141: '军官证', 142: '医护证', 143: '教师资格证', 144: '导游证', 145: '导游证' };
 
-const certifIdList = (certifId: array) => {
-	let all = '',
-		len = certifId.length;
-	console.log(props.tableList);
+// const certifIdList = (certifId: array) => {
+// 	let all = '',
+// 		len = certifId.length || 0;
+// 	console.log(props.tableList);
 
-	certifId.map((i, index) => {
-		all += certifIdType[i];
+// 	certifId.map((i, index) => {
+// 		all += certifIdType[i];
 
-		if (index < len - 1) all += ',';
-		return i;
-	});
-	return all;
-};
-const options = [
-	{ label: '学生证', value: 140 },
-	{ label: '军官证', value: 141 },
-	{ label: '医护证', value: 142 },
-	{ label: '教师资格证', value: 143 },
-	{ label: '导游证', value: 144 },
-	{ label: '导游证', value: 145 },
-];
+// 		if (index < len - 1) all += ',';
+// 		return i;
+// 	});
+// 	return all;
+// };
+// const options = [
+// 	{ label: '学生证', value: 140 },
+// 	{ label: '军官证', value: 141 },
+// 	{ label: '医护证', value: 142 },
+// 	{ label: '教师资格证', value: 143 },
+// 	{ label: '导游证', value: 144 },
+// 	{ label: '导游证', value: 145 },
+// ];
 const useForm = Form.useForm;
 // 新增减免规则
 const formValidate = reactive({
-	certifId: [],
+	// certifId: [],
 	discount: null,
 	ruleName: '',
 });
@@ -99,12 +98,12 @@ const columnsCount = ref([
 		key: 'ruleName',
 		width: 200,
 	},
-	{
-		title: '证件类型',
-		dataIndex: 'certifId',
-		key: 'certifId',
-		width: 200,
-	},
+	// {
+	// 	title: '证件类型',
+	// 	dataIndex: 'certifId',
+	// 	key: 'certifId',
+	// 	width: 200,
+	// },
 	{
 		title: '折扣',
 		dataIndex: 'discount',
@@ -161,7 +160,7 @@ const apply = () => {
 const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
 	formValidate,
 	reactive({
-		certifId: [{ required: true, message: '请选择类型' }],
+		// certifId: [{ required: true, message: '请选择类型' }],
 		discount: [{ required: true, message: '请输入0-10', pattern: /^([0-9]|10)$/ }],
 		ruleName: [{ required: true, message: '请填写' }],
 	})

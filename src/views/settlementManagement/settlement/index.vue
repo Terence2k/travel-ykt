@@ -2,8 +2,7 @@
 	<CommonSearch>
 		<search-item label="团队类型">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.teamTypeId" style="width: 200px" placeholder="请选择团队类型">
-				<a-select-option v-for="(item,index) in options.teamTypesLists" :value="item.oid" :key=index>{{ item.name }}
-				</a-select-option>
+				<a-select-option v-for="(item, index) in options.teamTypesLists" :value="item.oid" :key="index">{{ item.name }} </a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="行程单号">
@@ -11,23 +10,20 @@
 		</search-item>
 		<search-item label="组团社">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.travelId" style="width: 200px" placeholder="请选择旅行社名称">
-				<a-select-option v-for="(item,index) in options.groupSocietyList" :value="item.travelAgencyId" :key=index>{{ item.travelAgencyName }}
+				<a-select-option v-for="(item, index) in options.groupSocietyList" :value="item.travelAgencyId" :key="index"
+					>{{ item.travelAgencyName }}
 				</a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="地接社">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.subTravelId" style="width: 200px" placeholder="请选择旅行社名称">
-				<a-select-option v-for="(item,index) in options.earthContactAgencyList" :value="item.travelAgencyId" :key=index>{{ item.travelAgencyName }}
+				<a-select-option v-for="(item, index) in options.earthContactAgencyList" :value="item.travelAgencyId" :key="index"
+					>{{ item.travelAgencyName }}
 				</a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="行程时间">
-			<a-range-picker
-				v-model:value="state.tableData.param.time"
-				show-time
-				format="YYYY-MM-DD HH:mm"
-				value-format="YYYY-MM-DD HH:mm:ss"
-			/>
+			<a-range-picker v-model:value="state.tableData.param.time" show-time format="YYYY-MM-DD HH:mm" value-format="YYYY-MM-DD HH:mm:ss" />
 		</search-item>
 		<template #button>
 			<a-button @click="initList">查询</a-button>
@@ -36,12 +32,7 @@
 	<div>
 		<a-tabs v-model:activeKey="activeKey">
 			<a-tab-pane v-for="(item, index) in pages" :key="index" :tab="item.label">
-				<component 
-					ref="listRef" 
-					:is="item.name" 
-					v-if="index == activeKey"
-					:params="state.tableData.param"
-				></component>
+				<component ref="listRef" :is="item.name" v-if="index == activeKey" :params="state.tableData.param"></component>
 			</a-tab-pane>
 		</a-tabs>
 	</div>
@@ -100,7 +91,7 @@ const state = reactive({
 			itineraryNo: null,
 			travelId: null,
 			subTravelId: null,
-			time:'',
+			time: '',
 		},
 	},
 });
@@ -116,7 +107,7 @@ onMounted(() => {
 	options.getGroupSocietyList();
 	options.getEarthContactAgencyList();
 	initList();
-	navigatorBar.setNavigator(['结算管理','结算管理']);
+	navigatorBar.setNavigator(['结算管理', '结算管理']);
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
@@ -124,10 +115,10 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="less" scoped>
-::v-deep(.ant-tabs-nav) {
+:v-deep(.ant-tabs-nav) {
 	padding: 0px 20px !important;
 }
-// ::v-deep(.ant-tabs-top > .ant-tabs-nav) {
+// :v-deep(.ant-tabs-top > .ant-tabs-nav) {
 // 	margin: 0;
 // }
 .ant-table-thead > tr > th {
