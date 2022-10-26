@@ -56,8 +56,6 @@ export default [
 					},
 				],
 			},
-
-			// Enterprise Information Management
 			{
 				path: 'enterpriseInfoManagement',
 				name: 'enterpriseInfoManagement',
@@ -71,14 +69,26 @@ export default [
 				children: [
 					{
 						path: 'travelEnterpriseInfo',
-						component: () => import('@/views/baseInfoManage/enterpriseInfo/index.vue'),
-						name: 'enterpriseInfoManagement',
+						component: () => import('@/views/enterpriseInfoManagement/travelEnterpriseInfo.vue'),
+						name: 'travelEnterpriseInfo',
 						meta: {
 							title: '企业信息',
 							// icon: 'liulanqi',
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
+					},
+					{
+						path: 'membershipManagement/id/:id/contactName/:contactName/phone/:phone',
+						component: () => import('@/views/enterpriseInfoManagement/membershipManagement.vue'),
+						name: 'membershipManagement',
+						meta: {
+							title: '入会管理',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+						props: true
 					},
 					{
 						path: 'modifyEnterpriseInfo/name/:name/addressDetail/:addressDetail/legalPerson/:legalPerson/managementRange/:managementRange/registeredCapital/:registeredCapital/establishTime/:establishTime/businessTerm/:businessTerm/contactName/:contactName/phone/:phone/accountType/:accountType/bankAccountName/:bankAccountName/accountAddress/:accountAddress/bankAccount/:bankAccount/businessLicenseUrl/:businessLicenseUrl/manageUrl/:manageUrl/oid/:oid',
@@ -92,6 +102,42 @@ export default [
 						},
 					},
 				],
+			},
+			// fundManagement
+			{
+				path: 'fund',
+				name: 'fund',
+				redirect: '/travel/fund/fundManagement',
+				meta: {
+					title: '资金管理',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					// isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'fundManagement',
+						component: () => import('@/views/fundManagement/index.vue'),
+						name: 'fundManagement',
+						meta: {
+							title: '',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'recharge',
+						component: () => import('@/views/fundManagement/recharge.vue'),
+						name: 'recharge',
+						meta: {
+							title: '充值',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				]
 			},
 			// tourGuideManage
 			{

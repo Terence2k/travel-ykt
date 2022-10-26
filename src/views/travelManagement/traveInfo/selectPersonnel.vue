@@ -1,9 +1,15 @@
 <template>
 	<div class="table-area">
-		<BaseModal title="选择古维费可减免人员" v-model="modelValue" :width="600">
-            <CommonTable :columns="columns" :dataSource="state.tableData.data" :scrollY="false">
-				
-			</CommonTable>
+		<BaseModal title="选择古维费可减免人员" v-model="modelValue" :width="1000">
+			<div class="top">
+				<p>请选择可减免的游客，取消勾选：</p>
+				<a-button>自动检查可减免人员</a-button>
+			</div>
+			<CommonTable :row-selection="{ onSelect }" :columns="columns" :dataSource="state.tableData.data" :scrollY="false"> </CommonTable>
+			<template v-slot:footer>
+				<a-button type="primary">保存</a-button>
+				<a-button @click="dialogVisible = false">取消</a-button>
+			</template>
 		</BaseModal>
 	</div>
 </template>
@@ -28,56 +34,51 @@ const props = defineProps({
 	params: Object,
 });
 const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
-const columns= [
-			{
-				title: ' 序号 ',
-				key: 'index',
-				width: '80px',
-			},
-			{
-				title: '费用名称',
-				dataIndex: 'comprehensiveFeeProductName',
-				key: 'comprehensiveFeeProductName',
-			},
-			{
-				title: '结算归属',
-				dataIndex: 'belongCompanyName',
-				key: 'belongCompanyName',
-			},
-			{
-				title: '收费模式',
-				dataIndex: 'feeModel',
-				key: 'feeModel',
-			},
-			{
-				title: '是否按天收取',
-				dataIndex: 'confirmDailyChargeName',
-				key: 'confirmDailyChargeName',
-			},
-			{
-				title: '单价（元）',
-				dataIndex: 'feeNumber',
-				key: 'feeNumber',
-			},
-			{
-				title: '人数',
-				dataIndex: 'peopleCount',
-				key: 'peopleCount',
-			},
-			{
-				title: '行程天数',
-				dataIndex: 'dayCount',
-				key: 'dayCount',
-			},
-			{
-				title: '金额（元）',
-				dataIndex: 'totalMoney',
-				key: 'totalMoney',
-			},
-		],
+const columns = [
+	{
+		title: '游客名字',
+		dataIndex: 'comprehensiveFeeProductName',
+		key: 'comprehensiveFeeProductName',
+	},
+	{
+		title: '可减免类型',
+		dataIndex: 'belongCompanyName',
+		key: 'belongCompanyName',
+	},
+	{
+		title: '特殊证件类型',
+		dataIndex: 'feeModel',
+		key: 'feeModel',
+	},
+	{
+		title: '特殊证件照片',
+		dataIndex: 'confirmDailyChargeName',
+		key: 'confirmDailyChargeName',
+	},
+	{
+		title: '是否已缴',
+		dataIndex: 'feeNumber',
+		key: 'feeNumber',
+	},
+];
 const state = reactive({
 	tableData: {
-		data: [],
+		data: [
+			{
+				comprehensiveFeeProductName: '张三',
+				belongCompanyName: '特殊证件',
+				feeModel: '士官证',
+				confirmDailyChargeName: 'img',
+				feeNumber: '否',
+			},
+			{
+				comprehensiveFeeProductName: '张三',
+				belongCompanyName: '特殊证件',
+				feeModel: '士官证',
+				confirmDailyChargeName: 'img',
+				feeNumber: '否',
+			},
+		],
 		total: 400,
 		loading: false,
 		param: {
@@ -96,11 +97,13 @@ const state = reactive({
 const auditRef = ref();
 const init = async () => {
 	console.log('params', props.params);
-	// 
+	//
 	// formValidate.value = {};
 	// formValidate.value = { ...props.params };
 };
-
+const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
+	console.log(record, selected, selectedRows);
+};
 watch(
 	() => props.modelValue,
 	async (nVal) => {
@@ -112,22 +115,15 @@ watch(
 );
 
 watch(dialogVisible, (nVal) => {
-    console.log(nVal,'1111111111')
+	console.log(nVal, '1111111111');
 	emit('update:modelValue', nVal);
 });
 </script>
 
 <style lang="less" scoped>
-.input {
-	margin-left: -6px;
-	width: 100px;
-}
-.d-span {
-	margin-left: 20px;
-	line-height: 32px;
-}
-.select {
-	margin-left: -6px;
-	width: 367px;
+.top{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
 }
 </style>

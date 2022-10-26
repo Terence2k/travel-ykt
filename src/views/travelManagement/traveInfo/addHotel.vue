@@ -1,15 +1,22 @@
 <template>
 	<BaseModal v-model="dialogVisible" title="选择预定酒店" :width="900" :onOk="handleOk">
 		<a-form ref="formRef" :model="formState" autocomplete="off" labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 10 }">
-			<a-form-item label="选择星级" name="travelOperatorOid" :rules="[{ required: true, message: '请选择星级' }]">
-				<a-select v-model:value="formState.travelOperatorOid" placeholder="请选择星级" @change="handleChange">
-					<a-select-option :value="item.oid" v-for="item in hotelData.hotelStart" :price="item.price" :key="item.oid">{{ item.starCode }}</a-select-option>
+			<a-form-item label="选择星级" name="hotelStarId" :rules="[{ required: true, message: '请选择星级' }]">
+				<a-select v-model:value="formState.hotelStarId" placeholder="请选择星级" @change="handleChange">
+					<a-select-option 
+						:value="item.oid" v-for="item in hotelData.hotelStart" 
+						:price="item.price" 
+						:key="item.oid"
+						:name="item.starCode">{{ item.starCode }}</a-select-option>
 				</a-select>
 			</a-form-item>
 
 			<a-form-item label="选择酒店" name="hotelId" :rules="[{ required: true, message: '请选择酒店' }]">
-				<a-select v-model:value="formState.hotelId" placeholder="请选择酒店">
-					<a-select-option :value="item.oid" v-for="item in hotelData.hotel" :key="item.oid">{{ item.hotelName }}</a-select-option>
+				<a-select v-model:value="formState.hotelId" placeholder="请选择酒店" @change="handleHotel">
+					<a-select-option 
+						:value="item.oid" v-for="item in hotelData.hotel" 
+						:key="item.oid"
+						:name="item.hotelName">{{ item.hotelName }}</a-select-option>
 				</a-select>
 			</a-form-item>
 
@@ -40,17 +47,28 @@
 			<div v-for="(room, index) in formState.roomTypeList" :key="index">
 				<h3>房型{{ index + 1 }}</h3>
 				<a-form-item label="预定房型" :name="['roomTypeList', index, 'hotelRoomTypeId']" :rules="[{ required: true, message: '请选择预定房型' }]">
-					<a-select v-model:value="room.hotelRoomTypeId" placeholder="请选择组团社做团人">
-						<a-select-option :value="item.oid" v-for="item in hotelData.roomType" :name="item.roomTypeName" :key="item.oid">{{ item.roomTypeName }}</a-select-option>
+					<a-select 
+						@change="(e: any, option: any) => changeRoomType(e, option, index)"
+						v-model:value="room.hotelRoomTypeId" 
+						placeholder="请选择预定房型">
+						<a-select-option 
+							:value="item.oid" v-for="item in hotelData.roomType" 
+							:name="item.roomTypeName" 
+							:key="item.oid"
+							:stockNum="item.stockNum"
+							:num="item.roomOccupancyNum">{{ item.roomTypeName }}</a-select-option>
 					</a-select>
 				</a-form-item>
-				<a-form-item label="订房数量" :name="['roomTypeList', index, 'roomCount']" :rules="[{ required: true, message: '请选择订房数量' }]">
+				<a-form-item 
+					label="订房数量" 
+					:name="['roomTypeList', index, 'reserveNumber']" 
+					:rules="[{ required: true, validator: (_rule: Rule, value: string) => validateCheckNum(_rule, value, index) }]">
 					<a-input v-model:value="room.reserveNumber" />
 				</a-form-item>
 				<a-form-item
 					label="入住总人数"
 					:name="['roomTypeList', index, 'checkInNumber']"
-					:rules="[{ required: true, message: '请选择入住人数' }]"
+					:rules="[{ required: true, validator: (_rule: Rule, value: string) => validateCheckIn(_rule, value, index) }]"
 				>
 					<div class="d-flex">
 						<a-input v-model:value="room.checkInNumber" />
@@ -100,6 +118,11 @@ import api from '@/api';
 import { debounce } from 'lodash';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import { message } from 'ant-design-vue/es';
+import { Rule } from 'ant-design-vue/es/form';
+import dayjs from 'dayjs';
+
+const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any ) || {}
+const route = useRoute()
 const roomList = {
 	checkInNumber: '', //入住人数
 	hotelRoomTypeId: '', //房型id
@@ -109,6 +132,7 @@ const roomList = {
 };
 const travelStore = useTravelStore()
 const formRef = ref();
+
 const props = defineProps({
 	modelValue: {
 		type: Boolean,
@@ -116,14 +140,14 @@ const props = defineProps({
 	},
 });
 // 酒店数据
-const hotelData = reactive({
+const hotelData = reactive<{[k:string]: any}>({
 	hotelStart: [],
 	hotel: [],
 	roomType: [],
 });
 // 表单填写数据
 const formState = reactive<{[k: string]: any}>({
-	travelOperatorOid: '',
+	hotelStarId: '',
 	hotelId: '',
 	leaveTime: '',
 	enterTime: '',
@@ -138,18 +162,81 @@ const delRoom = (index: number) => {
 	formState.roomTypeList.splice(index, 1);
 };
 
+const handleHotel = (e: any, option: any) => {
+	formState.hotelName = option.name;
+}
+
+const changeRoomType = (e: any, option: any, index: number) => {
+	formState.roomTypeList[index].roomOccupancyNum = option.num;
+	formState.roomTypeList[index].roomTypeLimitPeople = option.stockNum;
+	formState.roomTypeList[index].roomTypeName = option.name
+	
+}
+
+
 const getHotelStarList = async () => {
 	hotelData.hotelStart = await api.getHotelStarList();
 };
 
 const handleChange = async (id: number, option: any) => {
 	formState.honestyGuidePrice = option.price
+	formState.hotelStarCode = option.name;
 	hotelData.hotel = await api.getHotelInfoByRated(id);
 };
+
+// 订房数量校验
+const validateCheckNum = async (_rule: Rule, value: string, index: number) => {
+	if (value === '') {
+		return Promise.reject('请输入预定房间数量');
+	} else if (value > formState.roomTypeList[index].roomTypeLimitPeople) {
+		return Promise.reject('预定房间数量超过最大库存');
+	} else {
+		return Promise.resolve();
+	}
+}
+
+// 入住总人数校验
+const validateCheckIn = async (_rule: Rule, value: string, index: number) => {
+	if (value === '') {
+		return Promise.reject('请输入入住总人数');
+	} else if(value < formState.roomTypeList[index].reserveNumber) {
+		return Promise.reject('入住人数不能低于房间数量');
+	} else if(Number(value) > (formState.roomTypeList[index].reserveNumber * formState.roomTypeList[index].roomOccupancyNum)) {
+		return Promise.reject('入住人数不能大于预定房间可住人数');
+	} else {
+		return Promise.resolve();
+	}
+};
+/**
+ * 
+ * @param data 数据源
+ * @param startDate 开始
+ * @param endDate 结束
+ * @return amount 总价
+ */
+const getOrderAmount = (data: Array<{[k:string]:any}>, startDate: string, endDate: string) => {
+	const day = dayjs(endDate).diff(startDate, 'day')
+	const amount = []
+	for (let k = 0; k < data.length; k++) {
+		amount[k] = data[k].orderAmount * data[k].reserveNumber * day
+	}
+	return amount.reduce((prev, next) => prev + next)
+}
 
 const handleOk = async (callback: Function) => {
 	try {
 		await formRef.value.validateFields();
+		formState.oid = null;
+		formState.scheduledNumber = formState.roomTypeList.map((it: any) => Number(it.checkInNumber))
+		.reduce((prev: any, current: any) => prev + current);
+		formState.scheduledRooms = formState.roomTypeList.map((it: any) => Number(it.reserveNumber))
+		.reduce((prev: any, current: any) => prev + current);
+		formState.tripNumber = travelStore.touristList.length;
+		formState.itineraryId = route.query.id || traveListData.oid
+		formState.orderAmount = getOrderAmount(formState.roomTypeList, formState.arrivalDate, formState.departureDate)
+		if (Number((formState.scheduledNumber / travelStore.touristList.length).toFixed) < 0.8) {
+			return message.error('入住总人数不低于团客总数的80%')
+		}
 		await api.travelManagement.reserveHotel(formState);
 		message.success('新增成功');
 		callback();

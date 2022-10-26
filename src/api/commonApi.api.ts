@@ -30,7 +30,15 @@ export const commonApi = {
             method: 'post',
             showLoading: false
         });
+    },
+    getItem(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/team/getItem`,
+            method: 'post',
+            showLoading: false
+        });
     }
+    
     
 }
     

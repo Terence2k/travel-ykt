@@ -1,15 +1,15 @@
 <template>
   <div>
 	
-		<CommonTable :row-selection="{onSelect}" :dataSource="state.tableData" :columns="state.columns">
+		<CommonTable :row-selection="{onSelect}" :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
       <template #button>
       </template>
       <template #bodyCell="{ column, text, index,record }">
-		 <template v-if="column.key === 'itineraryNo'">
-					<div>
-					  <a @click="goToDetail(record)">{{text}}</a>
-					</div>
-		</template>
+        <!-- <template v-if="column.key === 'itineraryNo'">
+          <div>
+            <a @click="goToDetail(record)">{{text}}</a>
+          </div>
+        </template> -->
         <template v-if="column.key === 'index'">
 					<div>
 						{{(state.params.pageNo - 1) * (state.params.pageSize) + (index + 1)}}
@@ -22,7 +22,7 @@
 
         <template v-if="column.key === 'action'">
           <div class="action-btns">
-            <a @click="goToPath(record.oid)">编辑</a>
+            <a @click="goToPath(record)">编辑</a>
             <a>邀请地接社编辑</a>
             <a>发团</a>
           </div>
@@ -118,11 +118,12 @@
 	const pageSideChange = () => {
 
 	}
-	const goToPath = (id: number) => {
+	const goToPath = (row: any) => {
 		router.push({
 			path: '/travel/travel_manage/add_travel',
 			query: {
-				id
+				id: row.oid,
+				itineraryNo: row.itineraryNo
 			}
 		})
 	}

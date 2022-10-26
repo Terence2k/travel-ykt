@@ -50,10 +50,10 @@
 						<span v-if="record.ruleStatus === 1">启用</span>
 					</template>
 					<!-- 收费名称 -->
-					<template v-if="column.key === 'charCount'">
-						<span v-if="record.chargeModel === 1">{{ record.charCount }}%</span>
-						<span v-if="record.chargeModel === 2">{{ record.charCount }}人</span>
-						<span v-if="record.chargeModel === 3">{{ (record.charCount / 100).toFixed(2) }}元</span>
+					<template v-if="column.key === 'chargeCount'">
+						<span v-if="record.chargeModel === 1">{{ record.chargeCount }}%</span>
+						<span v-if="record.chargeModel === 2">{{ record.chargeCount }}人</span>
+						<span v-if="record.chargeModel === 3">{{ (record.chargeCount / 100).toFixed(2) }}元</span>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
@@ -112,8 +112,8 @@ const columns = [
 	},
 	{
 		title: '收费金额',
-		dataIndex: 'charCount',
-		key: 'charCount',
+		dataIndex: 'chargeCount',
+		key: 'chargeCount',
 	},
 	{
 		title: '费用说明',

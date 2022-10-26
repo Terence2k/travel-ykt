@@ -1,7 +1,24 @@
 <template>
 	<BaseModal :title="state.title" v-model="modelValue" width="70%" @cancel="dialogVisible = false">
 		<h3 style="margin: 0px 0 20px 30px">合计 {{ state.settlementCost / 100 }} 元</h3>
-		<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }"></CommonTable>
+		<CommonTable
+			:dataSource="state.tableData.data"
+			:columns="columns"
+			:scroll="{ x: '100%', y: '100%' }"
+			rowKey="oid"
+			:row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
+		>
+			<template #bodyCell="{ column, record }">
+				<template v-if="column.key === 'settlementCost'">
+					<span>{{ (record.settlementCost / 100).toFixed(2) }}元</span>
+				</template>
+				<template v-if="column.key === 'action'">
+					<div class="action-btns">
+						<a href="javascript:;" @click="transferAccounts(record.id)">申请转账</a>
+					</div>
+				</template>
+			</template>
+		</CommonTable>
 		<CommonPagination
 			:current="state.tableData.param.pageNo"
 			:page-size="state.tableData.param.pageSize"
@@ -23,6 +40,7 @@
 import BaseModal from '@/components/common/BaseModal.vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
+import type { TableProps } from 'ant-design-vue';
 import { Ref } from 'vue';
 import lodash from 'lodash';
 import { message } from 'ant-design-vue';
@@ -40,40 +58,55 @@ const props = defineProps({
 	},
 	methods: Object,
 });
-const columns = [
-	{
-		title: '转账单号',
-		dataIndex: 'transferAccountsNo',
-		key: 'transferAccountsNo',
-	},
-	{
-		title: '转账单位',
-		dataIndex: 'transferAccountsCompanyName',
-		key: 'transferAccountsCompanyName',
-	},
-	{
-		title: '转账账户',
-		dataIndex: 'transferAccountsAccount',
-		key: 'transferAccountsAccount',
-	},
-	{
-		title: '转账金额（元）',
-		dataIndex: 'transferAccountsMoney',
-		key: 'transferAccountsMoney',
-	},
-	{
-		title: '收款单位',
-		dataIndex: 'collectionCompanyName',
-		key: 'collectionCompanyName',
-	},
-	{
-		title: '收款账户',
-		dataIndex: 'collectionAccount',
-		key: 'collectionAccount',
-	},
-];
+const columns = computed(() => {
+	const column = [
+		{
+			title: '转账单号',
+			dataIndex: 'transferAccountsNo',
+			key: 'transferAccountsNo',
+		},
+		{
+			title: '转账单位',
+			dataIndex: 'transferAccountsCompanyName',
+			key: 'transferAccountsCompanyName',
+		},
+		{
+			title: '转账账户',
+			dataIndex: 'transferAccountsAccount',
+			key: 'transferAccountsAccount',
+		},
+		{
+			title: '转账金额（元）',
+			dataIndex: 'transferAccountsMoney',
+			key: 'transferAccountsMoney',
+		},
+		{
+			title: '收款单位',
+			dataIndex: 'collectionCompanyName',
+			key: 'collectionCompanyName',
+		},
+		{
+			title: '收款账户',
+			dataIndex: 'collectionAccount',
+			key: 'collectionAccount',
+		},
+	];
+	if (state.status === 4) {
+		const c = {
+			title: '操作',
+			dataIndex: 'action',
+			key: 'action',
+		};
+		column.push(c);
+	}
+	return column;
+});
 const emit = defineEmits(['update:modelValue', 'submit']);
 const dialogVisible = ref(false);
+// 多选按钮
+const onSelectChange = (selectedRowKeys: any) => {
+	state.selectedRowKeys = selectedRowKeys;
+};
 const state = reactive({
 	title: '审核',
 	tableData: {
@@ -88,11 +121,14 @@ const state = reactive({
 	},
 	isHandle: true,
 	settlementCost: 0,
+	status: null,
 	audit: {
 		remark: '', //备注
 		oid: null, //oid
 		status: 2, //转账单状态 1-待审核 2-转账完成 3-审核不通过
+		transferAccountDetailsIds: [],
 	},
+	selectedRowKeys: [],
 });
 const init = () => {
 	console.log(`我进来啦`);
@@ -108,6 +144,7 @@ const init = () => {
 const initList = async () => {
 	state.tableData.param.transferAccountsId = props.params.transferAccountsId;
 	state.audit.oid = props.params.transferAccountsId;
+	state.status = props.params.status;
 	state.settlementCost = props.params.settlementCost;
 	const result = await api.getTransferAccountDetails(state.tableData.param);
 	const { total, content } = result;
@@ -139,11 +176,26 @@ const refuse = () => {
 	transferAccountAudit();
 };
 const transferAccountAudit = async () => {
+	if (!state.selectedRowKeys.length) {
+		message.error(`请选择数据之后再进行转账`);
+		return;
+	}
+	state.audit.transferAccountDetailsIds = state.selectedRowKeys;
 	try {
 		await api.transferAccountAudit(state.audit);
 		dialogVisible.value = false;
 		message.success('操作成功');
 		emit('submit');
+	} catch (error) {
+		console.log(error);
+		message.error(`${error}`);
+	}
+};
+// 发起单条数据的转账
+const transferAccounts = async (id: number) => {
+	try {
+		await api.transferAccountsDetail(id);
+		message.success('操作成功');
 	} catch (error) {
 		console.log(error);
 		message.error(`${error}`);

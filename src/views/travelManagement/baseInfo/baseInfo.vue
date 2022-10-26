@@ -43,14 +43,14 @@
 			</a-form-item>
 
 			<a-form-item label="组团社计调">
-				<a-input v-model:value="formState.username" disabled />
+				<a-input v-model:value="formState.travelOperatorName" disabled />
 				<!-- <a-select v-model:value="formState.travelOperatorOid" placeholder="请选择组团社做团人" disabled>
 					<a-select-option :value="userInfo.oid">{{userInfo.username}}</a-select-option>
 				</a-select> -->
 			</a-form-item>
 
-			<a-form-item label="组团社计调电话" name="contactPhone">
-				<a-input v-model:value="formState.contactPhone" disabled />
+			<a-form-item label="组团社计调电话" name="travelOperatorPhone">
+				<a-input v-model:value="formState.travelOperatorPhone" disabled />
 			</a-form-item>
 			<!--  v-if="teamGroupType === GroupMode.TeamGroup" -->
 			<div>
@@ -75,6 +75,7 @@
 							:value="item.oid" 
 							v-for="item in list.travelOperatorList" 
 							:key="item.oid"
+							:name="item.username"
 							:phone="item.mobile"
 							>
 							{{item.username}}
@@ -82,8 +83,8 @@
 					</a-select>
 				</a-form-item>
 
-				<a-form-item label="地接社计调电话" name="subTravelContactPhone">
-					<a-input v-model:value="formState.subTravelContactPhone" placeholder="选定地接社计调后自动读出" disabled />
+				<a-form-item label="地接社计调电话" name="subTravelOperatorPhone">
+					<a-input v-model:value="formState.subTravelOperatorPhone" placeholder="选定地接社计调后自动读出" disabled />
 				</a-form-item>
 			</div>
 
@@ -135,9 +136,10 @@
 
 <script lang="ts" setup>
 import { getUserInfo } from '@/utils/util';
-import { GroupMode, RouteType } from '@/enum';
+import { ConfirmDailyCharge, FeeModel, GroupMode, RouteType } from '@/enum';
 import api from '@/api/index';
 import { useTravelStore } from '@/stores/modules/travelManagement';
+import dayjs from 'dayjs';
 
 interface TeamType {
 	teamType: Array<any>;
@@ -187,14 +189,14 @@ if (route.query.id) {
 	userInfo = getUserInfo()
 	addParams = {
 		oid: null,
-		username: userInfo.username,
+		travelOperatorName: userInfo.username,
 		groupType: teamGroupType.value,
-		contactPhone: userInfo.mobile,
+		travelOperatorPhone: userInfo.mobile,
 		subTravelOperatorOid: '',
 		travelOid: userInfo.sysCompany.oid,
 		travelOperatorOid: userInfo.oid,
 		touristNum: touristCount.value,
-		subTravelContactPhone: '',
+		subTravelOperatorPhone: '',
 		routeName: '',
 		endDate: '',
 		startDate: '',
@@ -211,8 +213,8 @@ if (route.query.id) {
 const rulesRef = {
 	teamType: [{ required: true, message: '请选择行程类型' }],
 	// travelName: [{ required: true, message: '请输入发团旅行社' }],
-	contactPhone: [{ required: true, message: '请输入组团社联系电话' }],
-	subTravelContactPhone: [{ required: true, message: '请输入地接社联系电话' }],
+	travelOperatorPhone: [{ required: true, message: '请输入组团社联系电话' }],
+	subTravelOperatorPhone: [{ required: true, message: '请输入地接社联系电话' }],
 	travelOid: [{ required: true, message: '请选择组团社社'}],
 	touristNum: [{ required: true, message: '请输入行程人数' }],
 	// routeType: [{ required: true, message: '请选择线路类型' }],
@@ -251,7 +253,8 @@ const gettravelOperatorList = async (travelId: number, option: any) => {
 	list.travelOperatorList = await api.travelManagement.gettravelOperatorList({travelId});
 }
 const handleChange = (event: any, option: any) => {
-	formState.value.subTravelContactPhone = option.phone
+	formState.value.subTravelOperatorPhone = option.phone
+	formState.value.subTravelOperatorName = option.name
 }
 const handleChangeTime = (event: any) => {
 	if (event) {
@@ -268,16 +271,99 @@ const changeRadio = (event:any) =>  {
 	travelStore.setTeamType(event.target.value);
 
 }
+
+/**
+ * 
+ * @param model 收费模式
+ * @param price 单价
+ * @returns count 总价
+ */
+
+const getPrice = (model: any, price: number) => {
+	let count = 0
+	switch(model) {
+		case FeeModel.Number :
+			count = price * travelStore.touristList.length
+			break;
+		case FeeModel.Price :
+			count = price
+			break;
+	}
+	return count
+}
+
+
+/**
+ * 
+ * @param a 是否按天收费
+ * @param price 单价
+ * @param model 收费模式
+ * @returns countPrice 总价
+ */
+
+const getAmount = (a:any, price: number, model: any) => {
+	let countPrice = 0
+	switch (a) {
+		case ConfirmDailyCharge.NotDay :
+			countPrice = getPrice(model, price)
+			break;
+		case ConfirmDailyCharge.IsDay :
+			const dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day');
+			countPrice = getPrice(model, price) * dayCount
+			break;
+	}
+	return countPrice
+}
+const findByIdTeamType = async () => {
+		if (!travelStore.teamType) return
+		const formData = new FormData();
+		formData.append('id', travelStore.teamType);
+		if (travelStore.teamType) {
+			let allFeesProducts = []
+			const res = await api.travelManagement.findByIdTeamType(formData);
+			
+			for (let i = 0; i < res.productVos.length; i++) {
+				if (res.productVos[i].itemId === 0) {
+					const result = await api.travelManagement.findProductInfo(res.productVos[i].productId)
+					result.peopleCount = travelStore.touristList.length;
+					result.unPrice = result.feeNumber;
+					result.isDay = true;
+					result.dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day')
+					result.totalMoney = getAmount(
+						result.confirmDailyCharge,
+						result.feeNumber,
+						result.feeModel
+					)
+					allFeesProducts.push(result)
+				}
+			}
+			
+			
+			travelStore.setCompositeProducts(allFeesProducts);
+		}
+		
+	}
 watch(() => props.onCheck, (newVal) => {
 	onSubmit()
 })
 watch(() => travelStore.baseInfo, newVal => {
 	formState.value = newVal;
+	console.log(newVal)
 	if (route.query.id) {
-		list.travelOperatorList = [newVal.subTravelOperator];
+		list.travelOperatorList = [{
+			oid: newVal.subTravelOperatorOid,
+			username: newVal.subTravelOperatorName,
+			mobile: newVal.subTravelOperatorPhone
+		}];
 		travelStore.setTeamType(travelStore.baseInfo.teamType);
 	}
 })
+watch(
+	() => travelStore.teamType,
+	(newVal) => {
+		findByIdTeamType();
+	}
+);
 getTeamTypeList();
 getSubtravelList();
 </script>
