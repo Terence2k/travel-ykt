@@ -183,10 +183,10 @@ const shijianYMD = (timestamp: any) => {
 const isCurrentDay = (timestamp: Dayjs) => {
 	let day = shijianYMD(timestamp),
 		// isHad = setDayPriceList.value.filter((i) => i.day == day);
-		isHad = props.setList.filter((i) => i.stockDate == day);
+		isHad: any = props.setList.filter((i) => i.stockDate == day);
 
 	if (isHad.length > 0) {
-		return '￥' + isHad[0].ticketPrice;
+		return isHad[0].ticketPrice ? '￥' + isHad[0].ticketPrice : '';
 	} else {
 		return '';
 	}
@@ -195,10 +195,10 @@ const isCurrentDay = (timestamp: Dayjs) => {
 const isCurrentDayInventpry = (timestamp: Dayjs) => {
 	let day = shijianYMD(timestamp),
 		// isHad = setDayPriceList.value.filter((i) => i.day == day);
-		isHad = props.setList.filter((i) => i.stockDate == day);
+		isHad: any = props.setList.filter((i) => i.stockDate == day);
 
 	if (isHad.length > 0) {
-		return isHad[0].stock;
+		return isHad[0].stock ? isHad[0].stock : '';
 	} else {
 		return '';
 	}
