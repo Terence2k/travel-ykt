@@ -121,10 +121,9 @@ const toEdit = (record: any) => {
 const calendarRef = ref();
 
 //库存部分
-const InventoryIndex = ref<number | null>();
-const Inventory = (index: number) => {
-	InventoryIndex.value = index;
-	calendarRef.value.open();
+const Inventory = (value: any) => {
+	// InventoryIndex.value = index;
+	calendarRef.value.open(value.oid);
 };
 // 删除提示
 const delShow = ref(false);

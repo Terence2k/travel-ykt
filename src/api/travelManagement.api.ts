@@ -123,12 +123,19 @@ export const travelManagement = {
     },
     reserveHotel(data: any){
         return request({
-            url: `${commonPath}/travel-agency-service/public/api/itinerary/reserveHotel`,
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/modifyHotel`,
+            data,
+            method: 'post',
+            showLoading: true
+        });
+    },
+    reserveTicket(data: any){
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/reserveTicket`,
             data,
             method: 'post',
             showLoading: true
         });
     }
-
     
 }

@@ -59,7 +59,7 @@
 		<div class="footer">
 			<div class="tooter-btn">
 				<a-button type="primary" @click.prevent="toPass">审核通过</a-button>
-				<a-button  @click.prevent="onCancel">取消</a-button>
+				<a-button @click.prevent="onCancel">取消</a-button>
 			</div>
 		</div>
 	</div>
@@ -99,9 +99,9 @@ const onCancel = () => {
 const columns = [
 	{
 		title: '序号',
-        customRender: ({ text, record, index }) => {
-            return `${ index + 1 }`;
-        }
+		customRender: ({ text, record, index }) => {
+			return `${index + 1}`;
+		},
 	},
 	{
 		title: '结算方类别',
@@ -140,7 +140,7 @@ const formData: any = reactive({
     settlementInformationVOList: [],
 });
 // 缓存编辑表格模态框数据
-const adjustData= ref({
+const adjustData = ref({
 	editItem: {},
 	editShow: false,
 	editIndex: 0,
@@ -149,8 +149,8 @@ const adjustData= ref({
 });
 
 // 审核通过
-const toPass = (() => {
-    Modal.confirm({
+const toPass = () => {
+	Modal.confirm({
 		title: '审核通过',
 		width: 560,
 		closable: true,
@@ -161,8 +161,8 @@ const toPass = (() => {
 			// api
 			// 	.settlementUpdate(data)
 			// 	.then((res: any) => {
-					message.success('操作成功');
-					onCancel();
+			message.success('操作成功');
+			onCancel();
 			// 	})
 			// 	.catch((err: any) => {
 			// 		message.error(err || '操作失败');
@@ -170,12 +170,12 @@ const toPass = (() => {
 		},
 		onCancel() {},
 	});
-})
+};
 // 结算明细
-const itemDetail = ((oid: any) => {
+const itemDetail = (oid: any) => {
 	adjustData.value.detailShow = true;
 	adjustData.value.modalParams = { oid };
-})
+};
 //初始化页面
 const initPage = async (): Promise<void> => {
 	api.examineDetail(111).then((res: any) => {
@@ -188,7 +188,7 @@ const initPage = async (): Promise<void> => {
 onMounted(() => {
 	initOption();
 	initPage();
-})
+});
 // 调整费用
 // const editItem = ((record: any,index: any) => {
 //     console.log('调整费用id',record,index);
@@ -223,10 +223,10 @@ onMounted(() => {
 		color: #1e2226;
 		box-sizing: content-box;
 	}
-    .titleMargin{
+	.titleMargin {
 		margin-top: 24px;
-	    margin-bottom: 20px;
-    }
+		margin-bottom: 20px;
+	}
 	.footer {
 		position: fixed;
 		bottom: 12px;
@@ -258,12 +258,12 @@ onMounted(() => {
 	height: 32px;
 }
 .ant-form-item:first-child {
-    margin-top: 13px;
+	margin-top: 13px;
 }
-::v-deep(.ant-form-item-control-input) {
+:v-deep(.ant-form-item-control-input) {
 	height: 18px;
 }
-::v-deep(.ant-form-item-label > label) {
+:v-deep(.ant-form-item-label > label) {
 	position: relative;
 	display: inline-flex;
 	align-items: center;
@@ -275,7 +275,7 @@ onMounted(() => {
 	color: #1e2226;
 }
 .table-area {
-    padding: 0;
-    margin-bottom: 16px;
+	padding: 0;
+	margin-bottom: 16px;
 }
 </style>

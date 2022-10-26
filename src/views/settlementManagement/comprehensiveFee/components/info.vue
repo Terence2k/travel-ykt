@@ -21,7 +21,7 @@
 				<span>{{ formData.data.feeModel == 0 ? '人数' : '价格' }}</span>
 			</a-form-item>
 			<a-form-item label="收费金额">
-				<span>{{ (formData.data.feeNumber || '') + ( formData.data.feeModel == 0 ? ' 元/人' : ' 元' ) }}</span>
+				<span>{{ (formData.data.feeNumber || '') + (formData.data.feeModel == 0 ? ' 元/人' : ' 元') }}</span>
 			</a-form-item>
 			<a-form-item label="是否按天收费">
 				<span>{{ formData.data.confirmDailyChargeName }}</span>
@@ -59,13 +59,11 @@ const getBelongCompanyName = computed(() => (value: any) => {
 })
 // 跳转编辑页
 const toEdit = () => {
-	route.go(-1)
+	route.go(-1);
 	// route.push({ path: '/settlementManagement/comprehensiveFee/edit' ,query: { edit: 1, oid: route.currentRoute.value?.query?.oid } });
 };
 const formData: any = reactive({
-	data: {
-		
-	},
+	data: {},
 });
 //初始化页面
 const initPage = async (): Promise<void> => {
@@ -76,7 +74,7 @@ const initPage = async (): Promise<void> => {
 onMounted(() => {
 	initOption();
 	initPage();
-})
+});
 </script>
 
 <style lang="less" scoped>
@@ -127,12 +125,12 @@ onMounted(() => {
 	height: 32px;
 }
 .ant-form-item:first-child {
-    margin-top: 13px;
+	margin-top: 13px;
 }
-::v-deep(.ant-form-item-control-input) {
+:v-deep(.ant-form-item-control-input) {
 	height: 18px;
 }
-::v-deep(.ant-form-item-label > label) {
+:v-deep(.ant-form-item-label > label) {
 	position: relative;
 	display: inline-flex;
 	align-items: center;

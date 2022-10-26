@@ -9,11 +9,11 @@
 			<search-item label="行程单号">
 				<a-input placeholder="请输入行程单号" />
 			</search-item>
-            <search-item label="旅行社">
+			<search-item label="旅行社">
 				<a-input placeholder="请输入旅行社" />
 			</search-item>
 			<template #button>
-                <a-button>重置</a-button>
+				<a-button>重置</a-button>
 				<a-button>查询</a-button>
 			</template>
 		</CommonSearch>
@@ -45,16 +45,16 @@ const pages = [
 	{
 		name: refuse,
 		label: '已驳回',
-	}
+	},
 ];
 </script>
 <style lang="less" scoped>
 .trave-contaner {
 	height: 100%;
-	::v-deep(.ant-tabs-nav) {
+	:v-deep(.ant-tabs-nav) {
 		padding: 16px 20px;
 	}
-	// ::v-deep(.ant-tabs-content-holder) {
+	// :v-deep(.ant-tabs-content-holder) {
 	//   padding: 0 20px;
 	// }
 }

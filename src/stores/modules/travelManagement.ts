@@ -72,7 +72,7 @@ export const useTravelStore = defineStore({
 		trafficType: [],
 		trafficColor: [],
 		baseInfo: {
-			subTravelOperatorId: '',
+			subTravelOperatorOid: '',
 			subTravelOperatorName: '',
 			subTravelOperatorPhone: '',
 			teamType: '',

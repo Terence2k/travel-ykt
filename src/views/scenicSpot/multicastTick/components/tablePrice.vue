@@ -12,11 +12,12 @@
 
 		<Calendar
 			ref="calendarRef"
-			:setAllValue="allPrice"
+			:setCurrentInventory="currentInventory"
 			:setCurrentValue="currentPrict"
 			:setList="setDayPriceList"
 			@get-current-day="getCurrentDay"
 			@clear-current-day="clearCurrentDay"
+			@save-data="saveDate"
 		>
 			<header class="tips">
 				<p>说明：点击后编辑每日库存，不编辑默认库存为默认</p>
@@ -30,14 +31,14 @@
 						<a-range-picker v-model:value="dateRange" />
 					</p>
 					<p>
-						<span class="label">批量设置:</span>
+						<span class="label">库存:</span>
 						<a-input-number
 							:min="0"
-							:max="9999999999"
-							v-model:value="allPrice"
+							:max="99999"
+							v-model:value="currentInventory"
 							:formatter="(value) => value.replace(/\D/g, '')"
 							:parser="(value) => value.replace(/\D/g, '')"
-							placeholder="输入统一票价"
+							placeholder="输入库存"
 							style="width: 200px"
 						/>
 					</p>
@@ -100,14 +101,14 @@ const columnsCount = ref([
 
 //自定义价格列表
 const setDayPriceList = ref([
-	{ stockDate: '2022-10-20', ticketPrice: '30', setDayPriceList: '30' },
-	{ stockDate: '2022-10-21', ticketPrice: '13', setDayPriceList: '30' },
+	{ stockDate: '2022-10-20', ticketPrice: '30', stock: '30' },
+	{ stockDate: '2022-10-21', ticketPrice: '13', stock: '30' },
 ]);
 
 //日历
 const currentPrict = ref(null);
-const allPrice = ref(40);
-const dateRange = ref([dayjs('2022-10-20'), dayjs('2022-10-25')]);
+const currentInventory = ref();
+const dateRange = ref([]);
 
 //getCurrentDay
 const currentDay = ref();
@@ -119,32 +120,35 @@ const getCurrentDay = (day: string) => {
 const clearCurrentDay = () => {
 	currentDay.value = null;
 	currentPrict.value = null;
+	currentInventory.value = null;
 	calendarRef.value.clear();
+	dateRange.value = [];
 };
-
+const saveDate = () => {
+	console.log('保存数据', props.tableList);
+};
 const createDateItem = () => {
 	let timeRange = dateRange.value,
 		arr: string[] = [],
 		isEdit = false;
 
-	// if (timeRange) {
-	// 	let arr = getAllDateCN(new Date(shijianYMD(timeRange[0])), new Date(shijianYMD(timeRange[1])));
-	// 	console.log(arr, 'range Date');
-	// 	return
-	// }
-
-	if (!currentDay.value && !timeRange) {
+	if (!currentDay.value && !timeRange[0]) {
 		message.error('请选择日期');
 		return;
 	}
 
 	if (typeof currentPrict.value !== 'number') {
-		message.error('请填写价格');
+		message.error('请填写按日设置价格');
+		return;
+	}
+
+	if (typeof currentInventory.value !== 'number') {
+		message.error('请填写库存');
 		return;
 	}
 	console.log(timeRange, 'timeRange');
 
-	if (timeRange) {
+	if (timeRange[0]) {
 		console.log('???');
 
 		arr = getAllDateCN(new Date(shijianYMD(timeRange[0])), new Date(shijianYMD(timeRange[1])));
@@ -152,23 +156,23 @@ const createDateItem = () => {
 
 		setDayPriceList.value.map((i, index) => {
 			let arrindex = arr.indexOf(i.stockDate),
-				obj = { stockDate: i.stockDate, ticketPrice: currentPrict.value, stock: currentPrict.value };
+				obj = { stockDate: i.stockDate, ticketPrice: currentPrict.value, stock: currentInventory.value };
 			console.log(arrindex, i.stockDate, arr);
 
 			if (arrindex > -1) {
-				console.log(arrindex, 'arrindex');
+				// console.log(arrindex, 'arrindex');
 				arr.splice(arrindex, 1);
 				editItem(index, obj);
 			}
 			return i;
 		});
-		console.log(arr, 'arr');
+		// console.log(arr, 'arr');
 
 		arr.map((i) => {
-			createItem({ stockDate: i, ticketPrice: currentPrict.value });
+			createItem({ stockDate: i, ticketPrice: currentPrict.value, stock: currentInventory.value });
 		});
 	} else {
-		let obj = { stockDate: currentDay.value, ticketPrice: currentPrict.value };
+		let obj = { stockDate: currentDay.value, ticketPrice: currentPrict.value, stock: currentInventory.value };
 
 		setDayPriceList.value.map((i, index) => {
 			if (i.stockDate === currentDay.value) {

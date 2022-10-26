@@ -57,7 +57,7 @@ const save = () => {
 		api
 			.editHotelStarData({
 				oid: formValidate.value.oid,
-				price: formValidate.value.price * 100,
+				price: parseInt(formValidate.value.price) * 100,
 				starCode: formValidate.value.starCode,
 				ratedStatus: formValidate.value.ratedStatus,
 			})
@@ -72,7 +72,10 @@ const save = () => {
 			});
 	} else {
 		api
-			.addHotelStarData(formValidate.value)
+			.addHotelStarData({
+				...formValidate.value,
+				price: parseInt(formValidate.value.price) * 100,
+			})
 			.then((res: any) => {
 				console.log('res:', res);
 				dialogVisible.value = false;
@@ -89,7 +92,7 @@ const init = async () => {
 	console.log('params', props.params);
 	formValidate.value = {};
 	if (props.params?.oid) {
-		formValidate.value = { ...props.params, price: props.params.price / 100 };
+		formValidate.value = { ...props.params, price: parseInt(props.params.price) / 100 };
 		options.title = '编辑酒店星级';
 	} else {
 		options.title = '新增酒店星级';

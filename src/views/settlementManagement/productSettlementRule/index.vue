@@ -296,7 +296,7 @@ const tabsChange = () => {
 </script>
 
 <style lang="less" scoped>
-::v-deep(.ant-tabs-nav) {
+:v-deep(.ant-tabs-nav) {
 	padding: 16px 20px;
 }
 .table-area {

@@ -176,7 +176,7 @@ const auditPass = () => {
 					message.error(err || '审核失败');
 				});
 		} else {
-			console.log('获取role失败');
+			message.error('当前用户无此权限');
 		}
 	});
 };
@@ -200,7 +200,7 @@ const auditFail = () => {
 				initPage();
 			});
 		} else {
-			console.log('获取role失败');
+			message.error('当前用户无此权限');
 		}
 	});
 };

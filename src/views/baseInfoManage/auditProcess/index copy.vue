@@ -628,7 +628,7 @@ onMounted(() => {
 </script>
 
 <style scoped lang="less">
-::v-deep(.ant-transfer-list-body) {
+:v-deep(.ant-transfer-list-body) {
   overflow: auto;
 }
 
