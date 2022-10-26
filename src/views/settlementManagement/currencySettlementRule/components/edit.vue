@@ -29,6 +29,15 @@
 				>
 				</a-select>
 			</a-form-item>
+			<a-form-item label="酒店星级" name="hotelRatedId" v-if="formState.productType === 2">
+				<a-select
+					v-model:value="formState.hotelRatedId"
+					placeholder="请选择酒店星级"
+					allowClear
+					:options="generaRulesOptions.hotelRatedList.map((item) => ({ value: item.oid, label: item.starCode }))"
+				>
+				</a-select>
+			</a-form-item>
 			<a-form-item label="费用名称" name="costName">
 				<a-input v-model:value="formState.costName" placeholder="请输入费用名称" allowClear />
 			</a-form-item>
@@ -147,7 +156,7 @@ import { message } from 'ant-design-vue';
 import { isIntegerNotMust, isBtnZeroToHundred } from '@/utils/validator';
 import api from '@/api';
 import { updateProductRule } from '@/api/settlementManage.api';
-import { FormState } from './type';
+import { FormState } from '../../productSettlementRule/components/type';
 import { useGeneraRules } from '@/stores/modules/GeneraRules';
 const navigatorBar = useNavigatorBar();
 const generaRulesOptions = useGeneraRules();
@@ -168,6 +177,7 @@ const formState: UnwrapRef<FormState> = reactive({
 	level: null,
 	productSonType: null,
 	productType: null,
+	hotelRatedId: null,
 });
 const columns = ref([
 	{
@@ -207,6 +217,7 @@ const rulesRef = {
 	isPrepaid: [{ required: true, message: '请新增是否垫付' }],
 	prepaidCompany: [{ required: true, message: '请选择垫付单位' }],
 	lastCostBelongCompany: [{ required: true, message: '请选择剩余费用归属' }],
+	hotelRatedId: [{ required: true, message: '请选择酒店星级' }],
 	// 百分比
 	percentage: [{ required: true, validator: isBtnZeroToHundred, trigger: 'blur' }],
 	// 人数和金额
@@ -228,6 +239,7 @@ const query = route.currentRoute.value.query;
 const init = () => {
 	generaRulesOptions.getTeamTypeList();
 	generaRulesOptions.getPrepaidCompanyList();
+	generaRulesOptions.getHotelRatedList();
 	if (query && query.oid) {
 		oid.value = query.oid;
 		navigatorBar.setNavigator(['编辑']);

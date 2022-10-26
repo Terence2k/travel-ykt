@@ -302,9 +302,17 @@ export async function settlementDetail(informationId: any) {
 // 结算状态变更
 export async function settlementUpdate(data: any) {
 	return request({
-		url: `${commonPath}/ykt/settlement-service/public/api/settlement-information/update/status`,
+		url: `${commonPath}/settlement-service/public/api/settlement-information/update/status`,
 		method: 'post',
 		data,
+		showLoading: true,
+	});
+}
+// 酒店星级下拉列表
+export async function currencySettlementHotelRatedList() {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-rated/list`,
+		method: 'get',
 		showLoading: true,
 	});
 }

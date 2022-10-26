@@ -30,6 +30,7 @@ export const useGeneraRules = defineStore('generaRules', {
 			{ value: 2, name: '演出票', type: 'SHOW' },
 			// { value: 'SELF', name: '没有子产品，即产品本身' },
 		],
+		hotelRatedList: [], //酒店星级
 	}),
 	getters: {},
 	actions: {
@@ -48,6 +49,15 @@ export const useGeneraRules = defineStore('generaRules', {
 					this.prepaidCompanyList = res.filter((item: any) => {
 						return item.oid !== 202 && item.oid !== 116 && item.oid !== 117 && item.oid !== 118;
 					});
+				});
+			}
+		},
+		//获取酒店启动星级枚举
+		getHotelRatedList() {
+			if (!this.hotelRatedList.length) {
+				api.currencySettlementHotelRatedList().then((res: any) => {
+					console.log(res, `res123312`);
+					this.hotelRatedList = res;
 				});
 			}
 		},
