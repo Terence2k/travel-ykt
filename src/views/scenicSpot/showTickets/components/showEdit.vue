@@ -32,7 +32,7 @@
 				</a-form-item>
 				<div class="footer">
 					<div class="tooter-btn">
-						<a-button type="primary" @click.prevent="onSubmit">保存</a-button>
+						<a-button type="primary" @click.prevent="edit">保存</a-button>
 						<a-button type="primary" @click="reset">提交审核</a-button>
 					</div>
 				</div>

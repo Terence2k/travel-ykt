@@ -88,7 +88,7 @@
 						>取消</a-button
 					>
 				</div>
-				<div v-if="modalState.baseInfo.auditStatus === 0 && (tableState.roleId || tableState.roleId === 0)">
+				<div v-if="modalState.baseInfo.auditStatus === 0 && (tableState.roleId || tableState.roleId === null || tableState.roleId === 0)">
 					<a-button style="width: 100px; font-size: 14px; background-color: #36b374ff; color: #ffffffff" @click="passModalInfo">审核通过</a-button>
 					<a-button style="width: 100px; font-size: 14px; background-color: #ffffffff; color: #54565cff" @click="failModalInfo">审核不通过</a-button>
 				</div>
@@ -493,7 +493,7 @@ const tableState = reactive({
 	params: {
 		currentTimeDetailText: '',
 	},
-	roleId: null,
+	roleId: undefined,
 	auditBusinessType: '',
 });
 
@@ -616,7 +616,10 @@ const passModalInfo = () => {
 			.then((res: any) => {
 				console.log('审核通过 返回：', res);
 				modalState.visible = false;
-				getHotelRoomTypeStockTableInfo(props?.hotelId);
+				setTimeout(() => {
+					getHotelRoomTypeStockTableInfo(props?.hotelId);
+				}, 1000);
+				//getHotelRoomTypeStockTableInfo(props?.hotelId);
 			});
 	}
 };
@@ -632,7 +635,10 @@ const failModalInfo = () => {
 			.then((res: any) => {
 				console.log('审核不通过 返回：', res);
 				modalState.visible = false;
-				getHotelRoomTypeStockTableInfo(props?.hotelId);
+				setTimeout(() => {
+					getHotelRoomTypeStockTableInfo(props?.hotelId);
+				}, 1000);
+				//getHotelRoomTypeStockTableInfo(props?.hotelId);
 			});
 	}
 };
