@@ -8,8 +8,7 @@
 			</a-form-item>
 			<a-form-item label="费用归属" name="belongCompany">
 				<a-select v-model:value="formData.data.belongCompany" style="width: 100%" placeholder="请选择费用归属" allowClear>
-					<a-select-option v-for="(item,index) in option" :value="item.codeValue" :key=index>{{ item.name }}
-					</a-select-option>
+					<a-select-option v-for="(item, index) in option" :value="item.codeValue" :key="index">{{ item.name }} </a-select-option>
 				</a-select>
 			</a-form-item>
 			<a-form-item label="费用说明" name="feeExplanation">
@@ -32,7 +31,7 @@
 				<a-input v-model:value="formData.data.feeNumber" placeholder="请填写收款数量">
 					<template #addonAfter>
 						<div>
-							{{ formData.data.feeModel === 1 ? '元' : "元/人"}}
+							{{ formData.data.feeModel === 1 ? '元' : '元/人' }}
 						</div>
 					</template>
 				</a-input>
@@ -73,10 +72,10 @@ const rulesRef = {
 	status: [{ required: true, message: '请选择状态' }],
 	feeModel: [{ required: true, message: '请选择收费模式' }],
 	feeNumber: [{ required: true, validator: isIntegerNotMust }],
-	belongCompany: [{ required: true, message: '请选择费用归属', trigger: 'blur',}],
+	belongCompany: [{ required: true, message: '请选择费用归属', trigger: 'blur' }],
 };
 const formData: any = reactive({
-	data: {}
+	data: {},
 });
 const initOption = async () => {
 	await useOptions.getBusinessTypeOptionList();
@@ -86,7 +85,7 @@ const option = computed(() => useOptions.businessTypeOptionList);
 const initPage = async (): Promise<void> => {
 	// 判断编辑还是新增，自定义面包屑
 	if (route.currentRoute.value?.query?.edit) {
-		navigatorBar.setNavigator(['结算管理', '综费产品', '编辑'])
+		navigatorBar.setNavigator(['结算管理', '综费产品', '编辑']);
 		api.getcomprehensiveFeeDetail(route.currentRoute.value?.query?.oid).then((res: any) => {
 			formData.data = res;
 		});
@@ -110,7 +109,7 @@ const onSubmit = () => {
 				status: formData.data.status,
 				feeModel: formData.data.feeModel,
 				feeNumber: formData.data.feeNumber,
-				belongCompany: formData.data.belongCompany
+				belongCompany: formData.data.belongCompany,
 			};
 			save(toRaw(Data));
 		})
@@ -124,15 +123,17 @@ const save = async (params: any) => {
 	if (route.currentRoute.value?.query?.edit) {
 		// 判断是否编辑
 		params.oid = formData.data.oid; // 编辑需要带oid
-		await api.comprehensiveFeeUpdate(params).then((res) => { // 编辑
+		await api.comprehensiveFeeUpdate(params).then((res) => {
+			// 编辑
 			message.success('保存成功');
 			route.push({ path: '/settlementManagement/comprehensiveFee' });
-		})
+		});
 	} else {
-		await api.comprehensiveFeeAdd(params).then((res) => { // 新增
+		await api.comprehensiveFeeAdd(params).then((res) => {
+			// 新增
 			message.success('保存成功');
 			route.push({ path: '/settlementManagement/comprehensiveFee' });
-		})
+		});
 	}
 };
 // 取消
@@ -193,10 +194,10 @@ onMounted(() => {
 // 	margin-bottom: 0;
 // 	height: 32px;
 // }
-// ::v-deep(.ant-form-item-control-input) {
+// :v-deep(.ant-form-item-control-input) {
 // 	height: 18px;
 // }
-// ::v-deep(.ant-form-item-label > label) {
+// :v-deep(.ant-form-item-label > label) {
 // 	position: relative;
 // 	display: inline-flex;
 // 	align-items: center;

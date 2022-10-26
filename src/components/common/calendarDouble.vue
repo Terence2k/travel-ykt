@@ -74,8 +74,6 @@
 import BaseModal from '@/components/common/BaseModal.vue';
 
 import dayjs, { Dayjs } from 'dayjs';
-import _ from 'lodash';
-import { message } from 'ant-design-vue';
 
 const emits = defineEmits(['get-current-day', 'clear-current-day', 'get-data', 'save-data']);
 
@@ -183,7 +181,7 @@ const shijianYMD = (timestamp: any) => {
 const isCurrentDay = (timestamp: Dayjs) => {
 	let day = shijianYMD(timestamp),
 		// isHad = setDayPriceList.value.filter((i) => i.day == day);
-		isHad: any = props.setList.filter((i) => i.stockDate == day);
+		isHad: any = props.setList.filter((i: any) => i.stockDate == day);
 
 	if (isHad.length > 0) {
 		return isHad[0].ticketPrice ? '￥' + isHad[0].ticketPrice : '';
@@ -195,7 +193,7 @@ const isCurrentDay = (timestamp: Dayjs) => {
 const isCurrentDayInventpry = (timestamp: Dayjs) => {
 	let day = shijianYMD(timestamp),
 		// isHad = setDayPriceList.value.filter((i) => i.day == day);
-		isHad: any = props.setList.filter((i) => i.stockDate == day);
+		isHad: any = props.setList.filter((i: any) => i.stockDate == day);
 
 	if (isHad.length > 0) {
 		return isHad[0].stock ? isHad[0].stock : '';
@@ -339,32 +337,32 @@ defineExpose({
 	}
 }
 
-::v-deep .ant-picker-calendar .ant-picker-panel {
+:v-deep .ant-picker-calendar .ant-picker-panel {
 	border-top: none;
 }
-::v-deep thead {
+:v-deep thead {
 	padding: 10px;
 	height: 44px;
 	border-bottom: 1px solid #f1f2f5 !important;
 }
-::v-deep thead tr th::before {
+:v-deep thead tr th::before {
 	content: '周';
 	font-size: 14px;
 	font-weight: 400;
 }
-::v-deep thead tr th {
+:v-deep thead tr th {
 	font-size: 14px;
 	font-weight: 400;
 }
-::v-deep tbody tr:first-child {
+:v-deep tbody tr:first-child {
 	padding-top: 10px;
 	margin-top: 10px;
 }
 
-::v-deep .ant-picker-cell.ant-picker-cell-in-view {
+:v-deep .ant-picker-cell.ant-picker-cell-in-view {
 	padding: 0;
 }
-::v-deep .ant-picker-body {
+:v-deep .ant-picker-body {
 	padding: 0 !important;
 	margin: 0;
 }

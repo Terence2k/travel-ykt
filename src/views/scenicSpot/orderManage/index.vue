@@ -320,11 +320,11 @@ onBeforeUnmount(() => {
 }
 // .trave-contaner {
 // 	height: 100%;
-// 	::v-deep(.ant-tabs-nav) {
+// 	:v-deep(.ant-tabs-nav) {
 // 		padding: 0 20px;
 // 	}
 // }
-::v-deep .ant-table-body {
+:v-deep .ant-table-body {
 	// max-height: 38vh !important;
 }
 .ant-tabs-top > .ant-tabs-nav {
@@ -354,7 +354,7 @@ onBeforeUnmount(() => {
 		margin-right: 16px;
 	}
 }
-::v-deep .ant-tabs-nav-wrap {
+:v-deep .ant-tabs-nav-wrap {
 	margin-left: 20px;
 }
 .ant-pagination {

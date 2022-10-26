@@ -83,7 +83,7 @@
 						</template>
 					</div> -->
 				</template>
-				<template v-if="['roomTypeCode'].includes(column.dataIndex)">
+				<template v-if="['sysRoomTypeId'].includes(column.dataIndex)">
 					<div>
 						<a-select
 							class="systemRoomType-select"
@@ -134,6 +134,8 @@
 					<a-table-summary-cell></a-table-summary-cell>
 					<a-table-summary-cell></a-table-summary-cell>
 					<a-table-summary-cell></a-table-summary-cell>
+					<a-table-summary-cell></a-table-summary-cell>
+					<a-table-summary-cell></a-table-summary-cell>
 					<a-table-summary-cell class="cell-actions">
 						<a-button @click="add" class="button-add">添加</a-button>
 					</a-table-summary-cell>
@@ -178,8 +180,8 @@ const columns = [
 	},
 	{
 		title: '系统房型',
-		dataIndex: 'roomTypeCode',
-		key: 'roomTypeCode',
+		dataIndex: 'sysRoomTypeId',
+		key: 'sysRoomTypeId',
 		width: '10%',
 	},
 	{
@@ -220,7 +222,7 @@ interface DataSourceItem {
 	auditStatus: number;
 	hotelId: string | number;
 	oid: string | number;
-	roomTypeCode?: string | number;
+	sysRoomTypeId?: string | number;
 	roomTypeName: string;
 	systemRoomName: string;
 	price: number;
@@ -294,6 +296,7 @@ const remove = (key: string) => {
 	} else {
 		editableData[key] = cloneDeep(dataSource.value.filter((item) => key === item.key)[0]);
 		editableData[key].operationType = 2;
+		editableData[key].roomOperateNum = ~editableData[key].roomNum + 1 || 0;
 	}
 	dataSource.value = dataSource.value.filter((item) => key !== item.key);
 };
@@ -348,9 +351,10 @@ const initPage = () => {
 		systemRoomData.value = res.map((item) => {
 			return {
 				value: item.oid,
-				label: item.sysRoomTypeCode,
+				label: item.sysRoomTypeName,
 			};
 		});
+		console.log('systemRoomData', systemRoomData);
 	});
 };
 
@@ -383,8 +387,8 @@ const saveRoomInfo = () => {
 					oid: item.oid,
 					hotelId: item.hotelId ? parseInt(item.hotelId) : undefined,
 					roomTypeName: item.roomTypeName,
-					roomTypeCode: item.roomTypeCode,
-					roomNum: parseInt(item.roomNum) - parseInt(item.roomOperateNum),
+					sysRoomTypeId: item.sysRoomTypeId,
+					roomNum: item.operationType !== 2 ? parseInt(item.roomNum) - parseInt(item.roomOperateNum) : parseInt(item.roomNum),
 					roomOccupancyNum: parseInt(item.roomOccupancyNum),
 					operationType: parseInt(item.operationType),
 					roomOperateNum: parseInt(item.roomOperateNum),
@@ -394,7 +398,7 @@ const saveRoomInfo = () => {
 					return {
 						hotelId: item.hotelId ? parseInt(item.hotelId) : undefined,
 						roomTypeName: item.roomTypeName,
-						roomTypeCode: item.roomTypeCode,
+						sysRoomTypeId: item.sysRoomTypeId,
 						roomNum: parseInt(item.roomNum),
 						roomOccupancyNum: parseInt(item.roomOccupancyNum),
 						operationType: parseInt(item.operationType),
@@ -437,7 +441,7 @@ const add = () => {
 	} else {
 		editableData[newData.key] = cloneDeep(dataSource.value.filter((item) => newData.key === item.key)[0]);
 		editableData[newData.key].operationType = 0;
-		const roomOccupancyNum = state.systemRoomAllData.find((item) => item.oid === editableData[newData.key].roomTypeCode)?.roomOccupancyNum;
+		const roomOccupancyNum = state.systemRoomAllData.find((item) => item.oid === editableData[newData.key].sysRoomTypeId)?.roomOccupancyNum;
 
 		editableData[newData.key].roomOccupancyNum = roomOccupancyNum;
 		newData.roomOccupancyNum = roomOccupancyNum;
@@ -446,7 +450,7 @@ const add = () => {
 };
 
 const changeRoomOccupancyNum = (target) => {
-	target.roomOccupancyNum = state.systemRoomAllData.find((item) => item.oid === target.roomTypeCode)?.roomOccupancyNum;
+	target.roomOccupancyNum = state.systemRoomAllData.find((item) => item.oid === target.sysRoomTypeId)?.roomOccupancyNum;
 	console.log('当前房型Id为：', target.oid);
 	console.log('target:', target);
 	// if (target?.operationType !== 0) {
