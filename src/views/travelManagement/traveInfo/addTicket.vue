@@ -21,6 +21,15 @@
 				</a-select>
 			</a-form-item>
 
+			<a-form-item label="入园日期" name="startDate" :rules="[{ required: true, message: '请选择入园日期' }]">
+                <a-date-picker
+					style="width: 100%"
+					v-model:value="formState.startDate"
+					format="YYYY-MM-DD"
+					value-format="YYYY-MM-DD"
+				/>
+			</a-form-item>
+
 			<a-form-item
 				label="选择门票"
 				name="ticketId"
@@ -43,14 +52,6 @@
 				<span>{{ticketPrice}}元</span>
 			</a-form-item>
 
-			<a-form-item label="入园日期" name="startDate" :rules="[{ required: true, message: '请选择入园日期' }]">
-                <a-date-picker
-					style="width: 100%"
-					v-model:value="formState.startDate"
-					format="YYYY-MM-DD"
-					value-format="YYYY-MM-DD"
-				/>
-			</a-form-item>
 
             <!-- <a-form-item label="入园时段" name="startDate" :rules="[{ required: true, message: '请选择入园时段' }]">
                 <a-time-picker
@@ -64,22 +65,22 @@
 				<a-input v-model:value="formState.count" disabled placeholder="无需填写，勾选人员名单后自动计算" />
 			</a-form-item> -->
             
-            <a-form-item label="免票人数">
+            <!-- <a-form-item label="免票人数">
 				<a-input v-model:value="formState.startDate" disabled placeholder="无需填写，勾选人员名单后自动计算（如符合满16减1政策）" />
-			</a-form-item>
+			</a-form-item> -->
 
             <a-form-item label="订单金额">
-				<a-input v-model:value="formState.startDate" disabled placeholder="无需填写，勾选人员名单后自动计算" />
+				<a-input v-model:value="formState.price" disabled placeholder="无需填写，勾选人员名单后自动计算" />
 			</a-form-item>
 
             <a-form-item label="订单编号">
-				<a-input v-model:value="formState.startDate" disabled placeholder="无需填写，订单提交后自动生成" />
+				<a-input v-model:value="formState.ticketOrderNo" disabled placeholder="无需填写，订单提交后自动生成" />
 			</a-form-item>
 
             <a-form-item label="订单生成时间">
-				<a-input v-model:value="formState.startDate" disabled placeholder="无需填写，订单提交后自动生成" />
+				<a-input v-model:value="formState.createTime" disabled placeholder="无需填写，订单提交后自动生成" />
 			</a-form-item>
-			<div>
+			<!-- <div>
 				<h3>选择订票人员</h3>
                 <CommonTable :row-selection="{onSelect}" :columns="columns" :dataSource="travelStore.touristList" :scrollY="false">
                     <template #bodyCell="{ column, text, index, record }">
@@ -105,7 +106,7 @@
 						</template>
                     </template>
                 </CommonTable>
-			</div>
+			</div> -->
 		</a-form>
 	</BaseModal>
 </template>
@@ -205,9 +206,10 @@
 		try {
 			await formRef.value.validateFields()
 			formState.unitPrice = ticketPrice.value
-			formState.itineraryId = route.query.itineraryNo || traveListData.itineraryNo
+			formState.itineraryId = route.query.id || traveListData.oid
 			formState.peopleCount = travelStore.touristList.length
 			await api.travelManagement.reserveTicket(formState)
+			travelStore.setTicket(formState)
 			callback()
 		} catch (errorInfo) {
 			callback(false)

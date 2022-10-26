@@ -238,8 +238,9 @@ const handleOk = async (callback: Function) => {
 			return message.error('入住总人数不低于团客总数的80%')
 		}
 		await api.travelManagement.reserveHotel(formState);
-		message.success('新增成功');
-		callback();
+		// message.success('新增成功');
+		travelStore.setHotels(formState)
+		setTimeout(() => callback(), 500)
 	} catch (errorInfo) {
 		callback(false);
 	}

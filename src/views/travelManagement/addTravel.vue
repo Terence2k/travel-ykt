@@ -137,6 +137,8 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 			travelStore.setTouristList(res.touristList.content);
 			travelStore.setTrafficList(res.transportList);
 			travelStore.setFileInfo(res.attachment);
+			travelStore.hotels = res.hotelList;
+			travelStore.scenicTickets = res.ticketList
 		
 		})
 	}
