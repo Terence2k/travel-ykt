@@ -40,10 +40,10 @@ import { message } from 'ant-design-vue';
 
 const loading = ref(false);
 
-let state = reactive<{[k:string]:any}>({
+let state = reactive<{ [k: string]: any }>({
 	otherQuery: {},
 	redirect: undefined,
-	activeKey: '1'
+	activeKey: '1',
 });
 
 /* listen router change  */
@@ -85,22 +85,25 @@ const handleFinish = async (values: any) => {
 	// console.log(checked, values);
 	console.log(values);
 	loading.value = true;
-  
-	api.login(formModel).then(res => {
-    console.log(res)
-    window.localStorage.setItem('authorization', `${res.authorization}`);
-    window.localStorage.setItem('userInfo', JSON.stringify(res));
-    if (res.sysMenuVos[0]) {
-      router.replace({
-        path: res.sysMenuVos[0].childMenuList[0].url || '/',
-        query: state.otherQuery,
-      });
-    } else {
-      message.error('该用户没有菜单列表')
-    }
-  }).catch(err => {
-    console.log(err)
-  })
+
+	api
+		.login(formModel)
+		.then((res) => {
+			console.log(res);
+			window.localStorage.setItem('authorization', `${res.authorization}`);
+			window.localStorage.setItem('userInfo', JSON.stringify(res));
+			if (res.sysMenuVos[0]) {
+				router.replace({
+					path: res.sysMenuVos[0].childMenuList[0].url || '/',
+					query: state.otherQuery,
+				});
+			} else {
+				message.error('该用户没有菜单列表');
+			}
+		})
+		.catch((err) => {
+			console.log(err);
+		});
 	loading.value = false;
 	// if (res) {
 	//   message.success("成功");
@@ -110,9 +113,9 @@ const handleFinish = async (values: any) => {
 };
 const goTo = () => {
 	router.push({
-		path: '/login/businessLogin'
-	})
-}
+		path: '/login/businessLogin',
+	});
+};
 </script>
 <style lang="less" scoped>
 .form_box {
@@ -131,15 +134,15 @@ const goTo = () => {
 			border: none;
 		}
 	}
-	::v-deep(.ant-tabs-tab) {
+	:v-deep(.ant-tabs-tab) {
 		padding: 10px 2px;
 	}
-	::v-deep(.ant-tabs-nav) {
+	:v-deep(.ant-tabs-nav) {
 		&::before {
 			border-bottom: none;
 		}
 	}
-	::v-deep(.ant-input-affix-wrapper-focused) {
+	:v-deep(.ant-input-affix-wrapper-focused) {
 		box-shadow: none !important;
 	}
 	.icon {
@@ -160,7 +163,7 @@ const goTo = () => {
 		height: 48px;
 		line-height: 48px;
 		border: none;
-		border-bottom: 1px solid #E7E7E7;
+		border-bottom: 1px solid #e7e7e7;
 		padding: 0;
 		.reset-prefix {
 			width: 81px;
@@ -180,7 +183,7 @@ const goTo = () => {
 		padding-top: 16px;
 		margin-bottom: 12px;
 		.register-text {
-			color: #5EC28F;
+			color: #5ec28f;
 			cursor: pointer;
 		}
 	}

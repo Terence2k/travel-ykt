@@ -65,7 +65,17 @@ import dayjs, { Dayjs } from 'dayjs';
 
 const modelValue = ref(false);
 const route = useRouter();
-const formValidate = reactive({
+
+interface formValidateType {
+	data: {
+		ticketId: string | null;
+		ticketType: string | null;
+		downReason: string | null;
+		dateList: any[];
+	};
+}
+
+const formValidate = reactive<formValidateType>({
 	data: {
 		ticketId: '',
 		ticketType: 'UNITE',
@@ -73,11 +83,14 @@ const formValidate = reactive({
 		dateList: [{ startDateTime: '', endDateTime: '', time: [] }],
 	},
 });
+
 const formRef = ref();
+
 const formRules: any = {
 	time: [{ required: true, message: '请选择时间' }],
 	downReason: [{ required: true, message: '请填写' }],
 };
+
 const props = defineProps({
 	// modelValue: {
 	// 	type: Boolean,
@@ -94,14 +107,13 @@ const addTimeList = () => {
 const del = (index: number) => {
 	formValidate.data.dateList.splice(index, 1);
 };
-const apply = () => {
-	console.log('apply');
 
+const apply = () => {
 	formRef.value
 		.validateFields()
-		.then(async (res) => {
+		.then(async (res: any) => {
 			let params = formValidate.data;
-			params.dateList.map((i) => {
+			params.dateList.map((i: any) => {
 				i.startDateTime = i.time[0];
 				i.endDateTime = i.time[1];
 				delete i.time;
@@ -115,14 +127,17 @@ const apply = () => {
 			console.log(err);
 		});
 };
+
 const toHistoryPage = () => {
 	route.push('/scenic-spot/sold-out-history');
 };
+
 // 打开弹窗
-const open = (id) => {
+const open = (id: any) => {
 	modelValue.value = true;
 	formValidate.data.ticketId = id;
 };
+
 // 关闭弹窗
 const cancel = () => {
 	modelValue.value = false;

@@ -1,6 +1,54 @@
 <template>
 	<Calendar
 		ref="calendarRef"
+		:setCurrentInventory="currentInventory"
+		:setCurrentValue="currentPrict"
+		:setList="setDayPriceList"
+		@get-current-day="getCurrentDay"
+		@clear-current-day="clearCurrentDay"
+		@save-data="saveDate"
+	>
+		<header class="tips">
+			<p>说明：点击后编辑每日库存，不编辑默认库存为默认</p>
+			<p>说明：点击后编辑每日价格，不编辑则默认价格为默认价格，价格为默认价格时不可保存价格日历</p>
+		</header>
+
+		<section>
+			<div class="set-wrap">
+				<p>
+					<span class="label">时间：</span>
+					<a-range-picker v-model:value="dateRange" />
+				</p>
+				<p>
+					<span class="label">库存:</span>
+					<a-input-number
+						:min="0"
+						:max="99999"
+						v-model:value="currentInventory"
+						:formatter="(value) => value.replace(/\D/g, '')"
+						:parser="(value) => value.replace(/\D/g, '')"
+						placeholder="输入库存"
+						style="width: 200px"
+					/>
+				</p>
+				<p>
+					<span class="label">按日设置</span>
+					<a-input-number
+						:min="0"
+						:max="9999999999"
+						v-model:value="currentPrict"
+						:formatter="(value) => value.replace(/\D/g, '')"
+						:parser="(value) => value.replace(/\D/g, '')"
+						placeholder="输入当日票价"
+						style="width: 200px"
+					/>
+					<a-button @click="createDateItem">确定</a-button>
+				</p>
+			</div>
+		</section>
+	</Calendar>
+	<!-- <Calendar
+		ref="calendarRef"
 		title="编辑库存日历"
 		:setAllValue="allPrice"
 		:setAllInventory="allPrice"
@@ -55,7 +103,6 @@
 						placeholder="输入当日票价"
 						style="width: 200px"
 					/>
-					<!-- <a-button @click="createDateItem">确定</a-button> -->
 				</p>
 				<p>
 					<span class="label">按日设置库存</span>
@@ -72,7 +119,7 @@
 				</p>
 			</div>
 		</section>
-	</Calendar>
+	</Calendar> -->
 </template>
 
 <script setup lang="ts">
@@ -82,21 +129,16 @@ import dayjs, { Dayjs } from 'dayjs';
 
 import api from '@/api';
 import { message } from 'ant-design-vue';
-const calendarRef = ref();
-const open = () => {
-	calendarRef.value.open();
-};
+
 //自定义价格列表
 const setDayPriceList = ref([
-	{ day: '2022-10-20', price: '30' },
-	{ day: '2022-10-21', price: '13' },
+	// { stockDate: '2022-10-20', ticketPrice: '30', stock: '30' },
+	// { stockDate: '2022-10-21', ticketPrice: '13', stock: '30' },
 ]);
 
-//日历
+///日历
 const currentPrict = ref(null);
-const currentInventory = ref(null);
-const allPrice = ref(123);
-// const dateRange = ref([dayjs('2022-10-20'), dayjs('2022-10-25')]);
+const currentInventory = ref();
 const dateRange = ref([]);
 
 //getCurrentDay
@@ -111,6 +153,7 @@ const clearCurrentDay = () => {
 	currentPrict.value = null;
 	currentInventory.value = null;
 	calendarRef.value.clear();
+	dateRange.value = [];
 };
 
 const createDateItem = () => {
@@ -118,51 +161,46 @@ const createDateItem = () => {
 		arr: string[] = [],
 		isEdit = false;
 
-	// if (timeRange) {
-	// 	let arr = getAllDateCN(new Date(shijianYMD(timeRange[0])), new Date(shijianYMD(timeRange[1])));
-	// 	console.log(arr, 'range Date');
-	// 	return
-	// }
-
-	if (!currentDay.value && !timeRange) {
+	if (!currentDay.value && !timeRange[0]) {
 		message.error('请选择日期');
 		return;
 	}
 
 	if (typeof currentPrict.value !== 'number') {
-		message.error('请填写价格');
+		message.error('请填写按日设置价格');
+		return;
+	}
+
+	if (typeof currentInventory.value !== 'number') {
+		message.error('请填写库存');
 		return;
 	}
 	console.log(timeRange, 'timeRange');
 
-	if (timeRange) {
-		console.log('???');
-
+	if (timeRange[0]) {
+		// 根据时间段
 		arr = getAllDateCN(new Date(shijianYMD(timeRange[0])), new Date(shijianYMD(timeRange[1])));
-		// let obj = { day: currentDay.value, price: currentPrict.value };
 
 		setDayPriceList.value.map((i, index) => {
-			let arrindex = arr.indexOf(i.day),
-				obj = { day: i.day, price: currentPrict.value };
-			console.log(arrindex, i.day, arr);
+			let arrindex = arr.indexOf(i.stockDate),
+				obj = { stockDate: i.stockDate, ticketPrice: currentPrict.value, stock: currentInventory.value };
 
 			if (arrindex > -1) {
-				console.log(arrindex, 'arrindex');
 				arr.splice(arrindex, 1);
 				editItem(index, obj);
 			}
 			return i;
 		});
-		console.log(arr, 'arr');
 
 		arr.map((i) => {
-			createItem({ day: i, price: currentPrict.value });
+			createItem({ stockDate: i, ticketPrice: currentPrict.value, stock: currentInventory.value });
 		});
 	} else {
-		let obj = { day: currentDay.value, price: currentPrict.value };
+		// 时间点
+		let obj = { stockDate: currentDay.value, ticketPrice: currentPrict.value, stock: currentInventory.value };
 
 		setDayPriceList.value.map((i, index) => {
-			if (i.day === currentDay.value) {
+			if (i.stockDate === currentDay.value) {
 				isEdit = true;
 				editItem(index, obj);
 			}
@@ -172,10 +210,9 @@ const createDateItem = () => {
 		if (!isEdit) {
 			createItem(obj);
 		}
-		console.log('createDateItem', currentPrict.value, currentDay.value);
 	}
 
-	message.success('成功');
+	message.success('已修改');
 	clearCurrentDay();
 	isEdit = false;
 };
@@ -188,6 +225,8 @@ const shijianYMD = (timestamp: any) => {
 	return year + '-' + month + '-' + date;
 };
 const getAllDateCN = (startTime: Date, endTime: Date) => {
+	console.log(startTime, endTime, 'endTime');
+
 	var date_all = [];
 	var i = 0;
 	while (endTime.getTime() - startTime.getTime() >= 0) {
@@ -206,24 +245,56 @@ const createItem = (obj: any) => {
 };
 
 const editItem = (index: number, obj: any) => {
-	const { day, price } = obj;
-	setDayPriceList.value[index].day = day;
-	setDayPriceList.value[index].price = price;
+	const { ticketPrice, stock } = obj;
+	setDayPriceList.value[index].ticketPrice = ticketPrice;
+	setDayPriceList.value[index].stock = stock;
 };
-const state = reactive({
+const nextYear = (timestamp: any) => {
+	let time = new Date(timestamp),
+		year = Number(time.getFullYear()),
+		month = (time.getMonth() + 1).toString().padStart(2, '0'),
+		date = time.getDate().toString().padStart(2, '0');
+
+	year++;
+	return year + '-' + month + '-' + date;
+};
+const saveDate = async () => {
+	let res = await api.saveInevntoryDetail({ ticketId: state.data.ticketId, stocks: setDayPriceList.value });
+	console.log(res, 'asdas');
+
+	message.success(res);
+};
+
+interface stateType {
 	data: {
-		ticketId: '103',
-		end: '2022-10-30',
-		start: '2022-08-01',
+		ticketId: string | number | null;
+		end: string | null;
+		start: string | null;
+	};
+}
+
+const state = reactive<stateType>({
+	data: {
+		ticketId: null,
+		end: null,
+		start: null,
 	},
 });
-const init = async () => {
-	let res = await api.getInevntoryDetail(state.data);
-	console.log(res);
+
+const calendarRef = ref();
+const open = (id: number) => {
+	calendarRef.value.open();
+	init(id);
 };
-onMounted(() => {
-	init();
-});
+
+const init = async (id: number) => {
+	state.data.ticketId = id;
+	state.data.start = shijianYMD(new Date());
+	state.data.end = nextYear(state.data.start);
+	let res = await api.getInevntoryDetail(state.data);
+	setDayPriceList.value = res;
+};
+
 defineExpose({
 	open,
 });

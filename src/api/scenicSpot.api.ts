@@ -178,6 +178,7 @@ export async function deleteWriteOffItem(id: number) {
 		method: 'delete',
 	});
 }
+// localhost:8003/ticket-service/public/api/scenic-unite?pageNo=1&pageSize=10&ticketName=
 // 联票 列表
 export async function getMultipleList(data: any) {
 	return request({
@@ -226,6 +227,14 @@ export async function getScenicVerif(id: number) {
 export async function getScenicSave(data: any) {
 	return request({
 		url: `${commonPath}/ticket-service/public/api/scenic-verif-manage/save`,
+		method: 'get',
+		data,
+	});
+}
+// 单票库存
+export async function saveInevntoryDetail(data: any) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-one-ticket/save-stock`,
 		method: 'post',
 		data,
 	});

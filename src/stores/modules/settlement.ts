@@ -9,7 +9,6 @@ export const settlementOptions = defineStore('settlement', {
         groupSocietyList: [], //组团社
         earthContactAgencyList: [], // 地接社
         businessTypeOptionList: [], //企业类型
-        businessTypeOption: {}, //企业类型对象
 	}),
 	getters: {},
 	actions: {
@@ -48,13 +47,11 @@ export const settlementOptions = defineStore('settlement', {
                     const options = res.map((i: any) => {
                         return { name: i.name, oid: i.oid, codeValue: i.codeValue };
                     });
-                    res.forEach(item => {
-                        this.businessTypeOption[item.codeValue] = item.name;
-                    });
                     this.businessTypeOptionList = options;
                     return options;
                 });
             }
 		},
 	},
+
 });

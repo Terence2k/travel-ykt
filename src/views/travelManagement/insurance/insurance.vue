@@ -157,16 +157,16 @@ const {
 		margin-left: 16px;
 	}
 }
-::v-deep(.ant-upload-drag) {
+:v-deep(.ant-upload-drag) {
 	width: 64px;
 	height: 34px;
 	border: 1px solid #d5d5d5;
 	background-color: #fff;
 }
-::v-deep(.ant-upload-drag .ant-upload) {
+:v-deep(.ant-upload-drag .ant-upload) {
 	padding: 5px 0;
 }
-::v-deep(.ant-upload-drag .anticon-plus) {
+:v-deep(.ant-upload-drag .anticon-plus) {
 	color: #777;
 	font-size: 16px;
 }

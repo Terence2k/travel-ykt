@@ -49,15 +49,15 @@ const attrs = useAttrs()
 const businessLoginRef = ref()
 const imgUploadRef = ref()
 const businessTypeOption = [
-  { oid: 116, name: '酒店' },
-  { oid: 117, name: '餐饮' },
-  { oid: 118, name: '景区' },
-  { oid: 119, name: '旅行社' },
-  /* { oid: 158, name: '一卡通' },
-  { oid: 159, name: '监理' },
-  { oid: 160, name: '协会' },
-  { oid: 161, name: '集团' },
-  { oid: 162, name: '文旅局' }, */
+  { codeValue: 116, name: '酒店' },
+  { codeValue: 117, name: '餐饮' },
+  { codeValue: 118, name: '景区' },
+  { codeValue: 119, name: '旅行社' },
+  /* { codeValue: 158, name: '一卡通' },
+  { codeValue: 159, name: '监理' },
+  { codeValue: 160, name: '协会' },
+  { codeValue: 161, name: '集团' },
+  { codeValue: 162, name: '文旅局' }, */
 ];
 const formRules: any = {
   businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
