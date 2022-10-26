@@ -203,3 +203,30 @@ export async function getInevntoryDetail(data: any) {
 		data,
 	});
 }
+// 核销时间段
+export async function getVerifManage(data: any) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-verif-manage/page`,
+		method: 'get',
+		data,
+	});
+}
+// 核销项目详情
+export async function getScenicVerif(id: number) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-verif-manage/${id}`,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+		method: 'get',
+		showLoading: false
+	});
+}
+// 核销时间段编辑
+export async function getScenicSave(data: any) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-verif-manage/save`,
+		method: 'post',
+		data,
+	});
+}
