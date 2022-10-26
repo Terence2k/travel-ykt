@@ -8,7 +8,7 @@
 				<span>{{ formData.data.comprehensiveFeeProductName }}</span>
 			</a-form-item>
 			<a-form-item label="费用归属">
-				<span>{{ formData.data.belongCompanyName }}</span>
+				<span>{{ getBelongCompanyName(formData.data.belongCompany) }}</span>
 			</a-form-item>
 			<a-form-item label="费用说明">
 				<span>{{ formData.data.feeExplanation || '' }}</span>
@@ -41,9 +41,22 @@ const tstyle = { 'font-weight': '700' };
 import api from '@/api';
 import { useBusinessManageOption } from '@/stores/modules/businessManage';
 import { settlementOptions } from '@/stores/modules/settlement';
-const useOptions = settlementOptions();
-const option = computed(() => useOptions.businessTypeOption);
 
+const useOptions = settlementOptions();
+const initOption = async () => {
+	await useOptions.getBusinessTypeOptionList();
+};
+// 计算属性匹配费用归属对应企业类型
+const getBelongCompanyName = computed(() => (value: any) => {
+	if (useOptions.businessTypeOptionList) {
+		const idx = useOptions.businessTypeOptionList.findIndex((item) => item.codeValue === value);
+		if (idx !== -1) {
+			return useOptions.businessTypeOptionList[idx]['name'];
+		}
+		return '';
+	}
+	return ''
+})
 // 跳转编辑页
 const toEdit = () => {
 	route.go(-1);
@@ -56,11 +69,10 @@ const formData: any = reactive({
 const initPage = async (): Promise<void> => {
 	api.getcomprehensiveFeeDetail(route.currentRoute.value?.query?.oid).then((res: any) => {
 		formData.data = res;
-		formData.data.belongCompanyName = option.value[formData.data.belongCompany];
 	});
 };
 onMounted(() => {
-	useOptions.getBusinessTypeOptionList();
+	initOption();
 	initPage();
 });
 </script>

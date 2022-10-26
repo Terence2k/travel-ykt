@@ -29,7 +29,7 @@
 			<a-button @click="initList">查询</a-button>
 		</template>
 	</CommonSearch>
-	<div>
+	<div class="table-area">
 		<a-tabs v-model:activeKey="activeKey">
 			<a-tab-pane v-for="(item, index) in pages" :key="index" :tab="item.label">
 				<component ref="listRef" :is="item.name" v-if="index == activeKey" :params="state.tableData.param"></component>

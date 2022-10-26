@@ -2,17 +2,17 @@
 	<div class="table-area">
 		<BaseModal :title="state.title" v-model="modelValue" :width="600">
 			<a-form ref="formRef" model="formValidate" rules="rules" :label-col="{ span: 5 }" :wrapper-col="{ span: 16, offset: 1 }" labelAlign="left">
-				<a-form-item label="规则名称" name="username">
+				<a-form-item label="规则名称" name="ruleName">
 					<a-input v-model:value="formValidate.age" placeholder="请输入规则名称" />
 				</a-form-item>
-				<a-form-item label=" 减免模式" name="account">
-					<a-select ref="select" placeholder="请选择特殊证件类型" v-model:value="state.tableData.pattern">
-						<a-select-option value="1">游客年龄</a-select-option>
-						<a-select-option value="2">特殊证件</a-select-option>
+				<a-form-item label=" 减免模式" name="discountType">
+					<a-select ref="select" placeholder="请选择特殊证件类型" v-model:value="state.tableData.data.discountType">
+						<a-select-option value="0">游客年龄</a-select-option>
+						<a-select-option value="1">特殊证件</a-select-option>
 					</a-select>
 				</a-form-item>
 				<a-form-item name="account">
-					<a-row v-if="state.tableData.pattern == '1'">
+					<a-row v-if="state.tableData.data.discountType == '0'">
 						<a-col :span="8"></a-col>
 						<a-col :span="6">
 							<a-input class="input" placeholder="请输入年龄"></a-input>
@@ -24,7 +24,7 @@
 							<a-input class="input" placeholder="请输入年龄"></a-input>
 						</a-col>
 					</a-row>
-					<a-row v-if="state.tableData.pattern == '2'">
+					<a-row v-if="state.tableData.data.discountType == '1'">
 						<a-col :span="8"></a-col>
 						<a-col :span="8">
 							<a-select ref="select" placeholder="请选择特殊证件类型" class="select">
@@ -36,13 +36,13 @@
 						<a-col :span="8"> </a-col>
 					</a-row>
 				</a-form-item>
-				<a-form-item label=" 减免折扣" name="account">
-					<a-input v-model:value="formValidate.address3" placeholder="请输入折扣信息(0~0.99)" />
+				<a-form-item label=" 减免折扣" name="discount">
+					<a-input v-model:value="state.tableData.data.discount" placeholder="请输入折扣信息(0~0.99)" />
 				</a-form-item>
-				<a-form-item label=" 状态" name="account">
-					<a-radio-group v-model:value="state.tableData.status" name="radioGroup">
+				<a-form-item label=" 状态" name="discountRuleStatus">
+					<a-radio-group v-model:value="state.tableData.data.discountRuleStatus" name="radioGroup">
 						<a-radio value="1">启用</a-radio>
-						<a-radio value="2">禁用</a-radio>
+						<a-radio value="0">禁用</a-radio>
 					</a-radio-group>
 				</a-form-item>
 			</a-form>
@@ -83,8 +83,6 @@ const state = reactive({
 			pageNo: 1,
 			pageSize: 10,
 		},
-		status: '1',
-		pattern: '1',
 	},
 	title: '',
 	operationModal: {

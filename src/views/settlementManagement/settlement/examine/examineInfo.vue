@@ -3,45 +3,54 @@
 		<!-- <header>基本信息</header> -->
 		<div class="title">基本信息</div>
 
-		<a-form labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
+		<a-form labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 10 }">
 			<a-form-item label="结算状态" required>
-				<span>{{ formData.data.aaa }}</span>
+				<span>{{ formData.data.accountingIsNormal == 1 ? '正常' : formData.data.accountingIsNormal == 2 ? '异常' : '-' }}</span>
 			</a-form-item>
 			<a-form-item label="团队类型" required>
-				<span>{{ formData.data.bbb }}</span>
+				<span>{{ formData.data.teamTypeName }}</span>
 			</a-form-item>
 			<a-form-item label="行程单号" required>
-				<span>{{ formData.data.ccc || '' }}</span>
+				<span>{{ formData.data.itineraryNo || '' }}</span>
 			</a-form-item>
-			<a-form-item label="线路名称" required>
-				<span>{{ formData.data.eee }}</span>
+            <a-form-item label="线路名称" required>
+				<span>{{ formData.data.routeName }}</span>
 			</a-form-item>
-			<a-form-item label="组团社" required>
-				<span>{{ formData.data.fff }}</span>
+            <a-form-item label="组团社" required>
+				<span>{{ formData.data.travelName }}</span>
 			</a-form-item>
-			<a-form-item label="地接社" required>
-				<span>{{ formData.data.ggg }}</span>
+            <a-form-item label="地接社" required>
+				<span>{{ formData.data.subTravelName }}</span>
 			</a-form-item>
-			<a-form-item label="行程时间" required>
-				<span>{{ formData.data.hhh }}</span>
+            <a-form-item label="行程时间" required>
+				<span>{{ formData.data.startDate }} - {{ formData.data.endDate }}</span>
 			</a-form-item>
-			<a-form-item label="游客人数" required>
-				<span>{{ formData.data.jjj }}</span>
+            <a-form-item label="游客人数" required>
+				<span>{{ formData.data.touristNum }}</span>
 			</a-form-item>
-			<a-form-item label="行程费用" required>
-				<span>{{ formData.data.kkk }}</span>
+            <a-form-item label="行程费用" required>
+				<span>{{ formData.data.totalFee }}</span>
 			</a-form-item>
-			<a-form-item label="结算费用" required>
-				<span>{{ formData.data.lll }}</span>
+            <a-form-item label="结算费用" required>
+				<span>{{ formData.data.settlementCost }}</span>
 			</a-form-item>
 
 			<div class="title titleMargin">结算信息</div>
-			<CommonTable :dataSource="formData.list" :columns="columns" :scrollY="false" :scroll="{ y: '300px' }">
-				<template #bodyCell="{ column, record, index }">
+			<CommonTable :dataSource="formData.settlementInformationVOList" :columns="columns" :scrollY="false" :scroll="{ y: '300px' }">
+				<template #bodyCell="{ column, record ,index}">
+					<!-- 费用归属 -->
+					<template v-if="column.key === 'companyType'">
+						<span>{{ getBelongCompanyName(record.companyType) }}</span>
+					</template>
+					<!-- 结算费用 单位转成元-->
+					<template v-if="column.key === 'settlementCost'">
+						<span>
+							{{ (record.settlementCost / 100) > 0 ? (record.settlementCost / 100).toFixed(2) : 0}} </span>
+					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<!-- <a href="javascript:;" @click="editItem(record,index)">调整费用</a> -->
-							<a href="javascript:;" @click="itemDetail(record.oid)">结算明细</a>
+							<a href="javascript:;" @click="itemDetail(record.oid)">分账明细</a>
 						</div>
 					</template>
 				</template>
@@ -65,14 +74,27 @@ import { message } from 'ant-design-vue';
 import { Modal } from 'ant-design-vue';
 import AdjustModal from '@/views/settlementManagement/settlement/examine/adjustModal.vue';
 import DetailModal from '@/views/settlementManagement/settlement/examine/detailModal.vue';
-import lodash from 'lodash';
-
+import { settlementOptions } from '@/stores/modules/settlement';
+// import lodash from 'lodash';
 const route = useRouter();
-const tstyle = { 'font-weight': '700' };
-
+const useOptions = settlementOptions();
+const initOption = async () => {
+	await useOptions.getBusinessTypeOptionList();
+};
+// 计算属性 匹配费用归属企业类型
+const getBelongCompanyName = computed(() => (value: any) => {
+	if (useOptions.businessTypeOptionList) {
+		const idx = useOptions.businessTypeOptionList.findIndex((item) => item.codeValue === value);
+		if (idx !== -1) {
+			return useOptions.businessTypeOptionList[idx]['name'];
+		}
+		return '';
+	}
+	return ''
+})
 // 取消
 const onCancel = () => {
-	route.push({ path: '/settlementManagement/settlement/list', query: { edit: 1, oid: route.currentRoute.value?.query?.oid } });
+	route.go(-1);
 };
 const columns = [
 	{
@@ -83,28 +105,28 @@ const columns = [
 	},
 	{
 		title: '结算方类别',
-		dataIndex: 'type',
-		key: 'type',
+		dataIndex: 'companyType',
+		key: 'companyType',
 	},
 	{
 		title: '结算方',
-		dataIndex: 'name',
-		key: 'name',
+		dataIndex: 'companyName',
+		key: 'companyName',
 	},
 	{
 		title: '结算账户',
-		dataIndex: 'bank',
-		key: 'bank',
+		dataIndex: 'companyAccount',
+		key: 'companyAccount',
 	},
 	{
 		title: '结算费用（元）',
-		dataIndex: 'price',
-		key: 'price',
+		dataIndex: 'settlementCost',
+		key: 'settlementCost',
 	},
 	{
 		title: '结算时间',
-		dataIndex: 'time',
-		key: 'time',
+		dataIndex: 'settlementTime',
+		key: 'settlementTime',
 	},
 	{
 		title: '操作',
@@ -114,49 +136,8 @@ const columns = [
 	},
 ];
 const formData: any = reactive({
-	data: {
-		aaa: 'test',
-		bbb: 'test',
-		ccc: 'test',
-		ddd: 'test',
-		eee: 'test',
-		fff: 'test',
-		ggg: 'test',
-		hhh: 'test',
-		iii: 'test',
-		jjj: 'test',
-		kkk: 'test',
-		lll: 'test',
-	},
-	list: [
-		{
-			oid: 1,
-			key: 1,
-			type: 'John Brown sr.',
-			name: 'test',
-			bank: 'test',
-			price: '1001',
-			time: 'test',
-		},
-		{
-			oid: 2,
-			key: 1,
-			type: 'John Brown sr.',
-			name: 'test',
-			bank: 'test',
-			price: '1001',
-			time: 'test',
-		},
-		{
-			oid: 3,
-			key: 1,
-			type: 'John Brown sr.',
-			name: 'test',
-			bank: 'test',
-			price: '1001',
-			time: 'test',
-		},
-	],
+	data: {},
+    settlementInformationVOList: [],
 });
 // 缓存编辑表格模态框数据
 const adjustData = ref({
@@ -178,7 +159,7 @@ const toPass = () => {
 		content: '是否确定所选数据审核通过？',
 		onOk() {
 			// api
-			// 	.comprehensiveFeeEnable(record.oid)
+			// 	.settlementUpdate(data)
 			// 	.then((res: any) => {
 			message.success('操作成功');
 			onCancel();
@@ -197,12 +178,15 @@ const itemDetail = (oid: any) => {
 };
 //初始化页面
 const initPage = async (): Promise<void> => {
-	// api.getcomprehensiveFeeDetail(route.currentRoute.value?.query?.oid).then((res: any) => {
-	// 	formData.data = res;
-	// });
-	console.log(route.currentRoute.value?.query.oid);
+	api.examineDetail(111).then((res: any) => {
+		formData.data = res;
+		formData.settlementInformationVOList = res.settlementInformationVOList
+	});
+	console.log(route.currentRoute.value?.query.itineraryNo);
 };
+
 onMounted(() => {
+	initOption();
 	initPage();
 });
 // 调整费用
@@ -214,11 +198,11 @@ onMounted(() => {
 // })
 // 调整费用模态框关闭回调 此时调用接口
 // const adjustConfirm = ((e: any) => {
-//     console.log('我回来了');
-//     console.log(e.form.price);
-// 	message.success('保存成功');
-// 	formData.list[adjustData.value.editIndex].price = e.form.price;
-//     //
+	//     console.log('我回来了');
+	//     console.log(e.form.settlementCost);
+	// 	message.success('保存成功');
+	// 	formData.settlementInformationVOList[adjustData.value.editIndex].settlementCost = e.form.settlementCost;
+//     // 
 // })
 </script>
 

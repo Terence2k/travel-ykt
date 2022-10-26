@@ -385,6 +385,18 @@ const formRules: Record<string, Rule[]> = {
 const userInfo = getUserInfo();
 const submitFunc = ref();
 const validateArray: Ref<Array<any>> = ref([]);
+const businessTypeOption = computed(() => businessManageOptions.businessTypeOption);
+const hotelStarList = ref();
+const scenicLevelList = ref();
+
+// 获取酒店星级下拉数据
+const getHotelStarList = async () => {
+  hotelStarList.value = await api.getHotelStarList();
+}
+// 获取景区等级下拉数据
+const getScenicLevels = async () => {
+  scenicLevelList.value = await api.getScenicLevels();
+}
 
 const initOpeion = async () => {
   await businessManageOptions.getBusinessTypeOption();
@@ -432,26 +444,9 @@ const initOpeion = async () => {
     }
   });
 };
-const businessTypeOption = computed(() => businessManageOptions.businessTypeOption);
-const hotelStarList = ref();
-const scenicLevelList = ref();
-// 获取酒店星级下拉数据
-const getHotelStarList = async () => {
-  hotelStarList.value = await api.getHotelStarList();
-}
-// 获取景区等级下拉数据
-const getScenicLevels = async () => {
-  scenicLevelList.value = await api.getScenicLevels();
-}
 
 // 更改字段修改确定状态
 const changeDisabledStatus = (name: string) => {
-  if (!validateArray.value?.find((it: any) => it.name === name)) {
-    validateArray.value.push({
-      name: name,
-      disabled: true
-    })
-  }
   validateArray.value.forEach((item: any) => {
     if (item.name === name) {
       item.disabled = !item.disabled;

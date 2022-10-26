@@ -22,6 +22,18 @@
 					<span>{{ getTypeName('productType') }}</span>
 				</div>
 			</a-form-item>
+			<a-form-item label="酒店星级" v-if="formState.productType === 2">
+				<div>
+					<span>{{ getTypeName('hotelRatedId') }}</span>
+				</div>
+				<!-- <a-select
+					v-model:value="formState.hotelRatedId"
+					placeholder="请选择酒店星级"
+					allowClear
+					:options="generaRulesOptions.hotelRatedList.map((item) => ({ value: item.oid, label: item.starCode }))"
+				>
+				</a-select> -->
+			</a-form-item>
 			<a-form-item label="费用名称" name="name">
 				<div>
 					<span>{{ formState.costName }}</span>
@@ -122,6 +134,7 @@ const formState: UnwrapRef<FormState> = reactive({
 	costExplanation: null,
 	level: null,
 	productType: null,
+	hotelRatedId: null,
 });
 const columns = ref([
 	{
@@ -211,6 +224,13 @@ const getTypeName = computed(() => (str: string) => {
 			return generaRulesOptions.prepaidCompanyList[idx]['name'];
 		}
 	}
+	if (str === 'hotelRatedId') {
+		const idx = generaRulesOptions.hotelRatedList.findIndex((item: any) => item.oid === formState.hotelRatedId);
+		if (idx !== -1) {
+			return generaRulesOptions.hotelRatedList[idx]['starCode'];
+		}
+	}
+	return '';
 });
 const getCompanyTypeName = computed(() => (value: number) => {
 	const idx = generaRulesOptions.prepaidCompanyList.findIndex((item) => item.codeValue === value);

@@ -3,7 +3,12 @@
   background-color:white;
   overflow: hidden;
   max-height: calc(100vh - 130px);
+
   :deep{ 
+
+    .ant-table tfoot > tr > td {
+      position:static !important;
+    }
 
     .icon-before-container .ant-select-arrow{
       left:10px !important;
@@ -45,7 +50,7 @@
       right:10px !important;
     }
     .ant-table-body{
-      overflow: scroll !important;
+      overflow:hidden scroll !important;
       height: calc(100vh - 250px) !important;
       border-bottom:1px solid #f5f4f7;
     }
@@ -82,11 +87,14 @@
   .row-summary{
     .cell-actions{
       .button-add{
-        position:fixed;
-        right: 45px;
+        //position:fixed;
+        //right: 45px;
+        //position: fixed;
+        position: absolute;
         background-color:#5eb27a;
         color:white;
         font-size: 13px;
+        right:340px;
       }
     }
   }

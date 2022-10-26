@@ -34,7 +34,7 @@
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a href="javascript:;" @click="toSee">查看</a>
-						<!-- <a href="javascript:;" @click="toExamine">审核</a> -->
+						<a href="javascript:;" @click="toExamine">审核</a>
 						<a href="javascript:;" @click="print">打印票据</a>
 					</div>
 				</template>
@@ -169,10 +169,10 @@ const onHandleCurrentChange = (val: number) => {
 const toSee = () => {
 	route.push({ path: '/gouvyManagement/orderChange/order-change_edit'});
 };
-//审核
-// const toExamine = () => {
-// 	route.push({ path: '/gouvyManagement/orderChange/order-change_edit' ,query:{index:1}});
-// };
+// 审核
+const toExamine = () => {
+	route.push({ path: '/gouvyManagement/orderChange/order-change_edit' ,query:{index:1}});
+};
 const print =()=>{
 	message.success('已打印');
 }
