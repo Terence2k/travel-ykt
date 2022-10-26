@@ -3,10 +3,10 @@
     <div class="check_box">
       <div class="title">
         <div class="info_box">
-          <div class="info_item">一卡通账户名称：丽江黑松白鹿旅行社</div>
-          <div class="info_item">已绑定银行账户名称：丽江黑松白鹿旅游服务有限公司</div>
-          <div class="info_item">开户行：中国建设银行丽江分行古城支行</div>
-          <div class="info_item">银行账号： 589 3728203 980</div>
+          <div class="info_item">一卡通账户名称：{{ fundInfo.yktAccountName }}</div>
+          <div class="info_item">已绑定银行账户名称：{{ fundInfo.bankAccountName }}</div>
+          <div class="info_item">开户行：{{ fundInfo.bank }}</div>
+          <div class="info_item">银行账号： {{ fundInfo.bankAccount }}</div>
         </div>
         <span class="close_btn" @click="back">
           <close-outlined />
@@ -15,16 +15,16 @@
       <div class="table_box">
         <div class="card_info">
           <div class="mb20">一卡通资金子账号：</div>
-          <div class="count mb20">6225 0088 4399 0074</div>
+          <div class="count mb20">{{ fundInfo.yktAccountNumber }}</div>
           <div class="mb20">
             <span style="margin-right:20px">当前可用余额</span>
-            <span class="count">1,300.00</span>
+            <span class="count">{{ fundInfo.availableBalance }}</span>
           </div>
         </div>
         <div class="recharge_info">
           <div class="mb20">输入本次充值金额：</div>
           <div class="mb20">
-            <a-input v-model:value="amount" allowClear style="width:300px" @change="inputChange" />
+            <a-input v-model:value="form.runningAmount" allowClear style="width:300px" @change="inputChange" />
             <span style="margin-left: 20px">元</span>
           </div>
           <div class="mb20">
@@ -37,7 +37,7 @@
             <p>3、银行转账成功后，将根据贵司的一卡通账号自动识别，增加对应的余额至您的一卡通账户；</p>
             <p>4、转账成功与否，取决于银行网银系统是否稳定，如有失败，可向开户行查询。</p>
           </div>
-          <a-button type="primary">提交银行转账</a-button>
+          <a-button type="primary" @click="addAmount">提交银行转账</a-button>
         </div>
       </div>
     </div>
@@ -46,6 +46,7 @@
 
 <script setup lang="ts">
 import convertCurrency from '@/views/fundManagement/change'
+import { message } from 'ant-design-vue';
 import { CloseOutlined } from '@ant-design/icons-vue';
 import { useRouter, useRoute } from 'vue-router';
 import api from '@/api';
@@ -56,17 +57,77 @@ const back = () => {
     name: 'fund'
   })
 }
-const amount = ref('')
+const fundInfo = reactive({
+  bank: '',
+  bankAccountName: '',
+  bankAccount: '',
+  availableBalance: 0,
+  yktAccountName: '',
+  yktAccountNumber: ''
+})
+const form = reactive({
+  companyId: '',
+  runningAmount: ''
+})
 const bigAmount = ref()
-let timer
+let timer: NodeJS.Timeout
 const inputChange = () => {
-  if (timer) {
-    clearTimeout(timer)
-  }
+  timer && clearTimeout(timer)
   timer = setTimeout(() => {
-    bigAmount.value = convertCurrency(amount.value)
+    if (!form.runningAmount) {
+      form.runningAmount = ''
+      bigAmount.value = ''
+    } else {
+      let val = Number(form.runningAmount)
+      if (!isNaN(val)) {
+        bigAmount.value = convertCurrency(val)
+      } else {
+        message.warning('请输入正确金额！')
+      }
+    }
   }, 500);
 }
+const addAmount = async () => {
+  let params = {
+    companyId: form.companyId,
+    fundAccount: fundInfo.bankAccount,
+    runningAmount: Number(form.runningAmount) * 100
+  }
+  let res = await api.recharge(params)
+  if (res) {
+    message.success('充值成功！')
+    form.runningAmount = ''
+    getBaseInfo()
+  } else {
+    message.error('充值失败！')
+  }
+}
+const getUserInfo = () => {
+  let userInfo = window.localStorage.getItem('userInfo');
+  userInfo = JSON.parse(userInfo as string)
+  const { sysCompany: { oid } } = userInfo
+  form.companyId = oid
+}
+const getBaseInfo = async () => {
+  let {
+    bank,
+    bankAccountName,
+    bankAccount,
+    availableBalance,
+    yktAccountName,
+    yktAccountNumber
+  } = await api.findTravelFund({ companyId: form.companyId, rechargeTime: 1, expenditureTime: 1 })
+  fundInfo.bank = bank;
+  fundInfo.bankAccountName = bankAccountName;
+  fundInfo.bankAccount = bankAccount;
+  fundInfo.availableBalance = availableBalance ? Number(availableBalance) / 100 : 0;
+  fundInfo.yktAccountName = yktAccountName;
+  fundInfo.yktAccountNumber = yktAccountNumber;
+}
+onMounted(() => {
+  getUserInfo()
+  getBaseInfo()
+})
 </script>
 
 <style scoped lang="scss">
