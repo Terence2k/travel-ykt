@@ -22,7 +22,7 @@
 
         <template v-if="column.key === 'action'">
           <div class="action-btns">
-            <a @click="goToPath(record.oid)">编辑</a>
+            <a @click="goToPath(record)">编辑</a>
             <a>邀请地接社编辑</a>
             <a>发团</a>
           </div>
@@ -118,11 +118,12 @@
 	const pageSideChange = () => {
 
 	}
-	const goToPath = (id: number) => {
+	const goToPath = (row: any) => {
 		router.push({
 			path: '/travel/travel_manage/add_travel',
 			query: {
-				id
+				id: row.oid,
+				itineraryNo: row.itineraryNo
 			}
 		})
 	}

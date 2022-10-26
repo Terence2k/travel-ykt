@@ -8,13 +8,14 @@
 			:label-col="{ span: 3 }"
 			:wrapper-col="{ span: 10 }"
 		>
-			<a-form-item label="选择景区" name="ticketId" :rules="[{ required: true, message: '请选择景区' }]">
+			<a-form-item label="选择景区" name="scenicId" :rules="[{ required: true, message: '请选择景区' }]">
 				<a-select 
-                    v-model:value="formState.ticketId" 
+                    v-model:value="formState.scenicId" 
                     placeholder="请选择景区"
                     @change="handleChange">
 					<a-select-option 
                         :value="item.ticketId"
+						:name="item.ticketName"
                         v-for="item in ticketData.scenicList"
                         :key="item.ticketId">{{item.ticketName}}</a-select-option>
 				</a-select>
@@ -22,12 +23,13 @@
 
 			<a-form-item
 				label="选择门票"
-				name="travelOperatorOid"
+				name="ticketId"
 				:rules="[{ required: true, message: '请选择门票' }]"
 			>
-				<a-select v-model:value="formState.travelOperatorOid" placeholder="请选择门票">
+				<a-select @change="changeTicket" v-model:value="formState.ticketId" placeholder="请选择门票">
 					<a-select-option 
                         :value="item.oid"
+						:name="item.ticketName"
                         v-for="item in ticketData.ticketList"
                         :key="item.oid">{{item.ticketName}}</a-select-option>
 				</a-select>
@@ -41,26 +43,26 @@
 				<span>{{ticketPrice}}元</span>
 			</a-form-item>
 
-			<a-form-item label="入园日期" name="allDate" :rules="[{ required: true, message: '请选择入园日期' }]">
-                <a-range-picker
+			<a-form-item label="入园日期" name="startDate" :rules="[{ required: true, message: '请选择入园日期' }]">
+                <a-date-picker
 					style="width: 100%"
-					v-model:value="formState.allDate"
+					v-model:value="formState.startDate"
 					format="YYYY-MM-DD"
 					value-format="YYYY-MM-DD"
 				/>
 			</a-form-item>
 
-            <a-form-item label="入园时段" name="startDate" :rules="[{ required: true, message: '请选择入园时段' }]">
+            <!-- <a-form-item label="入园时段" name="startDate" :rules="[{ required: true, message: '请选择入园时段' }]">
                 <a-time-picker
                     style="width: 100%"
 					v-model:value="formState.startDate"
 					format="HH:mm" valueFormat="HH:mm"
 				/>
-			</a-form-item>
+			</a-form-item> -->
 
-            <a-form-item label="订票人数" name="count" :rules="[{ required: true, message: '请勾选订票人数' }]">
+            <!-- <a-form-item label="订票人数" name="count" :rules="[{ required: true, message: '请勾选订票人数' }]">
 				<a-input v-model:value="formState.count" disabled placeholder="无需填写，勾选人员名单后自动计算" />
-			</a-form-item>
+			</a-form-item> -->
             
             <a-form-item label="免票人数">
 				<a-input v-model:value="formState.startDate" disabled placeholder="无需填写，勾选人员名单后自动计算（如符合满16减1政策）" />
@@ -115,6 +117,8 @@
     import api from '@/api';
 	import { debounce } from 'lodash';
 
+	const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any ) || {}
+	const route = useRoute()
     const travelStore = useTravelStore()
     const IDCard = computed(() => travelStore.IDCard)
 	const formRef = ref()
@@ -172,20 +176,19 @@
         }
     ]
     const tableData = ref([])
-    const ticketData = reactive({
+    const ticketData = reactive<{[k:string]: any}>({
         scenicList: [],
         ticketList: []
     })
 	const formState = reactive<{[k: string]: any}>({
-		travelOperatorOid: '',
+		ticketId: '',
 		startDate: '',
-		allDate: [],
 		endData: '',
         count: ''
 	});
 
     const ticketPrice = computed(() => {
-        return ticketData.ticketList.filter(it => it.oid === formState.travelOperatorOid)[0]?.price
+        return ticketData.ticketList.filter((it:any) => it.oid === formState.ticketId)[0]?.price
     })
 
     const getScenicList = async () => {
@@ -201,6 +204,10 @@
 	const handleOk = async (callback: Function) => {
 		try {
 			await formRef.value.validateFields()
+			formState.unitPrice = ticketPrice.value
+			formState.itineraryId = route.query.itineraryNo || traveListData.itineraryNo
+			formState.peopleCount = travelStore.touristList.length
+			await api.travelManagement.reserveTicket(formState)
 			callback()
 		} catch (errorInfo) {
 			callback(false)
@@ -209,10 +216,15 @@
 	};
 
 
-    const handleChange = async (event: number) => {
-        formState.travelOperatorOid = ''
+    const handleChange = async (event: number, option:any) => {
+        formState.ticketId = ''
+		formState.scenicName = option.name;
         ticketData.ticketList = await api.travelManagement.getTicketList(event)
     }
+
+	const changeTicket = (event: number, option: any) => {
+		formState.ticketName = option.name;
+	}
 
 	const emits = defineEmits(['update:modelValue'])
 	const dialogVisible = ref(false);
@@ -239,10 +251,10 @@
 	}, 500);
 
 	watch(
-		() => [formState.travelOperatorOid, formState.allDate],
+		() => [formState.ticketId, formState.startDate],
 		([newHotelId, newallDate]) => {
-			if (newHotelId && newallDate && newallDate.length && newallDate[0] && newallDate[1]) {
-				debounceFun(newHotelId, newallDate[1], newallDate[0]);
+			if (newHotelId && newallDate && newallDate) {
+				debounceFun(newHotelId, newallDate, newallDate);
 			}
 		}
 	);
