@@ -42,23 +42,23 @@
 <script setup lang="ts">
 import imgUpload from '@/views/baseInfoManage/businessManagement/components/imgUpload.vue';
 import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
-import { useBusinessManageOption } from '@/stores/modules/businessManage';
+// import { useBusinessManageOption } from '@/stores/modules/businessManage';
 import { useAttrs } from 'vue'
 const attrs = useAttrs()
-const businessManageOptions = useBusinessManageOption();
+// const businessManageOptions = useBusinessManageOption();
 const businessLoginRef = ref()
 const imgUploadRef = ref()
-/* const businessTypeOption = [
+const businessTypeOption = [
   { oid: 116, name: '酒店' },
   { oid: 117, name: '餐饮' },
   { oid: 118, name: '景区' },
   { oid: 119, name: '旅行社' },
-  { oid: 158, name: '一卡通' },
+  /* { oid: 158, name: '一卡通' },
   { oid: 159, name: '监理' },
   { oid: 160, name: '协会' },
   { oid: 161, name: '集团' },
-  { oid: 162, name: '文旅局' },
-]; */
+  { oid: 162, name: '文旅局' }, */
+];
 const formRules: any = {
   businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
   name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
@@ -69,10 +69,10 @@ const formRules: any = {
   region: [{ required: true, trigger: 'blur', message: '请选择所属地区' }],
   businessLicenseUrl: [{ required: true, trigger: 'blur', message: '请上传营业执照照片' }],
 };
-const initOpeion = async () => {
-  await businessManageOptions.getBusinessTypeOption();
-};
-const businessTypeOption = computed(() => businessManageOptions.businessTypeOption);
+// const initOpeion = async () => {
+//   await businessManageOptions.getBusinessTypeOption();
+// };
+// const businessTypeOption = computed(() => businessManageOptions.businessTypeOption);
 const regionChange = () => {
   attrs.model.provinceId = attrs.model.region ? attrs.model.region[0] : ''
   attrs.model.cityId = attrs.model.region ? attrs.model.region[1] : ''
@@ -93,7 +93,7 @@ defineExpose({
   validate
 })
 onMounted(() => {
-  initOpeion()
+  // initOpeion()
 })
 </script>
 

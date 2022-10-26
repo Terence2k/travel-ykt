@@ -38,6 +38,8 @@
 		<div class="list-btn">
 			<a-button type="primary" class="success">导出</a-button>
 		</div>
+	</div>
+	<div>
 		<a-spin size="large" :spinning="state.tableData.loading">
 			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%' }">
 				<template #bodyCell="{ column, record, index }"> </template>

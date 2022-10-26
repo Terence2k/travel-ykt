@@ -40,7 +40,7 @@
 						/>
 					</template>
 					<template v-if="column.key === 'ifVerification'">
-						{{ record.ifVerification ? '是' : '否' }}
+						<a @click="changeIfVerification(index)">{{ record.ifVerification ? '是' : '否' }}</a>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
@@ -100,6 +100,7 @@ const times = computed(() => {
 		num = num + Number(i.verificationNumber);
 		return i;
 	});
+	emits('get-optional-verification', num);
 	return num;
 });
 const column = ref([
@@ -142,6 +143,7 @@ const columns = ref([
 		key: 'action',
 	},
 ]);
+
 const itemNameCompute = (id: number) => {
 	let rN = formData.data.filter((i) => i.id === id),
 		optionN = options.value.filter((i) => i.id === id);
@@ -155,7 +157,9 @@ const change = (value: object) => {
 	console.log(value, type.value);
 	if (type.value) {
 		console.log('多点');
+
 		modelValue.value = true;
+		emits('get-optional-verification', 0);
 	} else {
 		console.log('单点');
 		modelValue.value = true;
@@ -167,7 +171,7 @@ const formValidate = reactive({
 	proj: [],
 	initData: [{ init: true }],
 });
-const emits = defineEmits(['del-verification-obj', 'add-verification-obj', 'add-verification-obj-sign']);
+const emits = defineEmits(['del-verification-obj', 'add-verification-obj', 'add-verification-obj-sign', 'get-optional-verification', 'change-iv']);
 const del = (index: number | null) => {
 	delShow.value = true;
 	delIndex.value = index;
@@ -176,6 +180,9 @@ const del = (index: number | null) => {
 const delSubmit = () => {
 	emits('del-verification-obj', toRaw(delIndex.value));
 	delCancel();
+};
+const changeIfVerification = (index: number) => {
+	emits('change-iv', index);
 };
 const delCancel = () => {
 	delShow.value = false;
@@ -207,6 +214,14 @@ const apply = () => {
 const modelValue = ref(false);
 const CreateData = () => {
 	modelValue.value = true;
+	console.log(props.tableList);
+	if (type && props.tableList.length > 0) {
+		formValidate.proj = [];
+		props.tableList.map((i) => {
+			formValidate.proj.push(i.itemId);
+			return i;
+		});
+	}
 };
 
 const cancel = () => {

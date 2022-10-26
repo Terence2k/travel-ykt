@@ -19,12 +19,14 @@
 				<div class="list-btn">
 					<a-button type="primary" class="success" @click="createNewProject">新增门票</a-button>
 				</div>
+
 				<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }">
 					<template #bodyCell="{ column, record }">
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
 								<a href="javascript:;" @click="toEdit(record)">编辑</a>
 								<a href="javascript:;" @click="del(record)">删除</a>
+								<a href="javascript:;" @click="Inventory(record)">库存日历</a>
 								<a href="javascript:;" v-if="record.putaway === '上架'" @click="open(record)"> 下架申请</a>
 							</div>
 						</template>
@@ -42,6 +44,7 @@
 			<Create ref="createModelRef" />
 		</a-spin>
 		<DelModal :params="{ title: '删除', content: '是否确定该条数据' }" v-model="delShow" @submit="delSubmit" @cancel="delCancel" />
+		<InventoryCalendar ref="calendarRef" />
 	</div>
 </template>
 
@@ -57,6 +60,8 @@ import Modal from '@/components/common/BaseModal.vue';
 import Audit from './components/aduit.vue';
 import Create from './components/create.vue';
 import DelModal from '@/components/common/DelModal.vue';
+import Calendar from '@/components/common/calendarDouble.vue';
+import InventoryCalendar from './components/InventoryCalendar.vue';
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 const route = useRouter();
@@ -82,12 +87,12 @@ const columns = [
 		key: 'scenicName',
 		width: 120,
 	},
-	{
-		title: '审核状态',
-		dataIndex: 'auditStatus',
-		key: 'auditStatus',
-		width: 120,
-	},
+	// {
+	// 	title: '审核状态',
+	// 	dataIndex: 'auditStatus',
+	// 	key: 'auditStatus',
+	// 	width: 120,
+	// },
 	{
 		title: '平台上架状态',
 		dataIndex: 'putaway',
@@ -111,6 +116,15 @@ const toEdit = (record: any) => {
 	console.log(record);
 
 	route.push({ path: '/scenic-spot/singleVote/edit', query: { t: record.verificationType, oid: record.oid } });
+};
+//库存日历
+const calendarRef = ref();
+
+//库存部分
+const InventoryIndex = ref<number | null>();
+const Inventory = (index: number) => {
+	InventoryIndex.value = index;
+	calendarRef.value.open();
 };
 // 删除提示
 const delShow = ref(false);
@@ -171,9 +185,8 @@ const status = ['待审核', '审核中', '审核通过', '审核不通过'];
 
 const dealData = (params: [any]) => {
 	params.map((i: any) => {
-		i.auditStatus = status[i.auditStatus];
+		// i.auditStatus = status[i.auditStatus];
 		i.putaway = i.putaway ? '上架' : '下架';
-		// i.verificationType = i.verificationType === 1 ? '多点核销' : i.verificationType === 0 ? '单点核销' : '';
 		i.verificationTypeName = i.verificationType === 1 ? '多点核销' : i.verificationType === 0 ? '单点核销' : '';
 		return i;
 	});

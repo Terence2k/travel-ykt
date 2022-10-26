@@ -82,7 +82,7 @@ export async function getVerifUser() {
 // 新增或 编辑单票信息
 export async function saveSingleVoteInfo(data: any) {
 	return request({
-		url: commonPath + `/ticket-service/public/api/scenic-one-ticket/audit`,
+		url: commonPath + `/ticket-service/public/api/scenic-one-ticket/save`,
 		method: 'post',
 		data,
 	});
@@ -192,5 +192,14 @@ export async function getMultipleDetail(id: number) {
 	return request({
 		url: `${commonPath}/ticket-service/public/api/scenic-unite/${id}`,
 		method: 'get',
+	});
+}
+
+// 单票库存
+export async function getInevntoryDetail(data: any) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-one-ticket/get-stock`,
+		method: 'get',
+		data,
 	});
 }

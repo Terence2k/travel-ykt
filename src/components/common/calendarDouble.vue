@@ -1,8 +1,7 @@
 <template>
-	<BaseModal :modelValue="modelValue" title="设置减免规则" @cancel="cancel" width="1212px">
+	<BaseModal :modelValue="modelValue" :title="title" @cancel="cancel" width="1212px">
 		<!-- 外部 -->
 		<slot> </slot>
-
 		<article class="calendar-wrap">
 			<div class="turn-left" @click="turnLeft">
 				<img src="@/assets/svg/turn-left.svg" alt="" />
@@ -20,7 +19,10 @@
 						<div v-if="current.month() === value.month()">
 							<div :class="current.date() === value.date() && currentPoint === '1' ? 'date-wrap current' : 'date-wrap'">
 								<div>{{ current.date() }}</div>
-								<span class="price_tips">{{ isCurrentDay(current) ? '￥' + isCurrentDay(current) : '￥' + setAllValue }} </span>
+								<span class="price_tips" v-show="setAllValue"> ￥{{ isCurrentDay(current) ? isCurrentDay(current) : setAllValue }} </span>
+								<span class="inventory" v-show="setAllInventory"
+									>{{ isCurrentDayInventpry(current) ? isCurrentDayInventpry(current) : setAllInventory }}
+								</span>
 							</div>
 						</div>
 					</template>
@@ -35,7 +37,10 @@
 						<div v-if="current.month() === valueNext.month()">
 							<div :class="current.date() === valueNext.date() && currentPoint === '2' ? 'date-wrap current' : 'date-wrap'">
 								<div>{{ current.date() }}</div>
-								<span class="price_tips">￥{{ isCurrentDay(current) ? isCurrentDay(current) : setAllValue }} </span>
+								<span class="price_tips" v-show="setAllValue"> ￥{{ isCurrentDay(current) ? isCurrentDay(current) : setAllValue }} </span>
+								<span class="inventory" v-show="setAllInventory"
+									>{{ isCurrentDayInventpry(current) ? +isCurrentDayInventpry(current) : setAllInventory }}
+								</span>
 							</div>
 						</div>
 					</template>
@@ -74,9 +79,7 @@ import BaseModal from '@/components/common/BaseModal.vue';
 
 import dayjs, { Dayjs } from 'dayjs';
 import _ from 'lodash';
-import api from '@/api';
 import { message } from 'ant-design-vue';
-import { log } from 'console';
 
 const emits = defineEmits(['get-current-day', 'clear-current-day', 'get-data']);
 
@@ -93,15 +96,35 @@ const props = defineProps({
 		default: null,
 		// require: true,
 	},
+	// 默认库存
+	setAllInventory: {
+		type: Number || null,
+		default: null,
+		// require: true,
+	},
+	/***
+	 * @setList
+	 * {
+	 * "oid": null, //有就传
+	 * "stockDate": "2023-10-25", //库存日期
+	 * "stock": "999", //库存数量
+	 * "ticketPrice": "299" //价钱
+	 * }
+	 */
 	//设置自定义的价格列表
 	setList: {
 		type: Array,
 		default: () => [],
 		require: true,
 	},
+
 	fistDate: {
+		type: Date,
+		default: new Date(),
+	},
+	title: {
 		type: String,
-		defaule: new Date(),
+		default: '设置减免规则',
 	},
 });
 
@@ -110,7 +133,7 @@ const preMonth = (day: any) => {
 	let time = new Date(day),
 		year = Number(time.getFullYear()),
 		month = Number((time.getMonth() + 1).toString().padStart(2, '0')),
-		date = time.getDate().toString().padStart(2, '0');
+		date = Number(time.getDate().toString().padStart(2, '0'));
 
 	if (month - 1 === 0) {
 		year--;
@@ -119,7 +142,16 @@ const preMonth = (day: any) => {
 		month -= 1;
 	}
 
-	return dayjs(year + '-' + month + '-' + date);
+	let dateStr = year + '-' + month + '-' + date,
+		// 获取日期天数
+		d = new Date(year, month, 0),
+		days = d.getDate();
+
+	if (days < date) {
+		dateStr = year + '-' + month + '-' + days;
+	}
+
+	return dayjs(dateStr);
 };
 
 //后一个月
@@ -127,7 +159,7 @@ const nextMonth = (day: any) => {
 	let time = new Date(day),
 		year = time.getFullYear(),
 		month = Number((time.getMonth() + 1).toString().padStart(2, '0')),
-		date = time.getDate().toString().padStart(2, '0');
+		date = Number(time.getDate().toString().padStart(2, '0'));
 	if (month + 1 === 13) {
 		year++;
 		month = 1;
@@ -135,7 +167,16 @@ const nextMonth = (day: any) => {
 		month += 1;
 	}
 
-	return dayjs(year + '-' + month + '-' + date);
+	let dateStr = year + '-' + month + '-' + date,
+		// 获取日期天数
+		d = new Date(year, month, 0),
+		days = d.getDate();
+
+	if (days < date) {
+		dateStr = year + '-' + month + '-' + days;
+	}
+
+	return dayjs(dateStr);
 };
 
 const shijianYMD = (timestamp: any) => {
@@ -151,12 +192,22 @@ const shijianYMD = (timestamp: any) => {
 const isCurrentDay = (timestamp: Dayjs) => {
 	let day = shijianYMD(timestamp),
 		// isHad = setDayPriceList.value.filter((i) => i.day == day);
-		isHad = props.setList.filter((i) => i.day == day);
-	// nextTick(() => {
-	// 	console.log('test', props.setList);
-	// });
+		isHad = props.setList.filter((i) => i.stockDate == day);
+
 	if (isHad.length > 0) {
-		return isHad[0].price;
+		return isHad[0].ticketPrice;
+	} else {
+		return false;
+	}
+};
+//获取是否在在自定义价格列表
+const isCurrentDayInventpry = (timestamp: Dayjs) => {
+	let day = shijianYMD(timestamp),
+		// isHad = setDayPriceList.value.filter((i) => i.day == day);
+		isHad = props.setList.filter((i) => i.stockDate == day);
+
+	if (isHad.length > 0) {
+		return isHad[0].stock;
 	} else {
 		return false;
 	}
@@ -165,7 +216,7 @@ const currentPoint = ref<null | string>(null);
 //设置当前日期
 const bindSetDatePriceFirst = (e: Dayjs) => {
 	let time = shijianYMD(e),
-		nextValue = nextMonth(e);
+		nextValue = nextMonth(time);
 
 	valueNext.value = nextValue;
 	currentPoint.value = '1';
@@ -240,7 +291,7 @@ defineExpose({
 	.turn-left {
 		position: absolute;
 		left: 0;
-		top: 172px;
+		top: 50%;
 		width: 20px;
 		height: 20px;
 		text-align: center;
@@ -249,19 +300,24 @@ defineExpose({
 	.turn-right {
 		position: absolute;
 		right: 0;
-		top: 172px;
-
+		top: 50%;
 		width: 20px;
 		height: 20px;
 		text-align: center;
 		cursor: pointer;
 	}
+
 	.wrap {
 		position: relative;
 		width: 568px;
 		border: 1px solid #f1f2f5;
 		.price_tips {
+			display: block;
 			color: #ff9f3f;
+		}
+		.inventory {
+			// display: block;
+			color: #6cf;
 		}
 		.price_tips.default {
 			color: #ddd;
@@ -277,7 +333,7 @@ defineExpose({
 		.date-wrap {
 			padding-top: 6px;
 			width: 80px;
-			height: 50px;
+			height: 60px;
 			line-height: 18px;
 			font-size: 14px;
 			text-align: center;

@@ -29,11 +29,11 @@
 			<a-form-item label="减免人数">
 				<span>30人</span>
 			</a-form-item>
-			<div v-if="state.tableData.index.index == '1'">
+			<!-- <div v-if="state.tableData.index.index == '1'">
 				<a-button type="primary" class="success" @click="adopt">审核通过</a-button>
 				<a-button type="primary" class="btn" @click="dialogVisible = true">审核不通过</a-button>
-			</div>
-			<div class="title">人员信息</div>
+			</div> -->
+			<div class="title">申请减免人员</div>
 			<CommonTable :dataSource="dataSource" :columns="columns">
 				<template #bodyCell="{ column, index }">
 					<template v-if="column.key === 'action'">
@@ -43,7 +43,7 @@
 					</template>
 				</template>
 			</CommonTable>
-			<BaseModal title="审核不通过说明" v-model="dialogVisible">
+			<!-- <BaseModal title="审核不通过说明" v-model="dialogVisible">
 			<a-form>
 				<a-form-item label="">
 					<a-textarea placeholder="审核不通过原因" :rows="4" />
@@ -53,7 +53,7 @@
 				<a-button type="primary"  @click="cancel">关闭</a-button>
 				<a-button type="primary" style="width:120px" @click="Fail">确认审核不通过</a-button>
 			</template>
-		</BaseModal>
+		</BaseModal> -->
 		</a-form>
 	</div>
 </template>
@@ -151,15 +151,15 @@ const go =()=>{
 const cancel =()=>{
 	dialogVisible.value = false
 }
-const Fail =()=>{
-	message.error('审核未通过');
-	dialogVisible.value = false
-	go()
-}
-const adopt =()=>{
-	message.success('审核已通过');
-	go()
-}
+// const Fail =()=>{
+// 	message.error('审核未通过');
+// 	dialogVisible.value = false
+// 	go()
+// }
+// const adopt =()=>{
+// 	message.success('审核已通过');
+// 	go()
+// }
 const download =()=>{
 	message.success('下载成功');
 	go()
