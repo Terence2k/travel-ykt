@@ -23,6 +23,10 @@
 		<a-spin size="large" :spinning="state.tableData.loading">
 			<CommonTable :dataSource="state.tableData.data" :scroll="{ x: '100%',y: '100%' }" :columns="columns" rowKey="oid" :row-selection="rowSelection" >
 				<template #bodyCell="{ column, record }">
+					<!-- 费用归属 -->
+					<template v-if="column.key === 'belongCompany'">
+						<span>{{ getBelongCompanyName(record.belongCompany) }}</span>
+					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a href="javascript:;" @click="toCheck(record)">查看</a>
@@ -60,8 +64,17 @@ const useOptions = settlementOptions();
 const initOption = async () => {
 	await useOptions.getBusinessTypeOptionList();
 };
-
-const option = computed(() => useOptions.businessTypeOption);
+// 计算属性 匹配费用归属企业类型
+const getBelongCompanyName = computed(() => (value: any) => {
+	if (useOptions.businessTypeOptionList) {
+		const idx = useOptions.businessTypeOptionList.findIndex((item) => item.codeValue === value);
+		if (idx !== -1) {
+			return useOptions.businessTypeOptionList[idx]['name'];
+		}
+		return '';
+	}
+	return ''
+})
 const columns = [
 	{
 		title: '综费产品',
@@ -70,8 +83,8 @@ const columns = [
 	},
 	{
 		title: '费用归属',
-		dataIndex: 'belongCompanyName',
-		key: 'belongCompanyName',
+		dataIndex: 'belongCompany',
+		key: 'belongCompany',
 	},
 	{
 		title: '费用说明',
@@ -234,7 +247,6 @@ const dealData = (params: [any]) => {
 		// feeModel 收费模式: 0-人数 1-价格
 		// feeNumber 收费数量
 		i.feeText = i.feeModel == 0 ? `${i.feeNumber} 元/人` : `${i.feeNumber} 元`;	
-		i.belongCompanyName = option.value[i.belongCompany]
 		return i;
 	});
 

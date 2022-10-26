@@ -20,6 +20,7 @@
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a @click="examine('one', record)">审核</a>
+						<a @click="reclosing(record)">重新结算</a>
 						<a @click="toInfo(record)">查看</a>
 					</div>
 				</template>
@@ -169,13 +170,35 @@ const onSearch = async() => {
 };
 // 向父组件暴露方法
 defineExpose({ onSearch })
-
+// 重新结算
+const reclosing = (() => {
+	Modal.confirm({
+		title: '重新结算',
+		width: 560,
+		closable: true,
+		centered: true,
+		icon: false,
+		content: '你即将对行程单重新结算，是否确定执行？',
+		onOk() {
+			// api
+			// 	.comprehensiveFeeEnable(record.oid)
+			// 	.then((res: any) => {
+					message.success('操作成功');
+			// 		onSearch();
+			// 	})
+			// 	.catch((err: any) => {
+			// 		message.error(err || '操作失败');
+			// 	});
+		},
+		onCancel() {},
+	});
+})
 // 审核通过
 const examine = (type: string, record: any) => {
 	// type:one单项  all批量
 	if (type == 'one') {
 		// 单项跳转审核详情页
-		router.push({ path: '/settlementManagement/settlement/examineInfo', query: { oid: encodeURIComponent(record.oid) } });
+		router.push({ path: '/settlementManagement/settlement/examineInfo', query: { itineraryNo: encodeURIComponent(record.itineraryNo) } });
 	} else {
 		// 判断是否有选择项
 		if (state.selectedRowKeys.length == 0) {

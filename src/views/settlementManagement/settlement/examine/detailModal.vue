@@ -1,7 +1,15 @@
 <template>
 	<BaseModal :title="options.title" v-model="modelValue" :width="1000">
 		<CommonTable :dataSource="formData.list" :columns="columns" :scrollY="false">
-
+			<template #bodyCell="{ column, record }">
+				<!-- 结算费用 拼接 + - 号 单位转成元-->
+				<template v-if="column.key === 'settlementCost'">
+					<span>
+						{{ record.costType == 0 ? '-' : '+' }}
+						{{ record.settlementCost / 100 > 0 ? (record.settlementCost / 100).toFixed(2) : 0 }}
+					</span>
+				</template>
+			</template>
 		</CommonTable>
 		<template v-slot:footer>
 			<a-button @click="dialogVisible = false">取消</a-button>
@@ -10,103 +18,101 @@
 </template>
 
 <script setup lang="ts">
+import api from '@/api';
 import BaseModal from '@/components/common/BaseModal.vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import { isIntegerNotMust, isBtnZeroToHundred } from '@/utils/validator';
 import { Ref } from 'vue';
 import lodash from 'lodash';
 import { message } from 'ant-design-vue';
-import { log } from 'console';
+const dialogVisible = ref(false);
 const props = defineProps({
 	modelValue: {
 		type: Boolean,
 		default: false,
 	},
-	params: Object,
+	params: {
+		type: Object,
+		default: false,
+	},
 	methods: Object,
 });
 const emit = defineEmits(['update:modelValue', 'submit']);
 const columns = [
 	{
 		title: '序号',
-        customRender: ({ text, record, index }) => {
-            return `${ index + 1 }`;
-        }
+		customRender: ({ text, record, index }) => {
+			return `${index + 1}`;
+		},
 	},
 	{
 		title: '费用名称',
-		dataIndex: 'name',
-		key: 'name',
+		dataIndex: 'costName',
+		key: 'costName',
 	},
 	{
 		title: '结算产品',
-		dataIndex: 'type',
-		key: 'type',
+		dataIndex: 'productName',
+		key: 'productName',
 	},
 	{
 		title: '结算方',
-		dataIndex: 'bank',
-		key: 'bank',
-	},
-	{
-		title: '分账金额',
-		dataIndex: 'price',
-		key: 'price',
+		dataIndex: 'companyName',
+		key: 'companyName',
 	},
 	{
 		title: '结算费用（元）',
-		dataIndex: 'price',
-		key: 'price',
+		dataIndex: 'settlementCost',
+		key: 'settlementCost',
 	},
 ];
 const formData: any = reactive({
 	list: [
-		{
-            oid: 1,
-            key: 1,
-            type: 'John Brown sr.',
-            name: 'test',
-            bank: 'test',
-            price: '1001',
-            time: 'test',
-        },
-        {
-            oid: 2,
-            key: 1,
-            type: 'John Brown sr.',
-            name: 'test',
-            bank: 'test',
-            price: '1001',
-            time: 'test',
-        },
-        {
-            oid: 3,
-            key: 1,
-            type: 'John Brown sr.',
-            name: 'test',
-            bank: 'test',
-            price: '1001',
-            time: 'test',
-        },
-	]
+		// {
+		//     oid: 1,
+		//     productName: 'John Brown sr.',
+		//     costName: 'test',
+		//     companyName: 'test',
+		//     settlementCost: '1001',
+		// 	costType: 1
+		// },
+		// {
+		//     oid: 2,
+		//     productName: 'John Brown sr.',
+		//     costName: 'test',
+		//     companyName: 'test',
+		//     settlementCost: '1001',
+		// 	costType: 0
+		// },
+		// {
+		//     oid: 3,
+		//     productName: 'John Brown sr.',
+		//     costName: 'test',
+		//     companyName: 'test',
+		//     settlementCost: '1001',
+		// 	costType: 1
+		// },
+	],
 });
 const options = reactive({
-	title: '结算明细',
+	title: '分账明细',
 });
 
 const rules: any = {
-	price: [{ required: true, validator: isIntegerNotMust, }],
+	settlementCost: [{ required: true, validator: isIntegerNotMust }],
 };
-const init = async () => {
-	console.log(props.params.oid);
-};
-const formRef = ref();
 
-const dialogVisible = ref(false);
+const init = async () => {
+	api
+		.settlementDetail(props.params.oid)
+		.then((res: any) => {
+			formData.list = res
+		})
+};
+
 watch(
 	() => props.modelValue,
 	async (nVal) => {
-		console.log('props.modelValue->', nVal);
 		dialogVisible.value = nVal;
 		if (dialogVisible.value) {
 			await init();
@@ -115,7 +121,6 @@ watch(
 );
 
 watch(dialogVisible, (nVal) => {
-	console.log('dialogVisible:', nVal);
 	emit('update:modelValue', nVal);
 });
 </script>
