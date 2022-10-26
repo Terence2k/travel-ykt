@@ -83,7 +83,7 @@
 
 			<div class="footer">
 				<div class="tooter-btn">
-					<a-button type="primary" @click.prevent="onSubmit">提交审核</a-button>
+					<a-button type="primary" @click.prevent="onSubmit">保存</a-button>
 				</div>
 			</div>
 		</a-form>
