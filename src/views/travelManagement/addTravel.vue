@@ -132,13 +132,19 @@ const getTraveDetail = () => {
 			travelStore.setTouristList(res.touristList.content);
 			travelStore.setTrafficList(res.transportList);
 			travelStore.setFileInfo(res.attachment);
-		});
-};
+			travelStore.hotels = res.hotelList;
+			travelStore.scenicTickets = res.ticketList
+		
+		})
+	}
 const changeTab = (event: number) => {
 	if (event === 4) {
-		check.value = !check.value;
+		
+		check.value = !check.value
+		
 	}
-};
+}
+
 getTraveDetail();
 // !route.query.id && saveItinerary({})
 </script>
