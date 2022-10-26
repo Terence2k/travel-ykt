@@ -1,15 +1,13 @@
 <template>
 	<div class="table-area">
-		<p class="top-p">古维费规则配置</p>
-		<a-form ref="formRef" :rules="formRules" model="formValidate.data" :label-col="{ span: 4 }" :wrapper-col="{ flex: 12 }" labelAlign="left">
-			<a-row>
-				<a-col :span="2" class="span-buy">购买后可生效时间</a-col>
-				<a-col :span="8"><a-input placeholder="请输入购买生效时间（单位，天）"></a-input></a-col>
-			</a-row>
-			<a-row class="top">
-				<a-col :span="2" class="span-title">政策说明</a-col>
-				<a-col :span="8"><a-textarea placeholder="请输入古维政策说明" :rows="4" /></a-col>
-			</a-row>
+		<p class="top-p">基本信息设置</p>
+		<a-form ref="formRef" :rules="rules" model="formValidate.data" :label-col="{ span: 2}" :wrapper-col="{ flex: 12 }" labelAlign="left">
+			<a-form-item label="购买价格" name="price">
+				<a-input v-model:value="state.tableData.data.price" placeholder="请输入缴纳费用价格（单位，元）" style="width:600px"></a-input>
+			</a-form-item>
+			<a-form-item label="政策说明" name="price">
+				<a-textarea v-model:value="state.tableData.data.policyExplain" placeholder="请输入古维政策说明" :rows="4" style="width:600px" />
+			</a-form-item>
 			<a-row>
 				<a-col :span="12"></a-col>
 				<a-col :span="10"></a-col>
@@ -20,18 +18,18 @@
 		<a-row>
 			<a-col :span="12"></a-col>
 			<a-col :span="10"></a-col>
-			<a-col :span="2"> <a-button type="primary" class="btn" @click="add({handle: 'add'})">添加</a-button></a-col>
+			<a-col :span="2"> <a-button type="primary" class="btn" @click="add({ handle: 'add' })">添加</a-button></a-col>
 		</a-row>
-		<CommonTable :dataSource="dataSource" :columns="columns">
+		<CommonTable :dataSource="state.tableData.data" :columns="columns">
 			<template #bodyCell="{ column, index, record }">
 				<template v-if="column.key === 'status'">
-					<a-span v-if="record.status==1">启用</a-span>
+					<a-span v-if="record.status == 1">启用</a-span>
 					<a-span v-else>禁用</a-span>
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a href="javascript:;" @click="add({  row: record,  handle: 'update'})">编辑</a>
-						<a href="javascript:;" @click="disable" v-if="record.status==1">禁用</a>
+						<a href="javascript:;" @click="add({ row: record, handle: 'update' })">编辑</a>
+						<a href="javascript:;" @click="disable" v-if="record.status == 1">禁用</a>
 						<a href="javascript:;" @click="enable" v-else>启用</a>
 					</div>
 				</template>
@@ -49,8 +47,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref,reactive} from 'vue';
-import { useRouter } from 'vue-router'
+import { ref, reactive } from 'vue';
+import { useRouter } from 'vue-router';
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
@@ -58,43 +56,22 @@ import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import BaseModal from '@/components/common/BaseModal.vue';
 import Edit from './edit.vue';
+import api from '@/api';
 import { message } from 'ant-design-vue';
 const route = useRouter();
 const dialogVisible = ref(false);
-const value = ref<string>('1');
-const value2 = ref<string>('1');
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
-const dataSource = [
-	{
-		key: '1',
-		name: '1',
-		age: '军人减免规则',
-		address: '特殊证件',
-		address2: '军官证、士官证',
-		address3: '0.5',
-		status: '1',
-	},
-	{
-		key: '1',
-		name: '1',
-		age: '军人减免规则',
-		address: '特殊证件',
-		address2: '军官证、士官证',
-		address3: '0.5',
-		status: '2',
-	},
-];
 const columns = [
 	{
 		title: '规则名称',
-		dataIndex: 'age',
-		key: 'age',
+		dataIndex: 'ruleName',
+		key: 'ruleName',
 	},
 	{
 		title: '减免模式',
-		dataIndex: 'address',
-		key: 'address',
+		dataIndex: 'discountType',
+		key: 'discountType',
 	},
 	{
 		title: '详细信息',
@@ -118,7 +95,10 @@ const columns = [
 		widthmin: 350,
 	},
 ];
-
+const rules: any = {
+	price: [{ required: true, trigger: 'blur', message: '请输入价格' }],
+	policyExplain: [{ required: true, trigger: 'blur', message: '请输入古维政策说明' }],
+};
 const state = reactive({
 	tableData: {
 		data: [],
@@ -131,7 +111,7 @@ const state = reactive({
 		status: '1',
 		pattern: '1',
 	},
-	params:{},
+	params: {},
 	operationModal: {
 		isEditdate: false,
 	},
@@ -142,42 +122,40 @@ const onHandleCurrentChange = (val: number) => {
 	onSearch();
 };
 const auditRef = ref();
-const cancel=()=>{
-    dialogVisible.value=false
-}
+const cancel = () => {
+	dialogVisible.value = false;
+};
 const pageSideChange = (current: number, size: number) => {
 	console.log('changePageSize:', size);
 	state.tableData.param.pageSize = size;
 	// onSearch();
 };
 const add = (param: any) => {
-	const {row,  handle}=param
-	state.params={};
-	if(handle==='update')
-	{
-		state.params=row
+	const { row, handle } = param;
+	state.params = {};
+	if (handle === 'update') {
+		state.params = row;
 	}
 	state.operationModal.isEditdate = true;
 };
-const disable=()=>{
+const disable = () => {
 	message.error('已禁用');
-}
-const enable=()=>{
-	message.success('已启用');
-}
-const save =()=>{
-	message.success('保存成功');
-}
-const onSearch = () => {
-	// userList(state.tableData.param).then((res) => {
-	// 	console.log(res);
-	// });
 };
+const enable = () => {
+	message.success('已启用');
+};
+const save = () => {
+	console.log(state.tableData.data, '111111111111111');
+	message.success('保存成功');
+};
+const onSearch = () => {
+	api.getBasicInfo().then((res) => {
+		console.log(res, '111111111111');
+	});
+};
+
 onMounted(() => {
-	// navigatorBar
-	// 重新定义面包屑
-	// navigatorBar.clearNavigator();
-	// navigatorBar.setNavigator(['演出票']);
+	onSearch();
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();

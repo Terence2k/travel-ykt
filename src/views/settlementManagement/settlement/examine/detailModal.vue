@@ -122,6 +122,7 @@ watch(
 
 watch(dialogVisible, (nVal) => {
 	emit('update:modelValue', nVal);
+	formData.list = []
 });
 </script>
 

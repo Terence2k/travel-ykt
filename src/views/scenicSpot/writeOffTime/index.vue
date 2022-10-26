@@ -5,22 +5,32 @@
 		</SearchItem>
 		<SearchItem label="门票分类">
 			<a-select ref="select" style="width: 200px" placeholder="请选择门票分类" v-model:value="state.tableData.param.ticketType">
-				<a-select-option value="0">单票</a-select-option>
-				<a-select-option value="1">演出票</a-select-option>
-				<a-select-option value="2">联票</a-select-option>
+				<a-select-option value="0">联票</a-select-option>
+				<a-select-option value="1">单票</a-select-option>
+				<a-select-option value="2">演出票</a-select-option>
 			</a-select>
 		</SearchItem>
 		<template #button>
+			<a-button @click="reset()" class="btn">重置</a-button>
 			<a-button @click="onSearch()">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
-		<CommonTable :dataSource="dataSource" :columns="columns">
+		<CommonTable :dataSource="state.tableData.data" :columns="columns">
 			<template #bodyCell="{ column, index, record }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a @click="SetUp({ row: record })">设置核销时间段</a>
 					</div>
+				</template>
+				<template v-if="column.key === 'verificationType'">
+					<a-span v-if="record.verificationType==0">单点</a-span>
+					<a-span v-else>多点</a-span>
+				</template>
+				<template v-if="column.key === 'ticketType'">
+					<a-span v-if="record.ticketType==0">联票</a-span>
+					<a-span v-else-if="record.ticketType==1">单票</a-span>
+					<a-span v-else>演出票</a-span>
 				</template>
 			</template>
 		</CommonTable>
@@ -46,29 +56,6 @@ import api from '@/api';
 const route = useRouter();
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
-const dataSource = [
-	{
-		ticketName: '木府',
-		verificationType: '多点核销',
-		scenicName: '木府',
-		ticketDataType: '单票',
-		address4: '待审核',
-	},
-	{
-		ticketName: '木府纳西族演出',
-		verificationType: '单点核销',
-		scenicName: '木府',
-		ticketDataType: '演出票',
-		address4: '待审核',
-	},
-	{
-		ticketName: '古城一票游',
-		verificationType: '多点核销',
-		scenicName: '丽江古城，木府',
-		ticketDataType: '联票',
-		address4: '待审核',
-	},
-];
 const columns = [
 	{
 		title: '门票名称',
@@ -87,19 +74,14 @@ const columns = [
 	},
 	{
 		title: '门票分类',
-		dataIndex: 'ticketDataType',
-		key: 'ticketDataType',
-	},
-	{
-		title: '审核状态',
-		dataIndex: 'address4',
-		key: 'address4',
+		dataIndex: 'ticketType',
+		key: 'ticketType',
 	},
 	{
 		title: '操作',
 		key: 'action',
 		fixed: 'right',
-		widthmin: 350,
+		width: 150,
 	},
 ];
 
@@ -112,7 +94,7 @@ const state = reactive({
 			ticketName: '',
 			ticketType: '',
 			pageNo: 1,
-			pageSize: 9999,
+			pageSize: 10,
 		},
 	},
 	operationModal: {
@@ -121,13 +103,30 @@ const state = reactive({
 	params: {},
 });
 const onSearch = () => {
-	api.getWriteOffTimeList(state.tableData.param).then((res: any) => {
-		console.log('res:', res);
-		//   state.tableData.data = res.content;
-		//   state.tableData.total = res.total;
+	api.getVerifManage(state.tableData.param).then((res: any) => {
+		console.log('res:', res.content);
+		  state.tableData.data = res.content;
+		  state.tableData.total = res.total;
 	});
-	console.log(state.tableData.param, '1111111111111');
 };
+const reset=()=>{
+	state.tableData.param.ticketType='',
+	state.tableData.param.ticketName='',
+	onSearch()
+}
+const onHandleCurrentChange = (val: number) => {
+	console.log('change:', val);
+	state.tableData.param.pageNo = val;
+	onSearch();
+};
+const pageSideChange = (current: number, size: number) => {
+	console.log('changePageSize:', size);
+	state.tableData.param.pageSize = size;
+	// onSearch();
+};
+onMounted(() => {
+	onSearch();
+});
 const SetUp = (param: any) => {
 	const row = param;
 	state.params = row;
@@ -194,5 +193,8 @@ const SetUp = (param: any) => {
 }
 .ant-table-body {
 	height: 500px;
+}
+.btn{
+	margin-right: 30px;
 }
 </style>
