@@ -20,7 +20,13 @@
 			</template>
 		</BaseModal>
 		<div class="inner-wrapper">
-			<CommonTable :dataSource="!type ? formValidate.initData : tableList" :columns="type ? columns : column" :scrollY="false" bordered class="left">
+			<CommonTable
+				:dataSource="pageStatus ? formValidate.initData : tableList"
+				:columns="type ? columns : column"
+				:scrollY="false"
+				bordered
+				class="left"
+			>
 				<template #bodyCell="{ column, record, index }">
 					<template v-if="column.key === 'itemId'">
 						<div class="action-btns">
@@ -28,7 +34,7 @@
 								{{ itemNameCompute(Number(record.itemId)) }}
 							</span>
 							<a v-if="record.itemId && !type" href="javascript:;" @click="change(record)">更换</a>
-							<a href="javascript:;" v-if="!type && formValidate.initData[0].init" @click="CreateData">请选择</a>
+							<a href="javascript:;" v-if="pageStatus && formValidate.initData[0].init" @click="CreateData">请选择</a>
 						</div>
 					</template>
 					<template v-if="column.key === 'verificationNumber'">
@@ -71,6 +77,9 @@ const route = useRouter();
 
 const type = computed(() => {
 	return route.currentRoute.value?.query?.t === '1' ? true : false;
+});
+const pageStatus = computed(() => {
+	return route.currentRoute.value?.query?.s === 'new';
 });
 const isCreate = computed(() => {
 	return route.currentRoute.value?.query?.s ? true : false;
