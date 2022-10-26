@@ -3,50 +3,51 @@
 		<search-item label="行程单号">
 			<a-input v-model:value="state.tableData.param.feeName" placeholder="请输入费用名称" allowClear style="width: 180px" />
 		</search-item>
-        <search-item label="团队类型">
+		<search-item label="团队类型">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.teamTypeId" style="width: 200px" placeholder="请选择团队类型">
-				<a-select-option v-for="(item,index) in options.teamTypesLists" :value="item.oid" :key=index>{{ item.name }}
-				</a-select-option>
+				<a-select-option v-for="(item, index) in options.teamTypesLists" :value="item.oid" :key="index">{{ item.name }} </a-select-option>
 			</a-select>
 		</search-item>
-        <search-item label="组团社">
+		<search-item label="组团社">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.travelId" style="width: 200px" placeholder="请选择旅行社名称">
-				<a-select-option v-for="(item,index) in options.groupSocietyList" :value="item.travelAgencyId" :key=index>{{ item.travelAgencyName }}
+				<a-select-option v-for="(item, index) in options.groupSocietyList" :value="item.travelAgencyId" :key="index"
+					>{{ item.travelAgencyName }}
 				</a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="地接社">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.subTravelId" style="width: 200px" placeholder="请选择旅行社名称">
-				<a-select-option v-for="(item,index) in options.earthContactAgencyList" :value="item.travelAgencyId" :key=index>{{ item.travelAgencyName }}
+				<a-select-option v-for="(item, index) in options.earthContactAgencyList" :value="item.travelAgencyId" :key="index"
+					>{{ item.travelAgencyName }}
 				</a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="发团时间">
-			<a-date-picker 
-                v-model:value="state.tableData.param.date1" 
-                :show-time="{ format: 'HH:mm' }"
-                format="YYYY-MM-DD HH:mm" 
-                value-format="YYYY-MM-DD HH:mm:ss" 
-                style="width: 180px" 
-            />
+			<a-date-picker
+				v-model:value="state.tableData.param.date1"
+				:show-time="{ format: 'HH:mm' }"
+				format="YYYY-MM-DD HH:mm"
+				value-format="YYYY-MM-DD HH:mm:ss"
+				style="width: 180px"
+			/>
 		</search-item>
-	    <search-item label="散团时间">
-			<a-date-picker 
-                v-model:value="state.tableData.param.date2" 
-                :show-time="{ format: 'HH:mm' }"
-                format="YYYY-MM-DD HH:mm" 
-                value-format="YYYY-MM-DD HH:mm:ss" 
-                style="width: 180px" 
-            />
+		<search-item label="散团时间">
+			<a-date-picker
+				v-model:value="state.tableData.param.date2"
+				:show-time="{ format: 'HH:mm' }"
+				format="YYYY-MM-DD HH:mm"
+				value-format="YYYY-MM-DD HH:mm:ss"
+				style="width: 180px"
+			/>
 		</search-item>
-        <search-item label="结算时间">
-			<a-date-picker 
-                v-model:value="state.tableData.param.date3" 
-                :show-time="{ format: 'HH:mm' }"
-                format="YYYY-MM-DD HH:mm" 
-                value-format="YYYY-MM-DD HH:mm:ss" 
-                style="width: 180px" 
-            />
+		<search-item label="结算时间">
+			<a-date-picker
+				v-model:value="state.tableData.param.date3"
+				:show-time="{ format: 'HH:mm' }"
+				format="YYYY-MM-DD HH:mm"
+				value-format="YYYY-MM-DD HH:mm:ss"
+				style="width: 180px"
+			/>
 		</search-item>
 		<template #button>
 			<a-button @click="initList">查询</a-button>
@@ -57,26 +58,26 @@
 			<a-button type="primary" class="success">导出</a-button>
 		</div>
 	</div>
-    <div>
-        <a-spin size="large" :spinning="state.tableData.loading">
-            <CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x:4000,y:'100%'}">
-                <template #bodyCell="{ column, record, index }">
-                    <template v-if="column.key === 'action'">
-                        <div class="action-btns">
-                            <a href="javascript:;" @click="toDetail(record)">结算明细</a>
-                        </div>
-                    </template>
-                </template>
-            </CommonTable>
-        </a-spin>
-        <CommonPagination
-            :current="state.tableData.param.pageNo"
-            :page-size="state.tableData.param.pageSize"
-            :total="state.tableData.total"
-            @change="onHandleCurrentChange"
-            @showSizeChange="pageSideChange"
-        />
-    </div>
+	<div>
+		<a-spin size="large" :spinning="state.tableData.loading">
+			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: 4000, y: '100%' }">
+				<template #bodyCell="{ column, record, index }">
+					<template v-if="column.key === 'action'">
+						<div class="action-btns">
+							<a href="javascript:;" @click="toDetail(record)">结算明细</a>
+						</div>
+					</template>
+				</template>
+			</CommonTable>
+		</a-spin>
+		<CommonPagination
+			:current="state.tableData.param.pageNo"
+			:page-size="state.tableData.param.pageSize"
+			:total="state.tableData.total"
+			@change="onHandleCurrentChange"
+			@showSizeChange="pageSideChange"
+		/>
+	</div>
 </template>
 
 <script setup lang="ts">
@@ -90,7 +91,7 @@ import { settlementOptions } from '@/stores/modules/settlement';
 const options = settlementOptions();
 const route = useRouter();
 const columns: TableColumnsType = [
-  {
+	{
 		title: '行程单号',
 		dataIndex: 'comprehensiveFeeProductName',
 		key: 'comprehensiveFeeProductName',
@@ -120,186 +121,186 @@ const columns: TableColumnsType = [
 		dataIndex: 'statusName',
 		key: 'statusName',
 	},
-    {
+	{
 		title: '游客人数',
 		dataIndex: 'statusName',
 		key: 'statusName',
 	},
-    {
+	{
 		title: '结算时间',
 		dataIndex: 'statusName',
 		key: 'statusName',
 	},
-    {
+	{
 		title: '行程总费用(元)',
 		dataIndex: 'statusName',
 		key: 'statusName',
 	},
-    {
+	{
 		title: '核销总费用(元)',
 		dataIndex: 'statusName',
 		key: 'statusName',
 	},
-    {
+	{
 		title: '未消费总费用(元)',
 		dataIndex: 'statusName',
 		key: 'statusName',
 	},
-    {
-        title: '古维费用',
-        children: [
-            {
-                title: '小计(元)',
-                dataIndex: 'companyAddress',
-                key: 'companyAddress',
-            },
-            {
-                title: '扣除费用(元)',
-                dataIndex: 'companyName',
-                key: 'companyName',
-            },
-            {
-                title: '实收(元)',
-                dataIndex: 'companyName',
-                key: 'companyName',
-            },
-        ],
-    },
-    {
-        title: '酒店费用',
-        children: [
-            {
-                title: '未消费费用(元)',
-                dataIndex: 'companyAddress',
-                key: 'companyAddress',
-            },
-            {
-                title: '核销金额(元)',
-                dataIndex: 'companyName',
-                key: 'companyName',
-            },
-            {
-                title: '扣除费用(元)',
-                dataIndex: 'companyName',
-                key: 'companyName',
-            },
-            {
-                title: '实收(元)',
-                dataIndex: 'companyName',
-                key: 'companyName',
-            },
-        ],
-    },
-    {
-        title: '餐饮费用',
-        children: [
-            {
-                title: '未消费费用(元)',
-                dataIndex: 'companyAddress',
-                key: 'companyAddress',
-            },
-            {
-                title: '核销金额(元)',
-                dataIndex: 'companyName',
-                key: 'companyName',
-            },
-            {
-                title: '扣除费用(元)',
-                dataIndex: 'companyName',
-                key: 'companyName',
-            },
-            {
-                title: '实收(元)',
-                dataIndex: 'companyName',
-                key: 'companyName',
-            },
-        ],
-    },
-    {
-        title: '景区费用',
-        children: [
-            {
-                title: '未消费费用(元)',
-                dataIndex: 'companyAddress',
-                key: 'companyAddress',
-            },
-            {
-                title: '核销金额(元)',
-                dataIndex: 'companyName',
-                key: 'companyName',
-            },
-            {
-                title: '扣除费用(元)',
-                dataIndex: 'companyName',
-                key: 'companyName',
-            },
-            {
-                title: '实收(元)',
-                dataIndex: 'companyName',
-                key: 'companyName',
-            },
-        ],
-    },
-    {
-        title: '导服费',
-        children: [
-            {
-                title: '小计(元)',
-                dataIndex: 'companyAddress',
-                key: 'companyAddress',
-            },
-            {
-                title: '扣除费用(元)',
-                dataIndex: 'companyName',
-                key: 'companyName',
-            },
-            {
-                title: '实收(元)',
-                dataIndex: 'companyName',
-                key: 'companyName',
-            },
-        ],
-    },
-    {
-        title: '标餐费',
-        children: [
-            {
-                title: '小计(元)',
-                dataIndex: 'companyAddress',
-                key: 'companyAddress',
-            },
-            {
-                title: '扣除费用(元)',
-                dataIndex: 'companyName',
-                key: 'companyName',
-            },
-            {
-                title: '实收(元)',
-                dataIndex: 'companyName',
-                key: 'companyName',
-            },
-        ],
-    },
-    {
-        title: '监理费',
-        children: [
-            {
-                title: '小计(元)',
-                dataIndex: 'companyAddress',
-                key: 'companyAddress',
-            },
-            {
-                title: '扣除费用(元)',
-                dataIndex: 'companyName',
-                key: 'companyName',
-            },
-            {
-                title: '实收(元)',
-                dataIndex: 'companyName',
-                key: 'companyName',
-            },
-        ],
-    },
+	{
+		title: '古维费用',
+		children: [
+			{
+				title: '小计(元)',
+				dataIndex: 'companyAddress',
+				key: 'companyAddress',
+			},
+			{
+				title: '扣除费用(元)',
+				dataIndex: 'companyName',
+				key: 'companyName',
+			},
+			{
+				title: '实收(元)',
+				dataIndex: 'companyName',
+				key: 'companyName',
+			},
+		],
+	},
+	{
+		title: '酒店费用',
+		children: [
+			{
+				title: '未消费费用(元)',
+				dataIndex: 'companyAddress',
+				key: 'companyAddress',
+			},
+			{
+				title: '核销金额(元)',
+				dataIndex: 'companyName',
+				key: 'companyName',
+			},
+			{
+				title: '扣除费用(元)',
+				dataIndex: 'companyName',
+				key: 'companyName',
+			},
+			{
+				title: '实收(元)',
+				dataIndex: 'companyName',
+				key: 'companyName',
+			},
+		],
+	},
+	{
+		title: '餐饮费用',
+		children: [
+			{
+				title: '未消费费用(元)',
+				dataIndex: 'companyAddress',
+				key: 'companyAddress',
+			},
+			{
+				title: '核销金额(元)',
+				dataIndex: 'companyName',
+				key: 'companyName',
+			},
+			{
+				title: '扣除费用(元)',
+				dataIndex: 'companyName',
+				key: 'companyName',
+			},
+			{
+				title: '实收(元)',
+				dataIndex: 'companyName',
+				key: 'companyName',
+			},
+		],
+	},
+	{
+		title: '景区费用',
+		children: [
+			{
+				title: '未消费费用(元)',
+				dataIndex: 'companyAddress',
+				key: 'companyAddress',
+			},
+			{
+				title: '核销金额(元)',
+				dataIndex: 'companyName',
+				key: 'companyName',
+			},
+			{
+				title: '扣除费用(元)',
+				dataIndex: 'companyName',
+				key: 'companyName',
+			},
+			{
+				title: '实收(元)',
+				dataIndex: 'companyName',
+				key: 'companyName',
+			},
+		],
+	},
+	{
+		title: '导服费',
+		children: [
+			{
+				title: '小计(元)',
+				dataIndex: 'companyAddress',
+				key: 'companyAddress',
+			},
+			{
+				title: '扣除费用(元)',
+				dataIndex: 'companyName',
+				key: 'companyName',
+			},
+			{
+				title: '实收(元)',
+				dataIndex: 'companyName',
+				key: 'companyName',
+			},
+		],
+	},
+	{
+		title: '标餐费',
+		children: [
+			{
+				title: '小计(元)',
+				dataIndex: 'companyAddress',
+				key: 'companyAddress',
+			},
+			{
+				title: '扣除费用(元)',
+				dataIndex: 'companyName',
+				key: 'companyName',
+			},
+			{
+				title: '实收(元)',
+				dataIndex: 'companyName',
+				key: 'companyName',
+			},
+		],
+	},
+	{
+		title: '监理费',
+		children: [
+			{
+				title: '小计(元)',
+				dataIndex: 'companyAddress',
+				key: 'companyAddress',
+			},
+			{
+				title: '扣除费用(元)',
+				dataIndex: 'companyName',
+				key: 'companyName',
+			},
+			{
+				title: '实收(元)',
+				dataIndex: 'companyName',
+				key: 'companyName',
+			},
+		],
+	},
 	{
 		title: '操作',
 		key: 'action',
@@ -312,12 +313,12 @@ const state = reactive({
 	tableData: {
 		param: {
 			feeName: '',
-            teamTypeId: null,
-            travelId: null,
-            subTravelId: null,
-            date1: "",
-            date2: "",
-            date3: "",
+			teamTypeId: null,
+			travelId: null,
+			subTravelId: null,
+			date1: '',
+			date2: '',
+			date3: '',
 			pageSize: 10,
 			pageNo: 1,
 		},
@@ -329,7 +330,6 @@ const state = reactive({
 		total: 20,
 		loading: false,
 	},
-
 });
 
 // 查询
@@ -361,20 +361,20 @@ const toDetail = (record: any) => {
 	});
 };
 onMounted(() => {
-    options.getTeamTypeList();
+	options.getTeamTypeList();
 	options.getGroupSocietyList();
 	options.getEarthContactAgencyList();
-})
+});
 </script>
 <style scoped lang="less">
-::v-deep(.ant-table-thead > tr > th, .ant-table-tbody > tr > td, .ant-table tfoot > tr > th, .ant-table tfoot > tr > td){
-    padding: 16px 0;
+:v-deep(.ant-table-thead > tr > th, .ant-table-tbody > tr > td, .ant-table tfoot > tr > th, .ant-table tfoot > tr > td) {
+	padding: 16px 0;
 }
-::v-deep(.ant-table-thead > tr > th) {
-    text-align: center;
+:v-deep(.ant-table-thead > tr > th) {
+	text-align: center;
 }
-::v-deep(.ant-table-thead > tr > th) {
-    border-right: 1px solid #f0f0f0;
-    border-bottom: 1px solid #f0f0f0 !important;
+:v-deep(.ant-table-thead > tr > th) {
+	border-right: 1px solid #f0f0f0;
+	border-bottom: 1px solid #f0f0f0 !important;
 }
 </style>

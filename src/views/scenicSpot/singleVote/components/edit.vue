@@ -1,7 +1,7 @@
 <template>
 	<div class="editWrapper">
 		<header class="title">基本信息</header>
-		<a-form class="" ref="formRef" :model="formData" :label-col="{ span: 3 }" labelAlign="left" :wrapper-col="{ span: 7 }" :scrollToFirstError="true">
+		<a-form class="" ref="formRef" :model="formData" :label-col="{ span: 3 }" labelAlign="left" :wrapper-col="{ span: 7 }" :scrollToField="true">
 			<a-form-item label="归属景区" v-bind="validateInfos[`data.scenicId`]">
 				<!-- <a-input v-model:value="formData.data.scenicId" placeholder="请填写景区名字" /> -->
 				<a-select allowClear v-model:value="formData.data.scenicId" placeholder="请选择">
@@ -108,8 +108,28 @@ const route = useRouter();
 
 const useForm = Form.useForm;
 const navigatorBar = useNavigatorBar();
+interface formDataType {
+	data: {
+		oid: null | string;
+		verificationType: null | number;
+		scenicId: null | string;
+		ticketName: null | string;
+		orderTime: null | string;
+		orderTimeRule: null | string;
+		validTime: null | string;
+		optionalVerificationCount: any;
+		assistId: null | string;
+		dayStock: null | string;
+		wateryPrice: any;
+		price: any;
+		ticketDesc: null | string;
+		restsExplain: null | string;
+		itemList: any[];
+		discountList: any[];
+	};
+}
 // 数据
-const formData = reactive({
+const formData = reactive<formDataType>({
 	data: {
 		oid: null, //新增时需要传主键
 		verificationType: null, //核销类型
@@ -126,11 +146,11 @@ const formData = reactive({
 		ticketDesc: '', //单票说明
 		restsExplain: '', //其他说明
 		itemList: [
-			{
-				itemId: 1, //itemId
-				verificationNumber: 30, //核销数
-				ifVerification: true, //是否必须核销
-			},
+			// {
+			// 	itemId: 1, //itemId
+			// 	verificationNumber: 30, //核销数
+			// 	ifVerification: true, //是否必须核销
+			// },
 		], //核销项目
 		discountList: [
 			// {
@@ -178,8 +198,11 @@ const errorPriceInfos = computed(() => {
 const tickerType = computed(() => (route.currentRoute.value?.query?.t === '0' ? '单票：单点核销' : '单票：多点核销'));
 // 提交
 const onSubmit = async () => {
+	// scrollToField((name: any, options: [any]) => {
+	// 	console.log(name, options, 'asdasd');
+	// });
 	validate()
-		.then((res) => {
+		.then(() => {
 			console.log(toRaw(formData.data), 'psss');
 			// save(toRaw(formData.data));
 			save(toRaw(formData.data));
@@ -190,18 +213,14 @@ const onSubmit = async () => {
 		});
 };
 
-interface interfaceType {
-	wateryPrice: null | number;
-	price: null | number;
-}
-
-const changePrice = (val: interfaceType) => {
+const changePrice = (val: any) => {
 	const { wateryPrice, price } = val;
 	console.log('emit get ', val);
 	formData.data.wateryPrice = wateryPrice;
 	formData.data.price = price;
 };
-const getOptionalVerificationCount = (val: number) => {
+
+const getOptionalVerificationCount = (val: any) => {
 	formData.data.optionalVerificationCount = val;
 	// console.log('getOptionalVerificationCount', val, formData.data.optionalVerificationCount);
 };
@@ -215,16 +234,19 @@ const save = async (params: object) => {
 const delRuleObj = (index: number) => {
 	formData.data.discountList.splice(index, 1);
 };
+
 const addRuleObj = (obj: object) => {
 	if (String(formData.data.discountList) === 'null') {
 		formData.data.discountList = [];
 	}
 	formData.data.discountList.push(obj);
 };
+
 const delVerificationObj = (index: number) => {
 	formData.data.itemList.splice(index, 1);
 };
-const addVerificationObj = (obj: object) => {
+
+const addVerificationObj = (obj: any) => {
 	if (!formData.data.itemList) {
 		formData.data.itemList = [];
 	}
@@ -236,13 +258,16 @@ const addVerificationObj = (obj: object) => {
 const changeIv = (index: number) => {
 	formData.data.itemList[index].ifVerification = !formData.data.itemList[index].ifVerification;
 };
-const addVerificationObjSign = (obj: object) => {
+
+const addVerificationObjSign = (obj: any) => {
 	formData.data.itemList = obj;
 };
+
 // 重置
 const reset = (): void => {
 	resetFields();
 };
+
 const viewList = ref(null);
 //初始化页面
 const initPage = async (): Promise<void> => {
@@ -266,6 +291,7 @@ onMounted(() => {
 	initPage();
 	// 自定义面包屑
 });
+
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
 });
