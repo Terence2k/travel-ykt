@@ -22,7 +22,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		addHotelPop: false,
 		addTicketPop: false,
 		selectPersonnelPop:false,
-		allFeesProducts: [],
+		allFeesProducts: travelStore.compositeProducts,
 		ticketData: [],
 		holteDate: [],
 		gouvyDate:[{
@@ -244,100 +244,100 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			console.log(key)
 		},
 		
-		/**
-		 * 
-		 * @param model 收费模式
-		 * @param price 单价
-		 * @returns count 总价
-		 */
+		// /**
+		//  * 
+		//  * @param model 收费模式
+		//  * @param price 单价
+		//  * @returns count 总价
+		//  */
 
-		getPrice(model: any, price: number) {
-			let count = 0
-			switch(model) {
-				case FeeModel.Number :
-					count = price * travelStore.touristList.length
-					break;
-				case FeeModel.Price :
-					count = price
-					break;
-			}
-			return count
-		},
+		// getPrice(model: any, price: number) {
+		// 	let count = 0
+		// 	switch(model) {
+		// 		case FeeModel.Number :
+		// 			count = price * travelStore.touristList.length
+		// 			break;
+		// 		case FeeModel.Price :
+		// 			count = price
+		// 			break;
+		// 	}
+		// 	return count
+		// },
 
 
-		/**
-		 * 
-		 * @param a 是否按天收费
-		 * @param price 单价
-		 * @param model 收费模式
-		 * @returns countPrice 总价
-		 */
+		// /**
+		//  * 
+		//  * @param a 是否按天收费
+		//  * @param price 单价
+		//  * @param model 收费模式
+		//  * @returns countPrice 总价
+		//  */
 
-		getAmount(a:any, price: number, model: any) {
-			let countPrice = 0
-			switch (a) {
-				case ConfirmDailyCharge.NotDay :
-					countPrice = this.getPrice(model, price)
-					break;
-				case ConfirmDailyCharge.IsDay :
-					const dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day');
-					countPrice = this.getPrice(model, price) * dayCount
-					break;
-			}
-			return countPrice
-		},
+		// getAmount(a:any, price: number, model: any) {
+		// 	let countPrice = 0
+		// 	switch (a) {
+		// 		case ConfirmDailyCharge.NotDay :
+		// 			countPrice = this.getPrice(model, price)
+		// 			break;
+		// 		case ConfirmDailyCharge.IsDay :
+		// 			const dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day');
+		// 			countPrice = this.getPrice(model, price) * dayCount
+		// 			break;
+		// 	}
+		// 	return countPrice
+		// },
 
-		async getProduct() {
-			// 请求综费接口
-			const result = await api.travelManagement.comprehensiveFeeProduct(state.params);
-			for (let i = 0; i < result.content.length; i++) {
-				result.content[i].peopleCount = travelStore.touristList.length;
-				result.content[i].dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day');
-				result.content[i].unPrice = result.content[i].feeNumber;
-				result.content[i].totalMoney = this.getAmount(
-					result.content[i].confirmDailyCharge,
-					result.content[i].feeNumber,
-					result.content[i].feeModel
-				)
-				state.allFeesProducts.push(result.content[i]);
-			}
-			travelStore.setCompositeProducts(state.allFeesProducts);
-		},
-		async findByIdTeamType() {
-			if (!travelStore.teamType) return
-			const formData = new FormData();
-			formData.append('id', travelStore.teamType);
-			console.log(travelStore.teamType)
-			if (travelStore.teamType) {
-				// 根据团队类型获取配置酒店景区餐饮数据
-				const res = await api.travelManagement.findByIdTeamType(formData);
-				for (let i = 0; i < res.itemVos.length; i++) {
-					if (res.itemVos[i].itemName == '酒店') {
-						if (res.itemVos[i].productVos.length == 0) {
-							state.holteDate.push([]);
-						} else {
-							state.holteDate.push(res.itemVos[i].productVos);
-						}
-					} else if (res.itemVos[i].itemName == '票务') {
-						if (res.itemVos[i].productVos.length == 0) {
-							state.ticketData.push([]);
-						} else {
-							state.ticketData.push(res.itemVos[i].productVos);
-						}
-					}
-				}
-			}
+		// async getProduct() {
+		// 	// 请求综费接口
+		// 	const result = await api.travelManagement.comprehensiveFeeProduct(state.params);
+		// 	for (let i = 0; i < result.content.length; i++) {
+		// 		result.content[i].peopleCount = travelStore.touristList.length;
+		// 		result.content[i].dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day');
+		// 		result.content[i].unPrice = result.content[i].feeNumber;
+		// 		result.content[i].totalMoney = this.getAmount(
+		// 			result.content[i].confirmDailyCharge,
+		// 			result.content[i].feeNumber,
+		// 			result.content[i].feeModel
+		// 		)
+		// 		state.allFeesProducts.push(result.content[i]);
+		// 	}
+		// 	travelStore.setCompositeProducts(state.allFeesProducts);
+		// },
+		// async findByIdTeamType() {
+		// 	if (!travelStore.teamType) return
+		// 	const formData = new FormData();
+		// 	formData.append('id', travelStore.teamType);
+		// 	console.log(travelStore.teamType)
+		// 	if (travelStore.teamType) {
+		// 		// 根据团队类型获取配置酒店景区餐饮数据
+		// 		const res = await api.travelManagement.findByIdTeamType(formData);
+		// 		for (let i = 0; i < res.itemVos.length; i++) {
+		// 			if (res.itemVos[i].itemName == '酒店') {
+		// 				if (res.itemVos[i].productVos.length == 0) {
+		// 					state.holteDate.push([]);
+		// 				} else {
+		// 					state.holteDate.push(res.itemVos[i].productVos);
+		// 				}
+		// 			} else if (res.itemVos[i].itemName == '票务') {
+		// 				if (res.itemVos[i].productVos.length == 0) {
+		// 					state.ticketData.push([]);
+		// 				} else {
+		// 					state.ticketData.push(res.itemVos[i].productVos);
+		// 				}
+		// 			}
+		// 		}
+		// 	}
 			
-		},
+		// },
 	};
-	watch(
-		() => travelStore.teamType,
-		(newVal) => {
-			methods.findByIdTeamType();
-		}
-	);
-	methods.getProduct()
-	methods.findByIdTeamType();
+	// watch(
+	// 	() => travelStore.teamType,
+	// 	(newVal) => {
+	// 		methods.findByIdTeamType();
+	// 	}
+	// );
+	// // methods.getProduct()
+	// methods.findByIdTeamType();
 	return {
 		...toRefs(state),
 		...methods,
