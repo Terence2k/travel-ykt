@@ -19,10 +19,8 @@
 						<div v-if="current.month() === value.month()">
 							<div :class="current.date() === value.date() && currentPoint === '1' ? 'date-wrap current' : 'date-wrap'">
 								<div>{{ current.date() }}</div>
-								<span class="price_tips" v-show="setAllValue"> ￥{{ isCurrentDay(current) ? isCurrentDay(current) : setAllValue }} </span>
-								<span class="inventory" v-show="setAllInventory"
-									>{{ isCurrentDayInventpry(current) ? isCurrentDayInventpry(current) : setAllInventory }}
-								</span>
+								<span class="price_tips"> {{ isCurrentDay(current) }} </span>
+								<span class="inventory">{{ isCurrentDayInventpry(current) }} </span>
 							</div>
 						</div>
 					</template>
@@ -37,10 +35,8 @@
 						<div v-if="current.month() === valueNext.month()">
 							<div :class="current.date() === valueNext.date() && currentPoint === '2' ? 'date-wrap current' : 'date-wrap'">
 								<div>{{ current.date() }}</div>
-								<span class="price_tips" v-show="setAllValue"> ￥{{ isCurrentDay(current) ? isCurrentDay(current) : setAllValue }} </span>
-								<span class="inventory" v-show="setAllInventory"
-									>{{ isCurrentDayInventpry(current) ? +isCurrentDayInventpry(current) : setAllInventory }}
-								</span>
+								<span class="price_tips"> {{ isCurrentDay(current) }} </span>
+								<span class="inventory">{{ isCurrentDayInventpry(current) }} </span>
 							</div>
 						</div>
 					</template>
@@ -49,7 +45,7 @@
 		</article>
 
 		<template v-slot:footer>
-			<a-button type="primary" @click="cancel" style="width: 100px">保存</a-button>
+			<a-button type="primary" @click="save" style="width: 100px">保存</a-button>
 			<a-button @click="cancel">取消</a-button>
 		</template>
 	</BaseModal>
@@ -66,7 +62,7 @@
  *
  * @props
  *  @setCurrentValue 自定义当前值
- *  @setAllValue     全局默认值
+ *  @setCurrentInventory     库存
  *  @setList         显示列表
  *  @fistDate      初始化日期
  *
@@ -81,7 +77,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import _ from 'lodash';
 import { message } from 'ant-design-vue';
 
-const emits = defineEmits(['get-current-day', 'clear-current-day', 'get-data']);
+const emits = defineEmits(['get-current-day', 'clear-current-day', 'get-data', 'save-data']);
 
 const props = defineProps({
 	//自定义当前价格
@@ -90,18 +86,13 @@ const props = defineProps({
 		default: null,
 		// require: true,
 	},
-	// 默认价格
-	setAllValue: {
+	// 库存
+	setCurrentInventory: {
 		type: Number || null,
 		default: null,
 		// require: true,
 	},
-	// 默认库存
-	setAllInventory: {
-		type: Number || null,
-		default: null,
-		// require: true,
-	},
+
 	/***
 	 * @setList
 	 * {
@@ -195,9 +186,9 @@ const isCurrentDay = (timestamp: Dayjs) => {
 		isHad = props.setList.filter((i) => i.stockDate == day);
 
 	if (isHad.length > 0) {
-		return isHad[0].ticketPrice;
+		return '￥' + isHad[0].ticketPrice;
 	} else {
-		return false;
+		return '';
 	}
 };
 //获取是否在在自定义价格列表
@@ -209,7 +200,7 @@ const isCurrentDayInventpry = (timestamp: Dayjs) => {
 	if (isHad.length > 0) {
 		return isHad[0].stock;
 	} else {
-		return false;
+		return '';
 	}
 };
 const currentPoint = ref<null | string>(null);
@@ -273,6 +264,10 @@ const open = () => {
 const cancel = () => {
 	modelValue.value = false;
 	emits('clear-current-day');
+};
+const save = () => {
+	emits('save-data');
+	cancel();
 };
 
 defineExpose({
