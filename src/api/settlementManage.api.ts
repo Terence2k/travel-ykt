@@ -283,3 +283,36 @@ export async function transferAccountAudit(data: any) {
 		showLoading: true,
 	});
 }
+// 结算管理--审核详情
+export async function examineDetail(itineraryNo: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/settlement-information/itinerary/details?itineraryNo=${itineraryNo}`,
+		method: 'get',
+		showLoading: true,
+	});
+}
+// 结算管理--结算明细
+export async function settlementDetail(informationId: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/settlement-information/information/details/${informationId}`,
+		method: 'get',
+		showLoading: false,
+	});
+}
+// 结算状态变更
+export async function settlementUpdate(data: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/settlement-information/update/status`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
+// 酒店星级下拉列表
+export async function currencySettlementHotelRatedList() {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-rated/list`,
+		method: 'get',
+		showLoading: true,
+	});
+}

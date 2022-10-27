@@ -81,14 +81,14 @@ const props = defineProps({
 const columnsCount = ref([
 	{
 		title: '子票',
-		dataIndex: 'sonName',
-		key: 'sonName',
+		dataIndex: 'ticketName',
+		key: 'ticketName',
 		width: 200,
 	},
 	{
 		title: '联票价格估算',
-		dataIndex: 'reckon',
-		key: 'reckon',
+		dataIndex: 'ticketPrice',
+		key: 'ticketPrice',
 		width: 200,
 	},
 
@@ -229,8 +229,10 @@ const editItem = (index: number, obj: any) => {
 //弹窗部分
 const modelValue = ref(false);
 const calendarRef = ref();
-const CreateData = () => {
+const CreateData = (value: any) => {
 	// modelValue.value = true;
+	console.log('value', value);
+
 	calendarRef.value.open();
 };
 
@@ -262,5 +264,9 @@ onMounted(() => {});
 .label {
 	display: inline-block;
 	min-width: 70px;
+}
+.table-area {
+	// margin: 0 10px 0 0;
+	padding: 0;
 }
 </style>

@@ -6,10 +6,9 @@ import { log } from 'console';
 export const settlementOptions = defineStore('settlement', {
 	state: () => ({
 		teamTypesLists: [], // 团队类型
-        groupSocietyList: [], //组团社
-        earthContactAgencyList: [], // 地接社
-        businessTypeOptionList: [], //企业类型
-        businessTypeOption: {}, //企业类型对象
+		groupSocietyList: [], //组团社
+		earthContactAgencyList: [], // 地接社
+		businessTypeOptionList: [], //企业类型
 	}),
 	getters: {},
 	actions: {
@@ -31,8 +30,8 @@ export const settlementOptions = defineStore('settlement', {
 				});
 			}
 		},
-        // 获取地接社
-        getEarthContactAgencyList() {
+		// 获取地接社
+		getEarthContactAgencyList() {
 			if (!this.earthContactAgencyList.length) {
 				api.getTravelInfo(0).then((res: any) => {
 					this.earthContactAgencyList = res.filter((item: any) => {
@@ -41,20 +40,17 @@ export const settlementOptions = defineStore('settlement', {
 				});
 			}
 		},
-        //获取企业类型
+		//获取企业类型
 		getBusinessTypeOptionList() {
-            if(!this.businessTypeOptionList.length) {
-                api.businessTypeDropDown('BUSINESS_TYPE').then((res: any) => {
-                    const options = res.map((i: any) => {
-                        return { name: i.name, oid: i.oid, codeValue: i.codeValue };
-                    });
-                    res.forEach(item => {
-                        this.businessTypeOption[item.codeValue] = item.name;
-                    });
-                    this.businessTypeOptionList = options;
-                    return options;
-                });
-            }
+			if (!this.businessTypeOptionList.length) {
+				api.businessTypeDropDown('BUSINESS_TYPE').then((res: any) => {
+					const options = res.map((i: any) => {
+						return { name: i.name, oid: i.oid, codeValue: i.codeValue };
+					});
+					this.businessTypeOptionList = options;
+					return options;
+				});
+			}
 		},
 	},
 });

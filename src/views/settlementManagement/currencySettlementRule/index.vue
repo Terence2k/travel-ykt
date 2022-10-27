@@ -293,6 +293,7 @@ onMounted(async () => {
 
 const getEnum = async () => {
 	await generaRulesOptions.getTeamTypeList();
+	await generaRulesOptions.getHotelRatedList();
 };
 // 计算属性
 const getTeamTypeName = computed(() => (value: number) => {

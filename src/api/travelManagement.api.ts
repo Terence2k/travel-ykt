@@ -131,7 +131,7 @@ export const travelManagement = {
     },
     reserveTicket(data: any){
         return request({
-            url: `${commonPath}/travel-agency-service/public/api/itinerary/reserveTicket`,
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/modifyTicket`,
             data,
             method: 'post',
             showLoading: true

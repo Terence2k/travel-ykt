@@ -63,6 +63,7 @@
 		</template>
 	</CommonSearch>
 	<div class="tabs_box">
+		<a-badge :count="auditTableData.total" class="rebadge" />
 		<a-tabs v-model:activeKey="activeKey" @change="tabsChange">
 			<a-tab-pane key="1" tab="已审核">
 				<CommonTable :dataSource="tableData.data" :columns="columns">
@@ -192,10 +193,10 @@
 	<CommonModal :title="registerAuditTitle" v-model:visible="registerAuditVisible" @close="registerAuditClose"
 		@conform="registerAuditConform" :conform-text="'确定'">
 		<span v-if="isRegiste">
-			您即将批准 {{details.name}} 的注册申请，批准后该企业管理员将可以登录一卡通后台继续完善信息
+			您即将批准 {{ details.name }} 的注册申请，批准后该企业管理员将可以登录一卡通后台继续完善信息
 		</span>
 		<span v-else>
-			您即将批准 {{details.name}} 的企业信息变更申请，是否已检查无误？
+			您即将批准 {{ details.name }} 的企业信息变更申请，是否已检查无误？
 		</span>
 	</CommonModal>
 	<CommonModal :title="failTitle" v-model:visible="failVisible" @close="failClose" @cancel="failClose"
@@ -217,10 +218,10 @@
 					<th class="key_hd">变更前内容</th>
 					<th class="key_hd">变更后内容</th>
 				</tr>
-				<tr class="row" v-for="(item,index) in changeKeys" :key="index">
+				<tr class="row" v-for="(item, index) in changeKeys" :key="index">
 					<td class="key">{{ keyNameList[item] }}</td>
 
-					<td class="value" v-if="['manageUrl','businessLicenseUrl'].includes(item) && oldArrList[item]">
+					<td class="value" v-if="['manageUrl', 'businessLicenseUrl'].includes(item) && oldArrList[item]">
 						<a-image width="200px" :src="oldArrList[item]" />
 					</td>
 					<td class="value" v-else-if="item === 'regionCode'">
@@ -230,7 +231,7 @@
 					</td>
 					<td class="value" v-else>{{ getComputedVal(item, oldArrList[item]) }}</td>
 
-					<td class="value" v-if="['manageUrl','businessLicenseUrl'].includes(item) && newArrList[item]">
+					<td class="value" v-if="['manageUrl', 'businessLicenseUrl'].includes(item) && newArrList[item]">
 						<a-image width="200px" :src="newArrList[item]" />
 					</td>
 					<td class="value" v-else-if="item === 'regionCode'">
@@ -855,14 +856,25 @@ onActivated(() => {
 onMounted(() => {
 	initOpeion()
 	onSearch()
-	// onAuditSearch()
+	onAuditSearch()
 	// onFailSearch()
 })
 </script>
 
 <style scoped lang="scss">
+:deep(.ant-tabs-tab + .ant-tabs-tab) {
+	margin: 0 0 0 60px;
+}
+
 .tabs_box {
+	position: relative;
 	padding: 20px;
+
+	.rebadge {
+		position: absolute;
+		left: 165px;
+		top: 25px;
+	}
 }
 
 .table-area {

@@ -22,9 +22,9 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		addHotelPop: false,
 		addTicketPop: false,
 		selectPersonnelPop:false,
-		allFeesProducts: travelStore.compositeProducts,
-		ticketData: [],
-		holteDate: [],
+		allFeesProducts: computed(() => travelStore.compositeProducts),
+		ticketData: computed(() => travelStore.scenicTickets),
+		holteDate: computed(() => travelStore.hotels),
 		gouvyDate:[{
 			comprehensiveFeeProductName:'古维管理费',
 			numberOfTourists:'6',
@@ -159,19 +159,34 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				key: 'startDate',
 			},
 			{
+				title: '门票名称',
+				dataIndex: 'ticketName',
+				key: 'ticketName',
+			},
+			{
 				title: '单价（元）',
 				dataIndex: 'unitPrice',
 				key: 'unitPrice',
 			},
 			{
-				title: '行程人数',
-				dataIndex: 'peopleCount',
-				key: 'peopleCount',
+				title: '团队游客人数',
+				dataIndex: 'ticketCount',
+				key: 'ticketCount',
+			},
+			{
+				title: '购票人数',
+				dataIndex: 'reservePeopleCount',
+				key: 'reservePeopleCount',
 			},
 			{
 				title: '费用预估（元）',
-				dataIndex: 'name',
-				key: 'name',
+				dataIndex: 'totalFee',
+				key: 'totalFee',
+			},
+			{
+				title: '支付状态',
+				dataIndex: 'reserveStatusName',
+				key: 'reserveStatusName',
 			},
 			{
 				title: '操作',
@@ -187,11 +202,26 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			},
 			{
 				title: '酒店类型',
-				dataIndex: 'hotelType',
-				key: 'hotelType',
+				dataIndex: 'hotelStar',
+				key: 'hotelStar',
 			},
 			{
-				title: '日期',
+				title: '酒店名称',
+				dataIndex: 'hotelName',
+				key: 'hotelName',
+			},
+			{
+				title: '房间数量',
+				dataIndex: '1',
+				key: '1',
+			},
+			{
+				title: '入住时间',
+				dataIndex: 'startDate',
+				key: 'startDate',
+			},
+			{
+				title: '离店时间',
 				dataIndex: 'endDate',
 				key: 'endDate',
 			},
@@ -201,14 +231,14 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				key: 'unitPrice',
 			},
 			{
-				title: '人数',
-				dataIndex: 'peopleCount',
-				key: 'peopleCount',
+				title: '入住人数',
+				dataIndex: 'reservePeopleCount',
+				key: 'reservePeopleCount',
 			},
 			{
-				title: '预估金额（元）',
-				dataIndex: 'name',
-				key: 'name',
+				title: '金额（元）',
+				dataIndex: 'orderFee',
+				key: 'orderFee',
 			},
 			{
 				title: '操作',

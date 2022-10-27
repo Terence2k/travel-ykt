@@ -5,22 +5,30 @@
 			<a-form-item label="联票名称" v-bind="validateInfos[`data.ticketName`]">
 				<a-input v-model:value="formData.data.ticketName" placeholder="请填写景区名字" />
 			</a-form-item>
-			<a-form-item label="子票选择" v-bind="validateInfos[`data.scenicTicketListId`]">
-				<a-select mode="multiple" allowClear v-model:value="formData.data.scenicTicketListId" placeholder="子票选择">
-					<a-select-option v-for="o in formData.data.scenicTicketList" :key="o.ticketSonName" :value="o.ticketId">
-						{{ o.ticketSonName }}
-					</a-select-option>
+			<a-form-item label="子票选择" v-bind="validateInfos[`scenicTicketListId`]">
+				<!-- <a-select mode="multiple" allowClear v-model:value="formData.scenicTicketListId" placeholder="子票选择"> </a-select> -->
+				<a-select
+					v-model:value="formData.scenicTicketListId"
+					:allowClear="true"
+					mode="multiple"
+					placeholder="请选择"
+					@change="changeOption"
+					:options="childrenTicketOption"
+				>
 				</a-select>
 			</a-form-item>
 
 			<a-form-item label="联票描述" v-bind="validateInfos[`data.ticketDesc`]">
 				<a-textarea v-model:value="formData.data.ticketDesc" placeholder="请输入其他说明" :rows="4" />
 			</a-form-item>
-			<a-form-item label="联票减扣规则" v-bind="validateInfos[`data.businessLicenseUrl`]">
+			<a-form-item label="联票减扣规则" v-bind="validateInfos[`data.discountList`]">
 				<TableRule :tableList="formData.data.discountList" @del-rule-obj="delRuleObj" @add-rule-obj="addRuleObj" />
 			</a-form-item>
-			<a-form-item label="设置价格" v-bind="validateInfos[`data.businessLicenseUrl`]">
-				<TablePrice :tableList="formData.data.priceList" @del-rule-obj="delRuleObj" @add-rule-obj="addRuleObj" />
+			<a-form-item label="设置价格" v-bind="validateInfos[`data.scenicTicketList`]">
+				<TablePrice :tableList="formData.data.scenicTicketList" @del-rule-obj="delRuleObj" @add-rule-obj="addRuleObj" />
+			</a-form-item>
+			<a-form-item label="库存" v-bind="validateInfos[`data.dayStock`]">
+				<a-input v-model:value="formData.data.dayStock" placeholder="请填写库存" />
 			</a-form-item>
 			<a-form-item label="联票价格说明" v-bind="validateInfos[`data.businessLicenseUrl`]" :wrapper-col="{ span: 14 }">
 				<div class="tips">
@@ -42,7 +50,7 @@
 			<div class="footer">
 				<div class="tooter-btn">
 					<a-button type="primary" @click.prevent="onSubmit">保存</a-button>
-					<a-button type="primary" @click="onSubmit">提交审核</a-button>
+					<!-- <a-button type="primary" @click="onSubmit">提交审核</a-button> -->
 				</div>
 			</div>
 		</a-form>
@@ -66,62 +74,88 @@ const useForm = Form.useForm;
 const navigatorBar = useNavigatorBar();
 const scenicSpotOptions = useScenicSpotOption();
 
-// 数据
-const formData = reactive({
-	name: '',
-	sub: {
-		name: '',
-	},
+interface forDataType {
+	name: string;
+	scenicTicketListId: any[] | null;
 	data: {
-		oid: 1, //oid
+		oid: null | number;
+		discountList: any[] | null;
+		ticketName: null | string;
+		scenicTicketList: any[] | null;
+		dayStock: string | number | null;
+	};
+}
+
+// 数据
+const formData = reactive<forDataType>({
+	name: '',
+	scenicTicketListId: [],
+	data: {
+		oid: null, //oid
 		discountList: [],
-		priceList: [
-			{
-				sonName: '入园',
-				reckon: '200',
-			},
-			{
-				sonName: '游戏机',
-				reckon: '200',
-			},
-		],
+		ticketName: null,
+		scenicTicketList: [],
+		dayStock: null,
 	},
 });
+
 // 表单
 const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
 	formData,
 	reactive({
-		'data.provinceId': [{ required: true, message: '请选择省份' }],
+		'data.ticketName': [{ required: true, message: '请填写联票名称' }],
+		'data.dayStock': [{ required: true, message: '请填设置库存' }],
+		'data.discountList': [{ required: true, message: '请填写联票规则' }],
+		scenicTicketListId: [{ required: true, message: '请选择子票' }],
 	})
 );
 
 //删除
 const delRuleObj = (index: number) => {
-	formData.data.discountList.splice(index, 1);
+	formData.data.discountList?.splice(index, 1);
 };
-const addRuleObj = (obj: object) => {
+const addRuleObj = (obj: any) => {
 	if (String(formData.data.discountList) === 'null') {
 		formData.data.discountList = [];
 	}
-	formData.data.discountList.push(obj);
+	formData.data.discountList?.push(obj);
 };
+const changeOption = (arr: any) => {
+	console.log(arr, 'changeOption');
+	let list = childrenTicketOption.value.filter((item: any) => arr.includes(item.ticketId));
+
+	formData.data.scenicTicketList = list.map((i: any) => {
+		return {
+			sonOid: i.sonOid, //子票id
+			ticketId: i.ticketId, //被关联的票id
+			ticketType: i.ticketType, //门票类型:0-联票，1-单票，2-演出票
+			price: i.ticketPrice,
+			ticketName: i.ticketName,
+			ticketPrice: i.ticketPrice,
+		};
+	});
+};
+const childrenTicketOption = ref<any>([]);
 //初始化下拉列表
 const initOption = async () => {
-	// await scenicSpotOptions.getBusinessTypeOption();
-	// await scenicSpotOptions.getAllAreaProvice(0);
-};
-// 下拉选择
-const popupScroll = () => {
-	console.log('popupScroll');
+	let res = await api.getChildOption();
+	console.log(res);
+	childrenTicketOption.value = res.map((item: any) => {
+		return {
+			value: item.ticketId,
+			label: item.ticketName,
+			...item,
+		};
+	});
 };
 
 // 提交
 const onSubmit = async () => {
 	validate()
 		.then((res) => {
-			console.log(toRaw(formData.data), 'psss');
-			// save(toRaw(formData.data));
-			route.push('/scenic-spot/multicast/list');
+			console.log(toRaw(formData.data), 'psss', res);
+			save(toRaw(formData.data));
+			// route.push('/scenic-spot/multicast/list');
 		})
 		.catch((err) => {
 			console.log('error', err);
@@ -136,10 +170,10 @@ const onSubmit = async () => {
 	// }
 };
 const save = async (params: object) => {
-	let res = await api.changeScenicSpotInformation(params);
+	let res = await api.createMultiple(params);
 	if (res) {
 		message.success('保存成功');
-		route.push({ path: '/scenic-spot/information/list' });
+		route.push({ path: '/scenic-spot/multicast/list' });
 	}
 };
 

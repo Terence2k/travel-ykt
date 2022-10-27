@@ -29,7 +29,7 @@
 			<a-button @click="initList">查询</a-button>
 		</template>
 	</CommonSearch>
-	<div>
+	<div class="table-area">
 		<a-tabs v-model:activeKey="activeKey">
 			<a-tab-pane v-for="(item, index) in pages" :key="index" :tab="item.label">
 				<component ref="listRef" :is="item.name" v-if="index == activeKey" :params="state.tableData.param"></component>
@@ -115,10 +115,10 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="less" scoped>
-:v-deep(.ant-tabs-nav) {
+::v-deep(.ant-tabs-nav) {
 	padding: 0px 20px !important;
 }
-// :v-deep(.ant-tabs-top > .ant-tabs-nav) {
+// ::v-deep(.ant-tabs-top > .ant-tabs-nav) {
 // 	margin: 0;
 // }
 .ant-table-thead > tr > th {

@@ -165,6 +165,9 @@ const formData = reactive<formDataType>({
 const type = computed(() => {
 	return route.currentRoute.value?.query?.t;
 });
+const pageStatus = computed(() => {
+	return route.currentRoute.value?.query?.s;
+});
 // 表单
 const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
 	formData,
