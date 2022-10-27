@@ -477,6 +477,9 @@ const submit = () => {
       companyBo: queryData
     }
   }
+  if (userInfo.sysCompany.businessType == 'HOTEL') {
+    queryData.hotelName = queryData.name;
+  }
   if (queryData.addressIds?.length) {
     queryData.provinceId = queryData.addressIds[0];
     queryData.cityId = queryData.addressIds[1];
