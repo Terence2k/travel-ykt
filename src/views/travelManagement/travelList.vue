@@ -180,7 +180,7 @@ sessionStorage.removeItem('traveList');
 <style lang="less" scoped>
 .trave-contaner {
 	height: 100%;
-	:v-deep(.ant-tabs-nav) {
+	::v-deep(.ant-tabs-nav) {
 		padding: 0 20px;
 	}
 	// :v-deep(.ant-tabs-content-holder) {
