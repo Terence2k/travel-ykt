@@ -4,7 +4,7 @@
 			<template #bodyCell="{ column, record }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a href="javascript:;" @click="CreateData(record)">编辑价格日历</a>
+						<a href="javascript:;" @click="createData(record)">编辑价格日历</a>
 					</div>
 				</template>
 			</template>
@@ -87,8 +87,8 @@ const columnsCount = ref([
 	},
 	{
 		title: '联票价格估算',
-		dataIndex: 'ticketPrice',
-		key: 'ticketPrice',
+		dataIndex: 'price',
+		key: 'price',
 		width: 200,
 	},
 
@@ -101,8 +101,8 @@ const columnsCount = ref([
 
 //自定义价格列表
 const setDayPriceList = ref([
-	{ stockDate: '2022-10-20', ticketPrice: '30', stock: '30' },
-	{ stockDate: '2022-10-21', ticketPrice: '13', stock: '30' },
+	{ stockDate: '2022-10-20', price: '30', stock: '30' },
+	{ stockDate: '2022-10-21', price: '13', stock: '30' },
 ]);
 
 //日历
@@ -156,7 +156,7 @@ const createDateItem = () => {
 
 		setDayPriceList.value.map((i, index) => {
 			let arrindex = arr.indexOf(i.stockDate),
-				obj = { stockDate: i.stockDate, ticketPrice: currentPrict.value, stock: currentInventory.value };
+				obj = { stockDate: i.stockDate, price: currentPrict.value, stock: currentInventory.value };
 			console.log(arrindex, i.stockDate, arr);
 
 			if (arrindex > -1) {
@@ -169,10 +169,10 @@ const createDateItem = () => {
 		// console.log(arr, 'arr');
 
 		arr.map((i) => {
-			createItem({ stockDate: i, ticketPrice: currentPrict.value, stock: currentInventory.value });
+			createItem({ stockDate: i, price: currentPrict.value, stock: currentInventory.value });
 		});
 	} else {
-		let obj = { stockDate: currentDay.value, ticketPrice: currentPrict.value, stock: currentInventory.value };
+		let obj = { stockDate: currentDay.value, price: currentPrict.value, stock: currentInventory.value };
 
 		setDayPriceList.value.map((i, index) => {
 			if (i.stockDate === currentDay.value) {
@@ -221,15 +221,15 @@ const createItem = (obj: any) => {
 };
 
 const editItem = (index: number, obj: any) => {
-	const { stockDate, ticketPrice, stock } = obj;
+	const { stockDate, price, stock } = obj;
 	setDayPriceList.value[index].stockDate = stockDate;
-	setDayPriceList.value[index].ticketPrice = ticketPrice;
+	setDayPriceList.value[index].price = price;
 	setDayPriceList.value[index].stock = stock;
 };
 //弹窗部分
 const modelValue = ref(false);
 const calendarRef = ref();
-const CreateData = (value: any) => {
+const createData = (value: any) => {
 	// modelValue.value = true;
 	console.log('value', value);
 
