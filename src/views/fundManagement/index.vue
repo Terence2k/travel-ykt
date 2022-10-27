@@ -2,18 +2,21 @@
   <div class="header">
     <div class="header_left">
       <div class="header_left_top">
-        <div class="info_item">已绑定的收款账户：丽江黑松白鹿旅游服务有限公司</div>
-        <div class="info_item">开户行：中国建设银行丽江分行古城支行</div>
-        <div class="info_item">银行账号： 589 3728203 980</div>
+        <div class="info_item">已绑定的收款账户：{{ fundInfo.bankAccountName }}</div>
+        <div class="info_item">开户行：{{ fundInfo.bank }}</div>
+        <div class="info_item">银行账号： {{ fundInfo.bankAccount }}</div>
       </div>
       <div class="header_left_bottom">
         <div class="list_item">
           <div class="text">当前可用余额</div>
           <div>
-            <div class="number">50,000.00</div>
-            <div>
+            <div class="number">{{ fundInfo.availableBalance }}</div>
+            <div v-if="fundInfo.yktAccountNumber">
               <span class="list_item_operate" @click="goTo">去充值</span>
               <span class="list_item_operate">申请退款</span>
+            </div>
+            <div v-else>
+              开通一卡通资金子账户后可充值
             </div>
           </div>
         </div>
@@ -21,7 +24,7 @@
         <div class="list_item">
           <div class="text">当前预冻结金额</div>
           <div>
-            <div class="number">98,500.50</div>
+            <div class="number">{{ fundInfo.accountFrozen }}</div>
             <div>
               <span class="list_item_operate">查看详情</span>
             </div>
@@ -31,9 +34,16 @@
         <div class="list_item">
           <div class="text">已充值金额</div>
           <div>
-            <div class="number">10,000.00</div>
+            <div class="number">{{ fundInfo.rechargedMoney }}</div>
             <div>
-              <span class="list_item_operate">查看详情</span>
+              <span class="list_item_operate">
+                <a-select v-model:value="form.rechargeTime" style="width: 95px" @change="getBaseInfo">
+                  <a-select-option v-for="item in tiemOptions" :value="item.value" :key="item.value">{{
+                      item.key
+                  }}
+                  </a-select-option>
+                </a-select>
+              </span>
             </div>
           </div>
         </div>
@@ -41,22 +51,29 @@
         <div class="list_item">
           <div class="text">已支出金额</div>
           <div>
-            <div class="number">113,000.00</div>
+            <div class="number">{{ fundInfo.expenditureMoney }}</div>
             <div>
-              <span class="list_item_operate">查看详情</span>
+              <span class="list_item_operate">
+                <a-select v-model:value="form.expenditureTime" style="width: 95px" @change="getBaseInfo">
+                  <a-select-option v-for="item in tiemOptions" :value="item.value" :key="item.value">{{
+                      item.key
+                  }}
+                  </a-select-option>
+                </a-select>
+              </span>
             </div>
           </div>
         </div>
       </div>
     </div>
     <div class="header_right">
-      <div class="header_right_top info_item">一卡通账户名称：丽江黑松白鹿旅行社</div>
+      <div class="header_right_top info_item">一卡通账户名称：{{ fundInfo.yktAccountName }}</div>
       <div class="header_right_bottom">
-        <div class="info_item">一卡通资金子账号：<span>当前未开通</span></div>
-        <div class="count">6225 0088 4399 0074</div>
-        <!-- <a-button type="primary">
+        <div class="info_item">一卡通资金子账号：<span v-show="!fundInfo.yktAccountNumber">当前未开通</span></div>
+        <div class="count" v-show="fundInfo.yktAccountNumber">{{ fundInfo.yktAccountNumber }}</div>
+        <a-button type="primary" v-show="!fundInfo.yktAccountNumber">
           申请开通
-        </a-button> -->
+        </a-button>
       </div>
     </div>
   </div>
@@ -65,15 +82,16 @@
       <a-tab-pane key="1" tab="充值记录查询">
         <CommonSearch>
           <search-item label="充值时间">
-            <a-date-picker v-model:value="tableData1.param.value1" />
+            <a-date-picker v-model:value="tableData1.param.createTime" :format="dateFormat" :valueFormat="dateFormat"
+              placeholder="请选择充值时间" />
           </search-item>
           <search-item label="充值流水号">
-            <a-input v-model:value="tableData1.param.value1" placeholder="请输入订单号" allowClear />
+            <a-input v-model:value="tableData1.param.serialNumber" placeholder="请输入订单号" allowClear />
           </search-item>
           <search-item label="充值金额">
-            <a-input v-model:value="tableData1.param.value1" allowClear style="width:150px" />
+            <a-input v-model:value="startAmount1" allowClear style="width:150px" @change="() => { inputChange(1) }" />
             <span style="margin:0 20px">-</span>
-            <a-input v-model:value="tableData1.param.value1" allowClear style="width:150px" />
+            <a-input v-model:value="endAmount1" allowClear style="width:150px" @change="() => { inputChange(2) }" />
             <span style="margin-left: 20px">元</span>
           </search-item>
           <template #button>
@@ -91,15 +109,16 @@
       <a-tab-pane key="2" tab="资金支出记录">
         <CommonSearch>
           <search-item label="支出时间">
-            <a-date-picker v-model:value="tableData2.param.value1" />
+            <a-date-picker v-model:value="tableData2.param.createTime" :format="dateFormat" :valueFormat="dateFormat"
+              placeholder="请选择支出时间" />
           </search-item>
           <search-item label="支出流水号">
-            <a-input v-model:value="tableData2.param.value1" placeholder="请输入订单号" allowClear />
+            <a-input v-model:value="tableData2.param.serialNumber" placeholder="请输入订单号" allowClear />
           </search-item>
           <search-item label="支出金额">
-            <a-input v-model:value="tableData2.param.value1" allowClear style="width:150px" />
+            <a-input v-model:value="startAmount2" allowClear style="width:150px" @change="() => { inputChange(3) }" />
             <span style="margin:0 20px">-</span>
-            <a-input v-model:value="tableData2.param.value1" allowClear style="width:150px" />
+            <a-input v-model:value="endAmount2" allowClear style="width:150px" @change="() => { inputChange(4) }" />
             <span style="margin-left: 20px">元</span>
           </search-item>
           <template #button>
@@ -117,15 +136,16 @@
       <a-tab-pane key="3" tab="预冻结资金">
         <CommonSearch>
           <search-item label="预冻结时间">
-            <a-date-picker v-model:value="tableData3.param.value1" />
+            <a-date-picker v-model:value="tableData3.param.createTime" :format="dateFormat" :valueFormat="dateFormat"
+              placeholder="请选择预冻结时间" />
           </search-item>
           <search-item label="预冻结流水号">
-            <a-input v-model:value="tableData3.param.value1" placeholder="请输入订单号" allowClear />
+            <a-input v-model:value="tableData3.param.serialNumber" placeholder="请输入订单号" allowClear />
           </search-item>
           <search-item label="预冻结金额">
-            <a-input v-model:value="tableData3.param.value1" allowClear style="width:150px" />
+            <a-input v-model:value="startAmount3" allowClear style="width:150px" @change="() => { inputChange(5) }" />
             <span style="margin:0 20px">-</span>
-            <a-input v-model:value="tableData3.param.value1" allowClear style="width:150px" />
+            <a-input v-model:value="endAmount3" allowClear style="width:150px" @change="() => { inputChange(6) }" />
             <span style="margin-left: 20px">元</span>
           </search-item>
           <template #button>
@@ -153,12 +173,36 @@ import api from '@/api';
 import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router';
 const router = useRouter();
-const goTo = () => {
-  router.push({
-    name: 'recharge',
-  })
-}
-const activeKey = ref('1')
+const activeKey = ref('1');
+const dateFormat = 'YYYY-MM-DD';
+const startAmount1 = ref()
+const startAmount2 = ref()
+const startAmount3 = ref()
+const endAmount1 = ref()
+const endAmount2 = ref()
+const endAmount3 = ref()
+const form = reactive({
+  rechargeTime: 1,
+  expenditureTime: 1,
+  companyId: ''
+})
+const fundInfo = reactive({
+  bank: '',
+  bankAccountName: '',
+  bankAccount: '',
+  availableBalance: 0,
+  accountFrozen: 0,
+  rechargedMoney: 0,
+  expenditureMoney: 0,
+  yktAccountName: '',
+  yktAccountNumber: ''
+})
+const tiemOptions = [
+  { key: '本月', value: 1 },
+  { key: '近3个月', value: 2 },
+  { key: '今年', value: 3 },
+  { key: '去年', value: 4 }
+]
 const state = reactive({
   tableData1: {
     data: [],
@@ -167,7 +211,11 @@ const state = reactive({
     param: {
       pageNo: 1,
       pageSize: 10,
-      auditStatus: 2,
+      runningAmountType: 1,
+      createTime: '',
+      serialNumber: '',
+      startAmount: undefined,
+      endAmount: undefined
     },
   },
   tableData2: {
@@ -177,7 +225,11 @@ const state = reactive({
     param: {
       pageNo: 1,
       pageSize: 10,
-      auditStatus: 1,
+      runningAmountType: 3,
+      createTime: '',
+      serialNumber: '',
+      startAmount: undefined,
+      endAmount: undefined
     },
   },
   tableData3: {
@@ -187,7 +239,11 @@ const state = reactive({
     param: {
       pageNo: 1,
       pageSize: 10,
-      auditStatus: 3,
+      runningAmountType: 2,
+      createTime: '',
+      serialNumber: '',
+      startAmount: undefined,
+      endAmount: undefined
     },
   }
 });
@@ -195,129 +251,270 @@ const { tableData1, tableData2, tableData3 } = toRefs(state)
 const columns1 = [
   {
     title: '充值流水号',
-    dataIndex: 'account',
-    key: 'account',
+    dataIndex: 'serialNumber',
+    key: 'serialNumber',
   },
   {
     title: '充值金额',
-    dataIndex: 'account',
-    key: 'account',
+    dataIndex: 'runningAmount',
+    key: 'runningAmount',
   },
   {
     title: '充值时间',
-    dataIndex: 'account',
-    key: 'account',
+    dataIndex: 'createTime',
+    key: 'createTime',
   },
   {
     title: '充值前余额',
-    dataIndex: 'account',
-    key: 'account',
+    dataIndex: 'amountBeforeRunning',
+    key: 'amountBeforeRunning',
   },
   {
     title: '充值后余额',
-    dataIndex: 'account',
-    key: 'account',
+    dataIndex: 'amountAfterRunning',
+    key: 'amountAfterRunning',
   },
   {
     title: '充值资金来源（银行账户）',
-    dataIndex: 'account',
-    key: 'account',
+    dataIndex: 'fundAccount',
+    key: 'fundAccount',
   },
   {
     title: '操作员',
-    dataIndex: 'account',
-    key: 'account',
+    dataIndex: 'userName',
+    key: 'userName',
   }
 ]
 const columns2 = [
   {
     title: '支出流水号',
-    dataIndex: 'account',
-    key: 'account',
+    dataIndex: 'serialNumber',
+    key: 'serialNumber',
   },
   {
     title: '支出金额',
-    dataIndex: 'account',
-    key: 'account',
+    dataIndex: 'runningAmount',
+    key: 'runningAmount',
   },
   {
     title: '支出时间',
-    dataIndex: 'account',
-    key: 'account',
+    dataIndex: 'createTime',
+    key: 'createTime',
   },
   {
     title: '支出前余额',
-    dataIndex: 'account',
-    key: 'account',
+    dataIndex: 'amountBeforeRunning',
+    key: 'amountBeforeRunning',
   },
   {
     title: '支出后余额',
-    dataIndex: 'account',
-    key: 'account',
+    dataIndex: 'amountAfterRunning',
+    key: 'amountAfterRunning',
   },
   {
     title: '支出资金来源（银行账户）',
-    dataIndex: 'account',
-    key: 'account',
+    dataIndex: 'fundAccount',
+    key: 'fundAccount',
   },
   {
     title: '操作员',
-    dataIndex: 'account',
-    key: 'account',
+    dataIndex: 'userName',
+    key: 'userName',
   }
 ]
 const columns3 = [
   {
     title: '预冻结流水号',
-    dataIndex: 'account',
-    key: 'account',
+    dataIndex: 'serialNumber',
+    key: 'serialNumber',
   },
   {
     title: '预冻结金额',
-    dataIndex: 'account',
-    key: 'account',
+    dataIndex: 'runningAmount',
+    key: 'runningAmount',
   },
   {
     title: '预冻结时间',
-    dataIndex: 'account',
-    key: 'account',
+    dataIndex: 'createTime',
+    key: 'createTime',
   },
   {
     title: '预冻结前余额',
-    dataIndex: 'account',
-    key: 'account',
+    dataIndex: 'amountBeforeRunning',
+    key: 'amountBeforeRunning',
   },
   {
     title: '预冻结后余额',
-    dataIndex: 'account',
-    key: 'account',
+    dataIndex: 'amountAfterRunning',
+    key: 'amountAfterRunning',
   },
   {
     title: '预冻结资金来源（银行账户）',
-    dataIndex: 'account',
-    key: 'account',
+    dataIndex: 'fundAccount',
+    key: 'fundAccount',
   },
   {
     title: '操作员',
-    dataIndex: 'account',
-    key: 'account',
+    dataIndex: 'userName',
+    key: 'userName',
   }
 ]
-const tabsChange = (val: string) => {
-  switch (val) {
-    case '1':
-
+let timer: NodeJS.Timeout
+const inputChange = (type: number) => {
+  timer && clearTimeout(timer)
+  switch (type) {
+    case 1:
+      timer = setTimeout(() => {
+        if (!startAmount1.value) {
+          state.tableData1.param.startAmount = undefined
+        } else {
+          let val = Number(startAmount1.value)
+          if (!isNaN(val)) {
+            state.tableData1.param.startAmount = val * 100
+          } else {
+            message.warning('请输入正确金额！')
+          }
+        }
+      }, 500);
       break;
-    case '2':
-
+    case 2:
+      timer = setTimeout(() => {
+        if (!endAmount1.value) {
+          state.tableData1.param.endAmount = undefined
+        } else {
+          let val = Number(endAmount1.value)
+          if (!isNaN(val)) {
+            state.tableData1.param.endAmount = val * 100
+          } else {
+            message.warning('请输入正确金额！')
+          }
+        }
+      }, 500);
       break;
-    case '3':
-
+    case 3:
+      timer = setTimeout(() => {
+        if (!startAmount2.value) {
+          state.tableData2.param.startAmount = undefined
+        } else {
+          let val = Number(startAmount2.value)
+          if (!isNaN(val)) {
+            state.tableData2.param.startAmount = val * 100
+          } else {
+            message.warning('请输入正确金额！')
+          }
+        }
+      }, 500);
+      break;
+    case 4:
+      timer = setTimeout(() => {
+        if (!endAmount2.value) {
+          state.tableData2.param.endAmount = undefined
+        } else {
+          let val = Number(endAmount2.value)
+          if (!isNaN(val)) {
+            state.tableData2.param.endAmount = val * 100
+          } else {
+            message.warning('请输入正确金额！')
+          }
+        }
+      }, 500);
+      break;
+    case 5:
+      timer = setTimeout(() => {
+        if (!startAmount3.value) {
+          state.tableData3.param.startAmount = undefined
+        } else {
+          let val = Number(startAmount3.value)
+          if (!isNaN(val)) {
+            state.tableData3.param.startAmount = val * 100
+          } else {
+            message.warning('请输入正确金额！')
+          }
+        }
+      }, 500);
+      break;
+    case 6:
+      timer = setTimeout(() => {
+        if (!endAmount3.value) {
+          state.tableData3.param.endAmount = undefined
+        } else {
+          let val = Number(endAmount3.value)
+          if (!isNaN(val)) {
+            state.tableData3.param.endAmount = val * 100
+          } else {
+            message.warning('请输入正确金额！')
+          }
+        }
+      }, 500);
       break;
   }
 }
-const onQuery = () => { }
-const onSearch = () => { }
+const tabsChange = (val: string) => {
+  switch (val) {
+    case '1':
+      if (state.tableData1.data.length === 0) {
+        onSearch()
+      }
+      break;
+    case '2':
+      if (state.tableData2.data.length === 0) {
+        onSearch()
+      }
+      break;
+    case '3':
+      if (state.tableData3.data.length === 0) {
+        onSearch()
+      }
+      break;
+  }
+}
+const onQuery = () => {
+  if (activeKey.value === '1') {
+    state.tableData1.param.pageNo = 1
+    onSearch()
+  } else if (activeKey.value === '2') {
+    state.tableData2.param.pageNo = 1
+    onSearch()
+  } else if (activeKey.value === '3') {
+    state.tableData3.param.pageNo = 1
+    onSearch()
+  }
+}
+const onSearch = async () => {
+  if (activeKey.value === '1') {
+    let res = await api.findCapitalDetailedList(state.tableData1.param)
+    res.content.forEach((item: any) => {
+      item.runningAmount = item.runningAmount ? Number(item.runningAmount) / 100 : 0
+      item.amountBeforeRunning = item.amountBeforeRunning ? Number(item.amountBeforeRunning) / 100 : 0
+      item.amountAfterRunning = item.amountAfterRunning ? Number(item.amountAfterRunning) / 100 : 0
+    })
+    state.tableData1.data = res.content
+    state.tableData1.total = res.total
+  } else if (activeKey.value === '2') {
+    let res = await api.findCapitalDetailedList(state.tableData2.param)
+    res.content.forEach((item: any) => {
+      item.runningAmount = item.runningAmount ? Number(item.runningAmount) / 100 : 0
+      item.amountBeforeRunning = item.amountBeforeRunning ? Number(item.amountBeforeRunning) / 100 : 0
+      item.amountAfterRunning = item.amountAfterRunning ? Number(item.amountAfterRunning) / 100 : 0
+    })
+    state.tableData2.data = res.content
+    state.tableData2.total = res.total
+  } else if (activeKey.value === '3') {
+    let res = await api.findCapitalDetailedList(state.tableData3.param)
+    res.content.forEach((item: any) => {
+      item.runningAmount = item.runningAmount ? Number(item.runningAmount) / 100 : 0
+      item.amountBeforeRunning = item.amountBeforeRunning ? Number(item.amountBeforeRunning) / 100 : 0
+      item.amountAfterRunning = item.amountAfterRunning ? Number(item.amountAfterRunning) / 100 : 0
+    })
+    state.tableData3.data = res.content
+    state.tableData3.total = res.total
+  }
+}
+const goTo = () => {
+  router.push({
+    name: 'recharge',
+  })
+}
 const onHandleCurrentChange = (val: number) => {
   state.tableData1.param.pageNo = val;
   onSearch();
@@ -327,9 +524,48 @@ const pageSideChange = (current: number, size: number) => {
   state.tableData1.param.pageSize = size;
   onSearch();
 }
+const getUserInfo = () => {
+  let userInfo = window.localStorage.getItem('userInfo');
+  userInfo = JSON.parse(userInfo as string)
+  const { sysCompany: { oid } } = userInfo
+  form.companyId = oid
+}
+const getBaseInfo = async () => {
+  let {
+    bank,
+    bankAccountName,
+    bankAccount,
+    availableBalance,
+    accountFrozen,
+    rechargedMoney,
+    expenditureMoney,
+    yktAccountName,
+    yktAccountNumber
+  } = await api.findTravelFund(toRaw(form))
+  fundInfo.bank = bank;
+  fundInfo.bankAccountName = bankAccountName;
+  fundInfo.bankAccount = bankAccount;
+  fundInfo.availableBalance = availableBalance ? Number(availableBalance) / 100 : 0;
+  fundInfo.accountFrozen = accountFrozen ? Number(accountFrozen) / 100 : 0;
+  fundInfo.rechargedMoney = rechargedMoney ? Number(rechargedMoney) / 100 : 0;
+  fundInfo.expenditureMoney = expenditureMoney ? Number(expenditureMoney) / 100 : 0;
+  fundInfo.yktAccountName = yktAccountName;
+  fundInfo.yktAccountNumber = yktAccountNumber;
+}
+const expenditureTimeChange = () => { }
+onMounted(() => {
+  getUserInfo()
+  getBaseInfo()
+  onSearch()
+})
 </script>
 
 <style scoped lang="scss">
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  appearance: none;
+}
+
 .header {
   display: flex;
   padding: 24px 20px;
