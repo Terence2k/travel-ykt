@@ -128,7 +128,7 @@ import { CloseOutlined } from '@ant-design/icons-vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import imgUpload from '@/views/baseInfoManage/businessManagement/components/imgUpload.vue';
-import { useBusinessManageOption } from '@/stores/modules/businessManage';
+// import { useBusinessManageOption } from '@/stores/modules/businessManage';
 import type { Rule } from 'ant-design-vue/es/form';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
@@ -286,11 +286,23 @@ onDeactivated(() => {
   formRef.value.resetFields()
   formRules.value = formRules6
 })
-const businessManageOptions = useBusinessManageOption();
+const businessTypeOption = [
+  { codeValue: 'HOTEL', name: '酒店' },
+  { codeValue: 'CATERING', name: '餐饮' },
+  { codeValue: 'TICKET', name: '景区' },
+  { codeValue: 'TRAVEL', name: '旅行社' },
+  { codeValue: 'GROUP', name: '集团' },
+  /* { codeValue: 'YKT', name: '一卡通' },
+  { codeValue: 'SUPERVISE', name: '监理' },
+  { codeValue: 'ASSOCIATION', name: '协会' },
+  { codeValue: 'CULTURE_BUREAU', name: '文旅局' },
+  { codeValue: 'ANCIENT_UYGUR', name: '古维管理部门' } */
+];
+/* const businessManageOptions = useBusinessManageOption();
 const initOpeion = async () => {
   await businessManageOptions.getBusinessTypeOption();
 };
-const businessTypeOption = computed(() => businessManageOptions.businessTypeOption);
+const businessTypeOption = computed(() => businessManageOptions.businessTypeOption); */
 const uploadDown = () => {
   form.businessLicenseUrl = form.businessLicenseUrl ? form.businessLicenseUrl[0] : undefined
 }
@@ -344,7 +356,7 @@ const tipCancel = () => {
   tipVisible.value = false
 } */
 onMounted(() => {
-  initOpeion()
+  // initOpeion()
 })
 </script>
 
