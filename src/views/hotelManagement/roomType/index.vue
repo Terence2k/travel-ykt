@@ -20,7 +20,7 @@
 							</template>
 							<template v-if="column.dataIndex === 'actions'">
 								<div class="cell-actions">
-									<span @click="openNewPageByAction(record?.hotelId, record?.unitStatus)" class="item"> 进入审核 </span>
+									<span @click="openNewPageByAction(record?.hotelId, record)" class="item"> 进入审核 </span>
 								</div>
 							</template>
 						</template>
@@ -278,10 +278,10 @@ const getHotelStarList = () => {
 		});
 };
 
-const openNewPageByAction = (oid: number, unitStatus: number) => {
+const openNewPageByAction = (oid: number, record: any) => {
 	if (oid || oid === 0) {
 		console.log('open edit page, id is:', oid);
-		router.push({ path: '/hotelManagement/roomType/roomTypeCheck', query: { id: oid } });
+		router.push({ name: 'roomTypeCheck', query: { id: oid, hotelName: record?.hotelName, submitTime: record?.submitTime } });
 	}
 };
 
