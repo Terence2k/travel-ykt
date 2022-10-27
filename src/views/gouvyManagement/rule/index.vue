@@ -1,12 +1,12 @@
 <template>
 	<div class="table-area">
 		<p class="top-p">基本信息设置</p>
-		<a-form ref="formRef" :rules="rules" model="formValidate.data" :label-col="{ span: 2}" :wrapper-col="{ flex: 12 }" labelAlign="left">
+		<a-form ref="formRef" :rules="rules" :model="state.tableData.infoData" :label-col="{ span: 2 }" :wrapper-col="{ flex: 12 }" labelAlign="left">
 			<a-form-item label="购买价格" name="price">
-				<a-input v-model:value="state.tableData.data.price" placeholder="请输入缴纳费用价格（单位，元）" style="width:600px"></a-input>
+				<a-input v-model:value="state.tableData.infoData.price" placeholder="请输入缴纳费用价格（单位，元）" style="width: 600px"></a-input>
 			</a-form-item>
 			<a-form-item label="政策说明" name="price">
-				<a-textarea v-model:value="state.tableData.data.policyExplain" placeholder="请输入古维政策说明" :rows="4" style="width:600px" />
+				<a-textarea v-model:value="state.tableData.infoData.policyExplain" placeholder="请输入古维政策说明" :rows="4" style="width: 600px" />
 			</a-form-item>
 			<a-row>
 				<a-col :span="12"></a-col>
@@ -20,17 +20,21 @@
 			<a-col :span="10"></a-col>
 			<a-col :span="2"> <a-button type="primary" class="btn" @click="add({ handle: 'add' })">添加</a-button></a-col>
 		</a-row>
-		<CommonTable :dataSource="state.tableData.data" :columns="columns">
+		<CommonTable :dataSource="state.tableData.Data" :columns="columns">
 			<template #bodyCell="{ column, index, record }">
-				<template v-if="column.key === 'status'">
-					<a-span v-if="record.status == 1">启用</a-span>
+				<template v-if="column.key === 'discount'">
+					<a-span>{{ accDiv(record.discount, 100) }}</a-span>
+				</template>
+				<template v-if="column.key === 'discountRuleStatus'">
+					<a-span v-if="record.discountRuleStatus == 1">启用</a-span>
 					<a-span v-else>禁用</a-span>
 				</template>
+
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a href="javascript:;" @click="add({ row: record, handle: 'update' })">编辑</a>
-						<a href="javascript:;" @click="disable" v-if="record.status == 1">禁用</a>
-						<a href="javascript:;" @click="enable" v-else>启用</a>
+						<a href="javascript:;" @click="disable(record.oid)" v-if="record.discountRuleStatus == 1">禁用</a>
+						<a href="javascript:;" @click="enable(record.oid)" v-else>启用</a>
 					</div>
 				</template>
 			</template>
@@ -58,6 +62,7 @@ import BaseModal from '@/components/common/BaseModal.vue';
 import Edit from './edit.vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
+import { accDiv } from '@/utils/compute';
 const route = useRouter();
 const dialogVisible = ref(false);
 const navigatorBar = useNavigatorBar();
@@ -70,23 +75,23 @@ const columns = [
 	},
 	{
 		title: '减免模式',
-		dataIndex: 'discountType',
-		key: 'discountType',
+		dataIndex: 'discountTypeName',
+		key: 'discountTypeName',
 	},
 	{
-		title: '详细信息',
-		dataIndex: 'address2',
-		key: 'address2',
+		title: '可减免条件',
+		dataIndex: 'discountConditionName',
+		key: 'discountConditionName',
 	},
 	{
 		title: '减免折扣',
-		dataIndex: 'address3',
-		key: 'address3',
+		dataIndex: 'discount',
+		key: 'discount',
 	},
 	{
 		title: '状态',
-		dataIndex: 'status',
-		key: 'status',
+		dataIndex: 'discountRuleStatus',
+		key: 'discountRuleStatus',
 	},
 	{
 		title: '操作',
@@ -101,7 +106,8 @@ const rules: any = {
 };
 const state = reactive({
 	tableData: {
-		data: [],
+		infoData: [],
+		Data: [],
 		total: 400,
 		loading: false,
 		param: {
@@ -138,24 +144,35 @@ const add = (param: any) => {
 	}
 	state.operationModal.isEditdate = true;
 };
-const disable = () => {
-	message.error('已禁用');
+const enable = (value: any) => {
+	api.getEnable(value).then(() => {
+		message.success('已启用');
+		onSearchList()
+	});
 };
-const enable = () => {
-	message.success('已启用');
+const disable = (value: any) => {
+	api.getDisenable(value).then(() => {
+		message.success('已禁用');
+		onSearchList()
+	});
 };
 const save = () => {
-	console.log(state.tableData.data, '111111111111111');
 	message.success('保存成功');
 };
 const onSearch = () => {
 	api.getBasicInfo().then((res) => {
-		console.log(res, '111111111111');
+		state.tableData.infoData = res;
+		state.tableData.infoData.price = accDiv(res.price, 100);
 	});
 };
-
+const onSearchList = () => {
+	api.getBasiclist().then((res) => {
+		state.tableData.Data = res;
+	});
+};
 onMounted(() => {
 	onSearch();
+	onSearchList();
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
