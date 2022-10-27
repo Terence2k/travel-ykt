@@ -65,12 +65,12 @@ const beforeUpload = (file: any) => {
 };
 </script>
 <style lang="less" scoped>
-:v-deep(.ant-upload-drag) {
+::v-deep(.ant-upload-drag) {
 	width: 318px;
 	height: 190px;
 	border: 1px solid #d5d5d5;
 }
-:v-deep(.ant-upload-btn) {
+::v-deep(.ant-upload-btn) {
 	& > div {
 		height: 100%;
 		display: flex;

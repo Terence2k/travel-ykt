@@ -66,7 +66,7 @@ const props = defineProps({
 		color: #c8c9cc;
 		font-size: 12px;
 	}
-	:v-deep(.ant-upload-drag) {
+	::v-deep(.ant-upload-drag) {
 		border: 1px dashed #d3d4d6;
 		background-color: #f9fafc;
 	}

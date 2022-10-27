@@ -115,10 +115,10 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="less" scoped>
-:v-deep(.ant-tabs-nav) {
+::v-deep(.ant-tabs-nav) {
 	padding: 0px 20px !important;
 }
-// :v-deep(.ant-tabs-top > .ant-tabs-nav) {
+// ::v-deep(.ant-tabs-top > .ant-tabs-nav) {
 // 	margin: 0;
 // }
 .ant-table-thead > tr > th {
