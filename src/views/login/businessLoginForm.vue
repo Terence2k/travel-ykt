@@ -8,23 +8,23 @@
       </a-select>
     </a-form-item>
     <a-form-item name="name" label="企业名称">
-      <a-input v-model:value="$attrs.model.name" placeholder="请输入企业名称">
+      <a-input v-model:value="$attrs.model.name" placeholder="请输入企业名称" autocomplete="off">
       </a-input>
     </a-form-item>
     <a-form-item name="creditCode" label="信用代码">
-      <a-input v-model:value="$attrs.model.creditCode" placeholder="请输入信用代码">
+      <a-input v-model:value="$attrs.model.creditCode" placeholder="请输入信用代码" autocomplete="off">
       </a-input>
     </a-form-item>
-    <a-form-item name="account" label="账号">
-      <a-input v-model:value="$attrs.model.account" placeholder="请输入账号">
+    <a-form-item name="account" label="登录账号">
+      <a-input v-model:value="$attrs.model.account" placeholder="请输入登录账号" autocomplete="off">
       </a-input>
     </a-form-item>
     <a-form-item name="phone" label="手机号">
-      <a-input v-model:value="$attrs.model.phone" placeholder="请输入手机号">
+      <a-input v-model:value="$attrs.model.phone" placeholder="请输入手机号" autocomplete="off">
       </a-input>
     </a-form-item>
-    <a-form-item name="contactName" label="管理员">
-      <a-input v-model:value="$attrs.model.contactName" placeholder="请输入管理员姓名">
+    <a-form-item name="contactName" label="管理员姓名">
+      <a-input v-model:value="$attrs.model.contactName" placeholder="请输入管理员姓名" autocomplete="off">
       </a-input>
     </a-form-item>
     <a-form-item name="region" label="所属地区">
@@ -49,21 +49,22 @@ const attrs = useAttrs()
 const businessLoginRef = ref()
 const imgUploadRef = ref()
 const businessTypeOption = [
-  { codeValue: 116, name: '酒店' },
-  { codeValue: 117, name: '餐饮' },
-  { codeValue: 118, name: '景区' },
-  { codeValue: 119, name: '旅行社' },
-  /* { codeValue: 158, name: '一卡通' },
-  { codeValue: 159, name: '监理' },
-  { codeValue: 160, name: '协会' },
-  { codeValue: 161, name: '集团' },
-  { codeValue: 162, name: '文旅局' }, */
+  { codeValue: 'HOTEL', name: '酒店' },
+  { codeValue: 'CATERING', name: '餐饮' },
+  { codeValue: 'TICKET', name: '景区' },
+  { codeValue: 'TRAVEL', name: '旅行社' },
+  /* { codeValue: 'YKT', name: '一卡通' },
+  { codeValue: 'SUPERVISE', name: '监理' },
+  { codeValue: 'ASSOCIATION', name: '协会' },
+  { codeValue: 'GROUP', name: '集团' },
+  { codeValue: 'CULTURE_BUREAU', name: '文旅局' },
+  { codeValue: 'ANCIENT_UYGUR', name: '古维管理部门' } */
 ];
 const formRules: any = {
   businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
   name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
   creditCode: [{ required: true, trigger: 'blur', message: '请输入信用代码' }],
-  account: [{ required: true, trigger: 'blur', message: '请输入账号' }],
+  account: [{ required: true, trigger: 'blur', message: '请输入登录账号' }],
   phone: [{ required: true, trigger: 'blur', message: '请输入手机号' }],
   contactName: [{ required: true, trigger: 'blur', message: '请输入管理员姓名' }],
   region: [{ required: true, trigger: 'blur', message: '请选择所属地区' }],
