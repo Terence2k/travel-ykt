@@ -5,8 +5,14 @@
 			<a-input v-model:value="state.tableData.param.ticketName" placeholder="门票名称/关键词" style="width: 200px" />
 		</SearchItem>
 		<SearchItem label="归属景区">
-			<a-select ref="select" style="width: 200px" placeholder="请选择">
-				<a-select-option value="all">all</a-select-option>
+			<a-select
+				v-model:value="state.tableData.param.scenicId"
+				:allowClear="true"
+				ref="select"
+				style="width: 200px"
+				placeholder="请选择"
+				:options="scenicSpotOptions"
+			>
 			</a-select>
 		</SearchItem>
 		<template #button>
@@ -98,11 +104,11 @@ const columns = [
 		dataIndex: 'sonCount',
 		key: 'sonCount',
 	},
-	{
-		title: '审核状态',
-		dataIndex: 'auditStatus',
-		key: 'auditStatus',
-	},
+	// {
+	// 	title: '审核状态',
+	// 	dataIndex: 'auditStatus',
+	// 	key: 'auditStatus',
+	// },
 	{
 		title: '平台上下架状态',
 		dataIndex: 'putaway',
@@ -145,6 +151,7 @@ const toEditPage = (value: any) => {
 };
 //下架
 const outDown = (index) => {
+	//未对接口
 	console.log(index);
 	state.tableData.data[index].putaway = !state.tableData.data[index].putaway;
 	message.success('成功');
@@ -154,7 +161,16 @@ const outDown = (index) => {
 const add = () => {
 	route.push({ path: '/scenic-spot/multicast/edit', query: { t: 0 } });
 };
-
+const scenicSpotOptions = ref([]);
+const initOption = async () => {
+	let res = await api.getViewList();
+	scenicSpotOptions.value = res.map((item: any) => {
+		return {
+			value: item.ticketId,
+			label: item.ticketName,
+		};
+	});
+};
 const initPage = async () => {
 	// userList(state.tableData.param).then((res) => {
 	// 	console.log(res);
@@ -166,6 +182,7 @@ const initPage = async () => {
 };
 onMounted(() => {
 	initPage();
+	initOption();
 	// navigatorBar
 	// 重新定义面包屑
 	// navigatorBar.clearNavigator();

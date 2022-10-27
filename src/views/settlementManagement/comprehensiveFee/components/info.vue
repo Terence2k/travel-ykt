@@ -55,8 +55,8 @@ const getBelongCompanyName = computed(() => (value: any) => {
 		}
 		return '';
 	}
-	return ''
-})
+	return '';
+});
 // 跳转编辑页
 const toEdit = () => {
 	route.go(-1);
@@ -127,10 +127,10 @@ onMounted(() => {
 .ant-form-item:first-child {
 	margin-top: 13px;
 }
-:v-deep(.ant-form-item-control-input) {
+::v-deep(.ant-form-item-control-input) {
 	height: 18px;
 }
-:v-deep(.ant-form-item-label > label) {
+::v-deep(.ant-form-item-label > label) {
 	position: relative;
 	display: inline-flex;
 	align-items: center;

@@ -32,6 +32,22 @@ export async function getSingleVoteList(data: any) {
 		data,
 	});
 }
+// 单票库存
+export async function getInevntoryDetail(data: any) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-one-ticket/get-stock`,
+		method: 'get',
+		data,
+	});
+}
+// 单票库存保存
+export async function saveInevntoryDetail(data: any) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-one-ticket/save-stock`,
+		method: 'post',
+		data,
+	});
+}
 
 // 获取地区接口
 export async function getAllArea(pid: any, level: any) {
@@ -188,6 +204,15 @@ export async function getMultipleList(data: any) {
 	});
 }
 
+// 联票 新增
+export async function createMultiple(data: any) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-unite`,
+		method: 'post',
+		data,
+	});
+}
+
 // 联票 详情
 export async function getMultipleDetail(id: number) {
 	return request({
@@ -196,12 +221,11 @@ export async function getMultipleDetail(id: number) {
 	});
 }
 
-// 单票库存
-export async function getInevntoryDetail(data: any) {
+//联票 子票下拉列表
+export async function getChildOption() {
 	return request({
-		url: `${commonPath}/ticket-service/public/api/scenic-one-ticket/get-stock`,
+		url: `${commonPath}/ticket-service/public/api/scenic-ticket/search`,
 		method: 'get',
-		data,
 	});
 }
 // 核销时间段
@@ -216,11 +240,11 @@ export async function getVerifManage(data: any) {
 export async function getScenicVerif(id: number) {
 	return request({
 		url: `${commonPath}/ticket-service/public/api/scenic-verif-manage/${id}`,
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
 		method: 'get',
-		showLoading: false
+		showLoading: false,
 	});
 }
 // 核销时间段编辑
@@ -228,14 +252,6 @@ export async function getScenicSave(data: any) {
 	return request({
 		url: `${commonPath}/ticket-service/public/api/scenic-verif-manage/save`,
 		method: 'get',
-		data,
-	});
-}
-// 单票库存
-export async function saveInevntoryDetail(data: any) {
-	return request({
-		url: `${commonPath}/ticket-service/public/api/scenic-one-ticket/save-stock`,
-		method: 'post',
 		data,
 	});
 }

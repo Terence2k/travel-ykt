@@ -194,10 +194,10 @@ onMounted(() => {
 // 	margin-bottom: 0;
 // 	height: 32px;
 // }
-// :v-deep(.ant-form-item-control-input) {
+// ::v-deep(.ant-form-item-control-input) {
 // 	height: 18px;
 // }
-// :v-deep(.ant-form-item-label > label) {
+// ::v-deep(.ant-form-item-label > label) {
 // 	position: relative;
 // 	display: inline-flex;
 // 	align-items: center;
