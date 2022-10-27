@@ -118,16 +118,6 @@ export function getChangeBeforeAfterData(companyId: string, type: string) {
 		});
 	} else if (type === 'TICKET') {
 		// 景区根据企业id查询提交审核前、后数据
-	} else if (type === 'SUPERVISE') {
-		// 监理根据企业id查询提交审核前、后数据
-	} else if (type === 'ASSOCIATION') {
-		// 协会根据企业id查询提交审核前、后数据
-	} else if (type === 'GROUP') {
-		// 集团根据企业id查询提交审核前、后数据
-	} else if (type === 'CULTURE_BUREAU') {
-		// 文旅局根据企业id查询提交审核前、后数据
-	} else if (type === 'ANCIENT_UYGUR') {
-		// 古维管理部门根据企业id查询提交审核前、后数据
 	}
 }
 type paramsType = {
@@ -143,8 +133,8 @@ export function getBusinessDetails({ oid, businessType }: paramsType) {
 			method: 'get',
 			showLoading: true
 		});
-	} else if (businessType === 'TRAVEL') {
-		// 旅行社根据id获取企业详情
+	} else if (['TRAVEL', 'SUPERVISE', 'ASSOCIATION', 'GROUP', 'CULTURE_BUREAU', 'ANCIENT_UYGUR'].includes(businessType)) {
+		// 旅行社、监理、协会、集团、文旅局、古维管理部门根据id获取企业详情
 		return request({
 			url: `${commonPart}getCompanyInformation?oid=${oid}`,
 			method: 'post',
@@ -160,19 +150,9 @@ export function getBusinessDetails({ oid, businessType }: paramsType) {
 	} else if (businessType === 'TICKET') {
 		// 景区根据id获取企业详情
 		return request({
-			url: `${commonPath}ticket-service/public/api/scenic/${oid}`,
+			url: `${commonPath}/ticket-service/public/api/scenic/${oid}`,
 			method: 'get',
 			showLoading: true
 		});
-	} else if (businessType === 'SUPERVISE') {
-		// 监理根据id获取企业详情
-	} else if (businessType === 'ASSOCIATION') {
-		// 协会根据id获取企业详情
-	} else if (businessType === 'GROUP') {
-		// 集团根据id获取企业详情
-	} else if (businessType === 'CULTURE_BUREAU') {
-		// 文旅局根据id获取企业详情
-	} else if (businessType === 'ANCIENT_UYGUR') {
-		// 古维管理部门根据id获取企业详情
 	}
 }

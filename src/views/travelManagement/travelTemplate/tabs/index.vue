@@ -83,10 +83,10 @@ onMounted(() => {
 </script>
 <style lang="less" scoped>
 .trave-contaner {
-	:v-deep(.ant-tabs-nav) {
+	::v-deep(.ant-tabs-nav) {
 		padding: 16px 20px;
 	}
-	:v-deep(.ant-tabs-content-holder) {
+	::v-deep(.ant-tabs-content-holder) {
 		padding: 0 20px;
 	}
 }

@@ -1,5 +1,6 @@
 <template>
   <div class="tabs_box">
+    <a-badge :count="auditTableData.total" class="rebadge" />
     <a-tabs v-model:activeKey="activeKey" @change="tabsChange">
       <a-tab-pane key="1" tab="已审核">
         <CommonTable :dataSource="tableData.data" :columns="columns">
@@ -567,14 +568,25 @@ onActivated(() => {
 })
 onMounted(() => {
   onSearch()
-  // onAuditSearch()
+  onAuditSearch()
   // onFailSearch()
 })
 </script>
 
 <style scoped lang="scss">
+:deep(.ant-tabs-tab + .ant-tabs-tab) {
+  margin: 0 0 0 60px;
+}
+
 .tabs_box {
+  position: relative;
   padding: 20px;
+
+  .rebadge {
+    position: absolute;
+    left: 165px;
+    top: 25px;
+  }
 }
 
 .table-area {

@@ -134,15 +134,15 @@ const goTo = () => {
 			border: none;
 		}
 	}
-	:v-deep(.ant-tabs-tab) {
+	::v-deep(.ant-tabs-tab) {
 		padding: 10px 2px;
 	}
-	:v-deep(.ant-tabs-nav) {
+	::v-deep(.ant-tabs-nav) {
 		&::before {
 			border-bottom: none;
 		}
 	}
-	:v-deep(.ant-input-affix-wrapper-focused) {
+	::v-deep(.ant-input-affix-wrapper-focused) {
 		box-shadow: none !important;
 	}
 	.icon {

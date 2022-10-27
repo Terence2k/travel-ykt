@@ -84,13 +84,13 @@ const { columns, tableData, editableData, edit, save, onSelect, selectKey, input
 	useTrafficInfo(props, emits);
 </script>
 <style lang="less" scoped>
-:v-deep(.ant-upload-select-picture-card) {
+::v-deep(.ant-upload-select-picture-card) {
 	width: 64px;
 	height: 34px;
 	border: 1px solid #d5d5d5;
 	background-color: #fff;
 }
-:v-deep(.anticon-plus) {
+::v-deep(.anticon-plus) {
 	color: #777;
 }
 .footer-btn {

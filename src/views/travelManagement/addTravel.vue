@@ -133,17 +133,14 @@ const getTraveDetail = () => {
 			travelStore.setTrafficList(res.transportList);
 			travelStore.setFileInfo(res.attachment);
 			travelStore.hotels = res.hotelList;
-			travelStore.scenicTickets = res.ticketList
-		
-		})
-	}
+			travelStore.scenicTickets = res.ticketList;
+		});
+};
 const changeTab = (event: number) => {
 	if (event === 4) {
-		
-		check.value = !check.value
-		
+		check.value = !check.value;
 	}
-}
+};
 
 getTraveDetail();
 // !route.query.id && saveItinerary({})
@@ -157,7 +154,7 @@ getTraveDetail();
 	::v-deep(.ant-tabs-tab) {
 		padding: 16px 0;
 	}
-	// :v-deep(.ant-tabs-content-holder) {
+	// ::v-deep(.ant-tabs-content-holder) {
 	//   padding: 0 20px;
 	// }
 }

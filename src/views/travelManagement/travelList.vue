@@ -183,7 +183,7 @@ sessionStorage.removeItem('traveList');
 	::v-deep(.ant-tabs-nav) {
 		padding: 0 20px;
 	}
-	// :v-deep(.ant-tabs-content-holder) {
+	// ::v-deep(.ant-tabs-content-holder) {
 	//   padding: 0 20px;
 	// }
 }
