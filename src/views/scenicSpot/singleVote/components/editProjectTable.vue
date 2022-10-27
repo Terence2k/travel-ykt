@@ -260,7 +260,7 @@ const formData = reactive({
 	data: [],
 });
 
-const handleChange = (value) => {
+const handleChange = (value: any) => {
 	console.log(value, 'asdasd');
 	formValidate.proj = value;
 };

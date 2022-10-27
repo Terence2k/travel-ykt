@@ -1,10 +1,10 @@
 <template>
 	<div class="wrapper">
 		<CommonTable :dataSource="tableList" :columns="columnsCount" :scrollY="false" bordered class="left">
-			<template #bodyCell="{ column, record }">
+			<template #bodyCell="{ column, record, index }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a href="javascript:;" @click="createData(record)">编辑价格日历</a>
+						<a href="javascript:;" @click="createData(record, index)">编辑价格日历</a>
 					</div>
 				</template>
 			</template>
@@ -69,7 +69,7 @@ import Calendar from '@/components/common/calendarDouble.vue';
 
 import api from '@/api';
 import { message } from 'ant-design-vue';
-
+const route = useRouter();
 // 数据
 const props = defineProps({
 	tableList: {
@@ -100,9 +100,9 @@ const columnsCount = ref([
 ]);
 
 //自定义价格列表
-const setDayPriceList = ref([
-	{ stockDate: '2022-10-20', price: '30', stock: '30' },
-	{ stockDate: '2022-10-21', price: '13', stock: '30' },
+const setDayPriceList = ref<any>([
+	// { stockDate: '2022-10-20', ticketPrice: '30', stock: '30' },
+	// { stockDate: '2022-10-21', ticketPrice: '13', stock: '30' },
 ]);
 
 //日历
@@ -124,8 +124,51 @@ const clearCurrentDay = () => {
 	calendarRef.value.clear();
 	dateRange.value = [];
 };
-const saveDate = () => {
+// (该参数仅用于新增使用))
+const newObjTpl = reactive<any>({
+	ticketId: 127, //门票id/联票id
+	sonId: null, //子联票id
+	startDate: '2022-10-25', //开始日期: "yyyy-MM-dd"
+	endDate: '2022-10-30', //结束日期: "yyyy-MM-dd"
+	dateStockList: [
+		{
+			stockDate: '2022-10-26', //自选日期: "yyyy-MM-dd"
+			customPrice: 200, //自选价格
+			customDayStock: 600, //自选库存
+		},
+	], //自选库存数据列表
+});
+const emits = defineEmits(['set-calendar']);
+const isEdit = computed(() => {
+	return route.currentRoute.value?.query?.t === '1';
+});
+
+const saveDate = async () => {
+	let res = setDayPriceList.value.map((item: any) => {
+		return {
+			...item,
+			stockDate: item.stockDate, //自选日期: "yyyy-MM-dd"
+			customPrice: Number(item.ticketPrice || item.price), //自选价格
+			customDayStock: Number(item.stock), //自选库存
+		};
+	});
+	if (isEdit.value) {
+		console.log('调用编辑日历接口', setDayPriceList.value);
+		const { uniteId, subTicketId, startDate, endDate } = state.data;
+		newObjTpl.ticketId = uniteId;
+		newObjTpl.sonId = subTicketId;
+		newObjTpl.startDate = startDate;
+		newObjTpl.endDate = endDate;
+		newObjTpl.dateStockList = res;
+		console.log(newObjTpl, 'newObjTpl');
+
+		let resApi = await api.geditCalendarMultiple(newObjTpl);
+		message.success(resApi);
+	} else {
+		emits('set-calendar', { index: createNewCalendarIndex.value, data: res });
+	}
 	console.log('保存数据', props.tableList);
+	setDayPriceList.value = [];
 };
 const createDateItem = () => {
 	let timeRange = dateRange.value,
@@ -146,21 +189,16 @@ const createDateItem = () => {
 		message.error('请填写库存');
 		return;
 	}
-	console.log(timeRange, 'timeRange');
 
 	if (timeRange[0]) {
-		console.log('???');
-
 		arr = getAllDateCN(new Date(shijianYMD(timeRange[0])), new Date(shijianYMD(timeRange[1])));
-		// let obj = { day: currentDay.value, price: currentPrict.value };
 
-		setDayPriceList.value.map((i, index) => {
+		setDayPriceList.value.map((i: any, index: number) => {
 			let arrindex = arr.indexOf(i.stockDate),
-				obj = { stockDate: i.stockDate, price: currentPrict.value, stock: currentInventory.value };
+				obj = { stockDate: i.stockDate, ticketPrice: currentPrict.value, stock: currentInventory.value };
 			console.log(arrindex, i.stockDate, arr);
 
 			if (arrindex > -1) {
-				// console.log(arrindex, 'arrindex');
 				arr.splice(arrindex, 1);
 				editItem(index, obj);
 			}
@@ -169,12 +207,12 @@ const createDateItem = () => {
 		// console.log(arr, 'arr');
 
 		arr.map((i) => {
-			createItem({ stockDate: i, price: currentPrict.value, stock: currentInventory.value });
+			createItem({ stockDate: i, ticketPrice: currentPrict.value, stock: currentInventory.value });
 		});
 	} else {
-		let obj = { stockDate: currentDay.value, price: currentPrict.value, stock: currentInventory.value };
+		let obj = { stockDate: currentDay.value, ticketPrice: currentPrict.value, stock: currentInventory.value };
 
-		setDayPriceList.value.map((i, index) => {
+		setDayPriceList.value.map((i: any, index: number) => {
 			if (i.stockDate === currentDay.value) {
 				isEdit = true;
 				editItem(index, obj);
@@ -221,18 +259,61 @@ const createItem = (obj: any) => {
 };
 
 const editItem = (index: number, obj: any) => {
-	const { stockDate, price, stock } = obj;
+	const { stockDate, ticketPrice, stock } = obj;
 	setDayPriceList.value[index].stockDate = stockDate;
-	setDayPriceList.value[index].price = price;
+	setDayPriceList.value[index].ticketPrice = ticketPrice;
 	setDayPriceList.value[index].stock = stock;
+};
+
+interface stateType {
+	data: {
+		uniteId: string | number | null;
+		subTicketId: string | number | null;
+		startDate: string | null;
+		endDate: string | null;
+	};
+}
+
+const state = reactive<stateType>({
+	data: {
+		uniteId: null,
+		subTicketId: null,
+		endDate: null,
+		startDate: null,
+	},
+});
+const nextYear = (timestamp: any) => {
+	let time = new Date(timestamp),
+		year = Number(time.getFullYear()),
+		month = (time.getMonth() + 1).toString().padStart(2, '0'),
+		date = time.getDate().toString().padStart(2, '0');
+
+	year++;
+	return year + '-' + month + '-' + date;
+};
+// 编辑日历
+const initCalendarList = async (id: number) => {
+	state.data.subTicketId = id;
+	state.data.uniteId = Number(route.currentRoute.value?.query?.o);
+	state.data.startDate = shijianYMD(new Date());
+	state.data.endDate = nextYear(state.data.startDate);
+	let res = await api.getCalendarMultiple(state.data);
+
+	setDayPriceList.value = res;
 };
 //弹窗部分
 const modelValue = ref(false);
 const calendarRef = ref();
-const createData = (value: any) => {
-	// modelValue.value = true;
-	console.log('value', value);
+const createNewCalendarIndex = ref<null | number>(null);
 
+const createData = (value: any, index: number) => {
+	// modelValue.value = true;
+	console.log('value', index, isEdit.value);
+	if (isEdit.value) {
+		initCalendarList(value.sonOid);
+	} else {
+		createNewCalendarIndex.value = index;
+	}
 	calendarRef.value.open();
 };
 

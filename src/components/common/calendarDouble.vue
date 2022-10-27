@@ -184,7 +184,7 @@ const isCurrentDay = (timestamp: Dayjs) => {
 		isHad: any = props.setList.filter((i: any) => i.stockDate == day);
 
 	if (isHad.length > 0) {
-		return isHad[0].ticketPrice ? '￥' + isHad[0].ticketPrice : '';
+		return typeof isHad[0].ticketPrice === 'number' ? '￥' + isHad[0].ticketPrice : '';
 	} else {
 		return '';
 	}
@@ -196,7 +196,7 @@ const isCurrentDayInventpry = (timestamp: Dayjs) => {
 		isHad: any = props.setList.filter((i: any) => i.stockDate == day);
 
 	if (isHad.length > 0) {
-		return isHad[0].stock ? isHad[0].stock : '';
+		return typeof isHad[0].stock === 'number' ? isHad[0].stock : '';
 	} else {
 		return '';
 	}

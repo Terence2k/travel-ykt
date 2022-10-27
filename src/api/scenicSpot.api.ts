@@ -228,6 +228,24 @@ export async function getChildOption() {
 		method: 'get',
 	});
 }
+
+//联票 查询库存日历 （仅编辑）
+export async function getCalendarMultiple(data: any) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-unite/subUnitePriceDate`,
+		method: 'get',
+		data,
+	});
+}
+//联票 编辑库存日历 （仅编辑）
+export async function geditCalendarMultiple(data: any) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-unite/subUnitePriceDate`,
+		method: 'post',
+		data,
+	});
+}
+
 // 核销时间段
 export async function getVerifManage(data: any) {
 	return request({
