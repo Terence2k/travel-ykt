@@ -16,6 +16,7 @@ export interface FormState {
 	productType?: number | null;
 	oid?: number | null;
 	charCount?: number | string | null;
+	hotelRatedId?: number | string | null;
 }
 export interface splitListType {
 	companyType?: number | null | string;

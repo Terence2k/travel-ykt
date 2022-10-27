@@ -367,13 +367,13 @@ onMounted(() => {
 });
 </script>
 <style scoped lang="less">
-:v-deep(.ant-table-thead > tr > th, .ant-table-tbody > tr > td, .ant-table tfoot > tr > th, .ant-table tfoot > tr > td) {
+::v-deep(.ant-table-thead > tr > th, .ant-table-tbody > tr > td, .ant-table tfoot > tr > th, .ant-table tfoot > tr > td) {
 	padding: 16px 0;
 }
-:v-deep(.ant-table-thead > tr > th) {
+::v-deep(.ant-table-thead > tr > th) {
 	text-align: center;
 }
-:v-deep(.ant-table-thead > tr > th) {
+::v-deep(.ant-table-thead > tr > th) {
 	border-right: 1px solid #f0f0f0;
 	border-bottom: 1px solid #f0f0f0 !important;
 }

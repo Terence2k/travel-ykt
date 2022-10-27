@@ -1,9 +1,15 @@
 <template>
 	<div class="roomType-check-wrapper">
+		<div class="title-bar">
+			<span v-if="dataSource?.length > 0">当前酒店：{{ state.hotelName }}&nbsp;,&nbsp;提交审核时间：{{ state.submitTime }}</span>
+			<template v-else>
+				<span>当前酒店：{{ state.hotelName }}&nbsp;,&nbsp;暂无待审核数据</span>
+			</template>
+		</div>
 		<CommonTable :columns="columns" :data-source="dataSource">
 			<template #bodyCell="{ column, record, text }">
 				<div>
-					<template v-if="['roomTypeName', 'price', 'roomNum'].includes(column.dataIndex)">
+					<template v-if="['roomTypeName', 'price'].includes(column.dataIndex)">
 						<div>
 							<span>{{ text }}</span>
 						</div>
@@ -13,12 +19,23 @@
 							<span>{{ text }}</span>
 						</div>
 					</template>
-					<template v-if="['roomOccupancyNum'].includes(column.dataIndex)">
-						<div>
+					<template v-if="['roomNum'].includes(column.dataIndex)">
+						<div v-if="record?.operationType !== 0">
 							<span>{{ text }}</span>
 						</div>
+						<template v-else>
+							<span>0</span>
+						</template>
 					</template>
 					<template v-if="['roomOperateNum'].includes(column.dataIndex)">
+						<div v-if="record?.operationType !== 0">
+							<span>{{ text }}</span>
+						</div>
+						<template v-else>
+							<span>{{ record?.roomNum || '' }}</span>
+						</template>
+					</template>
+					<template v-if="['roomOccupancyNum'].includes(column.dataIndex)">
 						<div>
 							<span>{{ text }}</span>
 						</div>
@@ -106,6 +123,8 @@ interface DataSourceItem {
 const state = reactive({
 	hotelId: 0,
 	auditOrderId: '',
+	hotelName: '',
+	submitTime: '',
 });
 
 const dataSource: DataSourceItem[] = ref([]);
@@ -135,9 +154,12 @@ const initPage = () => {
 };
 
 watch(
-	() => route.query,
+	() => route,
 	(res) => {
-		state.hotelId = res?.id;
+		//console.info('eeeeeeeeeeeeeeeeeee', res.params, res.query);
+		state.hotelName = res?.query?.hotelName || '';
+		state.submitTime = res?.query?.submitTime || '';
+		state.hotelId = parseInt(res?.query?.id);
 		if (state.hotelId) {
 			initPage();
 		}

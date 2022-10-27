@@ -18,8 +18,7 @@
         <a-form-item name="businessType" label="企业类型">
           <a-select v-model:value="form.businessType" placeholder="请选择企业类型" @change="optionChange">
             <a-select-option v-for="item in businessTypeOption" :value="item.codeValue" :key="item.codeValue">{{
-                item.name
-            }}
+            item.name }}
             </a-select-option>
           </a-select>
         </a-form-item>
@@ -116,7 +115,7 @@
     </CommonModal>
     <CommonModal title="提示" v-model:visible="tipVisible" @cancel="tipCancel" @close="tipCancel" @conform="tipCancel"
       :conform-text="'我知道了'" :is-cancel="false">
-      您已成功添加 {{ form.name }} ，超级管理员账
+      您已成功添加 {{form.name}} ，超级管理员账
       号密码已分配成功，请线下告知该企业管理员登录。
     </CommonModal>
   </div>
@@ -128,7 +127,7 @@ import { CloseOutlined } from '@ant-design/icons-vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import imgUpload from '@/views/baseInfoManage/businessManagement/components/imgUpload.vue';
-// import { useBusinessManageOption } from '@/stores/modules/businessManage';
+import { useBusinessManageOption } from '@/stores/modules/businessManage';
 import type { Rule } from 'ant-design-vue/es/form';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
@@ -186,14 +185,14 @@ const back = () => {
     }
   })
 }
-// 旅行社、旅游集团、酒店、景区、餐厅
-const condition1 = ['TRAVEL', 'GROUP', 'HOTEL', 'TICKET', 'CATERING']
-// 一卡通、古维管理部门
-const condition2 = ['YKT']
-// 监理
-const condition3 = ['SUPERVISE', 'ANCIENT_UYGUR']
-// 旅游协会、文旅局
-const condition4 = ['ASSOCIATION', 'CULTURE_BUREAU']
+// 旅行社、酒店、景区、餐厅
+const condition1 = ['TRAVEL', 'HOTEL', 'TICKET', 'CATERING']
+// 旅游协会、一卡通、监理、古维管理部门
+const condition2 = ['ASSOCIATION', 'YKT', 'SUPERVISE', 'ANCIENT_UYGUR']
+// 旅游集团
+const condition3 = ['GROUP']
+// 文旅局
+const condition4 = ['CULTURE_BUREAU']
 let validatePass = async (_rule: Rule, value: string) => {
   if (value === '') {
     return Promise.reject('请输入密码！');
@@ -213,7 +212,7 @@ let validatePass2 = async (_rule: Rule, value: string) => {
     return Promise.resolve();
   }
 };
-// 旅行社、旅游集团、酒店、景区、餐厅
+// 旅行社、酒店、景区、餐厅
 const formRules6: Record<string, Rule[]> = {
   businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
   name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
@@ -236,20 +235,8 @@ const formRules6: Record<string, Rule[]> = {
   password: [{ required: true, validator: validatePass, trigger: 'change' }],
   checkPass: [{ validator: validatePass2, trigger: 'change' }],
 }
-// 一卡通
+// 旅游协会、一卡通、监理、古维管理部门
 const formRules9: Record<string, Rule[]> = {
-  businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
-  name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
-  regionCode: [{ required: true, trigger: 'blur', message: '请选择企业所属地区' }],
-  addressDetail: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
-  contactName: [{ required: true, trigger: 'blur', message: '请输入联系人姓名' }],
-  phone: [{ required: true, trigger: 'blur', message: '请输入联系电话' }],
-  account: [{ required: true, trigger: 'blur', message: '请输入超级管理员账号' }],
-  password: [{ required: true, validator: validatePass, trigger: 'change' }],
-  checkPass: [{ validator: validatePass2, trigger: 'change' }],
-}
-// 监理、古维管理部门
-const formRules7: Record<string, Rule[]> = {
   businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
   name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
   regionCode: [{ required: true, trigger: 'blur', message: '请选择企业所属地区' }],
@@ -260,11 +247,22 @@ const formRules7: Record<string, Rule[]> = {
   bankAccountName: [{ required: true, trigger: 'blur', message: '请输入公司账户名称' }],
   bank: [{ required: true, trigger: 'blur', message: '请输入开户行' }],
   bankAccount: [{ required: true, trigger: 'blur', message: '请输入公司账号' }],
+  creditCode: [{ required: true, trigger: 'blur', message: '请输入统一社会信用代码' }],
   account: [{ required: true, trigger: 'blur', message: '请输入超级管理员账号' }],
   password: [{ required: true, validator: validatePass, trigger: 'change' }],
   checkPass: [{ validator: validatePass2, trigger: 'change' }],
 }
-// 旅游协会、文旅局
+// 旅游集团
+const formRules7: Record<string, Rule[]> = {
+  businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
+  bankAccountName: [{ required: true, trigger: 'blur', message: '请输入公司账户名称' }],
+  bank: [{ required: true, trigger: 'blur', message: '请输入开户行' }],
+  bankAccount: [{ required: true, trigger: 'blur', message: '请输入公司账号' }],
+  account: [{ required: true, trigger: 'blur', message: '请输入超级管理员账号' }],
+  password: [{ required: true, validator: validatePass, trigger: 'change' }],
+  checkPass: [{ validator: validatePass2, trigger: 'change' }],
+}
+// 文旅局
 const formRules8: Record<string, Rule[]> = {
   businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
   name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
@@ -286,23 +284,11 @@ onDeactivated(() => {
   formRef.value.resetFields()
   formRules.value = formRules6
 })
-const businessTypeOption = [
-  { codeValue: 'HOTEL', name: '酒店' },
-  { codeValue: 'CATERING', name: '餐饮' },
-  { codeValue: 'TICKET', name: '景区' },
-  { codeValue: 'TRAVEL', name: '旅行社' },
-  { codeValue: 'GROUP', name: '集团' },
-  /* { codeValue: 'YKT', name: '一卡通' },
-  { codeValue: 'SUPERVISE', name: '监理' },
-  { codeValue: 'ASSOCIATION', name: '协会' },
-  { codeValue: 'CULTURE_BUREAU', name: '文旅局' },
-  { codeValue: 'ANCIENT_UYGUR', name: '古维管理部门' } */
-];
-/* const businessManageOptions = useBusinessManageOption();
+const businessManageOptions = useBusinessManageOption();
 const initOpeion = async () => {
   await businessManageOptions.getBusinessTypeOption();
 };
-const businessTypeOption = computed(() => businessManageOptions.businessTypeOption); */
+const businessTypeOption = computed(() => businessManageOptions.businessTypeOption);
 const uploadDown = () => {
   form.businessLicenseUrl = form.businessLicenseUrl ? form.businessLicenseUrl[0] : undefined
 }
@@ -356,7 +342,7 @@ const tipCancel = () => {
   tipVisible.value = false
 } */
 onMounted(() => {
-  // initOpeion()
+  initOpeion()
 })
 </script>
 

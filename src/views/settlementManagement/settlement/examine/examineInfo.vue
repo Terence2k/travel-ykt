@@ -13,39 +13,38 @@
 			<a-form-item label="行程单号" required>
 				<span>{{ formData.data.itineraryNo || '' }}</span>
 			</a-form-item>
-            <a-form-item label="线路名称" required>
+			<a-form-item label="线路名称" required>
 				<span>{{ formData.data.routeName }}</span>
 			</a-form-item>
-            <a-form-item label="组团社" required>
+			<a-form-item label="组团社" required>
 				<span>{{ formData.data.travelName }}</span>
 			</a-form-item>
-            <a-form-item label="地接社" required>
+			<a-form-item label="地接社" required>
 				<span>{{ formData.data.subTravelName }}</span>
 			</a-form-item>
-            <a-form-item label="行程时间" required>
+			<a-form-item label="行程时间" required>
 				<span>{{ formData.data.startDate }} - {{ formData.data.endDate }}</span>
 			</a-form-item>
-            <a-form-item label="游客人数" required>
+			<a-form-item label="游客人数" required>
 				<span>{{ formData.data.touristNum }}</span>
 			</a-form-item>
-            <a-form-item label="行程费用" required>
+			<a-form-item label="行程费用" required>
 				<span>{{ formData.data.totalFee }}</span>
 			</a-form-item>
-            <a-form-item label="结算费用" required>
+			<a-form-item label="结算费用" required>
 				<span>{{ formData.data.settlementCost }}</span>
 			</a-form-item>
 
 			<div class="title titleMargin">结算信息</div>
 			<CommonTable :dataSource="formData.settlementInformationVOList" :columns="columns" :scrollY="false" :scroll="{ y: '300px' }">
-				<template #bodyCell="{ column, record ,index}">
+				<template #bodyCell="{ column, record, index }">
 					<!-- 费用归属 -->
 					<template v-if="column.key === 'companyType'">
 						<span>{{ getBelongCompanyName(record.companyType) }}</span>
 					</template>
 					<!-- 结算费用 单位转成元-->
 					<template v-if="column.key === 'settlementCost'">
-						<span>
-							{{ (record.settlementCost / 100) > 0 ? (record.settlementCost / 100).toFixed(2) : 0}} </span>
+						<span> {{ record.settlementCost / 100 > 0 ? (record.settlementCost / 100).toFixed(2) : 0 }} </span>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
@@ -90,8 +89,8 @@ const getBelongCompanyName = computed(() => (value: any) => {
 		}
 		return '';
 	}
-	return ''
-})
+	return '';
+});
 // 取消
 const onCancel = () => {
 	route.go(-1);
@@ -137,7 +136,7 @@ const columns = [
 ];
 const formData: any = reactive({
 	data: {},
-    settlementInformationVOList: [],
+	settlementInformationVOList: [],
 });
 // 缓存编辑表格模态框数据
 const adjustData = ref({
@@ -180,7 +179,7 @@ const itemDetail = (oid: any) => {
 const initPage = async (): Promise<void> => {
 	api.examineDetail(111).then((res: any) => {
 		formData.data = res;
-		formData.settlementInformationVOList = res.settlementInformationVOList
+		formData.settlementInformationVOList = res.settlementInformationVOList;
 	});
 	console.log(route.currentRoute.value?.query.itineraryNo);
 };
@@ -198,11 +197,11 @@ onMounted(() => {
 // })
 // 调整费用模态框关闭回调 此时调用接口
 // const adjustConfirm = ((e: any) => {
-	//     console.log('我回来了');
-	//     console.log(e.form.settlementCost);
-	// 	message.success('保存成功');
-	// 	formData.settlementInformationVOList[adjustData.value.editIndex].settlementCost = e.form.settlementCost;
-//     // 
+//     console.log('我回来了');
+//     console.log(e.form.settlementCost);
+// 	message.success('保存成功');
+// 	formData.settlementInformationVOList[adjustData.value.editIndex].settlementCost = e.form.settlementCost;
+//     //
 // })
 </script>
 
@@ -260,10 +259,10 @@ onMounted(() => {
 .ant-form-item:first-child {
 	margin-top: 13px;
 }
-:v-deep(.ant-form-item-control-input) {
+::v-deep(.ant-form-item-control-input) {
 	height: 18px;
 }
-:v-deep(.ant-form-item-label > label) {
+::v-deep(.ant-form-item-label > label) {
 	position: relative;
 	display: inline-flex;
 	align-items: center;
