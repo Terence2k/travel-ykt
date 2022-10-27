@@ -35,7 +35,24 @@ export function isBtnZeroToHundred(rule: any, value: any, callback: any) {
 
 	// }, 100);
 }
-
+// 验证0-1的数，保留以为小数点
+export function isOnedecimalpoint(
+	rule: any,
+	value: string,
+	callback: (error?: Error) => void
+  ): void {
+	if (!value) {
+	  callback(new Error('请输入0-0.99的中的任意数值,允许保留一位小数点'));
+	} else {
+	  const re = /^([0-0.99](\.\d)?|10)$/;
+	  const rsCheck = re.test(value);
+	  if (!rsCheck) {
+		callback(new Error('请输入0-0.99的中的任意数值,允许保留一位小数点'));
+	  } else {
+		callback();
+	  }
+	}
+  }
 export function validateRules(rules: any, data: any, key?: string) {
 	let rulesRef: any = {};
 	if (key) {

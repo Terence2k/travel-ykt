@@ -255,3 +255,22 @@ export async function getScenicSave(data: any) {
 		data,
 	});
 }
+
+// 获取核销记录分页数据
+export async function getWriteOffRecordList(data: any) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-verif-record/page`,
+		method: 'get',
+		data,
+		showLoading: true,
+	});
+}
+
+//获取核销记录详情
+export async function getWriteOffRecordDetails(oid: number) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-verif-record/${oid}`,
+		method: 'get',
+		showLoading: true,
+	});
+}
