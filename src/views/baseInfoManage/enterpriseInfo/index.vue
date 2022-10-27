@@ -429,13 +429,16 @@ const initOpeion = async () => {
   }
   console.log('state.form:', state.form)
   // 右上角文字描述判断
-  formRef.value.validate().then((res: any) => {
-    enterpriseState.value = travelStore.enterpriseState[state.form.informationAuditStatus]?.descriptions;
-	}).catch((err: any) => {
-    console.log(err)
-    // enterpriseState.value = '信息不完善，待补充。';
-    formRef.value.clearValidate();
-  });
+  enterpriseState.value = travelStore.enterpriseState[state.form.informationAuditStatus]?.descriptions;
+
+  // 判断字段是否为空，如为空则显示待补充信息
+  // formRef.value.validate().then((res: any) => {
+  //   enterpriseState.value = travelStore.enterpriseState[state.form.informationAuditStatus]?.descriptions;
+	// }).catch((err: any) => {
+  //   console.log(err)
+  //   // enterpriseState.value = '信息不完善，待补充。';
+  //   formRef.value.clearValidate();
+  // });
 
   validateArray.value = Object.keys(form.value).map((item: any) => {
     return {
