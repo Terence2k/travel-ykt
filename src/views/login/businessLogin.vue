@@ -49,6 +49,7 @@ const handleFinish = async (values: any) => {
     if (res == '提交成功，请耐心等待审核通过!') {
       message.success(res);
       businessLoginRef.value.restForm()
+      goTo()
     } else {
       message.error(res);
     }

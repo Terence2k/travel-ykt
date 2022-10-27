@@ -77,6 +77,7 @@
 								<a v-else @click="enable(record)">启用</a>
 								<a @click="goTo(record, 'details')">查看</a>
 								<a @click="resetPassword(record.oid)">重置密码</a>
+								<a @click="edit(record)" v-show="editVisible(record.businessType)">编辑</a>
 							</div>
 						</template>
 					</template>
@@ -298,6 +299,14 @@ const getComputedVal = computed(() => (key: string, val: any) => {
 		return val == 1 ? '是' : '否'
 	} else {
 		return val
+	}
+})
+const editVisible = computed(() => (type: string) => {
+	// 集团、监理、协会、文旅局、古维管理部门可编辑
+	if (['GROUP', 'SUPERVISE', 'ASSOCIATION', 'CULTURE_BUREAU', 'ANCIENT_UYGUR'].includes(type)) {
+		return true
+	} else {
+		return false
 	}
 })
 const failForm = reactive({
@@ -784,6 +793,7 @@ const enable = async (record: any) => {
 		message.error('启用失败！')
 	}
 }
+const edit = (record: any) => { }
 const disableCancel = () => {
 	disableVisible.value = false
 }
