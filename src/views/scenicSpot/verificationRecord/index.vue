@@ -4,13 +4,13 @@
 			<div class="search-bar">
 				<div class="item">
 					<span class="field-input item">输入搜索</span>
-					<a-input class="input-search-keywords item" v-model:value="tableState.tableData.param.searchKeyWords" placeholder="旅行社名称/关键词" />
+					<a-input class="input-search-keywords item" v-model:value="tableState.tableData.param.sendTravelName" placeholder="旅行社名称/关键词" />
 				</div>
 
 				<div class="item">
 					<span class="field-select item">核销状态</span>
 					<a-select
-						v-model:value="tableState.tableData.param.writeOffStatus"
+						v-model:value="tableState.tableData.param.verifState"
 						class="select-writeOff-status select item"
 						:showArrow="true"
 						:options="tableState.writeOffStatusOptions"
@@ -21,12 +21,12 @@
 
 				<div class="item">
 					<span class="field-input item">核销日期</span>
-					<a-date-picker class="input-writeOff-date item" v-model:value="tableState.tableData.param.writeOffDate" placeholder="请选择核销日期" />
+					<a-date-picker class="input-writeOff-date item" v-model:value="tableState.tableData.param.startTime" placeholder="请选择核销日期" />
 				</div>
 
 				<div class="item">
 					<span class="field-input item">订单编号</span>
-					<a-input class="input-order-num item" v-model:value="tableState.tableData.param.orderNum" placeholder="请输入订单编号" />
+					<a-input class="input-order-num item" v-model:value="tableState.tableData.param.orderNo" placeholder="请输入订单编号" />
 				</div>
 
 				<div class="item button-search-wrapper">
@@ -78,20 +78,26 @@ import api from '@/api';
 
 interface DataSourceItem {
 	key: string | number;
-	orderNum: string;
-	writeOffItem: string;
-	writeOffDate: string;
-	scenicSpot: string;
-	travelAgencyName: string;
-	bookingNum: number;
-	writeOffNum: number;
-	orderAmount: number;
-	writeOffStatus: string;
+	orderNo: string;
+	verificationItemName: string;
+	verificationTime: string;
+	scenicName: string;
+	sendTravelName: string;
+	verifCount: string;
 }
 
 const router = useRouter();
 
-let writeOffStatusOptionsData = [];
+let writeOffStatusOptionsData = [
+	{
+		value: true,
+		label: '已核销',
+	},
+	{
+		value: false,
+		label: '未开始核销',
+	},
+];
 const tableState = reactive({
 	tableData: {
 		data: [],
@@ -100,10 +106,10 @@ const tableState = reactive({
 		param: {
 			pageNo: 1,
 			pageSize: 10,
-			searchKeyWords: undefined,
-			writeOffStatus: undefined,
-			writeOffDate: undefined,
-			orderNum: undefined,
+			sendTravelName: undefined,
+			verifState: undefined,
+			startTime: undefined,
+			orderNo: undefined,
 		},
 	},
 	writeOffStatusOptions: ref<SelectProps['options']>(writeOffStatusOptionsData),
@@ -112,95 +118,60 @@ const tableState = reactive({
 const columns: TableColumnsType = [
 	{
 		title: '订单编号',
-		dataIndex: 'orderNum',
-		key: 'orderNum',
+		dataIndex: 'orderNo',
+		key: 'orderNo',
+		width: 100,
 	},
 	{
 		title: '核销项目',
-		dataIndex: 'writeOffItem',
-		key: 'writeOffItem',
+		dataIndex: 'verificationItemName',
+		key: 'verificationItemName',
+		width: 100,
 	},
 	{
 		title: '核销时间',
-		dataIndex: 'writeOffDate',
-		key: 'writeOffDate',
+		dataIndex: 'verificationTime',
+		key: 'verificationTime',
+		width: 100,
 	},
 	{
 		title: '归属景区',
-		dataIndex: 'scenicSpot',
-		key: 'scenicSpot',
+		dataIndex: 'scenicName',
+		key: 'scenicName',
+		width: 100,
 	},
 	{
 		title: '旅行社名称',
-		dataIndex: 'travelAgencyName',
-		key: 'travelAgencyName',
+		dataIndex: 'sendTravelName',
+		key: 'sendTravelName',
+		width: 100,
 	},
-	{
-		title: '订票人数',
-		dataIndex: 'bookingNum',
-		key: 'bookingNum',
-	},
-	{
-		title: '核销人数',
-		dataIndex: 'writeOffNum',
-		key: 'writeOffNum',
-	},
-	{
-		title: '订单金额',
-		dataIndex: 'orderAmount',
-		key: 'orderAmount',
-	},
+
 	{
 		title: '核销状态',
-		dataIndex: 'writeOffStatus',
-		key: 'writeOffStatus',
+		dataIndex: 'verifCount',
+		key: 'verifCount',
+		width: 250,
 	},
 	{
 		title: '操作',
 		dataIndex: 'actions',
 		key: 'actions',
 		fixed: 'right',
-		width: 160,
+		width: 80,
 	},
 ];
 
-let dataSource: DataSourceItem[] = [
-	{
-		key: 1,
-		orderNum: '100001',
-		writeOffItem: '入园',
-		writeOffDate: '2022年8月30日 14:49:18',
-		scenicSpot: '木府',
-		travelAgencyName: '夏日里旅行社',
-		bookingNum: 22,
-		writeOffNum: 22,
-		orderAmount: 2200,
-		writeOffStatus: '已核销',
-	},
-	{
-		key: 2,
-		orderNum: '103323',
-		writeOffItem: '入园',
-		writeOffDate: '2022年8月29日 10:49:20',
-		scenicSpot: '木府',
-		travelAgencyName: '新世界旅行社',
-		bookingNum: 12,
-		writeOffNum: 12,
-		orderAmount: 3200,
-		writeOffStatus: '已核销',
-	},
-];
-
-// const dataSource = computed(() => {
-// 	if (Array.isArray(tableState.tableData.data)) {
-// 		return tableState.tableData.data.map((item) => {
-// 			return {
-// 				...item,
-// 				key: item?.oid,
-// 			};
-// 		});
-// 	}
-// });
+const dataSource = computed(() => {
+	if (Array.isArray(tableState.tableData.data)) {
+		return tableState.tableData.data.map((item) => {
+			return {
+				...item,
+				key: item?.oid,
+			};
+		});
+	}
+});
 
 const rowSelection = computed(() => {
 	return {
@@ -217,22 +188,25 @@ const rowSelection = computed(() => {
 });
 
 const onSearch = () => {
+	const startTime = tableState.tableData.param.startTime ? dayjs(tableState.tableData.param.startTime)?.format('YYYY-MM-DD') : '';
+	const endTime = tableState.tableData.param.startTime ? dayjs(tableState.tableData.param.startTime).add(1, 'day').format('YYYY-MM-DD') : '';
 	const requestParams = {
 		...tableState.tableData.param,
-		writeOffDate: dayjs(tableState.tableData.param.writeOffDate)?.format('YYYY-MM-DD'),
+		startTime: startTime,
+		endTime: endTime,
 	};
 
 	console.log('search params: ', requestParams);
-	// api
-	// 	.getHotelTableInfo(tableState.tableData.param)
-	// 	.then((res: any) => {
-	// 		console.log('res:', res);
-	// 		tableState.tableData.data = res.content;
-	// 		tableState.tableData.total = res.total;
-	// 	})
-	// 	.catch((err: any) => {
-	// 		console.log(err);
-	// 	});
+	api
+		.getWriteOffRecordList(requestParams)
+		.then((res: any) => {
+			console.log('res:', res);
+			tableState.tableData.data = res.content;
+			tableState.tableData.total = res.total;
+		})
+		.catch((err: any) => {
+			console.log(err);
+		});
 };
 
 const searchByFilter = () => {
@@ -253,8 +227,10 @@ const pageSideChange = (current: number, size: number) => {
 };
 
 const openDisplayPage = (record) => {
-	router.push({ path: '/scenic-spot/verificationRecord/verificationRecordDisplay', query: { id: record.orderNum } });
-	console.log('open display page');
+	if (record?.oid || record?.oid === 0) {
+		router.push({ path: '/scenic-spot/verificationRecord/verificationRecordDisplay', query: { id: record.oid } });
+		console.log('open display page');
+	}
 };
 
 onMounted(() => {
