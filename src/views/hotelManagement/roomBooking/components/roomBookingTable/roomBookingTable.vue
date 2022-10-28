@@ -555,6 +555,8 @@ watch(
 
 const openRoomStatusDetailsModal = (data: any) => {
 	console.log('当前单元格数据：', data);
+	tableState.roleId = undefined;
+	tableState.auditBusinessType = '';
 	if (data?.auditStatus === 0 && data?.uuid) {
 		api.getRoleId({ uuid: data?.uuid }).then((res) => {
 			console.log('sssss', res);
