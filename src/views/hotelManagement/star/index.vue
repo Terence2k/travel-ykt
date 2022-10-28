@@ -22,7 +22,7 @@
 						<template #bodyCell="{ column, record }">
 							<template v-if="column.dataIndex === 'price'">
 								<div class="cell-price">
-									<span class="item">{{ record.price / 100 }}</span>
+									<span class="item">{{ accDiv(record.price, 100) }}</span>
 								</div>
 							</template>
 							<template v-if="column.dataIndex === 'actions'">
@@ -57,7 +57,7 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import HotelStarAddUpdate from './components/hotelStar-add-update/hotelStar-add-update.vue';
 import api from '@/api';
-
+import { accDiv } from '@/utils/compute';
 const status = ref('');
 let statusOptionsData = [
 	{

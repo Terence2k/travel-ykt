@@ -27,6 +27,7 @@
 import BaseModal from '@/components/common/BaseModal.vue';
 import { Ref } from 'vue';
 import { message } from 'ant-design-vue';
+import { accDiv, accMul } from '@/utils/compute';
 import api from '@/api';
 
 const props = defineProps({
@@ -57,7 +58,7 @@ const save = () => {
 		api
 			.editHotelStarData({
 				oid: formValidate.value.oid,
-				price: parseInt(formValidate.value.price) * 100,
+				price: accMul(parseInt(formValidate.value.price), 100),
 				starCode: formValidate.value.starCode,
 				ratedStatus: formValidate.value.ratedStatus,
 			})
@@ -74,7 +75,7 @@ const save = () => {
 		api
 			.addHotelStarData({
 				...formValidate.value,
-				price: parseInt(formValidate.value.price) * 100,
+				price: accMul(parseInt(formValidate.value.price), 100),
 			})
 			.then((res: any) => {
 				console.log('res:', res);
@@ -92,7 +93,7 @@ const init = async () => {
 	console.log('params', props.params);
 	formValidate.value = {};
 	if (props.params?.oid) {
-		formValidate.value = { ...props.params, price: parseInt(props.params.price) / 100 };
+		formValidate.value = { ...props.params, price: accDiv(parseInt(props.params.price), 100) };
 		options.title = '编辑酒店星级';
 	} else {
 		options.title = '新增酒店星级';
