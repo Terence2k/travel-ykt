@@ -618,10 +618,10 @@ const passModalInfo = () => {
 			.then((res: any) => {
 				console.log('审核通过 返回：', res);
 				modalState.visible = false;
-				setTimeout(() => {
-					getHotelRoomTypeStockTableInfo(props?.hotelId);
-				}, 1000);
-				//getHotelRoomTypeStockTableInfo(props?.hotelId);
+				// setTimeout(() => {
+				// 	getHotelRoomTypeStockTableInfo(props?.hotelId);
+				// }, 1000);
+				getHotelRoomTypeStockTableInfo(props?.hotelId);
 			});
 	}
 };
@@ -637,10 +637,10 @@ const failModalInfo = () => {
 			.then((res: any) => {
 				console.log('审核不通过 返回：', res);
 				modalState.visible = false;
-				setTimeout(() => {
-					getHotelRoomTypeStockTableInfo(props?.hotelId);
-				}, 1000);
-				//getHotelRoomTypeStockTableInfo(props?.hotelId);
+				// setTimeout(() => {
+				// 	getHotelRoomTypeStockTableInfo(props?.hotelId);
+				// }, 1000);
+				getHotelRoomTypeStockTableInfo(props?.hotelId);
 			});
 	}
 };
