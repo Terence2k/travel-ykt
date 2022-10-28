@@ -21,7 +21,7 @@
 
 				<div class="item">
 					<span class="field-input item">核销日期</span>
-					<a-date-picker class="input-writeOff-date item" v-model:value="tableState.tableData.param.startTime" placeholder="请选择核销日期" />
+					<a-range-picker class="input-writeOff-date item" v-model:value="tableState.tableData.param.startTime" />
 				</div>
 
 				<div class="item">
@@ -188,14 +188,18 @@ const rowSelection = computed(() => {
 });
 
 const onSearch = () => {
-	const startTime = tableState.tableData.param.startTime ? dayjs(tableState.tableData.param.startTime)?.format('YYYY-MM-DD') : '';
-	const endTime = tableState.tableData.param.startTime ? dayjs(tableState.tableData.param.startTime).add(1, 'day').format('YYYY-MM-DD') : '';
+	console.info('tableState.tableData.param.startTime', tableState.tableData.param.startTime);
+	let startTime = '',
+		endTime = '';
+	if (Array.isArray(tableState.tableData.param?.startTime) && tableState.tableData.param?.startTime?.length === 2) {
+		startTime = tableState.tableData.param?.startTime[0] ? dayjs(tableState.tableData.param.startTime[0])?.format('YYYY-MM-DD') : '';
+		endTime = tableState.tableData.param?.startTime[1] ? dayjs(tableState.tableData.param.startTime[1]).format('YYYY-MM-DD') : '';
+	}
 	const requestParams = {
 		...tableState.tableData.param,
 		startTime: startTime,
 		endTime: endTime,
 	};
-
 	console.log('search params: ', requestParams);
 	api
 		.getWriteOffRecordList(requestParams)
