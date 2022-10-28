@@ -92,7 +92,6 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import api from '@/api';
 import viewTable from './components/table.vue';
 import ApplyChange from './components/applyChange.vue';
-
 const navigatorBar = useNavigatorBar();
 const ticketType = ['联票', '单票', '演出票'];
 // import { userList } from '@/api';

@@ -107,7 +107,7 @@ const addTimeList = () => {
 const del = (index: number) => {
 	formValidate.data.dateList.splice(index, 1);
 };
-
+const emits = defineEmits(['down-page']);
 const apply = () => {
 	formRef.value
 		.validateFields()
@@ -119,11 +119,11 @@ const apply = () => {
 				delete i.time;
 				return i;
 			});
-			cancel();
 			console.log(res, params);
-
 			// let apiRes = api.scenicTicketDown(params);
 			// console.log(apiRes, 'apiRes');
+			emits('down-page');
+			cancel();
 		})
 		.catch((err: any) => {
 			console.log(err);

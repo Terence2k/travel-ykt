@@ -134,8 +134,6 @@ const del = (record: any) => {
 	// emits('del-verification-obj', index);
 };
 const delSubmit = () => {
-	// emits('del-verification-obj', toRaw(delOid.value));
-	// console.log(delOid.value);
 	api.singleVoteDel(delOid.value);
 	delCancel();
 

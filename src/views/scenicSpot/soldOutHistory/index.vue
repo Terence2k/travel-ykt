@@ -121,8 +121,8 @@ const columns = [
 	},
 	{
 		title: '原因',
-		dataIndex: 'derateRule',
-		key: 'derateRule',
+		dataIndex: 'downReason',
+		key: 'downReason',
 		width: 120,
 	},
 	{
