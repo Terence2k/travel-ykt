@@ -1,63 +1,65 @@
 <template>
 	<div class="wrapper">
-		<CommonTable :dataSource="tableList" :columns="columnsCount" :scrollY="false" bordered class="left">
-			<template #bodyCell="{ column, record, index }">
-				<template v-if="column.key === 'action'">
-					<div class="action-btns">
-						<a href="javascript:;" @click="createData(record, index)">编辑价格日历</a>
-					</div>
+		<a-spin size="large" :spinning="loading" style="min-height: 30vh">
+			<CommonTable :dataSource="tableList" :columns="columnsCount" :scrollY="false" bordered class="left">
+				<template #bodyCell="{ column, record, index }">
+					<template v-if="column.key === 'action'">
+						<div class="action-btns">
+							<a href="javascript:;" @click="createData(record, index)">编辑价格日历</a>
+						</div>
+					</template>
 				</template>
-			</template>
-		</CommonTable>
+			</CommonTable>
 
-		<Calendar
-			ref="calendarRef"
-			:setCurrentInventory="currentInventory"
-			:setCurrentValue="currentPrict"
-			:setList="setDayPriceList"
-			@get-current-day="getCurrentDay"
-			@clear-current-day="clearCurrentDay"
-			@save-data="saveDate"
-		>
-			<header class="tips">
-				<p>说明：点击后编辑每日库存，不编辑默认库存为默认</p>
-				<p>说明：点击后编辑每日价格，不编辑则默认价格为默认价格，价格为默认价格时不可保存价格日历</p>
-			</header>
+			<Calendar
+				ref="calendarRef"
+				:setCurrentInventory="currentInventory"
+				:setCurrentValue="currentPrict"
+				:setList="setDayPriceList"
+				@get-current-day="getCurrentDay"
+				@clear-current-day="clearCurrentDay"
+				@save-data="saveDate"
+			>
+				<header class="tips">
+					<p>说明：点击后编辑每日库存，不编辑默认库存为默认</p>
+					<p>说明：点击后编辑每日价格，不编辑则默认价格为默认价格，价格为默认价格时不可保存价格日历</p>
+				</header>
 
-			<section>
-				<div class="set-wrap">
-					<p>
-						<span class="label">时间：</span>
-						<a-range-picker v-model:value="dateRange" />
-					</p>
-					<p>
-						<span class="label">库存:</span>
-						<a-input-number
-							:min="0"
-							:max="99999"
-							v-model:value="currentInventory"
-							:formatter="(value) => value.replace(/\D/g, '')"
-							:parser="(value) => value.replace(/\D/g, '')"
-							placeholder="输入库存"
-							style="width: 200px"
-						/>
-					</p>
-					<p>
-						<span class="label">按日设置</span>
-						<a-input-number
-							:min="0"
-							:max="9999999999"
-							v-model:value="currentPrict"
-							:formatter="(value) => value.replace(/\D/g, '')"
-							:parser="(value) => value.replace(/\D/g, '')"
-							placeholder="输入当日票价"
-							style="width: 200px"
-						/>
-						<a-button @click="createDateItem">确定</a-button>
-					</p>
-				</div>
-			</section>
-		</Calendar>
+				<section>
+					<div class="set-wrap">
+						<p>
+							<span class="label">时间：</span>
+							<a-range-picker v-model:value="dateRange" />
+						</p>
+						<p>
+							<span class="label">库存:</span>
+							<a-input-number
+								:min="0"
+								:max="99999"
+								v-model:value="currentInventory"
+								:formatter="(value) => value.replace(/\D/g, '')"
+								:parser="(value) => value.replace(/\D/g, '')"
+								placeholder="输入库存"
+								style="width: 200px"
+							/>
+						</p>
+						<p>
+							<span class="label">按日设置</span>
+							<a-input-number
+								:min="0"
+								:max="9999999999"
+								v-model:value="currentPrict"
+								:formatter="(value) => value.replace(/\D/g, '')"
+								:parser="(value) => value.replace(/\D/g, '')"
+								placeholder="输入当日票价"
+								style="width: 200px"
+							/>
+							<a-button @click="createDateItem">确定</a-button>
+						</p>
+					</div>
+				</section>
+			</Calendar>
+		</a-spin>
 	</div>
 </template>
 
@@ -70,6 +72,7 @@ import Calendar from '@/components/common/calendarDouble.vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 const route = useRouter();
+const loading = ref(false);
 // 数据
 const props = defineProps({
 	tableList: {
@@ -153,6 +156,7 @@ const saveDate = async () => {
 		};
 	});
 	if (isEdit.value) {
+		loading.value = true;
 		console.log('调用编辑日历接口', setDayPriceList.value);
 		const { uniteId, subTicketId, startDate, endDate } = state.data;
 		newObjTpl.ticketId = uniteId;
@@ -164,8 +168,10 @@ const saveDate = async () => {
 
 		let resApi = await api.geditCalendarMultiple(newObjTpl);
 		message.success(resApi);
+		loading.value = false;
 	} else {
 		emits('set-calendar', { index: createNewCalendarIndex.value, data: res });
+		loading.value = false;
 	}
 	console.log('保存数据', props.tableList);
 	setDayPriceList.value = [];
@@ -310,7 +316,7 @@ const createData = (value: any, index: number) => {
 	// modelValue.value = true;
 	console.log('value', index, isEdit.value);
 	if (isEdit.value) {
-		initCalendarList(value.sonOid);
+		initCalendarList(value.ticketId);
 	} else {
 		createNewCalendarIndex.value = index;
 	}
