@@ -77,8 +77,8 @@ const columns: TableColumnsType = [
 	},
 	{
 		title: '系统房型',
-		dataIndex: 'sysRoomTypeCode',
-		key: 'sysRoomTypeCode',
+		dataIndex: 'sysRoomTypeName',
+		key: 'sysRoomTypeName',
 		width: '25%',
 	},
 	{
