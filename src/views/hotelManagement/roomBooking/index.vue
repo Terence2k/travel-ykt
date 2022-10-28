@@ -65,7 +65,7 @@ const auditStatusData = ref([
 const auditStatusOptions = ref<SelectProps['options']>(auditStatusData);
 
 const clearSearchFilter = () => {
-	auditStatus.value = undefined;
+	auditStatus.value = null;
 };
 
 watch(
@@ -79,7 +79,7 @@ watch(
 						label: item?.hotelName,
 					};
 				});
-				console.log('eeeeeeeeeeeeeeeeeeeee', hotelOptionsData.value[0]?.value);
+				//console.log('eeeeeeeeeeeeeeeeeeeee', hotelOptionsData.value[0]?.value);
 				hotel.value = hotelOptionsData.value[0]?.value || '';
 			}
 		});

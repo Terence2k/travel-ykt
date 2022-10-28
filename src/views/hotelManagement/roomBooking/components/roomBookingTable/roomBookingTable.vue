@@ -555,6 +555,8 @@ watch(
 
 const openRoomStatusDetailsModal = (data: any) => {
 	console.log('当前单元格数据：', data);
+	tableState.roleId = undefined;
+	tableState.auditBusinessType = '';
 	if (data?.auditStatus === 0 && data?.uuid) {
 		api.getRoleId({ uuid: data?.uuid }).then((res) => {
 			console.log('sssss', res);
@@ -616,10 +618,10 @@ const passModalInfo = () => {
 			.then((res: any) => {
 				console.log('审核通过 返回：', res);
 				modalState.visible = false;
-				setTimeout(() => {
-					getHotelRoomTypeStockTableInfo(props?.hotelId);
-				}, 1000);
-				//getHotelRoomTypeStockTableInfo(props?.hotelId);
+				// setTimeout(() => {
+				// 	getHotelRoomTypeStockTableInfo(props?.hotelId);
+				// }, 1000);
+				getHotelRoomTypeStockTableInfo(props?.hotelId);
 			});
 	}
 };
@@ -635,10 +637,10 @@ const failModalInfo = () => {
 			.then((res: any) => {
 				console.log('审核不通过 返回：', res);
 				modalState.visible = false;
-				setTimeout(() => {
-					getHotelRoomTypeStockTableInfo(props?.hotelId);
-				}, 1000);
-				//getHotelRoomTypeStockTableInfo(props?.hotelId);
+				// setTimeout(() => {
+				// 	getHotelRoomTypeStockTableInfo(props?.hotelId);
+				// }, 1000);
+				getHotelRoomTypeStockTableInfo(props?.hotelId);
 			});
 	}
 };
