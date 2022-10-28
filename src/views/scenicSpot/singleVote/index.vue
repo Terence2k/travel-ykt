@@ -138,7 +138,11 @@ const delSubmit = () => {
 	// console.log(delOid.value);
 	api.singleVoteDel(delOid.value);
 	delCancel();
-	initList();
+
+	state.tableData.loading = true;
+	setTimeout(() => {
+		initList();
+	}, 300);
 };
 const delCancel = () => {
 	delShow.value = false;
