@@ -92,6 +92,9 @@ const getComputedVal = computed(() => (key: string, val: any) => {
       case 'ANCIENT_UYGUR':
         name = '古维管理部门'
         break;
+      case 'YKT':
+        name = '一卡通'
+        break;
     }
     return name
   } else {
@@ -124,7 +127,7 @@ const getData = async () => {
     }
   }
 }
-onMounted(() => {
+onActivated(() => {
   if (props.oid) {
     let key: keyof queryParamsType;
     for (key in props) {

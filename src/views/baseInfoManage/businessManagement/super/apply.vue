@@ -272,6 +272,9 @@ const goTo = (value: any, name: string) => {
 		params: newObj
 	})
 }
+const props = defineProps<{
+	type?: string,
+}>()
 const activeKey = ref('1')
 const modalVisible = ref(false)
 const disableVisible = ref(false)
@@ -301,9 +304,10 @@ const getComputedVal = computed(() => (key: string, val: any) => {
 		return val
 	}
 })
+const editList = ['GROUP', 'SUPERVISE', 'ASSOCIATION', 'CULTURE_BUREAU', 'ANCIENT_UYGUR']
 const editVisible = computed(() => (type: string) => {
 	// 集团、监理、协会、文旅局、古维管理部门可编辑
-	if (['GROUP', 'SUPERVISE', 'ASSOCIATION', 'CULTURE_BUREAU', 'ANCIENT_UYGUR'].includes(type)) {
+	if (editList.includes(type) && props.type === 'YKT') {
 		return true
 	} else {
 		return false
