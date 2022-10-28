@@ -2,7 +2,7 @@ FROM node:12.18.0 AS builder
 WORKDIR /app/
 ADD .npmrc .
 ADD package.json .
-RUN npm install pnpm  && pnpm install
+RUN npm install -g pnpm  && pnpm install
 ADD . .
 RUN npm run build:{build_env}
 
