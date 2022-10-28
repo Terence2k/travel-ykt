@@ -95,7 +95,7 @@ const sendGroup = async (id: string) => {
 
 const saveItinerary = (val: any) => {
 	console.log(travelStore.touristList);
-	const itineraryId =  route.query.id || traveListData.id
+	const itineraryId =  route.query.id || traveListData.oid
 	let ajax = itineraryId ? api.travelManagement.editItinerary : api.travelManagement.saveItinerary;
 	return ajax({
 		oid: itineraryId ? itineraryId.toString() : null,
@@ -135,7 +135,7 @@ watch(obj, (newVal) => {
 });
 
 const getTraveDetail = () => {
-	if (!route.query.id && !traveListData) {
+	if (!route.query.id && !traveListData.oid) {
 		travelStore.setBaseInfo({});
 		travelStore.setGuideList([]);
 		travelStore.setTouristList([]);
