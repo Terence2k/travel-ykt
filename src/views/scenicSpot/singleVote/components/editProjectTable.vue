@@ -260,7 +260,7 @@ const formData = reactive({
 	data: [],
 });
 
-const handleChange = (value) => {
+const handleChange = (value: any) => {
 	console.log(value, 'asdasd');
 	formValidate.proj = value;
 };
@@ -290,7 +290,7 @@ onMounted(() => {
 });
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="less">
 .inner-wrapper {
 	position: relative;
 	display: flex;

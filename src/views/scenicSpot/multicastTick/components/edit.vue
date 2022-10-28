@@ -23,7 +23,7 @@
 				<TableRule :tableList="formData.data.discountList" @del-rule-obj="delRuleObj" @add-rule-obj="addRuleObj" />
 			</a-form-item>
 			<a-form-item label="设置价格" v-bind="validateInfos[`data.scenicTicketList`]">
-				<TablePrice :tableList="formData.data.scenicTicketList" @del-rule-obj="delRuleObj" @add-rule-obj="addRuleObj" />
+				<TablePrice :tableList="formData.data.scenicTicketList" @set-calendar="setCalendar" @del-rule-obj="delRuleObj" @add-rule-obj="addRuleObj" />
 			</a-form-item>
 			<a-form-item label="库存" name="data.dayStock" v-bind="validateInfos[`data.dayStock`]">
 				<a-input v-model:value="formData.data.dayStock" placeholder="请填写库存" />
@@ -79,7 +79,7 @@ interface forDataType {
 		oid: null | number;
 		discountList: any[] | null;
 		ticketName: null | string;
-		scenicTicketList: any[] | null;
+		scenicTicketList: any[];
 		dayStock: string | number | null;
 	};
 }
@@ -117,6 +117,14 @@ const addRuleObj = (obj: any) => {
 		formData.data.discountList = [];
 	}
 	formData.data.discountList?.push(obj);
+};
+
+//新增-设置日历
+const setCalendar = (val: any) => {
+	console.log('获取日历信息', val);
+	console.log('获取日历信息', val.index);
+	formData.data.scenicTicketList[val.index].dateStockList = val.data;
+	console.log(formData.data, 'save');
 };
 const changeOption = (arr: any) => {
 	let list = childrenTicketOption.value.filter((item: any) => arr.includes(item.ticketId));
@@ -221,7 +229,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="less">
 .editWrapper {
 	padding: 0 16px;
 	padding-bottom: 64px;

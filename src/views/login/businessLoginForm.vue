@@ -8,23 +8,23 @@
       </a-select>
     </a-form-item>
     <a-form-item name="name" label="企业名称">
-      <a-input v-model:value="$attrs.model.name" placeholder="请输入企业名称">
+      <a-input v-model:value="$attrs.model.name" placeholder="请输入企业名称" autocomplete="off">
       </a-input>
     </a-form-item>
     <a-form-item name="creditCode" label="信用代码">
-      <a-input v-model:value="$attrs.model.creditCode" placeholder="请输入信用代码">
+      <a-input v-model:value="$attrs.model.creditCode" placeholder="请输入信用代码" autocomplete="off">
       </a-input>
     </a-form-item>
-    <a-form-item name="account" label="账号">
-      <a-input v-model:value="$attrs.model.account" placeholder="请输入账号">
+    <a-form-item name="account" label="登录账号">
+      <a-input v-model:value="$attrs.model.account" placeholder="请输入登录账号" autocomplete="off">
       </a-input>
     </a-form-item>
     <a-form-item name="phone" label="手机号">
-      <a-input v-model:value="$attrs.model.phone" placeholder="请输入手机号">
+      <a-input v-model:value="$attrs.model.phone" placeholder="请输入手机号" autocomplete="off">
       </a-input>
     </a-form-item>
-    <a-form-item name="contactName" label="管理员">
-      <a-input v-model:value="$attrs.model.contactName" placeholder="请输入管理员姓名">
+    <a-form-item name="contactName" label="管理员姓名">
+      <a-input v-model:value="$attrs.model.contactName" placeholder="请输入管理员姓名" autocomplete="off">
       </a-input>
     </a-form-item>
     <a-form-item name="region" label="所属地区">
@@ -64,7 +64,7 @@ const formRules: any = {
   businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
   name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
   creditCode: [{ required: true, trigger: 'blur', message: '请输入信用代码' }],
-  account: [{ required: true, trigger: 'blur', message: '请输入账号' }],
+  account: [{ required: true, trigger: 'blur', message: '请输入登录账号' }],
   phone: [{ required: true, trigger: 'blur', message: '请输入手机号' }],
   contactName: [{ required: true, trigger: 'blur', message: '请输入管理员姓名' }],
   region: [{ required: true, trigger: 'blur', message: '请选择所属地区' }],

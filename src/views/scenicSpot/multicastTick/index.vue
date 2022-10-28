@@ -193,4 +193,4 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped lang="less"></style>

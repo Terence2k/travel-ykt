@@ -169,7 +169,7 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 onMounted(() => {});
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="less">
 .wrapper {
 	position: relative;
 	// width: 100%;
