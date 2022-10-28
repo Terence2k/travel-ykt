@@ -84,7 +84,7 @@ const loadData: CascaderProps['loadData'] = async (selectedOptions) => {
     }
 } */
 const reproduceOpetion = async () => {
-    list.value = await getAllAreaProvice(0)
+    // list.value = await getAllAreaProvice(0)
     const regionCode = attrs.value as number[]
     if (regionCode && regionCode.length > 0) {
         const provinceId = regionCode[0]// '省'
@@ -109,8 +109,14 @@ const reproduceOpetion = async () => {
         }
     }
 }
-onMounted(async () => {
-    reproduceOpetion()
+watch(() => attrs.value,
+    async (newVal) => {
+        list.value = await getAllAreaProvice(0)
+        if (newVal) {
+            reproduceOpetion()
+        }
+    }, {
+    immediate: true
 })
 </script>
 
