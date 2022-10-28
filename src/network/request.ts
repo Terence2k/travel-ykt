@@ -40,6 +40,15 @@ const fetch = async (options: OptionsProp) => {
         headers,
         responseType
       });
+
+    case "put":
+      return axios.request({
+        url: url,
+        data,
+        method: 'PUT',
+        headers,
+        responseType
+      });
     /**
      * {
      *  'name':'file'

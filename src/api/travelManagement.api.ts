@@ -136,6 +136,14 @@ export const travelManagement = {
             method: 'post',
             showLoading: true
         });
+    },
+    sendGroup(data: any){
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/sendGroup`,
+            data,
+            method: 'put',
+            showLoading: true
+        });
     }
     
 }

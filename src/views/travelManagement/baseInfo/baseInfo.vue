@@ -240,15 +240,16 @@ const onSubmit = async () => {
 	}
 };
 const getTeamTypeList = async () => {
-	const res = await api.commonApi.getTeamTypeList(page.teamType);
-	list.teamType = res.content;
+	// page.teamType
+	const res = await api.commonApi.getTeamTypeList();
+	list.teamType = res;
 }
 const getSubtravelList = async () => {
 	const res = await api.travelManagement.getSubtravelList(page.subTravelList);
 	list.subTravelList = res.content;
 }
 const gettravelOperatorList = async (travelId: number, option: any) => {
-
+	formState.value.subTravelOperatorOid = '';
 	formState.value.subTravelName = option.name
 	list.travelOperatorList = await api.travelManagement.gettravelOperatorList({travelId});
 }

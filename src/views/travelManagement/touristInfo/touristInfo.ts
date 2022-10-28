@@ -140,7 +140,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 		copyData(key:any) {
 			console.log(key)
 			Object.assign(
-				state.tableData.filter((item:any) => key === (item.key ? item.key : item.oid))[0], 
+				state.tableData.filter((item:any) => key == (item.key ? item.key : item.oid))[0], 
 				state.editableData[key]
 			);
 		},
@@ -189,7 +189,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 		},
 		edit: (key: string) => {
 			state.editableData[key] = cloneDeep(
-				state.tableData.filter((item:any, index: number) => key === (item.key ? item.key : item.oid))[0]
+				state.tableData.filter((item:any, index: number) => key == (item.key ? item.key : item.oid))[0]
 			)
 			state.editableData[key].edit = true
 		},

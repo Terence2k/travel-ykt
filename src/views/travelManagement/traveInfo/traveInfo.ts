@@ -183,11 +183,11 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				dataIndex: 'totalFee',
 				key: 'totalFee',
 			},
-			{
-				title: '支付状态',
-				dataIndex: 'reserveStatusName',
-				key: 'reserveStatusName',
-			},
+			// {
+			// 	title: '支付状态',
+			// 	dataIndex: 'reserveStatusName',
+			// 	key: 'reserveStatusName',
+			// },
 			{
 				title: '操作',
 				key: 'action',
