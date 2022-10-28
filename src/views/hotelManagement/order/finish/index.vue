@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<CommonTable :columns="columns" :dataSource="data">
+		<CommonTable :columns="columns" :dataSource="state.tableData.data">
 			<template #bodyCell="{ column, record }">
 				<template v-if="column.dataIndex === 'actions'">
 					<div class="action-btns">
@@ -8,17 +8,20 @@
 						<a @click="Vdetail = true">详情</a>
 					</div>
 				</template>
+				<template v-if="column.key == 'reduceAfterAmount'">
+					{{ accDiv(record.reduceAfterAmount, 100) }}
+				</template>
 			</template>
 		</CommonTable>
 		<CommonPagination
-			:current="state.tableData.param.pageNo"
-			:page-size="state.tableData.param.pageSize"
+			:current="hotelStore.HotelList.finish.params.pageNo"
+			:page-size="hotelStore.HotelList.finish.params.pageSize"
 			:total="state.tableData.total"
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
 		>
 		</CommonPagination>
-		<BaseModal :title="'申请改刷'" v-model="visible" :onOk="handleOk">
+		<BaseModal :title="'申请改刷'" v-model="visible">
 			<a-form>
 				<a-form-item label="当前房数">
 					<span>222</span>
@@ -65,63 +68,57 @@ import BaseModal from '@/components/common/BaseModal.vue';
 import api from '@/api';
 import { SelectProps, TableColumnsType } from 'ant-design-vue';
 import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
+import { HotelStatus } from '@/enum';
+import { useHotelStore } from '@/stores/modules/hotelManage';
+import { accDiv } from '@/utils/compute.js';
+
 const visible = ref(false);
 const Vdetail = ref(false);
 
+const hotelStore = useHotelStore();
 const router = useRouter();
 const navigatorBar = useNavigatorBar();
 const type = ref('2');
-
 const columns = [
 	{
 		title: '行程单号',
-		dataIndex: 'a',
-		key: 'a',
+		dataIndex: 'itineraryNo',
+		key: 'itineraryNo',
+	},
+	{
+		title: '旅行社名称',
+		dataIndex: 'travelName',
+		key: 'travelName',
+	},
+	{
+		title: '预定时间',
+		dataIndex: 'createTime',
+		key: 'createTime',
 	},
 	{
 		title: '入住时间',
-		dataIndex: 'b',
-		key: 'b',
+		dataIndex: 'arrivalDate',
+		key: 'arrivalDate',
 	},
 	{
 		title: '离店时间',
-		dataIndex: 'c',
-		key: 'c',
+		dataIndex: 'departureDate',
+		key: 'departureDate',
 	},
 	{
 		title: '预定人数',
-		dataIndex: 'd',
-		key: 'd',
+		dataIndex: 'scheduledNumber',
+		key: 'scheduledNumber',
 	},
 	{
 		title: '预定房数',
-		dataIndex: 'e',
-		key: 'e',
-	},
-	{
-		title: '减免人数',
-		dataIndex: 'f',
-		key: 'f',
+		dataIndex: 'scheduledRooms',
+		key: 'scheduledRooms',
 	},
 	{
 		title: '费用（元）',
-		dataIndex: 'g',
-		key: 'g',
-	},
-	{
-		title: '核销房数',
-		dataIndex: 'h',
-		key: 'h',
-	},
-	{
-		title: '核销时间',
-		dataIndex: 'i',
-		key: 'i',
-	},
-	{
-		title: '实际费用',
-		dataIndex: 'm',
-		key: 'm',
+		dataIndex: 'reduceAfterAmount',
+		key: 'reduceAfterAmount',
 	},
 	{
 		title: '操作',
@@ -132,66 +129,39 @@ const columns = [
 	},
 ];
 
-const data = [
-	{
-		a: 'YNLJ135680',
-		b: '2022.2.23',
-		c: '2022.2.24',
-		d: '30',
-		e: '25',
-		f: '2',
-		g: '1100',
-		h: '20',
-		i: '2022.2.23  19:30',
-		m: '1000',
-	},
-	{
-		a: 'YNLJ135680',
-		b: '2022.2.23',
-		c: '2022.2.24',
-		d: '30',
-		e: '25',
-		f: '2',
-		g: '1100',
-		h: '20',
-		i: '2022.2.23  19:30',
-		m: '1000',
-	},
-];
-
 const state = reactive({
 	tableData: {
-		data: [],
-		total: 0,
+		data: computed(() => hotelStore.HotelList.finish.list),
+		total: computed(() => hotelStore.HotelList.finish.total),
 		loading: false,
 		param: {
 			pageNo: 1,
 			pageSize: 10,
-			phone: null,
-			name: null,
-			auditStatus: null,
+			scheduledTime: null,
+			arrivalDate: null,
+			status: null,
+			itineraryNo:null
 		},
 	},
 });
 
-const onHandleCurrentChange = (val: number) => {
-	console.log('change:', val);
-	state.tableData.param.pageNo = val;
-	// onSearch();
+const onHandleCurrentChange = (val: any) => {
+	hotelStore.HotelList.finish.params.pageNo = val
+	// state.tableData.param.pageNo = val;
+	hotelOrderPage();
 };
 
 const pageSideChange = (current: number, size: number) => {
-	console.log('changePageSize:', size);
-	state.tableData.param.pageSize = size;
-	// onSearch();
+	// console.log('changePageSize:', size);
+	// state.tableData.param.pageSize = size;
+	// // onSearch();
 };
 
-// const getCateringList = () => {
-// 	api.getCateringPage(state.tableData.param).then((res: any) => {
-// 		state.tableData.total = res.total;
-// 		state.tableData.data = res.content;
-// 	});
-// };
+const hotelOrderPage = async () => {
+	hotelStore.HotelList.finish.params.status = HotelStatus.finish
+	const res = await api.hotelOrderPage(hotelStore.HotelList.finish.params);
+	hotelStore.setOrderList(res, 'finish')
+};
 
 const openInfoPage = (record: any) => {
 	router.push({ path: '/catering/basic_Information/basic_info', query: { oid: record.oid } });
@@ -202,7 +172,7 @@ const openEditPage = (record: any) => {
 
 onMounted(() => {
 	navigatorBar.setNavigator(['订单管理']);
-	// getCateringList();
+	hotelOrderPage();
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
