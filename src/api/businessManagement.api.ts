@@ -113,7 +113,7 @@ export function getChangeBeforeAfterData(companyId: string, type: string) {
 		// 餐饮根据企业id查询提交审核前、后数据
 		return request({
 			url: `${commonPath}/catering-service/public/api/catering/post-data/${companyId}`,
-			method: 'post',
+			method: 'get',
 			showLoading: true
 		});
 	} else if (type === 'TICKET') {
@@ -133,8 +133,8 @@ export function getBusinessDetails({ oid, businessType }: paramsType) {
 			method: 'get',
 			showLoading: true
 		});
-	} else if (['TRAVEL', 'SUPERVISE', 'ASSOCIATION', 'GROUP', 'CULTURE_BUREAU', 'ANCIENT_UYGUR'].includes(businessType)) {
-		// 旅行社、监理、协会、集团、文旅局、古维管理部门根据id获取企业详情
+	} else if (['TRAVEL', 'SUPERVISE', 'ASSOCIATION', 'GROUP', 'CULTURE_BUREAU', 'ANCIENT_UYGUR', 'YKT'].includes(businessType)) {
+		// 旅行社、监理、协会、集团、文旅局、古维管理部门、一卡通根据id获取企业详情
 		return request({
 			url: `${commonPart}getCompanyInformation?oid=${oid}`,
 			method: 'post',
