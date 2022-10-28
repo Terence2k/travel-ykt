@@ -191,7 +191,7 @@ onMounted(() => {});
 	}
 }
 .table-area {
-	margin: 0 10px 0 0;
+	margin: 0 0px 0 0;
 	padding: 0;
 }
 .btn {

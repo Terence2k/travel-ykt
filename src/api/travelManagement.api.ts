@@ -145,5 +145,4 @@ export const travelManagement = {
             showLoading: true
         });
     }
-    
 }

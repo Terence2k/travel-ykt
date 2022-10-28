@@ -32,7 +32,7 @@
 							<span>{{ text }}</span>
 						</div>
 						<template v-else>
-							<span>{{ record?.roomNum || '' }}</span>
+							<span>{{ record?.roomNum }}</span>
 						</template>
 					</template>
 					<template v-if="['roomOccupancyNum'].includes(column.dataIndex)">
@@ -61,6 +61,7 @@
 import { message } from 'ant-design-vue/es';
 import api from '@/api';
 import CommonTable from '@/components/common/CommonTable.vue';
+import { accDiv } from '@/utils/compute';
 const route = useRoute();
 const userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
 const columns = [
@@ -140,7 +141,7 @@ const initPage = () => {
 				dataSource.value = res.map((item) => {
 					return {
 						...item,
-						price: item.price / 100,
+						price: accDiv(item.price, 100),
 						key: item?.oid,
 					};
 				});
