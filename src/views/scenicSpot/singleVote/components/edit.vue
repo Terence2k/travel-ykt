@@ -1,7 +1,7 @@
 <template>
 	<div class="editWrapper">
 		<header class="title">基本信息</header>
-		<a-form class="" ref="formRef" :model="formData" :label-col="{ span: 3 }" labelAlign="left" :wrapper-col="{ span: 7 }" :scrollToField="true">
+		<a-form class="" ref="formRef" :model="formData" :label-col="{ span: 2 }" labelAlign="left" :wrapper-col="{ span: 7 }" :scrollToField="true">
 			<a-form-item label="归属景区" name="data.scenicId" v-bind="validateInfos[`data.scenicId`]">
 				<!-- <a-input v-model:value="formData.data.scenicId" placeholder="请填写景区名字" /> -->
 				<a-select allowClear v-model:value="formData.data.scenicId" placeholder="请选择">
@@ -58,6 +58,7 @@
 					@get-optional-verification="getOptionalVerificationCount"
 					@change-iv="changeIv"
 				/>
+				<span v-if="isShow" class="ant-form-item-explain-error">请填写可核销次数</span>
 			</a-form-item>
 			<a-form-item label="可核销账号" :wrapper-col="{ span: 12 }">
 				<EditCountTable :tableList="[{ assistId: formData.data.assistId }]" />
@@ -169,20 +170,52 @@ const type = computed(() => {
 const pageStatus = computed(() => {
 	return route.currentRoute.value?.query?.s;
 });
+const first = ref(false);
+const isShow = computed(() => {
+	return first.value && type.value == '1' && typeof formData.data.optionalVerificationCount !== 'number';
+});
+const validItemList = (rule: any, value: any) => {
+	if (first.value) {
+		let isCreateSignle = value[0]?.init || false;
+		if (value.length > 0 && isCreateSignle) {
+			return Promise.reject('请选择核销项目并填写可核销次数');
+		}
+
+		if (value.length === 0 && !isCreateSignle) {
+			return Promise.reject('请选择核销项目并填写可核销次数');
+		}
+
+		let verificationNumberSub = value.filter((i: any) => typeof i.verificationNumber !== 'number'),
+			len = verificationNumberSub.length;
+		console.log(verificationNumberSub, len, 'len', this, !isCreateSignle && len > 0 && formData.data.optionalVerificationCount);
+
+		if (isCreateSignle && len > 0) {
+			return Promise.reject('请选择核销项目并填写可核销次数');
+		}
+
+		if (!isCreateSignle && len) {
+			return Promise.reject('请填写可核销次数');
+		}
+
+		return Promise.resolve();
+	}
+	return Promise.resolve();
+};
+
 // 表单
 const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
 	formData,
 	reactive({
-		'data.orderTime': [{ required: true, message: '请选择当日最晚可定票时间' }],
+		'data.scenicId': [{ required: true, message: '请选择归属景区' }],
 		'data.orderTimeRule': [{ required: true, message: '请选择可预定时间' }],
+		'data.orderTime': [{ required: true, message: '请选择当日最晚可定票时间' }],
 		'data.wateryPrice': [{ required: true, message: '请输入水牌价' }],
 		'data.price': [{ required: true, message: '请输入价格' }],
-		'data.scenicId': [{ required: true, message: '请选择归属景区' }],
 		'data.ticketName': [{ required: true, message: '请输入门票名称' }],
 		'data.validTime': [{ required: true, message: '请选择有效时间' }],
 		'data.dayStock': [{ required: true, message: '请输入门票库存' }],
 		'data.discountList': [{ required: true, message: '请填写减免规则' }],
-		'data.itemList': [{ required: true, message: '请填写核销项' }],
+		'data.itemList': [{ required: true, validator: validItemList }],
 		// 'data.verificationType': [{ required: true, message: 'verificationType' }],
 		// 'data.ticketType': [{ required: true, message: '请选择门票分类' }],
 
@@ -195,7 +228,7 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 );
 //合并错误提示
 const errorInfos = computed(() => {
-	return mergeValidateInfo(toArray(validateInfos).splice(0, 2));
+	return mergeValidateInfo(toArray(validateInfos).splice(1, 2));
 });
 const errorPriceInfos = computed(() => {
 	return mergeValidateInfo(toArray(validateInfos).splice(2, 2));
@@ -208,6 +241,7 @@ const onSubmit = async () => {
 	// scrollToField((name: any, options: [any]) => {
 	// 	console.log(name, options, 'asdasd');
 	// });
+	first.value = true;
 	validate()
 		.then(() => {
 			console.log(toRaw(formData.data), 'psss');
@@ -216,9 +250,9 @@ const onSubmit = async () => {
 			// route.currentRoute.value?.query?.s ? save(toRaw(formData.data)) : editInfo(toRaw(formData.data));
 		})
 		.catch((err) => {
-			console.log('error', err);
+			console.log('error', err, err.errorFields[0].name);
 			//滚动跳转
-			formRef.value.scrollToField(err.errorFields[0].name.toString());
+			formRef.value.scrollToField(err.errorFields[0].name);
 		});
 };
 
@@ -371,5 +405,7 @@ onBeforeUnmount(() => {
 }
 .table-wrapper-long {
 	width: 970px;
+}
+.iv-error-tips {
 }
 </style>
