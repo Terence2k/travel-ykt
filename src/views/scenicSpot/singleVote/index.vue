@@ -138,6 +138,7 @@ const delSubmit = () => {
 	// console.log(delOid.value);
 	api.singleVoteDel(delOid.value);
 	delCancel();
+	initList();
 };
 const delCancel = () => {
 	delShow.value = false;

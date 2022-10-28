@@ -159,6 +159,13 @@ export async function getViewOrderList(data: any) {
 		data,
 	});
 }
+//景区订单 详情
+export async function getViewOrderDetails(id: any) {
+	return request({
+		url: commonPath + `/ticket-service/public/api/scenic-order/+${id}`,
+		method: 'get',
+	});
+}
 
 // 获取景区等级数据
 export async function getScenicLevels() {

@@ -2,35 +2,31 @@
 	<a-spin size="large" :spinning="state.tableData.loading" style="min-height: 50vh">
 		<CommonSearch>
 			<SearchItem label="入园日期">
-				<!-- <a-select ref="select" style="width: 200px" placeholder="请选择审核状态">
-					<a-select-option value="all">all</a-select-option>
-				</a-select> -->
-				<a-date-picker format="YYYY-MM-DD " value-format="YYYY-MM-DD " v-model:value="state.tableData.schoolDate" placeholder="入园日期" />
-				<!-- <a-time-picker
-					v-model:value="state.tableData.schoolDate"
-					:show-time="{ format: 'YYYY-MM-DD HH:mm:ss' }"
-					format="YYYY-MM-DD HH:mm:ss"
-					value-format="YYYY-MM-DD HH:mm:ss"
-					placeholder="入园日期"
-				/> -->
+				<a-date-picker format="YYYY-MM-DD " value-format="YYYY-MM-DD " v-model:value="state.tableData.param.schoolDate" placeholder="入园日期" />
 			</SearchItem>
 			<SearchItem label="核销日期">
 				<a-date-picker
-					v-model:value="state.tableData.verificationTime"
+					format="YYYY-MM-DD "
+					value-format="YYYY-MM-DD "
+					v-model:value="state.tableData.param.verificationTime"
+					placeholder="入园日期"
+				/>
+				<!-- <a-date-picker
+					v-model:value="state.tableData.param.verificationTime"
 					:show-time="{ format: 'HH:mm:ss' }"
 					format="YYYY-MM-DD HH:mm:ss"
 					value-format="YYYY-MM-DD HH:mm:ss"
 					placeholder="核销日期"
 					style="width: 120px"
-				/>
+				/> -->
 			</SearchItem>
 			<SearchItem label="行程单号">
-				<a-input v-model:value="state.tableData.itineraryNo" placeholder="请输入行程单号" style="width: 200px" />
+				<a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入行程单号" style="width: 200px" />
 			</SearchItem>
 			<SearchItem label="旅行社名称">
-				<a-input v-model:value="state.tableData.travelName" placeholder="请输入行程单号" style="width: 200px" />
-				<!-- <a-input placeholder="请输入用户姓名/手机号" style="width: 200px" /> -->
+				<a-input v-model:value="state.tableData.param.sendTravelName" placeholder="请输入旅行社名称" style="width: 200px" />
 			</SearchItem>
+
 			<template #button>
 				<a-button @click="search">查询</a-button>
 			</template>
@@ -45,8 +41,17 @@
 			<a-tab-pane :key="4" tab="已取消"> </a-tab-pane>
 		</a-tabs>
 		<div class="table-area">
-			<CommonTable :dataSource="dataSource" :columns="columns">
+			<CommonTable :dataSource="state.tableData.data" :columns="columns">
 				<template #bodyCell="{ column, record }">
+					<template v-if="column.key === 'orderAmount'">
+						<span v-if="typeof record.orderAmount === 'number'">
+							{{ record.orderAmount / 100 }}
+						</span>
+						<span v-else> - </span>
+					</template>
+					<template v-if="column.key === 'ticketType'">
+						{{ ticketType[record.ticketType] }}
+					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns" v-if="state.tableData.param.orderState !== 2">
 							<a href="javascript:;" @click="toDetail(record)">查看</a>
@@ -69,7 +74,6 @@
 
 			<div class="footer">
 				<div class="tooter-btn">
-					<!-- <a-button type="primary" @click.prevent="onSubmit">保存</a-button> -->
 					<a-button type="primary" @click="exportBtn">导出</a-button>
 				</div>
 			</div>
@@ -90,77 +94,78 @@ import viewTable from './components/table.vue';
 import ApplyChange from './components/applyChange.vue';
 
 const navigatorBar = useNavigatorBar();
+const ticketType = ['联票', '单票', '演出票'];
 // import { userList } from '@/api';
 const dataSource = [
 	{
 		orderNo: '619351806191367230',
 		itineraryNo: 'LYF000000001',
-		travelName: '黑白水旅行社',
+		localTravelName: '黑白水旅行社',
 		ticketName: '入园',
-		ticketTypeName: '单票',
+		ticketType: 1,
 		schoolDate: '2022-7-14',
 		verificationTime: '2022-7-12 17:50:45',
 		bookTime: '2022-7-12 17:50:45',
 		orderStatus: '已核销',
 		bookCount: '30',
 		verificationCount: '30',
-		orderAmount: '1100元',
+		orderAmount: 1100,
 	},
 	{
 		orderNo: '619351806191367230',
 		itineraryNo: 'LYF000000002',
-		travelName: '黑白水旅行社',
+		localTravelName: '黑白水旅行社',
 		ticketName: '入园',
-		ticketTypeName: '单票',
+		ticketType: 1,
 		schoolDate: '2022-7-14',
 		verificationTime: '2022-7-12 17:50:45',
 		bookTime: '2022-7-12 17:50:45',
 		orderStatus: '已核销',
 		bookCount: '30',
 		verificationCount: '30',
-		orderAmount: '1100元',
+		orderAmount: 1122,
 	},
 	{
 		orderNo: '619351806191367230',
 		itineraryNo: 'LYF000000003',
-		travelName: '黑白水旅行社',
+		localTravelName: '黑白水旅行社',
 		ticketName: '入园',
-		ticketTypeName: '单票',
+		ticketType: 2,
 		schoolDate: '2022-7-14',
 		verificationTime: '2022-7-12 17:50:45',
 		bookTime: '2022-7-12 17:50:45',
 		orderStatus: '已核销',
 		bookCount: '30',
 		verificationCount: '30',
-		orderAmount: '1100元',
+		orderAmount: 1100,
 	},
 	{
 		orderNo: '619351806191367230',
 		itineraryNo: 'LYF000000004',
-		travelName: '黑白水旅行社',
+		localTravelName: '黑白水旅行社',
 		ticketName: '入园',
-		ticketTypeName: '单票',
+		ticketType: 1,
 		schoolDate: '2022-7-14',
 		verificationTime: '2022-7-12 17:50:45',
 		bookTime: '2022-7-12 17:50:45',
 		orderStatus: '已核销',
 		bookCount: '30',
 		verificationCount: '30',
-		orderAmount: '1100元',
+		orderAmount: 1100,
 	},
 	{
 		orderNo: '619351806191367230',
 		itineraryNo: 'LYF000000005',
-		travelName: '黑白水旅行社',
+		localTravelName: '黑白水旅行社',
 		ticketName: '入园',
-		ticketTypeName: '单票',
+		ticketType: 0,
 		schoolDate: '2022-7-14',
 		verificationTime: '2022-7-12 17:50:45',
 		bookTime: '2022-7-12 17:50:45',
 		orderStatus: '已核销',
 		bookCount: '30',
 		verificationCount: '30',
-		orderAmount: '1100元',
+		orderAmount: 1100,
 	},
 ];
 const columns = [
@@ -178,8 +183,8 @@ const columns = [
 	},
 	{
 		title: '旅行社名称',
-		dataIndex: 'travelName',
-		key: 'travelName',
+		dataIndex: 'localTravelName',
+		key: 'localTravelName',
 		width: 120,
 	},
 	{
@@ -190,8 +195,8 @@ const columns = [
 	},
 	{
 		title: '门票分类',
-		dataIndex: 'ticketTypeName',
-		key: 'ticketTypeName',
+		dataIndex: 'ticketType',
+		key: 'ticketType',
 		width: 80,
 	},
 	{
@@ -252,7 +257,7 @@ const state = reactive({
 		param: {
 			schoolDate: '',
 			verificationTime: '',
-			travelName: '',
+			sendTravelName: '',
 			orderState: '',
 			itineraryNumber: null,
 			pageNo: 1,
@@ -277,11 +282,11 @@ const changePageStatus = (e: any) => {
 //查看
 const route = useRouter();
 const toDetail = (record: any) => {
-	route.push({ path: '/scenic-spot/order-manage/edit', query: { oid: record.oid } });
+	route.push({ path: '/scenic-spot/order-manage/edit', query: { oid: record.orderNo } });
 };
 //查看
 const toVerifivcation = (record: any) => {
-	route.push({ path: '/scenic-spot/verificationRecord', query: { oid: record.oid } });
+	route.push({ path: '/scenic-spot/verificationRecord', query: { oid: record.orderNo } });
 };
 
 //导出
@@ -300,9 +305,12 @@ const pageSideChange = (current: number, size: number) => {
 };
 
 const init = async () => {
-	// state.tableData.loading = true;
+	state.tableData.loading = true;
 	let res = await api.getViewOrderList(state.tableData.param);
 	state.tableData.loading = false;
+	state.tableData.data = res.content || dataSource;
+	state.tableData.data = dataSource;
+	state.tableData.total = res.total;
 	console.log(res);
 };
 onMounted(() => {
@@ -317,13 +325,10 @@ onBeforeUnmount(() => {
 <style scoped lang="less">
 .table-area {
 	// padding-bottom: 16px;
+	padding: 0 10px;
+	// margin: 0 10px;
 }
-// .trave-contaner {
-// 	height: 100%;
-// 	::v-deep(.ant-tabs-nav) {
-// 		padding: 0 20px;
-// 	}
-// }
+
 ::v-deep .ant-table-body {
 	// max-height: 38vh !important;
 }
@@ -336,18 +341,14 @@ onBeforeUnmount(() => {
 	bottom: 12px;
 	line-height: 64px;
 	height: 64px;
-	// width: calc(100% - 292px);
 	width: 100px;
-	// border-top: 1px solid #f1f2f5;
 	margin-left: -16px;
 	margin-right: 24px;
-	// background-color: #fff;
 	background-color: transparent;
 	z-index: 101;
 
 	.tooter-btn {
 		width: 60%;
-		// background-color: #fff;
 		margin-left: 16px;
 	}
 	button:first-of-type {
@@ -356,10 +357,5 @@ onBeforeUnmount(() => {
 }
 ::v-deep .ant-tabs-nav-wrap {
 	margin-left: 20px;
-}
-.ant-pagination {
-	// display: flex;
-	// justify-content: right;
-	// padding: 0;
 }
 </style>
