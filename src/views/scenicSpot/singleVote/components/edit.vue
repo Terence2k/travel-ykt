@@ -3,7 +3,6 @@
 		<header class="title">基本信息</header>
 		<a-form class="" ref="formRef" :model="formData" :label-col="{ span: 2 }" labelAlign="left" :wrapper-col="{ span: 7 }" :scrollToField="true">
 			<a-form-item label="归属景区" name="data.scenicId" v-bind="validateInfos[`data.scenicId`]">
-				<!-- <a-input v-model:value="formData.data.scenicId" placeholder="请填写景区名字" /> -->
 				<a-select allowClear v-model:value="formData.data.scenicId" placeholder="请选择">
 					<a-select-option :value="vlItem.old" v-for="vlItem in viewList" :key="vlItem.ticketId">{{ vlItem.ticketName }}</a-select-option>
 				</a-select>
@@ -11,7 +10,6 @@
 			<a-form-item label="票种分类">
 				<a-input disabled v-model:value="tickerType" />
 			</a-form-item>
-
 			<a-form-item label="门票名称" name="data.ticketName" v-bind="validateInfos[`data.ticketName`]">
 				<a-input v-model:value="formData.data.ticketName" placeholder="请填写门票名称" />
 			</a-form-item>
@@ -78,7 +76,7 @@
 				<a-textarea v-model:value="formData.data.restsExplain" placeholder="请输入其他说明" :rows="4" />
 			</a-form-item>
 			<div class="title">减免规则</div>
-			<a-form-item label="减免规则" :wrapper-col="{ span: 12 }" name="data.discountList" v-bind="validateInfos[`data.discountList`]">
+			<a-form-item label="减免规则" name="data.discountList" v-bind="validateInfos[`data.discountList`]" :wrapper-col="{ span: 12 }">
 				<EditRuleTable :tableList="formData.data.discountList" @del-rule-obj="delRuleObj" @add-rule-obj="addRuleObj" />
 			</a-form-item>
 
@@ -231,7 +229,7 @@ const errorInfos = computed(() => {
 	return mergeValidateInfo(toArray(validateInfos).splice(1, 2));
 });
 const errorPriceInfos = computed(() => {
-	return mergeValidateInfo(toArray(validateInfos).splice(2, 2));
+	return mergeValidateInfo(toArray(validateInfos).splice(3, 2));
 });
 
 const tickerType = computed(() => (route.currentRoute.value?.query?.t === '0' ? '单票：单点核销' : '单票：多点核销'));
