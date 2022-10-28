@@ -1,4 +1,4 @@
-FROM node:12.18.0 AS builder
+FROM node:v14.6 AS builder
 WORKDIR /app/
 ADD .npmrc .
 ADD package.json .
