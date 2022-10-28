@@ -3,7 +3,7 @@ def registry = "ynty001-vpc.tencentcloudcr.com"
 
 
 def project = "lijiang"
-def image = "ykt-gateway"
+def image = "ykt-pc-web"
 
 def commit_messages = ""
 def image_name = "${registry}/${project}/${image}:${build_env}-${BUILD_NUMBER}"
