@@ -20,7 +20,8 @@
 							</a-form-item>
 
 							<template v-else>
-								{{ column.key === 'transportationType' ? column.data.filter(it => it.codeValue === text)[0]?.name : text }}
+								{{ text }}
+								<!-- {{ column.key === 'transportationType' ? column.data.filter(it => it.codeValue === text)[0]?.name : text }} -->
 							</template>
 						</div>
 					</template>

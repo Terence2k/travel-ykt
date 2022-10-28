@@ -190,26 +190,28 @@ export const useTravelStore = defineStore({
 		setTeamType(data: any) {
 			this.teamType = data;
 		},
-		setHotels(data: any, id?: string) {
-			if (id) {
+		setHotels(data: any, oid: string) {
+			if (data.oid) {
 				Object.assign(
-					this.hotels.filter((item:any) => id === item.id)[0], 
+					this.hotels.filter((item:any) => data.oid == item.oid)[0], 
 					data
 				)
 			} else {
+				data.oid = oid;
 				let newData = [...this.hotels, data]
 				this.hotels = newData as any;
 				console.log(this.hotels, data, newData)
 			}
 			
 		},
-		setTicket(data: any, id?: string) {
-			if (id) {
+		setTicket(data: any, oid: string) {
+			if (data.oid) {
 				Object.assign(
-					this.scenicTickets.filter((item:any) => id === item.id)[0], 
+					this.hotels.filter((item:any) => data.oid == item.oid)[0], 
 					data
 				)
 			} else {
+				data.oid = oid;
 				let newData = [...this.scenicTickets, data]
 				this.scenicTickets = newData as any;
 				console.log(this.scenicTickets, data, newData)

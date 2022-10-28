@@ -167,6 +167,7 @@ const getTraveDetail = () => {
 		});
 };
 const changeTab = (event: number) => {
+	sendTeam.value = false;
 	if (event === 4) {
 		check.value = !check.value;
 	}
