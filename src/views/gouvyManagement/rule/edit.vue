@@ -41,7 +41,7 @@
 				<a-form-item label=" 减免折扣" name="discount">
 					<a-input
 						v-model:value="formValidate.discount"
-						placeholder="请输入折扣信息(1~99)"
+						placeholder="请输入折扣信息(1~99)的整数"
 						oninput="value=value.replace(/^(0+)|[^\d]+/g,'')"
 						@change="check"
 					/>
@@ -90,7 +90,7 @@ const rules: any = {
 	ruleName: [{ required: true, trigger: 'blur', message: '请输入规则名称' }],
 	discountType: [{ required: true, trigger: 'blur', message: '请选择减免模式' }],
 	discountConditionName: [{ required: true, trigger: 'blur', message: '请填写减免模式内容' }],
-	discount: [{ required: true, trigger: 'blur', message: '请输入1-99之间的数值' }],
+	discount: [{ required: true, trigger: 'blur', message: '请输入1-99之间的整数' }],
 	discountRuleStatus: [{ required: true, trigger: 'blur', message: '请选择状态' }],
 };
 const state = reactive({
