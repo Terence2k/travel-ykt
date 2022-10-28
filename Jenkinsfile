@@ -19,6 +19,7 @@ pipeline
                 sh """
                         cp /usr/share/zoneinfo/Asia/Shanghai ./
                         sed -i 's,#GIT_URL,$git_url,g' Dockerfile
+                        sed -i 's/{build_env}/${build_env}/g' Dockerfile
                         docker build -t ${image_name} .
                         docker push ${image_name}
                     """
