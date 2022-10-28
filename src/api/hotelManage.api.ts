@@ -383,3 +383,36 @@ export async function getPriceByHotelId(hotelId: number) {
 		showLoading: true,
 	});
 }
+// 分页查询酒店订单
+export async function hotelOrderPage(data: any) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-order/page`,
+		method: 'post',
+		showLoading: true,
+		data,
+	});
+}
+// 根据订单号查询酒店订单信息
+export async function HotelOrderInfo(orderNo: any) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-order/getHotelOrderInfoByOrderNo/${orderNo}`,
+		method: 'get',
+		showLoading: true,
+	});
+}
+// 根据订单号审核酒店订单
+export async function aduitHotelOrder(orderNo: any, flag: Boolean, rejectReason: any) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-order/auditHotelOrderByOrderNo/${orderNo}?flag=${flag}&rejectReason=${rejectReason}`,
+		method: 'get',
+		showLoading: true,
+	});
+}
+// 根据订单号查看订单审核不通过原因
+export async function HotelOrderRejectReason(orderNo: any) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-order/getRejectReasonByOrderNo/${orderNo}`,
+		method: 'get',
+		showLoading: true,
+	});
+}

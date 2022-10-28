@@ -2,8 +2,8 @@
 	<div class="systemRoomType-modal-wrapper">
 		<BaseModal :title="options.title" v-model="modelValue" @close="handleOk">
 			<a-form :model="formValidate" :rules="rules" :label-col="{ span: 5 }" :wrapper-col="{ span: 16, offset: 1 }" labelAlign="left">
-				<a-form-item label="系统房型" name="sysRoomTypeCode">
-					<a-input v-model:value="formValidate.sysRoomTypeCode" />
+				<a-form-item label="系统房型" name="sysRoomTypeName">
+					<a-input v-model:value="formValidate.sysRoomTypeName" />
 				</a-form-item>
 				<a-form-item label="最多入住人数" name="roomOccupancyNum">
 					<a-input type="number" v-model:value="formValidate.roomOccupancyNum" />
@@ -46,7 +46,7 @@ const options = reactive({
 	title: '新增系统房型',
 });
 const rules: any = {
-	sysRoomTypeCode: [{ required: true, trigger: 'blur', message: '请输入系统房型' }],
+	sysRoomTypeName: [{ required: true, trigger: 'blur', message: '请输入系统房型' }],
 	roomOccupancyNum: [{ required: true, trigger: 'blur', message: '请输入最多入住人数' }],
 	sysRoomTypeStatus: [{ required: true, trigger: 'change', message: '请选择状态' }],
 };

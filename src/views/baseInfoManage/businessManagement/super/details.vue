@@ -43,17 +43,15 @@ const back = () => {
     name: 'apply'
   })
 }
-const props = defineProps<{
-  businessType?: string,
-  oid?: string
-}>()
-const detailsArrList = ref<any>({})
-const changeKeys = ref<string[]>([])
-const keyNameList = ref()
 type queryParamsType = {
   oid?: string,
   businessType?: string
 }
+const props = defineProps<queryParamsType>()
+const detailsArrList = ref<any>({})
+const changeKeys = ref<string[]>([])
+const keyNameList = ref()
+
 const queryParams = reactive<queryParamsType>({})
 const getComputedVal = computed(() => (key: string, val: any) => {
   if (key === 'accountType') {
@@ -92,6 +90,9 @@ const getComputedVal = computed(() => (key: string, val: any) => {
       case 'ANCIENT_UYGUR':
         name = '古维管理部门'
         break;
+      case 'YKT':
+        name = '一卡通'
+        break;
     }
     return name
   } else {
@@ -124,7 +125,7 @@ const getData = async () => {
     }
   }
 }
-onMounted(() => {
+onActivated(() => {
   if (props.oid) {
     let key: keyof queryParamsType;
     for (key in props) {

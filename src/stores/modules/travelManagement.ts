@@ -130,6 +130,9 @@ export const useTravelStore = defineStore({
 			},
 			'TICKET': {
 				submitFunc: 'changeScenicSpotInformation' 
+			},
+			'CATERING': {
+				submitFunc: 'getCateringAudit' 
 			}
 
 		}

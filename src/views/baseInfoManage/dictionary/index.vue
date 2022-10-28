@@ -15,8 +15,9 @@
 				<template #bodyCell="{ column, record }">
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a @click="addOrUpdate({  row: record,  handle: 'update'})" v-if="record.isEdit">编辑</a>
-							<a-popconfirm title="确认删除这条数据吗？" ok-text="确认" cancel-text="取消" @confirm="confirmDelete(record)">
+							<a @click="addOrUpdate({ row: record, handle: 'update' })" v-if="record.isEdit">编辑</a>
+							<a-popconfirm title="确认删除这条数据吗？" ok-text="确认" cancel-text="取消" @confirm="confirmDelete(record)"
+								v-if="record.isEdit">
 								<a>删除</a>
 							</a-popconfirm>
 							<a @click="viewDetails(record)">详情</a>
@@ -27,7 +28,7 @@
 		</div>
 		<div class="content content_middle"></div>
 		<div class="content content_right">
-			<CommonTable :dataSource="detailsTableData.data" :columns=" detailsColumns" :scroll="scroll">
+			<CommonTable :dataSource="detailsTableData.data" :columns="detailsColumns" :scroll="scroll">
 				<template #button>
 					<div class="query_box">
 						<span class="detail_text">字典详情</span>
@@ -38,8 +39,9 @@
 				<template #bodyCell="{ column, record }">
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a @click="detailsAddOrUpdate({  row: record,  handle: 'update'})">编辑</a>
-							<a-popconfirm title="确认删除这条数据吗？" ok-text="确认" cancel-text="取消" @confirm="deleteDetailsRow(record)">
+							<a @click="detailsAddOrUpdate({ row: record, handle: 'update' })" v-if="record.isEdit">编辑</a>
+							<a-popconfirm title="确认删除这条数据吗？" ok-text="确认" cancel-text="取消" @confirm="deleteDetailsRow(record)"
+								v-if="record.isEdit">
 								<a>删除</a>
 							</a-popconfirm>
 						</div>
@@ -68,7 +70,7 @@
 			:wrapper-col="wrapperCol">
 			<a-form-item label="所属字典" name="parentId" v-bind="detailsForm.validateInfos.parentId">
 				<a-select ref="select" v-model:value="detailsDictionaryForm.parentId" placeholder="请选择所属字典">
-					<a-select-option :value="detailsDictionarySelect.oid">{{detailsDictionarySelect.name}}</a-select-option>
+					<a-select-option :value="detailsDictionarySelect.oid">{{ detailsDictionarySelect.name }}</a-select-option>
 				</a-select>
 			</a-form-item>
 			<a-form-item label="字典标签" name="name" v-bind="detailsForm.validateInfos.name">
@@ -76,7 +78,7 @@
 			</a-form-item>
 			<a-form-item label="排序" name="sort" v-bind="detailsForm.validateInfos.sort">
 				<a-select ref="select" v-model:value="detailsDictionaryForm.sort" placeholder="请选择排序">
-					<a-select-option v-for="item in sortList" :value="item">{{item}}</a-select-option>
+					<a-select-option v-for="item in sortList" :value="item">{{ item }}</a-select-option>
 				</a-select>
 			</a-form-item>
 		</a-form>

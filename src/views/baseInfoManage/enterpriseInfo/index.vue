@@ -319,7 +319,7 @@
               :loading="loading"
               v-if="form.informationAuditStatus != 1">
               <!-- 除酒店、景点、旅行社外不提交审核 -->
-              <template v-if="['TRAVEL', 'HOTEL', 'TICKET'].includes(userInfo.sysCompany.businessType)">
+              <template v-if="['TRAVEL', 'HOTEL', 'TICKET', 'CATERING'].includes(userInfo.sysCompany.businessType)">
                 提交审核
               </template>
               <template v-else>
@@ -365,12 +365,12 @@ const formRules: Record<string, Rule[]> = {
   contactName: [{ required: true, trigger: 'blur', message: '请输入联系人' }],
   phone: [{ required: true, trigger: 'blur', message: '请输入联系电话' }],
   creditCode: [{ required: true, trigger: 'blur', message: '请输入统一社会信用代码' }],
-  businessLicenseUrl: [{ required: true, trigger: 'change', message: '请上传营业执照' }],
+  // businessLicenseUrl: [{ required: true, trigger: 'change', message: '请上传营业执照' }],
   accountType: [{ required: true, trigger: 'change', message: '请选择公司账户类型' }],
   bankAccountName: [{ required: true, trigger: 'blur', message: '请输入公司账户名称' }],
   bank: [{ required: true, trigger: 'blur', message: '请输入开户行' }],
   bankAccount: [{ required: true, trigger: 'blur', message: '请输入公司账号' }],
-  businessLicenseUrl1: [{ required: true, trigger: 'change', message: '请上传经营许可' }],
+  // businessLicenseUrl1: [{ required: true, trigger: 'change', message: '请上传经营许可' }],
   unitStatus: [{ required: true, trigger: 'change', message: '请选择开业状态' }],
   hotelStarId: [{ required: true, trigger: 'change', message: '请选择酒店星级' }],
   isReduced: [{ required: true, trigger: 'change', message: '请选择是否支持减免' }],
@@ -413,6 +413,8 @@ const initOpeion = async () => {
     case 'TICKET':
     infoFunc = api.getScenicById(userInfo.sysCompany.oid);
     break;
+    case 'CATERING':
+    infoFunc = api.getCateringInfo(userInfo.sysCompany.oid);
     // 其他业态
     default:
     infoFunc = api.getCompanyInformation(userInfo.sysCompany.oid);
@@ -477,6 +479,15 @@ const submit = () => {
   let queryData = form.value;
   if (userInfo.sysCompany.businessType == 'TRAVEL') {
     queryData = {
+      companyBo: queryData
+    }
+  }
+  if (userInfo.sysCompany.businessType == 'CATERING') {
+    queryData = {
+      shopPhone: queryData.shopPhone || '',
+      startTime: queryData.startTime || '',
+      endTime: queryData.endTime || '',
+      cateringDesc: queryData.cateringDesc || '',
       companyBo: queryData
     }
   }

@@ -23,8 +23,8 @@
         <template v-if="column.key === 'action'">
           <div class="action-btns">
             <a @click="goToPath(record)">编辑</a>
-            <a>邀请地接社编辑</a>
-            <a>发团</a>
+            <!-- <a>邀请地接社编辑</a> -->
+            <a @click="sendGroup(record.oid)">发团</a>
           </div>
         </template>
 			</template>
@@ -40,7 +40,8 @@
 </template>
 <script lang="ts" setup>
 	import CommonTable from '@/components/common/CommonTable.vue';
-  	import CommonPagination from '@/components/common/CommonPagination.vue';
+  import CommonPagination from '@/components/common/CommonPagination.vue';
+  import { message } from 'ant-design-vue';
 
 	import api from '@/api/index';
 
@@ -127,16 +128,26 @@
 			}
 		})
 	}
-  	const goToDetail = (val: any) => {
-    localStorage.setItem('tempData', JSON.stringify(val));
-		router.push({
-			name: 'travel_detail',
-			params: {
-				detailInfo: JSON.stringify(val)
-			}
-		})
-    
+
+  const sendGroup = (id: string) => {
+    const formData = new FormData();
+    formData.append('itineraryId', id);
+    api.travelManagement.sendGroup(formData).then((res: any) => {
+      message.success('发团成功');
+    })
   }
+
+  // 跳转行程单详情
+  // const goToDetail = (val: any) => {
+  //   localStorage.setItem('tempData', JSON.stringify(val));
+  //   router.push({
+  //     name: 'travel_detail',
+  //     params: {
+  //       detailInfo: JSON.stringify(val)
+  //     }
+  //   })
+  // }
+
 	const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
 			console.log(record, selected, selectedRows);
 	}
