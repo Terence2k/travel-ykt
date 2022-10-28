@@ -11,7 +11,7 @@ export const commonApi = {
     },
     getTeamTypeList(data: any) {
         return request({
-            url: `${commonPath}/travel-agency-service/public/api/team/selectTeamTypeList`,
+            url: `${commonPath}/travel-agency-service/public/api/team/downTeamType`,
             method: 'post',
             data,
             showLoading: true

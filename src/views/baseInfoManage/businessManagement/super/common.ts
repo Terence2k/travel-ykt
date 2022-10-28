@@ -87,7 +87,7 @@ const keyNameList5 = {
   bank: '开户行',
   bankAccount: '公司账号',
 }
-// 旅游协会、文旅局
+// 旅游协会、文旅局、一卡通
 const keyNameList6 = {
   businessType: '企业类型',
   name: '企业名称',
@@ -118,6 +118,7 @@ function getKeylist(businessType: string) {
       break;
     case 'CULTURE_BUREAU':
     case 'ASSOCIATION':
+    case 'YKT':
       keys = keyNameList6
       break;
   }

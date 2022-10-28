@@ -319,7 +319,7 @@
               :loading="loading"
               v-if="form.informationAuditStatus != 1">
               <!-- 除酒店、景点、旅行社外不提交审核 -->
-              <template v-if="['TRAVEL', 'HOTEL', 'TICKET'].includes(userInfo.sysCompany.businessType)">
+              <template v-if="['TRAVEL', 'HOTEL', 'TICKET', 'CATERING'].includes(userInfo.sysCompany.businessType)">
                 提交审核
               </template>
               <template v-else>
@@ -413,6 +413,8 @@ const initOpeion = async () => {
     case 'TICKET':
     infoFunc = api.getScenicById(userInfo.sysCompany.oid);
     break;
+    case 'CATERING':
+    infoFunc = api.getCateringInfo(userInfo.sysCompany.oid);
     // 其他业态
     default:
     infoFunc = api.getCompanyInformation(userInfo.sysCompany.oid);
@@ -477,6 +479,15 @@ const submit = () => {
   let queryData = form.value;
   if (userInfo.sysCompany.businessType == 'TRAVEL') {
     queryData = {
+      companyBo: queryData
+    }
+  }
+  if (userInfo.sysCompany.businessType == 'CATERING') {
+    queryData = {
+      shopPhone: queryData.shopPhone || '',
+      startTime: queryData.startTime || '',
+      endTime: queryData.endTime || '',
+      cateringDesc: queryData.cateringDesc || '',
       companyBo: queryData
     }
   }

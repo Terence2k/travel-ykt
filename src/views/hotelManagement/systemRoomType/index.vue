@@ -16,7 +16,7 @@
 						<template #bodyCell="{ column, record }">
 							<template v-if="column.dataIndex === 'price'">
 								<div class="cell-price">
-									<span class="item">{{ record.price / 100 }}</span>
+									<span class="item">{{ accDiv(record.price, 100) }}</span>
 								</div>
 							</template>
 							<template v-if="column.dataIndex === 'actions'">
@@ -51,6 +51,7 @@ import type { TableColumnsType } from 'ant-design-vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import SystemRoomTypeAddUpdate from './components/systemRoomType-add-update/systemRoomType-add-update.vue';
+import { accDiv } from '@/utils/compute';
 import api from '@/api';
 
 const status = ref('');
@@ -76,8 +77,8 @@ const columns: TableColumnsType = [
 	},
 	{
 		title: '系统房型',
-		dataIndex: 'sysRoomTypeCode',
-		key: 'sysRoomTypeCode',
+		dataIndex: 'sysRoomTypeName',
+		key: 'sysRoomTypeName',
 		width: '25%',
 	},
 	{
