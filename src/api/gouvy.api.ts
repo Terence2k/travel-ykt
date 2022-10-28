@@ -77,3 +77,12 @@ export async function add(data: any) {
 		showLoading: true
 	});
 }
+//新增古维减免规则
+export async function getItineraryTourist(data: any) {
+	return request({
+		url: `${commonPath}/travel-agency-service/public/api/itinerary/maintenance/getItineraryTourist`,
+		method: 'post',
+		data,
+		showLoading: true
+	});
+}

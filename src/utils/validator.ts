@@ -42,12 +42,12 @@ export function isOnedecimalpoint(
 	callback: (error?: Error) => void
   ): void {
 	if (!value) {
-	  callback(new Error('请输入0-0.99的中的任意数值,允许保留一位小数点'));
+	  callback(new Error('请输入0-0.99的中的任意数值,允许保留两位小数点'));
 	} else {
-	  const re = /^([0-0.99](\.\d)?|10)$/;
+	  const re = /^[0-0.99]+(\.[0-9]{1,2})?$/;
 	  const rsCheck = re.test(value);
 	  if (!rsCheck) {
-		callback(new Error('请输入0-0.99的中的任意数值,允许保留一位小数点'));
+		callback(new Error('请输入0-0.99的中的任意数值,允许保留两位小数点'));
 	  } else {
 		callback();
 	  }
