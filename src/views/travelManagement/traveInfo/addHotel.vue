@@ -115,7 +115,7 @@
 <script lang="ts" setup>
 import BaseModal from '@/components/common/BaseModal.vue';
 import api from '@/api';
-import { debounce } from 'lodash';
+import { cloneDeep, debounce } from 'lodash';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import { message } from 'ant-design-vue/es';
 import { Rule } from 'ant-design-vue/es/form';
@@ -188,7 +188,7 @@ const handleChange = async (id: number, option: any) => {
 const validateCheckNum = async (_rule: Rule, value: string, index: number) => {
 	if (value === '') {
 		return Promise.reject('请输入预定房间数量');
-	} else if (value > formState.roomTypeList[index].roomTypeLimitPeople) {
+	} else if (Number(value) > formState.roomTypeList[index].roomTypeLimitPeople) {
 		return Promise.reject('预定房间数量超过最大库存');
 	} else {
 		return Promise.resolve();
@@ -197,9 +197,11 @@ const validateCheckNum = async (_rule: Rule, value: string, index: number) => {
 
 // 入住总人数校验
 const validateCheckIn = async (_rule: Rule, value: string, index: number) => {
+	console.log(formState.roomTypeList[index].reserveNumber)
+	console.log(value)
 	if (value === '') {
 		return Promise.reject('请输入入住总人数');
-	} else if(value < formState.roomTypeList[index].reserveNumber) {
+	} else if(Number(value) < formState.roomTypeList[index].reserveNumber) {
 		return Promise.reject('入住人数不能低于房间数量');
 	} else if(Number(value) > (formState.roomTypeList[index].reserveNumber * formState.roomTypeList[index].roomOccupancyNum)) {
 		return Promise.reject('入住人数不能大于预定房间可住人数');
@@ -234,13 +236,22 @@ const handleOk = async (callback: Function) => {
 		formState.tripNumber = travelStore.touristList.length;
 		formState.itineraryId = route.query.id || traveListData.oid
 		formState.orderAmount = getOrderAmount(formState.roomTypeList, formState.arrivalDate, formState.departureDate)
+		
 		if (Number((formState.scheduledNumber / travelStore.touristList.length).toFixed) < 0.8) {
 			return message.error('入住总人数不低于团客总数的80%')
 		}
+		const newFormState = cloneDeep(formState)
+		newFormState.startDate = newFormState.arrivalDate
+		newFormState.endDate = newFormState.departureDate
+		newFormState.hotelStar = newFormState.hotelStarCode
+		newFormState.orderFee = newFormState.orderAmount
+		newFormState.reservePeopleCount = newFormState.roomTypeList.map((it:any) => it.checkInNumber).reduce((prev: number, next: number) => prev + next)
+		newFormState.roomCount = newFormState.roomTypeList.map((it:any) => it.reserveNumber).reduce((prev: number, next: number) => prev + next)
 		await api.travelManagement.reserveHotel(formState);
 		// message.success('新增成功');
-		travelStore.setHotels(formState)
-		setTimeout(() => callback(), 500)
+		
+		travelStore.setHotels(newFormState)
+		callback()
 	} catch (errorInfo) {
 		callback(false);
 	}

@@ -149,7 +149,10 @@ getTraveDetail();
 .trave-contaner {
 	height: 100%;
 	::v-deep(.ant-tabs-nav) {
-		padding: 16px 20px;
+		padding: 0 20px;
+	}
+	::v-deep(.ant-tabs-tab) {
+		padding: 16px 0;
 	}
 	// ::v-deep(.ant-tabs-content-holder) {
 	//   padding: 0 20px;
