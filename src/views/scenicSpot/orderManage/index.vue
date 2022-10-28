@@ -98,7 +98,7 @@ const ticketType = ['联票', '单票', '演出票'];
 // import { userList } from '@/api';
 const dataSource = [
 	{
-		orderNo: '619351806191367230',
+		orderNo: 'XXX20221027ABC',
 		itineraryNo: 'LYF000000001',
 		localTravelName: '黑白水旅行社',
 		ticketName: '入园',
@@ -112,7 +112,7 @@ const dataSource = [
 		orderAmount: 1100,
 	},
 	{
-		orderNo: '619351806191367230',
+		orderNo: 'XXX20221027ABC',
 		itineraryNo: 'LYF000000002',
 		localTravelName: '黑白水旅行社',
 		ticketName: '入园',
@@ -126,7 +126,7 @@ const dataSource = [
 		orderAmount: 1122,
 	},
 	{
-		orderNo: '619351806191367230',
+		orderNo: 'XXX20221027ABC',
 		itineraryNo: 'LYF000000003',
 		localTravelName: '黑白水旅行社',
 		ticketName: '入园',
@@ -140,7 +140,7 @@ const dataSource = [
 		orderAmount: 1100,
 	},
 	{
-		orderNo: '619351806191367230',
+		orderNo: 'XXX20221027ABC',
 		itineraryNo: 'LYF000000004',
 		localTravelName: '黑白水旅行社',
 		ticketName: '入园',
@@ -154,7 +154,7 @@ const dataSource = [
 		orderAmount: 1100,
 	},
 	{
-		orderNo: '619351806191367230',
+		orderNo: 'XXX20221027ABC',
 		itineraryNo: 'LYF000000005',
 		localTravelName: '黑白水旅行社',
 		ticketName: '入园',

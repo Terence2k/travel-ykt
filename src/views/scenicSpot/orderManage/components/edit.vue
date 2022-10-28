@@ -18,13 +18,12 @@
 					<a-form-item label="订单编号"> {{ formData.data.orderInfo.orderNo }} </a-form-item>
 					<a-form-item label="门票"> {{ formData.data.orderInfo.ticketName }} </a-form-item>
 					<a-form-item label="门票分类"> {{ formData.data.orderInfo.ticketType }} </a-form-item>
-					<!-- 
+
 					<div class="footer">
 						<div class="tooter-btn">
-							<a-button type="primary" @click.prevent="onSubmit">保存</a-button>
-							<a-button type="primary" @click="reset">提交审核</a-button>
+							<a-button type="primary" @click.prevent="route.back()">后退</a-button>
 						</div>
-					</div> -->
+					</div>
 				</a-form>
 			</a-tab-pane>
 
@@ -45,6 +44,11 @@
 						</template>
 					</template>
 				</CommonTable>
+				<div class="footer">
+					<div class="tooter-btn">
+						<a-button type="primary" @click.prevent="route.back()">后退</a-button>
+					</div>
+				</div>
 			</a-tab-pane>
 		</a-tabs>
 	</div>
@@ -342,5 +346,25 @@ onBeforeUnmount(() => {
 
 .table-area {
 	padding: 0;
+}
+.footer {
+	position: fixed;
+	bottom: 12px;
+	line-height: 64px;
+	height: 64px;
+	width: calc(100% - 288px);
+	border-top: 1px solid #f1f2f5;
+	margin-left: -16px;
+	margin-right: 24px;
+	background-color: #fff;
+	z-index: 99;
+
+	.tooter-btn {
+		width: 60%;
+		margin-left: 16px;
+	}
+	button:first-of-type {
+		margin-right: 16px;
+	}
 }
 </style>
