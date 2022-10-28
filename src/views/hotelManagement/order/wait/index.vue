@@ -6,7 +6,7 @@
 					<div class="action-btns">
 						<!-- <a @click="visible = true" >查看</a> -->
 						<a v-if="record.auditStatus == 1" @click="openInfoPage(record.orderNo)">审核</a>
-						<!-- <a>打印票据</a> -->
+						<a>打印票据</a>
 					</div>
 				</template>
 				<template v-if="column.key == 'reduceAfterAmount'">
