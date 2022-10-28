@@ -39,13 +39,13 @@
 				</template>
 			</template>
 		</CommonTable>
-		<CommonPagination
+		<!-- <CommonPagination
 			:current="state.tableData.param.pageNo"
 			:page-size="state.tableData.param.pageSize"
 			:total="state.tableData.total"
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
-		/>
+		/> -->
 	</div>
 	<Edit v-model="state.operationModal.isEditdate" :params="state.params" @onSearchList="onSearchList"></Edit>
 </template>
@@ -109,7 +109,7 @@ const state = reactive({
 	tableData: {
 		infoData: [],
 		Data: [],
-		total: 400,
+		total:'',
 		loading: false,
 		param: {
 			pageNo: 1,
@@ -123,20 +123,20 @@ const state = reactive({
 		isEditdate: false,
 	},
 });
-const onHandleCurrentChange = (val: number) => {
-	console.log('change:', val);
-	state.tableData.param.pageNo = val;
-	onSearch();
-};
+// const onHandleCurrentChange = (val: number) => {
+// 	console.log('change:', val);
+// 	state.tableData.param.pageNo = val;
+// 	onSearchList();
+// };
 const auditRef = ref();
 const cancel = () => {
 	dialogVisible.value = false;
 };
-const pageSideChange = (current: number, size: number) => {
-	console.log('changePageSize:', size);
-	state.tableData.param.pageSize = size;
-	// onSearch();
-};
+// const pageSideChange = (current: number, size: number) => {
+// 	console.log('changePageSize:', size);
+// 	state.tableData.param.pageSize = size;
+// 	onSearchList();
+// };
 const add = (param: any) => {
 	const { row, handle } = param;
 	state.params = {};
@@ -185,6 +185,7 @@ const onSearch = () => {
 const onSearchList = () => {
 	api.getBasiclist().then((res) => {
 		state.tableData.Data = res;
+		console.log(res,'1233')
 	});
 };
 onMounted(() => {
