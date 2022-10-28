@@ -111,7 +111,7 @@ const reproduceOpetion = async () => {
 }
 watch(() => attrs.value,
     async (newVal) => {
-        list.value = await getAllAreaProvice(0)
+        if (list.value.length === 0) { list.value = await getAllAreaProvice(0) }
         if (newVal) {
             reproduceOpetion()
         }
