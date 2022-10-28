@@ -15,6 +15,7 @@
 				<a-input placeholder="请输入行程单号" v-model:value="hotelStore.HotelList[chart].params.itineraryNo" />
 			</search-item>
 			<template #button>
+				<a-button style="margin-right: 30px"  @click="reset">重置</a-button>
 				<a-button @click="onSearch">查询</a-button>
 			</template>
 		</CommonSearch>
@@ -30,7 +31,7 @@
 <script lang="ts" setup>
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
-import { useHotelStore } from '@/stores/modules/hotelManage';
+import { useHotelStore,hotelListParams } from '@/stores/modules/hotelManage';
 import api from '@/api';
 import { HotelStatus } from '@/enum';
 import waits from './wait/index.vue';
@@ -99,6 +100,11 @@ const onSearch = async () => {
 	// params.groupType = params.groupType === '0' ? '' : params.groupType;
 	const res = await api.hotelOrderPage(params);
 	hotelStore.setOrderList(res, chartField);
+};
+const reset = () => {
+	let chartField: Field = chart.value;
+	hotelStore.HotelList[chartField].params = cloneDeep(hotelListParams.params);
+	onSearch();
 };
 </script>
 <style lang="less" scoped>
