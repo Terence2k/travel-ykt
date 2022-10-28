@@ -338,7 +338,7 @@ const apply = () => {
 onMounted(() => {});
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="less">
 .tips {
 	color: #71747a;
 }

@@ -106,4 +106,4 @@ defineExpose({
 // const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped lang="less"></style>

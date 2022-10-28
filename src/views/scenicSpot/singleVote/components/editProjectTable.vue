@@ -290,7 +290,7 @@ onMounted(() => {
 });
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="less">
 .inner-wrapper {
 	position: relative;
 	display: flex;

@@ -314,7 +314,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="less">
 .table-area {
 	// padding-bottom: 16px;
 }
