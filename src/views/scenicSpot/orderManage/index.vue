@@ -5,9 +5,9 @@
 				<!-- <a-select ref="select" style="width: 200px" placeholder="请选择审核状态">
 					<a-select-option value="all">all</a-select-option>
 				</a-select> -->
-				<a-date-picker format="YYYY-MM-DD " value-format="YYYY-MM-DD " v-model:value="state.tableData.schoolTime" placeholder="入园日期" />
+				<a-date-picker format="YYYY-MM-DD " value-format="YYYY-MM-DD " v-model:value="state.tableData.schoolDate" placeholder="入园日期" />
 				<!-- <a-time-picker
-					v-model:value="state.tableData.schoolTime"
+					v-model:value="state.tableData.schoolDate"
 					:show-time="{ format: 'YYYY-MM-DD HH:mm:ss' }"
 					format="YYYY-MM-DD HH:mm:ss"
 					value-format="YYYY-MM-DD HH:mm:ss"
@@ -28,7 +28,7 @@
 				<a-input v-model:value="state.tableData.itineraryNo" placeholder="请输入行程单号" style="width: 200px" />
 			</SearchItem>
 			<SearchItem label="旅行社名称">
-				<a-input v-model:value="state.tableData.agencyName" placeholder="请输入行程单号" style="width: 200px" />
+				<a-input v-model:value="state.tableData.travelName" placeholder="请输入行程单号" style="width: 200px" />
 				<!-- <a-input placeholder="请输入用户姓名/手机号" style="width: 200px" /> -->
 			</SearchItem>
 			<template #button>
@@ -95,10 +95,10 @@ const dataSource = [
 	{
 		orderNo: '619351806191367230',
 		itineraryNo: 'LYF000000001',
-		agencyName: '黑白水旅行社',
+		travelName: '黑白水旅行社',
 		ticketName: '入园',
 		ticketTypeName: '单票',
-		schoolTime: '2022-7-14',
+		schoolDate: '2022-7-14',
 		verificationTime: '2022-7-12 17:50:45',
 		bookTime: '2022-7-12 17:50:45',
 		orderStatus: '已核销',
@@ -109,10 +109,10 @@ const dataSource = [
 	{
 		orderNo: '619351806191367230',
 		itineraryNo: 'LYF000000002',
-		agencyName: '黑白水旅行社',
+		travelName: '黑白水旅行社',
 		ticketName: '入园',
 		ticketTypeName: '单票',
-		schoolTime: '2022-7-14',
+		schoolDate: '2022-7-14',
 		verificationTime: '2022-7-12 17:50:45',
 		bookTime: '2022-7-12 17:50:45',
 		orderStatus: '已核销',
@@ -123,10 +123,10 @@ const dataSource = [
 	{
 		orderNo: '619351806191367230',
 		itineraryNo: 'LYF000000003',
-		agencyName: '黑白水旅行社',
+		travelName: '黑白水旅行社',
 		ticketName: '入园',
 		ticketTypeName: '单票',
-		schoolTime: '2022-7-14',
+		schoolDate: '2022-7-14',
 		verificationTime: '2022-7-12 17:50:45',
 		bookTime: '2022-7-12 17:50:45',
 		orderStatus: '已核销',
@@ -137,10 +137,10 @@ const dataSource = [
 	{
 		orderNo: '619351806191367230',
 		itineraryNo: 'LYF000000004',
-		agencyName: '黑白水旅行社',
+		travelName: '黑白水旅行社',
 		ticketName: '入园',
 		ticketTypeName: '单票',
-		schoolTime: '2022-7-14',
+		schoolDate: '2022-7-14',
 		verificationTime: '2022-7-12 17:50:45',
 		bookTime: '2022-7-12 17:50:45',
 		orderStatus: '已核销',
@@ -151,10 +151,10 @@ const dataSource = [
 	{
 		orderNo: '619351806191367230',
 		itineraryNo: 'LYF000000005',
-		agencyName: '黑白水旅行社',
+		travelName: '黑白水旅行社',
 		ticketName: '入园',
 		ticketTypeName: '单票',
-		schoolTime: '2022-7-14',
+		schoolDate: '2022-7-14',
 		verificationTime: '2022-7-12 17:50:45',
 		bookTime: '2022-7-12 17:50:45',
 		orderStatus: '已核销',
@@ -178,8 +178,8 @@ const columns = [
 	},
 	{
 		title: '旅行社名称',
-		dataIndex: 'agencyName',
-		key: 'agencyName',
+		dataIndex: 'travelName',
+		key: 'travelName',
 		width: 120,
 	},
 	{
@@ -196,8 +196,8 @@ const columns = [
 	},
 	{
 		title: '入园日期',
-		dataIndex: 'schoolTime',
-		key: 'schoolTime',
+		dataIndex: 'schoolDate',
+		key: 'schoolDate',
 		width: 120,
 	},
 	{
@@ -250,9 +250,9 @@ const state = reactive({
 		total: 400,
 		loading: false,
 		param: {
-			schoolTime: '',
+			schoolDate: '',
 			verificationTime: '',
-			agencyName: '',
+			travelName: '',
 			orderState: '',
 			itineraryNumber: null,
 			pageNo: 1,
@@ -314,7 +314,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="less">
 .table-area {
 	// padding-bottom: 16px;
 }

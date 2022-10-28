@@ -228,7 +228,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="less">
 .editWrapper {
 	padding: 0 16px;
 	padding-bottom: 64px;

@@ -48,9 +48,9 @@
 			</a-form-item>
 
 			<div class="title">核销规则</div>
-
 			<a-form-item label="核销项目" name="data.itemList" v-bind="validateInfos[`data.itemList`]" :wrapper-col="{ span: 12 }">
 				<EditProjectTable
+					ref="editProjectTableRef"
 					@del-verification-obj="delVerificationObj"
 					@add-verification-obj="addVerificationObj"
 					:tableList="formData.data.itemList"
@@ -258,6 +258,8 @@ const addVerificationObj = (obj: any) => {
 	if (!formData.data.itemList) {
 		formData.data.itemList = [];
 	}
+	console.log(obj, 'addVerificationObj');
+
 	formData.data.itemList = obj;
 
 	// formData.data.itemList.push(obj);
@@ -283,11 +285,12 @@ const initPage = async (): Promise<void> => {
 	let res = await api.getViewList();
 	viewList.value = res;
 };
-
+const editProjectTableRef = ref();
 const initEditPage = async () => {
 	navigatorBar.setNavigator(['景区信息管理', '编辑']);
 	let res = await api.getScenicSpotSignleDetail(route.currentRoute.value?.query?.oid);
 	formData.data = res;
+	type && editProjectTableRef.value.setValue(formData.data.optionalVerificationCount);
 };
 
 const initCreatePage = () => {
@@ -305,7 +308,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="less">
 .editWrapper {
 	padding: 0 16px;
 	padding-bottom: 64px;

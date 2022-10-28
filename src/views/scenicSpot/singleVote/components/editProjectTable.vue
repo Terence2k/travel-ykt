@@ -20,13 +20,7 @@
 			</template>
 		</BaseModal>
 		<div class="inner-wrapper">
-			<CommonTable
-				:dataSource="pageStatus ? formValidate.initData : tableList"
-				:columns="type ? columns : column"
-				:scrollY="false"
-				bordered
-				class="left"
-			>
+			<CommonTable :dataSource="tableList" :columns="type ? columns : column" :scrollY="false" bordered class="left">
 				<template #bodyCell="{ column, record, index }">
 					<template v-if="column.key === 'itemId'">
 						<div class="action-btns">
@@ -34,7 +28,7 @@
 								{{ itemNameCompute(Number(record.itemId)) }}
 							</span>
 							<a v-if="record.itemId && !type" href="javascript:;" @click="change(record)">更换</a>
-							<a href="javascript:;" v-if="pageStatus && formValidate.initData[0].init" @click="CreateData">请选择</a>
+							<a href="javascript:;" v-if="pageStatus && !type && tableList[0].init" @click="CreateData">请选择</a>
 						</div>
 					</template>
 					<template v-if="column.key === 'verificationNumber'">
@@ -59,8 +53,20 @@
 		</div>
 
 		<span style="color: #c8c9cc" v-show="type">
-			<span style="color: red">*</span>其中，非必核销项目数量为{{ ifVerificationNum }}项，可核销总数（不包括必核销项）不超过{{ times }} 次</span
-		>
+			<span style="color: red">*</span>其中，非必核销项目数量为{{ ifVerificationNum }}项，可核销总数（不包括必核销项）不超过
+			<a-input-number
+				v-model:value="allTimes"
+				:min="times"
+				:max="timesMax"
+				:formatter="(value) => value.replace(/\D/g, '')"
+				:parser="(value) => value.replace(/\D/g, '')"
+				placeholder="次数"
+				style="width: 80px"
+				:controls="false"
+				@change="changeIfverification"
+			/>
+			次 (最小值：{{ times }}，最大值：{{ timesMax }})
+		</span>
 	</div>
 	<DelModal :params="{ title: '删除', content: '是否确定该条数据' }" v-model="delShow" @submit="delSubmit" @cancel="delCancel" />
 </template>
@@ -95,21 +101,37 @@ const props = defineProps({
 	// params: Object,
 	// tableList: Array,
 });
+const allTimes = ref<number | null>(null);
+
+const changeIfverification = (num: number) => {
+	emits('get-optional-verification', num);
+};
 //总数
 const ifVerificationNum = computed(() => {
 	let res = props.tableList?.filter((i) => !i.ifVerification) || 0;
 	return res.length || 0;
 });
 
-//次数
+//次数 最小值
 const times = computed(() => {
 	let num = 0;
-	let res = props.tableList?.filter((i) => !i.ifVerification);
-	res?.map((i) => {
+	let res = props.tableList?.filter((i: any) => i.ifVerification);
+	res?.map((i: any) => {
 		num = num + Number(i.verificationNumber);
 		return i;
 	});
-	emits('get-optional-verification', num);
+
+	return num;
+});
+
+//次数 最大值
+const timesMax = computed(() => {
+	let num = 0;
+	// let res = props.tableList?.filter((i) => !i.ifVerification);
+	props.tableList?.map((i: any) => {
+		num = num + Number(i.verificationNumber);
+		return i;
+	});
 	return num;
 });
 const column = ref([
@@ -154,8 +176,8 @@ const columns = ref([
 ]);
 
 const itemNameCompute = (id: number) => {
-	let rN = formData.data.filter((i) => i.id === id),
-		optionN = options.value.filter((i) => i.id === id);
+	let rN: any[] = formData.data.filter((i: any) => i.id === id),
+		optionN = options.value.filter((i: any) => i.id === id);
 	// console.log(optionN, 'optionN');
 
 	return rN[0]?.itemName || optionN[0]?.label || '';
@@ -205,11 +227,11 @@ const apply = () => {
 			if (!type.value) {
 				console.log('formValidate.initData');
 
-				formValidate.initData = [{ itemId: formValidate.proj, ifVerification: formValidate.proj === '1' ? true : false, verificationNumber: null }];
+				formValidate.initData = [{ itemId: formValidate.proj, ifVerification: false, verificationNumber: null }];
 				emits('add-verification-obj-sign', formValidate.initData);
 			} else {
 				let arr = formValidate.proj.map((i) => {
-					return { itemId: i, ifVerification: i === '1' ? true : false, verificationNumber: null };
+					return { itemId: i, ifVerification: false, verificationNumber: null };
 				});
 				emits('add-verification-obj', arr);
 			}
@@ -226,7 +248,7 @@ const CreateData = () => {
 	console.log(props.tableList);
 	if (type && props.tableList.length > 0) {
 		formValidate.proj = [];
-		props.tableList.map((i) => {
+		props.tableList.map((i: any) => {
 			formValidate.proj.push(i.itemId);
 			return i;
 		});
@@ -260,10 +282,10 @@ const formData = reactive({
 	data: [],
 });
 
-const handleChange = (value) => {
-	console.log(value, 'asdasd');
+const handleChange = (value: any) => {
 	formValidate.proj = value;
 };
+
 // 表单
 const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
 	formValidate,
@@ -275,7 +297,7 @@ const getList = async () => {
 	formData.data = await api.getVariflist();
 	// let res = await api.getScenicOneTicket();
 
-	let arr = formData.data.map((i) => {
+	let arr = formData.data.map((i: any) => {
 		return { value: i.id, label: i.itemName };
 	});
 
@@ -287,10 +309,22 @@ const delShow = ref(false);
 const delIndex = ref<null | number>();
 onMounted(() => {
 	getList();
+	console.log(pageStatus.value && !type.value, '单点新增');
+	if (pageStatus.value && !type.value) {
+		emits('add-verification-obj-sign', formValidate.initData);
+	}
+});
+
+const setValue = (value: number) => {
+	allTimes.value = value;
+};
+
+defineExpose({
+	setValue,
 });
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="less">
 .inner-wrapper {
 	position: relative;
 	display: flex;
@@ -301,9 +335,10 @@ onMounted(() => {
 	}
 }
 .table-area {
-	margin: 0 10px 0 0;
+	margin: 0;
 	padding: 0;
 }
+
 .btn {
 	position: absolute;
 	right: -126px;

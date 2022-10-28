@@ -154,7 +154,7 @@ export async function getWriteOffTimeList(data: any) {
 //景区订单 分页查询
 export async function getViewOrderList(data: any) {
 	return request({
-		url: commonPath + `/ticket-service/public/api/scenic-order/page`,
+		url: commonPath + `/ticket-service/public/api/scenic-order`,
 		method: 'get',
 		data,
 	});
@@ -228,6 +228,24 @@ export async function getChildOption() {
 		method: 'get',
 	});
 }
+
+//联票 查询库存日历 （仅编辑）
+export async function getCalendarMultiple(data: any) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-unite/subUnitePriceDate`,
+		method: 'get',
+		data,
+	});
+}
+//联票 编辑库存日历 （仅编辑）
+export async function geditCalendarMultiple(data: any) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-unite/subUnitePriceDate`,
+		method: 'post',
+		data,
+	});
+}
+
 // 核销时间段
 export async function getVerifManage(data: any) {
 	return request({
@@ -253,5 +271,24 @@ export async function getScenicSave(data: any) {
 		url: `${commonPath}/ticket-service/public/api/scenic-verif-manage/save`,
 		method: 'get',
 		data,
+	});
+}
+
+// 获取核销记录分页数据
+export async function getWriteOffRecordList(data: any) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-verif-record/page`,
+		method: 'get',
+		data,
+		showLoading: true,
+	});
+}
+
+//获取核销记录详情
+export async function getWriteOffRecordDetails(oid: number) {
+	return request({
+		url: `${commonPath}/ticket-service/public/api/scenic-verif-record/${oid}`,
+		method: 'get',
+		showLoading: true,
 	});
 }

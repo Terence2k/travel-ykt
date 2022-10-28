@@ -173,7 +173,7 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 onMounted(() => {});
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="less">
 .wrapper {
 	position: relative;
 	// width: 100%;
@@ -191,7 +191,7 @@ onMounted(() => {});
 	}
 }
 .table-area {
-	margin: 0 10px 0 0;
+	margin: 0 0px 0 0;
 	padding: 0;
 }
 .btn {

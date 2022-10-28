@@ -151,7 +151,7 @@ defineExpose({
 // const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="less">
 .table-area {
 	margin: 0;
 	padding: 0;

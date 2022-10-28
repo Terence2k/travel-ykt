@@ -116,7 +116,7 @@
 	import BaseModal from '@/components/common/BaseModal.vue';
     import { useTravelStore } from '@/stores/modules/travelManagement';
     import api from '@/api';
-	import { debounce } from 'lodash';
+	import { cloneDeep, debounce } from 'lodash';
 
 	const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any ) || {}
 	const route = useRoute()
@@ -208,8 +208,12 @@
 			formState.unitPrice = ticketPrice.value
 			formState.itineraryId = route.query.id || traveListData.oid
 			formState.peopleCount = travelStore.touristList.length
+			const newFormState = cloneDeep(formState)
+			newFormState.reservePeopleCount = formState.peopleCount
+			newFormState.totalFee = newFormState.peopleCount * newFormState.unitPrice
+			newFormState.reserveStatusName = '草稿'
 			await api.travelManagement.reserveTicket(formState)
-			travelStore.setTicket(formState)
+			travelStore.setTicket(newFormState)
 			callback()
 		} catch (errorInfo) {
 			callback(false)
