@@ -78,9 +78,6 @@ const save = (e: any) => {
 };
 
 const sendGroup = async (id: string) => {
-	if (!travelStore.guideList.length) return message.error('请选择带团导游');
-	if (!travelStore.touristList.length) return message.error('请添加游客');
-	if (!travelStore.trafficList.length) return message.error('请添加交通信息');
 
 	const formData = new FormData();
 	formData.append('itineraryId', id)
@@ -94,7 +91,11 @@ const sendGroup = async (id: string) => {
 }
 
 const saveItinerary = (val: any) => {
-	console.log(travelStore.touristList);
+	if (sendTeam.value) {
+		if (!travelStore.guideList.length) return message.error('请选择带团导游');
+		if (!travelStore.touristList.length) return message.error('请添加游客');
+		if (!travelStore.trafficList.length) return message.error('请添加交通信息');
+	}
 	const itineraryId =  route.query.id || traveListData.oid
 	let ajax = itineraryId ? api.travelManagement.editItinerary : api.travelManagement.saveItinerary;
 	return ajax({
