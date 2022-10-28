@@ -170,8 +170,8 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			},
 			{
 				title: '团队游客人数',
-				dataIndex: 'ticketCount',
-				key: 'ticketCount',
+				dataIndex: 'reservePeopleCount',
+				key: 'reservePeopleCount',
 			},
 			{
 				title: '购票人数',
@@ -212,8 +212,8 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			},
 			{
 				title: '房间数量',
-				dataIndex: '1',
-				key: '1',
+				dataIndex: 'roomCount',
+				key: 'roomCount',
 			},
 			{
 				title: '入住时间',
@@ -225,11 +225,11 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				dataIndex: 'endDate',
 				key: 'endDate',
 			},
-			{
-				title: '单价（元）',
-				dataIndex: 'unitPrice',
-				key: 'unitPrice',
-			},
+			// {
+			// 	title: '单价（元）',
+			// 	dataIndex: 'unitPrice',
+			// 	key: 'unitPrice',
+			// },
 			{
 				title: '入住人数',
 				dataIndex: 'reservePeopleCount',

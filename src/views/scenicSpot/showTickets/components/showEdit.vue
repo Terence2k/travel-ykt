@@ -154,7 +154,7 @@ const edit = () => {
 };
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="less">
 .header {
 	margin-left: 30px;
 	font-weight: bold;

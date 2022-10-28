@@ -71,7 +71,7 @@ defineExpose({
 // const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="less">
 ::deep .ant-modal-body {
 	margin: 0;
 	padding: 0;
