@@ -4,6 +4,7 @@
 			<template #button>
 				<div class="btn">
 					<a-button type="primary" @click="transfer('all', null)">申请转账</a-button>
+					<a-button style="margin-left: 8px" type="primary" @click="combination">组合转账</a-button>
 				</div>
 			</template>
 			<template #bodyCell="{ column, record }">
@@ -11,7 +12,7 @@
 				<template v-if="column.key === 'totalFee'">
 					{{ (record.totalFee / 100) > 0 ? (record.totalFee / 100).toFixed(2) : 0}}
 				</template>
-				<!-- 结算总额 单位转成元-->
+				<!-- 结算金额 单位转成元-->
 				<template v-if="column.key === 'accountingFee'">
 					{{ (record.accountingFee / 100) > 0 ? (record.accountingFee / 100).toFixed(2) : 0}}
 				</template>
@@ -31,6 +32,7 @@
 			@showSizeChange="pageSideChange"
 		/>
 	</div>
+	<transfer-modal v-model="transferData.show" @submit="transferConfirm" />
 </template>
 
 <script lang="ts" setup>
@@ -40,8 +42,11 @@ import { reactive, onMounted } from 'vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import { Modal } from 'ant-design-vue';
+import TransferModal from '@/views/settlementManagement/settlement/settlement/transferModal.vue';
+
 const props = defineProps({
 	params: Object,
+	status: Number
 })
 const router = useRouter();
 const columns = [
@@ -86,7 +91,12 @@ const columns = [
 		key: 'timeText',
 	},
     {
-		title: '结算总额(元)',
+		title: '结算金额(元)',
+		dataIndex: 'accountingFee',
+		key: 'accountingFee',
+	},
+	{
+		title: '对账批号',
 		dataIndex: 'accountingFee',
 		key: 'accountingFee',
 	},
@@ -97,7 +107,15 @@ const columns = [
 		width: 208,
 	},
 ];
-
+// 缓存编辑表格模态框数据
+const transferData = ref({
+	show: false,
+	modalParams: {},
+});
+// 申请转账成功回调
+const transferConfirm = () => {
+	onSearch();
+}
 const state = reactive({
 	tableData: {
 		data: [],
@@ -112,7 +130,7 @@ const state = reactive({
 			subTravelId: null,
 			startDate: null,
 			endDate: null,
-			status: 13, //10行程中 12预结算 13已结算 14已申请转账
+			status: null
 		},
 	},
 	selectedRowKeys: [], //当前选择的标识
@@ -148,6 +166,7 @@ const dealData = (params: [any]) => {
 
 const onSearch = async() => {
 	// 处理父组件传递筛选条件
+	state.tableData.param.status = props?.status
 	state.tableData.param.teamTypeId = props.params?.teamTypeId
 	state.tableData.param.itineraryNo = props.params?.itineraryNo
 	state.tableData.param.travelId = props.params?.travelId
@@ -166,41 +185,48 @@ const onSearch = async() => {
 // 向父组件暴露方法
 defineExpose({ onSearch });
 
+// 组合转账
+const combination = () => {
+	// 判断是否有选择项
+	let oid;
+	if (state.selectedRowKeys.length == 0) {
+		message.warn('请先选择组合项');
+		return;
+	}
+	oid = state.selectedRowKeys;
+	console.log('把老子的id给打印出来', oid);
+}
 // 申请转账
 const transfer = (type: string, record: any) => {
 	let oid;
 	// type:one单项  all批量
 	if (type == 'one') {
 		oid = record.oid;
+		Modal.confirm({
+			title: '下团结算',
+			width: 560,
+			closable: true,
+			centered: true,
+			icon: false,
+			content: '即将为所选行程单发起结算转账，是否确定申请转账？',
+			onOk() {
+				// api
+				// 	.comprehensiveFeeEnable(record.oid)
+				// 	.then((res: any) => {
+						message.success('操作成功');
+				// 		onSearch();
+				// 	})
+				// 	.catch((err: any) => {
+				// 		message.error(err || '操作失败');
+				// 	});
+			},
+			onCancel() {},
+		});
 	} else {
-		// 判断是否有选择项
-		if (state.selectedRowKeys.length == 0) {
-			message.warn('请先选择转账项');
-			return;
-		}
 		oid = state.selectedRowKeys;
+		transferData.value.show = true
 	}
 	console.log('把老子的id给打印出来', oid);
-	Modal.confirm({
-		title: '下团结算',
-		width: 560,
-		closable: true,
-		centered: true,
-		icon: false,
-		content: '即将为所选行程单发起结算转账，是否确定申请转账？',
-		onOk() {
-			// api
-			// 	.comprehensiveFeeEnable(record.oid)
-			// 	.then((res: any) => {
-					message.success('操作成功');
-			// 		onSearch();
-			// 	})
-			// 	.catch((err: any) => {
-			// 		message.error(err || '操作失败');
-			// 	});
-		},
-		onCancel() {},
-	});
 };
 // 查看详情
 const toInfo = (record: any) => {
