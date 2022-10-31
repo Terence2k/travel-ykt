@@ -9,4 +9,9 @@ export type Field = 'drafts' |
 				'refuseGroup' | 
 				'waitingChange' | 
 				'closeAnAccount' | 
-				'cancellation' | 'overtime'
+				'cancellation' | 
+        'overtime' |
+        'financeSendGroup' |
+        'financeChange' |
+        'administrativeSendGroup' |
+        'administrativeChange'

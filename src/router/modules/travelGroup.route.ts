@@ -236,6 +236,54 @@ export default [
 					},
 				],
 			},
+			{
+				path: 'finance_audit',
+				redirect: '/travel/finance_audit/finance_audit_list',
+				name: 'finance_audit',
+				meta: {
+					title: '财务审核行程单',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					// isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'finance_audit_list',
+						component: () => import('@/views/travelManagement/financeAuditList.vue'),
+						name: 'finance_audit_list',
+						meta: {
+							// title: '财务审核行程单',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
+			{
+				path: 'administrative_audit',
+				redirect: '/travel/administrative_audit/administrative_audit_list',
+				name: 'administrative_audit',
+				meta: {
+					title: '管理部门审核行程单',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					// isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'administrative_audit_list',
+						component: () => import('@/views/travelManagement/administrativeAuditList.vue'),
+						name: 'administrative_audit_list',
+						meta: {
+							// title: '管理部门审核行程单',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
 		],
 	},
 ];
