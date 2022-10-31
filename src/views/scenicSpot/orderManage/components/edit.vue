@@ -18,22 +18,24 @@
 					<a-form-item label="订单编号"> {{ formData.data.orderInfo.orderNo }} </a-form-item>
 					<a-form-item label="门票"> {{ formData.data.orderInfo.ticketName }} </a-form-item>
 					<a-form-item label="门票分类"> {{ formData.data.orderInfo.ticketType }} </a-form-item>
-					<!-- 
+
 					<div class="footer">
 						<div class="tooter-btn">
-							<a-button type="primary" @click.prevent="onSubmit">保存</a-button>
-							<a-button type="primary" @click="reset">提交审核</a-button>
+							<a-button type="primary" @click.prevent="route.back()">后退</a-button>
 						</div>
-					</div> -->
+					</div>
 				</a-form>
 			</a-tab-pane>
 
 			<a-tab-pane key="2" tab="人员信息">
-				<CommonTable :dataSource="formData.data.orderPersonInfo" :columns="columns" :scrollY="false">
+				<CommonTable :dataSource="formData.data.orderPersonInfoList" :columns="columns" :scrollY="false">
 					<template #bodyCell="{ column, index }">
 						<template v-if="column.key === 'index'">
 							{{ index + 1 }}
 						</template>
+						<!-- <template v-if="column.key === 'certificateType'">
+							{{ index + 1 }}
+						</template> -->
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
 								<a>申请改刷</a>
@@ -42,6 +44,11 @@
 						</template>
 					</template>
 				</CommonTable>
+				<div class="footer">
+					<div class="tooter-btn">
+						<a-button type="primary" @click.prevent="route.back()">后退</a-button>
+					</div>
+				</div>
 			</a-tab-pane>
 		</a-tabs>
 	</div>
@@ -57,6 +64,10 @@ import api from '@/api';
 import { message } from 'ant-design-vue';
 import Pic from '@/components/common/imageWrapper.vue';
 import CommonTable from '@/components/common/CommonTable.vue';
+
+// import { useTravelStore } from '@/stores/modules/travelManagement';
+// const travelStore = useTravelStore();
+// const IDCard = computed(() => travelStore.IDCard);
 const route = useRouter();
 
 const useForm = Form.useForm;
@@ -90,9 +101,9 @@ const formData = reactive({
 			ticketName: '门票名称', //门票名称
 			ticketType: '门票分类名称', //门票类型:0-儿童,1-成人,2-老人
 		}, //订单详情信息
-		orderPersonInfo: [
+		orderPersonInfoList: [
 			{
-				certificateTypeName: '证件类型名称', //证件类型名称
+				certificateType: '证件类型名称', //证件类型名称
 				certificateNo: '证件号', //证件号
 				gender: '性别', //性别: true 男 false 女
 				personName: '人员名称', //人员名称
@@ -205,8 +216,8 @@ const columns = [
 	},
 	{
 		title: '证件类型',
-		dataIndex: 'certificateTypeName',
-		key: 'certificateTypeName',
+		dataIndex: 'certificateType',
+		key: 'certificateType',
 	},
 	{
 		title: '证件号码',
@@ -229,13 +240,8 @@ const columns = [
 		key: 'gender',
 	},
 	{
-		title: '健康状态',
-		dataIndex: 'address3',
-		key: 'address3',
-	},
-	{
 		title: '门票类型',
-		dataIndex: 'address3',
+		dataIndex: 'ticketType',
 		key: 'address3',
 	},
 	{
@@ -316,20 +322,16 @@ const reset = (): void => {
 };
 //初始化页面
 const initPage = async (): Promise<void> => {
-	let res = await api.getScenicById(route.currentRoute.value?.query?.oid);
+	let res = await api.getViewOrderDetails(route.currentRoute.value?.query?.oid);
 	formData.data = res;
-	formData.data.oid = parseInt(route.currentRoute.value?.query?.oid);
-	// formData.data.cityId && selectCity(formData.data.cityId);
-	// formData.data.areaId && selectArea(formData.data.areaId);
+	// formData.data.oid = parseInt(route.currentRoute.value?.query?.oid);
 };
 
 // 自定义面包屑
 onMounted(async () => {
 	// navigatorBar.setNavigator(['景区信息管理', '编辑']);
+	await initPage();
 	// await initOpeion();
-	// await initPage();
-	// await selectCity(formData.data.provinceId);
-	// await selectArea(formData.data.cityId);
 });
 onBeforeUnmount(() => {
 	// navigatorBar.clearNavigator();
@@ -344,5 +346,25 @@ onBeforeUnmount(() => {
 
 .table-area {
 	padding: 0;
+}
+.footer {
+	position: fixed;
+	bottom: 12px;
+	line-height: 64px;
+	height: 64px;
+	width: calc(100% - 288px);
+	border-top: 1px solid #f1f2f5;
+	margin-left: -16px;
+	margin-right: 24px;
+	background-color: #fff;
+	z-index: 99;
+
+	.tooter-btn {
+		width: 60%;
+		margin-left: 16px;
+	}
+	button:first-of-type {
+		margin-right: 16px;
+	}
 }
 </style>

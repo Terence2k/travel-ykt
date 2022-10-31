@@ -30,9 +30,10 @@
 		</template>
 	</CommonSearch>
 	<div class="table-area">
-		<a-tabs v-model:activeKey="activeKey">
+		<!-- 等待行程单枚举获取完成 -->
+		<a-tabs v-model:activeKey="activeKey" v-if="options.itineraryStatus.length > 0">
 			<a-tab-pane v-for="(item, index) in pages" :key="index" :tab="item.label">
-				<component ref="listRef" :is="item.name" v-if="index == activeKey" :params="state.tableData.param"></component>
+				<component ref="listRef" :is="item.name" v-if="index == activeKey" :params="state.tableData.param" :status="getItineraryStatus(item.codeName)"></component>
 			</a-tab-pane>
 		</a-tabs>
 	</div>
@@ -50,6 +51,17 @@ import transferred from './transferred/transferred.vue';
 import { settlementOptions } from '@/stores/modules/settlement';
 const options = settlementOptions();
 
+// 计算属性 匹配费用归属企业类型
+const getItineraryStatus = computed(() => (value: any) => {
+	if (options.itineraryStatus) {
+		const idx = options.itineraryStatus.findIndex((item) => item.codeName === value);
+		if (idx !== -1) {
+			return options.itineraryStatus[idx]['status'];
+		}
+		return '';
+	}
+	return ''
+})
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 const route = useRouter();
@@ -60,18 +72,22 @@ const pages = [
 	{
 		name: trip,
 		label: '行程中',
+		codeName: 'AT_OUT'
 	},
 	{
 		name: examine,
 		label: '预结算',
+		codeName: 'PRE_SETTLE'
 	},
 	{
 		name: settlement,
 		label: '已结算',
+		codeName: 'HAD_SETTLED'
 	},
 	{
 		name: transferred,
 		label: '已申请转账',
+		codeName: 'HAD_APPLY_TRANSFER'
 	},
 ];
 
@@ -100,12 +116,15 @@ const listRef = ref<any>();
 
 // 搜索触发子组件查询
 const initList = async () => {
-	listRef.value[0].onSearch();
+	if(listRef.value) {
+		listRef.value[0].onSearch();
+	}
 };
 onMounted(() => {
 	options.getTeamTypeList();
 	options.getGroupSocietyList();
 	options.getEarthContactAgencyList();
+	options.getItineraryStatus();
 	initList();
 	navigatorBar.setNavigator(['结算管理', '结算管理']);
 });

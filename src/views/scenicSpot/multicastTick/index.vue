@@ -38,7 +38,7 @@
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a href="javascript:;" @click="toEditPage(record)">编辑</a>
-						<a href="javascript:;" @click="outDown(index)">
+						<a href="javascript:;" v-if="record.putaway" @click="outDown(index)">
 							{{ !record.putaway ? '上架' : '下架' }}
 						</a>
 					</div>
@@ -52,6 +52,7 @@
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
 		/>
+		<Audit ref="auditRef" @down-page="downPage" />
 	</div>
 </template>
 
@@ -64,6 +65,7 @@ import api from '@/api';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import { useCommonEnum } from '@/stores/modules/commonEnum';
 import { message } from 'ant-design-vue';
+import Audit from './components/audit.vue';
 const route = useRouter();
 const navigatorBar = useNavigatorBar();
 const commonEnum = useCommonEnum();
@@ -150,12 +152,19 @@ const toEditPage = (value: any) => {
 	route.push({ path: '/scenic-spot/multicast/edit', query: { t: 1, o: value.oid } });
 };
 //下架
-const outDown = (index) => {
+const auditRef = ref();
+const downIndex = ref<number | null>(null);
+const outDown = (index: number) => {
 	//未对接口
+	downIndex.value = index;
 	console.log(index);
-	state.tableData.data[index].putaway = !state.tableData.data[index].putaway;
-	message.success('成功');
+	auditRef.value.open();
+
 	// route.push({ path: '/scenic-spot/multicast/edit' });
+};
+const downPage = () => {
+	state.tableData.data[downIndex.value].putaway = !state.tableData.data[downIndex.value].putaway;
+	message.success('成功');
 };
 //新增
 const add = () => {

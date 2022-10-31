@@ -128,6 +128,22 @@ export async function scenicTicketDown(data: any) {
 		data,
 	});
 }
+
+// 景区下架 详情
+export async function scenicTicketDetail(id: number) {
+	return request({
+		url: commonPath + `/ticket-service/public/api/scenic-ticket-down/${id}`,
+		method: 'get',
+	});
+}
+
+// 景区上架
+export async function resigerScenicTicketDetail(id: number) {
+	return request({
+		url: commonPath + `/ticket-service/public/api/scenic-one-ticket/putaway/${id}`,
+		method: 'post',
+	});
+}
 //单票删除
 export async function singleVoteDel(id: number) {
 	return request({
@@ -157,6 +173,13 @@ export async function getViewOrderList(data: any) {
 		url: commonPath + `/ticket-service/public/api/scenic-order`,
 		method: 'get',
 		data,
+	});
+}
+//景区订单 详情
+export async function getViewOrderDetails(id: any) {
+	return request({
+		url: commonPath + `/ticket-service/public/api/scenic-order/+${id}`,
+		method: 'get',
 	});
 }
 
