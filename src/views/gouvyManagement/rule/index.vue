@@ -5,7 +5,7 @@
 			<a-form-item label="购买价格" name="price">
 				<a-input v-model:value="state.tableData.infoData.price" placeholder="请输入缴纳费用价格（单位，元）" style="width: 600px"></a-input>
 			</a-form-item>
-			<a-form-item label="政策说明" name="price">
+			<a-form-item label="政策说明" name="policyExplain">
 				<a-textarea v-model:value="state.tableData.infoData.policyExplain" placeholder="请输入古维政策说明" :rows="4" style="width: 600px" />
 			</a-form-item>
 			<a-row>
@@ -39,15 +39,15 @@
 				</template>
 			</template>
 		</CommonTable>
-		<CommonPagination
+		<!-- <CommonPagination
 			:current="state.tableData.param.pageNo"
 			:page-size="state.tableData.param.pageSize"
 			:total="state.tableData.total"
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
-		/>
+		/> -->
 	</div>
-	<Edit v-model="state.operationModal.isEditdate" :params="state.params"></Edit>
+	<Edit v-model="state.operationModal.isEditdate" :params="state.params" @onSearchList="onSearchList"></Edit>
 </template>
 
 <script setup lang="ts">
@@ -62,7 +62,8 @@ import BaseModal from '@/components/common/BaseModal.vue';
 import Edit from './edit.vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
-import { accDiv } from '@/utils/compute';
+import { accDiv,accMul} from '@/utils/compute';
+const formRef = ref<FormInstance>();
 const route = useRouter();
 const dialogVisible = ref(false);
 const navigatorBar = useNavigatorBar();
@@ -108,7 +109,7 @@ const state = reactive({
 	tableData: {
 		infoData: [],
 		Data: [],
-		total: 400,
+		total:'',
 		loading: false,
 		param: {
 			pageNo: 1,
@@ -122,20 +123,20 @@ const state = reactive({
 		isEditdate: false,
 	},
 });
-const onHandleCurrentChange = (val: number) => {
-	console.log('change:', val);
-	state.tableData.param.pageNo = val;
-	onSearch();
-};
+// const onHandleCurrentChange = (val: number) => {
+// 	console.log('change:', val);
+// 	state.tableData.param.pageNo = val;
+// 	onSearchList();
+// };
 const auditRef = ref();
 const cancel = () => {
 	dialogVisible.value = false;
 };
-const pageSideChange = (current: number, size: number) => {
-	console.log('changePageSize:', size);
-	state.tableData.param.pageSize = size;
-	// onSearch();
-};
+// const pageSideChange = (current: number, size: number) => {
+// 	console.log('changePageSize:', size);
+// 	state.tableData.param.pageSize = size;
+// 	onSearchList();
+// };
 const add = (param: any) => {
 	const { row, handle } = param;
 	state.params = {};
@@ -157,7 +158,23 @@ const disable = (value: any) => {
 	});
 };
 const save = () => {
-	message.success('保存成功');
+	formRef.value
+		.validateFields()
+		.then((i) => {
+			let data ={
+				oid:state.tableData.infoData.oid,
+				price:accMul(Number(state.tableData.infoData.price),100),
+				policyExplain:state.tableData.infoData.policyExplain
+			}
+			api.getBasicEdit(data).then(() => {
+					message.success('编辑成功');
+					onSearch();
+				});
+		})
+		.catch((info: any) => {
+			console.log('Validate Failed:', info);
+		});
+	// message.success('保存成功');
 };
 const onSearch = () => {
 	api.getBasicInfo().then((res) => {
@@ -168,6 +185,7 @@ const onSearch = () => {
 const onSearchList = () => {
 	api.getBasiclist().then((res) => {
 		state.tableData.Data = res;
+		console.log(res,'1233')
 	});
 };
 onMounted(() => {

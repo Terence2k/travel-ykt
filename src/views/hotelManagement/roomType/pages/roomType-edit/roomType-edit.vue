@@ -1,151 +1,164 @@
 <template>
 	<div class="roomType-edit-wrapper">
 		<!-- <a-form ref="formRef" :rules="rulesRef" :model="editableData" autocomplete="off" labelAlign="left"> -->
-		<CommonTable :columns="columns" :data-source="dataSource">
-			<template #bodyCell="{ column, text, record }">
-				<template v-if="['roomTypeName'].includes(column.dataIndex)">
-					<div>
-						<a-input v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]" />
-						<template v-else>
-							<a-input :disabled="true" :defaultValue="text" />
-						</template>
-					</div>
-				</template>
-				<template v-if="['price'].includes(column.dataIndex)">
-					<div>
-						<a-input :disabled="true" type="number" v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]" />
-						<template v-else>
-							<a-input :disabled="true" :defaultValue="text" />
-						</template>
-					</div>
-				</template>
-				<template v-if="['roomNum'].includes(column.dataIndex)">
-					<div>
-						<a-input-number
-							type="number"
-							:disabled="editableData[record.key]?.operationType !== 0"
+		<a-form :model="editableData" ref="formRef">
+			<CommonTable :columns="columns" :data-source="dataSource">
+				<template #bodyCell="{ column, text, record }">
+					<template v-if="['roomTypeName'].includes(column.dataIndex)">
+						<a-form-item
 							v-if="editableData[record.key]"
-							v-model:value="editableData[record.key][column.dataIndex]"
-							:controls="false"
+							:name="[record.key, column.dataIndex]"
+							:rules="[{ required: true, trigger: 'blur', message: '自定义房型不能为空' }]"
 						>
-							<template #addonBefore>
-								<a-select
-									class="icon-before-container"
-									:disabled="editableData[record.key]?.operationType === 0"
-									@click="getMaxMinusCount(record)"
-									@change="minusNumOptionsChange($event, record)"
-									v-model:value="editableData[record.key].minusNum"
-									:options="minusNumOptions"
-									style="width: 60px"
-								>
-									<template #suffixIcon>
-										<span class="icon-minus">-</span>
-									</template>
-								</a-select>
-							</template>
-							<template #addonAfter>
-								<a-select
-									:disabled="editableData[record.key]?.operationType === 0"
-									@change="plusNumOptionsChange($event, record)"
-									v-model:value="editableData[record.key].plusNum"
-									:options="plusNumOptions"
-									style="width: 60px"
-								>
-									<template #suffixIcon>
-										<span class="icon-plus">+</span>
-									</template>
-								</a-select>
-							</template>
-						</a-input-number>
+							<a-input v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]" />
+						</a-form-item>
 						<template v-else>
-							<a-input-number :disabled="true" :defaultValue="text">
+							<a-input :disabled="true" :defaultValue="text" />
+						</template>
+					</template>
+					<template v-if="['price'].includes(column.dataIndex)">
+						<div>
+							<a-input :disabled="true" type="number" v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]" />
+							<template v-else>
+								<a-input :disabled="true" :defaultValue="text" />
+							</template>
+						</div>
+					</template>
+					<template v-if="['roomNum'].includes(column.dataIndex)">
+						<div>
+							<a-input-number
+								type="number"
+								:disabled="editableData[record.key]?.operationType !== 0"
+								v-if="editableData[record.key]"
+								v-model:value="editableData[record.key][column.dataIndex]"
+								:controls="false"
+							>
 								<template #addonBefore>
-									<a-select class="icon-before-container" :disabled="true" style="width: 60px">
+									<a-select
+										class="icon-before-container"
+										:disabled="editableData[record.key]?.operationType === 0"
+										@click="getMaxMinusCount(record)"
+										@change="minusNumOptionsChange($event, record)"
+										v-model:value="editableData[record.key].minusNum"
+										:options="minusNumOptions"
+										style="width: 60px"
+									>
 										<template #suffixIcon>
 											<span class="icon-minus">-</span>
 										</template>
 									</a-select>
 								</template>
 								<template #addonAfter>
-									<a-select :disabled="true" style="width: 60px">
+									<a-select
+										:disabled="editableData[record.key]?.operationType === 0"
+										@change="plusNumOptionsChange($event, record)"
+										v-model:value="editableData[record.key].plusNum"
+										:options="plusNumOptions"
+										style="width: 60px"
+									>
 										<template #suffixIcon>
 											<span class="icon-plus">+</span>
 										</template>
 									</a-select>
 								</template>
 							</a-input-number>
-						</template>
-					</div>
-					<!-- <div>
+							<template v-else>
+								<a-input-number :disabled="true" :defaultValue="text">
+									<template #addonBefore>
+										<a-select class="icon-before-container" :disabled="true" style="width: 60px">
+											<template #suffixIcon>
+												<span class="icon-minus">-</span>
+											</template>
+										</a-select>
+									</template>
+									<template #addonAfter>
+										<a-select :disabled="true" style="width: 60px">
+											<template #suffixIcon>
+												<span class="icon-plus">+</span>
+											</template>
+										</a-select>
+									</template>
+								</a-input-number>
+							</template>
+						</div>
+						<!-- <div>
 						<a-input type="number" v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]" />
 						<template v-else>
 							<a-input :disabled="true" :defaultValue="text" />
 						</template>
 					</div> -->
-				</template>
-				<template v-if="['sysRoomTypeId'].includes(column.dataIndex)">
-					<div>
-						<a-select
-							class="systemRoomType-select"
-							@change="changeRoomOccupancyNum(editableData[record.key])"
+					</template>
+					<template v-if="['sysRoomTypeId'].includes(column.dataIndex)">
+						<a-form-item
 							v-if="editableData[record.key]"
-							v-model:value="editableData[record.key][column.dataIndex]"
-							:options="systemRoomNameOptions"
+							:name="[record.key, column.dataIndex]"
+							:rules="[{ required: true, trigger: 'blur', message: '系统房型不能为空' }]"
 						>
-						</a-select>
-
+							<a-select
+								class="systemRoomType-select"
+								@change="changeRoomOccupancyNum(editableData[record.key])"
+								v-if="editableData[record.key]"
+								v-model:value="editableData[record.key][column.dataIndex]"
+								:options="systemRoomNameOptions"
+							>
+							</a-select>
+						</a-form-item>
 						<template v-else>
 							<a-select class="systemRoomType-select" :disabled="true" :value="text" :options="systemRoomNameOptions"> </a-select>
 						</template>
-					</div>
+					</template>
+					<template v-if="['roomOccupancyNum'].includes(column.dataIndex)">
+						<div>
+							<a-input
+								:disabled="true"
+								type="number"
+								style="width: 16%"
+								v-if="editableData[record.key]"
+								v-model:value="editableData[record.key][column.dataIndex]"
+							/>
+							<template v-else>
+								<a-input style="width: 16%" :disabled="true" :defaultValue="text" />
+							</template>
+						</div>
+					</template>
+					<template v-if="['auditStatus'].includes(column.dataIndex)">
+						<div class="cell-auditStatus">
+							<span v-if="editableData[record.key]">{{ getAuditStatusText(editableData[record.key]?.auditStatus) }}</span>
+							<template v-else>
+								<span>{{ getAuditStatusText(parseInt(text)) }}</span>
+							</template>
+						</div>
+					</template>
+					<template v-else-if="column.dataIndex === 'actions'">
+						<div class="cell-actions">
+							<span class="item" @click="edit(record.key)">{{ editableData[record.key] ? '取消' : '编辑' }}</span>
+							<span class="item" @click="remove(record.key)">删除</span>
+						</div>
+					</template>
 				</template>
-				<template v-if="['roomOccupancyNum'].includes(column.dataIndex)">
-					<div>
-						<a-input
-							:disabled="true"
-							type="number"
-							style="width: 16%"
-							v-if="editableData[record.key]"
-							v-model:value="editableData[record.key][column.dataIndex]"
-						/>
-						<template v-else>
-							<a-input style="width: 16%" :disabled="true" :defaultValue="text" />
-						</template>
-					</div>
+				<template #summary>
+					<a-table-summary-row class="row-summary">
+						<a-table-summary-cell></a-table-summary-cell>
+						<a-table-summary-cell></a-table-summary-cell>
+						<a-table-summary-cell></a-table-summary-cell>
+						<a-table-summary-cell></a-table-summary-cell>
+						<a-table-summary-cell></a-table-summary-cell>
+						<a-table-summary-cell></a-table-summary-cell>
+						<a-table-summary-cell class="cell-actions">
+							<a-button @click="add" class="button-add">添加</a-button>
+						</a-table-summary-cell>
+					</a-table-summary-row>
 				</template>
-				<template v-if="['auditStatus'].includes(column.dataIndex)">
-					<div class="cell-auditStatus">
-						<span v-if="editableData[record.key]">{{ getAuditStatusText(editableData[record.key]?.auditStatus) }}</span>
-						<template v-else>
-							<span>{{ getAuditStatusText(parseInt(text)) }}</span>
-						</template>
-					</div>
-				</template>
-				<template v-else-if="column.dataIndex === 'actions'">
-					<div class="cell-actions">
-						<span class="item" @click="edit(record.key)">{{ editableData[record.key] ? '取消' : '编辑' }}</span>
-						<span class="item" @click="remove(record.key)">删除</span>
-					</div>
-				</template>
-			</template>
-			<template #summary>
-				<a-table-summary-row class="row-summary">
-					<a-table-summary-cell></a-table-summary-cell>
-					<a-table-summary-cell></a-table-summary-cell>
-					<a-table-summary-cell></a-table-summary-cell>
-					<a-table-summary-cell></a-table-summary-cell>
-					<a-table-summary-cell></a-table-summary-cell>
-					<a-table-summary-cell></a-table-summary-cell>
-					<a-table-summary-cell class="cell-actions">
-						<a-button @click="add" class="button-add">添加</a-button>
-					</a-table-summary-cell>
-				</a-table-summary-row>
-			</template>
-		</CommonTable>
-		<!-- </a-form> -->
+			</CommonTable>
+		</a-form>
 		<div class="footer">
 			<!-- <a-button @click="saveRoomInfo" class="button-save button">保存</a-button> -->
-			<a-button :class="{ mdisabled: state.isAuditStatus }" :disabled="state.isAuditStatus" class="button-submit button" @click="saveRoomInfo"
+			<a-button
+				html-type="submit"
+				:class="{ mdisabled: state.isAuditStatus }"
+				:disabled="state.isAuditStatus"
+				class="button-submit button"
+				@click="saveRoomInfo"
 				>提交审核</a-button
 			>
 		</div>
@@ -167,6 +180,7 @@ import { cloneDeep } from 'lodash-es';
 import { message } from 'ant-design-vue/es';
 import api from '@/api';
 import CommonTable from '@/components/common/CommonTable.vue';
+import { accDiv } from '@/utils/compute';
 // import CommonPagination from '@/components/common/CommonPagination.vue';
 
 const route = useRoute();
@@ -229,6 +243,8 @@ interface DataSourceItem {
 	roomNum: number;
 	roomOccupancyNum: number;
 }
+
+const formRef = ref();
 
 const userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
 
@@ -315,7 +331,7 @@ const initPage = () => {
 
 			api.getPriceByHotelId(state.hotelId).then((res) => {
 				console.log('诚信指导价：', res);
-				state.price = res / 100 || '';
+				state.price = accDiv(res, 100) || '';
 			});
 			api
 				.getHotelListInEdit()
@@ -331,7 +347,7 @@ const initPage = () => {
 							}
 							return {
 								...item,
-								price: item.price / 100,
+								price: accDiv(item.price, 100),
 								key: item?.oid,
 							};
 						});
@@ -358,67 +374,66 @@ const initPage = () => {
 	});
 };
 
-// watch(
-// 	() => route.query,
-// 	(res) => {
-// 		state.hotelId = route?.query?.id;
-// 		if (state.hotelId) {
-// 			initPage();
-// 		}
-// 	},
-// 	{
-// 		immediate: true,
-// 	}
-// );
-
 const saveRoomInfo = () => {
-	console.info('editableData :', editableData, toRaw(editableData));
-	const editableRawData = toRaw(editableData);
-	let editableArray = [];
-	for (let property in editableRawData) {
-		editableArray.push(editableRawData[property]);
-	}
-	console.info('editableArray', editableArray);
-	const result = editableArray
-		?.filter((item) => JSON.stringify(item) !== '{}')
-		.map((item) => {
-			if (item.oid) {
-				return {
-					oid: item.oid,
-					hotelId: item.hotelId ? parseInt(item.hotelId) : undefined,
-					roomTypeName: item.roomTypeName,
-					sysRoomTypeId: item.sysRoomTypeId,
-					roomNum: item.operationType !== 2 ? parseInt(item.roomNum) - parseInt(item.roomOperateNum) : parseInt(item.roomNum),
-					roomOccupancyNum: parseInt(item.roomOccupancyNum),
-					operationType: parseInt(item.operationType),
-					roomOperateNum: parseInt(item.roomOperateNum),
-				};
-			} else {
-				if (item?.key) {
-					return {
-						hotelId: item.hotelId ? parseInt(item.hotelId) : undefined,
-						roomTypeName: item.roomTypeName,
-						sysRoomTypeId: item.sysRoomTypeId,
-						roomNum: parseInt(item.roomNum),
-						roomOccupancyNum: parseInt(item.roomOccupancyNum),
-						operationType: parseInt(item.operationType),
-						roomOperateNum: parseInt(item.roomOperateNum),
-					};
-				}
-			}
-		});
-	console.info('保存的房型信息：', result);
-
-	api
-		.editRoomDetailInfo(result)
+	formRef.value
+		.validateFields()
 		.then((res) => {
-			console.info('编辑房型信息返回：', res);
-			initPage();
-			message.success('保存成功');
+			console.log('验证结果', res);
+			console.info('editableData :', editableData, toRaw(editableData));
+			const editableRawData = toRaw(editableData);
+			let editableArray = [];
+			for (let property in editableRawData) {
+				editableArray.push(editableRawData[property]);
+			}
+			console.info('editableArray', editableArray);
+			const result = editableArray
+				?.filter((item) => JSON.stringify(item) !== '{}')
+				.map((item) => {
+					if (item.oid) {
+						return {
+							oid: item.oid,
+							hotelId: item.hotelId ? parseInt(item.hotelId) : undefined,
+							roomTypeName: item.roomTypeName,
+							sysRoomTypeId: item.sysRoomTypeId,
+							roomNum: item.operationType !== 2 ? parseInt(item.roomNum) - parseInt(item.roomOperateNum) : parseInt(item.roomNum),
+							roomOccupancyNum: parseInt(item.roomOccupancyNum),
+							operationType: parseInt(item.operationType),
+							roomOperateNum: parseInt(item.roomOperateNum),
+						};
+					} else {
+						if (item?.key) {
+							return {
+								hotelId: item.hotelId ? parseInt(item.hotelId) : undefined,
+								roomTypeName: item.roomTypeName,
+								sysRoomTypeId: item.sysRoomTypeId,
+								roomNum: parseInt(item.roomNum),
+								roomOccupancyNum: parseInt(item.roomOccupancyNum),
+								operationType: parseInt(item.operationType),
+								roomOperateNum: parseInt(item.roomOperateNum),
+							};
+						}
+					}
+				});
+
+			if (Array.isArray(result) && result.length > 0) {
+				console.info('保存的房型信息：', result);
+				api
+					.editRoomDetailInfo(result)
+					.then((res) => {
+						console.info('编辑房型信息返回：', res);
+						initPage();
+						message.success('保存成功');
+					})
+					.catch((err) => {
+						message.error(err);
+						console.error(err);
+					});
+			} else {
+				message.error('当前缺少可提交审核的数据');
+			}
 		})
 		.catch((err) => {
-			message.error(err);
-			console.error(err);
+			console.log('提交数据验证失败', err);
 		});
 };
 
@@ -451,14 +466,6 @@ const add = () => {
 
 const changeRoomOccupancyNum = (target) => {
 	target.roomOccupancyNum = state.systemRoomAllData.find((item) => item.oid === target.sysRoomTypeId)?.roomOccupancyNum;
-	console.log('当前房型Id为：', target.oid);
-	console.log('target:', target);
-	// if (target?.operationType !== 0) {
-	// 	api.getMaxMinusCountOfRoom(target.oid).then((res) => {
-	// 		console.log('当前房型的最大可减小数量为：', res);
-	// 		editableData[target?.key].maxMinusCountOfRoom = res;
-	// 	});
-	// }
 };
 
 const minusNumOptionsChange = (val, option) => {

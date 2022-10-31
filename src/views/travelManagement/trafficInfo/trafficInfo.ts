@@ -102,8 +102,10 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 
 	const methods = {
 		copyData(key:any) {
+			console.log(state.tableData.filter((item:any) => key == (item.key ? item.key : item.oid))[0], 
+			state.editableData[key])
 			Object.assign(
-				state.tableData.filter((item:any) => key === (item.key ? item.key : item.oid))[0], 
+				state.tableData.filter((item:any) => key == (item.key ? item.key : item.oid))[0], 
 				state.editableData[key]
 			);
 		},
@@ -133,6 +135,7 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 				delete state.editableData[key];
 			} else {
 				for (let k in state.editableData) {
+					console.log(k, '======================')
 					methods.copyData(k);
 					delete state.editableData[k];
 				}
@@ -160,6 +163,7 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 	})
 	return {
 		...toRefs(state),
-		...methods
+		...methods,
+		travelStore
 	}
 }

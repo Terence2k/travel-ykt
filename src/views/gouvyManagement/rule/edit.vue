@@ -11,24 +11,33 @@
 						<a-select-option :value="1">特殊证件</a-select-option>
 					</a-select>
 				</a-form-item>
-				<a-form-item name="age1">
-					<a-row v-if="formValidate.discountType == '0'">
-						<a-col :span="8"></a-col>
+				<a-form-item label=" 减免模式内容" name="age1" v-if="formValidate.discountType == '0'">
+					<a-row>
 						<a-col :span="6">
-							<a-input class="input" placeholder="请输入年龄" v-model:value="state.tableData.age1"></a-input>
+							<a-input
+								class="input"
+								placeholder="请输入年龄"
+								oninput="value=value.replace(/^(0+)|[^\d]+/g,'')"
+								v-model:value="formValidate.age1"
+							></a-input>
 						</a-col>
 						<a-col :span="4">
 							<a-span class="d-span">至</a-span>
 						</a-col>
 						<a-col :span="6">
 							<a-form-item name="age2">
-								<a-input class="input" placeholder="请输入年龄" v-model:value="state.tableData.age2"></a-input>
+								<a-input
+									class="input"
+									placeholder="请输入年龄"
+									oninput="value=value.replace(/^(0+)|[^\d]+/g,'')"
+									v-model:value="formValidate.age2"
+								></a-input>
 							</a-form-item>
 						</a-col>
 					</a-row>
-
-					<a-row v-if="formValidate.discountType == '1'">
-						<a-col :span="8"></a-col>
+				</a-form-item>
+				<a-form-item label=" 减免模式内容" name="discountConditionName" v-if="formValidate.discountType == '1'">
+					<a-row>
 						<a-col :span="8">
 							<a-select ref="select" placeholder="请选择特殊证件类型" allowClear class="select" v-model:value="formValidate.discountConditionName">
 								<a-select-option v-for="item in state.tableData.list" :value="item.oid">
@@ -40,7 +49,12 @@
 					</a-row>
 				</a-form-item>
 				<a-form-item label=" 减免折扣" name="discount">
-					<a-input v-model:value="formValidate.discount" placeholder="请输入折扣信息(0~0.99)" />
+					<a-input
+						v-model:value="formValidate.discount"
+						placeholder="请输入折扣信息(1~99)的整数"
+						oninput="value=value.replace(/^(0+)|[^\d]+/g,'')"
+						@change="check"
+					/>
 				</a-form-item>
 				<a-form-item label=" 状态" name="discountRuleStatus">
 					<a-radio-group v-model:value="formValidate.discountRuleStatus" name="discountRuleStatus">
@@ -66,13 +80,13 @@ import BaseModal from '@/components/common/BaseModal.vue';
 import { message } from 'ant-design-vue';
 import type { FormInstance } from 'ant-design-vue';
 import api from '@/api';
-import { accDiv } from '@/utils/compute';
-import {isOnedecimalpoint} from '@/utils/validator';
+import { accDiv, accMul } from '@/utils/compute';
+import { isOnedecimalpoint } from '@/utils/validator';
 const route = useRouter();
 const dialogVisible = ref(false);
 const navigatorBar = useNavigatorBar();
 const formValidate: Ref<Record<string, any>> = ref({});
-const formRef = ref<FormInstance>();
+const formRef = ref();
 // import { userList } from '@/api';
 const props = defineProps({
 	modelValue: {
@@ -81,12 +95,14 @@ const props = defineProps({
 	},
 	params: Object,
 });
-const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
+const emit = defineEmits(['update:modelValue', 'cancel', 'onSearchList']);
 const rules: any = {
 	ruleName: [{ required: true, trigger: 'blur', message: '请输入规则名称' }],
 	discountType: [{ required: true, trigger: 'blur', message: '请选择减免模式' }],
-	// age1: [{ required: true, trigger: 'blur', message: '请填写减免模式内容' }],
-	discount: [{ required: true, validator: isOnedecimalpoint, trigger: 'blur' }],
+	age1: [{ required: true, trigger: 'blur', message: '请填写减免模式内容' }],
+	age2: [{ required: true, trigger: 'blur', message: '请填写减免模式内容' }],
+	discountConditionName: [{ required: true, trigger: 'blur', message: '请填写减免模式内容' }],
+	discount: [{ required: true, trigger: 'blur', message: '请输入1-99之间的整数' }],
 	discountRuleStatus: [{ required: true, trigger: 'blur', message: '请选择状态' }],
 };
 const state = reactive({
@@ -116,11 +132,12 @@ const init = async () => {
 		formValidate.value = { ...props.params };
 		if (formValidate.value.discountType == 0) {
 			state.tableData.age = formValidate.value.discountCondition.split('~');
-			state.tableData.age1 = state.tableData.age[0];
-			state.tableData.age2 = state.tableData.age[1];
-			formValidate.value.discount = accDiv(formValidate.value.discount, 100);
-			console.log(state.tableData.age[1], 'state.tableData.age[1]');
+			formValidate.value.age1 = state.tableData.age[0];
+			formValidate.value.age2 = state.tableData.age[1];
+		} else {
+			formValidate.value.discountConditionName = '';
 		}
+		formValidate.value.discount = formValidate.value.discount;
 		console.log(formValidate.value, 'formValidate.value');
 	} else {
 		state.title = '新增减免规则';
@@ -135,42 +152,73 @@ const dropDownQueryList = () => {
 	});
 };
 const cancel = () => {
-	// formRef.value.resetFields();
-	(state.tableData.age1 = ''),
-		(state.tableData.age2 = ''),
-		(formValidate.value.discount = ''),
-		(formValidate.value.discountRuleStatus = ''),
-		(formValidate.value.discountConditionName = ''),
-		(formValidate.value.discountType = ''),
-		(formValidate.value.ruleName = ''),
-		(dialogVisible.value = false);
+	formRef.value.resetFields();
+	dialogVisible.value = false;
 };
-const save = () => {
-	formRef.value.validateFields().then((i) => {
-		let data = {
-			ruleName: formValidate.value.ruleName,
-			discountType: formValidate.value.discountType,
-			discountCondition: '',
-			discount: formValidate.value.discount,
-			discountRuleStatus: formValidate.value.discountRuleStatus,
-		};
-		if (formValidate.value.discountType == 0) {
-			data.discountCondition = state.tableData.age1 + '~' + state.tableData.age2;
-		} else {
-			data.discountCondition = formValidate.value.discountConditionName;
-		}
-		if (state.title == '编辑减免规则') {
+const updateRule = () => {
+	formRef.value
+		.validateFields()
+		.then((i) => {
+			let data = {
+				oid: formValidate.value.oid,
+				ruleName: formValidate.value.ruleName,
+				discountType: formValidate.value.discountType,
+				discountCondition: '',
+				discount: Number(formValidate.value.discount),
+				discountRuleStatus: formValidate.value.discountRuleStatus,
+			};
+			if (formValidate.value.discountType == 0) {
+				data.discountCondition = formValidate.value.age1 + '~' + formValidate.value.age2;
+			} else {
+				data.discountCondition = formValidate.value.discountConditionName;
+			}
 			api.update(data).then(() => {
 				message.success('编辑成功');
+				emit('onSearchList');
+				cancel();
 			});
-		} else {
+		})
+		.catch((info: any) => {
+			console.log('Validate Failed:', info);
+		});
+};
+const addRule = () => {
+	formRef.value
+		.validateFields()
+		.then((i) => {
+			let data = {
+				ruleName: formValidate.value.ruleName,
+				discountType: formValidate.value.discountType,
+				discountCondition: '',
+				discount: Number(formValidate.value.discount),
+				discountRuleStatus: formValidate.value.discountRuleStatus,
+			};
+			if (formValidate.value.discountType == 0) {
+				data.discountCondition = formValidate.value.age1 + '~' + formValidate.value.age2;
+			} else {
+				data.discountCondition = formValidate.value.discountConditionName;
+			}
 			api.add(data).then(() => {
 				message.success('添加成功');
+				emit('onSearchList');
+				cancel();
 			});
-		}
-	});
-
-	// cancel();
+		})
+		.catch((info: any) => {
+			console.log('Validate Failed:', info);
+		});
+};
+const save = () => {
+	if (state.title == '编辑减免规则') {
+		updateRule();
+	} else {
+		addRule();
+	}
+};
+const check = () => {
+	if (Number(formValidate.value.discount) >= 100) {
+		formValidate.value.discount = 99;
+	}
 };
 watch(
 	() => props.modelValue,
@@ -190,15 +238,15 @@ watch(dialogVisible, (nVal) => {
 
 <style lang="less" scoped>
 .input {
-	margin-left: -6px;
+	// margin-left: -6px;
 	width: 100px;
 }
 .d-span {
-	margin-left: 20px;
+	margin-left: 28px;
 	line-height: 32px;
 }
 .select {
-	margin-left: -6px;
+	// margin-left: -6px;
 	width: 367px;
 }
 .discountType {

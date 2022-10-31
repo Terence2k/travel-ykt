@@ -91,7 +91,7 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 	const methods = {
 		copyData(key:any) {
 			Object.assign(
-				state.tableData.filter((item:any) => key === (item.key ? item.key : item.oid))[0], 
+				state.tableData.filter((item:any) => key == (item.key ? item.key : item.oid))[0], 
 				state.editableData[key]
 			);
 		},
@@ -104,7 +104,7 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 		},
 		edit: (key: string) => {
 			const cur = cloneDeep(
-				state.tableData.filter((item:any) => key === (item.key ? item.key : item.oid))[0]
+				state.tableData.filter((item:any) => key == (item.key ? item.key : item.oid))[0]
 			);
 			cur.time = cur.startDate && 
 						cur.endDate && 
@@ -178,6 +178,7 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 	})
 	return {
 		...toRefs(state),
-		...methods
+		...methods,
+		travelStore
 	}
 }

@@ -82,7 +82,7 @@
 				</a-form-item>
 			</a-form>
 			<template v-slot:footer>
-				<div v-if="modalState.baseInfo.auditStatus === 1">
+				<div v-if="modalState.baseInfo.auditStatus === 1 && tableState.roleCode?.includes('HOTEL_SUPER_ADMIN')">
 					<a-button style="width: 86px; font-size: 14px; background-color: #36b374ff; color: #ffffffff" @click="saveModalInfo">提交审核</a-button>
 					<a-button style="width: 86px; font-size: 14px; background-color: #ffffffff; color: #54565cff" @click="modalState.visible = false"
 						>取消</a-button
@@ -468,8 +468,14 @@ const dataSource = computed(() => {
 						};
 					}
 				});
-
 				columns.value = columns.value.filter((item, index) => index < 1 || item?.appointedTime);
+				if (columns.value.length < 7 && columns.value.length > 1) {
+					columns.value[0] = {
+						...columns.value[0],
+						width: `${parseInt((200 * (columns.value.length - 1)) / 6)}px`,
+					};
+					console.log('第一列宽度应为：', parseInt((200 * (columns.value.length - 1)) / 6));
+				}
 			}
 
 			console.info(`result${index}`, result);
@@ -493,15 +499,17 @@ const tableState = reactive({
 	params: {
 		currentTimeDetailText: '',
 	},
+	roleCode: [],
 	roleId: undefined,
 	auditBusinessType: '',
 });
 
 const getHotelRoomTypeStockTableInfo = (hotelId) => {
 	if (hotelId) {
-		// api.getHotelList(hotelId).then((result) => {
-		// 	console.info('酒店列表', result);
-		// });
+		let userInfo = window.localStorage.getItem('userInfo');
+		userInfo = JSON.parse(userInfo as string);
+		tableState.roleCode = userInfo?.sysRoles?.map((item) => item.roleCode) || [];
+		console.log('当前用户为：', tableState.roleCode);
 		const startDate = new Date(year?.value, month?.value - 1, 1);
 		const startTime = dayjs(startDate);
 		console.info('startTime', startTime.format('YYYY-MM-DD'));
@@ -555,6 +563,8 @@ watch(
 
 const openRoomStatusDetailsModal = (data: any) => {
 	console.log('当前单元格数据：', data);
+	tableState.roleId = undefined;
+	tableState.auditBusinessType = '';
 	if (data?.auditStatus === 0 && data?.uuid) {
 		api.getRoleId({ uuid: data?.uuid }).then((res) => {
 			console.log('sssss', res);
@@ -616,10 +626,10 @@ const passModalInfo = () => {
 			.then((res: any) => {
 				console.log('审核通过 返回：', res);
 				modalState.visible = false;
-				setTimeout(() => {
-					getHotelRoomTypeStockTableInfo(props?.hotelId);
-				}, 1000);
-				//getHotelRoomTypeStockTableInfo(props?.hotelId);
+				// setTimeout(() => {
+				// 	getHotelRoomTypeStockTableInfo(props?.hotelId);
+				// }, 1000);
+				getHotelRoomTypeStockTableInfo(props?.hotelId);
 			});
 	}
 };
@@ -635,10 +645,10 @@ const failModalInfo = () => {
 			.then((res: any) => {
 				console.log('审核不通过 返回：', res);
 				modalState.visible = false;
-				setTimeout(() => {
-					getHotelRoomTypeStockTableInfo(props?.hotelId);
-				}, 1000);
-				//getHotelRoomTypeStockTableInfo(props?.hotelId);
+				// setTimeout(() => {
+				// 	getHotelRoomTypeStockTableInfo(props?.hotelId);
+				// }, 1000);
+				getHotelRoomTypeStockTableInfo(props?.hotelId);
 			});
 	}
 };

@@ -123,7 +123,7 @@ export const travelManagement = {
     },
     reserveHotel(data: any){
         return request({
-            url: `${commonPath}/travel-agency-service/public/api/itinerary/modifyHotel`,
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/hotel/modifyHotel`,
             data,
             method: 'post',
             showLoading: true
@@ -131,9 +131,46 @@ export const travelManagement = {
     },
     reserveTicket(data: any){
         return request({
-            url: `${commonPath}/travel-agency-service/public/api/itinerary/modifyTicket`,
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/ticket/modifyTicket`,
             data,
             method: 'post',
+            showLoading: true
+        });
+    },
+    sendGroup(data: any){
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/sendGroup`,
+            data,
+            method: 'put',
+            showLoading: true
+        });
+    },
+    hotelDetail(data: any){
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/hotel/hotelDetail/${data}`,
+            method: 'get',
+            showLoading: false
+        });
+    },
+    ticketDetail(data: any){
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/ticket/ticketDetail/${data}`,
+            method: 'get',
+            showLoading: false
+        });
+    },
+    revokeGroupToDraft(data: any){
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/revokeGroupToDraft/${data}`,
+            method: 'get',
+            showLoading: true
+        });
+    },
+    getAuditList(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/auditList`,
+            method: 'post',
+            data,
             showLoading: true
         });
     }

@@ -29,6 +29,8 @@
 
 			<a-form-item label="入住日期" name="arrivalDate" :rules="[{ required: true, message: '请选择入住日期' }]">
 				<a-date-picker style="width: 100%"
+					:disabled-date="travelStore.setDisabled"
+					@change="handleChangCheckIn"
 					:show-time="{ format: 'HH:mm:ss' }" 
 					format="YYYY-MM-DD HH:mm:ss" 
 					value-format="YYYY-MM-DD HH:mm:ss" 
@@ -39,6 +41,7 @@
 				name="departureDate" 
 				:rules="[{ required: true, message: '请选择离店日期' }]">
 				<a-date-picker style="width: 100%" 
+					:disabled-date="disLeave"
 					:show-time="{ format: 'HH:mm:ss' }"  
 					format="YYYY-MM-DD HH:mm:ss" 
 					value-format="YYYY-MM-DD HH:mm:ss" 
@@ -65,7 +68,7 @@
 					:rules="[{ required: true, validator: (_rule: Rule, value: string) => validateCheckNum(_rule, value, index) }]">
 					<a-input v-model:value="room.reserveNumber" />
 				</a-form-item>
-				<a-form-item
+				<!-- <a-form-item
 					label="入住总人数"
 					:name="['roomTypeList', index, 'checkInNumber']"
 					:rules="[{ required: true, validator: (_rule: Rule, value: string) => validateCheckIn(_rule, value, index) }]"
@@ -73,7 +76,7 @@
 					<div class="d-flex">
 						<a-input v-model:value="room.checkInNumber" />
 					</div>
-				</a-form-item>
+				</a-form-item> -->
 				<a-form-item
 					label="单价"
 					:name="['roomTypeList', index, 'orderAmount']"
@@ -97,16 +100,16 @@
 			</div>
 
 			<a-form-item label="订单金额">
-				<a-input v-model:value="formState.enterTime" disabled placeholder="无需填写，填写房间数量后自动计算" />
+				<a-input v-model:value="formState.orderFee" disabled placeholder="无需填写，填写房间数量后自动计算" />
 				<span class="gary">如果符合满16减1标准，则自动优惠减扣。</span>
 			</a-form-item>
 
 			<a-form-item label="订单编号">
-				<a-input v-model:value="formState.enterTime" disabled placeholder="无需填写，订单提交后自动生成" />
+				<a-input v-model:value="formState.hotelOrderNo" disabled placeholder="无需填写，订单提交后自动生成" />
 			</a-form-item>
 
 			<a-form-item label="订单生成时间">
-				<a-input v-model:value="formState.enterTime" disabled placeholder="无需填写，订单提交后自动生成" />
+				<a-input v-model:value="formState.createTime" disabled placeholder="无需填写，订单提交后自动生成" />
 			</a-form-item>
 		</a-form>
 	</BaseModal>
@@ -119,7 +122,7 @@ import { cloneDeep, debounce } from 'lodash';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import { message } from 'ant-design-vue/es';
 import { Rule } from 'ant-design-vue/es/form';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any ) || {}
 const route = useRoute()
@@ -133,11 +136,20 @@ const roomList = {
 const travelStore = useTravelStore()
 const formRef = ref();
 
+let disLeave = ref((current: Dayjs) => {
+	return current && current < dayjs().subtract(1, 'day') || 
+	current > dayjs().startOf('day');
+})
+
 const props = defineProps({
 	modelValue: {
 		type: Boolean,
 		default: false,
 	},
+	hotelId: {
+		type: String,
+		default: ''
+	}
 });
 // 酒店数据
 const hotelData = reactive<{[k:string]: any}>({
@@ -146,7 +158,7 @@ const hotelData = reactive<{[k:string]: any}>({
 	roomType: [],
 });
 // 表单填写数据
-const formState = reactive<{[k: string]: any}>({
+let formState = reactive<{[k: string]: any}>({
 	hotelStarId: '',
 	hotelId: '',
 	leaveTime: '',
@@ -164,6 +176,11 @@ const delRoom = (index: number) => {
 
 const handleHotel = (e: any, option: any) => {
 	formState.hotelName = option.name;
+}
+
+const handleChangCheckIn = () => {
+	disLeave.value = (current: Dayjs) => current && current < dayjs(formState.arrivalDate).add(1, 'day') || 
+	(dayjs(travelStore.teamTime[1]) < current && current) as any;
 }
 
 const changeRoomType = (e: any, option: any, index: number) => {
@@ -186,6 +203,7 @@ const handleChange = async (id: number, option: any) => {
 
 // 订房数量校验
 const validateCheckNum = async (_rule: Rule, value: string, index: number) => {
+
 	if (value === '') {
 		return Promise.reject('请输入预定房间数量');
 	} else if (Number(value) > formState.roomTypeList[index].roomTypeLimitPeople) {
@@ -197,8 +215,6 @@ const validateCheckNum = async (_rule: Rule, value: string, index: number) => {
 
 // 入住总人数校验
 const validateCheckIn = async (_rule: Rule, value: string, index: number) => {
-	console.log(formState.roomTypeList[index].reserveNumber)
-	console.log(value)
 	if (value === '') {
 		return Promise.reject('请输入入住总人数');
 	} else if(Number(value) < formState.roomTypeList[index].reserveNumber) {
@@ -228,7 +244,6 @@ const getOrderAmount = (data: Array<{[k:string]:any}>, startDate: string, endDat
 const handleOk = async (callback: Function) => {
 	try {
 		await formRef.value.validateFields();
-		formState.oid = null;
 		formState.scheduledNumber = formState.roomTypeList.map((it: any) => Number(it.checkInNumber))
 		.reduce((prev: any, current: any) => prev + current);
 		formState.scheduledRooms = formState.roomTypeList.map((it: any) => Number(it.reserveNumber))
@@ -245,12 +260,13 @@ const handleOk = async (callback: Function) => {
 		newFormState.endDate = newFormState.departureDate
 		newFormState.hotelStar = newFormState.hotelStarCode
 		newFormState.orderFee = newFormState.orderAmount
-		newFormState.reservePeopleCount = newFormState.roomTypeList.map((it:any) => it.checkInNumber).reduce((prev: number, next: number) => prev + next)
-		newFormState.roomCount = newFormState.roomTypeList.map((it:any) => it.reserveNumber).reduce((prev: number, next: number) => prev + next)
-		await api.travelManagement.reserveHotel(formState);
+		newFormState.reservePeopleCount = newFormState.roomTypeList.map((it:any) => Number(it.checkInNumber)).reduce((prev: number, next: number) => prev + next)
+		newFormState.roomCount = newFormState.roomTypeList.map((it:any) => Number(it.reserveNumber)).reduce((prev: number, next: number) => prev + next)
+		const res = await api.travelManagement.reserveHotel(formState);
+		
 		// message.success('新增成功');
 		
-		travelStore.setHotels(newFormState)
+		travelStore.setHotels(newFormState, res)
 		callback()
 	} catch (errorInfo) {
 		callback(false);
@@ -275,6 +291,28 @@ watch(
 watch(dialogVisible, (newVal) => {
 	if (!newVal) {
 		formRef.value.resetFields();
+		for (let k in formState) {
+			if (k === 'roomTypeList') {
+				formState[k] = [{ ...roomList }]
+			} else {
+				formState[k] = '';
+			}
+		}
+	} else {
+		props.hotelId && api.travelManagement.hotelDetail(props.hotelId).then((res:any) => {
+			for (let k in res) {
+				formState[k] = res[k]
+			}
+			formState.arrivalDate = res.startDate
+			formState.departureDate = res.endDate
+			formState.roomTypeList = formState.roomTypeList.map((it:any) => {
+				it.reserveNumber = it.roomCount
+				// it.checkInNumber = it.roomCount
+				it.hotelRoomTypeId = it.roomTypeId
+				it.orderAmount = it.unitPrice
+				return it;
+			})
+		})
 	}
 	emits('update:modelValue', newVal);
 });
@@ -282,6 +320,8 @@ watch(dialogVisible, (newVal) => {
 const debounceFun = debounce((hotelId: number | string, leaveTime: string, enterTime: string) => {
 	getRoomType(hotelId, leaveTime, enterTime);
 }, 500);
+
+
 
 watch(
 	() => [formState.hotelId, formState.arrivalDate, formState.departureDate],

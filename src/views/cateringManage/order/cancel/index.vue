@@ -28,10 +28,12 @@
 </template>
 
 <script lang="ts" setup>
+import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import { reactive, onMounted } from 'vue';
 import api from '@/api';
+const navigatorBar = useNavigatorBar();
 const router = useRouter();
 
 const columns = [
@@ -183,7 +185,12 @@ const opendetailPage = () => {
 
 onMounted(() => {
 	getRoleList();
+	navigatorBar.setNavigator(['订单管理']);
 	onSearch();
+});
+
+onBeforeUnmount(() => {
+	navigatorBar.clearNavigator();
 });
 </script>
 

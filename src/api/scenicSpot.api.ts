@@ -292,7 +292,7 @@ export async function getScenicVerif(id: number) {
 export async function getScenicSave(data: any) {
 	return request({
 		url: `${commonPath}/ticket-service/public/api/scenic-verif-manage/save`,
-		method: 'get',
+		method: 'POST',
 		data,
 	});
 }

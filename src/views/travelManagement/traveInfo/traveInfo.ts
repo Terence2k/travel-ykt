@@ -17,6 +17,10 @@ interface DataItem {
 export function useTraveInfo(props: any, emits: any): Record<string, any> {
 	const { onCheck } = toRefs(props);
 	const travelStore = useTravelStore();
+	const editId = reactive<{[k: string]: any}>({
+		addTicketPop: '',
+		addHotelPop: ''
+	})
 	const state = reactive<{ editableData: UnwrapRef<Record<string, DataItem>>; [k: string]: any }>({
 		editableData: {},
 		addHotelPop: false,
@@ -141,7 +145,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				key: 'action',
 				fixed: 'right',
 			},
-	],
+		],
 		ticketColumns: [
 			{
 				title: ' 序号 ',
@@ -183,11 +187,11 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				dataIndex: 'totalFee',
 				key: 'totalFee',
 			},
-			{
-				title: '支付状态',
-				dataIndex: 'reserveStatusName',
-				key: 'reserveStatusName',
-			},
+			// {
+			// 	title: '支付状态',
+			// 	dataIndex: 'reserveStatusName',
+			// 	key: 'reserveStatusName',
+			// },
 			{
 				title: '操作',
 				key: 'action',
@@ -260,13 +264,13 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			Object.assign(state.tableData.filter((item: any) => key === item.key)[0], state.editableData[key]);
 			delete state.editableData[key];
 		},
-		add(key: string) {
+		add(key: string, oid?: string) {
+			editId[key] = ''
+			if (oid) {
+				editId[key] = oid
+			}
 			state[key] = true;
-			console.log(key,'6666666')
-		},
-		editHolte(key :string)
-		{
-			state[key] = true;
+			
 		},
 		choice(key :string)
 		{
@@ -371,5 +375,6 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 	return {
 		...toRefs(state),
 		...methods,
+		editId
 	};
 }

@@ -7,10 +7,10 @@
 		</a-tabs>
 		<div class="footer d-flex justify-content-between">
 			<div class="footer-btn">
-				<a-button type="primary" @click="check = !check">保存</a-button>
+				<a-button type="primary" @click="() => { check = !check; sendTeam = false }">保存</a-button>
 				<a-button type="primary" @click="activeKey = activeKey + 1">下一步</a-button>
 			</div>
-			<div class="submit-btn">提交发团</div>
+			<div class="submit-btn" @click="() => { check = !check; sendTeam = true }">提交发团</div>
 		</div>
 	</div>
 </template>
@@ -26,12 +26,14 @@ import { cloneDeep, debounce } from 'lodash';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
-const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any);
+import dayjs, { Dayjs } from 'dayjs';
+const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 const route = useRoute();
 const router = useRouter();
 const travelStore = useTravelStore();
 const activeKey = ref(0);
 const check = ref(false);
+const sendTeam = ref(false);
 const pages = [
 	{
 		name: baseInfo,
@@ -75,12 +77,52 @@ const save = (e: any) => {
 		});
 	}
 };
+
+const sendGroup = async (id: string) => {
+
+	const formData = new FormData();
+	formData.append('itineraryId', id)
+	try {
+		await api.travelManagement.sendGroup(formData)
+		message.success('发团成功')
+		sendTeam.value = false
+	} catch (error) {
+		sendTeam.value = false
+	}
+}
+
 const saveItinerary = (val: any) => {
-	console.log(travelStore.touristList);
-	let ajax = route.query.id || traveListData ? api.travelManagement.editItinerary : api.travelManagement.saveItinerary;
+	if (sendTeam.value) {
+		if (!travelStore.guideList.length) return message.error('请选择带团导游');
+		if (!travelStore.touristList.length) return message.error('请添加游客');
+		if (!travelStore.trafficList.length) return message.error('请添加交通信息');
+	}
+	const itineraryId =  route.query.id || traveListData.oid
+	let ajax = itineraryId ? api.travelManagement.editItinerary : api.travelManagement.saveItinerary;
+
 	return ajax({
-		oid: route.query.id ? route.query.id.toString() : null,
-		attachmentParam: travelStore.fileInfo || [],
+		oid: itineraryId ? itineraryId.toString() : null,
+		attachmentList: travelStore.attachmentList.length ? travelStore.attachmentList :
+		[
+			{
+				oid: null, //oid
+				attachmentName: "旅行合同", //附件名称
+				attachmentType: 2, //附件类型：1-旅行合同，2-接待协议，3-租车合同，4-其它
+				attachmentUrl: "http://test.jpg" //附件url
+			},
+			{
+				oid: null, //oid
+				attachmentName: "旅行合同", //附件名称
+				attachmentType: 3, //附件类型：1-旅行合同，2-接待协议，3-租车合同，4-其它
+				attachmentUrl: "http://test.jpg" //附件url
+			},
+			{
+				oid: null, //oid
+				attachmentName: "旅行合同", //附件名称
+				attachmentType: 1, //附件类型：1-旅行合同，2-接待协议，3-租车合同，4-其它
+				attachmentUrl: "http://test.jpg" //附件url
+			}
+		],
 		basicParam: val.basicParam || {},
 		guideList: travelStore.guideList.filter((it: any) => it.edit),
 		itineraryInfoParam: {
@@ -91,11 +133,17 @@ const saveItinerary = (val: any) => {
 	}).then((res: any) => {
 		res && sessionStorage.setItem('traveList', JSON.stringify(res));
 		getTraveDetail();
+		if (sendTeam.value) {
+			sendGroup(itineraryId)
+		}
 		// let msg = route.query.id ? '编辑成功' : '新增成功'
 		// message.success(msg);
 		// router.push('/travel/travel_manage/travel_list')
 	});
 };
+
+
+
 const debounceFun = debounce((val) => {
 	for (let k in val) {
 		if (val[k].valid === false) {
@@ -110,7 +158,7 @@ watch(obj, (newVal) => {
 });
 
 const getTraveDetail = () => {
-	if (!route.query.id && !traveListData) {
+	if (!route.query.id && !traveListData.oid) {
 		travelStore.setBaseInfo({});
 		travelStore.setGuideList([]);
 		travelStore.setTouristList([]);
@@ -128,15 +176,24 @@ const getTraveDetail = () => {
 			res.basic.time = [res.basic.startDate, res.basic.endDate];
 			res.basic.touristNum = res.basic.touristCount || 0;
 			travelStore.setBaseInfo(res.basic);
+			travelStore.setFileInfo(res.attachmentList);
 			travelStore.setGuideList(res.guideList);
 			travelStore.setTouristList(res.touristList.content);
+			res.transportList = res.transportList.map((it:any) => {
+				it.time = [it.startDate, it.endDate]
+				return it;
+			})
 			travelStore.setTrafficList(res.transportList);
-			travelStore.setFileInfo(res.attachment);
 			travelStore.hotels = res.hotelList;
 			travelStore.scenicTickets = res.ticketList;
+			travelStore.setDisabled = (current: Dayjs): any => {
+				return (dayjs(res.basic.startDate) && dayjs(res.basic.startDate) > current && current) ||
+					(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).add(1, 'day') < current && current)
+			}
 		});
 };
 const changeTab = (event: number) => {
+	sendTeam.value = false;
 	if (event === 4) {
 		check.value = !check.value;
 	}

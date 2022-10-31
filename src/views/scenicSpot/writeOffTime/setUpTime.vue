@@ -150,9 +150,7 @@ const save = () => {
 	api.getScenicSave(data).then((res: any) => {
 		message.success('设置成功');
 		cancel();
-	}).catch(err => {
-        message.error(err || '请求失败');
-      });
+	})
 };
 const cancel = () => {
 	dialogVisible.value = false;

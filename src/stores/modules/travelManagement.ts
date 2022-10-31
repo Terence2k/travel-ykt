@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia';
-import { GroupMode, GroupStatus, Gender, GuideType, FeeModel,insuranceType} from '@/enum';
+import { GroupMode, GroupStatus, Gender, GuideType, FeeModel, insuranceType, AuditStaus} from '@/enum';
 import api from '@/api/index';
 import { cloneDeep } from 'lodash';
 import { Field } from '@/type';
+import dayjs, { Dayjs } from 'dayjs';
 interface TraveDataItem {
 	groupType: GroupMode.All | GroupMode.TeamGroup |GroupMode.NoTeamGroup;
 	[k: string]: any
@@ -80,11 +81,16 @@ export const useTravelStore = defineStore({
 			endDate: '',
 			groupType: ''
 		},
+		setDisabled: (current: Dayjs) => {
+			return current && current < dayjs().subtract(1, 'day') || 
+			current > dayjs().startOf('day');
+		},
+		teamTime: '',
 		guideList: [],
 		touristList: [],
 		trafficList: [],
 		traveInfo: {},
-		fileInfo: [],
+		attachmentList: [],
 		compositeProducts: [],
 		hotels: [],
 		scenicTickets: [],
@@ -102,6 +108,12 @@ export const useTravelStore = defineStore({
 			closeAnAccount: cloneDeep(traveListParams),
 			cancellation: cloneDeep(traveListParams),
 			overtime: cloneDeep(traveListParams)
+		},
+		auditList: {
+			financeSendGroup: cloneDeep(traveListParams),
+			financeChange: cloneDeep(traveListParams),
+			administrativeSendGroup: cloneDeep(traveListParams),
+			administrativeChange: cloneDeep(traveListParams),
 		},
 		enterpriseState: [
 			{
@@ -130,9 +142,19 @@ export const useTravelStore = defineStore({
 			},
 			'TICKET': {
 				submitFunc: 'changeScenicSpotInformation' 
+			},
+			'CATERING': {
+				submitFunc: 'getCateringAudit' 
 			}
 
-		}
+		},
+
+		auditStatus: {
+			[AuditStaus.AdministrativeSendGroup]: '发团审核',
+			[AuditStaus.AdministrativeChange]: '变更审核',
+			[AuditStaus.FinanceSendGroup]: '发团审核',
+			[AuditStaus.FinanceChange]: '变更审核',
+		},
 	}),
 	getters: {
 		// count(): string {
@@ -166,6 +188,14 @@ export const useTravelStore = defineStore({
 					break;
 			}
 		},
+		async getAuditList(params: object) {
+			let res = await api.travelManagement.getAuditList(params);
+			res.content = res.content.map((it:TraveDataItem) => {
+				it.time = it.startDate + '-' + it.endDate;
+				return it
+			})
+			return res
+		},
 		setTouristList(list: any) {
 			this.touristList = list
 		},
@@ -182,7 +212,7 @@ export const useTravelStore = defineStore({
 			this.traveInfo = data
 		},
 		setFileInfo(data: any) {
-			this.fileInfo = data
+			this.attachmentList = data
 		},
 		setCompositeProducts(data: any) {
 			this.compositeProducts = data;
@@ -190,26 +220,28 @@ export const useTravelStore = defineStore({
 		setTeamType(data: any) {
 			this.teamType = data;
 		},
-		setHotels(data: any, id?: string) {
-			if (id) {
+		setHotels(data: any, oid: string) {
+			if (data.oid) {
 				Object.assign(
-					this.hotels.filter((item:any) => id === item.id)[0], 
+					this.hotels.filter((item:any) => data.oid == item.oid)[0], 
 					data
 				)
 			} else {
+				data.oid = oid;
 				let newData = [...this.hotels, data]
 				this.hotels = newData as any;
 				console.log(this.hotels, data, newData)
 			}
 			
 		},
-		setTicket(data: any, id?: string) {
-			if (id) {
+		setTicket(data: any, oid: string) {
+			if (data.oid) {
 				Object.assign(
-					this.scenicTickets.filter((item:any) => id === item.id)[0], 
+					this.hotels.filter((item:any) => data.oid == item.oid)[0], 
 					data
 				)
 			} else {
+				data.oid = oid;
 				let newData = [...this.scenicTickets, data]
 				this.scenicTickets = newData as any;
 				console.log(this.scenicTickets, data, newData)
@@ -219,6 +251,10 @@ export const useTravelStore = defineStore({
 		setTraveList(data: any, key: Field) {
 			this.traveList[key].list = data.content
 			this.traveList[key].total = data.total
+		},
+		setAuditList(data: any, key: Field) {
+			this.auditList[key].list = data.content
+			this.auditList[key].total = data.total
 		}
 	},
 });

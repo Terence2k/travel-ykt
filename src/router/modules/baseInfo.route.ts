@@ -49,9 +49,8 @@ export default [
 			},
 			{
 				path: 'businessManagement',
-				// component: () => import('@/views/baseInfoManage/businessManagement/index.vue'),
+				component: () => import('@/views/baseInfoManage/businessManagement/index.vue'),
 				name: 'businessManagement',
-				redirect: '/baseInfo/businessManagement/apply',
 				meta: {
 					title: '企业管理',
 					// icon: 'liulanqi',
@@ -61,8 +60,19 @@ export default [
 				children: [
 					{
 						path: 'apply',
-						component: () => import('@/views/baseInfoManage/businessManagement/index.vue'),
+						component: () => import('@/views/baseInfoManage/businessManagement/super/apply.vue'),
 						name: 'apply',
+						meta: {
+							title: '',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'memberReview',
+						component: () => import('@/views/baseInfoManage/businessManagement/normal/index.vue'),
+						name: 'memberReview',
 						meta: {
 							title: '',
 							// icon: 'liulanqi',
@@ -87,6 +97,18 @@ export default [
 						name: 'details',
 						meta: {
 							title: '详情',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+						props: true,
+					},
+					{
+						path: 'editBusinessInfo/businessType/:businessType/oid/:oid',
+						component: () => import('@/views/baseInfoManage/businessManagement/super/edit.vue'),
+						name: 'editBusinessInfo',
+						meta: {
+							title: '编辑',
 							// icon: 'liulanqi',
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示

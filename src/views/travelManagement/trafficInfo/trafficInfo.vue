@@ -21,7 +21,7 @@
 
 							<template v-else>
 								{{ text }}
-								<!-- {{ column.data.filter(it => it.codeValue === text)[0]?.name }} -->
+								<!-- {{ column.key === 'transportationType' ? column.data.filter(it => it.codeValue === text)[0]?.name : text }} -->
 							</template>
 						</div>
 					</template>
@@ -41,6 +41,7 @@
 						<div>
 							<a-form-item v-if="editableData[record.key ? record.key : record.oid]" :name="[record.key ? record.key : record.oid, column.key]">
 								<a-range-picker
+									:disabled-date="travelStore.setDisabled"
 									v-model:value="editableData[record.key ? record.key : record.oid][column.key]"
 									show-time
 									format="YYYY-MM-DD HH:mm:ss"
@@ -80,7 +81,7 @@ const props = defineProps({
 	},
 });
 const emits = defineEmits(['onSuccess']);
-const { columns, tableData, editableData, edit, save, onSelect, selectKey, inputKey, cityOptions, add, del, rulesRef, formRef, handleTime } =
+const { columns, tableData, editableData, edit, save, onSelect, selectKey, inputKey, travelStore, add, del, rulesRef, formRef, handleTime } =
 	useTrafficInfo(props, emits);
 </script>
 <style lang="less" scoped>
