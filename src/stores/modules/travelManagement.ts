@@ -90,7 +90,7 @@ export const useTravelStore = defineStore({
 		touristList: [],
 		trafficList: [],
 		traveInfo: {},
-		fileInfo: [],
+		attachmentList: [],
 		compositeProducts: [],
 		hotels: [],
 		scenicTickets: [],
@@ -212,7 +212,7 @@ export const useTravelStore = defineStore({
 			this.traveInfo = data
 		},
 		setFileInfo(data: any) {
-			this.fileInfo = data
+			this.attachmentList = data
 		},
 		setCompositeProducts(data: any) {
 			this.compositeProducts = data;

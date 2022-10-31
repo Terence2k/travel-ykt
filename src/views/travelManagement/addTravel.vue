@@ -99,9 +99,10 @@ const saveItinerary = (val: any) => {
 	}
 	const itineraryId =  route.query.id || traveListData.oid
 	let ajax = itineraryId ? api.travelManagement.editItinerary : api.travelManagement.saveItinerary;
+
 	return ajax({
 		oid: itineraryId ? itineraryId.toString() : null,
-		attachmentList: travelStore.fileInfo.length ? travelStore.fileInfo :
+		attachmentList: travelStore.attachmentList.length ? travelStore.attachmentList :
 		[
 			{
 				oid: null, //oid
@@ -175,6 +176,7 @@ const getTraveDetail = () => {
 			res.basic.time = [res.basic.startDate, res.basic.endDate];
 			res.basic.touristNum = res.basic.touristCount || 0;
 			travelStore.setBaseInfo(res.basic);
+			travelStore.setFileInfo(res.attachmentList);
 			travelStore.setGuideList(res.guideList);
 			travelStore.setTouristList(res.touristList.content);
 			res.transportList = res.transportList.map((it:any) => {
@@ -182,7 +184,6 @@ const getTraveDetail = () => {
 				return it;
 			})
 			travelStore.setTrafficList(res.transportList);
-			travelStore.setFileInfo(res.attachment);
 			travelStore.hotels = res.hotelList;
 			travelStore.scenicTickets = res.ticketList;
 			travelStore.setDisabled = (current: Dayjs): any => {
