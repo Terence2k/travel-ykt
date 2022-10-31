@@ -103,6 +103,18 @@ export default [
 						},
 						props: true,
 					},
+					{
+						path: 'editBusinessInfo/businessType/:businessType/oid/:oid',
+						component: () => import('@/views/baseInfoManage/businessManagement/super/edit.vue'),
+						name: 'editBusinessInfo',
+						meta: {
+							title: '编辑',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+						props: true,
+					},
 				],
 			},
 			{

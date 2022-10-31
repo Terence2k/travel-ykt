@@ -461,7 +461,7 @@ const changeDisabledStatus = (name: string) => {
 
 // 获取字段是否禁用状态
 const getStatus = (name: string) => {
-  return validateArray.value?.find((it: any) => it.name === name)?.disabled && ![0, 1].includes(form.value.informationAuditStatus);
+  return validateArray.value?.find((it: any) => it.name === name)?.disabled && ![0].includes(form.value.informationAuditStatus);
 }
 
 // 是否隐藏修改确定按钮
