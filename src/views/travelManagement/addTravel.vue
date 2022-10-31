@@ -118,7 +118,7 @@ const saveItinerary = (val: any) => {
 			{
 				oid: null, //oid
 				attachmentName: "旅行合同", //附件名称
-				attachmentType: 4, //附件类型：1-旅行合同，2-接待协议，3-租车合同，4-其它
+				attachmentType: 1, //附件类型：1-旅行合同，2-接待协议，3-租车合同，4-其它
 				attachmentUrl: "http://test.jpg" //附件url
 			}
 		],
