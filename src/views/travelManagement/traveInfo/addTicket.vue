@@ -23,6 +23,7 @@
 
 			<a-form-item label="入园日期" name="startDate" :rules="[{ required: true, message: '请选择入园日期' }]">
                 <a-date-picker
+					:disabled-date="travelStore.setDisabled"
 					style="width: 100%"
 					v-model:value="formState.startDate"
 					format="YYYY-MM-DD"

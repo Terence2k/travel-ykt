@@ -29,6 +29,8 @@
 
 			<a-form-item label="入住日期" name="arrivalDate" :rules="[{ required: true, message: '请选择入住日期' }]">
 				<a-date-picker style="width: 100%"
+					:disabled-date="travelStore.setDisabled"
+					@change="handleChangCheckIn"
 					:show-time="{ format: 'HH:mm:ss' }" 
 					format="YYYY-MM-DD HH:mm:ss" 
 					value-format="YYYY-MM-DD HH:mm:ss" 
@@ -39,6 +41,7 @@
 				name="departureDate" 
 				:rules="[{ required: true, message: '请选择离店日期' }]">
 				<a-date-picker style="width: 100%" 
+					:disabled-date="disLeave"
 					:show-time="{ format: 'HH:mm:ss' }"  
 					format="YYYY-MM-DD HH:mm:ss" 
 					value-format="YYYY-MM-DD HH:mm:ss" 
@@ -65,7 +68,7 @@
 					:rules="[{ required: true, validator: (_rule: Rule, value: string) => validateCheckNum(_rule, value, index) }]">
 					<a-input v-model:value="room.reserveNumber" />
 				</a-form-item>
-				<a-form-item
+				<!-- <a-form-item
 					label="入住总人数"
 					:name="['roomTypeList', index, 'checkInNumber']"
 					:rules="[{ required: true, validator: (_rule: Rule, value: string) => validateCheckIn(_rule, value, index) }]"
@@ -73,7 +76,7 @@
 					<div class="d-flex">
 						<a-input v-model:value="room.checkInNumber" />
 					</div>
-				</a-form-item>
+				</a-form-item> -->
 				<a-form-item
 					label="单价"
 					:name="['roomTypeList', index, 'orderAmount']"
@@ -119,7 +122,7 @@ import { cloneDeep, debounce } from 'lodash';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import { message } from 'ant-design-vue/es';
 import { Rule } from 'ant-design-vue/es/form';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any ) || {}
 const route = useRoute()
@@ -132,6 +135,11 @@ const roomList = {
 };
 const travelStore = useTravelStore()
 const formRef = ref();
+
+let disLeave = ref((current: Dayjs) => {
+	return current && current < dayjs().subtract(1, 'day') || 
+	current > dayjs().startOf('day');
+})
 
 const props = defineProps({
 	modelValue: {
@@ -168,6 +176,11 @@ const delRoom = (index: number) => {
 
 const handleHotel = (e: any, option: any) => {
 	formState.hotelName = option.name;
+}
+
+const handleChangCheckIn = () => {
+	disLeave.value = (current: Dayjs) => current && current < dayjs(formState.arrivalDate).add(1, 'day') || 
+	(dayjs(travelStore.teamTime[1]) < current && current) as any;
 }
 
 const changeRoomType = (e: any, option: any, index: number) => {
