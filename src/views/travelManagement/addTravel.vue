@@ -82,7 +82,7 @@ const sendGroup = async (id: string) => {
 	const formData = new FormData();
 	formData.append('itineraryId', id)
 	try {
-		await api.travelManagement.sendGroup()
+		await api.travelManagement.sendGroup(formData)
 		message.success('发团成功')
 		sendTeam.value = false
 	} catch (error) {
@@ -100,7 +100,15 @@ const saveItinerary = (val: any) => {
 	let ajax = itineraryId ? api.travelManagement.editItinerary : api.travelManagement.saveItinerary;
 	return ajax({
 		oid: itineraryId ? itineraryId.toString() : null,
-		attachmentParam: travelStore.fileInfo || [],
+		// attachmentParam: travelStore.fileInfo || [],
+		attachmentParam: [
+      {
+        oid: null, //oid
+        attachmentName: "旅行合同", //附件名称
+        attachmentType: 1, //附件类型：1-旅行合同，2-接待协议，3-租车合同，4-其它
+        attachmentUrl: "http://test.jpg" //附件url
+      }
+    ],
 		basicParam: val.basicParam || {},
 		guideList: travelStore.guideList.filter((it: any) => it.edit),
 		itineraryInfoParam: {
@@ -167,6 +175,7 @@ const getTraveDetail = () => {
 		});
 };
 const changeTab = (event: number) => {
+	sendTeam.value = false;
 	if (event === 4) {
 		check.value = !check.value;
 	}

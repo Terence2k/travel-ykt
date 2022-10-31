@@ -128,6 +128,10 @@
 			type: Boolean,
 			default: false,
 		},
+		ticketId: {
+			type: String,
+			default: ''
+		}
 	})
 	const columns = [
         {
@@ -211,9 +215,9 @@
 			const newFormState = cloneDeep(formState)
 			newFormState.reservePeopleCount = formState.peopleCount
 			newFormState.totalFee = newFormState.peopleCount * newFormState.unitPrice
-			newFormState.reserveStatusName = '草稿'
-			await api.travelManagement.reserveTicket(formState)
-			travelStore.setTicket(newFormState)
+			const res = await api.travelManagement.reserveTicket(formState)
+			// travelStore.setTicket(newFormState)
+			travelStore.setTicket(newFormState, res)
 			callback()
 		} catch (errorInfo) {
 			callback(false)
@@ -221,7 +225,7 @@
 		
 	};
 
-
+	
     const handleChange = async (event: number, option:any) => {
         formState.ticketId = ''
 		formState.scenicName = option.name;
@@ -238,9 +242,19 @@
 		dialogVisible.value = newVal
 	});
 	watch(dialogVisible, newVal => {
-		console.log(newVal)
+		console.log(newVal, props.ticketId)
 		if (!newVal) {
 			formRef.value.resetFields();
+			for (let k in formState) {
+				formState[k] = '';
+			}
+		} else {
+			props.ticketId && api.travelManagement.ticketDetail(props.ticketId).then((res:any) => {
+				for (let k in res) {
+					formState[k] = res[k]
+				}
+			})
+			
 		}
 		emits('update:modelValue', newVal)
 	})

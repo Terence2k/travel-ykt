@@ -215,7 +215,8 @@ const state = reactive({
       createTime: '',
       serialNumber: '',
       startAmount: undefined,
-      endAmount: undefined
+      endAmount: undefined,
+      companyId: undefined
     },
   },
   tableData2: {
@@ -229,7 +230,8 @@ const state = reactive({
       createTime: '',
       serialNumber: '',
       startAmount: undefined,
-      endAmount: undefined
+      endAmount: undefined,
+      companyId: undefined
     },
   },
   tableData3: {
@@ -243,7 +245,8 @@ const state = reactive({
       createTime: '',
       serialNumber: '',
       startAmount: undefined,
-      endAmount: undefined
+      endAmount: undefined,
+      companyId: undefined
     },
   }
 });
@@ -529,6 +532,9 @@ const getUserInfo = () => {
   userInfo = JSON.parse(userInfo as string)
   const { sysCompany: { oid } } = userInfo
   form.companyId = oid
+  state.tableData1.param.companyId = oid
+  state.tableData2.param.companyId = oid
+  state.tableData3.param.companyId = oid
 }
 const getBaseInfo = async () => {
   let {

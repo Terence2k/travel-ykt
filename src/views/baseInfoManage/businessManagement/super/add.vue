@@ -132,11 +132,20 @@ import imgUpload from '@/views/baseInfoManage/businessManagement/components/imgU
 import type { Rule } from 'ant-design-vue/es/form';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
+import {
+  commonFormRules6,
+  commonFormRules9,
+  commonFormRules7,
+  commonFormRules8,
+  condition1,
+  condition2,
+  condition3,
+  condition4
+} from '@/views/baseInfoManage/businessManagement/super/common'
 const router = useRouter();
 const route = useRoute();
 const formRef = ref()
 const dateFormat = 'YYYY-MM-DD';
-
 const saveVisible = ref(false)
 const tipVisible = ref(false)
 const loading = ref(false)
@@ -186,14 +195,7 @@ const back = () => {
     }
   })
 }
-// 旅行社、旅游集团、酒店、景区、餐厅
-const condition1 = ['TRAVEL', 'GROUP', 'HOTEL', 'TICKET', 'CATERING']
-// 一卡通、古维管理部门
-const condition2 = ['YKT']
-// 监理
-const condition3 = ['SUPERVISE', 'ANCIENT_UYGUR']
-// 旅游协会、文旅局
-const condition4 = ['ASSOCIATION', 'CULTURE_BUREAU']
+
 let validatePass = async (_rule: Rule, value: string) => {
   if (value === '') {
     return Promise.reject('请输入密码！');
@@ -213,69 +215,15 @@ let validatePass2 = async (_rule: Rule, value: string) => {
     return Promise.resolve();
   }
 };
-// 旅行社、旅游集团、酒店、景区、餐厅
-const formRules6: Record<string, Rule[]> = {
-  businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
-  name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
-  regionCode: [{ required: true, trigger: 'blur', message: '请选择企业所属地区' }],
-  addressDetail: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
-  legalPerson: [{ required: true, trigger: 'blur', message: '请输入法定代表人' }],
-  managementRange: [{ required: true, trigger: 'blur', message: '请输入经营范围' }],
-  registeredCapital: [{ required: true, trigger: 'blur', message: '请输入注册资本' }],
-  establishTime: [{ required: true, trigger: 'blur', message: '请选择成立日期' }],
-  businessTerm: [{ required: true, trigger: 'blur', message: '请选择营业期限' }],
-  contactName: [{ required: true, trigger: 'blur', message: '请输入联系人姓名' }],
-  phone: [{ required: true, trigger: 'blur', message: '请输入联系电话' }],
-  accountType: [{ required: true, trigger: 'blur', message: '请选择公司账户类型' }],
-  bankAccountName: [{ required: true, trigger: 'blur', message: '请输入公司账户名称' }],
-  bank: [{ required: true, trigger: 'blur', message: '请输入开户行' }],
-  bankAccount: [{ required: true, trigger: 'blur', message: '请输入公司账号' }],
-  creditCode: [{ required: true, trigger: 'blur', message: '请输入统一社会信用代码' }],
-  businessLicenseUrl: [{ required: true, trigger: 'blur', message: '请上传营业执照照片' }],
+const common = {
   account: [{ required: true, trigger: 'blur', message: '请输入超级管理员账号' }],
   password: [{ required: true, validator: validatePass, trigger: 'change' }],
   checkPass: [{ validator: validatePass2, trigger: 'change' }],
 }
-// 一卡通
-const formRules9: Record<string, Rule[]> = {
-  businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
-  name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
-  regionCode: [{ required: true, trigger: 'blur', message: '请选择企业所属地区' }],
-  addressDetail: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
-  contactName: [{ required: true, trigger: 'blur', message: '请输入联系人姓名' }],
-  phone: [{ required: true, trigger: 'blur', message: '请输入联系电话' }],
-  account: [{ required: true, trigger: 'blur', message: '请输入超级管理员账号' }],
-  password: [{ required: true, validator: validatePass, trigger: 'change' }],
-  checkPass: [{ validator: validatePass2, trigger: 'change' }],
-}
-// 监理、古维管理部门
-const formRules7: Record<string, Rule[]> = {
-  businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
-  name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
-  regionCode: [{ required: true, trigger: 'blur', message: '请选择企业所属地区' }],
-  addressDetail: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
-  contactName: [{ required: true, trigger: 'blur', message: '请输入联系人姓名' }],
-  phone: [{ required: true, trigger: 'blur', message: '请输入联系电话' }],
-  accountType: [{ required: true, trigger: 'blur', message: '请选择公司账户类型' }],
-  bankAccountName: [{ required: true, trigger: 'blur', message: '请输入公司账户名称' }],
-  bank: [{ required: true, trigger: 'blur', message: '请输入开户行' }],
-  bankAccount: [{ required: true, trigger: 'blur', message: '请输入公司账号' }],
-  account: [{ required: true, trigger: 'blur', message: '请输入超级管理员账号' }],
-  password: [{ required: true, validator: validatePass, trigger: 'change' }],
-  checkPass: [{ validator: validatePass2, trigger: 'change' }],
-}
-// 旅游协会、文旅局
-const formRules8: Record<string, Rule[]> = {
-  businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
-  name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
-  regionCode: [{ required: true, trigger: 'blur', message: '请选择企业所属地区' }],
-  addressDetail: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
-  contactName: [{ required: true, trigger: 'blur', message: '请输入联系人姓名' }],
-  phone: [{ required: true, trigger: 'blur', message: '请输入联系电话' }],
-  account: [{ required: true, trigger: 'blur', message: '请输入超级管理员账号' }],
-  password: [{ required: true, validator: validatePass, trigger: 'change' }],
-  checkPass: [{ validator: validatePass2, trigger: 'change' }],
-}
+const formRules6 = { ...commonFormRules6, ...common }
+const formRules9 = { ...commonFormRules9, ...common }
+const formRules7 = { ...commonFormRules7, ...common }
+const formRules8 = { ...commonFormRules8, ...common }
 const formRules = ref<Record<string, Rule[]>>({})
 formRules.value = formRules6
 onActivated(() => {
@@ -326,7 +274,7 @@ const regionChange = () => {
 const submit = () => {
   formRef.value.validateFields().then(() => {
     saveVisible.value = true
-  }).catch((error) => {
+  }).catch((error: Error) => {
     console.log(error);
   })
 }

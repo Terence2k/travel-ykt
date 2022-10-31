@@ -797,7 +797,9 @@ const enable = async (record: any) => {
 		message.error('启用失败！')
 	}
 }
-const edit = (record: any) => { }
+const edit = (record: any) => {
+	goTo(record, 'editBusinessInfo')
+}
 const disableCancel = () => {
 	disableVisible.value = false
 }
