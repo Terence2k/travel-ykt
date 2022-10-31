@@ -46,7 +46,7 @@
 
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a class="item" @click="editTicke('addTicketPop')">编辑</a>
+							<a class="item" @click="add('addTicketPop', record.oid)">编辑</a>
 							<a class="item">删除</a>
 						</div>
 					</template>
@@ -67,7 +67,7 @@
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a class="item" @click="editHolte('addHotelPop')">编辑</a>
+							<a class="item" @click="add('addHotelPop', record.oid)">编辑</a>
 							<a class="item" @click="del(index)">删除</a>
 						</div>
 					</template>
@@ -78,8 +78,8 @@
 			</div>
 		</div>
 	</div>
-	<addHotel v-model="addHotelPop" />
-	<addTicket v-model="addTicketPop" />
+	<addHotel :hotelId="editId.addHotelPop" v-model="addHotelPop" />
+	<addTicket :ticketId="editId.addTicketPop" v-model="addTicketPop" />
 	<Personnel v-model="selectPersonnelPop" />
 </template>
 <script lang="ts" setup>
@@ -112,8 +112,8 @@ const {
 	ticketData,
 	gouvyDate,
 	del,
-	editHolte,
-	choice
+	choice,
+	editId
 } = useTraveInfo(props, emits);
 </script>
 <style lang="less" scoped>

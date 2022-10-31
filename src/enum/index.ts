@@ -24,6 +24,15 @@ export enum GroupStatus {
   WaitRegiment,   //待出团
 }
 
+// 酒店订单状态
+export enum HotelStatus{
+  waits = 1,   //待审核
+  success = 2,//审核通过2
+  refuse = -1, //审核不通过-1
+  cancal =0, //取消
+  finish =3,   //完成
+}
+
 // 线路类型
 export enum RouteType {
   Routemodel = 1,
