@@ -44,16 +44,17 @@
 						</div>
 					</template>
 
-					<template v-if="column.key === 'action'">
+					<template v-if="column.key === 'action' && travelStore.teamStatus">
 						<div class="action-btns">
-							<a class="item" @click="add('addTicketPop', record.oid)">编辑</a>
-							<a class="item">删除</a>
+							<a v-if="reserve" @click="add('reserveTicketPop', record.oid)">预定</a>
+							<a v-if="isSave" class="item" @click="add('addTicketPop', record.oid)">编辑</a>
+							<a v-if="isSave" class="item">删除</a>
 						</div>
 					</template>
 				</template>
 			</CommonTable>
 			<div class="footer-btn">
-				<a-button type="primary" @click="add('addTicketPop')">添加</a-button>
+				<a-button type="primary" @click="add('addTicketPop')" v-if="travelStore.teamStatus">添加</a-button>
 			</div>
 		</div>
 		<div>
@@ -65,28 +66,31 @@
 							{{ index + 1 }}
 						</div>
 					</template>
-					<template v-if="column.key === 'action'">
+					<template v-if="column.key === 'action' && travelStore.teamStatus">
 						<div class="action-btns">
-							<a class="item" @click="add('addHotelPop', record.oid)">编辑</a>
-							<a class="item" @click="del(index)">删除</a>
+							<a v-if="reserve" class="item" @click="reserveHotel(record)">提交预定</a>
+							<a v-if="isSave" class="item" @click="add('addHotelPop', record.oid)">编辑</a>
+							<a v-if="isSave" class="item" @click="del(index)">删除</a>
 						</div>
 					</template>
 				</template>
 			</CommonTable>
 			<div class="footer-btn">
-				<a-button type="primary" @click="add('addHotelPop')">添加</a-button>
+				<a-button type="primary" @click="add('addHotelPop')" v-if="travelStore.teamStatus">添加</a-button>
 			</div>
 		</div>
 	</div>
 	<addHotel :hotelId="editId.addHotelPop" v-model="addHotelPop" />
 	<addTicket :ticketId="editId.addTicketPop" v-model="addTicketPop" />
 	<Personnel v-model="selectPersonnelPop" />
+	<reserveTicket :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop"  />
 </template>
 <script lang="ts" setup>
 import CommonTable from '@/components/common/CommonTable.vue';
 import addHotel from './addHotel.vue';
 import addTicket from './addTicket.vue';
 import Personnel from './selectPersonnel.vue';
+import reserveTicket from './reserveTicket.vue';
 import { useTraveInfo } from './traveInfo';
 const props = defineProps({
 	onCheck: {
@@ -94,6 +98,7 @@ const props = defineProps({
 	},
 });
 const emits = defineEmits(['onSuccess']);
+
 const {
 	columns,
 	ticketColumns,
@@ -113,7 +118,12 @@ const {
 	gouvyDate,
 	del,
 	choice,
-	editId
+	editId,
+	reserve,
+	reserveHotel,
+	reserveTicketPop,
+	isSave,
+	travelStore
 } = useTraveInfo(props, emits);
 </script>
 <style lang="less" scoped>

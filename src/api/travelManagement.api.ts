@@ -121,7 +121,7 @@ export const travelManagement = {
             showLoading: false
         });
     },
-    reserveHotel(data: any){
+    addHotel(data: any){
         return request({
             url: `${commonPath}/travel-agency-service/public/api/itinerary/hotel/modifyHotel`,
             data,
@@ -129,7 +129,7 @@ export const travelManagement = {
             showLoading: true
         });
     },
-    reserveTicket(data: any){
+    addTicket(data: any){
         return request({
             url: `${commonPath}/travel-agency-service/public/api/itinerary/ticket/modifyTicket`,
             data,
@@ -172,6 +172,30 @@ export const travelManagement = {
             method: 'post',
             data,
             showLoading: true
+        });
+    },
+    reserveHotel(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/hotel/reserveHotel`,
+            method: 'put',
+            data,
+            showLoading: false
+        });
+    },
+    reserveTicket(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/ticket/reserveTicket`,
+            method: 'post',
+            data,
+            showLoading: false
+        });
+    },
+    getItineraryStatus(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/getItineraryStatus`,
+            method: 'get',
+            data,
+            showLoading: false
         });
     }
     

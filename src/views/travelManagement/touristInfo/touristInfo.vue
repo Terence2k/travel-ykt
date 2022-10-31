@@ -2,7 +2,7 @@
 	<div class="tourist-container">
 		<div class="action-btn">
 			<a-button type="primary">模板下载</a-button>
-			<a-button type="primary">批量导入</a-button>
+			<a-button type="primary" v-if="travelStore.teamStatus">批量导入</a-button>
 			<a-button type="primary">中高风险地区一键检查</a-button>
 			<a-button type="primary">健康码一键检查</a-button>
 		</div>
@@ -66,7 +66,7 @@
 					<template v-if="column.key === 'specialCertificatePicture'">
 						<Upload></Upload>
 					</template>
-					<template v-if="column.key === 'action'">
+					<template v-if="column.key === 'action' && travelStore.teamStatus">
 						<div class="action-btns">
 							<a class="item" v-if="!editableData[record.key ? record.key : record.oid]" @click="edit(record.key ? record.key : record.oid)">编辑</a>
 							<a class="item" v-else @click="save(record.key ? record.key : record.oid)">确定</a>
@@ -77,8 +77,8 @@
 			</CommonTable>
 		</a-form>
 		<div class="footer-btn">
-			<a-button type="primary" @click="add">添加</a-button>
-			<a-button>批量删除</a-button>
+			<a-button v-if="travelStore.teamStatus" type="primary" @click="add">添加</a-button>
+			<a-button v-if="travelStore.teamStatus">批量删除</a-button>
 		</div>
 		<div class="">
 			<div>
@@ -125,6 +125,7 @@ const {
 	formRef,
 	loadData,
 	handleChange,
+	travelStore
 } = useTouristInfo(props, emits);
 </script>
 <style lang="less" scoped>

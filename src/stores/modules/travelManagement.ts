@@ -4,6 +4,7 @@ import api from '@/api/index';
 import { cloneDeep } from 'lodash';
 import { Field } from '@/type';
 import dayjs, { Dayjs } from 'dayjs';
+import { CODEVALUE } from '@/constant';
 interface TraveDataItem {
 	groupType: GroupMode.All | GroupMode.TeamGroup |GroupMode.NoTeamGroup;
 	[k: string]: any
@@ -79,13 +80,14 @@ export const useTravelStore = defineStore({
 			teamType: '',
 			startDate: '',
 			endDate: '',
-			groupType: ''
+			groupType: '',
+			status: ''
 		},
 		setDisabled: (current: Dayjs) => {
 			return current && current < dayjs().subtract(1, 'day') || 
 			current > dayjs().startOf('day');
 		},
-		teamTime: '',
+		teamTime: [],
 		guideList: [],
 		touristList: [],
 		trafficList: [],
@@ -148,6 +150,7 @@ export const useTravelStore = defineStore({
 			}
 
 		},
+		itineraryStatusList: [],
 
 		auditStatus: {
 			[AuditStaus.AdministrativeSendGroup]: '发团审核',
@@ -160,6 +163,11 @@ export const useTravelStore = defineStore({
 		// count(): string {
 		// 	return this.info;
 		// },
+		teamStatus(): boolean {
+			const res: any = this.itineraryStatusList.filter((it: any) => it.status == this.baseInfo.status)[0]
+			console.log(res)
+			return  res && (res.codeName === CODEVALUE.TRAVE_CODE.DRAFT)
+		}
 	},
 	actions: {
 		async getTravelList(params: object) {
@@ -255,6 +263,11 @@ export const useTravelStore = defineStore({
 		setAuditList(data: any, key: Field) {
 			this.auditList[key].list = data.content
 			this.auditList[key].total = data.total
+		},
+		async getItineraryStatus() {
+			if (this.itineraryStatusList.length) return
+			const res = await api.travelManagement.getItineraryStatus();
+			this.itineraryStatusList = res
 		}
 	},
 });

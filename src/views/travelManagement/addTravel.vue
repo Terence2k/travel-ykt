@@ -5,7 +5,7 @@
 				<component @onSuccess="save" :onCheck="check" :is="item.name"></component>
 			</a-tab-pane>
 		</a-tabs>
-		<div class="footer d-flex justify-content-between">
+		<div class="footer d-flex justify-content-between" v-if="travelStore.teamStatus">
 			<div class="footer-btn">
 				<a-button type="primary" @click="() => { check = !check; sendTeam = false }">保存</a-button>
 				<a-button type="primary" @click="activeKey = activeKey + 1">下一步</a-button>
@@ -92,6 +92,7 @@ const sendGroup = async (id: string) => {
 }
 
 const saveItinerary = (val: any) => {
+	if (!isSave.value) return
 	if (sendTeam.value) {
 		if (!travelStore.guideList.length) return message.error('请选择带团导游');
 		if (!travelStore.touristList.length) return message.error('请添加游客');
@@ -186,6 +187,7 @@ const getTraveDetail = () => {
 			travelStore.setTrafficList(res.transportList);
 			travelStore.hotels = res.hotelList;
 			travelStore.scenicTickets = res.ticketList;
+			travelStore.teamTime = [res.basic.startDate, res.basic.endDate]  as any
 			travelStore.setDisabled = (current: Dayjs): any => {
 				return (dayjs(res.basic.startDate) && dayjs(res.basic.startDate) > current && current) ||
 					(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).add(1, 'day') < current && current)
@@ -200,6 +202,7 @@ const changeTab = (event: number) => {
 };
 
 getTraveDetail();
+travelStore.getItineraryStatus();
 // !route.query.id && saveItinerary({})
 </script>
 <style lang="less" scoped>

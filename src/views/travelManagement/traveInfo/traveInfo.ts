@@ -1,10 +1,12 @@
 import { cloneDeep } from 'lodash';
 import dayjs from 'dayjs';
-import type { UnwrapRef } from 'vue';
+import { createVNode, UnwrapRef } from 'vue';
 import api from '@/api';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import { stat } from 'fs';
 import { ConfirmDailyCharge, FeeModel } from '@/enum';
+import { message, Modal } from 'ant-design-vue';
+import { CheckOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue';
 interface DataItem {
 	name: string;
 	name1: string;
@@ -19,12 +21,14 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 	const travelStore = useTravelStore();
 	const editId = reactive<{[k: string]: any}>({
 		addTicketPop: '',
-		addHotelPop: ''
+		addHotelPop: '',
+		reserveTicketPop: ''
 	})
 	const state = reactive<{ editableData: UnwrapRef<Record<string, DataItem>>; [k: string]: any }>({
 		editableData: {},
 		addHotelPop: false,
 		addTicketPop: false,
+		reserveTicketPop: false,
 		selectPersonnelPop:false,
 		allFeesProducts: computed(() => travelStore.compositeProducts),
 		ticketData: computed(() => travelStore.scenicTickets),
@@ -252,6 +256,10 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		],
 	});
 
+	const reserve = computed(() => {
+		return travelStore.baseInfo.status == '10' || travelStore.baseInfo.status == '11'
+	})
+
 	const methods = {
 		edit: (key: string) => {
 			const cur = cloneDeep(state.tableData.filter((item: any) => key === item.key)[0]);
@@ -264,7 +272,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			Object.assign(state.tableData.filter((item: any) => key === item.key)[0], state.editableData[key]);
 			delete state.editableData[key];
 		},
-		add(key: string, oid?: string) {
+		add(key: string, oid?: any) {
 			editId[key] = ''
 			if (oid) {
 				editId[key] = oid
@@ -277,6 +285,25 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			state[key]=true
 			console.log(key)
 		},
+		reserveHotel (row: any) {
+			Modal.confirm({
+				title: '酒店房型预定确认？',
+				icon: createVNode(CheckOutlined),
+				content: createVNode('div', { style: 'color: #333;' }, 
+				 `您即将提交${row.startDate}日入住“${row.hotelName}” 的订单，行程人数（${travelStore.touristList.length}人），订单金额（${row.orderFee}元）。`),
+				onOk() {
+					const formData = new FormData();
+					formData.append('oid', row.oid)
+					api.travelManagement.reserveHotel(formData).then((res:any) => {
+						message.success('预定成功')
+					})
+				},
+				onCancel() {
+					console.log('Cancel');
+				},
+				class: 'test',
+			});
+		}
 		
 		// /**
 		//  * 
@@ -372,9 +399,13 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 	// );
 	// // methods.getProduct()
 	// methods.findByIdTeamType();
+	const isSave = computed(() => travelStore.baseInfo.status == '1')
 	return {
 		...toRefs(state),
 		...methods,
-		editId
+		editId,
+		reserve,
+		isSave,
+		travelStore
 	};
 }

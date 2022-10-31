@@ -175,6 +175,8 @@ watch(
 const showAddBtn = computed(() => {
 	return userInfo.sysRoles.some((it: any) => it.roleCode === ROLE.TRAVE_CODE);
 });
+
+travelStore.getItineraryStatus();
 sessionStorage.removeItem('traveList');
 </script>
 <style lang="less" scoped>
