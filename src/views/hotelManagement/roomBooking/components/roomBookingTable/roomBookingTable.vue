@@ -468,8 +468,14 @@ const dataSource = computed(() => {
 						};
 					}
 				});
-
 				columns.value = columns.value.filter((item, index) => index < 1 || item?.appointedTime);
+				if (columns.value.length < 7) {
+					columns.value[0] = {
+						...columns.value[0],
+						width: `${parseInt((200 * columns.value.length) / 11)}px`,
+					};
+					console.log('dddddddddddd', parseInt((200 * columns.value.length) / 11));
+				}
 			}
 
 			console.info(`result${index}`, result);
