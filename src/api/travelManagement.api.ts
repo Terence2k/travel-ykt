@@ -152,5 +152,21 @@ export const travelManagement = {
             data,
             showLoading: true
         });
-    }
+    },
+    getAuditButton(data: any) {
+        return request({
+            url: `${commonPath}/customer-service/public/api/sys/audit/flow/getAuditButton`,
+            method: 'post',
+            data,
+            showLoading: true
+        });
+    },
+    auditInfo(data: any) {
+        return request({
+            url: `${commonPath}/customer-service/public/api/sys/audit/flow/handle`,
+            method: 'post',
+            data,
+            showLoading: true
+        });
+    },
 }
