@@ -38,6 +38,7 @@ import { cloneDeep } from 'lodash';
 import { message, Modal } from 'ant-design-vue';
 import { createVNode } from 'vue';
 import { CheckOutlined } from '@ant-design/icons-vue';
+import { CODEVALUE } from '@/constant';
     const props = defineProps({
 		modelValue: {
 			type: Boolean,
@@ -146,6 +147,7 @@ import { CheckOutlined } from '@ant-design/icons-vue';
         });
 		
 	}
+    travelStore.getTraveCode(CODEVALUE.TRAVE_CODE.IDCARD, 'IDCard');
 </script>
 <style lang="scss" scoped>
 

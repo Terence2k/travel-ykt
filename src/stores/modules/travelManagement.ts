@@ -183,6 +183,7 @@ export const useTravelStore = defineStore({
 			return res
 		},
 		async getTraveCode(codeValue: string, type: string) {
+			if (type === 'IDCard' && this.IDCard.length) return
 			const res = await api.commonApi.getCodeValue({codeValue})
 			switch(type) {
 				case 'IDCard' :

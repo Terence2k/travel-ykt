@@ -254,9 +254,9 @@ const handleOk = async (callback: Function) => {
 		formState.itineraryId = route.query.id || traveListData.oid
 		formState.orderAmount = getOrderAmount(formState.roomTypeList, formState.arrivalDate, formState.departureDate)
 		
-		if (Number((formState.scheduledNumber / travelStore.touristList.length).toFixed) < 0.8) {
-			return message.error('入住总人数不低于团客总数的80%')
-		}
+		// if (Number((formState.scheduledNumber / travelStore.touristList.length).toFixed) < 0.8) {
+		// 	return message.error('入住总人数不低于团客总数的80%')
+		// }
 		const newFormState = cloneDeep(formState)
 		newFormState.startDate = newFormState.arrivalDate
 		newFormState.endDate = newFormState.departureDate

@@ -151,6 +151,7 @@ interface TeamType {
 const travelStore = useTravelStore();
 const touristCount = computed(() => travelStore.touristList.length ? travelStore.touristList.length.toString() : 0)
 const route = useRoute()
+
 const page = reactive({
 	teamType: {
 		pageNo: 1,
@@ -334,34 +335,34 @@ const getAmount = (a:any, price: number, model: any) => {
 	return countPrice
 }
 const findByIdTeamType = async () => {
-		if (!travelStore.teamType) return
-		const formData = new FormData();
-		formData.append('id', travelStore.teamType);
-		if (travelStore.teamType) {
-			let allFeesProducts = []
-			const res = await api.travelManagement.findByIdTeamType(formData);
-			
-			for (let i = 0; i < res.productVos.length; i++) {
-				if (res.productVos[i].itemId === 0) {
-					const result = await api.travelManagement.findProductInfo(res.productVos[i].productId)
-					result.peopleCount = travelStore.touristList.length;
-					result.unPrice = result.feeNumber;
-					result.isDay = true;
-					result.dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day')
-					result.totalMoney = getAmount(
-						result.confirmDailyCharge,
-						result.feeNumber,
-						result.feeModel
-					)
-					allFeesProducts.push(result)
-				}
+	if (!travelStore.teamType) return
+	const formData = new FormData();
+	formData.append('id', travelStore.teamType);
+	if (travelStore.teamType) {
+		let allFeesProducts = []
+		const res = await api.travelManagement.findByIdTeamType(formData);
+		
+		for (let i = 0; i < res.productVos.length; i++) {
+			if (res.productVos[i].itemId === 0) {
+				const result = await api.travelManagement.findProductInfo(res.productVos[i].productId)
+				result.peopleCount = travelStore.touristList.length;
+				result.unPrice = result.feeNumber;
+				result.isDay = true;
+				result.dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day')
+				result.totalMoney = getAmount(
+					result.confirmDailyCharge,
+					result.feeNumber,
+					result.feeModel
+				)
+				allFeesProducts.push(result)
 			}
-			
-			
-			travelStore.setCompositeProducts(allFeesProducts);
 		}
 		
+		
+		travelStore.setCompositeProducts(allFeesProducts);
 	}
+	
+}
 watch(() => props.onCheck, (newVal) => {
 	onSubmit()
 })
@@ -383,6 +384,7 @@ watch(
 		findByIdTeamType();
 	}
 );
+
 getTeamTypeList();
 getSubtravelList();
 </script>
