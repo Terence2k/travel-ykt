@@ -118,6 +118,11 @@ export function getChangeBeforeAfterData(companyId: string, type: string) {
 		});
 	} else if (type === 'TICKET') {
 		// 景区根据企业id查询提交审核前、后数据
+		return request({
+			url: `${commonPath}/ticket-service/public/api/scenic/audit/${companyId}`,
+			method: 'get',
+			showLoading: true
+		});
 	}
 }
 type paramsType = {
