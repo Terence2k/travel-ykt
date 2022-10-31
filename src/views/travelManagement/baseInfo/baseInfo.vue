@@ -120,6 +120,7 @@
 				<a-range-picker
 					style="width: 100%"
 					@change="handleChangeTime"
+					:disabled-date="disabledDate"
 					v-model:value="formState.time"
 					show-time
 					format="YYYY-MM-DD HH:mm:ss"
@@ -139,7 +140,7 @@ import { getUserInfo } from '@/utils/util';
 import { ConfirmDailyCharge, FeeModel, GroupMode, RouteType } from '@/enum';
 import api from '@/api/index';
 import { useTravelStore } from '@/stores/modules/travelManagement';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 
 interface TeamType {
 	teamType: Array<any>;
@@ -230,6 +231,11 @@ const rulesRef = {
 
 const formState = ref<{[k:string]: any}>(route.query.id ? computed(() => travelStore.baseInfo) : addParams);
 
+
+const disabledDate = (current: Dayjs) => {
+	return current && current < dayjs().subtract(1, 'day');
+}
+
 const onSubmit = async () => {
 	try {
 		const values = await formRef.value.validateFields()
@@ -258,13 +264,25 @@ const handleChange = (event: any, option: any) => {
 	formState.value.subTravelOperatorName = option.name
 }
 const handleChangeTime = (event: any) => {
+	let dis = null
 	if (event) {
 		formState.value.startDate = event[0];
 		formState.value.endDate = event[1];
+		dis = (current: Dayjs) => {
+			return (dayjs(event[0]) && dayjs(event[0]) > current && current) ||
+			(dayjs(event[1]) && dayjs(event[1]).add(1, 'day') < current && current)
+		}
 	} else {
 		formState.value.startDate = '';
 		formState.value.endDate = '';
+		dis = (current: Dayjs) => {
+			return current && current < dayjs().endOf('day') || 
+			current > dayjs().startOf('day');
+		}
 	}
+	
+	travelStore.setDisabled = dis as any;
+	travelStore.teamTime = event 
 	
 }
 

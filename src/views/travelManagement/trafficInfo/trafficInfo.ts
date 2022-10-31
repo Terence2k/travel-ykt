@@ -163,6 +163,7 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 	})
 	return {
 		...toRefs(state),
-		...methods
+		...methods,
+		travelStore
 	}
 }

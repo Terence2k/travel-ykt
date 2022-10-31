@@ -26,6 +26,7 @@ import { cloneDeep, debounce } from 'lodash';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
+import dayjs, { Dayjs } from 'dayjs';
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 const route = useRoute();
 const router = useRouter();
@@ -100,15 +101,27 @@ const saveItinerary = (val: any) => {
 	let ajax = itineraryId ? api.travelManagement.editItinerary : api.travelManagement.saveItinerary;
 	return ajax({
 		oid: itineraryId ? itineraryId.toString() : null,
-		// attachmentParam: travelStore.fileInfo || [],
-		attachmentParam: [
-      {
-        oid: null, //oid
-        attachmentName: "旅行合同", //附件名称
-        attachmentType: 1, //附件类型：1-旅行合同，2-接待协议，3-租车合同，4-其它
-        attachmentUrl: "http://test.jpg" //附件url
-      }
-    ],
+		attachmentList: travelStore.fileInfo.length ? travelStore.fileInfo :
+		[
+			{
+				oid: null, //oid
+				attachmentName: "旅行合同", //附件名称
+				attachmentType: 2, //附件类型：1-旅行合同，2-接待协议，3-租车合同，4-其它
+				attachmentUrl: "http://test.jpg" //附件url
+			},
+			{
+				oid: null, //oid
+				attachmentName: "旅行合同", //附件名称
+				attachmentType: 3, //附件类型：1-旅行合同，2-接待协议，3-租车合同，4-其它
+				attachmentUrl: "http://test.jpg" //附件url
+			},
+			{
+				oid: null, //oid
+				attachmentName: "旅行合同", //附件名称
+				attachmentType: 4, //附件类型：1-旅行合同，2-接待协议，3-租车合同，4-其它
+				attachmentUrl: "http://test.jpg" //附件url
+			}
+		],
 		basicParam: val.basicParam || {},
 		guideList: travelStore.guideList.filter((it: any) => it.edit),
 		itineraryInfoParam: {
@@ -172,6 +185,10 @@ const getTraveDetail = () => {
 			travelStore.setFileInfo(res.attachment);
 			travelStore.hotels = res.hotelList;
 			travelStore.scenicTickets = res.ticketList;
+			travelStore.setDisabled = (current: Dayjs): any => {
+				return (dayjs(res.basic.startDate) && dayjs(res.basic.startDate) > current && current) ||
+					(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).add(1, 'day') < current && current)
+			}
 		});
 };
 const changeTab = (event: number) => {

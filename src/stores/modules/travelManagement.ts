@@ -3,6 +3,7 @@ import { GroupMode, GroupStatus, Gender, GuideType, FeeModel,insuranceType} from
 import api from '@/api/index';
 import { cloneDeep } from 'lodash';
 import { Field } from '@/type';
+import dayjs, { Dayjs } from 'dayjs';
 interface TraveDataItem {
 	groupType: GroupMode.All | GroupMode.TeamGroup |GroupMode.NoTeamGroup;
 	[k: string]: any
@@ -80,6 +81,11 @@ export const useTravelStore = defineStore({
 			endDate: '',
 			groupType: ''
 		},
+		setDisabled: (current: Dayjs) => {
+			return current && current < dayjs().subtract(1, 'day') || 
+			current > dayjs().startOf('day');
+		},
+		teamTime: '',
 		guideList: [],
 		touristList: [],
 		trafficList: [],

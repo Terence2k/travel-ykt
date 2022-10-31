@@ -21,6 +21,7 @@
 								v-if="editableData[record.key ? record.key : record.oid]" 
 								:name="[record.key ? record.key : record.oid, column.key]">
 									<a-range-picker
+										:disabled-date="travelStore.setDisabled"
 										v-model:value="editableData[record.key ? record.key : record.oid][column.key]"
 										show-time
 										format="YYYY-MM-DD HH:mm:ss"
@@ -100,7 +101,7 @@ const {
 	formRef,
 	getGuideList, 
 	add,
-	del, guideData, guideChange } = useGuideInfo(props, emits)
+	del, guideData, guideChange, travelStore } = useGuideInfo(props, emits)
 	getGuideList()
 </script>
 <style lang="less" scoped>
