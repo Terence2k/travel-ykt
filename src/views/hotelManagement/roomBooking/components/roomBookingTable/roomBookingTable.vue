@@ -613,7 +613,7 @@ const passModalInfo = () => {
 			.hotelRoomStockPass({
 				oid: modalState.baseInfo?.oid,
 				roleId: tableState?.roleId,
-				auditBusinessType: 'HOTEL',
+				auditBusinessType: tableState?.auditBusinessType,
 			})
 			.then((res: any) => {
 				console.log('审核通过 返回：', res);
@@ -632,7 +632,7 @@ const failModalInfo = () => {
 			.hotelRoomStockFailed({
 				oid: modalState.baseInfo?.oid,
 				roleId: tableState?.roleId,
-				auditBusinessType: 'HOTEL',
+				auditBusinessType: tableState?.auditBusinessType,
 			})
 			.then((res: any) => {
 				console.log('审核不通过 返回：', res);
