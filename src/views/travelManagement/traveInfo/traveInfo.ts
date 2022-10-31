@@ -238,11 +238,11 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			// 	dataIndex: 'unitPrice',
 			// 	key: 'unitPrice',
 			// },
-			{
-				title: '入住人数',
-				dataIndex: 'reservePeopleCount',
-				key: 'reservePeopleCount',
-			},
+			// {
+			// 	title: '入住人数',
+			// 	dataIndex: 'reservePeopleCount',
+			// 	key: 'reservePeopleCount',
+			// },
 			{
 				title: '金额（元）',
 				dataIndex: 'orderFee',

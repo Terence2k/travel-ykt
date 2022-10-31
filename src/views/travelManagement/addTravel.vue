@@ -34,7 +34,7 @@ const travelStore = useTravelStore();
 const activeKey = ref(0);
 const check = ref(false); //触发保存
 const sendTeam = ref(false); //发团判断
-const isSaveBtn = ref(false);
+const isSaveBtn = ref(false); //是否点击保存按钮
 const pages = [
 	{
 		name: baseInfo,
@@ -133,16 +133,16 @@ const saveItinerary = (val: any) => {
 		},
 		touristList: travelStore.touristList.filter((it: any) => it.edit),
 		transportList: travelStore.trafficList.filter((it: any) => it.edit),
-	}).then((res: any) => {
+	}, isSaveBtn.value).then((res: any) => {
 		res && sessionStorage.setItem('traveList', JSON.stringify(res));
 		getTraveDetail();
 		if (sendTeam.value) {
 			sendGroup(itineraryId)
 		}
 		if (isSaveBtn.value) {
+			router.push('/travel/travel_manage/travel_list')
 			let msg = route.query.id ? '编辑成功' : '新增成功'
 			message.success(msg);
-			router.push('/travel/travel_manage/travel_list')
 		}
 		
 	});
@@ -176,7 +176,7 @@ const getTraveDetail = () => {
 			oid: route.query.id || traveListData.oid,
 			pageNo: 1,
 			pageSize: 100000,
-		})
+		}, isSaveBtn.value)
 		.then((res: any) => {
 			res.basic.teamId = res.basic.itineraryNo;
 			res.basic.time = [res.basic.startDate, res.basic.endDate];

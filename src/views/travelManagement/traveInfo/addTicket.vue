@@ -174,7 +174,9 @@
 				formState[k] = '';
 			}
 		} else {
+			
 			props.ticketId && api.travelManagement.ticketDetail(props.ticketId).then((res:any) => {
+				handleChange(res.scenicId, {name: res.scenicName})
 				for (let k in res) {
 					formState[k] = res[k]
 				}

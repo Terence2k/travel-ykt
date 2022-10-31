@@ -249,7 +249,7 @@ export const useTravelStore = defineStore({
 		setTicket(data: any, oid: string) {
 			if (data.oid) {
 				Object.assign(
-					this.hotels.filter((item:any) => data.oid == item.oid)[0], 
+					this.scenicTickets.filter((item:any) => data.oid == item.oid)[0], 
 					data
 				)
 			} else {

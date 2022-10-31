@@ -194,7 +194,7 @@ const changeRoomType = (e: any, option: any, index: number) => {
 
 
 const getHotelStarList = async () => {
-	hotelData.hotelStart = await api.getHotelStarList();
+	hotelData.hotelStart = await api.commonApi.getHotelStarList();
 };
 
 const handleChange = async (id: number, option: any) => {
@@ -313,6 +313,7 @@ watch(dialogVisible, (newVal) => {
 			handleChange(res.hotelStarId, {name: res.hotelStar, price: price})
 			formState.roomTypeList = formState.roomTypeList.map((it:any) => {
 				it.reserveNumber = it.roomCount
+				it.roomTypeLimitPeople = it.limitPeople
 				// it.checkInNumber = it.roomCount
 				it.hotelRoomTypeId = it.roomTypeId
 				it.orderAmount = it.unitPrice

@@ -36,16 +36,16 @@ export const travelManagement = {
         });
     },
 
-    saveItinerary(data: any) {
+    saveItinerary(data: any, showLoading: boolean) {
         return request({
             url: `${commonPath}/travel-agency-service/public/api/itinerary/saveItinerary`,
             method: 'post',
             data,
-            showLoading: false
+            showLoading
         });
     },
 
-    getItineraryDetail(data: any) {
+    getItineraryDetail(data: any, showLoading: boolean) {
         return request({
             url: `${commonPath}/travel-agency-service/public/api/itinerary/detail`,
             headers: {
@@ -53,7 +53,7 @@ export const travelManagement = {
             },
             method: 'get',
             data,
-            showLoading: false
+            showLoading
         });
     },
     getScenicList(data: any) {
@@ -77,12 +77,12 @@ export const travelManagement = {
             showLoading: false
         });
     },
-    editItinerary(data: any) {
+    editItinerary(data: any, showLoading: boolean) {
         return request({
             url: `${commonPath}/travel-agency-service/public/api/itinerary/edit`,
             data,
             method: 'post',
-            showLoading: true
+            showLoading
         });
     },
     findByIdTeamType(data: any) {
@@ -126,7 +126,7 @@ export const travelManagement = {
             url: `${commonPath}/travel-agency-service/public/api/itinerary/hotel/modifyHotel`,
             data,
             method: 'post',
-            showLoading: true
+            showLoading: false
         });
     },
     addTicket(data: any){
@@ -134,7 +134,7 @@ export const travelManagement = {
             url: `${commonPath}/travel-agency-service/public/api/itinerary/ticket/modifyTicket`,
             data,
             method: 'post',
-            showLoading: true
+            showLoading: false
         });
     },
     sendGroup(data: any){
