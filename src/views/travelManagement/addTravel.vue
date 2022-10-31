@@ -92,7 +92,7 @@ const sendGroup = async (id: string) => {
 }
 
 const saveItinerary = (val: any) => {
-	if (!isSave.value) return
+	if (!travelStore.teamStatus) return
 	if (sendTeam.value) {
 		if (!travelStore.guideList.length) return message.error('请选择带团导游');
 		if (!travelStore.touristList.length) return message.error('请添加游客');

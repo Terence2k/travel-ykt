@@ -160,13 +160,16 @@ export const useTravelStore = defineStore({
 		},
 	}),
 	getters: {
-		// count(): string {
-		// 	return this.info;
-		// },
+		// 草稿
 		teamStatus(): boolean {
 			const res: any = this.itineraryStatusList.filter((it: any) => it.status == this.baseInfo.status)[0]
-			console.log(res)
+
 			return  res && (res.codeName === CODEVALUE.TRAVE_CODE.DRAFT)
+		},
+		// 预定
+		reserveStatus(): boolean {
+			const res: any = this.itineraryStatusList.filter((it: any) => it.status == this.baseInfo.status)[0]
+			return  res && (res.codeName === CODEVALUE.TRAVE_CODE.WAIT_RESERVE_HOTEL || res.codeName === CODEVALUE.TRAVE_CODE.WAIT_GO_OUT)
 		}
 	},
 	actions: {

@@ -46,9 +46,9 @@
 
 					<template v-if="column.key === 'action' && travelStore.teamStatus">
 						<div class="action-btns">
-							<a v-if="reserve" @click="add('reserveTicketPop', record.oid)">预定</a>
-							<a v-if="isSave" class="item" @click="add('addTicketPop', record.oid)">编辑</a>
-							<a v-if="isSave" class="item">删除</a>
+							<a v-if="travelStore.reserveStatus" @click="add('reserveTicketPop', record.oid)">预定</a>
+							<a v-if="travelStore.teamStatus" class="item" @click="add('addTicketPop', record.oid)">编辑</a>
+							<a v-if="travelStore.teamStatus" class="item">删除</a>
 						</div>
 					</template>
 				</template>
@@ -66,11 +66,11 @@
 							{{ index + 1 }}
 						</div>
 					</template>
-					<template v-if="column.key === 'action' && travelStore.teamStatus">
+					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a v-if="reserve" class="item" @click="reserveHotel(record)">提交预定</a>
-							<a v-if="isSave" class="item" @click="add('addHotelPop', record.oid)">编辑</a>
-							<a v-if="isSave" class="item" @click="del(index)">删除</a>
+							<a v-if="travelStore.reserveStatus" class="item" @click="reserveHotel(record)">提交预定</a>
+							<a v-if="travelStore.teamStatus" class="item" @click="add('addHotelPop', record.oid)">编辑</a>
+							<a v-if="travelStore.teamStatus" class="item" @click="del(index)">删除</a>
 						</div>
 					</template>
 				</template>
@@ -119,10 +119,8 @@ const {
 	del,
 	choice,
 	editId,
-	reserve,
 	reserveHotel,
 	reserveTicketPop,
-	isSave,
 	travelStore
 } = useTraveInfo(props, emits);
 </script>

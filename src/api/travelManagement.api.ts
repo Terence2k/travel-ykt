@@ -214,5 +214,20 @@ export const travelManagement = {
             showLoading: true
         });
     },
+    takeGroup(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/takeGroup/${data}`,
+            method: 'get',
+            showLoading: true
+        });
+    },
+    rejectGroup(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/rejectGroup/${data}`,
+            method: 'get',
+            showLoading: true
+        });
+    }
+    
     
 }

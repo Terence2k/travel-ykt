@@ -256,9 +256,6 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		],
 	});
 
-	const reserve = computed(() => {
-		return travelStore.baseInfo.status == '10' || travelStore.baseInfo.status == '11'
-	})
 
 	const methods = {
 		edit: (key: string) => {
@@ -399,13 +396,10 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 	// );
 	// // methods.getProduct()
 	// methods.findByIdTeamType();
-	const isSave = computed(() => travelStore.baseInfo.status == '1')
 	return {
 		...toRefs(state),
 		...methods,
 		editId,
-		reserve,
-		isSave,
 		travelStore
 	};
 }

@@ -24,9 +24,9 @@
 		<a-tabs v-model:activeKey="activeKey">
 			<a-tab-pane v-for="item in pages" :key="item.value" :tab="item.label">
 				<!--  v-if="showAddBtn" -->
-				<div class="d-flex justify-content-end">
+				<!-- <div class="d-flex justify-content-end">
 					<a-button style="margin-right: 20px">删除</a-button>
-				</div>
+				</div> -->
 				<component :onCheck="check" :is="item.name"></component>
 			</a-tab-pane>
 		</a-tabs>
