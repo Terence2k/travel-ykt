@@ -16,7 +16,7 @@
 
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
-				<a>查看结算明细</a>
+				<a>置为草稿</a>
 			</div>
 		</template>
 				</template>
