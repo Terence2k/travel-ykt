@@ -469,12 +469,12 @@ const dataSource = computed(() => {
 					}
 				});
 				columns.value = columns.value.filter((item, index) => index < 1 || item?.appointedTime);
-				if (columns.value.length < 7) {
+				if (columns.value.length < 7 && columns.value.length > 1) {
 					columns.value[0] = {
 						...columns.value[0],
-						width: `${parseInt((200 * columns.value.length) / 11)}px`,
+						width: `${parseInt((200 * (columns.value.length - 1)) / 6)}px`,
 					};
-					console.log('dddddddddddd', parseInt((200 * columns.value.length) / 11));
+					console.log('第一列宽度应为：', parseInt((200 * (columns.value.length - 1)) / 6));
 				}
 			}
 
