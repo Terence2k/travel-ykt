@@ -31,9 +31,9 @@ export enum GroupMode {
 export enum GroupStatus {
   Drafts = 1,     //草稿1
   WaitingGroup = 7,   //待接团2
-  HaveABall,      //已接团3
-  RefuseGroup,    //拒绝接团4
-  WaitingChange,  //待变更7
+  HaveABall = 11,      //已接团3
+  RefuseGroup = 13,    //拒绝接团4
+  WaitingChange = 4,  //待变更7
   CloseAnAccount = 15, //已结算8
   Cancellation,    //已作废9
   Overtime = 8,        //审核超时10
