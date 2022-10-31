@@ -195,6 +195,26 @@ const combination = () => {
 	}
 	oid = state.selectedRowKeys;
 	console.log('把老子的id给打印出来', oid);
+	Modal.confirm({
+			title: '组合转账',
+			width: 560,
+			closable: true,
+			centered: true,
+			icon: false,
+			content: '即将为所选行程单发起组合转账，是否确定组合转账？',
+			onOk() {
+				// api
+				// 	.comprehensiveFeeEnable(record.oid)
+				// 	.then((res: any) => {
+						message.success('操作成功');
+				// 		onSearch();
+				// 	})
+				// 	.catch((err: any) => {
+				// 		message.error(err || '操作失败');
+				// 	});
+			},
+			onCancel() {},
+		});
 }
 // 申请转账
 const transfer = (type: string, record: any) => {
