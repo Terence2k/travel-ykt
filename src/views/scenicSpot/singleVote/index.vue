@@ -1,5 +1,5 @@
 <template>
-	<Audit ref="auditRef" />
+	<Audit ref="auditRef" @done="done" />
 	<div>
 		<a-spin size="large" :spinning="state.tableData.loading" style="min-height: 50vh">
 			<CommonSearch>
@@ -27,7 +27,9 @@
 								<a href="javascript:;" @click="toEdit(record)">编辑</a>
 								<a href="javascript:;" @click="del(record)">删除</a>
 								<a href="javascript:;" @click="Inventory(record)">库存日历</a>
-								<a href="javascript:;" v-if="record.putaway === '上架'" @click="open(record)"> 下架申请</a>
+								<a href="javascript:;" v-if="record.putaway === '上架'" @click="open(record)"> 下架</a>
+								<a href="javascript:;" v-if="record.putaway === '下架'" @click="register(record)"> 上架</a>
+								<a href="javascript:;" v-if="record.putaway === '下架'" @click="changeDownTicket(record)"> 下架修改</a>
 							</div>
 						</template>
 					</template>
@@ -108,8 +110,23 @@ const columns = [
 ];
 
 const auditRef = ref();
-const open = (value) => {
+const open = (value: any) => {
 	auditRef.value.open(value.oid);
+};
+
+const changeDownTicket = (value: any) => {
+	auditRef.value.open(value.oid, 'edit');
+};
+const done = () => {
+	state.tableData.loading = true;
+	setTimeout(() => {
+		initList();
+	}, 300);
+};
+//上架
+const register = async (value: any) => {
+	await api.resigerScenicTicketDetail(value.oid);
+	done();
 };
 
 const toEdit = (record: any) => {
@@ -134,10 +151,10 @@ const del = (record: any) => {
 	// emits('del-verification-obj', index);
 };
 const delSubmit = () => {
-	// emits('del-verification-obj', toRaw(delOid.value));
-	// console.log(delOid.value);
 	api.singleVoteDel(delOid.value);
 	delCancel();
+
+	done();
 };
 const delCancel = () => {
 	delShow.value = false;

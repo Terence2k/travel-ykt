@@ -32,11 +32,12 @@
 						</div>
 					</template>
 					<template v-if="column.key === 'verificationNumber'">
-						<a-input
+						<a-input-number
 							v-model:value="record.verificationNumber"
 							:formatter="(value) => value.replace(/\D/g, '')"
 							:parser="(value) => value.replace(/\D/g, '')"
 							placeholder="可核销次数"
+							:controls="false"
 						/>
 					</template>
 					<template v-if="column.key === 'ifVerification'">
@@ -60,8 +61,8 @@
 				:max="timesMax"
 				:formatter="(value) => value.replace(/\D/g, '')"
 				:parser="(value) => value.replace(/\D/g, '')"
-				placeholder="次数"
-				style="width: 80px"
+				placeholder="可核销总数"
+				style="width: 100px"
 				:controls="false"
 				@change="changeIfverification"
 			/>
@@ -257,6 +258,7 @@ const CreateData = () => {
 
 const cancel = () => {
 	modelValue.value = false;
+	formValidate.proj = [];
 	// resetFields();
 };
 const options = ref([

@@ -3,7 +3,7 @@
 		<CommonTable :row-selection="{onSelect}" :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
 		<template #button>
 		</template>
-		<template #bodyCell="{ column, text, index }">
+		<template #bodyCell="{ column, text, index, record }">
 			<template v-if="column.key === 'index'">
 				<div>
 						{{(state.params.pageNo - 1) * (state.params.pageSize) + (index + 1)}}
@@ -16,7 +16,7 @@
 
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
-				<a>撤回任务</a>
+				<a @click="revokeGroupToDraft(record.oid)">撤回任务</a>
 				<a>催办</a>
 			</div>
 		</template>
@@ -39,6 +39,7 @@
 
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, GroupStatus } from '@/enum'
+import { message } from 'ant-design-vue/es';
 
 	const travelStore = useTravelStore();
 	const state = reactive({
@@ -110,6 +111,11 @@
 	}
 	const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
 		console.log(record, selected, selectedRows);
+	}
+
+	const revokeGroupToDraft = async (id:number) => {
+		await api.travelManagement.revokeGroupToDraft(id);
+		message.success('撤回成功')
 	}
 	onSearch()
 </script>

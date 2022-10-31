@@ -121,32 +121,32 @@ const columns = [
 	},
 	{
 		title: '原因',
-		dataIndex: 'derateRule',
-		key: 'derateRule',
+		dataIndex: 'downReason',
+		key: 'downReason',
 		width: 120,
 	},
-	{
-		title: '申请时间',
-		dataIndex: 'derateRule',
-		key: 'derateRule',
-		width: 120,
-	},
-	{
-		title: '审核时间',
-		dataIndex: 'auditDate',
-		key: 'auditDate',
-		width: 120,
-	},
-	{
-		title: '审核状态',
-		key: 'auditStatus',
-		width: 120,
-	},
-	{
-		title: '审核结果',
-		key: 'auditResult',
-		width: 120,
-	},
+	// {
+	// 	title: '申请时间',
+	// 	dataIndex: 'derateRule',
+	// 	key: 'derateRule',
+	// 	width: 120,
+	// },
+	// {
+	// 	title: '审核时间',
+	// 	dataIndex: 'auditDate',
+	// 	key: 'auditDate',
+	// 	width: 120,
+	// },
+	// {
+	// 	title: '审核状态',
+	// 	key: 'auditStatus',
+	// 	width: 120,
+	// },
+	// {
+	// 	title: '审核结果',
+	// 	key: 'auditResult',
+	// 	width: 120,
+	// },
 ];
 
 const auditRef = ref();
