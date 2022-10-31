@@ -82,7 +82,7 @@ const sendGroup = async (id: string) => {
 	const formData = new FormData();
 	formData.append('itineraryId', id)
 	try {
-		await api.travelManagement.sendGroup()
+		await api.travelManagement.sendGroup(formData)
 		message.success('发团成功')
 		sendTeam.value = false
 	} catch (error) {
