@@ -1,6 +1,6 @@
 <template>
 	<div class="table-container">
-		<div>
+		<div class="item-container">
 			<p class="title">古维管理费</p>
 			<CommonTable :columns="gouvyColumns" :dataSource="gouvyDate" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
@@ -19,7 +19,7 @@
 				</template>
 			</CommonTable>
 		</div>
-		<div>
+		<div class="item-container">
 			<p class="title">综费产品</p>
 			<CommonTable :columns="columns" :dataSource="allFeesProducts" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
@@ -34,7 +34,7 @@
 				</template>
 			</CommonTable>
 		</div>
-		<div>
+		<div class="item-container">
 			<p class="title">景区门票</p>
 			<CommonTable :columns="ticketColumns" :dataSource="ticketData" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
@@ -57,7 +57,7 @@
 				<a-button type="primary" @click="add('addTicketPop')" v-if="travelStore.teamStatus">添加</a-button>
 			</div>
 		</div>
-		<div>
+		<div class="item-container">
 			<p class="title">酒店住宿</p>
 			<CommonTable :columns="hotelColumns" :dataSource="holteDate" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
@@ -141,5 +141,14 @@ const {
 	font-size: 16px;
 	font-weight: bold;
 	padding-left: 20px;
+	margin-top: 20px;
 }
+.item-container {
+	&:first-of-type {
+		.title {
+			margin-top: 0;
+		}
+	}
+}
+
 </style>
