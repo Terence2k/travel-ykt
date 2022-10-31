@@ -107,8 +107,8 @@ const addTimeList = () => {
 const del = (index: number) => {
 	formValidate.data.dateList.splice(index, 1);
 };
-
-const apply = () => {
+const emits = defineEmits(['done']);
+const apply = async () => {
 	formRef.value
 		.validateFields()
 		.then(async (res: any) => {
@@ -119,10 +119,10 @@ const apply = () => {
 				delete i.time;
 				return i;
 			});
+			await api.scenicTicketDown(params);
 			cancel();
-			console.log(res, params);
+			emits('done');
 
-			// let apiRes = api.scenicTicketDown(params);
 			// console.log(apiRes, 'apiRes');
 		})
 		.catch((err: any) => {
@@ -135,11 +135,23 @@ const toHistoryPage = () => {
 };
 
 // 打开弹窗
-const open = (id: any) => {
+const open = (id: any, status: string | undefined) => {
 	modelValue.value = true;
 	formValidate.data.ticketId = id;
+
+	if (status) {
+		getDeatil(id);
+	}
 };
 
+const getDeatil = async (id: number) => {
+	let res = await api.scenicTicketDetail(id);
+	console.log(res, 'getDeatils');
+	formValidate.data = res;
+	formValidate.data.dateList = formValidate.data.dateList.map((item) => {
+		return { ...item, time: [dayjs(item.startDateTime), dayjs(item.endDateTime)] };
+	});
+};
 // 关闭弹窗
 const cancel = () => {
 	modelValue.value = false;

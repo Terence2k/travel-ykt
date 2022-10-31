@@ -131,8 +131,8 @@ const clearCurrentDay = () => {
 const newObjTpl = reactive<any>({
 	ticketId: 127, //门票id/联票id
 	sonId: null, //子联票id
-	startDate: '2022-10-25', //开始日期: "yyyy-MM-dd"
-	endDate: '2022-10-30', //结束日期: "yyyy-MM-dd"
+	// startDate: '2022-10-25', //开始日期: "yyyy-MM-dd"
+	// endDate: '2022-10-30', //结束日期: "yyyy-MM-dd"
 	dateStockList: [
 		{
 			stockDate: '2022-10-26', //自选日期: "yyyy-MM-dd"
@@ -161,8 +161,6 @@ const saveDate = async () => {
 		const { uniteId, subTicketId, startDate, endDate } = state.data;
 		newObjTpl.ticketId = uniteId;
 		newObjTpl.sonId = subTicketId;
-		newObjTpl.startDate = startDate;
-		newObjTpl.endDate = endDate;
 		newObjTpl.dateStockList = res;
 		console.log(newObjTpl, 'newObjTpl');
 
