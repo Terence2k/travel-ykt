@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<CommonTable :row-selection="{onSelect}" :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
+		<CommonTable :dataSource="state.tableData" :columns="state.columns">
 		<template #button>
 		</template>
 		<template #bodyCell="{ column, text, index }">
@@ -10,13 +10,9 @@
 				</div>
 		</template>
 
-		<template v-if="column.key === 'groupTypeStr'">
-				{{text}}
-		</template>
-
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
-				<a>置为草稿</a>
+				<a>去审核</a>
 			</div>
 		</template>
 				</template>
@@ -37,17 +33,17 @@
 	import api from '@/api/index';
 
 	import { useTravelStore } from '@/stores/modules/travelManagement';
-	import { GroupMode, GroupStatus } from '@/enum'
+	import { AuditStaus } from '@/enum'
 
 	const travelStore = useTravelStore();
 	const state = reactive({
-		total: computed(() => travelStore.traveList.cancellation.total),
+		total: 0,
 		params: {
 				pageNo: 1,
 				pageSize: 10,
 				status: 1
 		},
-		tableData: computed(() => travelStore.traveList.cancellation.list),
+		tableData: [],
 		columns: [
 			{
 					title: ' 序号 ',
@@ -65,24 +61,24 @@
 					key: 'routeName',
 			},
 			{
-					title: '组团社',
-					dataIndex: 'travelName',
-					key: 'travelName',
-			},
-			{
 					title: '地接社',
 					dataIndex: 'subTravelName',
 					key: 'subTravelName',
 			},
 			{
-					title: '原定行程时间',
+					title: '行程时间',
 					dataIndex: 'time',
 					key: 'time',
 			},
 			{
 					title: '团队类型',
-					dataIndex: 'groupTypeStr',
-					key: 'groupTypeStr',
+					dataIndex: 'teamTypeName',
+					key: 'teamTypeName',
+			},
+			{
+					title: '发团计调',
+					dataIndex: 'travelOperatorName',
+					key: 'travelOperatorName',
 			},
 			{
 					title: '团客人数',
@@ -90,9 +86,9 @@
 					key: 'touristCount',
 			},
 			{
-					title: '撤销时间',
-					dataIndex: 'touristCount',
-					key: 'touristCount',
+					title: '预冻结金额',
+					dataIndex: 'totalFee',
+					key: 'totalFee',
 			},
 			{
 					title: '操作',
@@ -102,19 +98,15 @@
 		]
 	})
 	const onSearch = async () => {
-		travelStore.traveList.cancellation.params.status = GroupStatus.Cancellation
-		const res = await travelStore.getTravelList(travelStore.traveList.cancellation.params);
-		
-		travelStore.setTraveList(res, 'cancellation')
+		const res = await travelStore.getAuditList({pageNo: 1, pageSize: 10, status: AuditStaus.AdministrativeChange});
+		state.tableData = res.content
+		state.total = res.total;
 	}
 	const onHandleCurrentChange = () => {
 
 	}
 	const pageSideChange = () => {
 
-	}
-	const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
-		console.log(record, selected, selectedRows);
 	}
 	onSearch()
 </script>

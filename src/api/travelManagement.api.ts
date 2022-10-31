@@ -165,6 +165,14 @@ export const travelManagement = {
             method: 'get',
             showLoading: true
         });
+    },
+    getAuditList(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/auditList`,
+            method: 'post',
+            data,
+            showLoading: true
+        });
     }
     
 }

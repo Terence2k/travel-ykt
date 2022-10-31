@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { GroupMode, GroupStatus, Gender, GuideType, FeeModel,insuranceType} from '@/enum';
+import { GroupMode, GroupStatus, Gender, GuideType, FeeModel, insuranceType, AuditStaus} from '@/enum';
 import api from '@/api/index';
 import { cloneDeep } from 'lodash';
 import { Field } from '@/type';
@@ -109,6 +109,12 @@ export const useTravelStore = defineStore({
 			cancellation: cloneDeep(traveListParams),
 			overtime: cloneDeep(traveListParams)
 		},
+		auditList: {
+			financeSendGroup: cloneDeep(traveListParams),
+			financeChange: cloneDeep(traveListParams),
+			administrativeSendGroup: cloneDeep(traveListParams),
+			administrativeChange: cloneDeep(traveListParams),
+		},
 		enterpriseState: [
 			{
 				stateName: '未提交',
@@ -141,7 +147,14 @@ export const useTravelStore = defineStore({
 				submitFunc: 'getCateringAudit' 
 			}
 
-		}
+		},
+
+		auditStatus: {
+			[AuditStaus.AdministrativeSendGroup]: '发团审核',
+			[AuditStaus.AdministrativeChange]: '变更审核',
+			[AuditStaus.FinanceSendGroup]: '发团审核',
+			[AuditStaus.FinanceChange]: '变更审核',
+		},
 	}),
 	getters: {
 		// count(): string {
@@ -174,6 +187,14 @@ export const useTravelStore = defineStore({
 					this.trafficColor = res;
 					break;
 			}
+		},
+		async getAuditList(params: object) {
+			let res = await api.travelManagement.getAuditList(params);
+			res.content = res.content.map((it:TraveDataItem) => {
+				it.time = it.startDate + '-' + it.endDate;
+				return it
+			})
+			return res
 		},
 		setTouristList(list: any) {
 			this.touristList = list
@@ -230,6 +251,10 @@ export const useTravelStore = defineStore({
 		setTraveList(data: any, key: Field) {
 			this.traveList[key].list = data.content
 			this.traveList[key].total = data.total
+		},
+		setAuditList(data: any, key: Field) {
+			this.auditList[key].list = data.content
+			this.auditList[key].total = data.total
 		}
 	},
 });
