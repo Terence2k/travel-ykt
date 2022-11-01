@@ -9,9 +9,11 @@ export type Field = 'drafts' |
 				'refuseGroup' | 
 				'waitingChange' | 
 				'closeAnAccount' | 
-				'cancellation' | 'overtime'
+				'cancellation' | 'overtime' | 'waitRegiment'
 				// |
-				// 'financeSendGroup' |
-				// 'financeChange' |
-				// 'administrativeSendGroup' |
-				// 'administrativeChange'
+				
+
+export type AuditField = 'financeSendGroup' |
+								'financeChange' |
+								'administrativeSendGroup' |
+								'administrativeChange'

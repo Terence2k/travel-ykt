@@ -16,7 +16,7 @@
 
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
-				<a>置位草稿</a>
+				<a>置为草稿</a>
 			</div>
 		</template>
 				</template>

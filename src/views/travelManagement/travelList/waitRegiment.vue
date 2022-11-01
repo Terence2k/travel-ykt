@@ -3,7 +3,7 @@
 		<CommonTable :row-selection="{onSelect}" :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
 		<template #button>
 		</template>
-		<template #bodyCell="{ column, text, index }">
+		<template #bodyCell="{ column, text, index, record }">
 			<template v-if="column.key === 'index'">
 				<div>
 						{{(state.params.pageNo - 1) * (state.params.pageSize) + (index + 1)}}
@@ -16,8 +16,8 @@
 
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
-				<a>变更</a>
-				<a>撤销行程</a>
+				<a @click="revokeGroupToDraft(record)">撤回任务</a>
+				<a>催办</a>
 			</div>
 		</template>
 				</template>
@@ -39,16 +39,17 @@
 
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, GroupStatus } from '@/enum'
+	import { message } from 'ant-design-vue';
 
 	const travelStore = useTravelStore();
 	const state = reactive({
-		total: 0,
+		total: computed(() => travelStore.traveList.waitRegiment.total),
 		params: {
 				pageNo: 1,
 				pageSize: 10,
 				status: 1
 		},
-		tableData: [],
+		tableData:  computed(() => travelStore.traveList.waitRegiment.list),
 		columns: [
 			{
 					title: ' 序号 ',
@@ -103,12 +104,23 @@
 		]
 	})
 	const onSearch = async () => {
-		const res = await travelStore.getTravelList({pageNo: 1, pageSize: 10, status: GroupStatus.WaitRegiment});
-		state.tableData = res.content
-		state.total = res.total;
-	}
-	const onHandleCurrentChange = () => {
+		// const res = await travelStore.getTravelList({pageNo: 1, pageSize: 10, status: GroupStatus.WaitRegiment});
+		// state.tableData = res.content
+		// state.total = res.total;
+		travelStore.traveList.waitRegiment.params.status = GroupStatus.WaitRegiment
+		const res = await travelStore.getTravelList(travelStore.traveList.waitRegiment.params);
 
+		travelStore.setTraveList(res, 'waitRegiment')
+	}
+
+	const revokeGroupToDraft = async (id:number) => {
+		await api.travelManagement.revokeGroupToDraft(id);
+		message.success('撤回成功')
+	}
+
+	const onHandleCurrentChange = (e:any) => {
+		travelStore.traveList.drafts.params.pageNo = e
+		onSearch()
 	}
 	const pageSideChange = () => {
 

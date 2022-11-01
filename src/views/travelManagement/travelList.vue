@@ -44,10 +44,10 @@ import SearchItem from '@/components/common/CommonSearchItem.vue';
 import drafts from './travelList/drafts.vue';
 import waitingGroup from './travelList/waitingGroup.vue';
 import overtime from './travelList/overtime.vue';
-import refuseGroup from './travelList/refuseGroup.vue';
-// import waitRegiment from './travelList/waitregiment.vue';
+// import refuseGroup from './travelList/refuseGroup.vue';
+import waitRegiment from './travelList/waitregiment.vue';
 import haveABall from './travelList/haveABall.vue';
-import closeAnAccount from './travelList/closeAnAccount.vue';
+// import closeAnAccount from './travelList/closeAnAccount.vue';
 import waitingChange from './travelList/waitingChange.vue';
 import cancellation from './travelList/cancellation.vue';
 
@@ -80,16 +80,17 @@ const pages = [
 		chart: 'drafts',
 	},
 	{
+		name: waitRegiment,
+		label: travelStore.groupStatus[GroupStatus.WaitRegiment],
+		value: GroupStatus.WaitRegiment,
+		chart: 'waitRegiment',
+	},
+	{
 		name: waitingGroup,
 		label: travelStore.groupStatus[GroupStatus.WaitingGroup],
 		value: GroupStatus.WaitingGroup,
 		chart: 'waitingGroup',
 	},
-	// {
-	// 	name: waitRegiment,
-	// 	label: travelStore.groupStatus[GroupStatus.WaitRegiment],
-	// 	value: GroupStatus.WaitRegiment
-	// },
 	{
 		name: haveABall,
 		label: travelStore.groupStatus[GroupStatus.HaveABall],
@@ -97,28 +98,28 @@ const pages = [
 		chart: 'haveABall',
 	},
 	{
-		name: refuseGroup,
-		label: travelStore.groupStatus[GroupStatus.RefuseGroup],
-		value: GroupStatus.RefuseGroup,
-		chart: 'refuseGroup',
+		name: cancellation,
+		label: travelStore.groupStatus[GroupStatus.Cancellation],
+		value: GroupStatus.Cancellation,
+		chart: 'cancellation',
 	},
-	{
-		name: closeAnAccount,
-		label: travelStore.groupStatus[GroupStatus.CloseAnAccount],
-		value: GroupStatus.CloseAnAccount,
-		chart: 'closeAnAccount',
-	},
+	// {
+	// 	name: refuseGroup,
+	// 	label: travelStore.groupStatus[GroupStatus.RefuseGroup],
+	// 	value: GroupStatus.RefuseGroup,
+	// 	chart: 'refuseGroup',
+	// },
+	// {
+	// 	name: closeAnAccount,
+	// 	label: travelStore.groupStatus[GroupStatus.CloseAnAccount],
+	// 	value: GroupStatus.CloseAnAccount,
+	// 	chart: 'closeAnAccount',
+	// },
 	{
 		name: waitingChange,
 		label: travelStore.groupStatus[GroupStatus.WaitingChange],
 		value: GroupStatus.WaitingChange,
 		chart: 'waitingChange',
-	},
-	{
-		name: cancellation,
-		label: travelStore.groupStatus[GroupStatus.Cancellation],
-		value: GroupStatus.Cancellation,
-		chart: 'cancellation',
 	},
 	{
 		name: overtime,

@@ -16,8 +16,8 @@
 
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
-				<a @click="revokeGroupToDraft(record.oid)">撤回任务</a>
-				<a>催办</a>
+				<a @click="goToPath(record)">查看行程单</a>
+				<a>催促地接社</a>
 			</div>
 		</template>
 				</template>
@@ -39,9 +39,10 @@
 
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, GroupStatus } from '@/enum'
-import { message } from 'ant-design-vue/es';
+
 
 	const travelStore = useTravelStore();
+	const router = useRouter()
 	const state = reactive({
 		total: computed(() => travelStore.traveList.waitingGroup.total),
 		params: {
@@ -113,9 +114,14 @@ import { message } from 'ant-design-vue/es';
 		console.log(record, selected, selectedRows);
 	}
 
-	const revokeGroupToDraft = async (id:number) => {
-		await api.travelManagement.revokeGroupToDraft(id);
-		message.success('撤回成功')
+	const goToPath = (row: any) => {
+		router.push({
+			path: '/travel/travel_manage/add_travel',
+			query: {
+				id: row.oid,
+				itineraryNo: row.itineraryNo
+			}
+		})
 	}
 	onSearch()
 </script>
