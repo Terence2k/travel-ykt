@@ -13,7 +13,6 @@
 
 			<Calendar
 				ref="calendarRef"
-				:setCurrentInventory="currentInventory"
 				:setCurrentValue="currentPrict"
 				:setList="setDayPriceList"
 				@get-current-day="getCurrentDay"
@@ -31,7 +30,7 @@
 							<span class="label">时间：</span>
 							<a-range-picker v-model:value="dateRange" />
 						</p>
-						<p>
+						<!-- <p>
 							<span class="label">库存:</span>
 							<a-input-number
 								:min="0"
@@ -42,7 +41,7 @@
 								placeholder="输入库存"
 								style="width: 200px"
 							/>
-						</p>
+						</p> -->
 						<p>
 							<span class="label">按日设置</span>
 							<a-input-number
@@ -110,7 +109,6 @@ const setDayPriceList = ref<any>([
 
 //日历
 const currentPrict = ref(null);
-const currentInventory = ref();
 const dateRange = ref([]);
 
 //getCurrentDay
@@ -123,7 +121,6 @@ const getCurrentDay = (day: string) => {
 const clearCurrentDay = () => {
 	currentDay.value = null;
 	currentPrict.value = null;
-	currentInventory.value = null;
 	calendarRef.value.clear();
 	dateRange.value = [];
 };
@@ -137,7 +134,7 @@ const newObjTpl = reactive<any>({
 		{
 			stockDate: '2022-10-26', //自选日期: "yyyy-MM-dd"
 			customPrice: 200, //自选价格
-			customDayStock: 600, //自选库存
+			// customDayStock: 600, //自选库存
 		},
 	], //自选库存数据列表
 });
@@ -152,7 +149,7 @@ const saveDate = async () => {
 			...item,
 			stockDate: item.stockDate, //自选日期: "yyyy-MM-dd"
 			customPrice: Number(item.ticketPrice || item.price), //自选价格
-			customDayStock: Number(item.stock), //自选库存
+			// customDayStock: Number(item.stock), //自选库存
 		};
 	});
 	if (isEdit.value) {
@@ -189,18 +186,13 @@ const createDateItem = () => {
 		return;
 	}
 
-	if (typeof currentInventory.value !== 'number') {
-		message.error('请填写库存');
-		return;
-	}
-
 	if (timeRange[0]) {
 		arr = getAllDateCN(new Date(shijianYMD(timeRange[0])), new Date(shijianYMD(timeRange[1])));
 
 		setDayPriceList.value.map((i: any, index: number) => {
-			let arrindex = arr.indexOf(i.stockDate),
-				obj = { stockDate: i.stockDate, ticketPrice: currentPrict.value, stock: currentInventory.value };
-			console.log(arrindex, i.stockDate, arr);
+			let arrindex = arr.indexOf(shijianYMD(i.stockDate)),
+				obj = { stockDate: i.stockDate, ticketPrice: currentPrict.value };
+			console.log(arrindex, shijianYMD(i.stockDate), arr);
 
 			if (arrindex > -1) {
 				arr.splice(arrindex, 1);
@@ -211,10 +203,10 @@ const createDateItem = () => {
 		// console.log(arr, 'arr');
 
 		arr.map((i) => {
-			createItem({ stockDate: i, ticketPrice: currentPrict.value, stock: currentInventory.value });
+			createItem({ stockDate: i, ticketPrice: currentPrict.value });
 		});
 	} else {
-		let obj = { stockDate: currentDay.value, ticketPrice: currentPrict.value, stock: currentInventory.value };
+		let obj = { stockDate: currentDay.value, ticketPrice: currentPrict.value };
 
 		setDayPriceList.value.map((i: any, index: number) => {
 			if (i.stockDate === currentDay.value) {
@@ -239,7 +231,12 @@ const shijianYMD = (timestamp: any) => {
 		year = time.getFullYear(),
 		month = (time.getMonth() + 1).toString().padStart(2, '0'),
 		date = time.getDate().toString().padStart(2, '0');
-
+	// if (Number(month) < 10) {
+	// 	month = '0' + month;
+	// }
+	// if (Number(date) < 10) {
+	// 	date = '0' + date;
+	// }
 	return year + '-' + month + '-' + date;
 };
 const getAllDateCN = (startTime: Date, endTime: Date) => {
@@ -249,8 +246,8 @@ const getAllDateCN = (startTime: Date, endTime: Date) => {
 	var i = 0;
 	while (endTime.getTime() - startTime.getTime() >= 0) {
 		var year = startTime.getFullYear();
-		var month = startTime.getMonth() + 1;
-		var day = startTime.getDate();
+		var month = (startTime.getMonth() + 1).toString().padStart(2, '0');
+		var day = startTime.getDate().toString().padStart(2, '0');
 		date_all[i] = year + '-' + month + '-' + day;
 		startTime.setDate(startTime.getDate() + 1);
 		i += 1;
@@ -266,7 +263,7 @@ const editItem = (index: number, obj: any) => {
 	const { stockDate, ticketPrice, stock } = obj;
 	setDayPriceList.value[index].stockDate = stockDate;
 	setDayPriceList.value[index].ticketPrice = ticketPrice;
-	setDayPriceList.value[index].stock = stock;
+	// setDayPriceList.value[index].stock = stock;
 };
 
 interface stateType {
@@ -303,7 +300,7 @@ const initCalendarList = async (id: number) => {
 	state.data.endDate = nextYear(state.data.startDate);
 	let res = await api.getCalendarMultiple(state.data);
 
-	setDayPriceList.value = res;
+	setDayPriceList.value = res.map((i: any) => ({ ticketPrice: i.ticketPrice, stockDate: i.stockDate }));
 };
 //弹窗部分
 const modelValue = ref(false);

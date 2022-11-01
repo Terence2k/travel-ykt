@@ -1,59 +1,63 @@
 <template>
-	<CommonSearch>
-		<SearchItem label="输入搜索">
-			<!-- <a-input v-model:value="state.tableData.itineraryNo" placeholder="请输入行程单号" style="width: 200px" /> -->
-			<a-input v-model:value="state.tableData.param.ticketName" placeholder="门票名称/关键词" style="width: 200px" />
-		</SearchItem>
-		<SearchItem label="归属景区">
-			<a-select
-				v-model:value="state.tableData.param.scenicId"
-				:allowClear="true"
-				ref="select"
-				style="width: 200px"
-				placeholder="请选择"
-				:options="scenicSpotOptions"
-			>
-			</a-select>
-		</SearchItem>
-		<template #button>
-			<a-button @click="initPage">查询</a-button>
-		</template>
-	</CommonSearch>
-
-	<div class="table-area">
-		<div class="list-btn">
-			<a-button type="primary" class="success" @click="add()">新增</a-button>
-		</div>
-		<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }">
-			<template #bodyCell="{ column, index, record }">
-				<template v-if="column.key === 'index'">
-					{{ index + 1 }}
-				</template>
-				<template v-if="column.key === 'auditStatus'">
-					{{ commonEnum.auditStatus[record.auditStatus] }}
-				</template>
-				<template v-if="column.key === 'putaway'">
-					{{ record.putaway ? '上架' : '下架' }}
-				</template>
-				<template v-if="column.key === 'action'">
-					<div class="action-btns">
-						<a href="javascript:;" @click="toEditPage(record)">编辑</a>
-						<a href="javascript:;" v-if="record.putaway" @click="outDown(record)">
-							{{ !record.putaway ? '上架' : '下架' }}
-						</a>
-					</div>
-				</template>
+	<a-spin size="large" :spinning="state.tableData.loading" style="min-height: 50vh">
+		<CommonSearch>
+			<SearchItem label="输入搜索">
+				<!-- <a-input v-model:value="state.tableData.itineraryNo" placeholder="请输入行程单号" style="width: 200px" /> -->
+				<a-input v-model:value="state.tableData.param.ticketName" placeholder="门票名称/关键词" style="width: 200px" />
+			</SearchItem>
+			<SearchItem label="归属景区">
+				<a-select
+					v-model:value="state.tableData.param.scenicId"
+					:allowClear="true"
+					ref="select"
+					style="width: 200px"
+					placeholder="请选择"
+					:options="scenicSpotOptions"
+				>
+				</a-select>
+			</SearchItem>
+			<template #button>
+				<a-button @click="initPage">查询</a-button>
 			</template>
-		</CommonTable>
-		<CommonPagination
-			:current="state.tableData.param.pageNo"
-			:page-size="state.tableData.param.pageSize"
-			:total="state.tableData.total"
-			@change="onHandleCurrentChange"
-			@showSizeChange="pageSideChange"
-		/>
-		<Audit ref="auditRef" @down-page="downPage" />
-	</div>
+		</CommonSearch>
+
+		<div class="table-area">
+			<div class="list-btn">
+				<a-button type="primary" class="success" @click="add()">新增</a-button>
+			</div>
+			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }">
+				<template #bodyCell="{ column, index, record }">
+					<template v-if="column.key === 'index'">
+						{{ index + 1 }}
+					</template>
+					<template v-if="column.key === 'auditStatus'">
+						{{ commonEnum.auditStatus[record.auditStatus] }}
+					</template>
+					<template v-if="column.key === 'putaway'">
+						{{ record.putaway ? '上架' : '下架' }}
+					</template>
+					<template v-if="column.key === 'action'">
+						<div class="action-btns">
+							<a href="javascript:;" @click="toEditPage(record)">编辑</a>
+							<a href="javascript:;" v-if="record.putaway" @click="outDown(record)">
+								{{ !record.putaway ? '上架' : '下架' }}
+							</a>
+							<a href="javascript:;" v-if="!record.putaway" @click="register(record)"> 上架</a>
+							<a href="javascript:;" v-if="!record.putaway" @click="changeDownTicket(record)"> 下架修改</a>
+						</div>
+					</template>
+				</template>
+			</CommonTable>
+			<CommonPagination
+				:current="state.tableData.param.pageNo"
+				:page-size="state.tableData.param.pageSize"
+				:total="state.tableData.total"
+				@change="onHandleCurrentChange"
+				@showSizeChange="pageSideChange"
+			/>
+			<Audit ref="auditRef" @down-page="downPage" />
+		</div>
+	</a-spin>
 </template>
 
 <script setup lang="ts">
@@ -158,6 +162,16 @@ const outDown = (value: any) => {
 
 	// route.push({ path: '/scenic-spot/multicast/edit' });
 };
+const changeDownTicket = (value: any) => {
+	auditRef.value.open(value.oid, 'edit');
+};
+
+//上架
+const register = async (value: any) => {
+	await api.resigerScenicTicketDetail(value.oid);
+	downPage();
+};
+
 const downPage = () => {
 	state.tableData.loading = true;
 	setTimeout(() => {
@@ -182,10 +196,12 @@ const initPage = async () => {
 	// userList(state.tableData.param).then((res) => {
 	// 	console.log(res);
 	// });
+	state.tableData.loading = true;
 	let res = await api.getMultipleList(state.tableData.param);
 	state.tableData.data = res.content || dataSource;
 	state.tableData.total = res.total;
 	console.log('res', res);
+	state.tableData.loading = false;
 };
 onMounted(() => {
 	initPage();
