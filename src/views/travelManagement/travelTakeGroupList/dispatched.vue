@@ -22,14 +22,15 @@
 
         <template v-if="column.key === 'action'">
           <div class="action-btns">
-            <a @click="goToPath(record)">编辑填报</a>
+            <a @click="goToPath(record)">查看</a>
+            <a>申请变更</a>
           </div>
         </template>
 			</template>
 		</CommonTable>
 		<CommonPagination
-			:current="travelStore.takeGroupList.drafts.params.pageNo"
-			:page-size="travelStore.takeGroupList.drafts.params.pageSize"
+			:current="travelStore.takeGroupList.dispatched.params.pageNo"
+			:page-size="travelStore.takeGroupList.dispatched.params.pageSize"
 			:total="state.total"
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
@@ -49,13 +50,13 @@
 	const travelStore = useTravelStore();
 	const router = useRouter()
 	const state = reactive({
-		total:  computed(() => travelStore.takeGroupList.drafts.total),
+		total:  computed(() => travelStore.takeGroupList.dispatched.total),
 		params: {
 			pageNo: 1,
 			pageSize: 10,
 			status: 1
 		},
-		tableData: computed(() => travelStore.takeGroupList.drafts.list),
+		tableData: computed(() => travelStore.takeGroupList.dispatched.list),
 		columns: [
 			{
 				title: ' 序号 ',
@@ -110,12 +111,12 @@
 		]
 	})
 	const onSearch = async () => {
-		travelStore.takeGroupList.drafts.params.status = TakeGroupStatus.Drafts
-		const res = await travelStore.getTravelList(travelStore.takeGroupList.drafts.params);
-		travelStore.setTakeGroupList(res, 'drafts')
+		travelStore.takeGroupList.dispatched.params.status = TakeGroupStatus.Dispatched
+		const res = await travelStore.getTravelList(travelStore.takeGroupList.dispatched.params);
+		travelStore.setTakeGroupList(res, 'dispatched')
 	}
 	const onHandleCurrentChange = (e:any) => {
-		travelStore.takeGroupList.drafts.params.pageNo = e
+		travelStore.takeGroupList.dispatched.params.pageNo = e
 		onSearch()
 	}
 	const pageSideChange = () => {

@@ -39,6 +39,10 @@ import SearchItem from '@/components/common/CommonSearchItem.vue';
 import drafts from './travelTakeGroupList/drafts.vue';
 import waitingGroup from './travelTakeGroupList/waitingGroup.vue';
 import waitingReserved from './travelTakeGroupList/waitingReserved.vue';
+import dispatched from './travelTakeGroupList/dispatched.vue';
+import cancellation from './travelTakeGroupList/cancellation.vue';
+import waitingChange from './travelTakeGroupList/waitingChange.vue';
+import overtime from './travelTakeGroupList/overtime.vue';
 
 import { traveListParams, useTravelStore } from '@/stores/modules/travelManagement';
 import { TakeGroupStatus, GroupType } from '@/enum';
@@ -79,6 +83,30 @@ const pages = [
 		label: travelStore.takeGroupStatus[TakeGroupStatus.WaitingReserved],
 		value: TakeGroupStatus.WaitingReserved,
 		chart: 'waitingReserved',
+	},
+	{
+		name: dispatched,
+		label: travelStore.takeGroupStatus[TakeGroupStatus.Dispatched],
+		value: TakeGroupStatus.Dispatched,
+		chart: 'dispatched',
+	},
+	{
+		name: cancellation,
+		label: travelStore.takeGroupStatus[TakeGroupStatus.Cancellation],
+		value: TakeGroupStatus.Cancellation,
+		chart: 'cancellation',
+	},
+	{
+		name: waitingChange,
+		label: travelStore.takeGroupStatus[TakeGroupStatus.WaitingChange],
+		value: TakeGroupStatus.WaitingChange,
+		chart: 'waitingChange',
+	},
+	{
+		name: overtime,
+		label: travelStore.takeGroupStatus[TakeGroupStatus.Overtime],
+		value: TakeGroupStatus.Overtime,
+		chart: 'overtime',
 	},
 ];
 

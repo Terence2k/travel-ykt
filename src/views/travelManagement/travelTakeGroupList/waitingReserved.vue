@@ -16,7 +16,7 @@
 
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
-        <a @click="goToPath(record)">进入预定</a>
+        <a @click="goToPath(record)">进入预订</a>
 			</div>
 		</template>
 				</template>

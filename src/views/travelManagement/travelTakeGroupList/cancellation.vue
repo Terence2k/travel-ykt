@@ -22,14 +22,14 @@
 
         <template v-if="column.key === 'action'">
           <div class="action-btns">
-            <a @click="goToPath(record)">编辑填报</a>
+            <a @click="goToPath(record)">查看行程单</a>
           </div>
         </template>
 			</template>
 		</CommonTable>
 		<CommonPagination
-			:current="travelStore.takeGroupList.drafts.params.pageNo"
-			:page-size="travelStore.takeGroupList.drafts.params.pageSize"
+			:current="travelStore.takeGroupList.cancellation.params.pageNo"
+			:page-size="travelStore.takeGroupList.cancellation.params.pageSize"
 			:total="state.total"
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
@@ -49,13 +49,13 @@
 	const travelStore = useTravelStore();
 	const router = useRouter()
 	const state = reactive({
-		total:  computed(() => travelStore.takeGroupList.drafts.total),
+		total:  computed(() => travelStore.takeGroupList.cancellation.total),
 		params: {
 			pageNo: 1,
 			pageSize: 10,
 			status: 1
 		},
-		tableData: computed(() => travelStore.takeGroupList.drafts.list),
+		tableData: computed(() => travelStore.takeGroupList.cancellation.list),
 		columns: [
 			{
 				title: ' 序号 ',
@@ -110,12 +110,12 @@
 		]
 	})
 	const onSearch = async () => {
-		travelStore.takeGroupList.drafts.params.status = TakeGroupStatus.Drafts
-		const res = await travelStore.getTravelList(travelStore.takeGroupList.drafts.params);
-		travelStore.setTakeGroupList(res, 'drafts')
+		travelStore.takeGroupList.cancellation.params.status = TakeGroupStatus.Cancellation
+		const res = await travelStore.getTravelList(travelStore.takeGroupList.cancellation.params);
+		travelStore.setTakeGroupList(res, 'cancellation')
 	}
 	const onHandleCurrentChange = (e:any) => {
-		travelStore.takeGroupList.drafts.params.pageNo = e
+		travelStore.takeGroupList.cancellation.params.pageNo = e
 		onSearch()
 	}
 	const pageSideChange = () => {
