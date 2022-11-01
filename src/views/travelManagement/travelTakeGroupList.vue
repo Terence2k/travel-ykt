@@ -2,31 +2,32 @@
 	<div class="trave-contaner">
 		<CommonSearch>
 			<search-item label="关键词搜索">
-				<a-input v-model:value="params.keyWord" placeholder="请输入游客姓名、导游姓名、旅行社名称、线路名称等关键字" />
+				<a-input v-model:value="travelStore.traveList[chart].params.keyWord" placeholder="请输入游客姓名、导游姓名、旅行社名称、线路名称等关键字" />
 			</search-item>
 
 			<search-item label="组团模式">
-				<a-select v-model:value="params.groupType">
+				<a-select v-model:value="travelStore.traveList[chart].params.groupType">
 					<a-select-option v-for="(value, key) in travelStore.groupMode" :key="key" :value="key">{{ value }}</a-select-option>
 				</a-select>
 			</search-item>
 
 			<search-item label="行程时间">
-				<a-range-picker v-model:value="params.time" show-time format="YYYY-MM-DD HH:mm" value-format="YYYY-MM-DD HH:mm" />
+				<a-range-picker
+					v-model:value="travelStore.traveList[chart].params.time"
+					show-time
+					format="YYYY-MM-DD HH:mm:ss"
+					value-format="YYYY-MM-DD HH:mm:ss"
+				/>
 			</search-item>
 
 			<template #button>
-				<a-button @click="query">查询</a-button>
-				<a-button style="margin-left: 30px" @click="reset">重置</a-button>
+				<a-button style="margin-right: 30px" @click="reset">重置</a-button>
+				<a-button @click="onSearch">查询</a-button>
 			</template>
 		</CommonSearch>
 
 		<a-tabs v-model:activeKey="activeKey">
 			<a-tab-pane v-for="item in pages" :key="item.value" :tab="item.label">
-				<!--  v-if="showAddBtn" -->
-				<!-- <div class="d-flex justify-content-end">
-					<a-button style="margin-right: 20px">删除</a-button>
-				</div> -->
 				<component :onCheck="check" :is="item.name"></component>
 			</a-tab-pane>
 		</a-tabs>
@@ -35,24 +36,21 @@
 <script lang="ts" setup>
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
+import drafts from './travelTakeGroupList/drafts.vue';
 import waitingGroup from './travelTakeGroupList/waitingGroup.vue';
-import overtime from './travelTakeGroupList/overtime.vue';
-import refuseGroup from './travelTakeGroupList/refuseGroup.vue';
-import haveABall from './travelTakeGroupList/haveABall.vue';
-import closeAnAccount from './travelTakeGroupList/closeAnAccount.vue';
-import waitingChange from './travelTakeGroupList/waitingChange.vue';
-import cancellation from './travelTakeGroupList/cancellation.vue';
 
-import { useTravelStore } from '@/stores/modules/travelManagement';
-import { GroupStatus, GroupType } from '@/enum';
+import { traveListParams, useTravelStore } from '@/stores/modules/travelManagement';
+import { TakeGroupStatus, GroupType } from '@/enum';
 import { getUserInfo } from '@/utils/util';
 import { ROLE } from '@/constant';
 import api from '@/api';
+import { TakeGroupField } from '@/type';
+import { cloneDeep } from 'lodash';
 
 const userInfo = getUserInfo();
 const travelStore = useTravelStore();
 const router = useRouter();
-const activeKey = ref(GroupStatus.WaitingGroup);
+const activeKey = ref(TakeGroupStatus.Drafts);
 const check = ref(false);
 const params = reactive({
 	keyWord: '',
@@ -61,41 +59,19 @@ const params = reactive({
 	startDate: '',
 	endDate: '',
 });
+
 const pages = [
 	{
+		name: drafts,
+		label: travelStore.takeGroupStatus[TakeGroupStatus.Drafts],
+		value: TakeGroupStatus.Drafts,
+		chart: 'drafts',
+	},
+	{
 		name: waitingGroup,
-		label: travelStore.groupStatus[GroupStatus.WaitingGroup],
-		value: GroupStatus.WaitingGroup,
-	},
-	{
-		name: haveABall,
-		label: travelStore.groupStatus[GroupStatus.HaveABall],
-		value: GroupStatus.HaveABall,
-	},
-	{
-		name: refuseGroup,
-		label: travelStore.groupStatus[GroupStatus.RefuseGroup],
-		value: GroupStatus.RefuseGroup,
-	},
-	{
-		name: closeAnAccount,
-		label: travelStore.groupStatus[GroupStatus.CloseAnAccount],
-		value: GroupStatus.CloseAnAccount,
-	},
-	{
-		name: waitingChange,
-		label: travelStore.groupStatus[GroupStatus.WaitingChange],
-		value: GroupStatus.WaitingChange,
-	},
-	{
-		name: cancellation,
-		label: travelStore.groupStatus[GroupStatus.Cancellation],
-		value: GroupStatus.Cancellation,
-	},
-	{
-		name: overtime,
-		label: travelStore.groupStatus[GroupStatus.Overtime],
-		value: GroupStatus.Unpaid,
+		label: travelStore.takeGroupStatus[TakeGroupStatus.WaitingGroup],
+		value: TakeGroupStatus.WaitingGroup,
+		chart: 'waitingGroup',
 	},
 ];
 
@@ -107,13 +83,28 @@ const goToPath = (type: number) => {
 		},
 	});
 };
+
+const chart = computed(() => pages.filter((it: any) => it.value === activeKey.value)[0].chart as TakeGroupField);
+
 //查询
-const query = () => {
-	console.log(GroupStatus.Cancellation, '11111111');
+const onSearch = async () => {
+	let chartField: TakeGroupField = chart.value;
+	let storeParams = travelStore.traveList[chartField].params;
+	travelStore.traveList[chartField].params.status = activeKey.value;
+	travelStore.traveList[chartField].params.startDate = storeParams.time[0];
+	travelStore.traveList[chartField].params.endDate = storeParams.time[1];
+	let params = cloneDeep(travelStore.traveList[chartField].params);
+	params.groupType = params.groupType === '0' ? '' : params.groupType;
+	const res = await travelStore.getTravelList(params);
+
+	travelStore.setTraveList(res, chartField);
 };
 //重置
 const reset = () => {
-	(params.keyWord = ''), (params.time = ''), (params.groupType = '');
+	let chartField: TakeGroupField = chart.value;
+
+	travelStore.traveList[chartField].params = cloneDeep(traveListParams.params);
+	onSearch();
 };
 watch(
 	() => params.time,
@@ -128,9 +119,8 @@ watch(
 	}
 );
 
-const showAddBtn = computed(() => {
-	return userInfo.sysRoles.some((it: any) => it.roleCode === ROLE.TRAVE_CODE);
-});
+travelStore.getItineraryStatus();
+sessionStorage.removeItem('traveList');
 </script>
 <style lang="less" scoped>
 .trave-contaner {

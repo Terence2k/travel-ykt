@@ -53,11 +53,11 @@
       dataIndex: 'menuType',
       key: 'menuType',
     },
-    {
-      title: '页面按钮',
-      dataIndex: 'buttonName',
-      key: 'buttonName',
-    },
+    // {
+    //   title: '页面按钮',
+    //   dataIndex: 'buttonName',
+    //   key: 'buttonName',
+    // },
     {
       title: '排序',
       dataIndex: 'sort',
@@ -71,7 +71,6 @@
     {
       title: '操作',
       key: 'action',
-      fixed: 'right',
       width: 208
     },
   ]

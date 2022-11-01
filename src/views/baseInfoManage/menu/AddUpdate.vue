@@ -9,7 +9,7 @@
 					<a-select-option :value="0">菜单夹</a-select-option>
 					<a-select-option :value="1">功能模块</a-select-option>
 					<a-select-option :value="2">tab页</a-select-option>
-					<a-select-option :value="3">按钮</a-select-option>
+					<!-- <a-select-option :value="3">按钮</a-select-option> -->
 				</a-select>
 			</a-form-item>
 			<a-form-item label="上级菜单" name="parentId">
@@ -27,11 +27,11 @@
 			<a-form-item label="跳转路径" name="url">
 				<a-input v-model:value="formValidate.url" placeholder="请输入跳转路径" />
 			</a-form-item>
-			<a-form-item label="操作按钮" name="buttonId" v-if="formValidate.menuType === 3">
+			<!-- <a-form-item label="操作按钮" name="buttonId" v-if="formValidate.menuType === 3">
 				<a-select ref="select" v-model:value="formValidate.buttonId" placeholder="请选择操作按钮">
 					<a-select-option v-for="item in btnGroupData" :value="item.oid">{{ item.name }}</a-select-option>
 				</a-select>
-			</a-form-item> 
+			</a-form-item>  -->
 			<a-form-item label="菜单编码" name="menuCode">
 				<a-input v-model:value="formValidate.menuCode" placeholder="无需填写，保存自动生成" disabled />
 			</a-form-item>
@@ -81,12 +81,12 @@ const formRef = ref<FormInstance>() as any;
 const formValidate: Ref<Record<string, any>> = ref({});
 const options = reactive({ title: '新增菜单' });
 const menuTreeDate: Ref<Array<any>> = ref([]);
-const btnGroupData: Ref<Array<any>> = ref([]);
+// const btnGroupData: Ref<Array<any>> = ref([]);
 const rules: any = {
 	menuName: [{ required: true, trigger: 'blur', message: '请输入菜单名称' }],
 	menuType: [{ required: true, trigger: 'change', message: '请选择菜单类型' }],
 	menuStatus: [{ required: true, trigger: 'change', message: '请选择菜单状态' }],
-	buttonId: [{ required: true, trigger: 'change', message: '请选择操作按钮' }],
+	// buttonId: [{ required: true, trigger: 'change', message: '请选择操作按钮' }],
 };
 
 const handleOk = () => {
@@ -119,16 +119,16 @@ const save = () => {
 		});
 };
 
-const getBtnCode = () => {
-	api
-		.getBtnCode()
-		.then((res: any) => {
-			btnGroupData.value = res;
-		})
-		.catch(() => {
-			message.error('获取按钮失败');
-		});
-};
+// const getBtnCode = () => {
+// 	api
+// 		.getBtnCode()
+// 		.then((res: any) => {
+// 			btnGroupData.value = res;
+// 		})
+// 		.catch(() => {
+// 			message.error('获取按钮失败');
+// 		});
+// };
 
 const addOrUpdateAPI = (apiName: string) => {
 	const queryData = cloneDeep(formValidate.value);
@@ -153,7 +153,7 @@ const init = async () => {
 		label: 'menuName',
 		children: 'children',
 	});
-	getBtnCode();
+	// getBtnCode();
 	formValidate.value = {};
 	if (props.params?.oid) {
 		formValidate.value = { ...props.params };

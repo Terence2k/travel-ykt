@@ -307,8 +307,8 @@ const init = async () => {
 	state.tableData.loading = true;
 	let res = await api.getViewOrderList(state.tableData.param);
 	state.tableData.loading = false;
-	state.tableData.data = res.content || dataSource;
-	state.tableData.data = dataSource;
+	state.tableData.data = res.content;
+	// state.tableData.data = dataSource;
 	state.tableData.total = res.total;
 	console.log(res);
 };
