@@ -193,11 +193,10 @@
         icon: false,
         content: `您即将批准行程单预冻结申请，请确认该计调在公司缴纳的余额充足，是否同意？`,
         onOk() {
-          const queryData = {
-            rejectReason: rejectReason.value, //审核描述
-            itineraryId: state.detail.oid, //uuid
-            isPass: true
-          };
+          let queryData = new FormData();
+          queryData.append('rejectReason', rejectReason.value);
+          queryData.append('itineraryId', state.detail.oid);
+          queryData.append('isPass', true);
           console.log('queryData:', queryData);
           api.travelManagement.financeAudit(queryData)
             .then((res: any) => {
@@ -216,12 +215,11 @@
     }
   }
   const rejectAudit = () => {
-    const queryData = {
-      rejectReason: rejectReason.value, //审核描述
-      itineraryId: state.detail.oid, //uuid
-      isPass: false
-    };
-    console.log('queryData:', queryData);
+    let queryData = new FormData();
+    queryData.append('rejectReason', rejectReason.value);
+    queryData.append('itineraryId', state.detail.oid);
+    queryData.append('isPass', false);
+    console.log('queryData:', queryData)
     api.travelManagement.financeAudit(queryData)
       .then((res: any) => {
         console.log('审核返回信息：', res);
