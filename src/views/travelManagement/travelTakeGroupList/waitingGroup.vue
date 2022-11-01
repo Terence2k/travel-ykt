@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<CommonTable :row-selection="{onSelect}" :dataSource="state.tableData" :columns="state.columns">
+		<CommonTable :row-selection="{onSelect}" :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
 		<template #button>
 		</template>
 		<template #bodyCell="{ column, text, index, record }">
@@ -16,15 +16,15 @@
 
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
-				<a @click="takeGroup(record.oid)">接受任务</a>
-				<a @click="rejectGroup(record.oid)">拒绝</a>
+				<a @click="takeGroup(record.oid)">同意接团</a>
+				<a @click="rejectGroup(record.oid)">拒绝接团</a>
 			</div>
 		</template>
 				</template>
 		</CommonTable>
 		<CommonPagination
-			:current="state.params.pageNo"
-			:page-size="state.params.pageSize"
+			:current="travelStore.takeGroupList.waitingGroup.params.pageNo"
+			:page-size="travelStore.takeGroupList.waitingGroup.params.pageSize"
 			:total="state.total"
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
@@ -35,21 +35,21 @@
 	import CommonTable from '@/components/common/CommonTable.vue';
 	import CommonPagination from '@/components/common/CommonPagination.vue';
 
-	import api from '@/api/index';
-
 	import { useTravelStore } from '@/stores/modules/travelManagement';
-	import { GroupMode, GroupStatus } from '@/enum'
-import { message } from 'ant-design-vue/es';
+	import { GroupMode, TakeGroupStatus } from '@/enum'
+	import api from '@/api/index';
+  import { message } from 'ant-design-vue';
+
 
 	const travelStore = useTravelStore();
 	const state = reactive({
-		total: 0,
+		total: computed(() => travelStore.takeGroupList.waitingGroup.total),
 		params: {
 				pageNo: 1,
 				pageSize: 10,
 				status: 1
 		},
-		tableData: [],
+		tableData: computed(() => travelStore.takeGroupList.waitingGroup.list),
 		columns: [
 			{
 					title: ' 序号 ',
@@ -67,9 +67,9 @@ import { message } from 'ant-design-vue/es';
 					key: 'routeName',
 			},
 			{
-					title: '地接社',
-					dataIndex: 'subTravelName',
-					key: 'subTravelName',
+					title: '组团社',
+					dataIndex: 'travelName',
+					key: 'travelName',
 			},
 			{
 					title: '行程时间',
@@ -99,36 +99,30 @@ import { message } from 'ant-design-vue/es';
 		]
 	})
 	const onSearch = async () => {
-		
-		const res = await travelStore.getTravelList({pageNo: 1, pageSize: 10, status: GroupStatus.WaitingGroup});
-		state.tableData = res.content
-		state.total = res.total;
+		travelStore.takeGroupList.waitingGroup.params.status = TakeGroupStatus.WaitingGroup
+		const res = await travelStore.getTravelList(travelStore.takeGroupList.waitingGroup.params);
+		travelStore.setTakeGroupList(res, 'waitingGroup')
 	}
-
-	const takeGroup = (id: string) => {
-		const formData = new FormData()
-		formData.append('id', id)
-		api.travelManagement.takeGroup(formData).then((res:any) => {
-			message.success('接团成功')
-		})
-	}
-	
-	const rejectGroup = (id: string) => {
-		const formData = new FormData()
-		formData.append('id', id)
-		api.travelManagement.rejectGroup(formData).then((res:any) => {
-			message.success('已拒绝接团')
-		})
-	}
-
+  const takeGroup = (id: string) => {
+    api.travelManagement.takeGroup(id).then((res: any) => {
+      onSearch()
+      message.success('接团成功');
+    })
+  }
+  const rejectGroup = (id: string) => {
+    api.travelManagement.rejectGroup(id).then((res: any) => {
+      onSearch()
+      message.success('已拒绝接团');
+    })
+  }
 	const onHandleCurrentChange = () => {
 
 	}
 	const pageSideChange = () => {
 
 	}
-	const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
-		console.log(record, selected, selectedRows);
-	}
+  const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
+    console.log(record, selected, selectedRows);
+  }
 	onSearch()
 </script>
