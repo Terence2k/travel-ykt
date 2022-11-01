@@ -3,7 +3,7 @@
 		<CommonTable :row-selection="{onSelect}" :dataSource="state.tableData" :columns="state.columns">
 		<template #button>
 		</template>
-		<template #bodyCell="{ column, text, index }">
+		<template #bodyCell="{ column, text, index, record }">
 			<template v-if="column.key === 'index'">
 				<div>
 						{{(state.params.pageNo - 1) * (state.params.pageSize) + (index + 1)}}
@@ -16,8 +16,8 @@
 
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
-				<a>撤回任务</a>
-				<a>催办</a>
+				<a @click="takeGroup(record.oid)">接受任务</a>
+				<a @click="rejectGroup(record.oid)">拒绝</a>
 			</div>
 		</template>
 				</template>
@@ -39,6 +39,7 @@
 
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, GroupStatus } from '@/enum'
+import { message } from 'ant-design-vue/es';
 
 	const travelStore = useTravelStore();
 	const state = reactive({
@@ -98,10 +99,28 @@
 		]
 	})
 	const onSearch = async () => {
+		
 		const res = await travelStore.getTravelList({pageNo: 1, pageSize: 10, status: GroupStatus.WaitingGroup});
 		state.tableData = res.content
 		state.total = res.total;
 	}
+
+	const takeGroup = (id: string) => {
+		const formData = new FormData()
+		formData.append('id', id)
+		api.travelManagement.takeGroup(formData).then((res:any) => {
+			message.success('接团成功')
+		})
+	}
+	
+	const rejectGroup = (id: string) => {
+		const formData = new FormData()
+		formData.append('id', id)
+		api.travelManagement.rejectGroup(formData).then((res:any) => {
+			message.success('已拒绝接团')
+		})
+	}
+
 	const onHandleCurrentChange = () => {
 
 	}

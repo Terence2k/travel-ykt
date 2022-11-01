@@ -23,7 +23,7 @@
         <template v-if="column.key === 'action'">
           <div class="action-btns">
             <a @click="goToPath(record)">编辑</a>
-            <a>邀请地接社编辑</a>
+            <!-- <a>邀请地接社编辑</a> -->
             <a @click="sendGroup(record.oid)">发团</a>
           </div>
         </template>

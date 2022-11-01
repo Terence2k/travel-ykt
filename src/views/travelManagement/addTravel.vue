@@ -5,12 +5,12 @@
 				<component @onSuccess="save" :onCheck="check" :is="item.name"></component>
 			</a-tab-pane>
 		</a-tabs>
-		<div class="footer d-flex justify-content-between">
+		<div class="footer d-flex justify-content-between" v-if="travelStore.teamStatus">
 			<div class="footer-btn">
-				<a-button type="primary" @click="() => { check = !check; sendTeam = false }">保存</a-button>
+				<a-button type="primary" @click="() => { check = !check; sendTeam = false; isSaveBtn = true }">保存</a-button>
 				<a-button type="primary" @click="activeKey = activeKey + 1">下一步</a-button>
 			</div>
-			<div class="submit-btn" @click="() => { check = !check; sendTeam = true }">提交发团</div>
+			<div class="submit-btn" @click="() => { check = !check; sendTeam = true; isSaveBtn = false }">提交发团</div>
 		</div>
 	</div>
 </template>
@@ -32,8 +32,9 @@ const route = useRoute();
 const router = useRouter();
 const travelStore = useTravelStore();
 const activeKey = ref(0);
-const check = ref(false);
-const sendTeam = ref(false);
+const check = ref(false); //触发保存
+const sendTeam = ref(false); //发团判断
+const isSaveBtn = ref(false); //是否点击保存按钮
 const pages = [
 	{
 		name: baseInfo,
@@ -84,6 +85,7 @@ const sendGroup = async (id: string) => {
 	formData.append('itineraryId', id)
 	try {
 		await api.travelManagement.sendGroup(formData)
+		router.push('/travel/travel_manage/travel_list')
 		message.success('发团成功')
 		sendTeam.value = false
 	} catch (error) {
@@ -92,6 +94,7 @@ const sendGroup = async (id: string) => {
 }
 
 const saveItinerary = (val: any) => {
+	if (!travelStore.teamStatus) return
 	if (sendTeam.value) {
 		if (!travelStore.guideList.length) return message.error('请选择带团导游');
 		if (!travelStore.touristList.length) return message.error('请添加游客');
@@ -130,15 +133,18 @@ const saveItinerary = (val: any) => {
 		},
 		touristList: travelStore.touristList.filter((it: any) => it.edit),
 		transportList: travelStore.trafficList.filter((it: any) => it.edit),
-	}).then((res: any) => {
+	}, isSaveBtn.value).then((res: any) => {
 		res && sessionStorage.setItem('traveList', JSON.stringify(res));
 		getTraveDetail();
 		if (sendTeam.value) {
 			sendGroup(itineraryId)
 		}
-		// let msg = route.query.id ? '编辑成功' : '新增成功'
-		// message.success(msg);
-		// router.push('/travel/travel_manage/travel_list')
+		if (isSaveBtn.value) {
+			router.push('/travel/travel_manage/travel_list')
+			let msg = route.query.id ? '编辑成功' : '新增成功'
+			message.success(msg);
+		}
+		
 	});
 };
 
@@ -170,7 +176,7 @@ const getTraveDetail = () => {
 			oid: route.query.id || traveListData.oid,
 			pageNo: 1,
 			pageSize: 100000,
-		})
+		}, isSaveBtn.value)
 		.then((res: any) => {
 			res.basic.teamId = res.basic.itineraryNo;
 			res.basic.time = [res.basic.startDate, res.basic.endDate];
@@ -186,6 +192,7 @@ const getTraveDetail = () => {
 			travelStore.setTrafficList(res.transportList);
 			travelStore.hotels = res.hotelList;
 			travelStore.scenicTickets = res.ticketList;
+			travelStore.teamTime = [res.basic.startDate, res.basic.endDate]  as any
 			travelStore.setDisabled = (current: Dayjs): any => {
 				return (dayjs(res.basic.startDate) && dayjs(res.basic.startDate) > current && current) ||
 					(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).add(1, 'day') < current && current)
@@ -195,11 +202,13 @@ const getTraveDetail = () => {
 const changeTab = (event: number) => {
 	sendTeam.value = false;
 	if (event === 4) {
+		isSaveBtn.value = false
 		check.value = !check.value;
 	}
 };
 
 getTraveDetail();
+travelStore.getItineraryStatus();
 // !route.query.id && saveItinerary({})
 </script>
 <style lang="less" scoped>

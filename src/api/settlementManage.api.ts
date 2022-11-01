@@ -316,3 +316,11 @@ export async function currencySettlementHotelRatedList() {
 		showLoading: true,
 	});
 }
+// 查询行程单枚举状态
+export async function getItineraryStatus() {
+	return request({
+		url: `${commonPath}/travel-agency-service/public/api/itinerary/getItineraryStatus`,
+		method: 'get',
+		showLoading: false,
+	});
+}

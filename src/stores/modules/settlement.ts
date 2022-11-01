@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { store } from '../index';
 import api from '@/api';
 import { log } from 'console';
+import { getItineraryStatus } from '@/api/settlementManage.api';
 // 结算管理的筛选项数据
 export const settlementOptions = defineStore('settlement', {
 	state: () => ({
@@ -9,6 +10,8 @@ export const settlementOptions = defineStore('settlement', {
 		groupSocietyList: [], //组团社
 		earthContactAgencyList: [], // 地接社
 		businessTypeOptionList: [], //企业类型
+		itineraryStatus: [], //行程单枚举状态
+		testStatus: 10
 	}),
 	getters: {},
 	actions: {
@@ -49,6 +52,14 @@ export const settlementOptions = defineStore('settlement', {
 					});
 					this.businessTypeOptionList = options;
 					return options;
+				});
+			}
+		},
+		// 获取行程单枚举状态
+		getItineraryStatus(code: any) {
+			if (!this.itineraryStatus.length) {
+				api.getItineraryStatus().then((res: any) => {
+					this.itineraryStatus = res;
 				});
 			}
 		},

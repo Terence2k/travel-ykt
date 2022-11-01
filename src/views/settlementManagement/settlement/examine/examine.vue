@@ -45,6 +45,7 @@ import { message } from 'ant-design-vue';
 import { Modal } from 'ant-design-vue';
 const props = defineProps({
 	params: Object,
+	status: Number
 })
 const router = useRouter();
 const columns = [
@@ -115,7 +116,7 @@ const state = reactive({
 			subTravelId: null,
 			startDate: null,
 			endDate: null,
-			status: 12, //10行程中 12预结算 13已结算 14已申请转账
+			status: null, 
 		},
 	},
 	selectedRowKeys: [],
@@ -153,6 +154,7 @@ const dealData = (params: [any]) => {
 
 const onSearch = async() => {
 	// 处理父组件传递筛选条件
+	state.tableData.param.status = props?.status
 	state.tableData.param.teamTypeId = props.params?.teamTypeId
 	state.tableData.param.itineraryNo = props.params?.itineraryNo
 	state.tableData.param.travelId = props.params?.travelId

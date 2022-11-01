@@ -4,6 +4,7 @@ import api from '@/api/index';
 import { cloneDeep } from 'lodash';
 import { Field } from '@/type';
 import dayjs, { Dayjs } from 'dayjs';
+import { CODEVALUE } from '@/constant';
 interface TraveDataItem {
 	groupType: GroupMode.All | GroupMode.TeamGroup |GroupMode.NoTeamGroup;
 	[k: string]: any
@@ -79,13 +80,14 @@ export const useTravelStore = defineStore({
 			teamType: '',
 			startDate: '',
 			endDate: '',
-			groupType: ''
+			groupType: '',
+			status: ''
 		},
 		setDisabled: (current: Dayjs) => {
 			return current && current < dayjs().subtract(1, 'day') || 
 			current > dayjs().startOf('day');
 		},
-		teamTime: '',
+		teamTime: [],
 		guideList: [],
 		touristList: [],
 		trafficList: [],
@@ -148,6 +150,7 @@ export const useTravelStore = defineStore({
 			}
 
 		},
+		itineraryStatusList: [],
 
 		auditStatus: {
 			[AuditStaus.AdministrativeSendGroup]: '发团审核',
@@ -157,9 +160,17 @@ export const useTravelStore = defineStore({
 		},
 	}),
 	getters: {
-		// count(): string {
-		// 	return this.info;
-		// },
+		// 草稿
+		teamStatus(): boolean {
+			const res: any = this.itineraryStatusList.filter((it: any) => it.status == this.baseInfo.status)[0]
+
+			return  res && (res.codeName === CODEVALUE.TRAVE_CODE.DRAFT)
+		},
+		// 预定
+		reserveStatus(): boolean {
+			const res: any = this.itineraryStatusList.filter((it: any) => it.status == this.baseInfo.status)[0]
+			return  res && (res.codeName === CODEVALUE.TRAVE_CODE.WAIT_RESERVE_HOTEL || res.codeName === CODEVALUE.TRAVE_CODE.WAIT_GO_OUT)
+		}
 	},
 	actions: {
 		async getTravelList(params: object) {
@@ -172,6 +183,7 @@ export const useTravelStore = defineStore({
 			return res
 		},
 		async getTraveCode(codeValue: string, type: string) {
+			if (type === 'IDCard' && this.IDCard.length) return
 			const res = await api.commonApi.getCodeValue({codeValue})
 			switch(type) {
 				case 'IDCard' :
@@ -237,7 +249,7 @@ export const useTravelStore = defineStore({
 		setTicket(data: any, oid: string) {
 			if (data.oid) {
 				Object.assign(
-					this.hotels.filter((item:any) => data.oid == item.oid)[0], 
+					this.scenicTickets.filter((item:any) => data.oid == item.oid)[0], 
 					data
 				)
 			} else {
@@ -255,6 +267,11 @@ export const useTravelStore = defineStore({
 		setAuditList(data: any, key: Field) {
 			this.auditList[key].list = data.content
 			this.auditList[key].total = data.total
+		},
+		async getItineraryStatus() {
+			if (this.itineraryStatusList.length) return
+			const res = await api.travelManagement.getItineraryStatus();
+			this.itineraryStatusList = res
 		}
 	},
 });
