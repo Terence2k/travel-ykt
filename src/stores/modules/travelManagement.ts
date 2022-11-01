@@ -138,6 +138,7 @@ export const useTravelStore = defineStore({
     takeGroupList: {
 			drafts: cloneDeep(takeGroupListParams),
 			waitingGroup: cloneDeep(takeGroupListParams),
+			waitingReserved: cloneDeep(takeGroupListParams),
     },
 		enterpriseState: [
 			{
