@@ -193,14 +193,14 @@
               </a-button>
             </div>
           </a-form-item>
-          <a-form-item name="isReduced" label="是否支持减免">
+          <a-form-item name="derate" label="是否支持减免">
             <div class="flex">
-              <a-radio-group v-model:value="form.isReduced" :disabled="getStatus('isReduced')">
-                <a-radio :value="1">是</a-radio>
-                <a-radio :value="0">否</a-radio>
+              <a-radio-group v-model:value="form.derate" :disabled="getStatus('derate')">
+                <a-radio :value="true">是</a-radio>
+                <a-radio :value="false">否</a-radio>
               </a-radio-group>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('isReduced')" v-if="showChangeBtns('isReduced')">
-                {{ getStatus('isReduced') ? '修改' : '确定' }}
+              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('derate')" v-if="showChangeBtns('derate')">
+                {{ getStatus('derate') ? '修改' : '确定' }}
               </a-button>
             </div>
           </a-form-item>
@@ -373,7 +373,6 @@ const formRules: Record<string, Rule[]> = {
   // businessLicenseUrl1: [{ required: true, trigger: 'change', message: '请上传经营许可' }],
   unitStatus: [{ required: true, trigger: 'change', message: '请选择开业状态' }],
   hotelStarId: [{ required: true, trigger: 'change', message: '请选择酒店星级' }],
-  isReduced: [{ required: true, trigger: 'change', message: '请选择是否支持减免' }],
   scenicLevel: [{ required: true, trigger: 'change', message: '请选择景区等级' }],
   derate: [{ required: true, trigger: 'change', message: '请选择是否支持减免' }],
   rangeTime: [{ required: true, trigger: 'change', message: '请选择营业时间' }],
