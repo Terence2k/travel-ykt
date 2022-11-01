@@ -22,7 +22,7 @@
 
         <template v-if="column.key === 'action'">
           <div class="action-btns">
-            <!-- <a>编辑填报</a> -->
+            <a @click="goToPath(record)">编辑填报</a>
           </div>
         </template>
 			</template>
