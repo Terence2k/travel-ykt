@@ -1,7 +1,7 @@
 <template>
 	<BaseModal :modelValue="modelValue" title="新增" width="600px" @cancel="cancel">
 		<a-form :model="formValidate" :label-col="{ span: 3 }" :wrapper-col="{ span: 12, offset: 1 }" labelAlign="left">
-			<a-form-item label="单票类型" class="fz14" v-bind="validateInfos[`data.verificationType`]">
+			<a-form-item label="门票类型" class="fz14" v-bind="validateInfos[`data.verificationType`]">
 				<a-radio-group v-model:value="formValidate.data.verificationType">
 					<a-radio :value="0">单票：单点核销</a-radio>
 					<a-radio :value="1">单票：多选核销</a-radio>

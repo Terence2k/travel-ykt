@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { GroupMode, GroupStatus, Gender, GuideType, FeeModel, insuranceType, AuditStaus, TakeGroupStatus} from '@/enum';
 import api from '@/api/index';
 import { cloneDeep } from 'lodash';
-import { AuditField, Field } from '@/type';
+import { AuditField, Field, TakeGroupField } from '@/type';
 import dayjs, { Dayjs } from 'dayjs';
 import { CODEVALUE } from '@/constant';
 interface TraveDataItem {
@@ -23,6 +23,22 @@ export const traveListParams = {
 		groupType: '',
 		time: [],
 		isSend: true
+	}
+}
+export const takeGroupListParams = {
+	total: 0,
+	list: [],
+	params: {
+		pageNo: 1,
+		pageSize: 10,
+		status: 0,
+		startDate: '',
+		endDate: '',
+		keyWord: '',
+		keyWordType: 1,
+		groupType: '',
+		time: [],
+		isSend: false
 	}
 }
 export const useTravelStore = defineStore({
@@ -119,6 +135,11 @@ export const useTravelStore = defineStore({
 			administrativeSendGroup: cloneDeep(traveListParams),
 			administrativeChange: cloneDeep(traveListParams),
 		},
+    takeGroupList: {
+			drafts: cloneDeep(takeGroupListParams),
+			waitingGroup: cloneDeep(takeGroupListParams),
+			waitingReserved: cloneDeep(takeGroupListParams),
+    },
 		enterpriseState: [
 			{
 				stateName: '未提交',
@@ -278,6 +299,10 @@ export const useTravelStore = defineStore({
 		setAuditList(data: any, key: AuditField) {
 			this.auditList[key].list = data.content
 			this.auditList[key].total = data.total
+		},
+		setTakeGroupList(data: any, key: TakeGroupField) {
+			this.takeGroupList[key].list = data.content
+			this.takeGroupList[key].total = data.total
 		},
 		async getItineraryStatus() {
 			if (this.itineraryStatusList.length) return

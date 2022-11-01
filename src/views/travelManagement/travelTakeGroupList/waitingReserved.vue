@@ -1,9 +1,9 @@
 <template>
 	<div>
-		<CommonTable :row-selection="{onSelect}" :dataSource="state.tableData" :columns="state.columns">
+		<CommonTable :row-selection="{onSelect}" :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
 		<template #button>
 		</template>
-		<template #bodyCell="{ column, text, index }">
+		<template #bodyCell="{ column, text, index, record }">
 			<template v-if="column.key === 'index'">
 				<div>
 						{{(state.params.pageNo - 1) * (state.params.pageSize) + (index + 1)}}
@@ -16,15 +16,14 @@
 
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
-				<a>变更</a>
-				<a>结算预览</a>
+        <a @click="goToPath(record)">进入预定</a>
 			</div>
 		</template>
 				</template>
 		</CommonTable>
 		<CommonPagination
-			:current="state.params.pageNo"
-			:page-size="state.params.pageSize"
+			:current="travelStore.takeGroupList.waitingReserved.params.pageNo"
+			:page-size="travelStore.takeGroupList.waitingReserved.params.pageSize"
 			:total="state.total"
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
@@ -35,20 +34,19 @@
 	import CommonTable from '@/components/common/CommonTable.vue';
 	import CommonPagination from '@/components/common/CommonPagination.vue';
 
-	import api from '@/api/index';
-
 	import { useTravelStore } from '@/stores/modules/travelManagement';
-	import { GroupMode, GroupStatus } from '@/enum'
+	import { GroupMode, TakeGroupStatus } from '@/enum'
 
 	const travelStore = useTravelStore();
+	const router = useRouter()
 	const state = reactive({
-		total: 0,
+		total: computed(() => travelStore.takeGroupList.waitingReserved.total),
 		params: {
 				pageNo: 1,
 				pageSize: 10,
 				status: 1
 		},
-		tableData: [],
+		tableData: computed(() => travelStore.takeGroupList.waitingReserved.list),
 		columns: [
 			{
 					title: ' 序号 ',
@@ -71,12 +69,7 @@
 					key: 'travelName',
 			},
 			{
-					title: '地接社',
-					dataIndex: 'subTravelName',
-					key: 'subTravelName',
-			},
-			{
-					title: '出团时间',
+					title: '行程时间',
 					dataIndex: 'time',
 					key: 'time',
 			},
@@ -103,9 +96,9 @@
 		]
 	})
 	const onSearch = async () => {
-		const res = await travelStore.getTravelList({pageNo: 1, pageSize: 10, status: GroupStatus.HaveABall});
-		state.tableData = res.content
-		state.total = res.total;
+		travelStore.takeGroupList.waitingReserved.params.status = TakeGroupStatus.WaitingReserved
+		const res = await travelStore.getTravelList(travelStore.takeGroupList.waitingReserved.params);
+		travelStore.setTakeGroupList(res, 'waitingReserved')
 	}
 	const onHandleCurrentChange = () => {
 
@@ -113,8 +106,17 @@
 	const pageSideChange = () => {
 
 	}
-	const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
-		console.log(record, selected, selectedRows);
+	const goToPath = (row: any) => {
+		router.push({
+			path: '/travel/travel_manage/add_travel',
+			query: {
+				id: row.oid,
+				itineraryNo: row.itineraryNo
+			}
+		})
 	}
+  const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
+    console.log(record, selected, selectedRows);
+  }
 	onSearch()
 </script>

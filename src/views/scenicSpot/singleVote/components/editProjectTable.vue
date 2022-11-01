@@ -99,6 +99,11 @@ const props = defineProps({
 		default: () => [],
 		require: true,
 	},
+	viewId: {
+		type: Number || null,
+		default: null,
+		require: true,
+	},
 	// params: Object,
 	// tableList: Array,
 });
@@ -223,7 +228,7 @@ const delCancel = () => {
 const apply = () => {
 	validate()
 		.then((res) => {
-			console.log(isCreate.value, type.value, '099');
+			console.log(isCreate.value, type.value, '099', res);
 
 			if (!type.value) {
 				console.log('formValidate.initData');
@@ -263,18 +268,18 @@ const cancel = () => {
 };
 const options = ref([
 	{
-		value: '1',
+		value: 1,
 		label: '入园',
 		id: 1,
 	},
 	{
-		value: '2',
+		value: 2,
 		label: '游戏机',
 		id: 2,
 	},
 
 	{
-		value: '3',
+		value: 3,
 		label: '其他',
 		id: 3,
 	},
@@ -288,15 +293,35 @@ const handleChange = (value: any) => {
 	formValidate.proj = value;
 };
 
+const hadList = (rule: any, value: any) => {
+	let len = value.length;
+	console.log(value, 'value', len, value[0]?.init, !value);
+
+	if (!value) {
+		return Promise.reject('请填写');
+	}
+	if (len <= 0) {
+		return Promise.reject('请填写');
+	}
+	if (len == 1 && value[0]?.init) {
+		return Promise.reject('请填写');
+	}
+
+	if (typeof value[0] !== 'number') {
+		return Promise.reject('请填写');
+	}
+	return Promise.resolve();
+};
+
 // 表单
 const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
 	formValidate,
 	reactive({
-		proj: [{ required: true, message: '请填写' }],
+		proj: [{ required: true, message: '请填写', validator: hadList }],
 	})
 );
-const getList = async () => {
-	formData.data = await api.getVariflist();
+const getList = async (id: number) => {
+	formData.data = await api.getVariflist(id);
 	// let res = await api.getScenicOneTicket();
 
 	let arr = formData.data.map((i: any) => {
@@ -304,13 +329,14 @@ const getList = async () => {
 	});
 
 	options.value = arr.length ? arr : options.value;
+	options.value = arr;
 };
 
 // 删除提示
 const delShow = ref(false);
 const delIndex = ref<null | number>();
 onMounted(() => {
-	getList();
+	// getList();
 	console.log(pageStatus.value && !type.value, '单点新增');
 	if (pageStatus.value && !type.value) {
 		emits('add-verification-obj-sign', formValidate.initData);
@@ -320,6 +346,15 @@ onMounted(() => {
 const setValue = (value: number) => {
 	allTimes.value = value;
 };
+
+watch(
+	() => props.viewId,
+	async (nVal) => {
+		if (nVal) {
+			getList(nVal);
+		}
+	}
+);
 
 defineExpose({
 	setValue,

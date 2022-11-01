@@ -55,12 +55,14 @@
 					@add-verification-obj-sign="addVerificationObjSign"
 					@get-optional-verification="getOptionalVerificationCount"
 					@change-iv="changeIv"
+					:viewId="formData.data.scenicId"
 				/>
 				<span v-if="isShow" class="ant-form-item-explain-error">请填写可核销次数</span>
 			</a-form-item>
-			<a-form-item label="可核销账号" :wrapper-col="{ span: 12 }">
+
+			<!-- <a-form-item label="可核销账号" :wrapper-col="{ span: 12 }">
 				<EditCountTable :tableList="[{ assistId: formData.data.assistId }]" />
-			</a-form-item>
+			</a-form-item> -->
 
 			<div class="title">票价</div>
 			<a-form-item label="门票库存" name="data.dayStock" v-bind="validateInfos[`data.dayStock`]">
@@ -169,6 +171,7 @@ const pageStatus = computed(() => {
 	return route.currentRoute.value?.query?.s;
 });
 const first = ref(false);
+
 const isShow = computed(() => {
 	return first.value && type.value == '1' && typeof formData.data.optionalVerificationCount !== 'number';
 });
@@ -242,6 +245,10 @@ const onSubmit = async () => {
 	first.value = true;
 	validate()
 		.then(() => {
+			if (isShow.value) {
+				return;
+			}
+
 			console.log(toRaw(formData.data), 'psss');
 			// save(toRaw(formData.data));
 			save(toRaw(formData.data));

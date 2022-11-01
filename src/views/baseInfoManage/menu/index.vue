@@ -71,7 +71,6 @@
     {
       title: '操作',
       key: 'action',
-      fixed: 'right',
       width: 208
     },
   ]

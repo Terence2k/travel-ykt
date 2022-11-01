@@ -4,7 +4,7 @@
 			<a-form ref="formRef" :rules="formRules" :model="formValidate.data" :label-col="{ span: 4 }" :wrapper-col="{ flex: 12 }" labelAlign="left">
 				<div v-for="(timeItem, index) in formValidate.data.dateList" :key="index" class="time-item">
 					<a-row>
-						<a-col :span="4">{{ index === 0 ? '下架时间：' : '' }}</a-col>
+						<a-col :span="4"> <i v-if="index === 0" style="color: red">*</i>{{ index === 0 ? '下架时间：' : '' }}</a-col>
 						<a-col :span="19">
 							<a-form-item :name="['dateList', index, 'time']" :rules="formRules.time">
 								<a-range-picker
@@ -35,7 +35,7 @@
 					<a-button type="primary" v-if="formValidate.data.dateList.length === 1" @click="addTimeList">添加</a-button>
 				</div>
 				<a-row>
-					<a-col :span="4">原因: </a-col>
+					<a-col :span="4"><i style="color: red">*</i>原因: </a-col>
 					<a-col :span="19">
 						<a-form-item name="downReason">
 							<a-textarea v-model:value="formValidate.data.downReason" placeholder="请输入原因" :rows="4" />
@@ -149,7 +149,8 @@ const getDeatil = async (id: number) => {
 	console.log(res, 'getDeatils');
 	formValidate.data = res;
 	formValidate.data.dateList = formValidate.data.dateList.map((item) => {
-		return { ...item, time: [dayjs(item.startDateTime), dayjs(item.endDateTime)] };
+		return { ...item, time: [item.startDateTime, item.endDateTime] };
+		// dayjs(' 00:00:00', 'HH:mm')
 	});
 };
 // 关闭弹窗

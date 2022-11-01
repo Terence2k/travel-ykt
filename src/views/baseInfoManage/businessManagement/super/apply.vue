@@ -259,6 +259,7 @@ import api from '@/api';
 import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router';
 import { useBusinessManageOption } from '@/stores/modules/businessManage';
+import { flat } from '@/views/baseInfoManage/businessManagement/super/common';
 const businessManageOptions = useBusinessManageOption();
 const router = useRouter();
 const route = useRoute();
@@ -298,8 +299,10 @@ const getComputedVal = computed(() => (key: string, val: any) => {
 		return val == 1 ? '对公账户' : '对私账户'
 	} else if (key === 'unitStatus') {
 		return val == 1 ? '停业' : '开业'
-	} else if (key === 'isReduced') {
-		return val == 1 ? '是' : '否'
+	} else if (key === 'derate') {
+		return val == 1 || val == true ? '是' : '否'
+	} else if (key === 'scenicLevel') {
+		return val ? val + 'A' : ''
 	} else {
 		return val
 	}
@@ -557,9 +560,10 @@ const keyNameList = {
 	businessLicenseUrl: '营业执照',
 	// manageUrl: '经营许可证',
 	hotelStarCode: '星级',
+	scenicLevel: '等级',
 	unitStatus: '开业状态', //  0-开业 1-停业
-	isReduced: '是否支持减免', // 0-否 1-是
-	reduceRule: '减免规则',
+	derate: '是否支持减免', // 0-否 1-是 derate
+	reduceRules: '减免规则',
 	startTime: '开始营业时间', // '营业时间',
 	endTime: '结束营业时间',
 	shopPhone: '店铺联系电话',
@@ -725,27 +729,16 @@ const auditEnterprise = async (record: any) => {
 				changeKeys.value.splice(i, 0, 'regionCode')
 			}
 		}
+		const newReduceRules = [newList?.reduceRule, newList?.fullRule]
+		const oldReduceRules = [oldList?.reduceRule, oldList?.fullRule]
+		if (newReduceRules.toString() !== oldReduceRules.toString()) {
+			newArrList.value['reduceRules'] = `满${newList?.fullRule}减${newList?.reduceRule}`
+			oldArrList.value['reduceRules'] = `满${oldList?.fullRule}减${oldList?.reduceRule}`
+			changeKeys.value.push('reduceRules')
+		}
 		changeAuditVisible.value = true
 		isRegiste.value = false
 	}
-}
-
-const flat = (target: any) => {
-	let obj: any = {};
-	let process = (_target: any) => {
-		if (Object.prototype.toString.call(_target) === '[object Object]') {
-			let keys = Object.keys(_target)
-			keys.forEach(item => {
-				if (Object.prototype.toString.call(_target[item]) === '[object Object]') {
-					process(_target[item])
-				} else {
-					obj[item] = _target[item]
-				}
-			})
-		}
-	}
-	process(target)
-	return obj
 }
 
 interface addInterface {
