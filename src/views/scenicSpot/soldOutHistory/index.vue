@@ -6,10 +6,13 @@
 					<a-input v-model:value="state.tableData.param.name" placeholder="请输入" />
 				</search-item>
 				<search-item label="门票分类">
-					<a-select allowClear ref="select" v-model:value="state.tableData.param.auditStatus" style="width: 200px" placeholder="请选择门票分类">
-						<a-select-option :value="-1">option1</a-select-option>
+					<a-select ref="select" style="width: 200px" placeholder="请选择门票分类" v-model:value="state.tableData.param.auditStatus">
+						<a-select-option value="0">联票</a-select-option>
+						<a-select-option value="1">单票</a-select-option>
+						<a-select-option value="2">演出票</a-select-option>
 					</a-select>
 				</search-item>
+
 				<template #button>
 					<a-button @click="initList">查询</a-button>
 				</template>
