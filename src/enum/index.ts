@@ -104,7 +104,7 @@ export enum AuditStaus {
 export enum TakeGroupStatus {
   Drafts = 1,     // 草稿 1
   WaitingGroup,   // 待接团 2
-  WaitingReserved,   // 待预定 3
+  WaitingReserved,   // 待预订 3
   Dispatched,   // 已出团 4
   Cancellation,    // 已散团 5
   WaitingChange,  // 待变更 6

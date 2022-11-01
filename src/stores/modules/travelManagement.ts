@@ -139,6 +139,10 @@ export const useTravelStore = defineStore({
 			drafts: cloneDeep(takeGroupListParams),
 			waitingGroup: cloneDeep(takeGroupListParams),
 			waitingReserved: cloneDeep(takeGroupListParams),
+			dispatched: cloneDeep(takeGroupListParams),
+			cancellation: cloneDeep(takeGroupListParams),
+			waitingChange: cloneDeep(takeGroupListParams),
+			overtime: cloneDeep(takeGroupListParams),
     },
 		enterpriseState: [
 			{
@@ -184,7 +188,7 @@ export const useTravelStore = defineStore({
 		takeGroupStatus: {
 			[TakeGroupStatus.Drafts]: '草稿',
 			[TakeGroupStatus.WaitingGroup]: '待接团',
-			[TakeGroupStatus.WaitingReserved]: '待预定',
+			[TakeGroupStatus.WaitingReserved]: '待预订',
 			[TakeGroupStatus.Dispatched]: '已出团',
 			[TakeGroupStatus.Cancellation]: '已散团',
 			[TakeGroupStatus.WaitingChange]: '待变更',

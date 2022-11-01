@@ -22,14 +22,14 @@
 
         <template v-if="column.key === 'action'">
           <div class="action-btns">
-            <a @click="goToPath(record)">编辑填报</a>
+            <!-- <a>催促审核</a> -->
           </div>
         </template>
 			</template>
 		</CommonTable>
 		<CommonPagination
-			:current="travelStore.takeGroupList.drafts.params.pageNo"
-			:page-size="travelStore.takeGroupList.drafts.params.pageSize"
+			:current="travelStore.takeGroupList.waitingChange.params.pageNo"
+			:page-size="travelStore.takeGroupList.waitingChange.params.pageSize"
 			:total="state.total"
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
@@ -49,13 +49,13 @@
 	const travelStore = useTravelStore();
 	const router = useRouter()
 	const state = reactive({
-		total:  computed(() => travelStore.takeGroupList.drafts.total),
+		total:  computed(() => travelStore.takeGroupList.waitingChange.total),
 		params: {
 			pageNo: 1,
 			pageSize: 10,
 			status: 1
 		},
-		tableData: computed(() => travelStore.takeGroupList.drafts.list),
+		tableData: computed(() => travelStore.takeGroupList.waitingChange.list),
 		columns: [
 			{
 				title: ' 序号 ',
@@ -110,25 +110,16 @@
 		]
 	})
 	const onSearch = async () => {
-		travelStore.takeGroupList.drafts.params.status = TakeGroupStatus.Drafts
-		const res = await travelStore.getTravelList(travelStore.takeGroupList.drafts.params);
-		travelStore.setTakeGroupList(res, 'drafts')
+		travelStore.takeGroupList.waitingChange.params.status = TakeGroupStatus.WaitingChange
+		const res = await travelStore.getTravelList(travelStore.takeGroupList.waitingChange.params);
+		travelStore.setTakeGroupList(res, 'waitingChange')
 	}
 	const onHandleCurrentChange = (e:any) => {
-		travelStore.takeGroupList.drafts.params.pageNo = e
+		travelStore.takeGroupList.waitingChange.params.pageNo = e
 		onSearch()
 	}
 	const pageSideChange = () => {
 
-	}
-	const goToPath = (row: any) => {
-		router.push({
-			path: '/travel/travel_manage/add_travel',
-			query: {
-				id: row.oid,
-				itineraryNo: row.itineraryNo
-			}
-		})
 	}
   const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
     console.log(record, selected, selectedRows);
