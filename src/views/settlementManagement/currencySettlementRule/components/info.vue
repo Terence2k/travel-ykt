@@ -44,6 +44,12 @@
 					<span>{{ formState.costExplanation }}</span>
 				</div>
 			</a-form-item>
+			<a-form-item label="扣费模式" name="deductionModel">
+				<div>
+					<span v-if="formState.deductionModel === 1">冻结金额</span>
+					<span v-if="formState.deductionModel === 2">核销金额</span>
+				</div>
+			</a-form-item>
 			<a-form-item label="状态" name="state">
 				<div>
 					<span>{{ getTypeName('ruleStatus') }}</span>
@@ -135,6 +141,7 @@ const formState: UnwrapRef<FormState> = reactive({
 	level: null,
 	productType: null,
 	hotelRatedId: null,
+	deductionModel: null,
 });
 const columns = ref([
 	{
