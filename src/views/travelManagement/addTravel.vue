@@ -141,7 +141,7 @@ const saveItinerary = (val: any) => {
 			sendGroup(itineraryId)
 		}
 		if (isSaveBtn.value) {
-			router.push('/travel/travel_manage/travel_list')
+			// router.push('/travel/travel_manage/travel_list')
 			let msg = route.query.id ? '编辑成功' : '新增成功'
 			message.success(msg);
 		}
