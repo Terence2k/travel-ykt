@@ -2,10 +2,6 @@
 	<div class="wrapper">
 		<BaseModal :modelValue="modelValue" title="关联核销项目" width="600px" @cancel="cancel">
 			<a-form :model="formValidate" :label-col="{ span: 3 }" :wrapper-col="{ span: 12, offset: 1 }" labelAlign="left">
-				<!-- {{ formValidate.proj }}
-				{{ options }} -->
-				{{ tableList }}
-				{{ viewId }}viewID
 				<a-form-item label="核销项目" class="fz14" v-bind="validateInfos.proj">
 					<a-select
 						v-model:value="formValidate.proj"
@@ -70,8 +66,7 @@
 				:controls="false"
 				@change="changeIfverification"
 			/>
-			次
-			<!-- (最小值：{{ times }}，最大值：{{ timesMax }}) -->
+			次 (最小值：{{ times }}，最大值：{{ timesMax }})
 		</span>
 	</div>
 	<DelModal :params="{ title: '删除', content: '是否确定该条数据' }" v-model="delShow" @submit="delSubmit" @cancel="delCancel" />
@@ -231,8 +226,6 @@ const delCancel = () => {
 	delIndex.value = null;
 };
 const apply = () => {
-	console.log('sss');
-
 	validate()
 		.then((res) => {
 			console.log(isCreate.value, type.value, '099', res);
@@ -302,7 +295,7 @@ const handleChange = (value: any) => {
 
 const hadList = (rule: any, value: any) => {
 	let len = value.length;
-	console.log(value, 'value');
+	console.log(value, 'value', len, value[0]?.init, !value);
 
 	if (!value) {
 		return Promise.reject('请填写');
@@ -311,6 +304,10 @@ const hadList = (rule: any, value: any) => {
 		return Promise.reject('请填写');
 	}
 	if (len == 1 && value[0]?.init) {
+		return Promise.reject('请填写');
+	}
+
+	if (typeof value[0] !== 'number') {
 		return Promise.reject('请填写');
 	}
 	return Promise.resolve();
@@ -353,10 +350,7 @@ const setValue = (value: number) => {
 watch(
 	() => props.viewId,
 	async (nVal) => {
-		console.log(nVal, 'asdasd');
-
 		if (nVal) {
-			console.log(nVal, 'nVal');
 			getList(nVal);
 		}
 	}

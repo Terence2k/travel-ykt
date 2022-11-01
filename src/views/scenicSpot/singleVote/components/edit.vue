@@ -171,6 +171,7 @@ const pageStatus = computed(() => {
 	return route.currentRoute.value?.query?.s;
 });
 const first = ref(false);
+
 const isShow = computed(() => {
 	return first.value && type.value == '1' && typeof formData.data.optionalVerificationCount !== 'number';
 });
@@ -244,6 +245,10 @@ const onSubmit = async () => {
 	first.value = true;
 	validate()
 		.then(() => {
+			if (isShow.value) {
+				return;
+			}
+
 			console.log(toRaw(formData.data), 'psss');
 			// save(toRaw(formData.data));
 			save(toRaw(formData.data));
