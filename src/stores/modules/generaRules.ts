@@ -16,7 +16,7 @@ export const useGeneraRules = defineStore('generaRules', {
 		],
 		chargeModelList: [
 			{ value: 1, name: '百分比' },
-			{ value: 2, name: '人数' },
+			{ value: 2, name: '按酒店收费' },
 			{ value: 3, name: '价格' },
 		],
 		isPrepaidList: [
@@ -29,6 +29,10 @@ export const useGeneraRules = defineStore('generaRules', {
 			{ value: 0, name: '联票', type: 'UNITE' },
 			{ value: 2, name: '演出票', type: 'SHOW' },
 			// { value: 'SELF', name: '没有子产品，即产品本身' },
+		],
+		deductionModelList: [
+			{ value: 1, name: '冻结金额' },
+			{ value: 2, name: '核销金额' },
 		],
 		hotelRatedList: [], //酒店星级
 	}),

@@ -44,6 +44,15 @@
 			<a-form-item label="费用说明" name="costExplanation">
 				<a-input v-model:value="formState.costExplanation" placeholder="请输入费用说明" allowClear />
 			</a-form-item>
+			<a-form-item label="扣费模式" name="deductionModel">
+				<a-select
+					v-model:value="formState.deductionModel"
+					placeholder="请选择扣费模式"
+					allowClear
+					:options="generaRulesOptions.deductionModelList.map((item) => ({ value: item.value, label: item.name }))"
+				>
+				</a-select>
+			</a-form-item>
 			<a-form-item label="状态" name="ruleStatus">
 				<a-radio-group v-model:value="formState.ruleStatus">
 					<a-radio v-for="item in generaRulesOptions.ruleStatusList" :value="item.value" :key="item.name">{{ item.name }}</a-radio>
@@ -55,7 +64,7 @@
 			<div class="title">收费规则</div>
 			<a-form-item label="收费模式" name="chargeModel">
 				<a-radio-group v-model:value="formState.chargeModel">
-					<a-radio v-for="item in generaRulesOptions.chargeModelList" :value="item.value" :key="item.name">{{ item.name }}</a-radio>
+					<a-radio v-for="item in getChargeModelList" :value="item.value" :key="item.name">{{ item.name }}</a-radio>
 				</a-radio-group>
 			</a-form-item>
 			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 1" :rules="rulesRef.percentage">
@@ -72,10 +81,10 @@
 					</template>
 				</a-input-number>
 			</a-form-item>
-			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 2" :rules="rulesRef.integer">
-				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入收费数量（单位：人）" style="width: 100%">
+			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 2 && formState.productType === 2" :rules="rulesRef.integer">
+				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入酒店房间数收费（单位：个）" style="width: 100%">
 					<template #addonAfter>
-						<span>人</span>
+						<span>个</span>
 					</template>
 				</a-input-number>
 			</a-form-item>
@@ -178,6 +187,7 @@ const formState: UnwrapRef<FormState> = reactive({
 	productSonType: null,
 	productType: null,
 	hotelRatedId: null,
+	deductionModel: null,
 });
 const columns = ref([
 	{
@@ -218,6 +228,7 @@ const rulesRef = {
 	prepaidCompany: [{ required: true, message: '请选择垫付单位' }],
 	lastCostBelongCompany: [{ required: true, message: '请选择剩余费用归属' }],
 	hotelRatedId: [{ required: true, message: '请选择酒店星级' }],
+	deductionModel: [{ required: true, message: '请选择扣费模式' }],
 	// 百分比
 	percentage: [{ required: true, validator: isBtnZeroToHundred, trigger: 'blur' }],
 	// 人数和金额
@@ -358,6 +369,25 @@ const getCompanyTypeName = computed(() => (value: number) => {
 		return generaRulesOptions.prepaidCompanyList[idx]['name'];
 	}
 	return;
+});
+// 判断是否为酒店时出现按酒店房间数量收费的枚举
+const getChargeModelList = computed(() => {
+	if (generaRulesOptions.chargeModelList && generaRulesOptions.chargeModelList.length) {
+		const arr: any = [];
+		generaRulesOptions.chargeModelList.forEach((item) => {
+			if (formState.productType === 2) {
+				arr.push(item);
+			} else {
+				if (item.value !== 2) {
+					arr.push(item);
+				}
+			}
+		});
+		console.log(arr, `arr`);
+
+		return arr;
+	}
+	return [];
 });
 </script>
 

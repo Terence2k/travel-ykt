@@ -17,6 +17,7 @@ export interface FormState {
 	oid?: number | null;
 	charCount?: number | string | null;
 	hotelRatedId?: number | string | null;
+	deductionModel?: number | null;
 }
 export interface splitListType {
 	companyType?: number | null | string;

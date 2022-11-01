@@ -35,6 +35,15 @@
 			<a-form-item label="费用说明">
 				<a-input v-model:value="formState.costExplanation" placeholder="请输入费用说明" allowClear />
 			</a-form-item>
+			<a-form-item label="扣费模式" name="deductionModel">
+				<a-select
+					v-model:value="formState.deductionModel"
+					placeholder="请选择扣费模式"
+					allowClear
+					:options="generaRulesOptions.deductionModelList.map((item) => ({ value: item.value, label: item.name }))"
+				>
+				</a-select>
+			</a-form-item>
 			<a-form-item label="状态" name="ruleStatus">
 				<a-radio-group v-model:value="formState.ruleStatus">
 					<a-radio v-for="item in generaRulesOptions.ruleStatusList" :value="item.value" :key="item.name">{{ item.name }}</a-radio>
@@ -46,7 +55,7 @@
 			<div class="title">收费规则</div>
 			<a-form-item label="收费模式" name="chargeModel">
 				<a-radio-group v-model:value="formState.chargeModel">
-					<a-radio v-for="item in generaRulesOptions.chargeModelList" :value="item.value" :key="item.name">{{ item.name }}</a-radio>
+					<a-radio v-for="item in getChargeModelList" :value="item.value" :key="item.name">{{ item.name }}</a-radio>
 				</a-radio-group>
 			</a-form-item>
 			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 1" :rules="rulesRef.percentage">
@@ -63,10 +72,10 @@
 					</template>
 				</a-input-number>
 			</a-form-item>
-			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 2" :rules="rulesRef.integer">
-				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入收费数量（单位：人）" style="width: 100%" :min="0">
+			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 2 && formState.productType === 2" :rules="rulesRef.integer">
+				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入酒店房间数收费（单位：个）" style="width: 100%" :min="0">
 					<template #addonAfter>
-						<span>人</span>
+						<span>个</span>
 					</template>
 				</a-input-number>
 			</a-form-item>
@@ -181,6 +190,7 @@ const formState: UnwrapRef<FormState> = reactive({
 	level: null,
 	productSonType: null,
 	productType: null,
+	deductionModel: null,
 });
 const columns = ref([
 	{
@@ -222,6 +232,7 @@ const rulesRef = {
 	// chargeCount: [{ required: true, message: '请填写收费数量' }],
 	chargeProductSonId: [{ required: true, message: '请选择收费子产品' }],
 	lastCostBelongCompany: [{ required: true, message: '请选择剩余费用归属' }],
+	deductionModel: [{ required: true, message: '请选择扣费模式' }],
 	// 百分比
 	percentage: [{ required: true, validator: isBtnZeroToHundred, trigger: 'blur' }],
 	// 人数和金额
@@ -284,9 +295,9 @@ const init = async () => {
 		formState.chargeModel = 1;
 		// // 默认为景区
 		formState.productType = Number(query.productType);
-		// 从父元素带过来
-		if (query.productType === 1) {
-			formState.productSonType = String(query.productSonType);
+		// 从父元素带过来 --- 当为景区时 productSonType 等于父元素的 productSonType
+		if (Number(query.productType) === 1) {
+			formState.productSonType = Number(query.productSonType);
 		}
 	}
 	console.log(formState, `formState`);
@@ -337,6 +348,7 @@ const submit = () => {
 	formRef.value
 		.validate()
 		.then(() => {
+			console.log(formState, `formState`);
 			if (cacheData.value.edit) {
 				edit();
 			} else {
@@ -357,6 +369,7 @@ const save = async () => {
 };
 const edit = async () => {
 	saveParams();
+	console.log(formState, `formState`);
 	const result = await api.updateProductRule(formState);
 	console.log(result, `result`);
 	message.success('修改成功');
@@ -369,11 +382,6 @@ const edit = async () => {
 	// }
 };
 const saveParams = () => {
-	// 暂时写死
-	// formState.chargeProductSonId = 1;
-	// if (formState.productSonType === 'SELF') {
-	// 	formState.chargeProductSonId = formState.productId;
-	// }
 	if (oid.value) {
 		formState.oid = oid.value;
 	}
@@ -400,6 +408,25 @@ const getCompanyTypeName = computed(() => (value: string) => {
 });
 const showProductSon = computed(() => {
 	return Number(route.currentRoute.value.query.productType) === 1;
+});
+// 判断是否为酒店时出现按酒店房间数量收费的枚举
+const getChargeModelList = computed(() => {
+	if (generaRulesOptions.chargeModelList && generaRulesOptions.chargeModelList.length) {
+		const arr: any = [];
+		generaRulesOptions.chargeModelList.forEach((item) => {
+			if (formState.productType === 2) {
+				arr.push(item);
+			} else {
+				if (item.value !== 2) {
+					arr.push(item);
+				}
+			}
+		});
+		console.log(arr, `arr`);
+
+		return arr;
+	}
+	return [];
 });
 </script>
 

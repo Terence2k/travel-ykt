@@ -49,6 +49,12 @@
 						<span v-if="record.ruleStatus === 0">禁用</span>
 						<span v-if="record.ruleStatus === 1">启用</span>
 					</template>
+					<!-- 扣费模式 -->
+					<template v-if="column.key === 'deductionModel'">
+						<span v-if="record.deductionModel === 1">冻结金额</span>
+						<span v-if="record.deductionModel === 2">核销金额</span>
+						<span v-else></span>
+					</template>
 					<!-- 收费名称 -->
 					<template v-if="column.key === 'chargeCount'">
 						<span v-if="record.chargeModel === 1">{{ record.chargeCount }}%</span>
@@ -114,6 +120,11 @@ const columns = [
 		title: '收费金额',
 		dataIndex: 'chargeCount',
 		key: 'chargeCount',
+	},
+	{
+		title: '扣费模式',
+		dataIndex: 'deductionModel',
+		key: 'deductionModel',
 	},
 	{
 		title: '费用说明',
