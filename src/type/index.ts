@@ -17,3 +17,6 @@ export type AuditField = 'financeSendGroup' |
 								'financeChange' |
 								'administrativeSendGroup' |
 								'administrativeChange'
+
+export type TakeGroupField = 'drafts' | 
+                'waitingGroup'
