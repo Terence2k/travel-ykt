@@ -74,10 +74,10 @@ export async function getCompandType() {
 	});
 }
 // 获取核销项目列表
-export async function getVariflist() {
+export async function getVariflist(id: number) {
 	return request({
 		// url: `${commonPath}/ticket-service/public/api/scenic-one-ticket/varif-list?id=2`,
-		url: `${commonPath}/ticket-service/public/api/scenic-one-ticket/varif-list`,
+		url: `${commonPath}/ticket-service/public/api/scenic-one-ticket/varif-list/${id}`,
 		method: 'get',
 	});
 }

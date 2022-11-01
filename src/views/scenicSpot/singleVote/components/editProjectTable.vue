@@ -2,6 +2,10 @@
 	<div class="wrapper">
 		<BaseModal :modelValue="modelValue" title="关联核销项目" width="600px" @cancel="cancel">
 			<a-form :model="formValidate" :label-col="{ span: 3 }" :wrapper-col="{ span: 12, offset: 1 }" labelAlign="left">
+				<!-- {{ formValidate.proj }}
+				{{ options }} -->
+				{{ tableList }}
+				{{ viewId }}viewID
 				<a-form-item label="核销项目" class="fz14" v-bind="validateInfos.proj">
 					<a-select
 						v-model:value="formValidate.proj"
@@ -66,7 +70,8 @@
 				:controls="false"
 				@change="changeIfverification"
 			/>
-			次 (最小值：{{ times }}，最大值：{{ timesMax }})
+			次
+			<!-- (最小值：{{ times }}，最大值：{{ timesMax }}) -->
 		</span>
 	</div>
 	<DelModal :params="{ title: '删除', content: '是否确定该条数据' }" v-model="delShow" @submit="delSubmit" @cancel="delCancel" />
@@ -97,6 +102,11 @@ const props = defineProps({
 	tableList: {
 		type: Array,
 		default: () => [],
+		require: true,
+	},
+	viewId: {
+		type: Number || null,
+		default: null,
 		require: true,
 	},
 	// params: Object,
@@ -221,9 +231,11 @@ const delCancel = () => {
 	delIndex.value = null;
 };
 const apply = () => {
+	console.log('sss');
+
 	validate()
 		.then((res) => {
-			console.log(isCreate.value, type.value, '099');
+			console.log(isCreate.value, type.value, '099', res);
 
 			if (!type.value) {
 				console.log('formValidate.initData');
@@ -263,18 +275,18 @@ const cancel = () => {
 };
 const options = ref([
 	{
-		value: '1',
+		value: 1,
 		label: '入园',
 		id: 1,
 	},
 	{
-		value: '2',
+		value: 2,
 		label: '游戏机',
 		id: 2,
 	},
 
 	{
-		value: '3',
+		value: 3,
 		label: '其他',
 		id: 3,
 	},
@@ -288,15 +300,31 @@ const handleChange = (value: any) => {
 	formValidate.proj = value;
 };
 
+const hadList = (rule: any, value: any) => {
+	let len = value.length;
+	console.log(value, 'value');
+
+	if (!value) {
+		return Promise.reject('请填写');
+	}
+	if (len <= 0) {
+		return Promise.reject('请填写');
+	}
+	if (len == 1 && value[0]?.init) {
+		return Promise.reject('请填写');
+	}
+	return Promise.resolve();
+};
+
 // 表单
 const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
 	formValidate,
 	reactive({
-		proj: [{ required: true, message: '请填写' }],
+		proj: [{ required: true, message: '请填写', validator: hadList }],
 	})
 );
-const getList = async () => {
-	formData.data = await api.getVariflist();
+const getList = async (id: number) => {
+	formData.data = await api.getVariflist(id);
 	// let res = await api.getScenicOneTicket();
 
 	let arr = formData.data.map((i: any) => {
@@ -304,13 +332,14 @@ const getList = async () => {
 	});
 
 	options.value = arr.length ? arr : options.value;
+	options.value = arr;
 };
 
 // 删除提示
 const delShow = ref(false);
 const delIndex = ref<null | number>();
 onMounted(() => {
-	getList();
+	// getList();
 	console.log(pageStatus.value && !type.value, '单点新增');
 	if (pageStatus.value && !type.value) {
 		emits('add-verification-obj-sign', formValidate.initData);
@@ -320,6 +349,18 @@ onMounted(() => {
 const setValue = (value: number) => {
 	allTimes.value = value;
 };
+
+watch(
+	() => props.viewId,
+	async (nVal) => {
+		console.log(nVal, 'asdasd');
+
+		if (nVal) {
+			console.log(nVal, 'nVal');
+			getList(nVal);
+		}
+	}
+);
 
 defineExpose({
 	setValue,

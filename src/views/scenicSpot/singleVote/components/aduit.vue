@@ -149,7 +149,8 @@ const getDeatil = async (id: number) => {
 	console.log(res, 'getDeatils');
 	formValidate.data = res;
 	formValidate.data.dateList = formValidate.data.dateList.map((item) => {
-		return { ...item, time: [dayjs(item.startDateTime), dayjs(item.endDateTime)] };
+		return { ...item, time: [item.startDateTime, item.endDateTime] };
+		// dayjs(' 00:00:00', 'HH:mm')
 	});
 };
 // 关闭弹窗
