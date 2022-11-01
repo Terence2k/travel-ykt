@@ -206,6 +206,7 @@ export const travelManagement = {
             showLoading: true
         });
     },
+    // 管理部门审核
     auditInfo(data: any) {
         return request({
             url: `${commonPath}/customer-service/public/api/sys/audit/flow/handle`,
@@ -227,7 +228,30 @@ export const travelManagement = {
             method: 'get',
             showLoading: true
         });
-    }
+    },
+    // 获取审核详情
+    getAuditInfo(id: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/audit/auditDetail?oid=${id}`,
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            method: 'get',
+            showLoading: true
+        });
+    },
+    // 财务部门审核
+    financeAudit(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/financeAudit`,
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            method: 'put',
+            data,
+            showLoading: true
+        });
+    },
     
     
 }

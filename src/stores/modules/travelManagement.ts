@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { GroupMode, GroupStatus, Gender, GuideType, FeeModel, insuranceType, AuditStaus} from '@/enum';
 import api from '@/api/index';
 import { cloneDeep } from 'lodash';
-import { Field } from '@/type';
+import { AuditField, Field } from '@/type';
 import dayjs, { Dayjs } from 'dayjs';
 import { CODEVALUE } from '@/constant';
 interface TraveDataItem {
@@ -21,7 +21,8 @@ export const traveListParams = {
 		keyWord: '',
 		keyWordType: 1,
 		groupType: '',
-		time: []
+		time: [],
+		isSend: true
 	}
 }
 export const useTravelStore = defineStore({
@@ -35,14 +36,14 @@ export const useTravelStore = defineStore({
 		},
 		groupStatus: {
 			[GroupStatus.Drafts]: '草稿',
+			[GroupStatus.WaitRegiment]: '待审核',
 			[GroupStatus.WaitingGroup]: '待接团',
-			[GroupStatus.RefuseGroup]: '拒绝接团',
-			// [GroupStatus.WaitRegiment]: '待出团',
+			// [GroupStatus.RefuseGroup]: '拒绝接团',
+			[GroupStatus.Cancellation]: '已散团',
 			[GroupStatus.HaveABall]: '已接团',
 			[GroupStatus.WaitingChange]: '待变更',
-			[GroupStatus.CloseAnAccount]: '已结算',
-			[GroupStatus.Cancellation]: '已撤销',
-			[GroupStatus.Overtime]: '审核超时',
+			// [GroupStatus.CloseAnAccount]: '已结算',
+			[GroupStatus.Overtime]: '已过期',
 
 		},
 		guideType: {
@@ -109,7 +110,8 @@ export const useTravelStore = defineStore({
 			waitingChange: cloneDeep(traveListParams),
 			closeAnAccount: cloneDeep(traveListParams),
 			cancellation: cloneDeep(traveListParams),
-			overtime: cloneDeep(traveListParams)
+			overtime: cloneDeep(traveListParams),
+			waitRegiment: cloneDeep(traveListParams)
 		},
 		auditList: {
 			financeSendGroup: cloneDeep(traveListParams),
@@ -264,7 +266,7 @@ export const useTravelStore = defineStore({
 			this.traveList[key].list = data.content
 			this.traveList[key].total = data.total
 		},
-		setAuditList(data: any, key: Field) {
+		setAuditList(data: any, key: AuditField) {
 			this.auditList[key].list = data.content
 			this.auditList[key].total = data.total
 		},

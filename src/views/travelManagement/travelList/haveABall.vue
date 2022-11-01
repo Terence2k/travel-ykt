@@ -3,7 +3,7 @@
 		<CommonTable :row-selection="{onSelect}" :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
 		<template #button>
 		</template>
-		<template #bodyCell="{ column, text, index }">
+		<template #bodyCell="{ column, text, index, record }">
 			<template v-if="column.key === 'index'">
 				<div>
 						{{(state.params.pageNo - 1) * (state.params.pageSize) + (index + 1)}}
@@ -16,8 +16,8 @@
 
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
-				<a>变更</a>
-				<a>结算预览</a>
+				<a @click="goToPath(record)">查看行程单</a>
+				<a>催促地接社</a>
 			</div>
 		</template>
 				</template>
@@ -41,6 +41,7 @@
 	import { GroupMode, GroupStatus } from '@/enum'
 
 	const travelStore = useTravelStore();
+	const router = useRouter()
 	const state = reactive({
 		total: computed(() => travelStore.traveList.haveABall.total),
 		params: {
@@ -107,6 +108,15 @@
 		const res = await travelStore.getTravelList(travelStore.traveList.haveABall.params);
 	
 		travelStore.setTraveList(res, 'haveABall')
+	}
+	const goToPath = (row: any) => {
+		router.push({
+			path: '/travel/travel_manage/add_travel',
+			query: {
+				id: row.oid,
+				itineraryNo: row.itineraryNo
+			}
+		})
 	}
 	const onHandleCurrentChange = () => {
 
