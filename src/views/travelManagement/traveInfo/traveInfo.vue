@@ -44,7 +44,7 @@
 						</div>
 					</template>
 
-					<template v-if="column.key === 'action' && travelStore.teamStatus">
+					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a v-if="travelStore.reserveStatus" @click="add('reserveTicketPop', record.oid)">预定</a>
 							<a v-if="travelStore.teamStatus" class="item" @click="add('addTicketPop', record.oid)">编辑</a>

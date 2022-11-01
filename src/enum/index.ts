@@ -99,3 +99,14 @@ export enum AuditStaus {
   FinanceSendGroup, // 带财务审核（发团）5
   FinanceChange, // 待财务审核（变更）6
 }
+
+// 接团状态类型
+export enum TakeGroupStatus {
+  Drafts = 1,     // 草稿 1
+  WaitingGroup,   // 待接团 2
+  WaitingReserved,   // 待预定 3
+  Dispatched,   // 已出团 4
+  Cancellation,    // 已散团 5
+  WaitingChange,  // 待变更 6
+  Overtime,        // 已过期 7
+}

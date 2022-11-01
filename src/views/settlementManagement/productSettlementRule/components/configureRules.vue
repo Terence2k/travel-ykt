@@ -25,6 +25,11 @@
 							getProductName(record.productSonType, record.chargeProductSonId)
 						}}</span>
 					</template>
+					<!-- deductionModel 扣费模式 -->
+					<template v-if="column.key === 'deductionModel'">
+						<span v-if="record.deductionModel === 1">冻结金额</span>
+						<span v-if="record.deductionModel === 2">核销金额</span>
+					</template>
 					<!-- 优先级 -->
 					<template v-if="column.key === 'ruleStatus'">
 						<span v-if="record.ruleStatus === 0">禁用</span>
@@ -94,6 +99,11 @@ const columns = [
 		title: '收费金额',
 		dataIndex: 'chargeCount',
 		key: 'chargeCount',
+	},
+	{
+		title: '扣费模式',
+		dataIndex: 'deductionModel',
+		key: 'deductionModel',
 	},
 	{
 		title: '费用说明',

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { GroupMode, GroupStatus, Gender, GuideType, FeeModel, insuranceType, AuditStaus} from '@/enum';
+import { GroupMode, GroupStatus, Gender, GuideType, FeeModel, insuranceType, AuditStaus, TakeGroupStatus} from '@/enum';
 import api from '@/api/index';
 import { cloneDeep } from 'lodash';
 import { AuditField, Field } from '@/type';
@@ -160,13 +160,22 @@ export const useTravelStore = defineStore({
 			[AuditStaus.FinanceSendGroup]: '发团审核',
 			[AuditStaus.FinanceChange]: '变更审核',
 		},
+		takeGroupStatus: {
+			[TakeGroupStatus.Drafts]: '草稿',
+			[TakeGroupStatus.WaitingGroup]: '待接团',
+			[TakeGroupStatus.WaitingReserved]: '待预定',
+			[TakeGroupStatus.Dispatched]: '已出团',
+			[TakeGroupStatus.Cancellation]: '已散团',
+			[TakeGroupStatus.WaitingChange]: '待变更',
+			[TakeGroupStatus.Overtime]: '已过期',
+		},
 	}),
 	getters: {
 		// 草稿
 		teamStatus(): boolean {
 			const res: any = this.itineraryStatusList.filter((it: any) => it.status == this.baseInfo.status)[0]
 
-			return  res && (res.codeName === CODEVALUE.TRAVE_CODE.DRAFT)
+			return  !res || (res.codeName === CODEVALUE.TRAVE_CODE.DRAFT)
 		},
 		// 预定
 		reserveStatus(): boolean {

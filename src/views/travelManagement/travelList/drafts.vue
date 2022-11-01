@@ -133,7 +133,8 @@
     const formData = new FormData();
     formData.append('itineraryId', id);
     api.travelManagement.sendGroup(formData).then((res: any) => {
-      message.success('发团成功');
+		onSearch()
+      	message.success('发团成功');
     })
   }
 
