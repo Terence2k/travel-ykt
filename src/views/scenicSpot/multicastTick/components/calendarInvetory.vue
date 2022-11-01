@@ -215,6 +215,7 @@ const saveDate = async () => {
 			customDayStock: Number(item.stock), //自选库存
 		};
 	});
+
 	if (isEdit.value) {
 		console.log('调用编辑日历接口', setDayPriceList.value);
 		const { uniteId, subTicketId, startDate, endDate } = state.data;
@@ -228,7 +229,7 @@ const saveDate = async () => {
 	} else {
 		emits('set-calendar-invetory', res);
 	}
-	setDayPriceList.value = [];
+	// setDayPriceList.value = [];
 };
 interface stateType {
 	data: {
