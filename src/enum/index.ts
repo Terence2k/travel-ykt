@@ -30,15 +30,15 @@ export enum GroupMode {
 // (17, "结算完成")
 export enum GroupStatus {
   Drafts = 1,     //草稿1
-  WaitingGroup = 3,   //待接团2
-  HaveABall,      //已接团3
-  RefuseGroup,    //拒绝接团4
-  WaitingChange,  //待变更7
-  CloseAnAccount, //已结算8
+  WaitingGroup = 7,   //待接团2
+  HaveABall = 11,      //已接团3
+  RefuseGroup = 13,    //拒绝接团4
+  WaitingChange = 4,  //待变更7
+  CloseAnAccount = 15, //已结算8
   Cancellation,    //已作废9
-  Overtime,        //审核超时10
+  Overtime = 8,        //审核超时10
   Unpaid,         //未支付
-  WaitRegiment,   //待出团
+  WaitRegiment = 12,   //待出团
 }
 
 // 酒店订单状态

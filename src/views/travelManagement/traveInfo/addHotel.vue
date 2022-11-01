@@ -4,7 +4,8 @@
 			<a-form-item label="选择星级" name="hotelStarId" :rules="[{ required: true, message: '请选择星级' }]">
 				<a-select v-model:value="formState.hotelStarId" placeholder="请选择星级" @change="handleChange">
 					<a-select-option 
-						:value="item.oid" v-for="item in hotelData.hotelStart" 
+						:value="item.oid" 
+						v-for="item in hotelData.hotelStart" 
 						:price="item.price" 
 						:key="item.oid"
 						:name="item.starCode">{{ item.starCode }}</a-select-option>
@@ -179,20 +180,21 @@ const handleHotel = (e: any, option: any) => {
 }
 
 const handleChangCheckIn = () => {
-	disLeave.value = (current: Dayjs) => current && current < dayjs(formState.arrivalDate).add(1, 'day') || 
-	(dayjs(travelStore.teamTime[1]) < current && current) as any;
+	disLeave.value = (current: Dayjs): any => current && current < dayjs(formState.arrivalDate).add(1, 'day') || 
+	(dayjs(travelStore.teamTime[1]) < current && current)
 }
 
 const changeRoomType = (e: any, option: any, index: number) => {
 	formState.roomTypeList[index].roomOccupancyNum = option.num;
-	formState.roomTypeList[index].roomTypeLimitPeople = option.stockNum;
+	formState.roomTypeList[index].roomTypeLimitPeople = option.num;
+	formState.roomTypeList[index].stockNum = option.stockNum
 	formState.roomTypeList[index].roomTypeName = option.name
 	
 }
 
 
 const getHotelStarList = async () => {
-	hotelData.hotelStart = await api.getHotelStarList();
+	hotelData.hotelStart = await api.commonApi.getHotelStarList();
 };
 
 const handleChange = async (id: number, option: any) => {
@@ -206,7 +208,7 @@ const validateCheckNum = async (_rule: Rule, value: string, index: number) => {
 
 	if (value === '') {
 		return Promise.reject('请输入预定房间数量');
-	} else if (Number(value) > formState.roomTypeList[index].roomTypeLimitPeople) {
+	} else if (Number(value) > formState.roomTypeList[index].stockNum) {
 		return Promise.reject('预定房间数量超过最大库存');
 	} else {
 		return Promise.resolve();
@@ -244,17 +246,17 @@ const getOrderAmount = (data: Array<{[k:string]:any}>, startDate: string, endDat
 const handleOk = async (callback: Function) => {
 	try {
 		await formRef.value.validateFields();
-		formState.scheduledNumber = formState.roomTypeList.map((it: any) => Number(it.checkInNumber))
-		.reduce((prev: any, current: any) => prev + current);
+		// formState.scheduledNumber = formState.roomTypeList.map((it: any) => Number(it.checkInNumber))
+		// .reduce((prev: any, current: any) => prev + current);
 		formState.scheduledRooms = formState.roomTypeList.map((it: any) => Number(it.reserveNumber))
 		.reduce((prev: any, current: any) => prev + current);
 		formState.tripNumber = travelStore.touristList.length;
 		formState.itineraryId = route.query.id || traveListData.oid
 		formState.orderAmount = getOrderAmount(formState.roomTypeList, formState.arrivalDate, formState.departureDate)
 		
-		if (Number((formState.scheduledNumber / travelStore.touristList.length).toFixed) < 0.8) {
-			return message.error('入住总人数不低于团客总数的80%')
-		}
+		// if (Number((formState.scheduledNumber / travelStore.touristList.length).toFixed) < 0.8) {
+		// 	return message.error('入住总人数不低于团客总数的80%')
+		// }
 		const newFormState = cloneDeep(formState)
 		newFormState.startDate = newFormState.arrivalDate
 		newFormState.endDate = newFormState.departureDate
@@ -262,7 +264,7 @@ const handleOk = async (callback: Function) => {
 		newFormState.orderFee = newFormState.orderAmount
 		newFormState.reservePeopleCount = newFormState.roomTypeList.map((it:any) => Number(it.checkInNumber)).reduce((prev: number, next: number) => prev + next)
 		newFormState.roomCount = newFormState.roomTypeList.map((it:any) => Number(it.reserveNumber)).reduce((prev: number, next: number) => prev + next)
-		const res = await api.travelManagement.reserveHotel(formState);
+		const res = await api.travelManagement.addHotel(formState);
 		
 		// message.success('新增成功');
 		
@@ -272,6 +274,8 @@ const handleOk = async (callback: Function) => {
 		callback(false);
 	}
 };
+
+
 
 const getRoomType = async (hotelId: number | string, leaveTime: string, enterTime: string) => {
 	hotelData.roomType = await api.getRoomType({
@@ -305,8 +309,11 @@ watch(dialogVisible, (newVal) => {
 			}
 			formState.arrivalDate = res.startDate
 			formState.departureDate = res.endDate
+			let price = hotelData.hotelStart.filter((it:any) => it.oid == res.hotelStarId)[0].price
+			handleChange(res.hotelStarId, {name: res.hotelStar, price: price})
 			formState.roomTypeList = formState.roomTypeList.map((it:any) => {
 				it.reserveNumber = it.roomCount
+				it.roomTypeLimitPeople = it.limitPeople
 				// it.checkInNumber = it.roomCount
 				it.hotelRoomTypeId = it.roomTypeId
 				it.orderAmount = it.unitPrice

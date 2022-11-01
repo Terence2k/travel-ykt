@@ -81,39 +81,13 @@
             <a-form-item label="订单生成时间">
 				<a-input v-model:value="formState.createTime" disabled placeholder="无需填写，订单提交后自动生成" />
 			</a-form-item>
-			<!-- <div>
-				<h3>选择订票人员</h3>
-                <CommonTable :row-selection="{onSelect}" :columns="columns" :dataSource="travelStore.touristList" :scrollY="false">
-                    <template #bodyCell="{ column, text, index, record }">
-                        <template v-if="column.key === 'index'">
-							<div>
-								{{index + 1}}
-							</div>
-						</template>
-                        <template v-if="column.key === 'certificateType'">
-							<div>
-								{{ IDCard.filter((it: any) => it.codeValue === text)[0]?.name }}
-							</div>
-						</template>
-                        <template v-if="column.key === 'gender'">
-							<div>
-								{{ travelStore.genderList.filter((it: any) => it.codeValue === text)[0]?.name }}
-							</div>
-						</template>
-                        <template v-if="column.key === 'certificatePicture'">
-							<div>
-								<img src="" alt="">
-							</div>
-						</template>
-                    </template>
-                </CommonTable>
-			</div> -->
+			
 		</a-form>
 	</BaseModal>
 </template>
 
 <script lang="ts" setup>
-    import CommonTable from '@/components/common/CommonTable.vue';
+    
 	import BaseModal from '@/components/common/BaseModal.vue';
     import { useTravelStore } from '@/stores/modules/travelManagement';
     import api from '@/api';
@@ -134,53 +108,7 @@
 			default: ''
 		}
 	})
-	const columns = [
-        {
-            title: ' 序号 ',
-            key: 'index',
-            width: '80px'
-        },
-        {
-            title: '证件类型',
-            dataIndex: 'certificateType',
-            key: 'certificateType',
-        },
-        {
-            title: '证件号码',
-            dataIndex: 'certificateNo',
-            key: 'certificateNo'
-        },
-        {
-            title: '姓名',
-            dataIndex: 'name',
-            key: 'name',
-        },
-        {
-            title: '性别',
-            dataIndex: 'gender',
-            key: 'gender'
-        },
-        {
-            title: '客源地',
-            dataIndex: 'sourceAddressStr',
-            key: 'sourceAddressStr',
-        },
-        {
-            title: '健康状态',
-            dataIndex: 'healthCode',
-            key: 'healthCode',
-        },
-        {
-            title: '特殊证件类型',
-            dataIndex: 'specialCertificateType',
-            key: 'specialCertificateType',
-        },
-        {
-            title: '证件图片',
-            dataIndex: 'specialCertificatePicture',
-            key: 'specialCertificatePicture',
-        }
-    ]
+	
     const tableData = ref([])
     const ticketData = reactive<{[k:string]: any}>({
         scenicList: [],
@@ -193,20 +121,15 @@
         count: ''
 	});
 
-    const ticketPrice = computed(() => {
+
+	const ticketPrice = computed(() => {
         return ticketData.ticketList.filter((it:any) => it.oid === formState.ticketId)[0]?.price
     })
 
     const getScenicList = async () => {
         ticketData.scenicList = await api.travelManagement.getScenicList()
     }
-    const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
-        console.log(record, selected, selectedRows);
-        const len = selectedRows.length
-        formState.count = len ? len : ''
-        // formState.feelCount
-        formState.moneyCount = len * ticketPrice.value;
-    }
+    
 	const handleOk = async (callback: Function) => {
 		try {
 			await formRef.value.validateFields()
@@ -216,7 +139,7 @@
 			const newFormState = cloneDeep(formState)
 			newFormState.reservePeopleCount = formState.peopleCount
 			newFormState.totalFee = newFormState.peopleCount * newFormState.unitPrice
-			const res = await api.travelManagement.reserveTicket(formState)
+			const res = await api.travelManagement.addTicket(formState)
 			// travelStore.setTicket(newFormState)
 			travelStore.setTicket(newFormState, res)
 			callback()
@@ -226,6 +149,7 @@
 		
 	};
 
+	
 	
     const handleChange = async (event: number, option:any) => {
         formState.ticketId = ''
@@ -250,7 +174,9 @@
 				formState[k] = '';
 			}
 		} else {
+			
 			props.ticketId && api.travelManagement.ticketDetail(props.ticketId).then((res:any) => {
+				handleChange(res.scenicId, {name: res.scenicName})
 				for (let k in res) {
 					formState[k] = res[k]
 				}

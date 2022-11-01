@@ -55,7 +55,7 @@
 							</template>
 						</div>
 					</template>
-					<template v-if="column.key === 'action'">
+					<template v-if="column.key === 'action' && travelStore.teamStatus">
 						<div class="action-btns">
 							<a class="item" v-if="!editableData[record.key ? record.key : record.oid]" @click="edit(record.key ? record.key : record.oid)">编辑</a>
 							<a class="item" v-else @click="save(record.key ? record.key : record.oid)">确定</a>
@@ -65,7 +65,7 @@
 				</template>
 			</CommonTable>
 		</a-form>
-		<div class="footer-btn">
+		<div class="footer-btn" v-if="travelStore.teamStatus">
 			<a-button type="primary" @click="add">添加</a-button>
 			<!-- <a-button>批量删除</a-button> -->
 		</div>

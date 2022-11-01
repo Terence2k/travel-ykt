@@ -6,7 +6,7 @@
 				<template v-if="column.key === 'totalFee'">
 					{{ (record.totalFee / 100) > 0 ? (record.totalFee / 100).toFixed(2) : 0}}
 				</template>
-				<!-- 结算总额 单位转成元-->
+				<!-- 结算金额 单位转成元-->
 				<template v-if="column.key === 'accountingFee'">
 					{{ (record.accountingFee / 100) > 0 ? (record.accountingFee / 100).toFixed(2) : 0}}
 				</template>
@@ -36,6 +36,7 @@ import { message } from 'ant-design-vue';
 import { Modal } from 'ant-design-vue';
 const props = defineProps({
 	params: Object,
+	status: Number
 })
 const router = useRouter();
 const columns = [
@@ -80,7 +81,12 @@ const columns = [
 		key: 'timeText',
 	},
 	{
-		title: '结算总额(元)',
+		title: '结算金额(元)',
+		dataIndex: 'accountingFee',
+		key: 'accountingFee',
+	},
+	{
+		title: '对账批号',
 		dataIndex: 'accountingFee',
 		key: 'accountingFee',
 	},
@@ -106,7 +112,7 @@ const state = reactive({
 			subTravelId: null,
 			startDate: null,
 			endDate: null,
-			status: 14, //10行程中 12预结算 13已结算 14已申请转账
+			status: null, 
 		},
 	},
 });
@@ -134,6 +140,7 @@ const dealData = (params: [any]) => {
 
 const onSearch = async() => {
 	// 处理父组件传递筛选条件
+	state.tableData.param.status = props?.status
 	state.tableData.param.teamTypeId = props.params?.teamTypeId
 	state.tableData.param.itineraryNo = props.params?.itineraryNo
 	state.tableData.param.travelId = props.params?.travelId

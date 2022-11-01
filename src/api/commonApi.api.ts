@@ -37,6 +37,14 @@ export const commonApi = {
             method: 'post',
             showLoading: false
         });
+    },
+    getHotelStarList(data: any) {
+        return request({
+            url: `${commonPath}/hotel-service/public/api/hotel-rated/list`,
+            method: 'get',
+            data,
+            showLoading: false,
+        });
     }
     
     

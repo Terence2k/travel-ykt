@@ -249,6 +249,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 	});
 	return {
 		...toRefs(state),
-		...methods
+		...methods,
+		travelStore
 	}
 }
