@@ -1,11 +1,12 @@
 <template>
 	<div class="form_box">
 		<a-form :model="formModel" :rules="rules" @finish="handleFinish">
-			<p class="text">请输入手机号登录</p>
+			<p class="text">密码登录</p>
+
 			<a-form-item name="account">
 				<a-input class="reset-input" v-model:value="formModel.account" placeholder="请输入账号">
 					<template #prefix>
-						<span class="reset-prefix">手机号</span>
+						<span class="reset-prefix">账号</span>
 					</template>
 				</a-input>
 			</a-form-item>
@@ -17,19 +18,22 @@
 					</template>
 				</a-input>
 			</a-form-item>
-			<div class="register">
-				<span class="register-text" @click="goTo">企业注册</span>
+			<div class="bottom">
+				<div class="register">
+					<span class="register-text" @click="goTo">企业注册</span>
+				</div>
+				<a-button html-type="submit" class="btn" type="primary" :loading="loading">登录</a-button>
+				<a-row style="margin-top: 16px">
+					<a-col :span="12">
+						<a-checkbox class="gray_text" v-model:checked="checked">自动登录</a-checkbox>
+					</a-col>
+					<a-col :span="12" class="text-right">
+						<span class="gray_text">忘记密码?</span>
+					</a-col>
+				</a-row>
 			</div>
-			<a-button html-type="submit" class="btn" type="primary" :loading="loading">登录</a-button>
-			<a-row style="margin-top: 16px">
-				<a-col :span="12">
-					<a-checkbox class="gray_text" v-model:checked="checked">自动登录</a-checkbox>
-				</a-col>
-				<a-col :span="12" class="text-right">
-					<span class="gray_text">忘记密码?</span>
-				</a-col>
-			</a-row>
 		</a-form>
+
 		<!-- <p class="copyright">@copyright JS-banana</p> -->
 	</div>
 </template>
@@ -124,15 +128,12 @@ const goTo = () => {
 	background-color: #fff;
 	border-radius: 4px;
 	.btn {
-		width: 100%;
+		width: 375px;
 		height: 48px;
-		border-radius: 6px;
-		color: #ffffff;
-		font-size: 16px;
-		&:hover {
-			opacity: 0.85;
-			border: none;
-		}
+		background: linear-gradient(132deg, #40f3cb 0%, #0272f0 100%);
+		opacity: 1;
+		border-radius: 4px;
+		margin-left: 22px;
 	}
 	::v-deep(.ant-tabs-tab) {
 		padding: 10px 2px;
@@ -179,13 +180,24 @@ const goTo = () => {
 		opacity: 0.85;
 	}
 	.register {
+		width: 395px;
 		text-align: right;
 		padding-top: 16px;
 		margin-bottom: 12px;
 		.register-text {
-			color: #5ec28f;
 			cursor: pointer;
+			width: 64px;
+			height: 20px;
+			font-size: 16px;
+			font-family: Microsoft YaHei UI;
+			font-weight: 400;
+			line-height: 24px;
+			color: #4197ef;
+			opacity: 1;
 		}
+	}
+	.bottom {
+		margin-top: 130px;
 	}
 }
 </style>
