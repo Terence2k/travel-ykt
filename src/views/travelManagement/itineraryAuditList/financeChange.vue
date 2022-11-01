@@ -82,7 +82,6 @@
 	import CommonTable from '@/components/common/CommonTable.vue';
 	import CommonPagination from '@/components/common/CommonPagination.vue';
   import BaseModal from '@/components/common/BaseModal.vue';
-  import { getUserInfo } from '@/utils/util';
   import { message } from 'ant-design-vue';
   import { Modal } from 'ant-design-vue';
 
@@ -92,7 +91,6 @@
 	import { AuditStaus } from '@/enum'
 
 	const travelStore = useTravelStore();
-  const userInfo = getUserInfo();
 	const state = reactive({
 		total: 0,
 		params: {
@@ -174,7 +172,7 @@
   }
   const auditStatus = (row: any) => {
     console.log('row:', row);
-    state.detail = row;
+    getDetail(row.oid, row);
     changeAuditVisible.value = true;
     
   }
@@ -197,15 +195,12 @@
         content: `您即将批准行程变更申请，是否同意？`,
         onOk() {
           const queryData = {
-            auditTypeCode: 7, //审核类code（详情参考CompanyAuditStatusEnum）
-            auditRemark: rejectReason.value, //审核描述
-            businessType: state.detail.auditInfo[0].auditBusinessType, //审核企业业态
-            uuid: state.detail.auditInfo[0].uuid, //uuid
-            roleId: state.detail.auditInfo[0].roleId || userInfo.sysRoles[0].oid, //角色id为查询是否拥有审核权限时返回的角色id，若返回的角色id为null，则不传
-            auditStatus: 2 //审核类型
+            rejectReason: rejectReason.value, //审核描述
+            itineraryId: state.detail.oid, //uuid
+            isPass: true
           };
           console.log('queryData:', queryData);
-          api.travelManagement.auditInfo(queryData)
+          api.travelManagement.financeAudit(queryData)
             .then((res: any) => {
               console.log('审核返回信息：', res);
               message.success('保存成功');
@@ -222,17 +217,13 @@
     }
   }
   const rejectAudit = () => {
-    console.log('state.detail.auditInfo:', state.detail.auditInfo)
     const queryData = {
-      auditTypeCode: 7, //审核类code（详情参考CompanyAuditStatusEnum）
-      auditRemark: rejectReason.value, //审核描述
-      businessType: state.detail.auditInfo[0].auditBusinessType, //审核企业业态
-      uuid: state.detail.auditInfo[0].uuid, //uuid
-      roleId: state.detail.auditInfo[0].roleId || userInfo.sysRoles[0].oid, //角色id为查询是否拥有审核权限时返回的角色id，若返回的角色id为null，则不传
-      auditStatus: 3 //审核类型
+      rejectReason: rejectReason.value, //审核描述
+      itineraryId: state.detail.oid, //uuid
+      isPass: false
     };
     console.log('queryData:', queryData);
-    api.travelManagement.auditInfo(queryData)
+    api.travelManagement.financeAudit(queryData)
       .then((res: any) => {
         console.log('审核返回信息：', res);
         message.success('保存成功');
@@ -242,13 +233,24 @@
         console.error(err);
       });
   }
+  const getDetail = (id: any, row: any) => {
+    const backup = row;
+    api.travelManagement.getAuditInfo(id)
+    .then((res: any) => {
+      state.detail = res;
+    })
+    .catch((err: any) => {
+      console.error(err);
+      state.detail = backup;
+    });
+  }
 	const onHandleCurrentChange = () => {
 
 	}
 	const pageSideChange = () => {
 
 	}
-	onSearch()
+	onSearch();
 </script>
 <style scoped lang="less">
 .table_box {

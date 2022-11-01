@@ -38,7 +38,7 @@
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a href="javascript:;" @click="toEditPage(record)">编辑</a>
-						<a href="javascript:;" v-if="record.putaway" @click="outDown(index)">
+						<a href="javascript:;" v-if="record.putaway" @click="outDown(record)">
 							{{ !record.putaway ? '上架' : '下架' }}
 						</a>
 					</div>
@@ -153,18 +153,16 @@ const toEditPage = (value: any) => {
 };
 //下架
 const auditRef = ref();
-const downIndex = ref<number | null>(null);
-const outDown = (index: number) => {
-	//未对接口
-	downIndex.value = index;
-	console.log(index);
-	auditRef.value.open();
+const outDown = (value: any) => {
+	auditRef.value.open(value.oid);
 
 	// route.push({ path: '/scenic-spot/multicast/edit' });
 };
 const downPage = () => {
-	state.tableData.data[downIndex.value].putaway = !state.tableData.data[downIndex.value].putaway;
-	message.success('成功');
+	state.tableData.loading = true;
+	setTimeout(() => {
+		initPage();
+	}, 300);
 };
 //新增
 const add = () => {

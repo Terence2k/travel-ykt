@@ -120,8 +120,8 @@ const apply = () => {
 				return i;
 			});
 			console.log(res, params);
-			// let apiRes = api.scenicTicketDown(params);
-			// console.log(apiRes, 'apiRes');
+			let apiRes = api.scenicTicketDown(params);
+			console.log(apiRes, 'apiRes');
 			emits('down-page');
 			cancel();
 		})
