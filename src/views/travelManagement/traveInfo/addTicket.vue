@@ -131,7 +131,10 @@
     }
     
 	const handleOk = async (callback: Function) => {
+		
+		
 		try {
+			let traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {}
 			await formRef.value.validateFields()
 			formState.unitPrice = ticketPrice.value
 			formState.itineraryId = route.query.id || traveListData.oid
@@ -142,6 +145,7 @@
 			const res = await api.travelManagement.addTicket(formState)
 			// travelStore.setTicket(newFormState)
 			travelStore.setTicket(newFormState, res)
+			
 			callback()
 		} catch (errorInfo) {
 			callback(false)

@@ -100,6 +100,7 @@ const saveItinerary = (val: any) => {
 		if (!travelStore.touristList.length) return message.error('请添加游客');
 		if (!travelStore.trafficList.length) return message.error('请添加交通信息');
 	}
+	const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 	const itineraryId =  route.query.id || traveListData.oid
 	let ajax = itineraryId ? api.travelManagement.editItinerary : api.travelManagement.saveItinerary;
 
@@ -164,6 +165,7 @@ watch(obj, (newVal) => {
 });
 
 const getTraveDetail = () => {
+	const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 	if (!route.query.id && !traveListData.oid) {
 		travelStore.setBaseInfo({});
 		travelStore.setGuideList([]);

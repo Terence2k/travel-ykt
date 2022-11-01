@@ -245,6 +245,7 @@ const getOrderAmount = (data: Array<{[k:string]:any}>, startDate: string, endDat
 
 const handleOk = async (callback: Function) => {
 	try {
+		let traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {}
 		await formRef.value.validateFields();
 		// formState.scheduledNumber = formState.roomTypeList.map((it: any) => Number(it.checkInNumber))
 		// .reduce((prev: any, current: any) => prev + current);
