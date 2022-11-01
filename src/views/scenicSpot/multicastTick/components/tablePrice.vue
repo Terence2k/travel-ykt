@@ -161,7 +161,7 @@ const saveDate = async () => {
 		newObjTpl.dateStockList = res;
 		console.log(newObjTpl, 'newObjTpl');
 
-		let resApi = await api.geditCalendarMultiple(newObjTpl);
+		let resApi = await api.editCalendarMultiple(newObjTpl);
 		message.success(resApi);
 		loading.value = false;
 	} else {

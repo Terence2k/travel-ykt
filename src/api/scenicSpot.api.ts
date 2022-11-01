@@ -261,7 +261,7 @@ export async function getCalendarMultiple(data: any) {
 	});
 }
 //联票 编辑库存日历 （仅编辑）
-export async function geditCalendarMultiple(data: any) {
+export async function editCalendarMultiple(data: any) {
 	return request({
 		url: `${commonPath}/ticket-service/public/api/scenic-unite/subUnitePriceDate`,
 		method: 'post',
