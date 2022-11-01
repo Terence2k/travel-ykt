@@ -53,11 +53,11 @@
       dataIndex: 'menuType',
       key: 'menuType',
     },
-    // {
-    //   title: '页面按钮',
-    //   dataIndex: 'buttonName',
-    //   key: 'buttonName',
-    // },
+    {
+      title: '页面按钮',
+      dataIndex: 'buttonName',
+      key: 'buttonName',
+    },
     {
       title: '排序',
       dataIndex: 'sort',
