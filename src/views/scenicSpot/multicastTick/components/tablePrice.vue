@@ -3,6 +3,7 @@
 		<a-spin size="large" :spinning="loading" style="min-height: 30vh">
 			<CommonTable :dataSource="tableList" :columns="columnsCount" :scrollY="false" bordered class="left">
 				<template #bodyCell="{ column, record, index }">
+					<template v-if="column.key === 'settlementModel'"> {{ record.settlementModel }} </template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a href="javascript:;" @click="createData(record, index)">编辑价格日历</a>
@@ -93,10 +94,22 @@ const columnsCount = ref([
 		key: 'price',
 		width: 200,
 	},
+	{
+		title: '参考价格',
+		dataIndex: 'price',
+		key: 'price',
+		width: 200,
+	},
 
 	{
 		title: '操作',
 		key: 'action',
+		width: 200,
+	},
+	{
+		title: '结算归属方',
+		dataIndex: 'settlementModel',
+		key: 'settlementModel',
 		width: 200,
 	},
 ]);

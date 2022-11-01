@@ -154,6 +154,7 @@ const changeOption = (arr: any) => {
 			ticketType: i.ticketType, //门票类型:0-联票，1-单票，2-演出票
 			price: i.price || i.ticketPrice,
 			ticketName: i.ticketName,
+			settlementModel: i.scenicId || null,
 		};
 	});
 };
