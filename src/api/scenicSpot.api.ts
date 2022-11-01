@@ -101,6 +101,7 @@ export async function saveSingleVoteInfo(data: any) {
 		url: commonPath + `/ticket-service/public/api/scenic-one-ticket/save`,
 		method: 'post',
 		data,
+		showLoading: true,
 	});
 }
 
@@ -233,6 +234,7 @@ export async function createMultiple(data: any) {
 		url: `${commonPath}/ticket-service/public/api/scenic-unite`,
 		method: 'post',
 		data,
+		showLoading: true,
 	});
 }
 
@@ -266,6 +268,7 @@ export async function editCalendarMultiple(data: any) {
 		url: `${commonPath}/ticket-service/public/api/scenic-unite/subUnitePriceDate`,
 		method: 'post',
 		data,
+		showLoading: true,
 	});
 }
 

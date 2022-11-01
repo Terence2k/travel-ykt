@@ -300,15 +300,17 @@ const initCalendarList = async (id: number) => {
 	state.data.endDate = nextYear(state.data.startDate);
 	let res = await api.getCalendarMultiple(state.data);
 
-	setDayPriceList.value = res.map((i: any) => ({ ticketPrice: i.ticketPrice, stockDate: i.stockDate }));
+	setDayPriceList.value = res.map((i: any) => {
+		delete i.stock;
+		return i;
+	});
 };
 //弹窗部分
-const modelValue = ref(false);
+
 const calendarRef = ref();
 const createNewCalendarIndex = ref<null | number>(null);
 
 const createData = (value: any, index: number) => {
-	// modelValue.value = true;
 	console.log('value', index, isEdit.value);
 	if (isEdit.value) {
 		initCalendarList(value.ticketId);
@@ -316,24 +318,6 @@ const createData = (value: any, index: number) => {
 		createNewCalendarIndex.value = index;
 	}
 	calendarRef.value.open();
-};
-
-const cancel = () => {
-	modelValue.value = false;
-	// resetFields();
-};
-
-const apply = () => {
-	// validate()
-	// 	.then((res) => {
-	// 		cancel();
-	// 		resetFields();
-	// 		console.log(formValidate, res);
-	// 		// emits('add-rule-obj', toRaw(res));
-	// 	})
-	// 	.catch((err) => {
-	// 		console.log('error', err);
-	// 	});
 };
 
 onMounted(() => {});

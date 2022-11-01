@@ -26,7 +26,8 @@
 				<TablePrice :tableList="formData.data.scenicTicketList" @set-calendar="setCalendar" @del-rule-obj="delRuleObj" @add-rule-obj="addRuleObj" />
 			</a-form-item>
 			<a-form-item label="库存" name="data.dayStock" v-bind="validateInfos[`data.dayStock`]">
-				<a-input v-model:value="formData.data.dayStock" placeholder="请填写库存" />
+				<a-input v-model:value="formData.data.dayStock" placeholder="请填写库存" style="width: 200px; margin-right: 20px" />
+				<a-button type="primary" @click.prevent="calendarInventory">编辑库存日历</a-button>
 			</a-form-item>
 			<a-form-item label="联票价格说明" v-bind="validateInfos[`data.businessLicenseUrl`]" :wrapper-col="{ span: 14 }">
 				<div class="tips">
@@ -54,6 +55,7 @@
 			</div>
 		</a-form>
 	</div>
+	<InventoryCalendar ref="calendarRef" @set-calendar-invetory="setCalendarInvetory" />
 </template>
 
 <script setup lang="ts">
@@ -67,6 +69,8 @@ import { message } from 'ant-design-vue';
 import Pic from '@/components/common/imageWrapper.vue';
 import TableRule from './tableRule.vue';
 import TablePrice from './tablePrice.vue';
+import InventoryCalendar from './calendarInvetory.vue';
+
 const route = useRouter();
 
 const useForm = Form.useForm;
@@ -82,6 +86,7 @@ interface forDataType {
 		ticketName: null | string;
 		scenicTicketList: any[];
 		dayStock: string | number | null;
+		dateStockList: any[];
 	};
 }
 
@@ -95,6 +100,7 @@ const formData = reactive<forDataType>({
 		ticketName: null,
 		scenicTicketList: [],
 		dayStock: null,
+		dateStockList: [],
 	},
 });
 
@@ -118,6 +124,17 @@ const addRuleObj = (obj: any) => {
 		formData.data.discountList = [];
 	}
 	formData.data.discountList?.push(obj);
+};
+
+//库存日历
+const calendarRef = ref();
+const setCalendarInvetory = (value: any) => {
+	formData.data.dateStockList = value;
+};
+//库存部分
+const calendarInventory = (value: any) => {
+	// InventoryIndex.value = index;
+	calendarRef.value.open(formData.data.oid);
 };
 
 //新增-设置日历
