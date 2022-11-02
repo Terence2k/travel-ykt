@@ -11,18 +11,17 @@
       </div>
       <div class="table_box">
         <table class="change_table" cellpadding="16px" border="1">
-          <tr class="row" v-for="(item, index) in changeKeys" :key="item">
-            <td class="key">{{ keyNameList[item] }}</td>
+          <tr class="row" v-for="(value, key) in detailsArrList" :key="key">
+            <td class="key">{{ keyNameList[key] }}</td>
 
-            <td class="value" v-if="['manageUrl', 'businessLicenseUrl'].includes(item) && detailsArrList[item]">
-              <a-image width="200px" :src="detailsArrList[item]" />
+            <td class="value" v-if="['manageUrl', 'businessLicenseUrl'].includes(key) && value">
+              <a-image width="200px" :src="value" />
             </td>
-            <td class="value" v-else-if="item === 'regionCode'">
-              <address-selector v-if="detailsArrList[item][0]" key="oldadd" style="width:30%"
-                v-model:value="detailsArrList[item]" disabled>
+            <td class="value" v-else-if="key === 'regionCode'">
+              <address-selector v-if="value[0]" key="oldadd" style="width:30%" :value="value" disabled>
               </address-selector>
             </td>
-            <td class="value" v-else>{{ getComputedVal(item, detailsArrList[item]) }}</td>
+            <td class="value" v-else>{{ getComputedVal(key, value) }}</td>
           </tr>
         </table>
       </div>
@@ -34,8 +33,9 @@
 import { useRouter, useRoute } from 'vue-router';
 import { CloseOutlined } from '@ant-design/icons-vue';
 import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
-import { getKeylist } from '@/views/baseInfoManage/businessManagement/super/common'
+import { getKeylist, flat } from '@/views/baseInfoManage/businessManagement/super/common'
 import api from '@/api';
+import { string } from 'vue-types';
 const router = useRouter();
 const route = useRoute();
 const back = () => {
@@ -49,7 +49,6 @@ type queryParamsType = {
 }
 const props = defineProps<queryParamsType>()
 const detailsArrList = ref<any>({})
-const changeKeys = ref<string[]>([])
 const keyNameList = ref()
 
 const queryParams = reactive<queryParamsType>({})
@@ -57,9 +56,9 @@ const getComputedVal = computed(() => (key: string, val: any) => {
   if (key === 'accountType') {
     return val == 1 ? '对公账户' : '对私账户'
   } else if (key === 'unitStatus') {
-    return val == 1 ? '停业' : '开业'
-  } else if (key === 'isReduced') {
-    return val == 1 ? '是' : '否'
+    return val === 1 || val === false ? '停业' : '开业'
+  } else if (key === 'derate') {
+    return val === 1 || val === true ? '是' : '否'
   } else if (key === 'businessType') {
     let name = ''
     switch (val) {
@@ -95,35 +94,33 @@ const getComputedVal = computed(() => (key: string, val: any) => {
         break;
     }
     return name
+  } else if (key === 'scenicLevel') {
+    return val ? val + 'A' : ''
   } else {
     return val
   }
 })
 const getData = async () => {
   detailsArrList.value = {}
-  changeKeys.value = []
   let res = await api.getBusinessDetails(queryParams)
+  res = flat(res)
   if (Object.prototype.toString.call(res) !== '[object Object]') return
   keyNameList.value = getKeylist(res.businessType)
   let keyList = Object.keys(keyNameList.value)
-  let dataKetList = Object.keys(res)
-  dataKetList.forEach((key: string) => {
-    if (keyList.includes(key)) {
+  keyList.forEach((key: string) => {
+    if (key === 'regionCode') {
+      if (res.provinceId) {
+        const region = [res.provinceId, res.cityId, res.areaId]
+        detailsArrList.value['regionCode'] = region
+      }
+    } else if (key === 'reduceRules') {
+      if (res.reduceRule && res.fullRule) {
+        detailsArrList.value['reduceRules'] = `满${res.fullRule}减${res.reduceRule}`
+      }
+    } else {
       detailsArrList.value[key] = res[key]
-      changeKeys.value.push(key)
     }
   })
-  if (res.provinceId) {
-    const region = [res.provinceId, res.cityId, res.areaId]
-    detailsArrList.value['regionCode'] = region
-    changeKeys.value.push('regionCode')
-    let i = changeKeys.value.indexOf('addressDetail')
-    let j = changeKeys.value.indexOf('regionCode')
-    if (i !== -1 && j !== -1) {
-      changeKeys.value.splice(j, 1)
-      changeKeys.value.splice(i, 0, 'regionCode')
-    }
-  }
 }
 onActivated(() => {
   if (props.oid) {

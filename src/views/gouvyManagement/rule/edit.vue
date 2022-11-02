@@ -37,16 +37,11 @@
 					</a-row>
 				</a-form-item>
 				<a-form-item label=" 减免模式内容" name="discountConditionName" v-if="formValidate.discountType == '1'">
-					<a-row>
-						<a-col :span="8">
-							<a-select ref="select" placeholder="请选择特殊证件类型" allowClear class="select" v-model:value="formValidate.discountConditionName">
-								<a-select-option v-for="item in state.tableData.list" :value="item.oid">
-									{{ item.name }}
-								</a-select-option>
-							</a-select>
-						</a-col>
-						<a-col :span="8"> </a-col>
-					</a-row>
+					<a-select ref="select" placeholder="请选择特殊证件类型" allowClear class="select" v-model:value="formValidate.discountConditionName">
+						<a-select-option v-for="item in state.tableData.list" :value="item.codeValue">
+							{{ item.name }}
+						</a-select-option>
+					</a-select>
 				</a-form-item>
 				<a-form-item label=" 减免折扣" name="discount">
 					<a-input

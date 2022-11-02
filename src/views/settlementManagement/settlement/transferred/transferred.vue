@@ -87,8 +87,8 @@ const columns = [
 	},
 	{
 		title: '对账批号',
-		dataIndex: 'accountingFee',
-		key: 'accountingFee',
+		dataIndex: 'reconciliationNo',
+		key: 'reconciliationNo',
 	},
 	{
 		title: '操作',

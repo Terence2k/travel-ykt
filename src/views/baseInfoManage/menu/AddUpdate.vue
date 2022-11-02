@@ -9,7 +9,7 @@
 					<a-select-option :value="0">菜单夹</a-select-option>
 					<a-select-option :value="1">功能模块</a-select-option>
 					<a-select-option :value="2">tab页</a-select-option>
-					<!-- <a-select-option :value="3">按钮</a-select-option> -->
+					<a-select-option :value="3">按钮</a-select-option>
 				</a-select>
 			</a-form-item>
 			<a-form-item label="上级菜单" name="parentId">
@@ -107,7 +107,7 @@ const save = () => {
 					parentId: formValidate.value.parentId,
 					sort: formValidate.value.sort,
 					url: formValidate.value.url,
-					buttonId: formValidate.value.buttonId,
+					// buttonId: formValidate.value.buttonId,
 				};
 				addOrUpdateAPI('editMenu');
 			} else {

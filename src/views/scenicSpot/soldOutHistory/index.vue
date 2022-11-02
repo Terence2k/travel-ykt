@@ -6,12 +6,15 @@
 					<a-input v-model:value="state.tableData.param.name" placeholder="请输入" />
 				</search-item>
 				<search-item label="门票分类">
-					<a-select allowClear ref="select" v-model:value="state.tableData.param.auditStatus" style="width: 200px" placeholder="请选择门票分类">
-						<a-select-option :value="-1">option1</a-select-option>
+					<a-select ref="select" style="width: 200px" placeholder="请选择门票分类" v-model:value="state.tableData.param.auditStatus">
+						<a-select-option value="0">联票</a-select-option>
+						<a-select-option value="1">单票</a-select-option>
+						<a-select-option value="2">演出票</a-select-option>
 					</a-select>
 				</search-item>
+
 				<template #button>
-					<a-button @click="initList">查询</a-button>
+					<a-button @click="search">查询</a-button>
 				</template>
 			</CommonSearch>
 			<div class="table-area">
@@ -71,6 +74,7 @@ const commonEnum = useCommonEnum();
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 const route = useRouter();
+const router = useRoute();
 
 const ticketDataTypeList = ['联票', '单票', '演出票'];
 const ticketTypeList = {
@@ -175,18 +179,23 @@ const state = reactive({
 		},
 	},
 });
-
+const search = () => {
+	state.tableData.param.pageNo = 1;
+	initList();
+};
 //搜索
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
 	state.tableData.param.pageNo = val;
 	// onSearch();
+	initList();
 };
 //翻页
 const pageSideChange = (current: number, size: number) => {
 	console.log('changePageSize:', size);
 	state.tableData.param.pageSize = size;
 	// onSearch();
+	initList();
 };
 //编辑
 const toEditPage = (record: any) => {
@@ -228,9 +237,18 @@ const dealData = (params: [any]) => {
 
 	return res;
 };
-
-onMounted(() => {
+const isSearch = () => {
+	console.log(router.query);
+	route.push('/scenic-spot/sold-out-history');
+	state.tableData.param.name = router.query.name;
 	initList();
+};
+onMounted(() => {
+	if (router.query?.name) {
+		isSearch();
+	} else {
+		initList();
+	}
 	// navigatorBar.setNavigator(['景区信息管理']);
 });
 onBeforeUnmount(() => {

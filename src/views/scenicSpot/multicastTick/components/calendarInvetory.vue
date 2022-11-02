@@ -190,7 +190,7 @@ const nextYear = (timestamp: any) => {
 };
 const emits = defineEmits(['set-calendar-invetory']);
 const isEdit = computed(() => {
-	return route.currentRoute.value?.query?.t === '1';
+	return route.currentRoute.value?.query?.t === '1' || route.currentRoute.value.path === '/scenic-spot/multicast/list';
 });
 
 const newObjTpl = reactive<any>({
@@ -215,6 +215,8 @@ const saveDate = async () => {
 			customDayStock: Number(item.stock), //自选库存
 		};
 	});
+	console.log(route.currentRoute.value, 'route');
+
 	if (isEdit.value) {
 		console.log('调用编辑日历接口', setDayPriceList.value);
 		const { uniteId, subTicketId, startDate, endDate } = state.data;
@@ -228,7 +230,7 @@ const saveDate = async () => {
 	} else {
 		emits('set-calendar-invetory', res);
 	}
-	setDayPriceList.value = [];
+	// setDayPriceList.value = [];
 };
 interface stateType {
 	data: {
@@ -252,7 +254,7 @@ const calendarRef = ref();
 const open = (id: number) => {
 	calendarRef.value.open();
 
-	if (isEdit.value) {
+	if (typeof id === 'number') {
 		initEdit(id);
 	}
 };

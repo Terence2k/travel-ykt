@@ -3,6 +3,10 @@
 		<a-spin size="large" :spinning="loading" style="min-height: 30vh">
 			<CommonTable :dataSource="tableList" :columns="columnsCount" :scrollY="false" bordered class="left">
 				<template #bodyCell="{ column, record, index }">
+					<template v-if="column.key === 'settlementModel'">
+						<a-select v-model:value="record.settlementModel" :allowClear="true" ref="select" placeholder="请选择" :options="settlementModelList">
+						</a-select>
+					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a href="javascript:;" @click="createData(record, index)">编辑价格日历</a>
@@ -79,6 +83,11 @@ const props = defineProps({
 		default: () => [],
 		require: true,
 	},
+	settlementModelList: {
+		type: Array,
+		default: () => [],
+		require: true,
+	},
 });
 const columnsCount = ref([
 	{
@@ -92,11 +101,30 @@ const columnsCount = ref([
 		dataIndex: 'price',
 		key: 'price',
 		width: 200,
+		customCell: (record: any, index: number) => {
+			if (record.price && !index) {
+				return { rowSpan: props.tableList.length };
+			} else {
+				return { rowSpan: 0, colSpan: 0 };
+			}
+		},
+	},
+	{
+		title: '参考价格',
+		dataIndex: 'price',
+		key: 'price',
+		width: 200,
 	},
 
 	{
 		title: '操作',
 		key: 'action',
+		width: 200,
+	},
+	{
+		title: '结算归属方',
+		dataIndex: 'settlementModel',
+		key: 'settlementModel',
 		width: 200,
 	},
 ]);
@@ -316,7 +344,14 @@ const createData = (value: any, index: number) => {
 		initCalendarList(value.ticketId);
 	} else {
 		createNewCalendarIndex.value = index;
+		let value = props.tableList[index].dateStockList;
+		if (value) {
+			setDayPriceList.value = value;
+		} else {
+			setDayPriceList.value = [];
+		}
 	}
+
 	calendarRef.value.open();
 };
 

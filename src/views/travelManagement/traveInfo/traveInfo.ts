@@ -35,12 +35,12 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		holteDate: computed(() => travelStore.hotels),
 		gouvyDate:[{
 			comprehensiveFeeProductName:'古维管理费',
-			numberOfTourists:'6',
-			NumberOfPersonsPayable:'6',
-			money:'100',
-			name1:'否',
-			name2:'否',
-			name3:'未冻结',
+			numberOfTourists:'',
+			NumberOfPersonsPayable:'',
+			money:'',
+			name1:'待接团后由地接社申请',
+			name2:'-',
+			name3:'-',
 		}],
 		tableData: [
 			{

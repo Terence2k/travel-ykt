@@ -55,16 +55,16 @@ const keyNameList2 = {
   ...keyNameList1,
   unitStatus: '开业状态', //  0-开业 1-停业
   hotelStarCode: '星级',
-  isReduced: '是否支持减免', // 0-否 1-是
-  reduceRule: '减免规则',
+  derate: '是否支持减免', // 0-否 1-是
+  reduceRules: '减免规则',
 }
 // 景区
 const keyNameList3 = {
   ...keyNameList1,
   unitStatus: '开业状态', //  0-开业 1-停业
   scenicLevel: '等级',
-  isReduced: '是否支持减免', // 0-否 1-是
-  reduceRule: '减免规则',
+  derate: '是否支持减免', // 0-否 1-是
+  reduceRules: '减免规则',
 }
 // 餐厅
 const keyNameList4 = {
@@ -185,6 +185,24 @@ const condition2 = ['YKT']
 const condition3 = ['SUPERVISE', 'ANCIENT_UYGUR']
 // 旅游协会、文旅局
 const condition4 = ['ASSOCIATION', 'CULTURE_BUREAU']
+// 对象扁平化
+const flat = (target: any) => {
+  let obj: any = {};
+  let process = (_target: any) => {
+    if (Object.prototype.toString.call(_target) === '[object Object]') {
+      let keys = Object.keys(_target)
+      keys.forEach(item => {
+        if (Object.prototype.toString.call(_target[item]) === '[object Object]') {
+          process(_target[item])
+        } else {
+          obj[item] = _target[item]
+        }
+      })
+    }
+  }
+  process(target)
+  return obj
+}
 export {
   getKeylist,
   commonFormRules6,
@@ -194,5 +212,6 @@ export {
   condition1,
   condition2,
   condition3,
-  condition4
+  condition4,
+  flat
 }

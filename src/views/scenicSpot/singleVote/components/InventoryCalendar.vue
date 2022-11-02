@@ -184,6 +184,7 @@ const createDateItem = () => {
 		setDayPriceList.value.map((i, index) => {
 			let arrindex = arr.indexOf(i.stockDate),
 				obj = { stockDate: i.stockDate, ticketPrice: currentPrict.value, stock: currentInventory.value };
+			console.log(arrindex, i.stockDate, arr);
 
 			if (arrindex > -1) {
 				arr.splice(arrindex, 1);
@@ -231,8 +232,8 @@ const getAllDateCN = (startTime: Date, endTime: Date) => {
 	var i = 0;
 	while (endTime.getTime() - startTime.getTime() >= 0) {
 		var year = startTime.getFullYear();
-		var month = startTime.getMonth() + 1;
-		var day = startTime.getDate();
+		var month = (startTime.getMonth() + 1).toString().padStart(2, '0');
+		var day = startTime.getDate().toString().padStart(2, '0');
 		date_all[i] = year + '-' + month + '-' + day;
 		startTime.setDate(startTime.getDate() + 1);
 		i += 1;

@@ -122,7 +122,6 @@
       param: {
         pageNo: 1,
         pageSize: 10,
-        availableRange: '',
         roleName: '',
         status: null,
       },

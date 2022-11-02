@@ -19,4 +19,9 @@ export type AuditField = 'financeSendGroup' |
 								'administrativeChange'
 
 export type TakeGroupField = 'drafts' | 
-                'waitingGroup'
+                'waitingGroup' |
+                'waitingReserved' | 
+                'dispatched' |
+                'cancellation' |
+                'waitingChange' |
+                'overtime'

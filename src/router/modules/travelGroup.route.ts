@@ -139,6 +139,79 @@ export default [
 					},
 				]
 			},
+			// storeManagement
+			{
+				path: 'storeManagement',
+				name: 'storeManagement',
+				component: () => import('@/views/storeManagement/index.vue'),
+				meta: {
+					title: '散客门店管理',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					// isDetail: true, // 在左侧的导航栏不会展示
+				},
+			},
+			// touristsElectronicContract
+			{
+				path: 'touristsElectronicContract',
+				name: 'touristsElectronicContract',
+				component: () => import('@/views/touristsElectronicContract/index.vue'),
+				meta: {
+					title: '散客电子合同',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					// isDetail: true, // 在左侧的导航栏不会展示
+				},
+			},
+			// lineManagement
+			{
+				path: 'lineManagement',
+				name: 'lineManagement',
+				component: () => import('@/views/lineManagement/index.vue'),
+				meta: {
+					title: '线路管理',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					// isDetail: true, // 在左侧的导航栏不会展示
+				},
+			},
+			// individualTouristsGroup
+			{
+				path: 'tourists',
+				name: 'tourists',
+				component: () => import('@/views/individualTouristsGroup/index.vue'),
+				redirect: '/travel/tourists/individualTouristsGroup',
+				meta: {
+					title: '散客拼团',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					// isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'individualTouristsGroup',
+						name: 'individualTouristsGroup',
+						component: () => import('@/views/individualTouristsGroup/touristsList.vue'),
+						meta: {
+							title: '',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'addTourists',
+						name: 'addTourists',
+						component: () => import('@/views/individualTouristsGroup/add.vue'),
+						meta: {
+							title: '新增',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				]
+			},
 			// tourGuideManage
 			{
 				path: 'tourGuideManage',

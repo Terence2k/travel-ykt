@@ -6,7 +6,7 @@
 				<template #bodyCell="{ column, text, index, record }">
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a class="item" disabled>提交申请</a>
+							<a class="item">-</a>
 						</div>
 					</template>
 					<template v-if="column.key === 'NumberOfPersonsPayable'">
