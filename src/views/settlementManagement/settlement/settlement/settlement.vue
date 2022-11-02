@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<CommonTable :dataSource="state.tableData.data" :scroll="{ x: '100%',y: '100%' }" rowKey="oid" :columns="columns" :row-selection="rowSelection">
+		<CommonTable :dataSource="state.tableData.data" :scroll="{ x: '100%',y: '100%' }" rowKey="itineraryNo" :columns="columns" :row-selection="rowSelection">
 			<template #button>
 				<div class="btn">
 					<a-button type="primary" @click="transfer('all', null)">申请转账</a-button>
@@ -18,7 +18,8 @@
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a @click="transfer('one', record)">申请转账</a>
+						<!-- 没有对账批号才能单项操作转账 -->
+						<a v-if="record.reconciliationNo == null" @click="transfer('one', record)">申请转账</a>
 						<a @click="toInfo(record)">查看</a>
 					</div>
 				</template>
@@ -33,6 +34,7 @@
 		/>
 	</div>
 	<transfer-modal v-model="transferData.show" @submit="transferConfirm" />
+	<DelModal :params="modalData.params" v-model="modalData.show" @submit="tipSubmit" @cancel="tipCancel" />
 </template>
 
 <script lang="ts" setup>
@@ -41,7 +43,7 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import { reactive, onMounted } from 'vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
-import { Modal } from 'ant-design-vue';
+import DelModal from '@/components/common/DelModal.vue';
 import TransferModal from '@/views/settlementManagement/settlement/settlement/transferModal.vue';
 
 const props = defineProps({
@@ -97,8 +99,8 @@ const columns = [
 	},
 	{
 		title: '对账批号',
-		dataIndex: 'accountingFee',
-		key: 'accountingFee',
+		dataIndex: 'reconciliationNo',
+		key: 'reconciliationNo',
 	},
 	{
 		title: '操作',
@@ -107,11 +109,40 @@ const columns = [
 		width: 208,
 	},
 ];
+const modalData = ref({
+	show: false,
+	params: {},
+	data: {}, // 传参对象
+	type: ''
+});
 // 缓存编辑表格模态框数据
 const transferData = ref({
 	show: false,
 	modalParams: {},
 });
+const tipSubmit = async () => {
+	// 组合转账
+	if (modalData.value.type == 'combination') {
+		api.exportReconciliation(modalData.value.data).then((res: any) => {
+			message.success('操作成功');
+			onSearch();
+		})
+			tipCancel();
+	}
+	// 申请转账
+	if (modalData.value.type == 'transfer') {
+		api.settlementUpdate(modalData.value.data).then((res: any) => {
+			message.success('操作成功');
+			onSearch();
+		})
+		tipCancel();
+	}
+};
+const tipCancel = () => {
+	modalData.value.data = {};
+	modalData.value.type = '';
+	modalData.value.show = false;
+};
 // 申请转账成功回调
 const transferConfirm = () => {
 	onSearch();
@@ -188,65 +219,36 @@ defineExpose({ onSearch });
 // 组合转账
 const combination = () => {
 	// 判断是否有选择项
-	let oid;
 	if (state.selectedRowKeys.length == 0) {
 		message.warn('请先选择组合项');
 		return;
 	}
-	oid = state.selectedRowKeys;
-	console.log('把老子的id给打印出来', oid);
-	Modal.confirm({
-			title: '组合转账',
-			width: 560,
-			closable: true,
-			centered: true,
-			icon: false,
-			content: '即将为所选行程单发起组合转账，是否确定组合转账？',
-			onOk() {
-				// api
-				// 	.comprehensiveFeeEnable(record.oid)
-				// 	.then((res: any) => {
-						message.success('操作成功');
-				// 		onSearch();
-				// 	})
-				// 	.catch((err: any) => {
-				// 		message.error(err || '操作失败');
-				// 	});
-			},
-			onCancel() {},
-		});
+	if (state.selectedRowKeys.length == 1) {
+		message.warn('请选择两个及以上组合项');
+		return;
+	}
+	modalData.value.params = { title: '组合转账', content: '即将为所选行程单发起组合转账，是否确定组合转账？' }
+	modalData.value.type = 'combination'
+	modalData.value.data = {
+		itineraryNoList : state.selectedRowKeys
+	}
+	modalData.value.show = true
 }
 // 申请转账
 const transfer = (type: string, record: any) => {
-	let oid;
 	// type:one单项  all批量
 	if (type == 'one') {
-		oid = record.oid;
-		Modal.confirm({
-			title: '下团结算',
-			width: 560,
-			closable: true,
-			centered: true,
-			icon: false,
-			content: '即将为所选行程单发起结算转账，是否确定申请转账？',
-			onOk() {
-				// api
-				// 	.comprehensiveFeeEnable(record.oid)
-				// 	.then((res: any) => {
-						message.success('操作成功');
-				// 		onSearch();
-				// 	})
-				// 	.catch((err: any) => {
-				// 		message.error(err || '操作失败');
-				// 	});
-			},
-			onCancel() {},
-		});
+		modalData.value.params = { title: '申请转账', content: '即将为所选行程单发起结算转账，是否确定申请转账？' }
+		modalData.value.type = 'transfer'
+		modalData.value.data = {
+			'status': 16,
+			'itineraryNoList' : [record.itineraryNo]
+		}
+		modalData.value.show = true
 	} else {
-		oid = state.selectedRowKeys;
+		// 唤起根据批号转账模态框
 		transferData.value.show = true
 	}
-	console.log('把老子的id给打印出来', oid);
 };
 // 查看详情
 const toInfo = (record: any) => {
