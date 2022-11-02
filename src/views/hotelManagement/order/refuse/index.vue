@@ -23,7 +23,7 @@
 		<BaseModal :title="'审核'" v-model="visible">
 			<a-form>
 				<a-form-item label="状态"> 审核不通过 </a-form-item>
-				<a-form-item label="">
+				<a-form-item label="原因">
 					<a-textarea placeholder="审核不通过原因" v-model:value="state.reject" :rows="4" disabled />
 				</a-form-item>
 			</a-form>

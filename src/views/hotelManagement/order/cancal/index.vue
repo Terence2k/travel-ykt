@@ -4,9 +4,7 @@
 			<template #bodyCell="{ column, record }">
 				<template v-if="column.dataIndex === 'actions'">
 					<div class="action-btns">
-						<a @click="openInfoPage">查看</a>
-						<a @click="visible = true">审核</a>
-						<a>打印票据</a>
+						<a @click="openInfoPage(record.orderNo)">查看</a>
 					</div>
 				</template>
 				<template v-if="column.key == 'reduceAfterAmount'">
@@ -22,22 +20,6 @@
 			@showSizeChange="pageSideChange"
 		>
 		</CommonPagination>
-		<BaseModal :title="'审核'" v-model="visible">
-			<a-form>
-				<a-form-item label="状态">
-					<a-radio-group v-model:value="state.tableData.type">
-						<a-radio value="1">通过</a-radio>
-						<a-radio value="2">不通过</a-radio>
-					</a-radio-group>
-				</a-form-item>
-				<a-form-item label="">
-					<a-textarea placeholder="审核不通过原因" :rows="4" :disabled="state.tableData.type == 1" />
-				</a-form-item>
-			</a-form>
-			<template v-slot:footer>
-				<a-button style="width: 76px" @click="visible = false">关闭</a-button>
-			</template>
-		</BaseModal>
 	</div>
 </template>
 
@@ -58,7 +40,6 @@ import { accDiv } from '@/utils/compute.js';
 const router = useRouter();
 const hotelStore = useHotelStore();
 const navigatorBar = useNavigatorBar();
-const visible = ref(false);
 const columns = [
 	{
 		title: '行程单号',
@@ -105,7 +86,7 @@ const columns = [
 		dataIndex: 'actions',
 		key: 'actions',
 		fixed: 'right',
-		width: 160,
+		width: 120,
 	},
 ];
 
@@ -119,7 +100,6 @@ const state = reactive({
 			pageSize: 10,
 			status:0
 		},
-		type: '1',
 	},
 });
 
@@ -141,8 +121,8 @@ const hotelOrderPage = async () => {
 	hotelStore.setOrderList(res, 'cancal')
 };
 
-const openInfoPage = (record: any) => {
-	router.push({ path: '/hotelManagement/hotelOrder/orderEdit', query: { oid: 1 } });
+const openInfoPage = (orderNo: any) => {
+	router.push({ path: '/hotelManagement/hotelOrder/orderEdit', query: { orderNo: orderNo } });
 };
 
 onMounted(() => {
