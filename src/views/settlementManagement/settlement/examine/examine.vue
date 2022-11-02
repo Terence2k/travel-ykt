@@ -112,11 +112,11 @@ const modalData = ref({
 const tipSubmit = async () => {
 	// 重新结算
 	if (modalData.value.type == 'reclosing') {
-		// api.settlementUpdate(modalData.value.data).then((res: any) => {
+		api.settlementUpdate(modalData.value.data).then((res: any) => {
 			message.success('操作成功');
-		// 	onSearch();
-		// })
-			tipCancel();
+			onSearch();
+		})
+		tipCancel();
 	}
 	// 申请转账
 	if (modalData.value.type == 'examine') {
@@ -207,7 +207,7 @@ const reclosing = ((record: any) => {
 	modalData.value.params = { title: '重新结算', content: '你即将对行程单重新结算，是否确定执行？' }
 	modalData.value.type = 'reclosing'
 	modalData.value.data = {
-		// 'status': 16,
+		'status': 14,
 		'itineraryNoList' : [record.itineraryNo]
 	}
 	modalData.value.show = true
