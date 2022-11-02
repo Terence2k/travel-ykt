@@ -205,14 +205,13 @@ const initOption = async () => {
 		};
 	});
 };
+
 const search = () => {
 	state.tableData.param.pageNo = 1;
 	initPage();
 };
+
 const initPage = async () => {
-	// userList(state.tableData.param).then((res) => {
-	// 	console.log(res);
-	// });
 	state.tableData.loading = true;
 	let res = await api.getMultipleList(state.tableData.param);
 	state.tableData.data = res.content || dataSource;
@@ -220,6 +219,7 @@ const initPage = async () => {
 	console.log('res', res);
 	state.tableData.loading = false;
 };
+
 onMounted(() => {
 	initPage();
 	initOption();
@@ -228,6 +228,7 @@ onMounted(() => {
 	// navigatorBar.clearNavigator();
 	// navigatorBar.setNavigator(['演出票']);
 });
+
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
 });

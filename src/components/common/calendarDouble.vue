@@ -10,7 +10,7 @@
 				<img src="@/assets/svg/turn-right.svg" alt="" />
 			</div>
 			<div class="wrap">
-				<a-calendar v-model:value="value" :fullscreen="false" border @select="bindSetDatePriceFirst">
+				<a-calendar v-model:value="value" :fullscreen="false" border @select="bindSetDatePriceFirst" :validRange="[dayjs(range[0]), dayjs(range[1])]">
 					<template #headerRender>
 						<div class="calendar-header">{{ value.year() }}年 {{ value.month() + 1 }}月</div>
 					</template>
@@ -27,7 +27,13 @@
 				</a-calendar>
 			</div>
 			<div class="wrap">
-				<a-calendar v-model:value="valueNext" :fullscreen="false" border @select="bindSetDatePriceSec">
+				<a-calendar
+					v-model:value="valueNext"
+					:fullscreen="false"
+					border
+					@select="bindSetDatePriceSec"
+					:validRange="[dayjs(range[0]), dayjs(range[1])]"
+				>
 					<template #headerRender>
 						<div class="calendar-header">{{ valueNext.year() }}年 {{ valueNext.month() + 1 }}月</div>
 					</template>
@@ -114,6 +120,11 @@ const props = defineProps({
 	title: {
 		type: String,
 		default: '设置减免规则',
+	},
+	range: {
+		type: Array,
+		default: () => [],
+		require: true,
 	},
 });
 
@@ -257,6 +268,7 @@ const modelValue = ref(false);
 
 const open = () => {
 	modelValue.value = true;
+	value.value = dayjs(new Date());
 };
 
 const cancel = () => {

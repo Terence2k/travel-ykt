@@ -8,6 +8,7 @@
 		@get-current-day="getCurrentDay"
 		@clear-current-day="clearCurrentDay"
 		@save-data="saveDate"
+		:range="[state.data.startDate, state.data.endDate]"
 	>
 		<header class="tips">
 			<p>说明：点击后编辑每日库存，不编辑默认库存为默认</p>
