@@ -25,7 +25,7 @@
 			@showSizeChange="pageSideChange"
 		/>
 	</div>
-  <BaseModal title="审核预冻结金额" v-model="changeAuditVisible" :width="1200">
+  <BaseModal title="审核预冻结金额" v-model="changeAuditVisible" :width="1000">
 		<div class="table_box">
 			<table class="info_table" cellpadding="16px" border="1">
 				<tr class="row">
