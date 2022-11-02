@@ -113,7 +113,6 @@ const handleOk = async () => {
 			padding: 16px 24px;
 			.ant-btn {
 				border-radius: 2px;
-				width: 76px;
 				height: 40px;
 			}
 		}
