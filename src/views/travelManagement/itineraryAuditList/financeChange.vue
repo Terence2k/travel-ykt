@@ -25,45 +25,59 @@
 			@showSizeChange="pageSideChange"
 		/>
 	</div>
-  <BaseModal title="行程单变更审核" v-model="changeAuditVisible">
-		<!-- <div class="table_box">
+  <BaseModal title="行程单变更审核" v-model="changeAuditVisible" :width="1200">
+		<div class="table_box">
 			<table class="info_table" cellpadding="16px" border="1">
 				<tr class="row">
-					<td class="key">团队类型</td>
-					<td class="value">{{ state.detail.lastUpdateTime }}</td>
+					<td class="key">行程单编号</td>
+					<td class="value">{{ state.detail.itineraryNo }}</td>
 				</tr>
 				<tr class="row">
-					<td class="key">企业类型</td>
-					<td class="value">{{ state.detail.businessTypeName }}</td>
+					<td class="key">线路名称</td>
+					<td class="value">{{ state.detail.routeName }}</td>
 				</tr>
 				<tr class="row">
-					<td class="key">企业名称</td>
-					<td class="value">{{ state.detail.name }}</td>
+					<td class="key">发团计调</td>
+					<td class="value">{{ state.detail.travelOperatorName }}</td>
+				</tr>
+				<tr class="row" v-if="state.detail.startDate && state.detail.endDate">
+					<td class="key">出散团时间</td>
+					<td class="value">{{ `${state.detail.startDate.split(' ')[0]} ~ ${state.detail.endDate.split(' ')[0]} (${state.detail.travelDays}天)`  }}</td>
 				</tr>
 				<tr class="row">
-					<td class="key">统一社会信用代码</td>
-					<td class="value">{{ state.detail.creditCode }}</td>
+					<td class="key">团客人数</td>
+					<td class="value">{{ state.detail.touristCount }}</td>
 				</tr>
 				<tr class="row">
-					<td class="key">管理员姓名</td>
-					<td class="value">{{ state.detail.contactName }}</td>
+					<td class="key">古维管理费</td>
+					<td class="value">{{ state.detail.maintainFee }}</td>
 				</tr>
 				<tr class="row">
-					<td class="key">管理员手机号</td>
-					<td class="value">{{ state.detail.phone }}</td>
+					<td class="key">综费产品</td>
+					<td class="value">{{ state.detail.productFee }}</td>
 				</tr>
 				<tr class="row">
-					<td class="key">所属地区</td>
-					<td class="value">{{ state.detail.regionName }}</td>
+					<td class="key">酒店</td>
+					<td class="value">{{ state.detail.hotelFee }}</td>
 				</tr>
 				<tr class="row">
-					<td class="key">营业执照</td>
-					<td class="value">
-						<a-image width="200px" :src="state.detail.businessLicenseUrl" />
-					</td>
+					<td class="key">景区</td>
+					<td class="value">{{ state.detail.ticketFee }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">餐饮</td>
+					<td class="value">{{ state.detail.cateringFee }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">本次预冻结金额</td>
+					<td class="value">{{ state.detail.totalFee }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">公司账户可用余额</td>
+					<td class="value">{{ state.detail.travelBalance }}</td>
 				</tr>
 			</table>
-		</div> -->
+		</div>
 		<template v-slot:footer>
       <a-button @click="sendAudit(3)">驳回</a-button>
 			<a-button type="primary" @click="sendAudit(2)">同意预冻结</a-button>
@@ -251,6 +265,10 @@
 
 	}
 	onSearch();
+
+  watch(changeAuditVisible, (nVal) => {
+    if (!nVal) state.detail = {};
+  });
 </script>
 <style scoped lang="less">
 .table_box {
@@ -265,6 +283,9 @@
 		font-weight: 400;
 		color: #1E2226;
 		border: 1px solid #E9E9E9;
+    td {
+      text-align: center;
+    }
 	}
 
 	.change_table {
