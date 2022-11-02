@@ -22,6 +22,7 @@ import LoginForm from './Form.vue';
 import LoginPic from './pic.vue';
 </script>
 <style lang="less" scoped>
+
 .login-container {
 	width: 1484px;
 	height: 864px;

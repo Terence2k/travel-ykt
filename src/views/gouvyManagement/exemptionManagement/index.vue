@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<CommonSearch>
-			<search-item label="行程时间">
+			<search-item label="出团时间">
 				<a-space direction="vertical">
 					<a-date-picker />
 				</a-space>
