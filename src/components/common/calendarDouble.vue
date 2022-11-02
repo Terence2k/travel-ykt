@@ -293,6 +293,7 @@ defineExpose({
 	height: 100%;
 	position: relative;
 	padding: 20px;
+	overflow: hidden;
 	.turn-left {
 		position: absolute;
 		left: 0;
@@ -377,5 +378,8 @@ defineExpose({
 ::v-deep .ant-picker-body {
 	padding: 0 !important;
 	margin: 0;
+}
+::v-deep .ant-picker-cell:before {
+	height: 100%;
 }
 </style>
