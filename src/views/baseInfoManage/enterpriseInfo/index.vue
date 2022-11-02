@@ -257,7 +257,7 @@
           </a-form-item>
           <a-form-item name="rangeTime" label="营业时间">
             <div class="flex">
-              <a-range-picker v-model:value="form.rangeTime" @change="changeTime" :disabled="getStatus('rangeTime')"/>
+              <a-range-picker v-model:value="form.rangeTime" @change="changeTime" :disabled="getStatus('rangeTime')" value-format="YYYY-MM-DD"/>
               <a-button type="primary" class="status-btn" @click="changeDisabledStatus('rangeTime')" v-if="showChangeBtns('rangeTime')">
                 {{ getStatus('rangeTime') ? '修改' : '确定' }}
               </a-button>
@@ -423,6 +423,9 @@ const initOpeion = async () => {
   let data = await infoFunc;
   state.form = { ...data, ...data.companyBo};
   if (state.form?.areaId) state.form.addressIds = [state.form.provinceId, state.form.cityId, state.form.areaId];
+  state.form.rangeTime = [state.form.startTime, state.form.endTime];
+  console.log('state.form:', state.form);
+  
   // submitFunc:提交编辑审核函数名
   if (Object.keys(travelStore.businessTypeOptions).includes(userInfo.sysCompany.businessType)) {
     submitFunc.value = travelStore.businessTypeOptions[userInfo.sysCompany.businessType].submitFunc;
