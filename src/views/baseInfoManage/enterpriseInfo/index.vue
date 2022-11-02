@@ -247,8 +247,8 @@
           <a-form-item name="unitStatus" label="开业状态">
             <div class="flex">
               <a-radio-group v-model:value="form.unitStatus" :disabled="getStatus('unitStatus')">
-                <a-radio :value="0">开业</a-radio>
-                <a-radio :value="1">停业</a-radio>
+                <a-radio :value="1">开业</a-radio>
+                <a-radio :value="0">停业</a-radio>
               </a-radio-group>
               <a-button type="primary" class="status-btn" @click="changeDisabledStatus('unitStatus')" v-if="showChangeBtns('unitStatus')">
                 {{ getStatus('unitStatus') ? '修改' : '确定' }}
