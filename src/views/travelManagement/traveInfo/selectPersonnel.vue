@@ -2,8 +2,10 @@
 	<div class="table-area">
 		<BaseModal title="选择古维费可减免人员" v-model="modelValue" :width="1200">
 			<div class="top">
-				<p>请选择可减免的游客，取消勾选：</p>
-				<a-button>自动检查可减免人员</a-button>
+				<p>请勾选可减免的游客，提交减免申请：</p>
+			</div>
+			<div class="p">
+				<p>全部游客{{}}名，已减免{{}}人，本次勾选 {{}}人</p>
 			</div>
 			<CommonTable :row-selection="{ onSelect }" :columns="columns" :dataSource="state.tableData.data" :scrollY="false">
 				<template #bodyCell="{ column, index, record }">
@@ -37,6 +39,9 @@ import { useRouter } from 'vue-router';
 import CommonTable from '@/components/common/CommonTable.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import BaseModal from '@/components/common/BaseModal.vue';
+import { useTravelStore } from '@/stores/modules/travelManagement';
+//获取本地存储数据
+const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 import { message } from 'ant-design-vue';
 import api from '@/api';
 const route = useRouter();
@@ -44,6 +49,8 @@ const dialogVisible = ref(false);
 const navigatorBar = useNavigatorBar();
 const formValidate: Ref<Record<string, any>> = ref({});
 // import { userList } from '@/api';
+const travelStore = useTravelStore()
+
 const props = defineProps({
 	modelValue: {
 		type: Boolean,
@@ -55,8 +62,8 @@ const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
 const columns = [
 	{
 		title: '游客姓名',
-		dataIndex: 'name',
-		key: 'name',
+		dataIndex: 'getBasiclist',
+		key: 'getBasiclist',
 	},
 	{
 		title: '身份证号码',
@@ -70,8 +77,8 @@ const columns = [
 	},
 	{
 		title: '年龄',
-		dataIndex: 'compre',
-		key: 'compre',
+		dataIndex: 'age',
+		key: 'age',
 	},
 	{
 		title: '联系方式',
@@ -85,18 +92,18 @@ const columns = [
 	},
 	{
 		title: '选择可减免规则',
-		dataIndex: 'siveFe',
-		key: 'siveFe',
+		dataIndex: 'discountRuleId',
+		key: 'discountRuleId',
 	},
 	{
 		title: '特殊证件类型',
-		dataIndex: 'e',
-		key: 'e',
+		dataIndex: 'specialCertificateTypeName',
+		key: 'specialCertificateTypeName',
 	},
 	{
 		title: '特殊证件照片',
-		dataIndex: 'be',
-		key: 'be',
+		dataIndex: 'specialCertificateImg',
+		key: 'specialCertificateImg',
 	},
 ];
 const state = reactive({
@@ -108,8 +115,8 @@ const state = reactive({
 			pageNo: 1,
 			pageSize: 10,
 		},
-		list:[],
-		queryList:[],
+		list: [],
+		queryList: [],
 		status: '1',
 		pattern: '1',
 	},
@@ -127,14 +134,14 @@ const init = async () => {
 	// formValidate.value = { ...props.params };
 };
 const onSelect = () => {
-	api.getItineraryTourist(state.tableData.param).then((res) => {
+	api.getItineraryTourist(traveListData.itineraryNo).then((res) => {
 		state.tableData.data = res.content;
 		console.log(res, '113');
 	});
 };
 const onSearchList = () => {
-	api.getBasiclist({discountRuleStatus:1}).then((res) => {
-		state.tableData.list=res
+	api.getBasiclist({ discountRuleStatus: 1 }).then((res) => {
+		state.tableData.list = res;
 	});
 };
 //查询证件列表
@@ -166,6 +173,8 @@ watch(dialogVisible, (nVal) => {
 .top {
 	display: flex;
 	justify-content: space-between;
-	margin-bottom: 30px;
+}
+.p{
+	text-align: right;
 }
 </style>
