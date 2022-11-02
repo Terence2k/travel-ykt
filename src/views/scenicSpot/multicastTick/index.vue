@@ -158,12 +158,12 @@ const toEditPage = (value: any) => {
 //下架
 const auditRef = ref();
 const outDown = (value: any) => {
-	auditRef.value.open(value.oid);
+	auditRef.value.open(value.oid, '', value.ticketName);
 
 	// route.push({ path: '/scenic-spot/multicast/edit' });
 };
 const changeDownTicket = (value: any) => {
-	auditRef.value.open(value.oid, 'edit');
+	auditRef.value.open(value.oid, 'edit', value.ticketName);
 };
 
 //上架

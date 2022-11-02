@@ -167,7 +167,7 @@ const changeOption = (arr: any) => {
 			ticketType: i.ticketType, //门票类型:0-联票，1-单票，2-演出票
 			price: i.price || i.ticketPrice,
 			ticketName: i.ticketName,
-			settlementModel: i.scenicId || null,
+			settlementModel: i.settlementModel || null,
 		};
 	});
 };
@@ -216,6 +216,7 @@ const dealEditData = (value: any) => {
 				ticketType: item.ticketType, //门票类型:0-联票，1-单票，2-演出票
 				price: item.price,
 				ticketName: item.ticketSonName,
+				settlementModel: item.settlementModel || null,
 			};
 		});
 	newOption = childrenTicketOption.value.map((option: any) => {

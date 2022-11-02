@@ -45,7 +45,7 @@
 			</a-form>
 
 			<div class="btn-wrapper">
-				<a href="javascript:;" @click="toHistoryPage">查看历史下架了记录</a>
+				<a href="javascript:;" @click="toHistoryPage">查看历史下架记录</a>
 			</div>
 		</div>
 		<template v-slot:footer>

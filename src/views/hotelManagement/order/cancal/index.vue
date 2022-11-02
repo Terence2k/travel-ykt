@@ -10,6 +10,9 @@
 				<template v-if="column.key == 'reduceAfterAmount'">
 					{{ accDiv(record.reduceAfterAmount, 100) }}
 				</template>
+				<template v-if="column.key == 'fullRule'">
+					满{{ record.fullRule }} 减 {{ record.reduceRule }}
+				</template>
 			</template>
 		</CommonTable>
 		<CommonPagination
@@ -41,6 +44,16 @@ const router = useRouter();
 const hotelStore = useHotelStore();
 const navigatorBar = useNavigatorBar();
 const columns = [
+	{
+		title: '订单编号',
+		dataIndex: 'orderNo',
+		key: 'orderNo',
+	},
+	{
+		title: '酒店名称',
+		dataIndex: 'hotelName',
+		key: 'hotelName',
+	},
 	{
 		title: '行程单号',
 		dataIndex: 'itineraryNo',
@@ -77,6 +90,11 @@ const columns = [
 		key: 'scheduledRooms',
 	},
 	{
+		title: '减免规则',
+		dataIndex: 'fullRule',
+		key: 'fullRule',
+	},
+	{
 		title: '费用（元）',
 		dataIndex: 'reduceAfterAmount',
 		key: 'reduceAfterAmount',
@@ -98,13 +116,13 @@ const state = reactive({
 		param: {
 			pageNo: 1,
 			pageSize: 10,
-			status:0
+			status: 0,
 		},
 	},
 });
 
 const onHandleCurrentChange = (val: any) => {
-	hotelStore.HotelList.cancal.params.pageNo = val
+	hotelStore.HotelList.cancal.params.pageNo = val;
 	// state.tableData.param.pageNo = val;
 	hotelOrderPage();
 };
@@ -116,9 +134,9 @@ const pageSideChange = (current: number, size: number) => {
 };
 
 const hotelOrderPage = async () => {
-	hotelStore.HotelList.cancal.params.status = HotelStatus.cancal
+	hotelStore.HotelList.cancal.params.status = HotelStatus.cancal;
 	const res = await api.hotelOrderPage(hotelStore.HotelList.cancal.params);
-	hotelStore.setOrderList(res, 'cancal')
+	hotelStore.setOrderList(res, 'cancal');
 };
 
 const openInfoPage = (orderNo: any) => {

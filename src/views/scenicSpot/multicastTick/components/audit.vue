@@ -45,7 +45,7 @@
 			</a-form>
 
 			<div class="btn-wrapper">
-				<a href="javascript:;" @click="toHistoryPage">查看历史下架了记录</a>
+				<a href="javascript:;" @click="toHistoryPage">查看历史下架记录</a>
 			</div>
 		</div>
 		<template v-slot:footer>
@@ -129,16 +129,16 @@ const apply = () => {
 			console.log(err);
 		});
 };
+const searchValue = ref<string>('');
 
 const toHistoryPage = () => {
-	route.push('/scenic-spot/sold-out-history');
+	route.push({ path: '/scenic-spot/sold-out-history', query: { name: searchValue.value } });
 };
-
 // 打开弹窗
-const open = (id: any, status: string | undefined) => {
+const open = (id: any, status: string | undefined, searchkey: string) => {
 	modelValue.value = true;
 	formValidate.data.ticketId = id;
-
+	searchValue.value = searchkey;
 	if (status) {
 		getDeatil(id);
 	}
@@ -149,7 +149,7 @@ const getDeatil = async (id: number) => {
 	console.log(res, 'getDeatils');
 	formValidate.data = res;
 	formValidate.data.dateList = formValidate.data.dateList.map((item) => {
-		return { ...item, time: [dayjs(item.startDateTime), dayjs(item.endDateTime)] };
+		return { ...item, time: [item.startDateTime, item.endDateTime] };
 	});
 };
 // 关闭弹窗
