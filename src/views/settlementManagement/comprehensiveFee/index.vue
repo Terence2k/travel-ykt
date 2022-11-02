@@ -46,6 +46,7 @@
 			@showSizeChange="pageSideChange"
 		/>
 	</div>
+	<DelModal :params="modalData.params" v-model="modalData.show" @submit="tipSubmit" @cancel="tipCancel" />
 </template>
 
 <script setup lang="ts">
@@ -55,8 +56,8 @@ import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import { message } from 'ant-design-vue';
-import { Modal } from 'ant-design-vue';
 import api from '@/api';
+import DelModal from '@/components/common/DelModal.vue';
 import { settlementOptions } from '@/stores/modules/settlement';
 const navigatorBar = useNavigatorBar();
 const route = useRouter();
@@ -113,7 +114,51 @@ const columns = [
 		width: 208,
 	},
 ];
-
+const modalData = ref({
+	show: false,
+	params: {},
+	data: {}, // 传参对象
+	type: '',
+	status: 0,
+	
+});
+// 缓存编辑表格模态框数据
+const transferData = ref({
+	show: false,
+	modalParams: {},
+});
+const tipSubmit = async () => {
+	// 删除
+	if (modalData.value.type == 'delete') {
+		api.comprehensiveFeeDelete(modalData.value.data).then((res: any) => {
+			message.success('删除成功');
+			initList();
+		})
+		.catch((err: any) => {
+			message.error(err || '删除失败');
+		});
+		tipCancel();
+	}
+	// 禁用 启用
+	if (modalData.value.type == 'disable') {
+		let statusText = modalData.value.status === 0 ? '启用' : '禁用';
+		let apiFun = modalData.value.status === 0 ? api.comprehensiveFeeEnable : api.comprehensiveFeeDisenable;
+		apiFun(modalData.value.data)
+			.then((res: any) => {
+				message.success(`${statusText}成功`);
+				initList();
+			})
+			.catch((err: any) => {
+				message.error(err || `${statusText}失败`);
+			});
+		tipCancel();
+	}
+};
+const tipCancel = () => {
+	modalData.value.data = {};
+	modalData.value.type = '';
+	modalData.value.show = false;
+};
 const state = reactive({
 	tableData: {
 		data: [],
@@ -171,26 +216,11 @@ const toEditPage = (record: any) => {
 //禁用 & 启用 (启用状态：1-启用  0-禁用)
 const toDisable = (record: any) => {
 	let statusText = record.status === 0 ? '启用' : '禁用';
-	let apiFun = record.status === 0 ? api.comprehensiveFeeEnable : api.comprehensiveFeeDisenable;
-	Modal.confirm({
-		title: statusText,
-		width: 560,
-		closable: true,
-		centered: true,
-		icon: false,
-		content: `确定是否${statusText}`,
-		onOk() {
-			apiFun(record.oid)
-				.then((res: any) => {
-					message.success(`${statusText}成功`);
-					initList();
-				})
-				.catch((err: any) => {
-					message.error(err || `${statusText}失败`);
-				});
-		},
-		onCancel() {},
-	});
+	modalData.value.params = { title: statusText, content: `确定是否${statusText}` }
+	modalData.value.type = 'disable'
+	modalData.value.data = record.oid
+	modalData.value.show = true,
+	modalData.value.status = record.status
 };
 //单项删除
 const toDelete = (record: any) => {
@@ -198,26 +228,10 @@ const toDelete = (record: any) => {
 };
 // 统一删除方法
 const deleteFun = (id: any) => {
-	Modal.confirm({
-		title: '删除确认',
-		width: 560,
-		closable: true,
-		centered: true,
-		icon: false,
-		content: `是否确定删除所选数据，删除会影响已支付本项费用的行程单结算`,
-		onOk() {
-			api
-				.comprehensiveFeeDelete(id)
-				.then((res: any) => {
-					message.success('删除成功');
-					initList();
-				})
-				.catch((err: any) => {
-					message.error(err || '删除失败');
-				});
-		},
-		onCancel() {},
-	});
+	modalData.value.params = { title: '删除确认', content: '是否确定删除所选数据，删除会影响已支付本项费用的行程单结算' }
+	modalData.value.type = 'delete'
+	modalData.value.data = id
+	modalData.value.show = true
 };
 //查看
 const toCheck = (record: any) => {
