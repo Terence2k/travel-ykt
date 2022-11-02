@@ -45,7 +45,6 @@
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a href="javascript:;" @click="toEditPage(record)">编辑</a>
-							<a href="javascript:;" @click="toEditPage(record)">编辑</a>
 							<a href="javascript:;" v-if="record.putaway" @click="outDown(record)">
 								{{ !record.putaway ? '上架' : '下架' }}
 							</a>
