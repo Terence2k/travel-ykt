@@ -14,7 +14,7 @@
 				</search-item>
 
 				<template #button>
-					<a-button @click="initList">查询</a-button>
+					<a-button @click="search">查询</a-button>
 				</template>
 			</CommonSearch>
 			<div class="table-area">
@@ -179,7 +179,10 @@ const state = reactive({
 		},
 	},
 });
-
+const search = () => {
+	state.tableData.param.pageNo = 1;
+	initList();
+};
 //搜索
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);

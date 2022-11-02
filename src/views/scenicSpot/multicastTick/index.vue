@@ -5,7 +5,13 @@
 				<!-- <a-input v-model:value="state.tableData.itineraryNo" placeholder="请输入行程单号" style="width: 200px" /> -->
 				<a-input v-model:value="state.tableData.param.ticketName" placeholder="门票名称/关键词" style="width: 200px" />
 			</SearchItem>
-			<SearchItem label="归属景区">
+			<SearchItem label="上架状态">
+				<a-select v-model:value="state.tableData.param.putaway" :allowClear="true" ref="select" style="width: 200px" placeholder="门票名称/关键词">
+					<a-select-option :value="false">下架</a-select-option>
+					<a-select-option :value="true">上架</a-select-option>
+				</a-select>
+			</SearchItem>
+			<!-- <SearchItem label="归属景区">
 				<a-select
 					v-model:value="state.tableData.param.scenicId"
 					:allowClear="true"
@@ -15,9 +21,9 @@
 					:options="scenicSpotOptions"
 				>
 				</a-select>
-			</SearchItem>
+			</SearchItem> -->
 			<template #button>
-				<a-button @click="initPage">查询</a-button>
+				<a-button @click="search">查询</a-button>
 			</template>
 		</CommonSearch>
 
@@ -199,6 +205,10 @@ const initOption = async () => {
 			label: item.ticketName,
 		};
 	});
+};
+const search = () => {
+	state.tableData.param.pageNo = 1;
+	initPage();
 };
 const initPage = async () => {
 	// userList(state.tableData.param).then((res) => {

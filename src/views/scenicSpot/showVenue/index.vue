@@ -140,6 +140,7 @@ const init = async () => {
 };
 
 const search = () => {
+	state.tableData.param.pageNo = 1;
 	init();
 };
 // 删除提示
