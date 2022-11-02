@@ -280,7 +280,46 @@ export default [
 					},
 				],
 			},
+			{
+				path: 'scenicSpotAccountReport',
+				name: 'scenicSpotAccountReport',
+				redirect: '/reportManagement/scenicSpotAccountReport/list',
+				meta: {
+					title: '景区账目报表',
+					isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/reportManagement/scenicSpotAccountReport/index.vue'),
+						name: 'scenicSpotAccountReportList',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
+			{
+				path: 'scenicSpotSummaryReport',
+				name: 'scenicSpotSummaryReport',
+				redirect: '/reportManagement/scenicSpotSummaryReport/list',
+				meta: {
+					title: '景区汇总报表',
+					isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/reportManagement/scenicSpotSummaryReport/index.vue'),
+						name: 'scenicSpotSummaryReportList',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
 		],
-		
 	},
 ];
