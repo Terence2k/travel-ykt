@@ -2,7 +2,7 @@
   <div class="add_box">
     <div class="title">
       <span>
-        添加新的企业（录入基本信息）：
+        添加新的企业（录入基本信息1）：
       </span>
       <span class="close_btn" @click="back">
         <close-outlined />
@@ -44,7 +44,9 @@
           </a-textarea>
         </a-form-item>
         <a-form-item name="registeredCapital" label="注册资本" v-show="formRules?.registeredCapital">
-          <a-input v-model:value="form.registeredCapital" placeholder="请输入注册资本" suffix="万元">
+          <a-input v-model:value="form.registeredCapital" placeholder="请输入注册资本" suffix="万元" @change="() => {
+            form.registeredCapital = form.registeredCapital.replace(/[^0-9.]/g, '')
+          }">
           </a-input>
         </a-form-item>
         <a-form-item name="establishTime" label="成立日期" v-show="formRules?.establishTime">
