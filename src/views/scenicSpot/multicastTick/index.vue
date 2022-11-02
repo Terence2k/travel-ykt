@@ -39,9 +39,11 @@
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a href="javascript:;" @click="toEditPage(record)">编辑</a>
+							<a href="javascript:;" @click="toEditPage(record)">编辑</a>
 							<a href="javascript:;" v-if="record.putaway" @click="outDown(record)">
 								{{ !record.putaway ? '上架' : '下架' }}
 							</a>
+							<a href="javascript:;" @click="invetory(record)"> 联票库存日历</a>
 							<a href="javascript:;" v-if="!record.putaway" @click="register(record)"> 上架</a>
 							<a href="javascript:;" v-if="!record.putaway" @click="changeDownTicket(record)"> 下架修改</a>
 						</div>
@@ -57,6 +59,7 @@
 			/>
 			<Audit ref="auditRef" @down-page="downPage" />
 		</div>
+		<CalendarInvetory ref="calendarInvetoryRef" />
 	</a-spin>
 </template>
 
@@ -70,6 +73,7 @@ import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import { useCommonEnum } from '@/stores/modules/commonEnum';
 import { message } from 'ant-design-vue';
 import Audit from './components/audit.vue';
+import CalendarInvetory from './components/calendarInvetory.vue';
 const route = useRouter();
 const navigatorBar = useNavigatorBar();
 const commonEnum = useCommonEnum();
@@ -150,6 +154,10 @@ const pageSideChange = (current: number, size: number) => {
 	console.log('changePageSize:', size);
 	state.tableData.param.pageSize = size;
 	initPage();
+};
+const calendarInvetoryRef = ref();
+const invetory = (value: any) => {
+	calendarInvetoryRef.value.open(value.oid);
 };
 //编辑
 const toEditPage = (value: any) => {
