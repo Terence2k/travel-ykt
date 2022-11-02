@@ -404,19 +404,20 @@ const initOpeion = async () => {
   console.log('userInfo.sysCompany.businessType:', userInfo.sysCompany.businessType);
   switch (userInfo.sysCompany.businessType) {
     case 'TRAVEL':
-    infoFunc = api.getTravelInformation();
+      infoFunc = api.getTravelInformation();
     break;
     case 'HOTEL':
-    infoFunc = api.getInfoByCompanyId(userInfo.sysCompany.oid);
+      infoFunc = api.getInfoByCompanyId(userInfo.sysCompany.oid);
     break;
     case 'TICKET':
-    infoFunc = api.getScenicById(userInfo.sysCompany.oid);
+      infoFunc = api.getScenicById(userInfo.sysCompany.oid);
     break;
     case 'CATERING':
-    infoFunc = api.getCateringInfo(userInfo.sysCompany.oid);
+      infoFunc = api.getCateringInfo(userInfo.sysCompany.oid);
+    break;
     // 其他业态
     default:
-    infoFunc = api.getCompanyInformation(userInfo.sysCompany.oid);
+      infoFunc = api.getCompanyInformation(userInfo.sysCompany.oid);
     break;
   }
   let data = await infoFunc;
@@ -428,7 +429,6 @@ const initOpeion = async () => {
   } else {
     submitFunc.value = 'editCompany';
   }
-  console.log('state.form:', state.form)
   // 右上角文字描述判断
   enterpriseState.value = travelStore.enterpriseState[state.form.informationAuditStatus]?.descriptions;
 
