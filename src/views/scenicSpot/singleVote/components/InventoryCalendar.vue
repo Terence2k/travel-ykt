@@ -7,6 +7,7 @@
 		@get-current-day="getCurrentDay"
 		@clear-current-day="clearCurrentDay"
 		@save-data="saveDate"
+		:range="[state.data.start, state.data.end]"
 	>
 		<header class="tips">
 			<p>说明：点击后编辑每日库存，不编辑默认库存为默认</p>
@@ -47,79 +48,6 @@
 			</div>
 		</section>
 	</Calendar>
-	<!-- <Calendar
-		ref="calendarRef"
-		title="编辑库存日历"
-		:setAllValue="allPrice"
-		:setAllInventory="allPrice"
-		:setCurrentValue="currentInventory"
-		:setList="setDayPriceList"
-		@get-current-day="getCurrentDay"
-		@clear-current-day="clearCurrentDay"
-	>
-		<header class="tips">
-			<p>说明：点击后编辑每日库存，不编辑默认库存为默认</p>
-			<p>说明：点击后编辑每日价格，不编辑则默认价格为默认价格，价格为默认价格时不可保存价格日历</p>
-		</header>
-
-		<section>
-			<div class="set-wrap">
-				<p>
-					<span class="label">时间</span>
-					<a-range-picker v-model:value="dateRange" />
-				</p>
-				<p>
-					<span class="label">批量设置价格</span>
-					<a-input-number
-						:min="0"
-						:max="9999999999"
-						v-model:value="allPrice"
-						:formatter="(value) => value.replace(/\D/g, '')"
-						:parser="(value) => value.replace(/\D/g, '')"
-						placeholder="输入统一票价"
-						style="width: 200px"
-					/>
-				</p>
-				<p>
-					<span class="label">批量设置库存</span>
-					<a-input-number
-						:min="0"
-						:max="9999999999"
-						v-model:value="allPrice"
-						:formatter="(value) => value.replace(/\D/g, '')"
-						:parser="(value) => value.replace(/\D/g, '')"
-						placeholder="输入统一票价"
-						style="width: 200px"
-					/>
-				</p>
-				<p>
-					<span class="label">按日设置价格</span>
-					<a-input-number
-						:min="0"
-						:max="9999999999"
-						v-model:value="currentPrict"
-						:formatter="(value) => value.replace(/\D/g, '')"
-						:parser="(value) => value.replace(/\D/g, '')"
-						placeholder="输入当日票价"
-						style="width: 200px"
-					/>
-				</p>
-				<p>
-					<span class="label">按日设置库存</span>
-					<a-input-number
-						:min="0"
-						:max="9999999999"
-						v-model:value="currentInventory"
-						:formatter="(value) => value.replace(/\D/g, '')"
-						:parser="(value) => value.replace(/\D/g, '')"
-						placeholder="输入当日票价"
-						style="width: 200px"
-					/>
-					<a-button @click="createDateItem">确定</a-button>
-				</p>
-			</div>
-		</section>
-	</Calendar> -->
 </template>
 
 <script setup lang="ts">

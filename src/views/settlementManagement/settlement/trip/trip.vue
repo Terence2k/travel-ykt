@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<CommonTable :dataSource="state.tableData.data" :scroll="{ x: '100%',y: '100%' }" rowKey="oid" :columns="columns" :row-selection="rowSelection">
+		<CommonTable :dataSource="state.tableData.data" :scroll="{ x: '100%',y: '100%' }" rowKey="itineraryNo" :columns="columns" :row-selection="rowSelection">
 			<template #button>
 				<div class="btn">
 					<a-button type="primary" @click="settlement('all', null)">下团结算</a-button>
@@ -27,6 +27,7 @@
 			@showSizeChange="pageSideChange"
 		/>
 	</div>
+	<DelModal :params="modalData.params" v-model="modalData.show" @submit="tipSubmit" @cancel="tipCancel" />
 </template>
 
 <script lang="ts" setup>
@@ -35,7 +36,8 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import { reactive, onMounted } from 'vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
-import { Modal } from 'ant-design-vue';
+import DelModal from '@/components/common/DelModal.vue';
+
 const props = defineProps({
 	params: Object,
 	status: Number
@@ -89,7 +91,27 @@ const columns = [
 		width: 208,
 	},
 ];
-
+// 缓存编辑表格模态框数据
+const transferData = ref({
+	show: false,
+	modalParams: {},
+});
+const modalData = ref({
+	show: false,
+	params: {},
+	data: {}, // 传参对象
+});
+const tipSubmit = async () => {
+	api.settlementUpdate(modalData.value.data).then((res: any) => {
+		message.success('操作成功');
+		onSearch();
+	})
+	tipCancel();
+};
+const tipCancel = () => {
+	modalData.value.data = {};
+	modalData.value.show = false;
+};
 const state = reactive({
 	tableData: {
 		data: [],
@@ -108,7 +130,6 @@ const state = reactive({
 		},
 	},
 	selectedRowKeys: [], //当前选择的标识
-
 });
 
 // 当前选择列
@@ -166,7 +187,7 @@ const settlement = (type: string, record: any) => {
 	let oid;
 	// type:one单项  all批量
 	if (type == 'one') {
-		oid = record.oid;
+		oid = [record.itineraryNo];
 	} else {
 		// 判断是否有选择项
 		if (state.selectedRowKeys.length == 0) {
@@ -175,27 +196,12 @@ const settlement = (type: string, record: any) => {
 		}
 		oid = state.selectedRowKeys;
 	}
-	console.log('把老子的id给打印出来', oid);
-	Modal.confirm({
-		title: '下团结算',
-		width: 560,
-		closable: true,
-		centered: true,
-		icon: false,
-		content: '你即将对行程单手动执行下团并结算操作，下团结算后，无法进行补刷、改刷操作。是否确定执行？',
-		onOk() {
-			// api
-			// 	.comprehensiveFeeEnable(record.oid)
-			// 	.then((res: any) => {
-					message.success('操作成功');
-			// 		onSearch();
-			// 	})
-			// 	.catch((err: any) => {
-			// 		message.error(err || '操作失败');
-			// 	});
-		},
-		onCancel() {},
-	});
+	modalData.value.params = { title: '下团结算', content: '你即将对行程单手动执行下团并结算操作，下团结算后，无法进行补刷、改刷操作。是否确定执行？' }
+	modalData.value.data = {
+		'status': 14,
+		'itineraryNoList' : oid
+	}
+	modalData.value.show = true
 };
 // 查看详情
 const toInfo = (record: any) => {

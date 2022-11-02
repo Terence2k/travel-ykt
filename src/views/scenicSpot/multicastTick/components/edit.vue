@@ -167,7 +167,7 @@ const changeOption = (arr: any) => {
 			ticketType: i.ticketType, //门票类型:0-联票，1-单票，2-演出票
 			price: i.price || i.ticketPrice,
 			ticketName: i.ticketName,
-			settlementModel: i.scenicId || null,
+			settlementModel: i.settlementModel || null,
 		};
 	});
 };
@@ -210,16 +210,15 @@ const dealEditData = (value: any) => {
 	let newOption: any[] = [],
 		arr = value.scenicTicketList?.map((item: any) => {
 			formData.scenicTicketListId?.push(item.ticketId);
-
 			return {
 				sonOid: item.sonOid, //子票id
 				ticketId: item.ticketId, //被关联的票id
 				ticketType: item.ticketType, //门票类型:0-联票，1-单票，2-演出票
 				price: item.price,
 				ticketName: item.ticketSonName,
+				settlementModel: item.settlementModel || null,
 			};
 		});
-
 	newOption = childrenTicketOption.value.map((option: any) => {
 		let index = formData.scenicTicketListId?.indexOf(option.ticketId);
 		if (Number(index) > -1) {
@@ -229,6 +228,7 @@ const dealEditData = (value: any) => {
 		}
 	});
 
+	changeOption(formData.scenicTicketListId);
 	console.log(newOption, 'newOption');
 
 	childrenTicketOption.value = newOption;

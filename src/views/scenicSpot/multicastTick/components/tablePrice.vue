@@ -22,6 +22,7 @@
 				@get-current-day="getCurrentDay"
 				@clear-current-day="clearCurrentDay"
 				@save-data="saveDate"
+				:range="[state.data.startDate, state.data.endDate]"
 			>
 				<header class="tips">
 					<p>说明：点击后编辑每日库存，不编辑默认库存为默认</p>
@@ -101,6 +102,13 @@ const columnsCount = ref([
 		dataIndex: 'price',
 		key: 'price',
 		width: 200,
+		customCell: (record: any, index: number) => {
+			if (record.price && !index) {
+				return { rowSpan: props.tableList.length };
+			} else {
+				return { rowSpan: 0, colSpan: 0 };
+			}
+		},
 	},
 	{
 		title: '参考价格',
@@ -337,7 +345,14 @@ const createData = (value: any, index: number) => {
 		initCalendarList(value.ticketId);
 	} else {
 		createNewCalendarIndex.value = index;
+		let value = props.tableList[index].dateStockList;
+		if (value) {
+			setDayPriceList.value = value;
+		} else {
+			setDayPriceList.value = [];
+		}
 	}
+
 	calendarRef.value.open();
 };
 

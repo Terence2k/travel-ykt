@@ -181,7 +181,7 @@ const handleHotel = (e: any, option: any) => {
 
 const handleChangCheckIn = () => {
 	disLeave.value = (current: Dayjs): any => current && current < dayjs(formState.arrivalDate).add(1, 'day') || 
-	(dayjs(travelStore.teamTime[1]) < current && current)
+	(dayjs(travelStore.teamTime[1]).add(1, 'day') < current && current)
 }
 
 const changeRoomType = (e: any, option: any, index: number) => {

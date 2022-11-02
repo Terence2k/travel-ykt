@@ -27,9 +27,9 @@
 					<a-col :span="12">
 						<a-checkbox class="gray_text" v-model:checked="checked">自动登录</a-checkbox>
 					</a-col>
-					<a-col :span="12" class="text-right">
+					<!-- <a-col :span="12" class="text-right">
 						<span class="gray_text">忘记密码?</span>
-					</a-col>
+					</a-col> -->
 				</a-row>
 			</div>
 		</a-form>

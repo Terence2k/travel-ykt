@@ -8,6 +8,7 @@
 		@get-current-day="getCurrentDay"
 		@clear-current-day="clearCurrentDay"
 		@save-data="saveDate"
+		:range="[state.data.startDate, state.data.endDate]"
 	>
 		<header class="tips">
 			<p>说明：点击后编辑每日库存，不编辑默认库存为默认</p>
@@ -190,7 +191,7 @@ const nextYear = (timestamp: any) => {
 };
 const emits = defineEmits(['set-calendar-invetory']);
 const isEdit = computed(() => {
-	return route.currentRoute.value?.query?.t === '1';
+	return route.currentRoute.value?.query?.t === '1' || route.currentRoute.value.path === '/scenic-spot/multicast/list';
 });
 
 const newObjTpl = reactive<any>({
@@ -215,6 +216,7 @@ const saveDate = async () => {
 			customDayStock: Number(item.stock), //自选库存
 		};
 	});
+	console.log(route.currentRoute.value, 'route');
 
 	if (isEdit.value) {
 		console.log('调用编辑日历接口', setDayPriceList.value);
@@ -253,7 +255,7 @@ const calendarRef = ref();
 const open = (id: number) => {
 	calendarRef.value.open();
 
-	if (isEdit.value) {
+	if (typeof id === 'number') {
 		initEdit(id);
 	}
 };

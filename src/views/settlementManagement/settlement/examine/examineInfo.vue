@@ -64,13 +64,14 @@
 	</div>
 	<detail-modal v-model="adjustData.detailShow" :params="adjustData.modalParams" />
 	<!-- <adjust-modal v-model="adjustData.editShow" @submit="adjustConfirm" :params="adjustData.modalParams" /> -->
+	<DelModal :params="modalData.params" v-model="modalData.show" @submit="tipSubmit" @cancel="tipCancel" />
 </template>
 
 <script lang="ts" setup>
 import api from '@/api';
 import CommonTable from '@/components/common/CommonTable.vue';
 import { message } from 'ant-design-vue';
-import { Modal } from 'ant-design-vue';
+import DelModal from '@/components/common/DelModal.vue';
 import AdjustModal from '@/views/settlementManagement/settlement/examine/adjustModal.vue';
 import DetailModal from '@/views/settlementManagement/settlement/examine/detailModal.vue';
 import { settlementOptions } from '@/stores/modules/settlement';
@@ -146,29 +147,31 @@ const adjustData = ref({
 	modalParams: {},
 	detailShow: false,
 });
-
+const modalData = ref({
+	show: false,
+	params: {},
+	data: {}, // 传参对象
+});
+const tipSubmit = async () => {
+	api.settlementUpdate(modalData.value.data).then((res: any) => {
+		message.success('操作成功');
+		// 返回上级列表
+		onCancel();
+	})
+	tipCancel();
+};
+const tipCancel = () => {
+	modalData.value.data = {};
+	modalData.value.show = false;
+};
 // 审核通过
 const toPass = () => {
-	Modal.confirm({
-		title: '审核通过',
-		width: 560,
-		closable: true,
-		centered: true,
-		icon: false,
-		content: '是否确定所选数据审核通过？',
-		onOk() {
-			// api
-			// 	.settlementUpdate(data)
-			// 	.then((res: any) => {
-			message.success('操作成功');
-			onCancel();
-			// 	})
-			// 	.catch((err: any) => {
-			// 		message.error(err || '操作失败');
-			// 	});
-		},
-		onCancel() {},
-	});
+	modalData.value.params = { title: '审核通过', content: '是否确定所选数据审核通过？' }
+	modalData.value.data = {
+		'status': 15,
+		'itineraryNoList' : route.currentRoute.value?.query.itineraryNo
+	}
+	modalData.value.show = true
 };
 // 结算明细
 const itemDetail = (oid: any) => {
@@ -177,11 +180,12 @@ const itemDetail = (oid: any) => {
 };
 //初始化页面
 const initPage = async (): Promise<void> => {
-	api.examineDetail(111).then((res: any) => {
+	api.examineDetail(route.currentRoute.value?.query.itineraryNo).then((res: any) => {
 		formData.data = res;
 		formData.settlementInformationVOList = res.settlementInformationVOList;
+	}).catch(() => {
+		onCancel()
 	});
-	console.log(route.currentRoute.value?.query.itineraryNo);
 };
 
 onMounted(() => {

@@ -24,12 +24,12 @@
 					</div>
 				</template>
 				<template v-if="column.key === 'verificationType'">
-					<a-span v-if="record.verificationType==0">单点</a-span>
+					<a-span v-if="record.verificationType == 0">单点</a-span>
 					<a-span v-else>多点</a-span>
 				</template>
 				<template v-if="column.key === 'ticketType'">
-					<a-span v-if="record.ticketType==0">联票</a-span>
-					<a-span v-else-if="record.ticketType==1">单票</a-span>
+					<a-span v-if="record.ticketType == 0">联票</a-span>
+					<a-span v-else-if="record.ticketType == 1">单票</a-span>
 					<a-span v-else>演出票</a-span>
 				</template>
 			</template>
@@ -42,7 +42,7 @@
 			@showSizeChange="pageSideChange"
 		/>
 	</div>
-	<SetUpTime v-model="state.operationModal.isSetUpdate" :params="state.params"></SetUpTime>
+	<SetUpTime v-model="state.operationModal.isSetUpdate" :params="state.params" @cancel="cancel"></SetUpTime>
 </template>
 
 <script setup lang="ts">
@@ -105,15 +105,13 @@ const state = reactive({
 const onSearch = () => {
 	api.getVerifManage(state.tableData.param).then((res: any) => {
 		console.log('res:', res.content);
-		  state.tableData.data = res.content;
-		  state.tableData.total = res.total;
+		state.tableData.data = res.content;
+		state.tableData.total = res.total;
 	});
 };
-const reset=()=>{
-	state.tableData.param.ticketType='',
-	state.tableData.param.ticketName='',
-	onSearch()
-}
+const reset = () => {
+	(state.tableData.param.ticketType = ''), (state.tableData.param.ticketName = ''), onSearch();
+};
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
 	state.tableData.param.pageNo = val;
@@ -194,7 +192,7 @@ const SetUp = (param: any) => {
 .ant-table-body {
 	height: 500px;
 }
-.btn{
+.btn {
 	margin-right: 30px;
 }
 </style>

@@ -305,7 +305,7 @@ export async function settlementUpdate(data: any) {
 		url: `${commonPath}/settlement-service/public/api/settlement-information/update/status`,
 		method: 'post',
 		data,
-		showLoading: true,
+		showLoading: false,
 	});
 }
 // 酒店星级下拉列表
@@ -321,6 +321,15 @@ export async function getItineraryStatus() {
 	return request({
 		url: `${commonPath}/travel-agency-service/public/api/itinerary/getItineraryStatus`,
 		method: 'get',
+		showLoading: false,
+	});
+}
+// 组合对账 导出企业结算资金对账表
+export async function exportReconciliation(data: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/settlement-information/exportReconciliation`,
+		method: 'post',
+		data,
 		showLoading: false,
 	});
 }
