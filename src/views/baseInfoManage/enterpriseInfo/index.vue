@@ -247,8 +247,8 @@
           <a-form-item name="unitStatus" label="开业状态">
             <div class="flex">
               <a-radio-group v-model:value="form.unitStatus" :disabled="getStatus('unitStatus')">
-                <a-radio :value="0">开业</a-radio>
-                <a-radio :value="1">停业</a-radio>
+                <a-radio :value="1">开业</a-radio>
+                <a-radio :value="0">停业</a-radio>
               </a-radio-group>
               <a-button type="primary" class="status-btn" @click="changeDisabledStatus('unitStatus')" v-if="showChangeBtns('unitStatus')">
                 {{ getStatus('unitStatus') ? '修改' : '确定' }}
@@ -257,7 +257,7 @@
           </a-form-item>
           <a-form-item name="rangeTime" label="营业时间">
             <div class="flex">
-              <a-range-picker v-model:value="form.rangeTime" @change="changeTime" :disabled="getStatus('rangeTime')"/>
+              <a-range-picker v-model:value="form.rangeTime" @change="changeTime" :disabled="getStatus('rangeTime')" value-format="YYYY-MM-DD"/>
               <a-button type="primary" class="status-btn" @click="changeDisabledStatus('rangeTime')" v-if="showChangeBtns('rangeTime')">
                 {{ getStatus('rangeTime') ? '修改' : '确定' }}
               </a-button>
@@ -404,31 +404,34 @@ const initOpeion = async () => {
   console.log('userInfo.sysCompany.businessType:', userInfo.sysCompany.businessType);
   switch (userInfo.sysCompany.businessType) {
     case 'TRAVEL':
-    infoFunc = api.getTravelInformation();
+      infoFunc = api.getTravelInformation();
     break;
     case 'HOTEL':
-    infoFunc = api.getInfoByCompanyId(userInfo.sysCompany.oid);
+      infoFunc = api.getInfoByCompanyId(userInfo.sysCompany.oid);
     break;
     case 'TICKET':
-    infoFunc = api.getScenicById(userInfo.sysCompany.oid);
+      infoFunc = api.getScenicById(userInfo.sysCompany.oid);
     break;
     case 'CATERING':
-    infoFunc = api.getCateringInfo(userInfo.sysCompany.oid);
+      infoFunc = api.getCateringInfo(userInfo.sysCompany.oid);
+    break;
     // 其他业态
     default:
-    infoFunc = api.getCompanyInformation(userInfo.sysCompany.oid);
+      infoFunc = api.getCompanyInformation(userInfo.sysCompany.oid);
     break;
   }
   let data = await infoFunc;
   state.form = { ...data, ...data.companyBo};
   if (state.form?.areaId) state.form.addressIds = [state.form.provinceId, state.form.cityId, state.form.areaId];
+  state.form.rangeTime = [state.form.startTime, state.form.endTime];
+  console.log('state.form:', state.form);
+  
   // submitFunc:提交编辑审核函数名
   if (Object.keys(travelStore.businessTypeOptions).includes(userInfo.sysCompany.businessType)) {
     submitFunc.value = travelStore.businessTypeOptions[userInfo.sysCompany.businessType].submitFunc;
   } else {
     submitFunc.value = 'editCompany';
   }
-  console.log('state.form:', state.form)
   // 右上角文字描述判断
   enterpriseState.value = travelStore.enterpriseState[state.form.informationAuditStatus]?.descriptions;
 
@@ -476,15 +479,6 @@ const changeTime = (date: string, dateString: string) => {
 
 const submit = () => {
   let queryData = form.value;
-  if (userInfo.sysCompany.businessType == 'CATERING') {
-    queryData = {
-      shopPhone: queryData.shopPhone || '',
-      startTime: queryData.startTime || '',
-      endTime: queryData.endTime || '',
-      cateringDesc: queryData.cateringDesc || '',
-      companyBo: queryData
-    }
-  }
   if (userInfo.sysCompany.businessType == 'HOTEL') {
     queryData.hotelName = queryData.name;
   }

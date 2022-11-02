@@ -5,7 +5,13 @@
 				<!-- <a-input v-model:value="state.tableData.itineraryNo" placeholder="请输入行程单号" style="width: 200px" /> -->
 				<a-input v-model:value="state.tableData.param.ticketName" placeholder="门票名称/关键词" style="width: 200px" />
 			</SearchItem>
-			<SearchItem label="归属景区">
+			<SearchItem label="上架状态">
+				<a-select v-model:value="state.tableData.param.putaway" :allowClear="true" ref="select" style="width: 200px" placeholder="门票名称/关键词">
+					<a-select-option :value="false">下架</a-select-option>
+					<a-select-option :value="true">上架</a-select-option>
+				</a-select>
+			</SearchItem>
+			<!-- <SearchItem label="归属景区">
 				<a-select
 					v-model:value="state.tableData.param.scenicId"
 					:allowClear="true"
@@ -15,9 +21,9 @@
 					:options="scenicSpotOptions"
 				>
 				</a-select>
-			</SearchItem>
+			</SearchItem> -->
 			<template #button>
-				<a-button @click="initPage">查询</a-button>
+				<a-button @click="search">查询</a-button>
 			</template>
 		</CommonSearch>
 
@@ -39,9 +45,11 @@
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a href="javascript:;" @click="toEditPage(record)">编辑</a>
+							<a href="javascript:;" @click="toEditPage(record)">编辑</a>
 							<a href="javascript:;" v-if="record.putaway" @click="outDown(record)">
 								{{ !record.putaway ? '上架' : '下架' }}
 							</a>
+							<a href="javascript:;" @click="invetory(record)"> 联票库存日历</a>
 							<a href="javascript:;" v-if="!record.putaway" @click="register(record)"> 上架</a>
 							<a href="javascript:;" v-if="!record.putaway" @click="changeDownTicket(record)"> 下架修改</a>
 						</div>
@@ -57,6 +65,7 @@
 			/>
 			<Audit ref="auditRef" @down-page="downPage" />
 		</div>
+		<CalendarInvetory ref="calendarInvetoryRef" />
 	</a-spin>
 </template>
 
@@ -70,6 +79,7 @@ import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import { useCommonEnum } from '@/stores/modules/commonEnum';
 import { message } from 'ant-design-vue';
 import Audit from './components/audit.vue';
+import CalendarInvetory from './components/calendarInvetory.vue';
 const route = useRouter();
 const navigatorBar = useNavigatorBar();
 const commonEnum = useCommonEnum();
@@ -151,6 +161,10 @@ const pageSideChange = (current: number, size: number) => {
 	state.tableData.param.pageSize = size;
 	initPage();
 };
+const calendarInvetoryRef = ref();
+const invetory = (value: any) => {
+	calendarInvetoryRef.value.open(value.oid);
+};
 //编辑
 const toEditPage = (value: any) => {
 	route.push({ path: '/scenic-spot/multicast/edit', query: { t: 1, o: value.oid } });
@@ -158,12 +172,12 @@ const toEditPage = (value: any) => {
 //下架
 const auditRef = ref();
 const outDown = (value: any) => {
-	auditRef.value.open(value.oid);
+	auditRef.value.open(value.oid, '', value.ticketName);
 
 	// route.push({ path: '/scenic-spot/multicast/edit' });
 };
 const changeDownTicket = (value: any) => {
-	auditRef.value.open(value.oid, 'edit');
+	auditRef.value.open(value.oid, 'edit', value.ticketName);
 };
 
 //上架
@@ -191,6 +205,10 @@ const initOption = async () => {
 			label: item.ticketName,
 		};
 	});
+};
+const search = () => {
+	state.tableData.param.pageNo = 1;
+	initPage();
 };
 const initPage = async () => {
 	// userList(state.tableData.param).then((res) => {

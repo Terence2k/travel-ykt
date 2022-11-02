@@ -101,6 +101,13 @@ const columnsCount = ref([
 		dataIndex: 'price',
 		key: 'price',
 		width: 200,
+		customCell: (record: any, index: number) => {
+			if (record.price && !index) {
+				return { rowSpan: props.tableList.length };
+			} else {
+				return { rowSpan: 0, colSpan: 0 };
+			}
+		},
 	},
 	{
 		title: '参考价格',
@@ -337,7 +344,14 @@ const createData = (value: any, index: number) => {
 		initCalendarList(value.ticketId);
 	} else {
 		createNewCalendarIndex.value = index;
+		let value = props.tableList[index].dateStockList;
+		if (value) {
+			setDayPriceList.value = value;
+		} else {
+			setDayPriceList.value = [];
+		}
 	}
+
 	calendarRef.value.open();
 };
 
