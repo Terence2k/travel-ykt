@@ -25,7 +25,7 @@
 			@showSizeChange="pageSideChange"
 		/>
 	</div>
-  <BaseModal title="行程详情预览" v-model="changeAuditVisible" :width="1200">
+  <BaseModal title="行程详情预览" v-model="changeAuditVisible" :width="1000">
 		<div class="table_box">
 			<table class="info_table" cellpadding="16px" border="1">
 				<tr class="row">
