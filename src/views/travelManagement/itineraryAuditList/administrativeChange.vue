@@ -88,7 +88,7 @@
 		</template>
   </BaseModal>
   <BaseModal title="驳回确认" v-model="rejectAuditVisible">
-    驳回行程变更申请，填写驳回理由：
+    驳回 {{state.detail.travelName}} 的行程变更申请，填写驳回理由：
     <a-textarea v-model:value="rejectReason" placeholder="请填写驳回理由" :rows="4" />
 		<template v-slot:footer>
       <a-button @click="rejectAuditVisible = false">取消</a-button>
@@ -212,7 +212,7 @@
         closable: true,
         centered: true,
         icon: false,
-        content: `您即将批准行程变更申请，请确认该行程单的变更内容是否合规？是否同意？`,
+        content: `您即将批准 ${state.detail.travelName} 申请的行程变更申请，请确认该行程单的变更内容是否合规？是否同意？`,
         onOk() {
           const queryData = {
             auditTypeCode: 7, //审核类code（详情参考CompanyAuditStatusEnum）
