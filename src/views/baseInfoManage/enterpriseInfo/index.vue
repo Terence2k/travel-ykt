@@ -476,15 +476,6 @@ const changeTime = (date: string, dateString: string) => {
 
 const submit = () => {
   let queryData = form.value;
-  if (userInfo.sysCompany.businessType == 'CATERING') {
-    queryData = {
-      shopPhone: queryData.shopPhone || '',
-      startTime: queryData.startTime || '',
-      endTime: queryData.endTime || '',
-      cateringDesc: queryData.cateringDesc || '',
-      companyBo: queryData
-    }
-  }
   if (userInfo.sysCompany.businessType == 'HOTEL') {
     queryData.hotelName = queryData.name;
   }
