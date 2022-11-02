@@ -210,7 +210,6 @@ const dealEditData = (value: any) => {
 	let newOption: any[] = [],
 		arr = value.scenicTicketList?.map((item: any) => {
 			formData.scenicTicketListId?.push(item.ticketId);
-
 			return {
 				sonOid: item.sonOid, //子票id
 				ticketId: item.ticketId, //被关联的票id
@@ -219,7 +218,6 @@ const dealEditData = (value: any) => {
 				ticketName: item.ticketSonName,
 			};
 		});
-
 	newOption = childrenTicketOption.value.map((option: any) => {
 		let index = formData.scenicTicketListId?.indexOf(option.ticketId);
 		if (Number(index) > -1) {
@@ -229,6 +227,7 @@ const dealEditData = (value: any) => {
 		}
 	});
 
+	changeOption(formData.scenicTicketListId);
 	console.log(newOption, 'newOption');
 
 	childrenTicketOption.value = newOption;

@@ -105,7 +105,7 @@ export function getChangeBeforeAfterData(companyId: string, type: string) {
 	} else if (type === 'TRAVEL') {
 		// 旅行社根据企业id查询提交审核前、后数据
 		return request({
-			url: `${commonPart}findCompanyInformationAuditDta?companyId=${companyId}`,
+			url: `${commonPart}findCompanyInformationAuditData?companyId=${companyId}`,
 			method: 'post',
 			showLoading: true
 		});

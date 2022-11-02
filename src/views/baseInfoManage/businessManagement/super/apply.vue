@@ -732,8 +732,8 @@ const auditEnterprise = async (record: any) => {
 		const newReduceRules = [newList?.reduceRule, newList?.fullRule]
 		const oldReduceRules = [oldList?.reduceRule, oldList?.fullRule]
 		if (newReduceRules.toString() !== oldReduceRules.toString()) {
-			newArrList.value['reduceRules'] = `满${newList?.fullRule}减${newList?.reduceRule}`
-			oldArrList.value['reduceRules'] = `满${oldList?.fullRule}减${oldList?.reduceRule}`
+			newArrList.value['reduceRules'] = newList?.fullRule && newList?.reduceRule && `满${newList?.fullRule}减${newList?.reduceRule}`
+			oldArrList.value['reduceRules'] = oldList?.fullRule && oldList?.reduceRule && `满${oldList?.fullRule}减${oldList?.reduceRule}`
 			changeKeys.value.push('reduceRules')
 		}
 		changeAuditVisible.value = true
