@@ -111,11 +111,11 @@ const columns = [
 
 const auditRef = ref();
 const open = (value: any) => {
-	auditRef.value.open(value.oid);
+	auditRef.value.open(value.oid, '', value.ticketName);
 };
 
 const changeDownTicket = (value: any) => {
-	auditRef.value.open(value.oid, 'edit');
+	auditRef.value.open(value.oid, 'edit', value.ticketName);
 };
 const done = () => {
 	state.tableData.loading = true;
