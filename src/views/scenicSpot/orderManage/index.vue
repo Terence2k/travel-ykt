@@ -278,6 +278,7 @@ const changePageStatus = (e: any) => {
 	state.tableData.param.orderState = e;
 	init();
 };
+
 //查看
 const route = useRouter();
 const toDetail = (record: any) => {
@@ -296,6 +297,7 @@ const onHandleCurrentChange = (val: number) => {
 };
 //搜索
 const search = () => {
+	state.tableData.param.pageNo = 1;
 	init();
 };
 const pageSideChange = (current: number, size: number) => {

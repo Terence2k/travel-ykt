@@ -12,7 +12,7 @@
 					</a-select>
 				</search-item> -->
 				<template #button>
-					<a-button @click="initList">查询</a-button>
+					<a-button @click="search">查询</a-button>
 				</template>
 			</CommonSearch>
 			<div class="table-area">
@@ -186,7 +186,10 @@ const pageSideChange = (current: number, size: number) => {
 	state.tableData.param.pageSize = size;
 	// onSearch();
 };
-
+const search = () => {
+	state.tableData.param.pageNo = 1;
+	initList();
+};
 const initList = async () => {
 	state.tableData.loading = true;
 	let res = await api.getSingleVoteList(state.tableData.param);

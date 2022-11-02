@@ -344,7 +344,14 @@ const createData = (value: any, index: number) => {
 		initCalendarList(value.ticketId);
 	} else {
 		createNewCalendarIndex.value = index;
+		let value = props.tableList[index].dateStockList;
+		if (value) {
+			setDayPriceList.value = value;
+		} else {
+			setDayPriceList.value = [];
+		}
 	}
+
 	calendarRef.value.open();
 };
 
