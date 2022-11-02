@@ -3,7 +3,7 @@
     <div class="header_top">
       <div class="title">企业信息</div>
       <div class="register_data" v-if="baseInfo.createTime">
-        注册时间：{{baseInfo.createTime}}
+        注册时间：{{ baseInfo.createTime }}
       </div>
     </div>
     <div class="header_bottom">
@@ -28,7 +28,7 @@
           <div class="list_item_name">已委派导游</div>
           <div class="list_item_operate">去管理</div>
         </div>
-        <div class="list_item_bottom active">{{baseInfo.delegateGuide}}</div>
+        <div class="list_item_bottom active">{{ baseInfo.delegateGuide }}</div>
       </div>
     </div>
   </div>
@@ -68,8 +68,9 @@
       </tr>
       <tr class="row">
         <td class="key">公司联系方式</td>
-        <td class="value"><span v-if="details.contactName&&details.phone">{{ details.contactName +"&nbsp;&nbsp"+
-        details.phone }}</span></td>
+        <td class="value"><span v-if="details.contactName && details.phone">{{ details.contactName + "&nbsp;&nbsp" +
+            details.phone
+        }}</span></td>
       </tr>
       <tr class="row">
         <td class="key">公司账户类型</td>
@@ -149,13 +150,15 @@ const state = reactive<stateType>({
 })
 const { baseInfo, details } = toRefs(state)
 const initOpeion = async () => {
-  let { accountBalance, delegateGuide, createTime, group, companyBo, groupState } = await api.getTravelInformation()
+  // let { accountBalance, delegateGuide, createTime, group, companyBo, groupState } = await api.getTravelInformation()
+  let res = await api.getTravelInformation()
+  let { accountBalance, delegateGuide, createTime, group, groupState } = res
   state.baseInfo.accountBalance = accountBalance
   state.baseInfo.delegateGuide = delegateGuide
   state.baseInfo.createTime = createTime
   state.baseInfo.group = group
   state.baseInfo.groupState = groupState
-  state.details = companyBo
+  state.details = res
   state.details.manageUrl = "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
 }
 const goTo = () => {

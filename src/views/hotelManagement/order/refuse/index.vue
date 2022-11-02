@@ -10,6 +10,9 @@
 				<template v-if="column.key == 'reduceAfterAmount'">
 					{{ accDiv(record.reduceAfterAmount, 100) }}
 				</template>
+				<template v-if="column.key == 'fullRule'">
+					满{{ record.fullRule }} 减 {{ record.reduceRule }}
+				</template>
 			</template>
 		</CommonTable>
 		<CommonPagination
@@ -23,7 +26,7 @@
 		<BaseModal :title="'审核'" v-model="visible">
 			<a-form>
 				<a-form-item label="状态"> 审核不通过 </a-form-item>
-				<a-form-item label="">
+				<a-form-item label="原因">
 					<a-textarea placeholder="审核不通过原因" v-model:value="state.reject" :rows="4" disabled />
 				</a-form-item>
 			</a-form>
@@ -53,6 +56,16 @@ const hotelStore = useHotelStore();
 const navigatorBar = useNavigatorBar();
 const visible = ref(false);
 const columns = [
+	{
+		title: '订单编号',
+		dataIndex: 'orderNo',
+		key: 'orderNo',
+	},
+	{
+		title: '酒店名称',
+		dataIndex: 'hotelName',
+		key: 'hotelName',
+	},
 	{
 		title: '行程单号',
 		dataIndex: 'itineraryNo',
@@ -89,6 +102,11 @@ const columns = [
 		key: 'scheduledRooms',
 	},
 	{
+		title: '减免规则',
+		dataIndex: 'fullRule',
+		key: 'fullRule',
+	},
+	{
 		title: '费用（元）',
 		dataIndex: 'reduceAfterAmount',
 		key: 'reduceAfterAmount',
@@ -98,10 +116,9 @@ const columns = [
 		dataIndex: 'actions',
 		key: 'actions',
 		fixed: 'right',
-		width: 160,
+		width: 120,
 	},
 ];
-
 const type = ref('2');
 
 const state = reactive({

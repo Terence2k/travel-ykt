@@ -179,7 +179,7 @@ export async function getViewOrderList(data: any) {
 //景区订单 详情
 export async function getViewOrderDetails(id: any) {
 	return request({
-		url: commonPath + `/ticket-service/public/api/scenic-order/+${id}`,
+		url: commonPath + `/ticket-service/public/api/scenic-order/${id}`,
 		method: 'get',
 	});
 }

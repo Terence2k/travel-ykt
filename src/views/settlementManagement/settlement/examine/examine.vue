@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<CommonTable :dataSource="state.tableData.data" :scroll="{ x: '100%',y: '100%' }" rowKey="oid" :columns="columns" :row-selection="rowSelection">
+		<CommonTable :dataSource="state.tableData.data" :scroll="{ x: '100%',y: '100%' }" rowKey="itineraryNo" :columns="columns" :row-selection="rowSelection">
 			<template #button>
 				<div class="btn">
 					<a-button type="primary" @click="examine('all', null)">审核通过</a-button>
@@ -34,6 +34,7 @@
 			@showSizeChange="pageSideChange"
 		/>
 	</div>
+	<DelModal :params="modalData.params" v-model="modalData.show" @submit="tipSubmit" @cancel="tipCancel" />
 </template>
 
 <script lang="ts" setup>
@@ -42,7 +43,8 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import { reactive, onMounted } from 'vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
-import { Modal } from 'ant-design-vue';
+import DelModal from '@/components/common/DelModal.vue';
+
 const props = defineProps({
 	params: Object,
 	status: Number
@@ -101,7 +103,35 @@ const columns = [
 		width: 208,
 	},
 ];
-
+const modalData = ref({
+	show: false,
+	params: {},
+	data: {}, // 传参对象
+	type: ''
+});
+const tipSubmit = async () => {
+	// 重新结算
+	if (modalData.value.type == 'reclosing') {
+		api.settlementUpdate(modalData.value.data).then((res: any) => {
+			message.success('操作成功');
+			onSearch();
+		})
+		tipCancel();
+	}
+	// 申请转账
+	if (modalData.value.type == 'examine') {
+		api.settlementUpdate(modalData.value.data).then((res: any) => {
+			message.success('操作成功');
+			onSearch();
+		})
+		tipCancel();
+	}
+};
+const tipCancel = () => {
+	modalData.value.data = {};
+	modalData.value.type = '';
+	modalData.value.show = false;
+};
 const state = reactive({
 	tableData: {
 		data: [],
@@ -173,27 +203,14 @@ const onSearch = async() => {
 // 向父组件暴露方法
 defineExpose({ onSearch })
 // 重新结算
-const reclosing = (() => {
-	Modal.confirm({
-		title: '重新结算',
-		width: 560,
-		closable: true,
-		centered: true,
-		icon: false,
-		content: '你即将对行程单重新结算，是否确定执行？',
-		onOk() {
-			// api
-			// 	.comprehensiveFeeEnable(record.oid)
-			// 	.then((res: any) => {
-					message.success('操作成功');
-			// 		onSearch();
-			// 	})
-			// 	.catch((err: any) => {
-			// 		message.error(err || '操作失败');
-			// 	});
-		},
-		onCancel() {},
-	});
+const reclosing = ((record: any) => {
+	modalData.value.params = { title: '重新结算', content: '你即将对行程单重新结算，是否确定执行？' }
+	modalData.value.type = 'reclosing'
+	modalData.value.data = {
+		'status': 14,
+		'itineraryNoList' : [record.itineraryNo]
+	}
+	modalData.value.show = true
 })
 // 审核通过
 const examine = (type: string, record: any) => {
@@ -207,26 +224,13 @@ const examine = (type: string, record: any) => {
 			message.warn('请先选择审核项');
 			return;
 		}
-		Modal.confirm({
-			title: '审核通过',
-			width: 560,
-			closable: true,
-			centered: true,
-			icon: false,
-			content: '是否确定所选数据审核通过',
-			onOk() {
-				// api
-				// 	.comprehensiveFeeEnable(state.selectedRowKeys)
-				// 	.then((res: any) => {
-				message.success('操作成功');
-				// 		onSearch();
-				// 	})
-				// 	.catch((err: any) => {
-				// 		message.error(err || '操作失败');
-				// 	});
-			},
-			onCancel() {},
-		});
+		modalData.value.params = { title: '审核通过', content: '是否确定所选数据审核通过' }
+		modalData.value.type = 'examine'
+		modalData.value.data = {
+			'status': 15,
+			'itineraryNoList' : state.selectedRowKeys
+		}
+		modalData.value.show = true
 	}
 };
 // 查看详情

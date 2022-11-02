@@ -67,32 +67,7 @@ const columns = [
 	},
 ];
 const formData: any = reactive({
-	list: [
-		// {
-		//     oid: 1,
-		//     productName: 'John Brown sr.',
-		//     costName: 'test',
-		//     companyName: 'test',
-		//     settlementCost: '1001',
-		// 	costType: 1
-		// },
-		// {
-		//     oid: 2,
-		//     productName: 'John Brown sr.',
-		//     costName: 'test',
-		//     companyName: 'test',
-		//     settlementCost: '1001',
-		// 	costType: 0
-		// },
-		// {
-		//     oid: 3,
-		//     productName: 'John Brown sr.',
-		//     costName: 'test',
-		//     companyName: 'test',
-		//     settlementCost: '1001',
-		// 	costType: 1
-		// },
-	],
+	list: [],
 });
 const options = reactive({
 	title: '分账明细',

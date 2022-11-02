@@ -23,7 +23,13 @@
 				<TableRule :tableList="formData.data.discountList" @del-rule-obj="delRuleObj" @add-rule-obj="addRuleObj" />
 			</a-form-item>
 			<a-form-item label="设置价格" v-bind="validateInfos[`data.scenicTicketList`]">
-				<TablePrice :tableList="formData.data.scenicTicketList" @set-calendar="setCalendar" @del-rule-obj="delRuleObj" @add-rule-obj="addRuleObj" />
+				<TablePrice
+					:tableList="formData.data.scenicTicketList"
+					:settlementModelList="settlementModelList"
+					@set-calendar="setCalendar"
+					@del-rule-obj="delRuleObj"
+					@add-rule-obj="addRuleObj"
+				/>
 			</a-form-item>
 			<a-form-item label="库存" name="data.dayStock" v-bind="validateInfos[`data.dayStock`]">
 				<a-input v-model:value="formData.data.dayStock" placeholder="请填写库存" style="width: 200px; margin-right: 20px" />
@@ -144,16 +150,24 @@ const setCalendar = (val: any) => {
 	formData.data.scenicTicketList[val.index].dateStockList = val.data;
 	console.log(formData.data, 'save');
 };
-const changeOption = (arr: any) => {
-	let list = childrenTicketOption.value.filter((item: any) => arr.includes(item.ticketId));
 
-	formData.data.scenicTicketList = list.map((i: any) => {
+const settlementModelList = ref<any>([]);
+const changeOption = (arr: any) => {
+	settlementModelList.value = [];
+	let list = childrenTicketOption.value.filter((item: any) => arr.includes(item.ticketId));
+	formData.data.scenicTicketList = list.map((i: any, index: number) => {
+		let isHad = settlementModelList.value?.filter((item: any) => item.value == i.scenicId);
+		if (isHad.length === 0) {
+			settlementModelList.value.push({ label: i.scenicName || `企业${index}`, value: i.scenicId });
+		}
+
 		return {
 			sonOid: i.sonOid || i.oid, //子票id
 			ticketId: i.ticketId, //被关联的票id
 			ticketType: i.ticketType, //门票类型:0-联票，1-单票，2-演出票
 			price: i.price || i.ticketPrice,
 			ticketName: i.ticketName,
+			settlementModel: i.settlementModel || null,
 		};
 	});
 };
@@ -196,16 +210,15 @@ const dealEditData = (value: any) => {
 	let newOption: any[] = [],
 		arr = value.scenicTicketList?.map((item: any) => {
 			formData.scenicTicketListId?.push(item.ticketId);
-
 			return {
 				sonOid: item.sonOid, //子票id
 				ticketId: item.ticketId, //被关联的票id
 				ticketType: item.ticketType, //门票类型:0-联票，1-单票，2-演出票
 				price: item.price,
 				ticketName: item.ticketSonName,
+				settlementModel: item.settlementModel || null,
 			};
 		});
-
 	newOption = childrenTicketOption.value.map((option: any) => {
 		let index = formData.scenicTicketListId?.indexOf(option.ticketId);
 		if (Number(index) > -1) {
@@ -215,6 +228,7 @@ const dealEditData = (value: any) => {
 		}
 	});
 
+	changeOption(formData.scenicTicketListId);
 	console.log(newOption, 'newOption');
 
 	childrenTicketOption.value = newOption;
