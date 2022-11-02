@@ -74,6 +74,7 @@ const commonEnum = useCommonEnum();
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 const route = useRouter();
+const router = useRoute();
 
 const ticketDataTypeList = ['联票', '单票', '演出票'];
 const ticketTypeList = {
@@ -184,12 +185,14 @@ const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
 	state.tableData.param.pageNo = val;
 	// onSearch();
+	initList();
 };
 //翻页
 const pageSideChange = (current: number, size: number) => {
 	console.log('changePageSize:', size);
 	state.tableData.param.pageSize = size;
 	// onSearch();
+	initList();
 };
 //编辑
 const toEditPage = (record: any) => {
@@ -231,9 +234,18 @@ const dealData = (params: [any]) => {
 
 	return res;
 };
-
-onMounted(() => {
+const isSearch = () => {
+	console.log(router.query);
+	route.push('/scenic-spot/sold-out-history');
+	state.tableData.param.name = router.query.name;
 	initList();
+};
+onMounted(() => {
+	if (router.query?.name) {
+		isSearch();
+	} else {
+		initList();
+	}
 	// navigatorBar.setNavigator(['景区信息管理']);
 });
 onBeforeUnmount(() => {
