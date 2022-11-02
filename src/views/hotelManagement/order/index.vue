@@ -71,18 +71,18 @@ const pages = [
 		value: HotelStatus.refuse,
 		chart: 'refuse',
 	},
-	{
-		name: cancal,
-		label: hotelStore.HotelOrderStatus[HotelStatus.cancal],
-		value: HotelStatus.cancal,
-		chart: 'cancal',
-	},
-	{
-		name: finish,
-		label: hotelStore.HotelOrderStatus[HotelStatus.finish],
-		value: HotelStatus.finish,
-		chart: 'finish',
-	},
+	// {
+	// 	name: cancal,
+	// 	label: hotelStore.HotelOrderStatus[HotelStatus.cancal],
+	// 	value: HotelStatus.cancal,
+	// 	chart: 'cancal',
+	// },
+	// {
+	// 	name: finish,
+	// 	label: hotelStore.HotelOrderStatus[HotelStatus.finish],
+	// 	value: HotelStatus.finish,
+	// 	chart: 'finish',
+	// },
 ];
 
 const chart = computed(() => pages.filter((it: any) => it.value === activeKey.value)[0].chart as Field);
