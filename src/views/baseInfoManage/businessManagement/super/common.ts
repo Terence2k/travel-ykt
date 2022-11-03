@@ -1,4 +1,5 @@
 import type { Rule } from 'ant-design-vue/es/form';
+import dayjs, { Dayjs } from 'dayjs';
 const keyNameList = {
   businessType: '企业类型',
   name: '企业名称',
@@ -203,6 +204,18 @@ const flat = (target: any) => {
   process(target)
   return obj
 }
+const disabledBeforeDate = (current: Dayjs) => {
+  // Can not select days before today and today
+  // return current && current < dayjs().endOf('day');
+  // Can not select days before today
+  return current < dayjs().endOf('day');
+};
+const disabledAfterDate = (current: Dayjs) => {
+  // Can not select days before today and today
+  // return current && current < dayjs().endOf('day');
+  // Can not select days after today
+  return dayjs().endOf('day') < current;
+};
 export {
   getKeylist,
   commonFormRules6,
@@ -213,5 +226,7 @@ export {
   condition2,
   condition3,
   condition4,
-  flat
+  flat,
+  disabledBeforeDate,
+  disabledAfterDate
 }

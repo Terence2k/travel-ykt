@@ -7,11 +7,11 @@
 					<a-form-item label="行程单号"> {{ formData.data.orderInfo.itineraryNo }} </a-form-item>
 					<a-form-item label="发团旅行社"> {{ formData.data.orderInfo.sendTravelName }} </a-form-item>
 					<a-form-item label="地接旅行社"> {{ formData.data.orderInfo.localTravelName }} </a-form-item>
-					<a-form-item label="联系电话"> {{ formData.data.orderInfo.travelPhone }} </a-form-item>
-					<a-form-item label="入园日期"> {{ formData.data.orderInfo.schoolTime }} </a-form-item>
+					<a-form-item label="联系电话"> {{ formData.data.orderInfo.sendTravelPhone }} </a-form-item>
+					<a-form-item label="入园日期"> {{ formData.data.orderInfo.schoolDate }} </a-form-item>
 					<a-form-item label="预定时间"> {{ formData.data.orderInfo.bookTime }}</a-form-item>
 					<a-form-item label="核销时间"> {{ formData.data.orderInfo.verificationTime }} </a-form-item>
-					<a-form-item label="行程人数"> {{ formData.data.orderInfo.travelCount }} </a-form-item>
+					<a-form-item label="行程人数"> {{ formData.data.orderInfo.itineraryCount }} </a-form-item>
 					<a-form-item label="订票人数"> {{ formData.data.orderInfo.bookCount }} </a-form-item>
 					<a-form-item label="核销人数"> {{ formData.data.orderInfo.verificationCount }} </a-form-item>
 					<a-form-item label="订单金额"> {{ formData.data.orderInfo.orderAmount }} </a-form-item>
@@ -88,7 +88,7 @@ const formData = reactive({
 			itineraryNo: '行程单号', //行程单号
 			sendTravelName: '发团社名称', //发团旅行社
 			localTravelName: '地接社名称', //地接旅行社
-			travelPhone: '联系电话', //联系电话
+			sendTravelPhone: '联系电话', //联系电话
 			schoolTime: '2022-7-14', //入园日期(yyyy-MM-dd)
 			verificationTime: '2022-7-12 17:50:45', //核销时间(yyyy-MM-dd HH:mm:ss)
 			bookTime: '2022-7-12 17:50:45', //预定时间
@@ -224,11 +224,12 @@ const columns = [
 		dataIndex: 'certificateNo',
 		key: 'certificateNo',
 	},
-	{
-		title: '身份类型',
-		dataIndex: 'address1',
-		key: 'address1',
-	},
+
+	// {
+	// 	title: '身份类型',
+	// 	dataIndex: 'address1',
+	// 	key: 'address1',
+	// },
 	{
 		title: '姓名',
 		dataIndex: 'personName',
@@ -240,9 +241,20 @@ const columns = [
 		key: 'gender',
 	},
 	{
-		title: '门票类型',
-		dataIndex: 'ticketType',
-		key: 'address3',
+		title: '客源地',
+		dataIndex: 'sourceAddress',
+		key: 'sourceAddress',
+	},
+
+	{
+		title: '特殊证件号',
+		dataIndex: 'specialNo',
+		key: 'specialNo',
+	},
+	{
+		title: '特殊证件图片',
+		dataIndex: 'specialPic',
+		key: 'specialPic',
 	},
 	{
 		title: '核销情况',

@@ -26,42 +26,48 @@
 					</template>
 					<template v-if="['roomNum'].includes(column.dataIndex)">
 						<div>
-							<a-input-number
-								type="number"
-								:disabled="editableData[record.key]?.operationType !== 0"
+							<a-form-item
 								v-if="editableData[record.key]"
-								v-model:value="editableData[record.key][column.dataIndex]"
-								:controls="false"
+								:name="[record.key, column.dataIndex]"
+								:rules="[{ required: true, validator: isPositiveInteger, trigger: 'blur', message: '房间数量必须为正整数' }]"
 							>
-								<template #addonBefore>
-									<a-select
-										class="icon-before-container"
-										:disabled="editableData[record.key]?.operationType === 0"
-										@click="getMaxMinusCount(record)"
-										@change="minusNumOptionsChange($event, record)"
-										v-model:value="editableData[record.key].minusNum"
-										:options="minusNumOptions"
-										style="width: 60px"
-									>
-										<template #suffixIcon>
-											<span class="icon-minus">-</span>
-										</template>
-									</a-select>
-								</template>
-								<template #addonAfter>
-									<a-select
-										:disabled="editableData[record.key]?.operationType === 0"
-										@change="plusNumOptionsChange($event, record)"
-										v-model:value="editableData[record.key].plusNum"
-										:options="plusNumOptions"
-										style="width: 60px"
-									>
-										<template #suffixIcon>
-											<span class="icon-plus">+</span>
-										</template>
-									</a-select>
-								</template>
-							</a-input-number>
+								<a-input-number
+									type="number"
+									:disabled="editableData[record.key]?.operationType !== 0"
+									v-if="editableData[record.key]"
+									v-model:value="editableData[record.key][column.dataIndex]"
+									:controls="false"
+								>
+									<template #addonBefore>
+										<a-select
+											class="icon-before-container"
+											:disabled="editableData[record.key]?.operationType === 0"
+											@click="getMaxMinusCount(record)"
+											@change="minusNumOptionsChange($event, record)"
+											v-model:value="editableData[record.key].minusNum"
+											:options="minusNumOptions"
+											style="width: 60px"
+										>
+											<template #suffixIcon>
+												<span class="icon-minus">-</span>
+											</template>
+										</a-select>
+									</template>
+									<template #addonAfter>
+										<a-select
+											:disabled="editableData[record.key]?.operationType === 0"
+											@change="plusNumOptionsChange($event, record)"
+											v-model:value="editableData[record.key].plusNum"
+											:options="plusNumOptions"
+											style="width: 60px"
+										>
+											<template #suffixIcon>
+												<span class="icon-plus">+</span>
+											</template>
+										</a-select>
+									</template>
+								</a-input-number>
+							</a-form-item>
 							<template v-else>
 								<a-input-number :disabled="true" :defaultValue="text">
 									<template #addonBefore>
@@ -176,11 +182,12 @@
 
 <script setup lang="ts">
 import { toRaw } from 'vue';
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep } from 'lodash';
 import { message } from 'ant-design-vue/es';
 import api from '@/api';
 import CommonTable from '@/components/common/CommonTable.vue';
 import { accDiv } from '@/utils/compute';
+import { isPositiveInteger } from '@/utils/validator';
 // import CommonPagination from '@/components/common/CommonPagination.vue';
 
 const route = useRoute();
@@ -444,7 +451,7 @@ const add = () => {
 		auditStatus: 0,
 		hotelId: state.hotelId ? parseInt(state.hotelId) : undefined,
 		roomTypeCode: systemRoomData?.value[0]?.value || 1,
-		roomNum: 0,
+		roomNum: 1,
 		roomOccupancyNum: 0,
 		operationType: 0,
 		roomOperateNum: 0,

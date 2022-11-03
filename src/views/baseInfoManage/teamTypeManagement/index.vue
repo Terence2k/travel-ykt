@@ -10,13 +10,11 @@
       <template v-if="column.key === 'productsLength'">
         <a-popover title="必购项目">
           <template #content>
-            <div v-show="record.products.length === 0">暂无必购项目</div>
-            <div v-show="record.products.length !== 0">
-              <p v-for="item in record.products">{{ item }}</p>
-            </div>
+            <p v-for="item in record.products">{{ item }}</p>
           </template>
-          <div style="color:#4197EF">{{ `${record.products.length}项` }}</div>
+          <div style="color:#4197EF" v-show="record.products.length !== 0">{{ `${record.products.length}项` }}</div>
         </a-popover>
+        <div v-show="record.products.length === 0">/</div>
       </template>
       <template v-if="column.key === 'action'">
         <div class="action-btns">
@@ -25,8 +23,14 @@
             @confirm="deleteTeam(record.oid)">
             <a>删除</a>
           </a-popconfirm>
-          <a @click="disable(0, record.oid)" v-show="record.state === 1">禁用</a>
-          <a @click="disable(1, record.oid)" v-show="record.state === 0">启用</a>
+          <a-popconfirm title="是否禁用当前团队类型？禁用后，创建行程单时无法再选中此类型。" ok-text="确认" cancel-text="取消"
+            @confirm="disable(0, record.oid)">
+            <a v-show="record.state === 1">禁用</a>
+          </a-popconfirm>
+          <a-popconfirm title="是否启用当前团队类型？启用后，创建行程单时可以选中此类型。" ok-text="确认" cancel-text="取消"
+            @confirm="disable(1, record.oid)">
+            <a v-show="record.state === 0">启用</a>
+          </a-popconfirm>
         </div>
       </template>
     </template>
@@ -128,7 +132,7 @@ const columns = [
   },
 ]
 let isAdd = true
-let normalProductIds: number[] = []
+// let normalProductIds: number[] = []
 const teamRef = ref()
 const teamForm = reactive({
   name: undefined,
@@ -305,7 +309,7 @@ const addOrUpdate = ({ row, handle }: addInterface) => {
     })
     tData.value = disabledChildKeys(tData.value, checkedParentKeys);
     checkedKeys.value = productIds;
-    normalProductIds = productIds;
+    // normalProductIds = productIds;
     isAdd = false
   }
 }
@@ -369,8 +373,8 @@ const closeModal = () => {
 
 const save = () => {
   teamRef.value.validate().then(async (val: any) => {
+    let teamTypeItemBos = format(checkedKeys.value, tData.value);
     if (isAdd) {
-      let teamTypeItemBos = format(checkedKeys.value, tData.value);
       let res = await api.addTeamType({ ...toRaw(teamForm), teamTypeItemBos });
       if (res === "添加成功") {
         message.success('新增团队类型成功！')
@@ -380,13 +384,13 @@ const save = () => {
         message.error('新增团队类型失败！')
       }
     } else {
-      let teamTypeItemBos
+      /* let teamTypeItemBos
       // 判断是否修改必购项目如果没有修改则不传该参数
       if (checkedKeys.value.toString() !== normalProductIds.toString()) {
         teamTypeItemBos = format(checkedKeys.value, tData.value);
       } else {
         teamTypeItemBos = undefined
-      }
+      } */
       let res = await api.updataTeamType({ ...toRaw(teamForm), teamTypeItemBos })
       if (res === "修改成功") {
         message.success('编辑团队类型成功！')

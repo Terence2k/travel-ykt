@@ -97,6 +97,7 @@ const init = async () => {
 		options.title = '编辑酒店星级';
 	} else {
 		options.title = '新增酒店星级';
+		formValidate.value.ratedStatus = 1;
 	}
 };
 
