@@ -72,7 +72,7 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import dayjs, { Dayjs } from 'dayjs';
 import { Form } from 'ant-design-vue';
 import Calendar from '@/components/common/calendarDouble.vue';
-
+import { shijianYMD, getAllDateCN, nextYear } from '@/utils/formatTIme';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 const route = useRouter();
@@ -259,34 +259,6 @@ const createDateItem = () => {
 	clearCurrentDay();
 	isEdit = false;
 };
-const shijianYMD = (timestamp: any) => {
-	let time = new Date(timestamp),
-		year = time.getFullYear(),
-		month = (time.getMonth() + 1).toString().padStart(2, '0'),
-		date = time.getDate().toString().padStart(2, '0');
-	// if (Number(month) < 10) {
-	// 	month = '0' + month;
-	// }
-	// if (Number(date) < 10) {
-	// 	date = '0' + date;
-	// }
-	return year + '-' + month + '-' + date;
-};
-const getAllDateCN = (startTime: Date, endTime: Date) => {
-	console.log(startTime, endTime, 'endTime');
-
-	var date_all = [];
-	var i = 0;
-	while (endTime.getTime() - startTime.getTime() >= 0) {
-		var year = startTime.getFullYear();
-		var month = (startTime.getMonth() + 1).toString().padStart(2, '0');
-		var day = startTime.getDate().toString().padStart(2, '0');
-		date_all[i] = year + '-' + month + '-' + day;
-		startTime.setDate(startTime.getDate() + 1);
-		i += 1;
-	}
-	return date_all;
-};
 
 const createItem = (obj: any) => {
 	setDayPriceList.value.push(obj);
@@ -316,15 +288,7 @@ const state = reactive<stateType>({
 		startDate: null,
 	},
 });
-const nextYear = (timestamp: any) => {
-	let time = new Date(timestamp),
-		year = Number(time.getFullYear()),
-		month = (time.getMonth() + 1).toString().padStart(2, '0'),
-		date = time.getDate().toString().padStart(2, '0');
 
-	year++;
-	return year + '-' + month + '-' + date;
-};
 // 编辑日历
 const initCalendarList = async (id: number) => {
 	state.data.subTicketId = id;
@@ -359,8 +323,6 @@ const createData = (value: any, index: number) => {
 
 	calendarRef.value.open();
 };
-
-onMounted(() => {});
 </script>
 
 <style scoped lang="less">

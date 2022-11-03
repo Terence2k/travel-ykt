@@ -57,6 +57,7 @@ import dayjs, { Dayjs } from 'dayjs';
 
 import api from '@/api';
 import { message } from 'ant-design-vue';
+import { shijianYMD, getAllDateCN, nextYear } from '@/utils/formatTIme';
 
 //自定义价格列表
 const setDayPriceList = ref([
@@ -149,29 +150,6 @@ const createDateItem = () => {
 	clearCurrentDay();
 	isEdit = false;
 };
-const shijianYMD = (timestamp: any) => {
-	let time = new Date(timestamp),
-		year = time.getFullYear(),
-		month = (time.getMonth() + 1).toString().padStart(2, '0'),
-		date = time.getDate().toString().padStart(2, '0');
-
-	return year + '-' + month + '-' + date;
-};
-const getAllDateCN = (startTime: Date, endTime: Date) => {
-	console.log(startTime, endTime, 'endTime');
-
-	var date_all = [];
-	var i = 0;
-	while (endTime.getTime() - startTime.getTime() >= 0) {
-		var year = startTime.getFullYear();
-		var month = (startTime.getMonth() + 1).toString().padStart(2, '0');
-		var day = startTime.getDate().toString().padStart(2, '0');
-		date_all[i] = year + '-' + month + '-' + day;
-		startTime.setDate(startTime.getDate() + 1);
-		i += 1;
-	}
-	return date_all;
-};
 
 const createItem = (obj: any) => {
 	setDayPriceList.value.push(obj);
@@ -182,15 +160,7 @@ const editItem = (index: number, obj: any) => {
 	setDayPriceList.value[index].ticketPrice = ticketPrice;
 	setDayPriceList.value[index].stock = stock;
 };
-const nextYear = (timestamp: any) => {
-	let time = new Date(timestamp),
-		year = Number(time.getFullYear()),
-		month = (time.getMonth() + 1).toString().padStart(2, '0'),
-		date = time.getDate().toString().padStart(2, '0');
 
-	year++;
-	return year + '-' + month + '-' + date;
-};
 const saveDate = async () => {
 	let res = await api.saveInevntoryDetail({ ticketId: state.data.ticketId, stocks: setDayPriceList.value });
 	console.log(res, 'asdas');
