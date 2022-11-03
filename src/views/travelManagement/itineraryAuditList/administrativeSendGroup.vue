@@ -1,8 +1,6 @@
 <template>
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns">
-		<template #button>
-		</template>
 		<template #bodyCell="{ column, text, index, record }">
 			<template v-if="column.key === 'index'">
 				<div>
