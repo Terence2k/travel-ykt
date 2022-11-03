@@ -4,18 +4,26 @@
 			<p class="title">古维管理费</p>
 			<CommonTable :columns="gouvyColumns" :dataSource="gouvyDate" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
+					<template v-if="column.key === 'touristNum'" > 
+						<span v-if="travelStore.baseInfo.status !=11 ">{{ travelStore.touristList.length }}人 </span>
+					</template>
+					<template v-if="column.key === 'payableNum'">
+						<div class="action-btns" v-if="travelStore.baseInfo.status !=11 ">
+							<span >预计{{ travelStore.touristList.length }}人 </span>
+						</div>
+						<div v-if="travelStore.baseInfo.status ==11 " >
+							<span >预计{{ record.payableNum }}人 </span>
+							<a class="item" @click="choice('selectPersonnelPop')" >选择人数</a>
+						</div>
+					</template>
+					<template v-if="column.key === 'payablePrice'">
+						<span v-if="travelStore.baseInfo.status !=11 ">{{accMul(travelStore.touristList.length,payablePrice)}}元 </span>
+					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a class="item">-</a>
+							<a class="item"></a>
 						</div>
 					</template>
-					<template v-if="column.key === 'NumberOfPersonsPayable'">
-						<div class="action-btns">
-							{{record.NumberOfPersonsPayable}}
-							<a class="item" @click="choice('selectPersonnelPop')">选择人数</a>
-						</div>
-					</template>
-					
 				</template>
 			</CommonTable>
 		</div>
@@ -83,7 +91,7 @@
 	<addHotel :hotelId="editId.addHotelPop" v-model="addHotelPop" />
 	<addTicket :ticketId="editId.addTicketPop" v-model="addTicketPop" />
 	<Personnel v-model="selectPersonnelPop" />
-	<reserveTicket :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop"  />
+	<reserveTicket :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop" />
 </template>
 <script lang="ts" setup>
 import CommonTable from '@/components/common/CommonTable.vue';
@@ -92,6 +100,9 @@ import addTicket from './addTicket.vue';
 import Personnel from './selectPersonnel.vue';
 import reserveTicket from './reserveTicket.vue';
 import { useTraveInfo } from './traveInfo';
+import { accDiv, accMul } from '@/utils/compute';
+import { GroupStatus } from '@/enum';
+
 const props = defineProps({
 	onCheck: {
 		type: Boolean,
@@ -121,8 +132,14 @@ const {
 	editId,
 	reserveHotel,
 	reserveTicketPop,
-	travelStore
+	travelStore,
+	aa,
+	onSearch,
+	payablePrice
 } = useTraveInfo(props, emits);
+onMounted(() => {
+	onSearch();
+});
 </script>
 <style lang="less" scoped>
 .select-guide {
@@ -150,5 +167,4 @@ const {
 		}
 	}
 }
-
 </style>
