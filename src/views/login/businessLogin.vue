@@ -63,8 +63,6 @@ const handleFinish = async (values: any) => {
 
 <style scoped lang="less">
 .form_box {
-	margin-top: 1px;
-	padding: 28px 37px 32px;
 	background-color: #fff;
 	border-radius: 4px;
 	.btn {
