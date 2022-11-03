@@ -173,7 +173,7 @@ export function shijiancTOYMD(timestamp: any) {
  * @param timestamp 当前时间，时间戳格式
  *
  */
-export function nextYear(timestamp: Date) {
+export function nextYear(timestamp: Date | string) {
 	const time = new Date(timestamp),
 		month = (time.getMonth() + 1).toString().padStart(2, '0'),
 		date = time.getDate().toString().padStart(2, '0');
