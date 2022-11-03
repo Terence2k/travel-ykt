@@ -320,6 +320,26 @@ export default [
 					},
 				],
 			},
+			{
+				path: 'scenicSpotHotelReport',
+				name: 'scenicSpotHotelReport',
+				redirect: '/reportManagement/scenicSpotHotelReport/list',
+				meta: {
+					title: '酒店账目报表',
+					isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/reportManagement/scenicSpotHotelReport/index.vue'),
+						name: 'scenicSpotHotelReportList',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
 		],
 	},
 ];
