@@ -90,8 +90,8 @@
     },
     {
       title: '所属单位类型',
-      dataIndex: 'unitTypeName',
-      key: 'unitTypeName',
+      dataIndex: 'businessTypeName',
+      key: 'businessTypeName',
     },
     {
       title: '所属单位',
@@ -111,7 +111,6 @@
     {
       title: '操作',
       key: 'action',
-      fixed: 'right',
       width: 208
     },
   ]

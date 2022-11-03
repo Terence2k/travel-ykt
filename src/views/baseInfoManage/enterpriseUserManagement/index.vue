@@ -31,7 +31,7 @@
     <a-form ref="teamRef" :model="form" :rules="formRules" name="addTeam" autocomplete="off" :label-col="{ span: 6 }"
       :wrapper-col="{ span: 18 }">
       <a-form-item name="roleIds" label="管理员角色">
-        <a-select v-model:value="form.roleIds" mode="multiple" placeholder="请选择管理员角色">
+        <a-select v-model:value="form.roleIds" placeholder="请选择管理员角色">
           <a-select-option v-for="item in roleOption" :value="item.roleId" :key="item.roleId">{{
           item.roleName }}
           </a-select-option>

@@ -1,8 +1,6 @@
 <template>
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns">
-		<template #button>
-		</template>
 		<template #bodyCell="{ column, text, index, record }">
 			<template v-if="column.key === 'index'">
 				<div>
@@ -217,9 +215,9 @@
           const queryData = {
             auditTypeCode: 7, //审核类code（详情参考CompanyAuditStatusEnum）
             auditRemark: rejectReason.value, //审核描述
-            businessType: state.detail.auditInfo[0].auditBusinessType, //审核企业业态
-            uuid: state.detail.auditInfo[0].uuid, //uuid
-            roleId: state.detail.auditInfo[0].roleId || userInfo.sysRoles[0].oid, //角色id为查询是否拥有审核权限时返回的角色id，若返回的角色id为null，则不传
+            businessType: state.detail.auditInfo.auditBusinessType, //审核企业业态
+            uuid: state.detail.auditInfo.uuid, //uuid
+            roleId: state.detail.auditInfo.roleId || userInfo.sysRoles.oid, //角色id为查询是否拥有审核权限时返回的角色id，若返回的角色id为null，则不传
             auditStatus: 2 //审核类型
           };
           console.log('queryData:', queryData);
@@ -244,9 +242,9 @@
     const queryData = {
       auditTypeCode: 7, //审核类code（详情参考CompanyAuditStatusEnum）
       auditRemark: rejectReason.value, //审核描述
-      businessType: state.detail.auditInfo[0].auditBusinessType, //审核企业业态
-      uuid: state.detail.auditInfo[0].uuid, //uuid
-      roleId: state.detail.auditInfo[0].roleId || userInfo.sysRoles[0].oid, //角色id为查询是否拥有审核权限时返回的角色id，若返回的角色id为null，则不传
+      businessType: state.detail.auditInfo.auditBusinessType, //审核企业业态
+      uuid: state.detail.auditInfo.uuid, //uuid
+      roleId: state.detail.auditInfo.roleId || userInfo.sysRoles.oid, //角色id为查询是否拥有审核权限时返回的角色id，若返回的角色id为null，则不传
       auditStatus: 3 //审核类型
     };
     console.log('queryData:', queryData);
@@ -265,6 +263,7 @@
     api.travelManagement.getAuditInfo(id)
     .then((res: any) => {
       state.detail = res;
+      if (row.auditInfo?.length) state.detail.auditInfo = row.auditInfo[0];
     })
     .catch((err: any) => {
       console.error(err);

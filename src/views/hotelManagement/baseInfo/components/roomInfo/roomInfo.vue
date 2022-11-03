@@ -96,7 +96,7 @@
 
 <script setup lang="ts">
 import { toRaw } from 'vue';
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep } from 'lodash';
 import { message } from 'ant-design-vue/es';
 import api from '@/api';
 import CommonTable from '@/components/common/CommonTable.vue';

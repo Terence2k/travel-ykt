@@ -55,9 +55,6 @@ const computeTableHeight = () => {
       + 
       getStyles(pagination[pagination.length - 1], 'height') ;
 			const antTableBody = document.getElementsByClassName('ant-table-body');
-			// console.log('a-table-height:', num);
-			// console.log('antheight:', antTableBody.offsetTop);`
-			// console.log('getElementPos:', getElementPos(commonTableHeight).y);
       antTableBody[antTableBody.length - 1].style.height = `calc(100vh - ${num + 25}px)`; // num + 微调
 
     }, 0);

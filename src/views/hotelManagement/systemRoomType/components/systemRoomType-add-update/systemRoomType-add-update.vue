@@ -91,6 +91,7 @@ const init = async () => {
 		options.title = '编辑系统房型';
 	} else {
 		options.title = '新增系统房型';
+		formValidate.value.sysRoomTypeStatus = 1;
 	}
 };
 
