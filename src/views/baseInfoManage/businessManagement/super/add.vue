@@ -292,6 +292,7 @@ const saveConform = () => {
       tipVisible.value = true
     } else {
       message.error(res);
+      saveVisible.value = false
     }
   }).catch((err: string) => {
     console.log(err)
