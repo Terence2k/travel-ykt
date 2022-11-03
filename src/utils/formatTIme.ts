@@ -168,3 +168,95 @@ export function shijiancTOYMD(timestamp: any) {
 
 	return Y + M + D;
 }
+/**
+ * 时间的下一年
+ * @param timestamp 当前时间，时间戳格式
+ *
+ */
+export function nextYear(timestamp: Date) {
+	const time = new Date(timestamp),
+		month = (time.getMonth() + 1).toString().padStart(2, '0'),
+		date = time.getDate().toString().padStart(2, '0');
+	let year = Number(time.getFullYear());
+
+	year++;
+	return year + '-' + month + '-' + date;
+}
+/**
+ * 获取两个时间之间的的所有日期
+ * @startTime
+ * @endTime
+ * @return       [2022-11-01，2022-11-30]
+ *
+ */
+export function getAllDateCN(startTime: Date, endTime: Date) {
+	const date_all = [];
+	let i = 0;
+	while (endTime.getTime() - startTime.getTime() >= 0) {
+		const year = startTime.getFullYear();
+		const month = (startTime.getMonth() + 1).toString().padStart(2, '0');
+		const day = startTime.getDate().toString().padStart(2, '0');
+		date_all[i] = year + '-' + month + '-' + day;
+		startTime.setDate(startTime.getDate() + 1);
+		i += 1;
+	}
+	return date_all;
+}
+
+/**
+ * 前一个月
+ * @param day 当前时间 2022-11-3
+ *
+ */
+export function preMonth(day: any) {
+	const time = new Date(day);
+	let year = Number(time.getFullYear()),
+		month = Number((time.getMonth() + 1).toString().padStart(2, '0'));
+	const date = Number(time.getDate().toString().padStart(2, '0'));
+
+	if (month - 1 === 0) {
+		year--;
+		month = 12;
+	} else {
+		month -= 1;
+	}
+
+	let dateStr = year + '-' + month + '-' + date;
+	// 获取日期天数
+	const d = new Date(year, month, 0),
+		days = d.getDate();
+
+	if (days < date) {
+		dateStr = year + '-' + month + '-' + days;
+	}
+
+	return dateStr;
+}
+/**
+ * 后一个月
+ * @param day 当前时间 2022-11-3
+ *
+ */
+export function nextMonth(day: any) {
+	const time = new Date(day);
+	let year = time.getFullYear(),
+		month = Number((time.getMonth() + 1).toString().padStart(2, '0'));
+	const date = Number(time.getDate().toString().padStart(2, '0'));
+	if (month + 1 === 13) {
+		year++;
+		month = 1;
+	} else {
+		month += 1;
+	}
+
+	let dateStr = year + '-' + month + '-' + date;
+	// 获取日期天数
+	const d = new Date(year, month, 0),
+		days = d.getDate();
+
+	if (days < date) {
+		dateStr = year + '-' + month + '-' + days;
+	}
+
+	return dateStr;
+}

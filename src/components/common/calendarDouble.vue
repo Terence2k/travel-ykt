@@ -80,7 +80,7 @@
 import BaseModal from '@/components/common/BaseModal.vue';
 
 import dayjs, { Dayjs } from 'dayjs';
-
+import { shijianYMD, nextMonth, preMonth } from '@/utils/formatTIme';
 const emits = defineEmits(['get-current-day', 'clear-current-day', 'get-data', 'save-data']);
 
 const props = defineProps({
@@ -128,66 +128,6 @@ const props = defineProps({
 	},
 });
 
-//前一个月
-const preMonth = (day: any) => {
-	let time = new Date(day),
-		year = Number(time.getFullYear()),
-		month = Number((time.getMonth() + 1).toString().padStart(2, '0')),
-		date = Number(time.getDate().toString().padStart(2, '0'));
-
-	if (month - 1 === 0) {
-		year--;
-		month = 12;
-	} else {
-		month -= 1;
-	}
-
-	let dateStr = year + '-' + month + '-' + date,
-		// 获取日期天数
-		d = new Date(year, month, 0),
-		days = d.getDate();
-
-	if (days < date) {
-		dateStr = year + '-' + month + '-' + days;
-	}
-
-	return dayjs(dateStr);
-};
-
-//后一个月
-const nextMonth = (day: any) => {
-	let time = new Date(day),
-		year = time.getFullYear(),
-		month = Number((time.getMonth() + 1).toString().padStart(2, '0')),
-		date = Number(time.getDate().toString().padStart(2, '0'));
-	if (month + 1 === 13) {
-		year++;
-		month = 1;
-	} else {
-		month += 1;
-	}
-
-	let dateStr = year + '-' + month + '-' + date,
-		// 获取日期天数
-		d = new Date(year, month, 0),
-		days = d.getDate();
-
-	if (days < date) {
-		dateStr = year + '-' + month + '-' + days;
-	}
-
-	return dayjs(dateStr);
-};
-
-const shijianYMD = (timestamp: any) => {
-	let time = new Date(timestamp),
-		year = time.getFullYear(),
-		month = (time.getMonth() + 1).toString().padStart(2, '0'),
-		date = time.getDate().toString().padStart(2, '0');
-
-	return year + '-' + month + '-' + date;
-};
-
 //获取是否在在自定义价格列表
 const isCurrentDay = (timestamp: Dayjs) => {
 	let day = shijianYMD(timestamp),
@@ -216,7 +156,7 @@ const currentPoint = ref<null | string>(null);
 //设置当前日期
 const bindSetDatePriceFirst = (e: Dayjs) => {
 	let time = shijianYMD(e),
-		nextValue = nextMonth(time);
+		nextValue = dayjs(nextMonth(time));
 
 	valueNext.value = nextValue;
 	currentPoint.value = '1';
@@ -225,7 +165,7 @@ const bindSetDatePriceFirst = (e: Dayjs) => {
 };
 const bindSetDatePriceSec = (e: Dayjs) => {
 	let time = shijianYMD(e),
-		preValue = preMonth(e);
+		preValue = dayjs(preMonth(e));
 
 	value.value = preValue;
 	currentPoint.value = '2';
@@ -240,8 +180,8 @@ const valueNext = ref<Dayjs>(dayjs(nextMonth(value.value)));
 //点击左边
 const turnLeft = () => {
 	console.log('turnLeft');
-	let preDay = preMonth(value.value),
-		preNDay = preMonth(valueNext.value);
+	let preDay = dayjs(preMonth(value.value)),
+		preNDay = dayjs(preMonth(valueNext.value));
 
 	value.value = preDay;
 	valueNext.value = preNDay;
@@ -250,8 +190,8 @@ const turnLeft = () => {
 };
 const turnRight = () => {
 	console.log('turnRight');
-	let nextDay = nextMonth(value.value),
-		nNDay = nextMonth(valueNext.value);
+	let nextDay = dayjs(nextMonth(value.value)),
+		nNDay = dayjs(nextMonth(valueNext.value));
 
 	value.value = nextDay;
 	valueNext.value = nNDay;
@@ -269,6 +209,7 @@ const modelValue = ref(false);
 const open = () => {
 	modelValue.value = true;
 	value.value = dayjs(new Date());
+	valueNext.value = dayjs(nextMonth(value.value));
 };
 
 const cancel = () => {
