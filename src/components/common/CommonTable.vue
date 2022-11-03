@@ -42,18 +42,24 @@ const computeTableHeight = () => {
 	if (props.scrollY) {
     setTimeout(() => {
 			// table-header
-			const tableHeader = getStyles(document.getElementsByClassName('ant-table-header')[0], 'height');
+			const tableHeader = document.getElementsByClassName('ant-table-header');
 			// 分页
-			const paginationHeight = getStyles(document.getElementsByClassName('ant-pagination')[0], 'height');
+			const pagination = document.getElementsByClassName('ant-pagination');
 			// common-table
-			const commonTableHeight = document.getElementsByClassName('common-table')[0];
+			const commonTable = document.getElementsByClassName('common-table');
+      
 			// 计算总高度vh-除表格内容外高度
-			let num = getElementPos(commonTableHeight).y + tableHeader + paginationHeight;
-			const antTableBody = document.getElementsByClassName('ant-table-body')[0] as HTMLElement;
+			let num = getElementPos(commonTable[commonTable.length - 1]).y
+      +
+      getStyles(tableHeader[tableHeader.length - 1], 'height') 
+      + 
+      getStyles(pagination[pagination.length - 1], 'height') ;
+			const antTableBody = document.getElementsByClassName('ant-table-body');
 			// console.log('a-table-height:', num);
 			// console.log('antheight:', antTableBody.offsetTop);`
 			// console.log('getElementPos:', getElementPos(commonTableHeight).y);
-      antTableBody.style.height = `calc(100vh - ${num + 25}px)`; // num + 微调
+      antTableBody[antTableBody.length - 1].style.height = `calc(100vh - ${num + 25}px)`; // num + 微调
+
     }, 0);
 	}
 };
