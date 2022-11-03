@@ -140,19 +140,25 @@ const open = (id: any, status: string | undefined, saerch: string) => {
 	modelValue.value = true;
 	formValidate.data.ticketId = id;
 	searchValue.value = saerch;
-	if (status) {
-		getDeatil(id);
-	}
+	getDeatil(id);
+
+	// if (status) {
+	// 	getDeatil(id);
+	// }
 };
 
 const getDeatil = async (id: number) => {
 	let res = await api.scenicTicketDetail(id);
 	console.log(res, 'getDeatils');
 	formValidate.data = res;
-	formValidate.data.dateList = formValidate.data.dateList.map((item) => {
-		return { ...item, time: [item.startDateTime, item.endDateTime] };
-		// dayjs(' 00:00:00', 'HH:mm')
-	});
+	if (formValidate.data.dateList.length > 0) {
+		formValidate.data.dateList = formValidate.data.dateList.map((item) => {
+			return { ...item, time: [item.startDateTime, item.endDateTime] };
+			// dayjs(' 00:00:00', 'HH:mm')
+		});
+	} else {
+		formValidate.data.dateList = [{ startDateTime: '', endDateTime: '', time: [] }];
+	}
 };
 // 关闭弹窗
 const cancel = () => {
