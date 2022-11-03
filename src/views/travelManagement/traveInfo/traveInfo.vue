@@ -140,16 +140,13 @@ const {
 	reserveHotel,
 	reserveTicketPop,
 	travelStore,
-<<<<<<< HEAD
 	aa,
 	onSearch,
-	payablePrice
-=======
+	payablePrice,
 	show,
 	showHotelPop,
 	showTicketPop,
 	showId
->>>>>>> 3fca7b74c85de8a19b2439b8138361fde97d6e36
 } = useTraveInfo(props, emits);
 onMounted(() => {
 	onSearch();

@@ -290,20 +290,16 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			state[key]=true
 			console.log(key)
 		},
-<<<<<<< HEAD
 		onSearch () {
 			api.getBasicInfo().then((res) => {
 				state.payablePrice=accDiv(res.price, 100)
 			});
 		},
-		reserveHotel (row: any) {
-=======
 		async reserveHotel (row: any) {
 			const res = await api.travelManagement.hotelDetail(row.oid)
 			let str = res.roomTypeList.map((it:any) => {
 				return `${it.roomTypeName}（${it.roomCount}间）`
 			})
->>>>>>> 3fca7b74c85de8a19b2439b8138361fde97d6e36
 			Modal.confirm({
 				title: '酒店房型预定确认？',
 				icon: createVNode(CheckOutlined),
