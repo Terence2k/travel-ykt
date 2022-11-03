@@ -183,13 +183,13 @@ export function nextYear(timestamp: Date) {
 	return year + '-' + month + '-' + date;
 }
 /**
- * 将时间转换为 年月日
- * @param timestamp 当前时间，时间戳格式
+ * 获取两个时间之间的的所有日期
+ * @startTime
+ * @endTime
+ * @return       [2022-11-01，2022-11-30]
  *
  */
 export function getAllDateCN(startTime: Date, endTime: Date) {
-	console.log(startTime, endTime, 'endTime');
-
 	const date_all = [];
 	let i = 0;
 	while (endTime.getTime() - startTime.getTime() >= 0) {
