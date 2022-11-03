@@ -51,11 +51,11 @@
         </a-form-item>
         <a-form-item name="establishTime" label="成立日期" v-show="formRules?.establishTime">
           <a-date-picker v-model:value="form.establishTime" placeholder="请选择成立日期" style="width:100%"
-            :format="dateFormat" :valueFormat="dateFormat" />
+            :format="dateFormat" :valueFormat="dateFormat" :disabled-date="disabledAfterDate" />
         </a-form-item>
         <a-form-item name="businessTerm" label="营业期限" v-show="formRules?.businessTerm">
           <a-date-picker v-model:value="form.businessTerm" placeholder="请选择营业期限" style="width:100%" :format="dateFormat"
-            :valueFormat="dateFormat" />
+            :valueFormat="dateFormat" :disabled-date="disabledBeforeDate"/>
         </a-form-item>
         <a-form-item name="contactName" label="联系人" v-show="formRules?.contactName">
           <a-input v-model:value="form.contactName" placeholder="请输入联系人">
@@ -142,7 +142,9 @@ import {
   condition1,
   condition2,
   condition3,
-  condition4
+  condition4,
+  disabledBeforeDate,
+  disabledAfterDate
 } from '@/views/baseInfoManage/businessManagement/super/common'
 const router = useRouter();
 const route = useRoute();
