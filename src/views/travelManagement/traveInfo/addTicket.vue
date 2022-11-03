@@ -131,8 +131,6 @@
     }
     
 	const handleOk = async (callback: Function) => {
-		
-		
 		try {
 			let traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {}
 			await formRef.value.validateFields()
@@ -153,8 +151,6 @@
 		
 	};
 
-	
-	
     const handleChange = async (event: number, option:any) => {
         formState.ticketId = ''
 		formState.scenicName = option.name;
