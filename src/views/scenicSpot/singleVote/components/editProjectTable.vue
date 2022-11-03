@@ -344,12 +344,16 @@ const getList = async (id: number) => {
 // 删除提示
 const delShow = ref(false);
 const delIndex = ref<null | number>();
+const first = ref(false);
 onMounted(() => {
 	// getList();
 	console.log(pageStatus.value && !type.value, '单点新增');
 	if (pageStatus.value && !type.value) {
 		emits('add-verification-obj-sign', formValidate.initData);
 	}
+	setTimeout(() => {
+		first.value = true;
+	}, 2000);
 });
 
 // const setValue = (value: number) => {
@@ -359,8 +363,10 @@ onMounted(() => {
 watch(
 	() => props.viewId,
 	async (nVal) => {
-		formValidate.proj = [];
-		emits('add-verification-obj', []);
+		if (first.value) {
+			formValidate.proj = [];
+			emits('add-verification-obj', []);
+		}
 		if (nVal) {
 			getList(nVal);
 		}
