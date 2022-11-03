@@ -270,22 +270,21 @@ const cancel = () => {
 	// resetFields();
 };
 const options = ref<any>([
-	{
-		value: 1,
-		label: '入园',
-		id: 1,
-	},
-	{
-		value: 2,
-		label: '游戏机',
-		id: 2,
-	},
-
-	{
-		value: 3,
-		label: '其他',
-		id: 3,
-	},
+	// {
+	// 	value: 1,
+	// 	label: '入园',
+	// 	id: 1,
+	// },
+	// {
+	// 	value: 2,
+	// 	label: '游戏机',
+	// 	id: 2,
+	// },
+	// {
+	// 	value: 3,
+	// 	label: '其他',
+	// 	id: 3,
+	// },
 ]);
 // 数据
 const formData = reactive({
@@ -360,6 +359,8 @@ onMounted(() => {
 watch(
 	() => props.viewId,
 	async (nVal) => {
+		formValidate.proj = [];
+		emits('add-verification-obj', []);
 		if (nVal) {
 			getList(nVal);
 		}
