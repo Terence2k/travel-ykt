@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia';
-import { GroupMode, GroupStatus, Gender, GuideType, FeeModel, insuranceType, AuditStaus, TakeGroupStatus} from '@/enum';
+import { GroupMode, GroupStatus, Gender, GuideType, FeeModel, insuranceType, AuditStaus, TakeGroupStatus } from '@/enum';
 import api from '@/api/index';
 import { cloneDeep } from 'lodash';
 import { AuditField, Field, TakeGroupField } from '@/type';
 import dayjs, { Dayjs } from 'dayjs';
 import { CODEVALUE } from '@/constant';
 interface TraveDataItem {
-	groupType: GroupMode.All | GroupMode.TeamGroup |GroupMode.NoTeamGroup;
-	[k: string]: any
+	groupType: GroupMode.All | GroupMode.TeamGroup | GroupMode.NoTeamGroup;
+	[k: string]: any;
 }
 export const traveListParams = {
 	total: 0,
@@ -22,9 +22,9 @@ export const traveListParams = {
 		keyWordType: 1,
 		groupType: '',
 		time: [],
-		isSend: true
-	}
-}
+		isSend: true,
+	},
+};
 export const takeGroupListParams = {
 	total: 0,
 	list: [],
@@ -38,9 +38,9 @@ export const takeGroupListParams = {
 		keyWordType: 1,
 		groupType: '',
 		time: [],
-		isSend: false
-	}
-}
+		isSend: false,
+	},
+};
 export const useTravelStore = defineStore({
 	id: 'travel',
 	state: () => ({
@@ -48,7 +48,7 @@ export const useTravelStore = defineStore({
 		groupMode: {
 			[GroupMode.All]: '全部',
 			[GroupMode.TeamGroup]: '协作组团',
-			[GroupMode.NoTeamGroup]: '非协作组团'
+			[GroupMode.NoTeamGroup]: '非协作组团',
 		},
 		groupStatus: {
 			[GroupStatus.Drafts]: '草稿',
@@ -60,31 +60,30 @@ export const useTravelStore = defineStore({
 			[GroupStatus.WaitingChange]: '待变更',
 			// [GroupStatus.CloseAnAccount]: '已结算',
 			[GroupStatus.Overtime]: '已过期',
-
 		},
 		guideType: {
 			[GuideType.UnderGuide]: '直属导游',
-			[GuideType.AppointGuide]: '可委派导游'
+			[GuideType.AppointGuide]: '可委派导游',
 		},
 		genderList: [
 			{
 				name: '男',
-				codeValue: Gender.Male
+				codeValue: Gender.Male,
 			},
 			{
 				name: '女',
-				codeValue: Gender.Madam
-			}
+				codeValue: Gender.Madam,
+			},
 		],
 		insuranceList: [
 			{
 				name: '旅责险',
-				codeValue: insuranceType.brigade
+				codeValue: insuranceType.brigade,
 			},
 			{
 				name: '意外险',
-				codeValue: insuranceType.accident
-			}
+				codeValue: insuranceType.accident,
+			},
 		],
 		IDCard: [],
 		specialId: [],
@@ -98,11 +97,10 @@ export const useTravelStore = defineStore({
 			startDate: '',
 			endDate: '',
 			groupType: '',
-			status: ''
+			status: '',
 		},
 		setDisabled: (current: Dayjs) => {
-			return current && current < dayjs().subtract(1, 'day') || 
-			current > dayjs().startOf('day');
+			return (current && current < dayjs().subtract(1, 'day')) || current > dayjs().startOf('day');
 		},
 		teamTime: [],
 		guideList: [],
@@ -113,10 +111,21 @@ export const useTravelStore = defineStore({
 		compositeProducts: [],
 		hotels: [],
 		scenicTickets: [],
+		gouvyList: [
+			{
+				feeName: '古维管理费',
+				touristNum:'',
+				payableNum: '',
+				payablePrice: '',
+				isInitiateReduction: '待接团后由地接社申请',
+				isReductionPassed: '',
+				issueStatusName: '',
+			},
+		],
 		teamType: '',
 		feeModel: {
 			[FeeModel.Number]: '人数',
-			[FeeModel.Price]: '价格'
+			[FeeModel.Price]: '价格',
 		},
 		traveList: {
 			drafts: cloneDeep(traveListParams),
@@ -127,7 +136,7 @@ export const useTravelStore = defineStore({
 			closeAnAccount: cloneDeep(traveListParams),
 			cancellation: cloneDeep(traveListParams),
 			overtime: cloneDeep(traveListParams),
-			waitRegiment: cloneDeep(traveListParams)
+			waitRegiment: cloneDeep(traveListParams),
 		},
 		auditList: {
 			financeSendGroup: cloneDeep(traveListParams),
@@ -135,7 +144,7 @@ export const useTravelStore = defineStore({
 			administrativeSendGroup: cloneDeep(traveListParams),
 			administrativeChange: cloneDeep(traveListParams),
 		},
-    takeGroupList: {
+		takeGroupList: {
 			drafts: cloneDeep(takeGroupListParams),
 			waitingGroup: cloneDeep(takeGroupListParams),
 			waitingReserved: cloneDeep(takeGroupListParams),
@@ -143,39 +152,38 @@ export const useTravelStore = defineStore({
 			cancellation: cloneDeep(takeGroupListParams),
 			waitingChange: cloneDeep(takeGroupListParams),
 			overtime: cloneDeep(takeGroupListParams),
-    },
+		},
 		enterpriseState: [
 			{
 				stateName: '未提交',
-				descriptions: ''
+				descriptions: '',
 			},
 			{
 				stateName: '待审核',
-				descriptions: '已提交信息变更审核，请耐心等待。'
+				descriptions: '已提交信息变更审核，请耐心等待。',
 			},
 			{
 				stateName: '审核通过',
-				descriptions: ''
+				descriptions: '',
 			},
 			{
 				stateName: '审核未通过',
-				descriptions: '信息变更申请被驳回！'
-			}
+				descriptions: '信息变更申请被驳回！',
+			},
 		],
 		businessTypeOptions: {
-			'TRAVEL': {
-				submitFunc: 'submitInformationAudit'
+			TRAVEL: {
+				submitFunc: 'submitInformationAudit',
 			},
-			'HOTEL': {
-				submitFunc: 'editHotelDetailInfo' 
+			HOTEL: {
+				submitFunc: 'editHotelDetailInfo',
 			},
-			'TICKET': {
-				submitFunc: 'changeScenicSpotInformation' 
+			TICKET: {
+				submitFunc: 'changeScenicSpotInformation',
 			},
-			'CATERING': {
-				submitFunc: 'getCateringAudit' 
-			}
-
+			CATERING: {
+				submitFunc: 'getCateringAudit',
+			},
 		},
 		itineraryStatusList: [],
 
@@ -198,69 +206,69 @@ export const useTravelStore = defineStore({
 	getters: {
 		// 草稿
 		teamStatus(): boolean {
-			const res: any = this.itineraryStatusList.filter((it: any) => it.status == this.baseInfo.status)[0]
+			const res: any = this.itineraryStatusList.filter((it: any) => it.status == this.baseInfo.status)[0];
 
-			return  !res || (res.codeName === CODEVALUE.TRAVE_CODE.DRAFT)
+			return !res || res.codeName === CODEVALUE.TRAVE_CODE.DRAFT;
 		},
 		// 预定
 		reserveStatus(): boolean {
-			const res: any = this.itineraryStatusList.filter((it: any) => it.status == this.baseInfo.status)[0]
-			return  res && (res.codeName === CODEVALUE.TRAVE_CODE.WAIT_RESERVE_HOTEL || res.codeName === CODEVALUE.TRAVE_CODE.WAIT_GO_OUT)
-		}
+			const res: any = this.itineraryStatusList.filter((it: any) => it.status == this.baseInfo.status)[0];
+			return res && (res.codeName === CODEVALUE.TRAVE_CODE.WAIT_RESERVE_HOTEL || res.codeName === CODEVALUE.TRAVE_CODE.WAIT_GO_OUT);
+		},
 	},
 	actions: {
 		async getTravelList(params: object) {
 			let res = await api.travelManagement.getTravelList(params);
-			res.content = res.content.map((it:TraveDataItem) => {
+			res.content = res.content.map((it: TraveDataItem) => {
 				it.time = it.startDate + '-' + it.endDate;
-				it.groupTypeStr = this.groupMode[it.groupType]
-				return it
-			})
-			return res
+				it.groupTypeStr = this.groupMode[it.groupType];
+				return it;
+			});
+			return res;
 		},
 		async getTraveCode(codeValue: string, type: string) {
-			if (type === 'IDCard' && this.IDCard.length) return
-			const res = await api.commonApi.getCodeValue({codeValue})
-			switch(type) {
-				case 'IDCard' :
+			if (type === 'IDCard' && this.IDCard.length) return;
+			const res = await api.commonApi.getCodeValue({ codeValue });
+			switch (type) {
+				case 'IDCard':
 					this.IDCard = res;
 					break;
-				case 'specialId' :
+				case 'specialId':
 					this.specialId = res;
 					break;
-				case 'trafficType' :
+				case 'trafficType':
 					this.trafficType = res;
 					break;
-				case 'trafficColor' :
+				case 'trafficColor':
 					this.trafficColor = res;
 					break;
 			}
 		},
 		async getAuditList(params: object) {
 			let res = await api.travelManagement.getAuditList(params);
-			res.content = res.content.map((it:TraveDataItem) => {
+			res.content = res.content.map((it: TraveDataItem) => {
 				it.time = it.startDate + '-' + it.endDate;
-				return it
-			})
-			return res
+				return it;
+			});
+			return res;
 		},
 		setTouristList(list: any) {
-			this.touristList = list
+			this.touristList = list;
 		},
 		setBaseInfo(data: any) {
-			this.baseInfo = data
+			this.baseInfo = data;
 		},
 		setGuideList(list: any) {
-			this.guideList = list
+			this.guideList = list;
 		},
 		setTrafficList(list: any) {
-			this.trafficList = list
+			this.trafficList = list;
 		},
 		setTraveInfo(data: any) {
-			this.traveInfo = data
+			this.traveInfo = data;
 		},
 		setFileInfo(data: any) {
-			this.attachmentList = data
+			this.attachmentList = data;
 		},
 		setCompositeProducts(data: any) {
 			this.compositeProducts = data;
@@ -270,17 +278,13 @@ export const useTravelStore = defineStore({
 		},
 		setHotels(data: any, oid: string) {
 			if (data.oid) {
-				Object.assign(
-					this.hotels.filter((item:any) => data.oid == item.oid)[0], 
-					data
-				)
+				Object.assign(this.hotels.filter((item: any) => data.oid == item.oid)[0], data);
 			} else {
 				data.oid = oid;
-				let newData = [...this.hotels, data]
+				let newData = [...this.hotels, data];
 				this.hotels = newData as any;
-				console.log(this.hotels, data, newData)
+				console.log(this.hotels, data, newData);
 			}
-			
 		},
 		setHotelsStatus(id: string) {
 			this.hotels = this.hotels.map((it: any) => {
@@ -308,34 +312,30 @@ export const useTravelStore = defineStore({
 		},
 		setTicket(data: any, oid: string) {
 			if (data.oid) {
-				Object.assign(
-					this.scenicTickets.filter((item:any) => data.oid == item.oid)[0], 
-					data
-				)
+				Object.assign(this.scenicTickets.filter((item: any) => data.oid == item.oid)[0], data);
 			} else {
 				data.oid = oid;
-				let newData = [...this.scenicTickets, data]
+				let newData = [...this.scenicTickets, data];
 				this.scenicTickets = newData as any;
-				console.log(this.scenicTickets, data, newData)
+				console.log(this.scenicTickets, data, newData);
 			}
-			
 		},
 		setTraveList(data: any, key: Field) {
-			this.traveList[key].list = data.content
-			this.traveList[key].total = data.total
+			this.traveList[key].list = data.content;
+			this.traveList[key].total = data.total;
 		},
 		setAuditList(data: any, key: AuditField) {
-			this.auditList[key].list = data.content
-			this.auditList[key].total = data.total
+			this.auditList[key].list = data.content;
+			this.auditList[key].total = data.total;
 		},
 		setTakeGroupList(data: any, key: TakeGroupField) {
-			this.takeGroupList[key].list = data.content
-			this.takeGroupList[key].total = data.total
+			this.takeGroupList[key].list = data.content;
+			this.takeGroupList[key].total = data.total;
 		},
 		async getItineraryStatus() {
-			if (this.itineraryStatusList.length) return
+			if (this.itineraryStatusList.length) return;
 			const res = await api.travelManagement.getItineraryStatus();
-			this.itineraryStatusList = res
-		}
+			this.itineraryStatusList = res;
+		},
 	},
 });
