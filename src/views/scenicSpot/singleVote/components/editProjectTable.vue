@@ -1,6 +1,5 @@
 <template>
 	<div class="wrapper">
-		{{ tableList }}
 		<BaseModal :modelValue="modelValue" title="关联核销项目" width="600px" @cancel="cancel">
 			<a-form :model="formValidate" :label-col="{ span: 3 }" :wrapper-col="{ span: 12, offset: 1 }" labelAlign="left">
 				<a-form-item label="核销项目" class="fz14" v-bind="validateInfos.proj">
@@ -203,9 +202,12 @@ const change = (value: object) => {
 		modelValue.value = true;
 	}
 };
-
+interface formValidateType {
+	proj: number[];
+	initData: any[];
+}
 // 关联核销项目
-const formValidate = reactive({
+const formValidate = reactive<formValidateType>({
 	proj: [],
 	initData: [{ init: true }],
 });
@@ -267,7 +269,7 @@ const cancel = () => {
 	formValidate.proj = [];
 	// resetFields();
 };
-const options = ref([
+const options = ref<any>([
 	{
 		value: 1,
 		label: '入园',
