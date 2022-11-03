@@ -2,7 +2,6 @@
 	<div class="wrapper">
 		<BaseModal :modelValue="modelValue" title="关联核销项目" width="600px" @cancel="cancel">
 			<a-form :model="formValidate" :label-col="{ span: 3 }" :wrapper-col="{ span: 12, offset: 1 }" labelAlign="left">
-				{{ formValidate.proj }}
 				<a-form-item label="核销项目" class="fz14" v-bind="validateInfos.proj">
 					<a-select
 						v-model:value="formValidate.proj"
