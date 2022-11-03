@@ -11,10 +11,10 @@
 									class="data-item"
 									v-model:value="formValidate.data.dateList[index].time"
 									format="YYYY-MM-DD HH:mm"
-									valueFormat="YYYY-MM-DD HH:mm:ss"
+									valueFormat="YYYY-MM-DD HH:mm"
 									:show-time="{
 										hideDisabledOptions: true,
-										defaultValue: [dayjs(' 00:00:00', 'HH:mm'), dayjs('23:59:59', 'HH:mm:ss')],
+										defaultValue: [dayjs(' 00:00:00', 'HH:mm'), dayjs('23:59:59', 'HH:mm')],
 									}"
 								/>
 							</a-form-item>
@@ -139,18 +139,24 @@ const open = (id: any, status: string | undefined, searchkey: string) => {
 	modelValue.value = true;
 	formValidate.data.ticketId = id;
 	searchValue.value = searchkey;
-	if (status) {
-		getDeatil(id);
-	}
+	getDeatil(id);
+	// if (status) {
+	// 	getDeatil(id);
+	// }
 };
 
 const getDeatil = async (id: number) => {
 	let res = await api.scenicTicketDetail(id);
 	console.log(res, 'getDeatils');
 	formValidate.data = res;
-	formValidate.data.dateList = formValidate.data.dateList.map((item) => {
-		return { ...item, time: [item.startDateTime, item.endDateTime] };
-	});
+	if (formValidate.data.dateList.length > 0) {
+		formValidate.data.dateList = formValidate.data.dateList.map((item) => {
+			return { ...item, time: [item.startDateTime, item.endDateTime] };
+			// dayjs(' 00:00:00', 'HH:mm')
+		});
+	} else {
+		formValidate.data.dateList = [{ startDateTime: '', endDateTime: '', time: [] }];
+	}
 };
 // 关闭弹窗
 const cancel = () => {

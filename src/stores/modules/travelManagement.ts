@@ -286,6 +286,30 @@ export const useTravelStore = defineStore({
 				console.log(this.hotels, data, newData);
 			}
 		},
+		setHotelsStatus(id: string) {
+			this.hotels = this.hotels.map((it: any) => {
+				if (it.oid == id) {
+					return {
+						...it,
+						orderStatus: 1
+					}
+				} else {
+					return it
+				}
+			}) as any
+		},
+		setTicketStatus(id: string) {
+			this.scenicTickets = this.scenicTickets.map((it: any) => {
+				if (it.oid == id) {
+					return {
+						...it,
+						orderStatus: 1
+					}
+				} else {
+					return it
+				}
+			}) as any
+		},
 		setTicket(data: any, oid: string) {
 			if (data.oid) {
 				Object.assign(this.scenicTickets.filter((item: any) => data.oid == item.oid)[0], data);

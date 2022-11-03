@@ -71,7 +71,7 @@ export function auditCompany(data: any) {
 // 管理员重置密码
 export function resetPassword(data: any) {
 	return request({
-		url: `${commonPart2}resetPassword?oid=${data.oid}&newPassword=${data.newPassword}`,
+		url: `${commonPart2}resetPassword?companyId=${data.oid}&newPassword=${data.newPassword}`,
 		method: 'post',
 		showLoading: true
 	});

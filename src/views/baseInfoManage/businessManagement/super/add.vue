@@ -2,7 +2,7 @@
   <div class="add_box">
     <div class="title">
       <span>
-        添加新的企业（录入基本信息）：
+        添加新的企业（录入基本信息1）：
       </span>
       <span class="close_btn" @click="back">
         <close-outlined />
@@ -44,16 +44,18 @@
           </a-textarea>
         </a-form-item>
         <a-form-item name="registeredCapital" label="注册资本" v-show="formRules?.registeredCapital">
-          <a-input v-model:value="form.registeredCapital" placeholder="请输入注册资本" suffix="万元">
+          <a-input v-model:value="form.registeredCapital" placeholder="请输入注册资本" suffix="万元" @change="() => {
+            form.registeredCapital = form.registeredCapital?.replace(/[^0-9.]/g, '')
+          }">
           </a-input>
         </a-form-item>
         <a-form-item name="establishTime" label="成立日期" v-show="formRules?.establishTime">
           <a-date-picker v-model:value="form.establishTime" placeholder="请选择成立日期" style="width:100%"
-            :format="dateFormat" :valueFormat="dateFormat" />
+            :format="dateFormat" :valueFormat="dateFormat" :disabled-date="disabledAfterDate" />
         </a-form-item>
         <a-form-item name="businessTerm" label="营业期限" v-show="formRules?.businessTerm">
           <a-date-picker v-model:value="form.businessTerm" placeholder="请选择营业期限" style="width:100%" :format="dateFormat"
-            :valueFormat="dateFormat" />
+            :valueFormat="dateFormat" :disabled-date="disabledBeforeDate" />
         </a-form-item>
         <a-form-item name="contactName" label="联系人" v-show="formRules?.contactName">
           <a-input v-model:value="form.contactName" placeholder="请输入联系人">
@@ -140,7 +142,9 @@ import {
   condition1,
   condition2,
   condition3,
-  condition4
+  condition4,
+  disabledBeforeDate,
+  disabledAfterDate
 } from '@/views/baseInfoManage/businessManagement/super/common'
 const router = useRouter();
 const route = useRoute();
@@ -215,7 +219,16 @@ let validatePass2 = async (_rule: Rule, value: string) => {
     return Promise.resolve();
   }
 };
-const common = {
+/* const common = ref<Record<string, Rule[]>>({
+  account: [{ required: true, trigger: 'blur', message: '请输入超级管理员账号' }],
+  password: [{ required: true, validator: validatePass, trigger: 'change' }],
+  checkPass: [{ validator: validatePass2, trigger: 'change' }],
+})
+const formRules6 = { ...commonFormRules6, ...common.value }
+const formRules9 = { ...commonFormRules9, ...common.value }
+const formRules7 = { ...commonFormRules7, ...common.value }
+const formRules8 = { ...commonFormRules8, ...common.value } */
+const common: Record<string, Rule[]> = {
   account: [{ required: true, trigger: 'blur', message: '请输入超级管理员账号' }],
   password: [{ required: true, validator: validatePass, trigger: 'change' }],
   checkPass: [{ validator: validatePass2, trigger: 'change' }],
@@ -290,6 +303,7 @@ const saveConform = () => {
       tipVisible.value = true
     } else {
       message.error(res);
+      saveVisible.value = false
     }
   }).catch((err: string) => {
     console.log(err)

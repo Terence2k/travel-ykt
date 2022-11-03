@@ -1,7 +1,6 @@
 <template>
-    <BaseModal v-model="dialogVisible" title="添加景区门票" :width="1000" :onOk="reserveTicket">
+    <BaseModal v-model="dialogVisible" title="选择订票人员" :width="1000" :onOk="reserveTicket">
         <div v-if="dialogVisible">
-            <h3>选择订票人员</h3>
             <CommonTable row-key="oid" :row-selection="{onSelect}" :columns="columns" :dataSource="travelStore.touristList" :scrollY="false">
                 <template #bodyCell="{ column, text, index, record }">
                     <template v-if="column.key === 'index'">
@@ -125,22 +124,29 @@ import { CODEVALUE } from '@/constant';
             callback(false)
             return message.error('请选择订票人员')
         }
+        console.log(reserveParams)
          
         Modal.confirm({
             title: '景区门票确认？',
             icon: createVNode(CheckOutlined),
             content: createVNode('div', { style: 'color: #333;' }, 
-                `您即将提交${reserveParams.startDate}日出行
-                “${reserveParams.ticketName}”的门票，
-                行程人数（${reserveParams.peopleCount}人），
-                订票人数（${reserveParams.reservePeopleList.length}人），订单金额（${reserveParams.unitPrice * reserveParams.reservePeopleList.length}元）。请免票人员带好相关证件到线下进行核准，学生证/老年人身份证可以到线下进行差价退款。`),
+                `您即将提交${ticketInfo.value.startDate}日出行
+                “${ticketInfo.value.ticketName}”的门票，
+                行程人数（${ticketInfo.value.peopleCount}人）
+                `),
+                // 订票人数（${reserveParams.reservePeopleList.length}人），订单金额（${ticketInfo.value.unitPrice * reserveParams.reservePeopleList.length}元）。请免票人员带好相关证件到线下进行核准，学生证/老年人身份证可以到线下进行差价退款。
             onOk() {
+                
                 api.travelManagement.reserveTicket(reserveParams).then((res:any) => {
+                    travelStore.setTicketStatus(props.ticketId)
                     message.success('预定成功')
                     callback()
+                }).catch((err:any) => {
+                    callback(false)
                 })
             },
             onCancel() {
+                callback(false)
                 console.log('Cancel');
             },
             class: 'test',

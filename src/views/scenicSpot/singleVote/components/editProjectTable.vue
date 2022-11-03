@@ -25,7 +25,7 @@
 					<template v-if="column.key === 'itemId'">
 						<div class="action-btns">
 							<span style="margin-right: 20px">
-								{{ itemNameCompute(Number(record.itemId)) }}
+								{{ record.itemName || itemNameCompute(Number(record.itemId)) }}
 							</span>
 							<a v-if="record.itemId && !type" href="javascript:;" @click="change(record)">更换</a>
 							<a href="javascript:;" v-if="pageStatus && !type && tableList[0].init" @click="CreateData">请选择</a>
@@ -53,7 +53,7 @@
 			<a-button type="primary" class="btn" v-show="type" @click="CreateData"> 关联核销项目</a-button>
 		</div>
 
-		<span style="color: #c8c9cc" v-show="type">
+		<!-- <span style="color: #c8c9cc" v-show="type">
 			<span style="color: red">*</span>其中，非必核销项目数量为{{ ifVerificationNum }}项，可核销总数（不包括必核销项）不超过
 			<a-input-number
 				v-model:value="allTimes"
@@ -67,7 +67,7 @@
 				@change="changeIfverification"
 			/>
 			次 (最小值：{{ times }}，最大值：{{ timesMax }})
-		</span>
+		</span> -->
 	</div>
 	<DelModal :params="{ title: '删除', content: '是否确定该条数据' }" v-model="delShow" @submit="delSubmit" @cancel="delCancel" />
 </template>
@@ -107,39 +107,39 @@ const props = defineProps({
 	// params: Object,
 	// tableList: Array,
 });
-const allTimes = ref<number | null>(null);
+// const allTimes = ref<number | null>(null);
 
 const changeIfverification = (num: number) => {
 	emits('get-optional-verification', num);
 };
 //总数
-const ifVerificationNum = computed(() => {
-	let res = props.tableList?.filter((i) => !i.ifVerification) || 0;
-	return res.length || 0;
-});
+// const ifVerificationNum = computed(() => {
+// 	let res = props.tableList?.filter((i) => !i.ifVerification) || 0;
+// 	return res.length || 0;
+// });
 
 //次数 最小值
-const times = computed(() => {
-	let num = 0;
-	let res = props.tableList?.filter((i: any) => i.ifVerification);
-	res?.map((i: any) => {
-		num = num + Number(i.verificationNumber);
-		return i;
-	});
+// const times = computed(() => {
+// 	let num = 0;
+// 	let res = props.tableList?.filter((i: any) => i.ifVerification);
+// 	res?.map((i: any) => {
+// 		num = num + Number(i.verificationNumber);
+// 		return i;
+// 	});
 
-	return num;
-});
+// 	return num;
+// });
 
 //次数 最大值
-const timesMax = computed(() => {
-	let num = 0;
-	// let res = props.tableList?.filter((i) => !i.ifVerification);
-	props.tableList?.map((i: any) => {
-		num = num + Number(i.verificationNumber);
-		return i;
-	});
-	return num;
-});
+// const timesMax = computed(() => {
+// 	let num = 0;
+// 	// let res = props.tableList?.filter((i) => !i.ifVerification);
+// 	props.tableList?.map((i: any) => {
+// 		num = num + Number(i.verificationNumber);
+// 		return i;
+// 	});
+// 	return num;
+// });
 const column = ref([
 	{
 		title: '核销项目',
@@ -202,9 +202,12 @@ const change = (value: object) => {
 		modelValue.value = true;
 	}
 };
-
+interface formValidateType {
+	proj: number[];
+	initData: any[];
+}
 // 关联核销项目
-const formValidate = reactive({
+const formValidate = reactive<formValidateType>({
 	proj: [],
 	initData: [{ init: true }],
 });
@@ -266,7 +269,7 @@ const cancel = () => {
 	formValidate.proj = [];
 	// resetFields();
 };
-const options = ref([
+const options = ref<any>([
 	{
 		value: 1,
 		label: '入园',
@@ -343,9 +346,9 @@ onMounted(() => {
 	}
 });
 
-const setValue = (value: number) => {
-	allTimes.value = value;
-};
+// const setValue = (value: number) => {
+// 	allTimes.value = value;
+// };
 
 watch(
 	() => props.viewId,
@@ -357,7 +360,7 @@ watch(
 );
 
 defineExpose({
-	setValue,
+	// setValue,
 });
 </script>
 

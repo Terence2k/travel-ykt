@@ -25,6 +25,10 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		addHotelPop: '',
 		reserveTicketPop: ''
 	})
+	const showId = reactive<{[k: string]: any}>({
+		showTicketPop: '',
+		showHotelPop: '',
+	})
 	const state = reactive<{ editableData: UnwrapRef<Record<string, DataItem>>; [k: string]: any }>({
 		editableData: {},
 		addHotelPop: false,
@@ -32,6 +36,8 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		reserveTicketPop: false,
 		selectPersonnelPop:false,
 		payablePrice:'',
+		showTicketPop: false,
+		showHotelPop: false,
 		allFeesProducts: computed(() => travelStore.compositeProducts),
 		ticketData: computed(() => travelStore.scenicTickets),
 		holteDate: computed(() => travelStore.hotels),
@@ -272,26 +278,45 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			state[key] = true;
 			
 		},
+		show(key: string, oid?: any) {
+			showId[key] = ''
+			if (oid) {
+				showId[key] = oid
+			}
+			state[key] = true;
+		},
 		choice(key :string)
 		{
 			state[key]=true
 			console.log(key)
 		},
+<<<<<<< HEAD
 		onSearch () {
 			api.getBasicInfo().then((res) => {
 				state.payablePrice=accDiv(res.price, 100)
 			});
 		},
 		reserveHotel (row: any) {
+=======
+		async reserveHotel (row: any) {
+			const res = await api.travelManagement.hotelDetail(row.oid)
+			let str = res.roomTypeList.map((it:any) => {
+				return `${it.roomTypeName}（${it.roomCount}间）`
+			})
+>>>>>>> 3fca7b74c85de8a19b2439b8138361fde97d6e36
 			Modal.confirm({
 				title: '酒店房型预定确认？',
 				icon: createVNode(CheckOutlined),
 				content: createVNode('div', { style: 'color: #333;' }, 
-				 `您即将提交${row.startDate}日入住“${row.hotelName}” 的订单，行程人数（${travelStore.touristList.length}人），订单金额（${row.orderFee}元）。`),
+				 `您即将提交${row.startDate}日入住 “${row.hotelName}” 的订单，
+				 		行程人数（${travelStore.touristList.length}人），
+						${str.join('，')}，订单金额（${row.orderFee}元）。`),
 				onOk() {
 					const formData = new FormData();
 					formData.append('oid', row.oid)
+					
 					api.travelManagement.reserveHotel(formData).then((res:any) => {
+						travelStore.setHotelsStatus(row.oid)
 						message.success('预定成功')
 					})
 				},
@@ -400,6 +425,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		...toRefs(state),
 		...methods,
 		editId,
+		showId,
 		travelStore
 	};
 }
