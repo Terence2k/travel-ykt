@@ -33,7 +33,7 @@
 					<div class="set-wrap">
 						<p>
 							<span class="label">时间：</span>
-							<a-range-picker v-model:value="dateRange" />
+							<a-range-picker v-model:value="dateRange" :disabled-date="disabledDate" />
 						</p>
 						<!-- <p>
 							<span class="label">库存:</span>
@@ -135,7 +135,11 @@ const setDayPriceList = ref<any>([
 	// { stockDate: '2022-10-20', ticketPrice: '30', stock: '30' },
 	// { stockDate: '2022-10-21', ticketPrice: '13', stock: '30' },
 ]);
-
+const disabledDate = (current: Dayjs) => {
+	let stat = dayjs(state.data.startDate),
+		end = dayjs(state.data.endDate);
+	return current < stat || current > end;
+};
 //日历
 const currentPrict = ref(null);
 const dateRange = ref([]);
