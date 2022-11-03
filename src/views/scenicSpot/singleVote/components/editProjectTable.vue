@@ -2,6 +2,7 @@
 	<div class="wrapper">
 		<BaseModal :modelValue="modelValue" title="关联核销项目" width="600px" @cancel="cancel">
 			<a-form :model="formValidate" :label-col="{ span: 3 }" :wrapper-col="{ span: 12, offset: 1 }" labelAlign="left">
+				{{ formValidate.proj }}
 				<a-form-item label="核销项目" class="fz14" v-bind="validateInfos.proj">
 					<a-select
 						v-model:value="formValidate.proj"
@@ -203,7 +204,7 @@ const change = (value: object) => {
 	}
 };
 interface formValidateType {
-	proj: number[];
+	proj: number[] | number;
 	initData: any[];
 }
 // 关联核销项目
@@ -301,18 +302,25 @@ const hadList = (rule: any, value: any) => {
 	console.log(value, 'value', len, value[0]?.init, !value);
 
 	if (!value) {
-		return Promise.reject('请填写');
+		console.log('空值');
+		return Promise.reject('请填写1');
 	}
+
 	if (len <= 0) {
-		return Promise.reject('请填写');
+		console.log('数组空值');
+		return Promise.reject('请填写2');
 	}
+
 	if (len == 1 && value[0]?.init) {
+		console.log('新增空值');
+		return Promise.reject('请填写3');
+	}
+
+	let isArra = typeof value === 'object';
+	if (isArra && typeof value[0] !== 'number') {
 		return Promise.reject('请填写');
 	}
 
-	if (typeof value[0] !== 'number') {
-		return Promise.reject('请填写');
-	}
 	return Promise.resolve();
 };
 
@@ -320,7 +328,7 @@ const hadList = (rule: any, value: any) => {
 const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
 	formValidate,
 	reactive({
-		proj: [{ required: true, message: '请填写', validator: hadList }],
+		proj: [{ required: true, validator: hadList }],
 	})
 );
 const getList = async (id: number) => {
