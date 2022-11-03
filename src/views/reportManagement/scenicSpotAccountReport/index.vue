@@ -1,16 +1,16 @@
 <template>
 	<CommonSearch>
-		<search-item label="团单编号" style="width: 280px">
-			<a-input v-model:value="state.tableData.param.transferAccountsNo" placeholder="请输入转账单号" allowClear style="width: 180px" />
+		<search-item label="行程单号" style="width: 280px">
+			<a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入转账单号" allowClear style="width: 180px" />
 		</search-item>
 		<search-item label="景区名称" style="width: 280px">
-			<a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入行程单号" allowClear style="width: 180px" />
+			<a-input v-model:value="state.tableData.param.scenicId" placeholder="请输入行程单号" allowClear style="width: 180px" />
 		</search-item>
 		<search-item label="景点名称" style="width: 280px">
-			<a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入订单号" allowClear style="width: 180px" />
+			<a-input v-model:value="state.tableData.param.ticketName" placeholder="请输入订单号" allowClear style="width: 180px" />
 		</search-item>
 		<search-item label="团队类型">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.teamTypeId" style="width: 200px" placeholder="请选择团队类型">
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.travelTypeId" style="width: 200px" placeholder="请选择团队类型">
 				<a-select-option v-for="(item, index) in options.teamTypesLists" :value="item.oid" :key="index">{{ item.name }} </a-select-option>
 			</a-select>
 		</search-item>
@@ -22,10 +22,10 @@
 			</a-select>
 		</search-item>
 		<search-item label="核销时间" style="width: 280px">
-			<a-date-picker v-model:value="state.tableData.param.applicationDate" style="width: 180px" />
+			<a-date-picker v-model:value="state.tableData.param.verificationStartTime" style="width: 180px" />
 		</search-item>
 		<search-item label="结算时间" style="width: 280px">
-			<a-date-picker v-model:value="state.tableData.param.applicationDate" style="width: 180px" />
+			<a-date-picker v-model:value="state.tableData.param.settlementStartTime" style="width: 180px" />
 		</search-item>
 		<template #button>
 			<a-button @click="initList">查询</a-button>
@@ -71,111 +71,109 @@ const columns = computed(() => {
 		},
 		{
 			title: '景区名称',
-			dataIndex: 'routeName',
-			key: 'routeName',
+			dataIndex: 'scenicName',
+			key: 'scenicName',
 		},
 		{
 			title: '票名称',
-			dataIndex: 'routeName',
-			key: 'routeName',
+			dataIndex: 'ticketName',
+			key: 'ticketName',
 		},
 		{
 			title: '团队类型',
-			dataIndex: 'routeName',
-			key: 'routeName',
+			dataIndex: 'travelTypeName',
+			key: 'travelTypeName',
 		},
 		{
 			title: '地接社',
-			dataIndex: 'routeName',
-			key: 'routeName',
+			dataIndex: 'subTravelName',
+			key: 'subTravelName',
 		},
 		{
 			title: '核销时间',
-			dataIndex: 'subTravelName',
-			key: 'subTravelName',
+			dataIndex: 'verificationTime',
+			key: 'verificationTime',
 		},
 		{
 			title: '结算时间',
-			dataIndex: 'subTravelName',
-			key: 'subTravelName',
+			dataIndex: 'settlementTime',
+			key: 'settlementTime',
 		},
 		{
 			title: '单价（元）',
-			dataIndex: 'subTravelName',
-			key: 'subTravelName',
+			dataIndex: 'unitPrice',
+			key: 'unitPrice',
 		},
 		{
 			title: '预定数',
-			dataIndex: 'subTravelName',
-			key: 'subTravelName',
+			dataIndex: 'reservationNum',
+			key: 'reservationNum',
 		},
 		{
 			title: '实刷数',
-			dataIndex: 'subTravelName',
-			key: 'subTravelName',
+			dataIndex: 'settlementNum',
+			key: 'settlementNum',
 		},
 		{
 			title: '减免数',
-			dataIndex: 'subTravelName',
-			key: 'subTravelName',
+			dataIndex: 'breaksNum',
+			key: 'breaksNum',
 		},
 		{
 			title: '预定金额(元)',
-			dataIndex: 'subTravelName',
-			key: 'subTravelName',
+			dataIndex: 'orderPrice',
+			key: 'orderPrice',
 		},
 		{
 			title: '减免金额(元)',
-			dataIndex: 'subTravelName',
-			key: 'subTravelName',
+			dataIndex: 'breaksPrice',
+			key: 'breaksPrice',
 		},
 		{
 			title: '未核销金额金额（元）',
-			dataIndex: 'time',
-			key: 'time',
+			dataIndex: 'unSettlementPrice',
+			key: 'unSettlementPrice',
 		},
 		{
 			title: '票款金额（元）',
-			dataIndex: 'time',
-			key: 'time',
+			dataIndex: 'ticketPrice',
+			key: 'ticketPrice',
+		},
+		{
+			title: '景点实收（元）',
+			dataIndex: 'scenicPrice',
+			key: 'scenicPrice',
 		},
 	];
-	for (const key in [1, 2]) {
-		const settlementRules = {
-			title: `结算规则${Number(Number(key) + 1)}`,
-			dataIndex: 'time',
-			key: 'time',
-		};
-		column.push(settlementRules);
+	if (state.tableData.data.settlementRuleNameList && state.tableData.data.settlementRuleNameList.length) {
+		for (const key in state.tableData.data.settlementRuleNameList) {
+			const settlementRules = {
+				title: `结算规则${Number(Number(key) + 1)}`,
+				dataIndex: 'settlementRuleName',
+				key: 'settlementRuleName',
+				data: state.tableData.data.settlementRuleNameList[key],
+			};
+			column.push(settlementRules);
+		}
 	}
-	const netReceipts = {
-		title: '实收金额金额（元）',
-		dataIndex: 'time',
-		key: 'time',
-	};
-	column.push(netReceipts);
 	return column;
 });
 const state = reactive({
 	tableData: {
 		param: {
-			applicationDate: null,
-			applicationName: null,
-			productType: 1,
-			pageSize: 10,
-			pageNo: 1,
-			teamTypeId: null,
-			travelId: null,
-			subTravelId: null,
-			transferAccountsNo: null,
-			itineraryNo: null,
-			type: null,
+			itineraryNo: '', //行程单号
+			scenicId: '', //关联景区id
+			ticketName: '', //门票名称
+			travelTypeId: '', //团队类型id
+			subTravelId: '', //地接社id
+			verificationStartTime: '', //核销开始时间
+			verificationEndTime: '', //核销结束时间
+			settlementStartTime: '', //结算开始时间
+			settlementEndTime: '', //结算结束时间
+			pageSize: 10, //页大小
+			pageNo: 1, //页号
 		},
-		data: [
-			{
-				name: 123456,
-			},
-		],
+		data: [],
 		total: 11,
 		loading: false,
 	},
@@ -183,7 +181,7 @@ const state = reactive({
 // 查询
 const initList = async () => {
 	// state.tableData.loading = true;
-	// let res = await api.productRuleList(state.tableData.param);
+	// let res = await api.byItineraryTicket(state.tableData.param);
 	// const { total, content } = res;
 	// state.tableData.total = total;
 	// const list: [any] = dealData(content);
