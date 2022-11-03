@@ -320,7 +320,7 @@ const reset = (): void => {
 //初始化页面
 const initPage = async (): Promise<void> => {
 	let res = await api.getViewOrderDetails(route.currentRoute.value?.query?.oid);
-	// formData.data = res;
+	formData.data = res;
 	// formData.data.oid = parseInt(route.currentRoute.value?.query?.oid);
 };
 
