@@ -10,7 +10,7 @@
 				<img src="@/assets/svg/turn-right.svg" alt="" />
 			</div>
 			<div class="wrap">
-				<a-calendar v-model:value="value" :fullscreen="false" border @select="bindSetDatePriceFirst">
+				<a-calendar v-model:value="value" :fullscreen="false" border @select="bindSetDatePriceFirst" :validRange="[dayjs(range[0]), dayjs(range[1])]">
 					<template #headerRender>
 						<div class="calendar-header">{{ value.year() }}年 {{ value.month() + 1 }}月</div>
 					</template>
@@ -27,7 +27,13 @@
 				</a-calendar>
 			</div>
 			<div class="wrap">
-				<a-calendar v-model:value="valueNext" :fullscreen="false" border @select="bindSetDatePriceSec">
+				<a-calendar
+					v-model:value="valueNext"
+					:fullscreen="false"
+					border
+					@select="bindSetDatePriceSec"
+					:validRange="[dayjs(range[0]), dayjs(range[1])]"
+				>
 					<template #headerRender>
 						<div class="calendar-header">{{ valueNext.year() }}年 {{ valueNext.month() + 1 }}月</div>
 					</template>
@@ -74,7 +80,7 @@
 import BaseModal from '@/components/common/BaseModal.vue';
 
 import dayjs, { Dayjs } from 'dayjs';
-
+import { shijianYMD, nextMonth, preMonth } from '@/utils/formatTIme';
 const emits = defineEmits(['get-current-day', 'clear-current-day', 'get-data', 'save-data']);
 
 const props = defineProps({
@@ -115,67 +121,12 @@ const props = defineProps({
 		type: String,
 		default: '设置减免规则',
 	},
+	range: {
+		type: Array,
+		default: () => [],
+		require: true,
+	},
 });
-
-//前一个月
-const preMonth = (day: any) => {
-	let time = new Date(day),
-		year = Number(time.getFullYear()),
-		month = Number((time.getMonth() + 1).toString().padStart(2, '0')),
-		date = Number(time.getDate().toString().padStart(2, '0'));
-
-	if (month - 1 === 0) {
-		year--;
-		month = 12;
-	} else {
-		month -= 1;
-	}
-
-	let dateStr = year + '-' + month + '-' + date,
-		// 获取日期天数
-		d = new Date(year, month, 0),
-		days = d.getDate();
-
-	if (days < date) {
-		dateStr = year + '-' + month + '-' + days;
-	}
-
-	return dayjs(dateStr);
-};
-
-//后一个月
-const nextMonth = (day: any) => {
-	let time = new Date(day),
-		year = time.getFullYear(),
-		month = Number((time.getMonth() + 1).toString().padStart(2, '0')),
-		date = Number(time.getDate().toString().padStart(2, '0'));
-	if (month + 1 === 13) {
-		year++;
-		month = 1;
-	} else {
-		month += 1;
-	}
-
-	let dateStr = year + '-' + month + '-' + date,
-		// 获取日期天数
-		d = new Date(year, month, 0),
-		days = d.getDate();
-
-	if (days < date) {
-		dateStr = year + '-' + month + '-' + days;
-	}
-
-	return dayjs(dateStr);
-};
-
-const shijianYMD = (timestamp: any) => {
-	let time = new Date(timestamp),
-		year = time.getFullYear(),
-		month = (time.getMonth() + 1).toString().padStart(2, '0'),
-		date = time.getDate().toString().padStart(2, '0');
-
-	return year + '-' + month + '-' + date;
-};
 
 //获取是否在在自定义价格列表
 const isCurrentDay = (timestamp: Dayjs) => {
@@ -205,7 +156,7 @@ const currentPoint = ref<null | string>(null);
 //设置当前日期
 const bindSetDatePriceFirst = (e: Dayjs) => {
 	let time = shijianYMD(e),
-		nextValue = nextMonth(time);
+		nextValue = dayjs(nextMonth(time));
 
 	valueNext.value = nextValue;
 	currentPoint.value = '1';
@@ -214,7 +165,7 @@ const bindSetDatePriceFirst = (e: Dayjs) => {
 };
 const bindSetDatePriceSec = (e: Dayjs) => {
 	let time = shijianYMD(e),
-		preValue = preMonth(e);
+		preValue = dayjs(preMonth(e));
 
 	value.value = preValue;
 	currentPoint.value = '2';
@@ -229,8 +180,8 @@ const valueNext = ref<Dayjs>(dayjs(nextMonth(value.value)));
 //点击左边
 const turnLeft = () => {
 	console.log('turnLeft');
-	let preDay = preMonth(value.value),
-		preNDay = preMonth(valueNext.value);
+	let preDay = dayjs(preMonth(value.value)),
+		preNDay = dayjs(preMonth(valueNext.value));
 
 	value.value = preDay;
 	valueNext.value = preNDay;
@@ -239,8 +190,8 @@ const turnLeft = () => {
 };
 const turnRight = () => {
 	console.log('turnRight');
-	let nextDay = nextMonth(value.value),
-		nNDay = nextMonth(valueNext.value);
+	let nextDay = dayjs(nextMonth(value.value)),
+		nNDay = dayjs(nextMonth(valueNext.value));
 
 	value.value = nextDay;
 	valueNext.value = nNDay;
@@ -257,6 +208,8 @@ const modelValue = ref(false);
 
 const open = () => {
 	modelValue.value = true;
+	value.value = dayjs(new Date());
+	valueNext.value = dayjs(nextMonth(value.value));
 };
 
 const cancel = () => {
@@ -281,6 +234,7 @@ defineExpose({
 	height: 100%;
 	position: relative;
 	padding: 20px;
+	overflow: hidden;
 	.turn-left {
 		position: absolute;
 		left: 0;
@@ -365,5 +319,8 @@ defineExpose({
 ::v-deep .ant-picker-body {
 	padding: 0 !important;
 	margin: 0;
+}
+::v-deep .ant-picker-cell:before {
+	height: 100%;
 }
 </style>

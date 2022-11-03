@@ -486,31 +486,46 @@ const onQuery = () => {
 const onSearch = async () => {
   if (activeKey.value === '1') {
     let res = await api.findCapitalDetailedList(state.tableData1.param)
-    res.content.forEach((item: any) => {
-      item.runningAmount = item.runningAmount ? Number(item.runningAmount) / 100 : 0
-      item.amountBeforeRunning = item.amountBeforeRunning ? Number(item.amountBeforeRunning) / 100 : 0
-      item.amountAfterRunning = item.amountAfterRunning ? Number(item.amountAfterRunning) / 100 : 0
-    })
-    state.tableData1.data = res.content
-    state.tableData1.total = res.total
+    if (res?.content) {
+      res.content.forEach((item: any) => {
+        item.runningAmount = item.runningAmount ? Number(item.runningAmount) / 100 : 0
+        item.amountBeforeRunning = item.amountBeforeRunning ? Number(item.amountBeforeRunning) / 100 : 0
+        item.amountAfterRunning = item.amountAfterRunning ? Number(item.amountAfterRunning) / 100 : 0
+      })
+      state.tableData1.data = res.content
+      state.tableData1.total = res.total
+    } else {
+      state.tableData1.data = []
+      state.tableData1.total = 0
+    }
   } else if (activeKey.value === '2') {
     let res = await api.findCapitalDetailedList(state.tableData2.param)
-    res.content.forEach((item: any) => {
-      item.runningAmount = item.runningAmount ? Number(item.runningAmount) / 100 : 0
-      item.amountBeforeRunning = item.amountBeforeRunning ? Number(item.amountBeforeRunning) / 100 : 0
-      item.amountAfterRunning = item.amountAfterRunning ? Number(item.amountAfterRunning) / 100 : 0
-    })
-    state.tableData2.data = res.content
-    state.tableData2.total = res.total
+    if (res?.content) {
+      res.content.forEach((item: any) => {
+        item.runningAmount = item.runningAmount ? Number(item.runningAmount) / 100 : 0
+        item.amountBeforeRunning = item.amountBeforeRunning ? Number(item.amountBeforeRunning) / 100 : 0
+        item.amountAfterRunning = item.amountAfterRunning ? Number(item.amountAfterRunning) / 100 : 0
+      })
+      state.tableData2.data = res.content
+      state.tableData2.total = res.total
+    } else {
+      state.tableData2.data = []
+      state.tableData2.total = 0
+    }
   } else if (activeKey.value === '3') {
     let res = await api.findCapitalDetailedList(state.tableData3.param)
-    res.content.forEach((item: any) => {
-      item.runningAmount = item.runningAmount ? Number(item.runningAmount) / 100 : 0
-      item.amountBeforeRunning = item.amountBeforeRunning ? Number(item.amountBeforeRunning) / 100 : 0
-      item.amountAfterRunning = item.amountAfterRunning ? Number(item.amountAfterRunning) / 100 : 0
-    })
-    state.tableData3.data = res.content
-    state.tableData3.total = res.total
+    if (res?.content) {
+      res.content.forEach((item: any) => {
+        item.runningAmount = item.runningAmount ? Number(item.runningAmount) / 100 : 0
+        item.amountBeforeRunning = item.amountBeforeRunning ? Number(item.amountBeforeRunning) / 100 : 0
+        item.amountAfterRunning = item.amountAfterRunning ? Number(item.amountAfterRunning) / 100 : 0
+      })
+      state.tableData3.data = res.content
+      state.tableData3.total = res.total
+    } else {
+      state.tableData3.data = []
+      state.tableData3.total = 0
+    }
   }
 }
 const goTo = () => {

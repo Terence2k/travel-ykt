@@ -8,6 +8,7 @@
 		@get-current-day="getCurrentDay"
 		@clear-current-day="clearCurrentDay"
 		@save-data="saveDate"
+		:range="[state.data.startDate, state.data.endDate]"
 	>
 		<header class="tips">
 			<p>说明：点击后编辑每日库存，不编辑默认库存为默认</p>
@@ -18,7 +19,7 @@
 			<div class="set-wrap">
 				<p>
 					<span class="label">时间：</span>
-					<a-range-picker v-model:value="dateRange" />
+					<a-range-picker v-model:value="dateRange" :disabled-date="disabledDate" />
 				</p>
 				<p>
 					<span class="label">库存:</span>
@@ -53,7 +54,7 @@
 
 <script setup lang="ts">
 import Calendar from '@/components/common/calendarDouble.vue';
-
+import { shijianYMD, getAllDateCN, nextYear } from '@/utils/formatTIme';
 import dayjs, { Dayjs } from 'dayjs';
 
 import api from '@/api';
@@ -65,7 +66,11 @@ const setDayPriceList = ref([
 	// { stockDate: '2022-10-20', ticketPrice: '30', stock: '30' },
 	// { stockDate: '2022-10-21', ticketPrice: '13', stock: '30' },
 ]);
-
+const disabledDate = (current: Dayjs) => {
+	let stat = dayjs(state.data.startDate),
+		end = dayjs(state.data.endDate);
+	return current < stat || current > end;
+};
 ///日历
 const currentPrict = ref(null);
 const currentInventory = ref();
@@ -146,29 +151,6 @@ const createDateItem = () => {
 	clearCurrentDay();
 	isEdit = false;
 };
-const shijianYMD = (timestamp: any) => {
-	let time = new Date(timestamp),
-		year = time.getFullYear(),
-		month = (time.getMonth() + 1).toString().padStart(2, '0'),
-		date = time.getDate().toString().padStart(2, '0');
-
-	return year + '-' + month + '-' + date;
-};
-const getAllDateCN = (startTime: Date, endTime: Date) => {
-	console.log(startTime, endTime, 'endTime');
-
-	var date_all = [];
-	var i = 0;
-	while (endTime.getTime() - startTime.getTime() >= 0) {
-		var year = startTime.getFullYear();
-		var month = (startTime.getMonth() + 1).toString().padStart(2, '0');
-		var day = startTime.getDate().toString().padStart(2, '0');
-		date_all[i] = year + '-' + month + '-' + day;
-		startTime.setDate(startTime.getDate() + 1);
-		i += 1;
-	}
-	return date_all;
-};
 
 const createItem = (obj: any) => {
 	setDayPriceList.value.push(obj);
@@ -179,15 +161,7 @@ const editItem = (index: number, obj: any) => {
 	// setDayPriceList.value[index].ticketPrice = ticketPrice;
 	setDayPriceList.value[index].stock = stock;
 };
-const nextYear = (timestamp: any) => {
-	let time = new Date(timestamp),
-		year = Number(time.getFullYear()),
-		month = (time.getMonth() + 1).toString().padStart(2, '0'),
-		date = time.getDate().toString().padStart(2, '0');
 
-	year++;
-	return year + '-' + month + '-' + date;
-};
 const emits = defineEmits(['set-calendar-invetory']);
 const isEdit = computed(() => {
 	return route.currentRoute.value?.query?.t === '1' || route.currentRoute.value.path === '/scenic-spot/multicast/list';
@@ -253,7 +227,8 @@ const state = reactive<stateType>({
 const calendarRef = ref();
 const open = (id: number) => {
 	calendarRef.value.open();
-
+	state.data.startDate = shijianYMD(new Date());
+	state.data.endDate = nextYear(state.data.startDate);
 	if (typeof id === 'number') {
 		initEdit(id);
 	}
@@ -261,8 +236,7 @@ const open = (id: number) => {
 
 const initEdit = async (id: number) => {
 	state.data.uniteId = id;
-	state.data.startDate = shijianYMD(new Date());
-	state.data.endDate = nextYear(state.data.startDate);
+
 	let res = await api.getCalendarMultiple(state.data);
 	setDayPriceList.value = res.map((i: any) => {
 		delete i.ticketPrice;

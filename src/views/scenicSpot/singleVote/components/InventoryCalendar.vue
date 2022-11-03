@@ -7,6 +7,7 @@
 		@get-current-day="getCurrentDay"
 		@clear-current-day="clearCurrentDay"
 		@save-data="saveDate"
+		:range="[state.data.start, state.data.end]"
 	>
 		<header class="tips">
 			<p>说明：点击后编辑每日库存，不编辑默认库存为默认</p>
@@ -17,7 +18,7 @@
 			<div class="set-wrap">
 				<p>
 					<span class="label">时间：</span>
-					<a-range-picker v-model:value="dateRange" />
+					<a-range-picker v-model:value="dateRange" :disabled-date="disabledDate" />
 				</p>
 				<p>
 					<span class="label">库存:</span>
@@ -47,79 +48,6 @@
 			</div>
 		</section>
 	</Calendar>
-	<!-- <Calendar
-		ref="calendarRef"
-		title="编辑库存日历"
-		:setAllValue="allPrice"
-		:setAllInventory="allPrice"
-		:setCurrentValue="currentInventory"
-		:setList="setDayPriceList"
-		@get-current-day="getCurrentDay"
-		@clear-current-day="clearCurrentDay"
-	>
-		<header class="tips">
-			<p>说明：点击后编辑每日库存，不编辑默认库存为默认</p>
-			<p>说明：点击后编辑每日价格，不编辑则默认价格为默认价格，价格为默认价格时不可保存价格日历</p>
-		</header>
-
-		<section>
-			<div class="set-wrap">
-				<p>
-					<span class="label">时间</span>
-					<a-range-picker v-model:value="dateRange" />
-				</p>
-				<p>
-					<span class="label">批量设置价格</span>
-					<a-input-number
-						:min="0"
-						:max="9999999999"
-						v-model:value="allPrice"
-						:formatter="(value) => value.replace(/\D/g, '')"
-						:parser="(value) => value.replace(/\D/g, '')"
-						placeholder="输入统一票价"
-						style="width: 200px"
-					/>
-				</p>
-				<p>
-					<span class="label">批量设置库存</span>
-					<a-input-number
-						:min="0"
-						:max="9999999999"
-						v-model:value="allPrice"
-						:formatter="(value) => value.replace(/\D/g, '')"
-						:parser="(value) => value.replace(/\D/g, '')"
-						placeholder="输入统一票价"
-						style="width: 200px"
-					/>
-				</p>
-				<p>
-					<span class="label">按日设置价格</span>
-					<a-input-number
-						:min="0"
-						:max="9999999999"
-						v-model:value="currentPrict"
-						:formatter="(value) => value.replace(/\D/g, '')"
-						:parser="(value) => value.replace(/\D/g, '')"
-						placeholder="输入当日票价"
-						style="width: 200px"
-					/>
-				</p>
-				<p>
-					<span class="label">按日设置库存</span>
-					<a-input-number
-						:min="0"
-						:max="9999999999"
-						v-model:value="currentInventory"
-						:formatter="(value) => value.replace(/\D/g, '')"
-						:parser="(value) => value.replace(/\D/g, '')"
-						placeholder="输入当日票价"
-						style="width: 200px"
-					/>
-					<a-button @click="createDateItem">确定</a-button>
-				</p>
-			</div>
-		</section>
-	</Calendar> -->
 </template>
 
 <script setup lang="ts">
@@ -129,13 +57,18 @@ import dayjs, { Dayjs } from 'dayjs';
 
 import api from '@/api';
 import { message } from 'ant-design-vue';
+import { shijianYMD, getAllDateCN, nextYear } from '@/utils/formatTIme';
 
 //自定义价格列表
 const setDayPriceList = ref([
 	// { stockDate: '2022-10-20', ticketPrice: '30', stock: '30' },
 	// { stockDate: '2022-10-21', ticketPrice: '13', stock: '30' },
 ]);
-
+const disabledDate = (current: Dayjs) => {
+	let stat = dayjs(state.data.start),
+		end = dayjs(state.data.end);
+	return current < stat || current > end;
+};
 ///日历
 const currentPrict = ref(null);
 const currentInventory = ref();
@@ -217,29 +150,6 @@ const createDateItem = () => {
 	clearCurrentDay();
 	isEdit = false;
 };
-const shijianYMD = (timestamp: any) => {
-	let time = new Date(timestamp),
-		year = time.getFullYear(),
-		month = (time.getMonth() + 1).toString().padStart(2, '0'),
-		date = time.getDate().toString().padStart(2, '0');
-
-	return year + '-' + month + '-' + date;
-};
-const getAllDateCN = (startTime: Date, endTime: Date) => {
-	console.log(startTime, endTime, 'endTime');
-
-	var date_all = [];
-	var i = 0;
-	while (endTime.getTime() - startTime.getTime() >= 0) {
-		var year = startTime.getFullYear();
-		var month = (startTime.getMonth() + 1).toString().padStart(2, '0');
-		var day = startTime.getDate().toString().padStart(2, '0');
-		date_all[i] = year + '-' + month + '-' + day;
-		startTime.setDate(startTime.getDate() + 1);
-		i += 1;
-	}
-	return date_all;
-};
 
 const createItem = (obj: any) => {
 	setDayPriceList.value.push(obj);
@@ -250,15 +160,7 @@ const editItem = (index: number, obj: any) => {
 	setDayPriceList.value[index].ticketPrice = ticketPrice;
 	setDayPriceList.value[index].stock = stock;
 };
-const nextYear = (timestamp: any) => {
-	let time = new Date(timestamp),
-		year = Number(time.getFullYear()),
-		month = (time.getMonth() + 1).toString().padStart(2, '0'),
-		date = time.getDate().toString().padStart(2, '0');
 
-	year++;
-	return year + '-' + month + '-' + date;
-};
 const saveDate = async () => {
 	let res = await api.saveInevntoryDetail({ ticketId: state.data.ticketId, stocks: setDayPriceList.value });
 	console.log(res, 'asdas');
