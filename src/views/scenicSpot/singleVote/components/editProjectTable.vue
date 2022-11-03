@@ -203,7 +203,7 @@ const change = (value: object) => {
 	}
 };
 interface formValidateType {
-	proj: number[];
+	proj: number[] | number;
 	initData: any[];
 }
 // 关联核销项目
@@ -301,18 +301,25 @@ const hadList = (rule: any, value: any) => {
 	console.log(value, 'value', len, value[0]?.init, !value);
 
 	if (!value) {
-		return Promise.reject('请填写');
-	}
-	if (len <= 0) {
-		return Promise.reject('请填写');
-	}
-	if (len == 1 && value[0]?.init) {
+		console.log('空值');
 		return Promise.reject('请填写');
 	}
 
-	if (typeof value[0] !== 'number') {
+	if (len <= 0) {
+		console.log('数组空值');
 		return Promise.reject('请填写');
 	}
+
+	if (len == 1 && value[0]?.init) {
+		console.log('新增空值');
+		return Promise.reject('请填写');
+	}
+
+	let isArra = typeof value === 'object';
+	if (isArra && typeof value[0] !== 'number') {
+		return Promise.reject('请填写');
+	}
+
 	return Promise.resolve();
 };
 
@@ -320,7 +327,7 @@ const hadList = (rule: any, value: any) => {
 const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
 	formValidate,
 	reactive({
-		proj: [{ required: true, message: '请填写', validator: hadList }],
+		proj: [{ required: true, validator: hadList }],
 	})
 );
 const getList = async (id: number) => {
