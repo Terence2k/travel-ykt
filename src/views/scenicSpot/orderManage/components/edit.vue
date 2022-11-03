@@ -8,9 +8,9 @@
 					<a-form-item label="发团旅行社"> {{ formData.data.orderInfo.sendTravelName }} </a-form-item>
 					<a-form-item label="地接旅行社"> {{ formData.data.orderInfo.localTravelName }} </a-form-item>
 					<a-form-item label="联系电话"> {{ formData.data.orderInfo.sendTravelPhone }} </a-form-item>
-					<a-form-item label="入园日期"> {{ formData.data.orderInfo.schoolDate }} </a-form-item>
-					<a-form-item label="预定时间"> {{ formData.data.orderInfo.bookTime }}</a-form-item>
-					<a-form-item label="核销时间"> {{ formData.data.orderInfo.verificationTime }} </a-form-item>
+					<a-form-item label="入园日期"> {{ formData.data.orderInfo.schoolDate || '-' }} </a-form-item>
+					<a-form-item label="预定时间"> {{ formData.data.orderInfo.bookDate || '-' }}</a-form-item>
+					<a-form-item label="核销时间"> {{ formData.data.orderInfo.verificationTime || '-' }} </a-form-item>
 					<a-form-item label="行程人数"> {{ formData.data.orderInfo.itineraryCount }} </a-form-item>
 					<a-form-item label="订票人数"> {{ formData.data.orderInfo.bookCount }} </a-form-item>
 					<a-form-item label="核销人数"> {{ formData.data.orderInfo.verificationCount }} </a-form-item>
@@ -29,13 +29,11 @@
 
 			<a-tab-pane key="2" tab="人员信息">
 				<CommonTable :dataSource="formData.data.orderPersonInfoList" :columns="columns" :scrollY="false">
-					<template #bodyCell="{ column, index }">
+					<template #bodyCell="{ column, index, record }">
 						<template v-if="column.key === 'index'">
 							{{ index + 1 }}
 						</template>
-						<!-- <template v-if="column.key === 'certificateType'">
-							{{ index + 1 }}
-						</template> -->
+						<template v-if="column.key === 'verificationStatus'"> {{ record.verificationStatus ? '已核销' : '未核销' }} </template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
 								<a>申请改刷</a>
@@ -111,6 +109,7 @@ const formData = reactive({
 				specialNo: '特殊证件号', //特殊证件号
 				specialPic: '特殊证件图片', //特殊证件图片.jpg/png...
 				specialType: '特殊证件类型名称', //特殊证件类型(按照字典175)
+				verificationStatus: true,
 			},
 		],
 	},
@@ -224,12 +223,6 @@ const columns = [
 		dataIndex: 'certificateNo',
 		key: 'certificateNo',
 	},
-
-	// {
-	// 	title: '身份类型',
-	// 	dataIndex: 'address1',
-	// 	key: 'address1',
-	// },
 	{
 		title: '姓名',
 		dataIndex: 'personName',
@@ -258,8 +251,8 @@ const columns = [
 	},
 	{
 		title: '核销情况',
-		dataIndex: 'address3',
-		key: 'address3',
+		dataIndex: 'verificationStatus',
+		key: 'verificationStatus',
 	},
 ];
 
@@ -308,14 +301,6 @@ const onSubmit = async () => {
 		.catch((err) => {
 			console.log('error', err);
 		});
-
-	// try {
-	// 	const values = await validate();
-	// 	console.log('Success:', values);
-	// } catch (errorInfo) {
-	// 	//返回报错信息，滚动到第一个报错的位置
-	// 	formRef.scrollToField(errorInfo.errorFields[0].name.toString());
-	// }
 };
 const save = async (params: object) => {
 	let res = await api.changeScenicSpotInformation(params);
@@ -335,7 +320,7 @@ const reset = (): void => {
 //初始化页面
 const initPage = async (): Promise<void> => {
 	let res = await api.getViewOrderDetails(route.currentRoute.value?.query?.oid);
-	formData.data = res;
+	// formData.data = res;
 	// formData.data.oid = parseInt(route.currentRoute.value?.query?.oid);
 };
 

@@ -293,8 +293,7 @@ const state = reactive<stateType>({
 const initCalendarList = async (id: number) => {
 	state.data.subTicketId = id;
 	state.data.uniteId = Number(route.currentRoute.value?.query?.o);
-	state.data.startDate = shijianYMD(new Date());
-	state.data.endDate = nextYear(state.data.startDate);
+
 	let res = await api.getCalendarMultiple(state.data);
 
 	setDayPriceList.value = res.map((i: any) => {
@@ -309,6 +308,9 @@ const createNewCalendarIndex = ref<null | number>(null);
 
 const createData = (value: any, index: number) => {
 	console.log('value', index, isEdit.value);
+
+	state.data.startDate = shijianYMD(new Date());
+	state.data.endDate = nextYear(state.data.startDate);
 	if (isEdit.value) {
 		initCalendarList(value.ticketId);
 	} else {
