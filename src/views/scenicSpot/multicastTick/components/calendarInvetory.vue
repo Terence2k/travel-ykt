@@ -227,7 +227,8 @@ const state = reactive<stateType>({
 const calendarRef = ref();
 const open = (id: number) => {
 	calendarRef.value.open();
-
+	state.data.startDate = shijianYMD(new Date());
+	state.data.endDate = nextYear(state.data.startDate);
 	if (typeof id === 'number') {
 		initEdit(id);
 	}
@@ -235,8 +236,7 @@ const open = (id: number) => {
 
 const initEdit = async (id: number) => {
 	state.data.uniteId = id;
-	state.data.startDate = shijianYMD(new Date());
-	state.data.endDate = nextYear(state.data.startDate);
+
 	let res = await api.getCalendarMultiple(state.data);
 	setDayPriceList.value = res.map((i: any) => {
 		delete i.ticketPrice;
