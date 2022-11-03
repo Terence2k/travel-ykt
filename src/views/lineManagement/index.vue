@@ -233,13 +233,11 @@ const setOption = () => {
 setOption()
 const sightsChange = () => {
   let selected: any[] = []
-  selected = form.sights.map(item => {
+  form.sights.forEach(item => {
     if (item.id !== undefined) {
-      return item.id
+      selected.push(item.id)
     }
   })
-  console.log(selected.toString(), '$$$$$$');
-
   if (selected.toString()) {
     if (selected.includes(3)) {
       sceneOption3.value.forEach(element => {
