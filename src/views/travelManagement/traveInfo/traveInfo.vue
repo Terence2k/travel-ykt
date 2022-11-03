@@ -46,9 +46,10 @@
 
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a v-if="travelStore.reserveStatus" @click="add('reserveTicketPop', record.oid)">预定</a>
+							<a v-if="travelStore.reserveStatus && record.orderStatus == 0" @click="add('reserveTicketPop', record.oid)">预定</a>
 							<a v-if="travelStore.teamStatus" class="item" @click="add('addTicketPop', record.oid)">编辑</a>
 							<a v-if="travelStore.teamStatus" class="item">删除</a>
+							<a class="item" @click="show('showTicketPop', record.oid)">查看</a>
 						</div>
 					</template>
 				</template>
@@ -68,9 +69,10 @@
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a v-if="travelStore.reserveStatus" class="item" @click="reserveHotel(record)">提交预定</a>
+							<a v-if="travelStore.reserveStatus && record.orderStatus == 0" class="item" @click="reserveHotel(record)">预定</a>
 							<a v-if="travelStore.teamStatus" class="item" @click="add('addHotelPop', record.oid)">编辑</a>
 							<a v-if="travelStore.teamStatus" class="item" @click="del(index)">删除</a>
+							<a class="item" @click="show('showHotelPop', record.oid)">查看</a>
 						</div>
 					</template>
 				</template>
@@ -84,6 +86,8 @@
 	<addTicket :ticketId="editId.addTicketPop" v-model="addTicketPop" />
 	<Personnel v-model="selectPersonnelPop" />
 	<reserveTicket :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop"  />
+	<showTicket :ticketId="showId.showTicketPop" v-model="showTicketPop"/>
+	<showHotel :hotelId="showId.showHotelPop" v-model="showHotelPop" />
 </template>
 <script lang="ts" setup>
 import CommonTable from '@/components/common/CommonTable.vue';
@@ -91,6 +95,8 @@ import addHotel from './addHotel.vue';
 import addTicket from './addTicket.vue';
 import Personnel from './selectPersonnel.vue';
 import reserveTicket from './reserveTicket.vue';
+import showTicket from './showTicket.vue';
+import showHotel from './showHotel.vue';
 import { useTraveInfo } from './traveInfo';
 const props = defineProps({
 	onCheck: {
@@ -121,7 +127,11 @@ const {
 	editId,
 	reserveHotel,
 	reserveTicketPop,
-	travelStore
+	travelStore,
+	show,
+	showHotelPop,
+	showTicketPop,
+	showId
 } = useTraveInfo(props, emits);
 </script>
 <style lang="less" scoped>

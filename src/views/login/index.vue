@@ -15,7 +15,7 @@
 			</div>
 			<!-- </a-card> -->
 		</div>
-	</div>
+</div>
 </template>
 <script setup lang="ts">
 import LoginForm from './Form.vue';
