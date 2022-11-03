@@ -122,6 +122,7 @@
     roleStatus: [{ required: true, trigger: 'change', message: '请选择角色状态' }],
     availableRange: [{ required: true, trigger: 'change', message: '请选择可用范围' }],
     menuIds: [{ required: true, trigger: 'change', message: '请选择角色权限' }],
+    roleCode: [{ required: true, trigger: 'blur', message: '请输入角色编码' }],
   };
   
 

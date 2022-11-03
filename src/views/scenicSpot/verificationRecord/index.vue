@@ -30,6 +30,7 @@
 				</div>
 
 				<div class="item button-search-wrapper">
+					<a-button @click="clearFilter" class="button-clear item">重置</a-button>
 					<a-button @click="searchByFilter" class="button-search item">查询</a-button>
 				</div>
 			</div>
@@ -40,12 +41,20 @@
 				</div>
 				<div class="table-container">
 					<CommonTable :columns="columns" :row-selection="rowSelection" :dataSource="dataSource">
-						<template #bodyCell="{ column, record }">
+						<template #bodyCell="{ column, record, text }">
 							<!-- <template v-if="column.dataIndex === 'auditStatus'">
 								<div class="cell-auditStatus">
 									<span class="item">{{ getAuditStatusName(parseInt(record?.auditStatus)) }}</span>
 								</div>
 							</template> -->
+							<template v-if="column.dataIndex === 'verificationTime'">
+								<div class="cell-verificationTime" v-if="record[column.dataIndex]">
+									<span>{{ text }}</span>
+								</div>
+								<template v-else>
+									<span>暂无</span>
+								</template>
+							</template>
 							<template v-if="column.dataIndex === 'actions'">
 								<div class="cell-actions">
 									<span class="item" @click="openDisplayPage(record)">查看</span>
@@ -215,6 +224,15 @@ const onSearch = () => {
 
 const searchByFilter = () => {
 	tableState.tableData.param.pageNo = 1;
+	onSearch();
+};
+
+const clearFilter = () => {
+	tableState.tableData.param.pageNo = 1;
+	tableState.tableData.param.sendTravelName = undefined;
+	tableState.tableData.param.verifState = undefined;
+	tableState.tableData.param.startTime = undefined;
+	tableState.tableData.param.orderNo = undefined;
 	onSearch();
 };
 

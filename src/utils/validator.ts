@@ -17,6 +17,24 @@ export function isIntegerNotMust(rule: any, value: any, callback: any) {
 		}
 	}
 }
+
+//验证是否为正整数
+export function isPositiveInteger(rule: any, value: any, callback: any) {
+	if (!Number(value)) {
+		// callback(new Error('请输入正整数'));
+		return Promise.reject('请输入正整数');
+	} else {
+		const re = /^\+?[1-9][0-9]*$/;
+		const rsCheck = re.test(value);
+		if (!rsCheck) {
+			// callback(new Error('请输入正整数'));
+			return Promise.reject('请输入正整数');
+		} else {
+			// callback();
+			return Promise.resolve();
+		}
+	}
+}
 // 验证是否是[0-100]的小数
 export function isBtnZeroToHundred(rule: any, value: any, callback: any) {
 	if (!value) {
@@ -36,23 +54,19 @@ export function isBtnZeroToHundred(rule: any, value: any, callback: any) {
 	// }, 100);
 }
 // 验证0-1的数，保留以为小数点
-export function isOnedecimalpoint(
-	rule: any,
-	value: string,
-	callback: (error?: Error) => void
-  ): void {
+export function isOnedecimalpoint(rule: any, value: string, callback: (error?: Error) => void): void {
 	if (!value) {
-	  callback(new Error('请输入0-0.99的中的任意数值,允许保留两位小数点'));
-	} else {
-	  const re = /^[0-0.99]+(\.[0-9]{1,2})?$/;
-	  const rsCheck = re.test(value);
-	  if (!rsCheck) {
 		callback(new Error('请输入0-0.99的中的任意数值,允许保留两位小数点'));
-	  } else {
-		callback();
-	  }
+	} else {
+		const re = /^[0-0.99]+(\.[0-9]{1,2})?$/;
+		const rsCheck = re.test(value);
+		if (!rsCheck) {
+			callback(new Error('请输入0-0.99的中的任意数值,允许保留两位小数点'));
+		} else {
+			callback();
+		}
 	}
-  }
+}
 export function validateRules(rules: any, data: any, key?: string) {
 	let rulesRef: any = {};
 	if (key) {

@@ -55,7 +55,6 @@
       >
         <a-select
           ref="select"
-          mode="multiple"
           v-model:value="formValidate.roleIds"
           v-if="formValidate.businessType"
         >
@@ -137,6 +136,7 @@
   const addOrUpdateAPI = (apiName: string) => {
     formValidate.value.companyId = null;
     formValidate.value.password = '123456';
+    formValidate.value.roleIds = [formValidate.value.roleIds];
     console.log('formValidate:', formValidate.value);
     api[apiName]({...formValidate.value}).then((res: any) => {
       // console.log('res:', res);
