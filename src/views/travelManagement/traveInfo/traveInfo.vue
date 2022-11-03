@@ -4,18 +4,26 @@
 			<p class="title">古维管理费</p>
 			<CommonTable :columns="gouvyColumns" :dataSource="gouvyDate" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
+					<template v-if="column.key === 'touristNum'" > 
+						<span v-if="travelStore.baseInfo.status !=11 ">{{ travelStore.touristList.length }}人 </span>
+					</template>
+					<template v-if="column.key === 'payableNum'">
+						<div class="action-btns" v-if="travelStore.baseInfo.status !=11 ">
+							<span >预计{{ travelStore.touristList.length }}人 </span>
+						</div>
+						<div v-if="travelStore.baseInfo.status ==11 " >
+							<span >预计{{ record.payableNum }}人 </span>
+							<a class="item" @click="choice('selectPersonnelPop')" >选择人数</a>
+						</div>
+					</template>
+					<template v-if="column.key === 'payablePrice'">
+						<span v-if="travelStore.baseInfo.status !=11 ">{{accMul(travelStore.touristList.length,payablePrice)}}元 </span>
+					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a class="item">-</a>
+							<a class="item"></a>
 						</div>
 					</template>
-					<template v-if="column.key === 'NumberOfPersonsPayable'">
-						<div class="action-btns">
-							{{record.NumberOfPersonsPayable}}
-							<a class="item" @click="choice('selectPersonnelPop')">选择人数</a>
-						</div>
-					</template>
-					
 				</template>
 			</CommonTable>
 		</div>
@@ -46,9 +54,10 @@
 
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a v-if="travelStore.reserveStatus" @click="add('reserveTicketPop', record.oid)">预定</a>
+							<a v-if="travelStore.reserveStatus && record.orderStatus == 0" @click="add('reserveTicketPop', record.oid)">预定</a>
 							<a v-if="travelStore.teamStatus" class="item" @click="add('addTicketPop', record.oid)">编辑</a>
 							<a v-if="travelStore.teamStatus" class="item">删除</a>
+							<a class="item" @click="show('showTicketPop', record.oid)">查看</a>
 						</div>
 					</template>
 				</template>
@@ -68,9 +77,10 @@
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a v-if="travelStore.reserveStatus" class="item" @click="reserveHotel(record)">提交预定</a>
+							<a v-if="travelStore.reserveStatus && record.orderStatus == 0" class="item" @click="reserveHotel(record)">预定</a>
 							<a v-if="travelStore.teamStatus" class="item" @click="add('addHotelPop', record.oid)">编辑</a>
 							<a v-if="travelStore.teamStatus" class="item" @click="del(index)">删除</a>
+							<a class="item" @click="show('showHotelPop', record.oid)">查看</a>
 						</div>
 					</template>
 				</template>
@@ -83,7 +93,10 @@
 	<addHotel :hotelId="editId.addHotelPop" v-model="addHotelPop" />
 	<addTicket :ticketId="editId.addTicketPop" v-model="addTicketPop" />
 	<Personnel v-model="selectPersonnelPop" />
+	<reserveTicket :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop" />
 	<reserveTicket :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop"  />
+	<showTicket :ticketId="showId.showTicketPop" v-model="showTicketPop"/>
+	<showHotel :hotelId="showId.showHotelPop" v-model="showHotelPop" />
 </template>
 <script lang="ts" setup>
 import CommonTable from '@/components/common/CommonTable.vue';
@@ -91,7 +104,12 @@ import addHotel from './addHotel.vue';
 import addTicket from './addTicket.vue';
 import Personnel from './selectPersonnel.vue';
 import reserveTicket from './reserveTicket.vue';
+import showTicket from './showTicket.vue';
+import showHotel from './showHotel.vue';
 import { useTraveInfo } from './traveInfo';
+import { accDiv, accMul } from '@/utils/compute';
+import { GroupStatus } from '@/enum';
+
 const props = defineProps({
 	onCheck: {
 		type: Boolean,
@@ -121,8 +139,18 @@ const {
 	editId,
 	reserveHotel,
 	reserveTicketPop,
-	travelStore
+	travelStore,
+	aa,
+	onSearch,
+	payablePrice,
+	show,
+	showHotelPop,
+	showTicketPop,
+	showId
 } = useTraveInfo(props, emits);
+onMounted(() => {
+	onSearch();
+});
 </script>
 <style lang="less" scoped>
 .select-guide {
@@ -150,5 +178,4 @@ const {
 		}
 	}
 }
-
 </style>

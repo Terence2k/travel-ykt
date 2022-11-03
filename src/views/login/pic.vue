@@ -19,16 +19,11 @@
 <style scoped lang="scss">
 /* For demo */
 .pic-wrapper {
-	width: 784px;
-	height: 784px;
+	width: 100%;
 	// border: 1px solid red;
 	img {
 		width: 100%;
 		height: 100%;
-		// width: 500px;
-		border-radius: 25px;
-		// height: 100%;
-		object-fit: cover;
 	}
 }
 // .ant-carousel :deep(.slick-slide) {

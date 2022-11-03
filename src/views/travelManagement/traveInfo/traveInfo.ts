@@ -7,6 +7,7 @@ import { stat } from 'fs';
 import { ConfirmDailyCharge, FeeModel } from '@/enum';
 import { message, Modal } from 'ant-design-vue';
 import { CheckOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { accDiv,accMul} from '@/utils/compute';
 interface DataItem {
 	name: string;
 	name1: string;
@@ -24,24 +25,23 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		addHotelPop: '',
 		reserveTicketPop: ''
 	})
+	const showId = reactive<{[k: string]: any}>({
+		showTicketPop: '',
+		showHotelPop: '',
+	})
 	const state = reactive<{ editableData: UnwrapRef<Record<string, DataItem>>; [k: string]: any }>({
 		editableData: {},
 		addHotelPop: false,
 		addTicketPop: false,
 		reserveTicketPop: false,
 		selectPersonnelPop:false,
+		payablePrice:'',
+		showTicketPop: false,
+		showHotelPop: false,
 		allFeesProducts: computed(() => travelStore.compositeProducts),
 		ticketData: computed(() => travelStore.scenicTickets),
 		holteDate: computed(() => travelStore.hotels),
-		gouvyDate:[{
-			comprehensiveFeeProductName:'古维管理费',
-			numberOfTourists:'',
-			NumberOfPersonsPayable:'',
-			money:'',
-			name1:'待接团后由地接社申请',
-			name2:'-',
-			name3:'-',
-		}],
+		gouvyDate:computed(() => travelStore.gouvyList),
 		tableData: [
 			{
 				key: '1',
@@ -111,38 +111,39 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		gouvyColumns:[
 			{
 				title:'费用名称',
-				dataIndex: 'comprehensiveFeeProductName',
-				key: 'comprehensiveFeeProductName',
+				dataIndex: 'feeName',
+				key: 'feeName',
 			},
 			{
 				title:'团队游客人数',
-				dataIndex: 'numberOfTourists',
-				key: 'numberOfTourists',
+				dataIndex: 'touristNum',
+				key: 'touristNum',
+
 			},
 			{
 				title:'应缴人数',
-				dataIndex: 'NumberOfPersonsPayable',
-				key: 'NumberOfPersonsPayable',
+				dataIndex: 'payableNum',
+				key: 'payableNum',
 			},
 			{
 				title:'应缴总金额',
-				dataIndex: 'money',
-				key: 'money',
+				dataIndex: 'payablePrice',
+				key: 'payablePrice',
 			},
 			{
 				title:'是否发起过减免申请',
-				dataIndex: 'name1',
-				key: 'name1',
+				dataIndex: 'isInitiateReduction',
+				key: 'isInitiateReduction',
 			},
 			{
 				title:'减免申请是否通过',
-				dataIndex: 'name2',
-				key: 'name2',
+				dataIndex: 'isReductionPassed',
+				key: 'isReductionPassed',
 			},
 			{
-				title:'款项状态',
-				dataIndex: 'name3',
-				key: 'name3',
+				title:'出票状态',
+				dataIndex: 'issueStatusName',
+				key: 'issueStatusName',
 			},
 			{
 				title: '操作',
@@ -277,21 +278,41 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			state[key] = true;
 			
 		},
+		show(key: string, oid?: any) {
+			showId[key] = ''
+			if (oid) {
+				showId[key] = oid
+			}
+			state[key] = true;
+		},
 		choice(key :string)
 		{
 			state[key]=true
 			console.log(key)
 		},
-		reserveHotel (row: any) {
+		onSearch () {
+			api.getBasicInfo().then((res) => {
+				state.payablePrice=accDiv(res.price, 100)
+			});
+		},
+		async reserveHotel (row: any) {
+			const res = await api.travelManagement.hotelDetail(row.oid)
+			let str = res.roomTypeList.map((it:any) => {
+				return `${it.roomTypeName}（${it.roomCount}间）`
+			})
 			Modal.confirm({
 				title: '酒店房型预定确认？',
 				icon: createVNode(CheckOutlined),
 				content: createVNode('div', { style: 'color: #333;' }, 
-				 `您即将提交${row.startDate}日入住“${row.hotelName}” 的订单，行程人数（${travelStore.touristList.length}人），订单金额（${row.orderFee}元）。`),
+				 `您即将提交${row.startDate}日入住 “${row.hotelName}” 的订单，
+				 		行程人数（${travelStore.touristList.length}人），
+						${str.join('，')}，订单金额（${row.orderFee}元）。`),
 				onOk() {
 					const formData = new FormData();
 					formData.append('oid', row.oid)
+					
 					api.travelManagement.reserveHotel(formData).then((res:any) => {
+						travelStore.setHotelsStatus(row.oid)
 						message.success('预定成功')
 					})
 				},
@@ -301,7 +322,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				class: 'test',
 			});
 		}
-		
+
 		// /**
 		//  * 
 		//  * @param model 收费模式
@@ -400,6 +421,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		...toRefs(state),
 		...methods,
 		editId,
+		showId,
 		travelStore
 	};
 }

@@ -4,7 +4,7 @@
 			<p class="text">密码登录</p>
 
 			<a-form-item name="account">
-				<a-input class="reset-input" v-model:value="formModel.account" placeholder="请输入账号">
+				<a-input class="reset-input" :bordered="false" v-model:value="formModel.account" placeholder="请输入账号">
 					<template #prefix>
 						<span class="reset-prefix">账号</span>
 					</template>
@@ -12,7 +12,7 @@
 			</a-form-item>
 			<!-- <p class="text">请输入密码</p> -->
 			<a-form-item name="password">
-				<a-input class="reset-input" v-model:value="formModel.password" type="password" placeholder="请输入密码">
+				<a-input class="reset-input" :bordered="false" v-model:value="formModel.password" type="password" placeholder="请输入密码">
 					<template #prefix>
 						<span class="reset-prefix">密码</span>
 					</template>
@@ -124,16 +124,13 @@ const goTo = () => {
 <style lang="less" scoped>
 .form_box {
 	margin-top: 24px;
-	padding: 28px 37px 32px;
 	background-color: #fff;
 	border-radius: 4px;
 	.btn {
-		width: 375px;
+		width: 100%;
 		height: 48px;
 		background: linear-gradient(132deg, #40f3cb 0%, #0272f0 100%);
-		opacity: 1;
 		border-radius: 4px;
-		margin-left: 22px;
 	}
 	::v-deep(.ant-tabs-tab) {
 		padding: 10px 2px;
@@ -161,13 +158,9 @@ const goTo = () => {
 		color: #666666;
 	}
 	.reset-input {
-		height: 48px;
-		line-height: 48px;
-		border: none;
 		border-bottom: 1px solid #e7e7e7;
-		padding: 0;
 		.reset-prefix {
-			width: 81px;
+			width: 70px;
 			font-size: 16px;
 			color: #000;
 			padding-right: 12px;
@@ -180,7 +173,6 @@ const goTo = () => {
 		opacity: 0.85;
 	}
 	.register {
-		width: 395px;
 		text-align: right;
 		padding-top: 16px;
 		margin-bottom: 12px;
@@ -188,12 +180,8 @@ const goTo = () => {
 			cursor: pointer;
 			width: 64px;
 			height: 20px;
-			font-size: 16px;
-			font-family: Microsoft YaHei UI;
-			font-weight: 400;
 			line-height: 24px;
 			color: #4197ef;
-			opacity: 1;
 		}
 	}
 	.bottom {

@@ -1,5 +1,5 @@
 <template>
-	<BaseModal v-model="dialogVisible" title="选择预定酒店" :width="900" :onOk="handleOk">
+	<BaseModal v-model="dialogVisible" title="选择预定酒店" :width="1100" :onOk="handleOk">
 		<a-form ref="formRef" :model="formState" autocomplete="off" labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 10 }">
 			<a-form-item label="选择星级" name="hotelStarId" :rules="[{ required: true, message: '请选择星级' }]">
 				<a-select v-model:value="formState.hotelStarId" placeholder="请选择星级" @change="handleChange">
@@ -25,7 +25,7 @@
 				<span>{{travelStore.touristList.length}}人</span>
 			</a-form-item>
 			<a-form-item label="诚信指定价">
-				<span>{{formState.honestyGuidePrice / 100}}元</span>
+				<span>{{honestyGuidePrice}}元</span>
 			</a-form-item>
 
 			<a-form-item label="入住日期" name="arrivalDate" :rules="[{ required: true, message: '请选择入住日期' }]">
@@ -80,12 +80,14 @@
 				</a-form-item> -->
 				<a-form-item
 					label="单价"
-					:name="['roomTypeList', index, 'orderAmount']"
+					:name="['roomTypeList', index, 'unitPrice']"
 					:wrapper-col="{ span: 16 }"
 					:rules="[{ required: true, message: '请输入您与酒店线下协商好的价格' }]"
 				>
-					<div class="d-flex">
-						<a-input v-model:value="room.orderAmount" placeholder="请输入您与酒店线下协商好的价格" />
+					<div class="d-flex align-item-center">
+						<div style="width: 500px">诚信指导价：{{honestyGuidePrice}}元 + </div>
+						<a-input @change="handleMoeny(index, room.unitPrice)" v-model:value="room.unitPrice" placeholder="请输入您与酒店线下协商好的价格" />
+						<div style="width: 200px; text-align: right; margin-right: 30px">{{formState.roomTypeList[index].orderAmount}}元</div>
 						<div class="d-flex" style="margin-left: 32px">
 							<a-button @click="delRoom(index)" :class="{ visable: formState.roomTypeList.length === 1 }">删除</a-button>
 							<a-button
@@ -130,7 +132,7 @@ const route = useRoute()
 const roomList = {
 	checkInNumber: '', //入住人数
 	hotelRoomTypeId: '', //房型id
-	orderAmount: '', //房型单价
+	unitPrice: 0, //房型单价
 	reserveNumber: '', //订房数量
 	roomTypeName: "" //房型名称
 };
@@ -167,6 +169,7 @@ let formState = reactive<{[k: string]: any}>({
 	roomTypeList: [{ ...roomList }],
 	honestyGuidePrice: ''
 });
+const honestyGuidePrice = computed(() => formState.honestyGuidePrice / 100)
 
 const addRoom = () => {
 	formState.roomTypeList.push({ ...roomList });
@@ -196,12 +199,18 @@ const changeRoomType = (e: any, option: any, index: number) => {
 const getHotelStarList = async () => {
 	hotelData.hotelStart = await api.commonApi.getHotelStarList();
 };
+const handleMoeny = (i: number, e: string) => {
+	formState.roomTypeList[i].orderAmount = honestyGuidePrice.value + parseFloat(e) || honestyGuidePrice.value;
+}
 
 const handleChange = async (id: number, option: any) => {
 	formState.honestyGuidePrice = option.price
 	formState.hotelStarCode = option.name;
 	hotelData.hotel = await api.getHotelInfoByRated(id);
+
 };
+
+
 
 // 订房数量校验
 const validateCheckNum = async (_rule: Rule, value: string, index: number) => {
@@ -214,6 +223,8 @@ const validateCheckNum = async (_rule: Rule, value: string, index: number) => {
 		return Promise.resolve();
 	}
 }
+
+
 
 // 入住总人数校验
 const validateCheckIn = async (_rule: Rule, value: string, index: number) => {

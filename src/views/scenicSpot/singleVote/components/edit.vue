@@ -53,11 +53,10 @@
 					@add-verification-obj="addVerificationObj"
 					:tableList="formData.data.itemList"
 					@add-verification-obj-sign="addVerificationObjSign"
-					@get-optional-verification="getOptionalVerificationCount"
 					@change-iv="changeIv"
 					:viewId="formData.data.scenicId"
 				/>
-				<span v-if="isShow" class="ant-form-item-explain-error">请填写可核销次数</span>
+				<!-- <span v-if="isShow" class="ant-form-item-explain-error">请填写可核销次数</span> -->
 			</a-form-item>
 
 			<!-- <a-form-item label="可核销账号" :wrapper-col="{ span: 12 }">
@@ -140,7 +139,7 @@ const formData = reactive<formDataType>({
 		orderTime: null, //预约时间 单位:时分
 		orderTimeRule: null, //预约时间规则:0-当日,1-次日
 		validTime: null, //有效期 1~7
-		optionalVerificationCount: null, //非必核销次数【多点核销必传】
+		// optionalVerificationCount: null, //非必核销次数【多点核销必传】
 		assistId: null, //辅助核销id
 		dayStock: null, //门票日库存
 		wateryPrice: null, //水牌价
@@ -172,9 +171,9 @@ const pageStatus = computed(() => {
 });
 const first = ref(false);
 
-const isShow = computed(() => {
-	return first.value && type.value == '1' && typeof formData.data.optionalVerificationCount !== 'number';
-});
+// const isShow = computed(() => {
+// 	return first.value && type.value == '1' && typeof formData.data.optionalVerificationCount !== 'number';
+// });
 const validItemList = (rule: any, value: any) => {
 	if (first.value) {
 		let isCreateSignle = value[0]?.init || false;
@@ -188,7 +187,7 @@ const validItemList = (rule: any, value: any) => {
 
 		let verificationNumberSub = value.filter((i: any) => typeof i.verificationNumber !== 'number'),
 			len = verificationNumberSub.length;
-		console.log(verificationNumberSub, len, 'len', this, !isCreateSignle && len > 0 && formData.data.optionalVerificationCount);
+		// console.log(verificationNumberSub, len, 'len', this, !isCreateSignle && len > 0 && formData.data.optionalVerificationCount);
 
 		if (isCreateSignle && len > 0) {
 			return Promise.reject('请选择核销项目并填写可核销次数');
@@ -204,7 +203,7 @@ const validItemList = (rule: any, value: any) => {
 };
 
 // 表单
-const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
+const { resetFields, validate, validateInfos, mergeValidateInfo } = useForm(
 	formData,
 	reactive({
 		'data.scenicId': [{ required: true, message: '请选择归属景区' }],
@@ -217,14 +216,6 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 		'data.dayStock': [{ required: true, message: '请输入门票库存' }],
 		'data.discountList': [{ required: true, message: '请填写减免规则' }],
 		'data.itemList': [{ required: true, validator: validItemList }],
-		// 'data.verificationType': [{ required: true, message: 'verificationType' }],
-		// 'data.ticketType': [{ required: true, message: '请选择门票分类' }],
-
-		// 'data.optionalVerificationCount': [{ required: true, message: '请选择有效期' }],
-		// 'data.assistId': [{ required: true, message: '请选择市' }],
-
-		// 'data.ticketDesc': [{ required: true, message: '请输入' }],
-		// 'data.restsExplain': [{ required: true, message: '请输入' }],
 	})
 );
 //合并错误提示
@@ -245,9 +236,9 @@ const onSubmit = async () => {
 	first.value = true;
 	validate()
 		.then(() => {
-			if (isShow.value) {
-				return;
-			}
+			// if (isShow.value) {
+			// 	return;
+			// }
 
 			console.log(toRaw(formData.data), 'psss');
 			// save(toRaw(formData.data));
@@ -268,10 +259,10 @@ const changePrice = (val: any) => {
 	formData.data.price = price;
 };
 
-const getOptionalVerificationCount = (val: any) => {
-	formData.data.optionalVerificationCount = val;
-	// console.log('getOptionalVerificationCount', val, formData.data.optionalVerificationCount);
-};
+// const getOptionalVerificationCount = (val: any) => {
+// 	formData.data.optionalVerificationCount = val;
+// 	// console.log('getOptionalVerificationCount', val, formData.data.optionalVerificationCount);
+// };
 // 保存
 const save = async (params: object) => {
 	let res = await api.saveSingleVoteInfo(params);
@@ -330,7 +321,7 @@ const initEditPage = async () => {
 	navigatorBar.setNavigator(['景区信息管理', '编辑']);
 	let res = await api.getScenicSpotSignleDetail(route.currentRoute.value?.query?.oid);
 	formData.data = res;
-	type && editProjectTableRef.value.setValue(formData.data.optionalVerificationCount);
+	// type && editProjectTableRef.value.setValue(formData.data.optionalVerificationCount);
 };
 
 const initCreatePage = () => {
@@ -356,8 +347,6 @@ onBeforeUnmount(() => {
 	.btn {
 		position: absolute;
 		top: 10px;
-		// left: 940px;
-		// margin-bottom: 10px;
 	}
 	.btn {
 		position: absolute;
