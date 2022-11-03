@@ -11,10 +11,10 @@
 									class="data-item"
 									v-model:value="formValidate.data.dateList[index].time"
 									format="YYYY-MM-DD HH:mm"
-									valueFormat="YYYY-MM-DD HH:mm:ss"
+									valueFormat="YYYY-MM-DD HH:mm"
 									:show-time="{
 										hideDisabledOptions: true,
-										defaultValue: [dayjs(' 00:00:00', 'HH:mm'), dayjs('23:59:59', 'HH:mm:ss')],
+										defaultValue: [dayjs(' 00:00:00', 'HH:mm'), dayjs('23:59:59', 'HH:mm')],
 									}"
 								/>
 							</a-form-item>
