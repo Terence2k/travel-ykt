@@ -302,17 +302,17 @@ const hadList = (rule: any, value: any) => {
 
 	if (!value) {
 		console.log('空值');
-		return Promise.reject('请填写1');
+		return Promise.reject('请填写');
 	}
 
 	if (len <= 0) {
 		console.log('数组空值');
-		return Promise.reject('请填写2');
+		return Promise.reject('请填写');
 	}
 
 	if (len == 1 && value[0]?.init) {
 		console.log('新增空值');
-		return Promise.reject('请填写3');
+		return Promise.reject('请填写');
 	}
 
 	let isArra = typeof value === 'object';
