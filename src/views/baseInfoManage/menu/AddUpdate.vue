@@ -158,6 +158,7 @@ const init = async () => {
 	if (props.params?.oid) {
 		formValidate.value = { ...props.params };
 		options.title = '编辑菜单';
+    if (formValidate.value.parentId === -1) delete formValidate.value.parentId;
 	} else {
     formValidate.value.menuStatus = 1;
 		options.title = '新增菜单';
