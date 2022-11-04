@@ -12,6 +12,7 @@
 					</a-select>
 				</search-item> -->
 				<template #button>
+					<a-button @click="reset">重置</a-button>
 					<a-button @click="search">查询</a-button>
 				</template>
 			</CommonSearch>
@@ -174,7 +175,11 @@ const state = reactive({
 		},
 	},
 });
-
+//重置
+const reset = () => {
+	state.tableData.param.ticketName = '';
+	state.tableData.param.pageNo = 1;
+};
 //搜索
 const onHandleCurrentChange = (val: number) => {
 	state.tableData.param.pageNo = val;

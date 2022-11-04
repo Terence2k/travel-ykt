@@ -36,3 +36,11 @@ export function getItem() {
 		showLoading: true
 	});
 }
+// 编辑前查询数据
+export function findEditTeamTypeById(id: number) {
+	return request({
+		url: `${commonPart}findEditTeamTypeById?id=${id}`,
+		method: 'post',
+		showLoading: true
+	});
+}

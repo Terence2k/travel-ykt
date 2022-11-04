@@ -10,11 +10,14 @@
       <template v-if="column.key === 'productsLength'">
         <a-popover title="必购项目">
           <template #content>
-            <p v-for="item in record.products">{{ item }}</p>
+            <p v-for="item in record.productItems">{{ item }}</p>
           </template>
-          <div style="color:#4197EF" v-show="record.products.length !== 0">{{ `${record.products.length}项` }}</div>
+          <div style="color:#4197EF" v-show="record.productItems && record.productItems.length !== 0">{{
+              `${record.productItems && record.productItems.length}项`
+          }}
+          </div>
         </a-popover>
-        <div v-show="record.products.length === 0">/</div>
+        <div v-show="!record.productItems">/</div>
       </template>
       <template v-if="column.key === 'action'">
         <div class="action-btns">
@@ -63,6 +66,7 @@
           </template>
         </a-transfer>
         <p class="tip">创建行程单时，是否有必购的项目？不选择即代表无必购项目。</p>
+        <p class="tip" style="color:#ff4d4f">勾选父节点表示选择任意子项目，而非全选</p>
       </a-form-item>
       <a-form-item label="是否启用" name="state">
         <a-radio-group name="state" v-model:value="teamForm.state">
@@ -291,18 +295,29 @@ interface addInterface {
   row?: any
   handle: 'update' | 'add'
 }
-const addOrUpdate = ({ row, handle }: addInterface) => {
+const addOrUpdate = async ({ row, handle }: addInterface) => {
   modalVisible.value = true
   if (handle === 'add') {
     title.value = '新增团队类型'
     isAdd = true
   } else if (handle === 'update') {
     title.value = '编辑团队类型'
-    const { name, state, productIds, oid } = row
+    const { name, state, oid } = row
     teamForm.name = name;
     teamForm.state = state;
     teamForm.oid = oid;
-    tData.value.map((item: any) => {
+    let res = await api.findEditTeamTypeById(oid)
+    let productIds: any[] = []
+    res?.forEach((item: any) => {
+      if (item?.products) {
+        item.products.forEach((citem: any) => {
+          productIds.push(item.itemId + '_' + citem.productId)
+        })
+      } else {
+        productIds.push(item.itemId)
+      }
+    })
+    tData.value?.map((item: any) => {
       if (productIds.includes(item.key)) {
         checkedParentKeys.push(productIds[productIds.indexOf(item.key)])
       }
@@ -341,24 +356,13 @@ const pageSideChange = (current: number, size: number) => {
 }
 const onSearch = async () => {
   let res = await api.selectTeamTypeList(state.tableData.param)
-  res.content.forEach((key: any) => {
-    key.products = []
-    key.productIds = []
-    key.teamTypeItemBos?.forEach((item: any) => {
-      if (item?.products) {
-        item.products.forEach((citem: any) => {
-          key.productIds.push(item.itemId + '_' + citem.productId)
-          key.products.push(citem.productName)
-        })
-      } else {
-        key.productIds.push(item.itemId)
-        key.products.push(item.itemName)
-      }
-    })
-  })
-
-  state.tableData.data = res.content
-  state.tableData.total = res.total
+  if (res) {
+    state.tableData.data = res.content
+    state.tableData.total = res.total
+  } else {
+    state.tableData.data = []
+    state.tableData.total = 0
+  }
 }
 const closeModal = () => {
   modalVisible.value = false
@@ -370,7 +374,6 @@ const closeModal = () => {
   checkedParentKeys.splice(0, checkedParentKeys.length)
   tData.value = disabledChildKeys(tData.value, checkedParentKeys);
 }
-
 const save = () => {
   teamRef.value.validate().then(async (val: any) => {
     let teamTypeItemBos = format(checkedKeys.value, tData.value);
