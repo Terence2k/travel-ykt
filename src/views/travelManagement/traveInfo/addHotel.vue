@@ -43,6 +43,8 @@
 				:rules="[{ required: true, message: '请选择离店日期' }]">
 				<a-date-picker style="width: 100%" 
 					:disabled-date="disLeave"
+					placeholder="请先选择入住时间"
+					:disabled="formState.arrivalDate === ''"
 					:show-time="{ format: 'HH:mm:ss' }"  
 					format="YYYY-MM-DD HH:mm:ss" 
 					value-format="YYYY-MM-DD HH:mm:ss" 
@@ -143,6 +145,10 @@ let disLeave = ref((current: Dayjs) => {
 	return current && current < dayjs().subtract(1, 'day') || 
 	current > dayjs().startOf('day');
 })
+
+// const Datedisabled = () => {
+// 	formState.value.arrivalDate = ''
+// }
 
 const props = defineProps({
 	modelValue: {
