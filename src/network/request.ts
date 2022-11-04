@@ -71,33 +71,6 @@ const fetch = async (options: OptionsProp) => {
         },
         responseType
       });
-    case "postExport":
-      // const fileType =  'xlsx'
-      // const fileName = '品质指数评分工单'
-      return new Promise((resolve, reject) => {
-        return axios.request({
-          method: "POST",
-          url,
-          data,
-          headers,
-          responseType: 'blob'
-        }).then(err => {
-          resolve(err.data)
-          if (!err) {
-            return
-          }
-          const url = window.URL.createObjectURL(err.data)
-          const link = document.createElement('a')
-          link.style.display = 'none'
-          link.href = url
-          // link.setAttribute('download', `${fileName}.${fileType}`)
-          document.body.appendChild(link)
-          link.click()
-        })
-        .catch(err => {
-          reject(err.data)
-        })
-      });
     default:
       return axios.request(options);
   }
