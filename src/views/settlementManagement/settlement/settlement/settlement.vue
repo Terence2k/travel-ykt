@@ -45,6 +45,7 @@ import api from '@/api';
 import { message } from 'ant-design-vue';
 import DelModal from '@/components/common/DelModal.vue';
 import TransferModal from '@/views/settlementManagement/settlement/settlement/transferModal.vue';
+import { downloadFile } from '@/utils/util';
 
 const props = defineProps({
 	params: Object,
@@ -124,6 +125,7 @@ const tipSubmit = async () => {
 	// 组合转账
 	if (modalData.value.type == 'combination') {
 		api.exportReconciliation(modalData.value.data).then((res: any) => {
+      downloadFile(res, '组合转账')
 			message.success('操作成功');
 			onSearch();
 		})

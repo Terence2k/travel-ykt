@@ -8,39 +8,17 @@
       :wrapper-col="{ span: 16, offset: 1 }"
       labelAlign="left"
     >
-      <!-- <a-form-item
-        label="单位类型"
-        name="username"
-      >
-        <a-input v-model:value="formValidate.username" />
-      </a-form-item> -->
       <a-form-item
-        label="用户名称"
-        name="username"
-      >
-        <a-input v-model:value="formValidate.username" />
-      </a-form-item>
-      <a-form-item
-        label="账号"
-        name="account"
-      >
-        <a-input v-model:value="formValidate.account" />
-      </a-form-item>
-      <a-form-item
-        label="手机号码"
-        name="mobile"
-      >
-        <a-input v-model:value="formValidate.mobile" />
-      </a-form-item>
-      <a-form-item
-        label="可用范围"
+        label="选择企业类型"
         name="businessType"
+        v-if="isPlatformSuperAdmin"
       >
         <a-select
           ref="select"
-          placeholder="请输入可用范围"
+          placeholder="请选择企业类型"
           allowClear
           v-model:value="formValidate.businessType"
+          :disabled="formValidate.oid ? true : false"
           @change="getRoleList"
         >
           <a-select-option v-for="item in businessTypeOption" :value="item.codeValue">
@@ -49,19 +27,58 @@
         </a-select>
       </a-form-item>
       <a-form-item
-        label="所属角色"
+        label="选择企业"
+        name="companyId"
+        v-if="isPlatformSuperAdmin"
+      >
+        <a-select
+          ref="select"
+          placeholder="选择一个企业"
+          allowClear
+          v-model:value="formValidate.companyId"
+          :disabled="formValidate.oid ? true : false"
+        >
+          <a-select-option v-for="item in companyOptions" :value="item.oid">
+            {{ item.name }}
+          </a-select-option>
+        </a-select>
+      </a-form-item>
+      <a-form-item
+        label="管理员角色"
         name="roleIds"
-        v-if="formValidate.businessType || formValidate.oid"
       >
         <a-select
           ref="select"
           v-model:value="formValidate.roleIds"
-          v-if="formValidate.businessType"
+          placeholder="请选择管理员角色"
+          :disabled="formValidate.oid ? true : false"
         >
           <a-select-option v-for="item in roleList" :value="item.roleId">{{ item.roleName }}</a-select-option>
         </a-select>
-        <span v-for="item, index in formValidate.roleList" v-else>
-        {{`${item.roleName}${index == formValidate.roleList.length - 1? '' : '，' }`}}</span>
+      </a-form-item>
+      <a-form-item
+        label="管理员姓名"
+        name="username"
+      >
+        <a-input v-model:value="formValidate.username" placeholder="请输入管理员姓名"/>
+      </a-form-item>
+      <a-form-item
+        label="管理员手机号"
+        name="mobile"
+      >
+        <a-input v-model:value="formValidate.mobile" placeholder="请输入管理员手机号"/>
+      </a-form-item>
+      <a-form-item
+        label="登录账号"
+        name="account"
+      >
+        <a-input v-model:value="formValidate.account" placeholder="请输入登录账号" :disabled="formValidate.oid ? true : false"/>
+      </a-form-item>
+      <a-form-item
+        label="登录密码"
+        name="password"
+      >
+        <a-input-password v-model:value="formValidate.password" :visibilityToggle="false" placeholder="请输入登录密码"/>
       </a-form-item>
       <a-form-item
         label="状态"
@@ -88,6 +105,7 @@
   import { message } from 'ant-design-vue';
   import { getUserInfo } from '@/utils/util';
   import { useBusinessManageOption } from '@/stores/modules/businessManage';
+  import type { Rule } from 'ant-design-vue/es/form';
 
   const props = defineProps({
       modelValue: {
@@ -101,18 +119,31 @@
   const formRef = ref<FormInstance>();
   const formValidate: Ref<Record<string, any>> = ref({});
   const options = reactive({ title: '新增用户' });
+  const validateAccount = async (_rule: Rule, value: string) => {
+    const formData = new FormData();
+    formData.append('account', value);
+    await api.checkAccount(formData).then((res: any) => {
+      return Promise.resolve();
+    }).catch((err: any) => {
+      return Promise.reject(err);
+    })
+  };
   const rules: any = {
-    username: [{ required: true, trigger: 'blur', message: '请输入用户姓名' }],
-    mobile: [{ required: true, trigger: 'blur', message: '请输入用户电话' }],
-    account: [{ required: true, trigger: 'blur', message: '请输入账号' }],
-    roleIds: [{ required: true, trigger: 'blur', message: '请选择所属角色' }],
-    businessType: [{ required: true, trigger: 'change', message: '请选择可用范围' }],
+    username: [{ required: true, trigger: 'blur', message: '请输入管理员姓名' }],
+    mobile: [{ required: true, trigger: 'blur', message: '请输入管理员手机号' }],
+    account: [{ validator: validateAccount, required: true, trigger: 'blur'}],
+    password: [{ required: true, trigger: 'blur', message: '请输入登录密码' }],
+    roleIds: [{ required: true, trigger: 'blur', message: '请选择管理员角色' }],
+    businessType: [{ required: true, trigger: 'change', message: '请选择企业类型' }],
+    companyId: [{ required: true, trigger: 'change', message: '请选择企业' }],
     userStatus: [{ required: true, trigger: 'change', message: '请选择用户状态' }],
   };
   const userInfo = getUserInfo();
   const roleList: Ref<Array<any>> = ref([]);
+  const isPlatformSuperAdmin = ref(false);
   const businessManageOptions = useBusinessManageOption();
   const businessTypeOption = computed(() => businessManageOptions.businessTypeOption);
+  const companyOptions = computed(() => businessManageOptions.companyOptions);
 
 	const handleOk = () => {
     emit('cancel');
@@ -134,8 +165,6 @@
   }
 
   const addOrUpdateAPI = (apiName: string) => {
-    formValidate.value.companyId = null;
-    formValidate.value.password = '123456';
     formValidate.value.roleIds = [formValidate.value.roleIds];
     console.log('formValidate:', formValidate.value);
     api[apiName]({...formValidate.value}).then((res: any) => {
@@ -174,12 +203,16 @@
         }
       });
     })
+    businessManageOptions.getCompanyByBusinessType(businessType);
   }
 
   watch(() => props.modelValue, async (nVal) => {
     dialogVisible.value = nVal;
     if (dialogVisible.value) {
       await init();
+    } else {
+      // 关闭弹窗重置校验
+      formRef.value.resetFields();
     }
 	})
   
@@ -189,6 +222,8 @@
   
   const initOpeion = async () => {
     await businessManageOptions.getBusinessTypeOption();
+    // PLATFORM_SUPER_ADMIN: 一卡通平台管理员
+    isPlatformSuperAdmin.value = userInfo.sysRoles.some((item: any) => item.roleCode === 'PLATFORM_SUPER_ADMIN');
   };
 
   onMounted(() => {

@@ -5,6 +5,7 @@ import api from '@/api';
 export const useBusinessManageOption = defineStore('businessManage', {
 	state: () => ({
 		businessTypeOption: [],
+    companyOptions: []
 	}),
 	getters: {},
 	actions: {
@@ -16,6 +17,12 @@ export const useBusinessManageOption = defineStore('businessManage', {
 				});
 				this.businessTypeOption = options;
 				return options;
+			});
+		},
+		//根据业态查询企业
+		getCompanyByBusinessType(businessType: string) {
+			api.getCompanyByBusinessType(businessType).then((res: any) => {
+				this.companyOptions = res;
 			});
 		},
 	},

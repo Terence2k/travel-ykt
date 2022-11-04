@@ -6,7 +6,7 @@ import loading from "@/components/Loading/index";
 import { cloneDeep } from "lodash";
 
 interface OptionsProp {
-  method?: Method | "postfile";
+  method?: Method | "postfile" | "postExport" ;
   url: string;
   headers?: any;
   data?: any;
@@ -40,7 +40,6 @@ const fetch = async (options: OptionsProp) => {
         headers,
         responseType
       });
-
     case "put":
       return axios.request({
         url: url,

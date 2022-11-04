@@ -170,13 +170,13 @@ const state = reactive({
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
 	state.tableData.param.pageNo = val;
-	// onSearch();
+	onSearch();
 };
 //翻页
 const pageSideChange = (current: number, size: number) => {
 	console.log('changePageSize:', size);
 	state.tableData.param.pageSize = size;
-	// onSearch();
+	onSearch();
 };
 //新增
 const toAddPage = () => {
@@ -191,11 +191,9 @@ const toEditPage = (record: any) => {
 const toCheck = (record: any) => {
 	route.push({ path: '/settlementManagement/currencySettlementRule/info', query: { oid: encodeURIComponent(record.oid) } });
 };
-// const onSearch = () => {
-// 	userList(state.tableData.param).then((res) => {
-// 		console.log(res);
-// 	});
-// };
+const onSearch = () => {
+	initList();
+};
 const initList = async () => {
 	state.tableData.loading = true;
 	let res = await api.currencySettlementRuleList(state.tableData.param);
