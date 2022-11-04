@@ -157,15 +157,6 @@ const goTo = () => {
 		font-size: 12px;
 		color: #666666;
 	}
-	.reset-input {
-		border-bottom: 1px solid #e7e7e7;
-		.reset-prefix {
-			width: 70px;
-			font-size: 16px;
-			color: #000;
-			padding-right: 12px;
-		}
-	}
 	.copyright {
 		margin-top: 20px;
 		font-size: 12px;

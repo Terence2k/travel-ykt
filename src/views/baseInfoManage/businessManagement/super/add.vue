@@ -219,15 +219,6 @@ let validatePass2 = async (_rule: Rule, value: string) => {
     return Promise.resolve();
   }
 };
-/* const common = ref<Record<string, Rule[]>>({
-  account: [{ required: true, trigger: 'blur', message: '请输入超级管理员账号' }],
-  password: [{ required: true, validator: validatePass, trigger: 'change' }],
-  checkPass: [{ validator: validatePass2, trigger: 'change' }],
-})
-const formRules6 = { ...commonFormRules6, ...common.value }
-const formRules9 = { ...commonFormRules9, ...common.value }
-const formRules7 = { ...commonFormRules7, ...common.value }
-const formRules8 = { ...commonFormRules8, ...common.value } */
 const common: Record<string, Rule[]> = {
   account: [{ required: true, trigger: 'blur', message: '请输入超级管理员账号' }],
   password: [{ required: true, validator: validatePass, trigger: 'change' }],

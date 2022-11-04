@@ -23,7 +23,7 @@
 import LoginForm from './Form.vue';
 import LoginPic from './pic.vue';
 </script>
-<style lang="less" scoped>
+<style lang="less">
 
 .login-container {
 	width: 77vw;
@@ -64,30 +64,39 @@ import LoginPic from './pic.vue';
     padding: 8%;
     padding-top: 4%;
 	}
-}
-.title_box {
-	display: flex;
-	align-items: center;
-	justify-content: start;
-	margin-top: 20px;
-	.logo {
-		width: 44px;
-		line-height: 44px;
-		// background-color: #36B374;
-		text-align: center;
-		border-radius: 7px;
-		color: #fff;
-		margin-right: 20px;
-	}
-	.title {
-		width: 216px;
-		height: 30px;
-		font-size: 24px;
-		font-family: Microsoft YaHei UI;
-		font-weight: bold;
-		line-height: 40px;
-		color: #1e2226;
-		opacity: 1;
-	}
+  .title_box {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    margin-top: 20px;
+    .logo {
+      width: 44px;
+      line-height: 44px;
+      // background-color: #36B374;
+      text-align: center;
+      border-radius: 7px;
+      color: #fff;
+      margin-right: 20px;
+    }
+    .title {
+      width: 216px;
+      height: 30px;
+      font-size: 24px;
+      font-family: Microsoft YaHei UI;
+      font-weight: bold;
+      line-height: 40px;
+      color: #1e2226;
+      opacity: 1;
+    }
+  }
+  .reset-input {
+    border-bottom: 1px solid #e7e7e7;
+    .reset-prefix {
+      width: 70px;
+      font-size: 16px;
+      color: #000;
+      padding-right: 12px;
+    }
+  }
 }
 </style>
