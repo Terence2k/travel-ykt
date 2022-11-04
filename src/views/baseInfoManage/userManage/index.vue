@@ -1,5 +1,5 @@
 <template>
-  <CommonSearch>
+  <CommonSearch v-if="isBusinessSuperAdmin">
     <search-item label="角色名称">
       <a-input v-model:value="state.tableData.param.roleName" placeholder="请输入角色名称"/>
     </search-item>
@@ -25,7 +25,12 @@
       <template #button>
         <a-button type="primary" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
       </template>
-      <template #bodyCell="{ column, record }">
+      <template #bodyCell="{ column, index, record }">
+        <template v-if="column.key === 'index'">
+            <div>
+                {{(state.tableData.param.pageNo - 1) * (state.tableData.param.pageSize) + (index + 1)}}
+            </div>
+        </template>
         <template v-if="column.key === 'roleList'">
           <span v-for="item, index in record.roleList">
             {{`${item.roleName}${index == record.roleList.length - 1? '' : '，' }`}}
@@ -34,9 +39,9 @@
         <template v-if="column.key === 'action'">
           <div class="action-btns">
             <a @click="addOrUpdate({  row: record,  handle: 'update'})">编辑</a>
-            <a @click="editStatus(record.oid, 0)" v-if="record.userStatus === 1">停用</a>
+            <a @click="resetPassword(record.oid)">重置密码</a>
+            <a @click="editStatus(record.oid, 0)" v-if="record.userStatus === 1">禁用</a>
             <a @click="editStatus(record.oid, 1)" v-if="record.userStatus === 0">启用</a>
-            <a @click="showDetails(record)">查看</a>
           </div>
         </template>
     </template>
@@ -53,10 +58,6 @@
     :params="state.params"
     @onSearch="onSearch"
     @cancel="cancel"/>
-  <Detail
-    v-model="state.operationModal.showDetails"
-    :params="state.params"
-    @cancel="cancel"/>
 </template>
 
 <script setup lang="ts">
@@ -65,38 +66,49 @@
   import CommonSearch from '@/components/common/CommonSearch.vue'
   import SearchItem from '@/components/common/CommonSearchItem.vue'
   import AddUpdate from './AddUpdate.vue';
-  import Detail from './Detail.vue';
   import api from '@/api';
   import { message } from 'ant-design-vue';
+  import { getUserInfo } from '@/utils/util';
+  import { Modal } from 'ant-design-vue';
   
   const columns = [
     {
-      title: '用户姓名',
+      title: '序号',
+      key: 'index',
+      width: '80px'
+    },
+    {
+      title: '管理员姓名',
       dataIndex: 'username',
       key: 'username',
     },
     {
-      title: '手机号',
+      title: '管理员手机号',
       dataIndex: 'mobile',
       key: 'mobile',
     },
     {
-      title: '所属单位类型',
-      dataIndex: 'businessTypeName',
-      key: 'businessTypeName',
+      title: '登录账号',
+      dataIndex: 'account',
+      key: 'account',
     },
     {
-      title: '所属单位',
-      dataIndex: 'unitName',
-      key: 'unitName',
-    },
-    {
-      title: '所属角色',
+      title: '管理员角色',
       dataIndex: 'roleList',
       key: 'roleList',
     },
     {
-      title: '状态',
+      title: '账号创建时间',
+      dataIndex: 'createTime',
+      key: 'createTime',
+    },
+    {
+      title: '最后登录时间',
+      dataIndex: 'lastLoginTime',
+      key: 'lastLoginTime',
+    },
+    {
+      title: '当前状态',
       dataIndex: 'userStatusName',
       key: 'userStatusName',
     },
@@ -126,10 +138,11 @@
     params: {},
     operationModal: {
       isAddOrUpdate: false,
-      showDetails: false
     },
     optionRoleList: [] as any
   });
+  const userInfo = getUserInfo();
+  const isBusinessSuperAdmin = ref(false);
 
   const onHandleCurrentChange = (val: number) => {
     console.log('change:', val);
@@ -153,7 +166,6 @@
 
   const cancel = (): any => {
     state.operationModal.isAddOrUpdate = false;
-    state.operationModal.showDetails = false;
   };
 
   const addOrUpdate = (param: any) => {
@@ -179,14 +191,31 @@
     })
   }
 
-  const showDetails = (row: any) => {
-    state.params = {};
-    state.params = row;
-    state.operationModal.showDetails = true;
+  const resetPassword = (id: any) => {
+      Modal.confirm({
+        title: '重置密码',
+        width: 560,
+        closable: true,
+        centered: true,
+        icon: false,
+        content: `是否确认重置密码？`,
+        onOk() {
+          let formData = new FormData();
+          formData.append('userId', id);
+          formData.append('newPassword', '123456');
+          api.adminResetPassword(formData).then((res: any) => {
+            message.success('密码重置成功');
+            onSearch();
+          })
+        },
+        onCancel() {},
+      });
   }
 
   onMounted(() => {
     onSearch();
+    // 企业超级管理员不显示搜索区域
+    isBusinessSuperAdmin.value = userInfo.sysRoles.some((item: any) => ['PLATFORM_SUPER_ADMIN', 'GROUP_SUPER_ADMIN'].includes(item.roleCode));
   })
 </script>
 
