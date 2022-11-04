@@ -330,7 +330,7 @@ export async function exportReconciliation(data: any) {
 		url: `${commonPath}/settlement-service/public/api/settlement-information/exportReconciliation`,
 		method: 'post',
 		data,
-    responseType: 'blob',
+    	responseType: 'blob',
 		showLoading: false,
 	});
 }
