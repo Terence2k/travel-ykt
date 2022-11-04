@@ -91,9 +91,4 @@ watch(dialogVisible, (nVal) => {
 .ant-input-number {
 	width: 100%;
 }
-.ant-btn {
-	/* height: 32px !important; */
-	padding: 0;
-	/* width: auto !important; */
-}
 </style>
