@@ -43,8 +43,8 @@
 				:rules="[{ required: true, message: '请选择离店日期' }]">
 				<a-date-picker style="width: 100%" 
 					:disabled-date="disLeave"
-					placeholder="请先选择入住时间"
 					:disabled="formState.arrivalDate === ''"
+					placeholder="请先选择入住时间"
 					:show-time="{ format: 'HH:mm:ss' }"  
 					format="YYYY-MM-DD HH:mm:ss" 
 					value-format="YYYY-MM-DD HH:mm:ss" 
@@ -146,10 +146,6 @@ let disLeave = ref((current: Dayjs) => {
 	current > dayjs().startOf('day');
 })
 
-// const Datedisabled = () => {
-// 	formState.value.arrivalDate = ''
-// }
-
 const props = defineProps({
 	modelValue: {
 		type: Boolean,
@@ -170,6 +166,7 @@ const hotelData = reactive<{[k:string]: any}>({
 let formState = reactive<{[k: string]: any}>({
 	hotelStarId: '',
 	hotelId: '',
+	arrivalDate:'',
 	leaveTime: '',
 	enterTime: '',
 	roomTypeList: [{ ...roomList }],
@@ -203,7 +200,7 @@ const changeRoomType = (e: any, option: any, index: number) => {
 
 
 const getHotelStarList = async () => {
-	hotelData.hotelStart = await api.commonApi.getHotelStarList();
+	hotelData.hotelStart = await api.commonApi.getHotelStarList();	
 };
 const handleMoeny = (i: number, e: string) => {
 	formState.roomTypeList[i].orderAmount = honestyGuidePrice.value + parseFloat(e) || honestyGuidePrice.value;
