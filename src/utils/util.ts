@@ -169,3 +169,38 @@ export function getStyles(elem: any, prop: any) {
     }
   }
 }
+
+/***
+ *下载文件
+ *@param response
+ */
+export const downloadFile = (response: any, name?: string) => {
+  const blob = new Blob([response.data], {
+    type: response.headers['content-type']
+  });
+  console.log('下载', response);
+  console.log(blob);
+
+  const disposition =
+    response.headers['content-disposition'] || 'filename=' + name;
+  if (!disposition) {
+    return;
+  }
+  let fileName =
+    disposition.split('filename=')[1] || disposition.split("''")[1];
+  // let fileName = '测试下载.xlsx';
+  fileName = decodeURIComponent(fileName) || fileName; //中文
+  if ('download' in document.createElement('a')) {
+    //非IE下载
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  } else {
+    if (navigator.msSaveBlob) navigator.msSaveBlob(blob, fileName);
+  }
+};
