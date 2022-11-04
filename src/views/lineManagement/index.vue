@@ -52,7 +52,7 @@
           </a-select-option>
         </a-select>
       </a-form-item> -->
-      <a-form-item v-for="(domain, index) in form.domains" :key="domain.key" :label="index === 0 ? '包含景区' : ' '"
+      <!-- <a-form-item v-for="(domain, index) in form.domains" :key="domain.key" :label="index === 0 ? '包含景区' : ' '"
         :colon="index === 0 ? true : false" :name="['domains', index, 'value']">
         <div style="display: flex">
           <a-select placeholder="请选择一个景区" v-model:value="domain.value" allowClear
@@ -89,13 +89,46 @@
           <PlusOutlined />
           添加
         </a-button>
+      </a-form-item> -->
+
+
+      <div v-for="(domain, index) in form.domains" :key="domain.key" style="display: flex;">
+        <a-form-item :label="index === 0 ? '选择线路内商家' : ' '" :colon="index === 0 ? true : false"
+          :name="['domains', index, 'value']" :wrapper-col="{ offset: 0, span: 24 }" style="flex: 1">
+          <a-select placeholder="请选择业态" v-model:value="domain.value" allowClear @change="">
+            <a-select-option v-for="item in businessTypeOption" :value="item.codeValue">{{
+                item.name
+            }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item label=" " :name="['domains', index, 'business']" :colon="false" :label-col="{ offset: 1, }"
+          :wrapper-col="{ offset: 0, span: 24 }" :class="{ mr8: form.domains.length > 1 }" style="flex: 1">
+          <a-select placeholder="请选择商家" v-model:value="domain.business" allowClear
+            @change="() => { sceneChange(form.domains, businessOption(domain.value)) }">
+            <a-select-option v-for="item in businessOption(domain.value)" :value="item.codeValue"
+              :disabled="item.disabled">{{
+                  item.name
+              }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
+        <MinusCircleOutlined v-if="form.domains.length > 1" class="dynamic-delete-button"
+          @click="removeDomain(domain, form.domains, businessOption(domain.value))" />
+      </div>
+      <a-form-item label=" " :colon="false">
+        <a-button type="dashed" @click="addDomain(form.domains)">
+          <PlusOutlined />
+          添加
+        </a-button>
       </a-form-item>
 
       <div v-for="(sight, index) in form.sights" :key="sight.key" style="display: flex;">
         <a-form-item :name="['sights', index, 'value']" :label="index === 0 ? '一口价' : ' '"
           :colon="index === 0 ? true : false" :wrapper-col="{ offset: 0, span: 24 }" style="flex: 1">
           <a-select v-model:value="sight.id" @change="sightsChange" allowClear>
-            <a-select-option v-for="item in sceneOption3" :value="item.codeValue" :disabled="item.disabled">{{ item.name
+            <a-select-option v-for="item in sceneOption3" :value="item.codeValue" :disabled="item.disabled">{{
+                item.name
             }}
             </a-select-option>
           </a-select>
@@ -137,6 +170,7 @@ const router = useRouter();
 const route = useRoute()
 interface Domain {
   value: string | undefined | number;
+  business: string | undefined | number;
   key: number;
 }
 interface Sights {
@@ -167,6 +201,7 @@ const state = reactive({
 const form = reactive({
   domains: [{
     value: undefined,
+    business: undefined,
     key: Date.now(),
   }],
   domains1: [{
@@ -181,22 +216,38 @@ const form = reactive({
 })
 const teamRef = ref()
 const formRules = {}
-const labelCol = { style: { width: '65px' } }
+const labelCol = { style: { width: '110px' } }
 const enableOption = [
   { codeValue: 0, name: '本社全部部门可用' },
   { codeValue: 1, name: '仅创建门店可用' },
 ]
-const sceneOption = [
-  { codeValue: 0, name: '景区1' },
-  { codeValue: 1, name: '景区2' },
-  { codeValue: 2, name: '景区3' },
-  { codeValue: 3, name: '景区4' },
-  { codeValue: 4, name: '景区5' },
-  { codeValue: 5, name: '景区6' },
-  { codeValue: 6, name: '景区7' },
-  { codeValue: 7, name: '景区8' },
-  { codeValue: 8, name: '景区9' },
+const businessTypeOption = [
+  { codeValue: 0, name: '景区' },
+  { codeValue: 1, name: '酒店' },
+  { codeValue: 2, name: '餐厅' },
 ]
+const sceneOption = ref([
+  { codeValue: 0, markValue: '0_0', name: '景区1' },
+  { codeValue: 1, markValue: '0_1', name: '景区2' },
+  { codeValue: 2, markValue: '0_2', name: '景区3' },
+  { codeValue: 3, markValue: '0_3', name: '景区4' },
+  { codeValue: 4, markValue: '0_4', name: '景区5' },
+  { codeValue: 5, markValue: '0_5', name: '景区6' },
+  { codeValue: 6, markValue: '0_6', name: '景区7' },
+  { codeValue: 7, markValue: '0_7', name: '景区8' },
+  { codeValue: 8, markValue: '0_8', name: '景区9' },
+])
+const restaurantOption = ref([
+  { codeValue: 0, markValue: '2_0', name: '餐厅1' },
+  { codeValue: 1, markValue: '2_1', name: '餐厅2' },
+  { codeValue: 2, markValue: '2_2', name: '餐厅3' },
+  { codeValue: 3, markValue: '2_3', name: '餐厅4' },
+  { codeValue: 4, markValue: '2_4', name: '餐厅5' },
+  { codeValue: 5, markValue: '2_5', name: '餐厅6' },
+  { codeValue: 6, markValue: '2_6', name: '餐厅7' },
+  { codeValue: 7, markValue: '2_7', name: '餐厅8' },
+  { codeValue: 8, markValue: '2_8', name: '餐厅9' },
+])
 const sceneOption1 = ref([
   { codeValue: 0, name: '景区1' },
   { codeValue: 1, name: '景区2' },
@@ -208,16 +259,16 @@ const sceneOption1 = ref([
   { codeValue: 7, name: '景区8' },
   { codeValue: 8, name: '景区9' },
 ])
-const sceneOption2 = ref([
-  { codeValue: 0, name: '酒店1' },
-  { codeValue: 1, name: '酒店2' },
-  { codeValue: 2, name: '酒店3' },
-  { codeValue: 3, name: '酒店4' },
-  { codeValue: 4, name: '酒店5' },
-  { codeValue: 5, name: '酒店6' },
-  { codeValue: 6, name: '酒店7' },
-  { codeValue: 7, name: '酒店8' },
-  { codeValue: 8, name: '酒店9' },
+const hotelOption = ref([
+  { codeValue: 0, markValue: '1_0', name: '酒店1' },
+  { codeValue: 1, markValue: '1_1', name: '酒店2' },
+  { codeValue: 2, markValue: '1_2', name: '酒店3' },
+  { codeValue: 3, markValue: '1_3', name: '酒店4' },
+  { codeValue: 4, markValue: '1_4', name: '酒店5' },
+  { codeValue: 5, markValue: '1_5', name: '酒店6' },
+  { codeValue: 6, markValue: '1_6', name: '酒店7' },
+  { codeValue: 7, markValue: '1_7', name: '酒店8' },
+  { codeValue: 8, markValue: '1_8', name: '酒店9' },
 ])
 const sceneOption3 = ref([
   { codeValue: 0, name: '成人价' },
@@ -225,6 +276,17 @@ const sceneOption3 = ref([
   { codeValue: 2, name: '儿童价' },
   { codeValue: 3, name: '会员一口价' },
 ])
+const businessOption = computed(() => (val: number | undefined) => {
+  if (val === 0) {
+    return sceneOption.value
+  } else if (val === 1) {
+    return hotelOption.value
+  } else if (val === 2) {
+    return restaurantOption.value
+  } else {
+    return []
+  }
+})
 const setOption = () => {
   sceneOption1.value.forEach(element => {
     element.disabled = false
@@ -265,12 +327,12 @@ const sightsChange = () => {
 const sceneChange = (domainsList: Domain[], options: any[]) => {
   let selected: any[] = []
   selected = domainsList.map(item => {
-    if (item.value !== undefined) {
-      return item.value
+    if (item.business !== undefined) {
+      return item.value + '_' + item.business
     }
   })
   options.forEach(element => {
-    if (selected.includes(element.codeValue)) {
+    if (selected.includes(element.markValue)) {
       element.disabled = true
     } else {
       element.disabled = false
@@ -368,6 +430,7 @@ const addOrUpdate = ({ row, handle }: addInterface) => {
 const addDomain = (domainsList: Domain[]) => {
   domainsList.push({
     value: undefined,
+    business: undefined,
     key: Date.now(),
   });
 };
@@ -383,7 +446,8 @@ const removeDomain = (item: Domain, domainsList: Domain[], options: any[]) => {
   if (index !== -1) {
     domainsList.splice(index, 1);
   }
-  sceneDeselect(item.value, options)
+  sceneChange(domainsList, options)
+  // sceneDeselect(item.value, options)
 };
 const removeSights = (item: Sights, domainsList: Sights[], options: any[]) => {
   let index = domainsList.indexOf(item);
