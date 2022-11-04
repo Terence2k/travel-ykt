@@ -15,25 +15,7 @@
         <a-input v-model:value="formValidate.username" />
       </a-form-item> -->
       <a-form-item
-        label="用户名称"
-        name="username"
-      >
-        <a-input v-model:value="formValidate.username" />
-      </a-form-item>
-      <a-form-item
-        label="账号"
-        name="account"
-      >
-        <a-input v-model:value="formValidate.account" />
-      </a-form-item>
-      <a-form-item
-        label="手机号码"
-        name="mobile"
-      >
-        <a-input v-model:value="formValidate.mobile" />
-      </a-form-item>
-      <a-form-item
-        label="可用范围"
+        label="选择企业类型"
         name="businessType"
       >
         <a-select
@@ -62,6 +44,24 @@
         </a-select>
         <span v-for="item, index in formValidate.roleList" v-else>
         {{`${item.roleName}${index == formValidate.roleList.length - 1? '' : '，' }`}}</span>
+      </a-form-item>
+      <a-form-item
+        label="用户名称"
+        name="username"
+      >
+        <a-input v-model:value="formValidate.username" />
+      </a-form-item>
+      <a-form-item
+        label="账号"
+        name="account"
+      >
+        <a-input v-model:value="formValidate.account" />
+      </a-form-item>
+      <a-form-item
+        label="手机号码"
+        name="mobile"
+      >
+        <a-input v-model:value="formValidate.mobile" />
       </a-form-item>
       <a-form-item
         label="状态"

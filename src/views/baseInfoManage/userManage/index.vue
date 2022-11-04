@@ -1,13 +1,5 @@
 <template>
   <CommonSearch>
-    <!-- <search-item label="单位类型">
-      <a-select
-        ref="select"
-        placeholder="请选择单位类型"
-      >
-        <a-select-option value="">all</a-select-option>
-      </a-select>
-    </search-item> -->
     <search-item label="角色名称">
       <a-input v-model:value="state.tableData.param.roleName" placeholder="请输入角色名称"/>
     </search-item>
