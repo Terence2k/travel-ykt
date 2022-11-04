@@ -28,6 +28,7 @@
 			</SearchItem>
 
 			<template #button>
+				<a-button @click="reset">重置</a-button>
 				<a-button @click="search">查询</a-button>
 			</template>
 		</CommonSearch>
@@ -258,7 +259,7 @@ const state = reactive({
 			verificationTime: '',
 			sendTravelName: '',
 			orderState: '',
-			itineraryNumber: null,
+			itineraryNo: null,
 			pageNo: 1,
 			pageSize: 10,
 		},
@@ -278,7 +279,14 @@ const changePageStatus = (e: any) => {
 	state.tableData.param.orderState = e;
 	init();
 };
-
+//重置
+const reset = () => {
+	state.tableData.param.sendTravelName = '';
+	state.tableData.param.itineraryNo = null;
+	state.tableData.param.verificationTime = '';
+	state.tableData.param.schoolDate = '';
+	state.tableData.param.pageNo = 1;
+};
 //查看
 const route = useRouter();
 const toDetail = (record: any) => {
