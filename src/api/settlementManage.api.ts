@@ -328,7 +328,7 @@ export async function getItineraryStatus() {
 export async function exportReconciliation(data: any) {
 	return request({
 		url: `${commonPath}/settlement-service/public/api/settlement-information/exportReconciliation`,
-		method: 'post',
+		method: 'postExport',
 		data,
 		showLoading: false,
 	});
