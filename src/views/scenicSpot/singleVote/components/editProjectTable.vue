@@ -365,7 +365,12 @@ watch(
 	async (nVal) => {
 		if (first.value) {
 			formValidate.proj = [];
-			emits('add-verification-obj', []);
+
+			if (!type.value) {
+				emits('add-verification-obj-sign', [{ init: true }]);
+			} else {
+				emits('add-verification-obj', []);
+			}
 		}
 		if (nVal) {
 			getList(nVal);
