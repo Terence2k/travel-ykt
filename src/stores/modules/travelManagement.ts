@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { GroupMode, GroupStatus, Gender, GuideType, FeeModel, insuranceType, AuditStaus, TakeGroupStatus } from '@/enum';
 import api from '@/api/index';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, toArray } from 'lodash';
 import { AuditField, Field, TakeGroupField } from '@/type';
 import dayjs, { Dayjs } from 'dayjs';
 import { CODEVALUE } from '@/constant';
@@ -111,17 +111,15 @@ export const useTravelStore = defineStore({
 		compositeProducts: [],
 		hotels: [],
 		scenicTickets: [],
-		gouvyList: [
-			{
+		gouvyList:[{
 				feeName: '古维管理费',
 				touristNum:'',
 				payableNum: '',
 				payablePrice: '',
-				isInitiateReduction: '待接团后由地接社申请',
-				isReductionPassed: '',
+				isInitiateReductionName: '待接团后由地接社申请',
+				isReductionPassedName: '',
 				issueStatusName: '',
-			},
-		],
+			}],
 		teamType: '',
 		feeModel: {
 			[FeeModel.Number]: '人数',
@@ -337,5 +335,10 @@ export const useTravelStore = defineStore({
 			const res = await api.travelManagement.getItineraryStatus();
 			this.itineraryStatusList = res;
 		},
+		async getManagementExpenses(id:any) {
+			const res = await api.getManagementExpenses(2);
+			this.gouvyList=res
+		},
+
 	},
 });

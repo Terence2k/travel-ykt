@@ -8,24 +8,33 @@
 						<span v-if="travelStore.baseInfo.status !=11 ">{{ travelStore.touristList.length }}人 </span>
 					</template>
 					<template v-if="column.key === 'payableNum'">
-						<div class="action-btns" v-if="travelStore.baseInfo.status !=11 ">
+						<div class="action-btns" v-if="!travelStore.reserveStatus">
 							<span >预计{{ travelStore.touristList.length }}人 </span>
 						</div>
-						<div v-if="travelStore.baseInfo.status ==11 " >
+						<div v-if="travelStore.reserveStatus " >
 							<span >预计{{ record.payableNum }}人 </span>
-							<a class="item" @click="choice('selectPersonnelPop')" >选择人数</a>
 						</div>
 					</template>
 					<template v-if="column.key === 'payablePrice'">
-						<span v-if="travelStore.baseInfo.status !=11 ">{{accMul(travelStore.touristList.length,payablePrice)}}元 </span>
+						<span v-if="!travelStore.reserveStatus ">{{accMul(travelStore.touristList.length,payablePrice)}}元 </span>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a class="item"></a>
+							<a class="item" v-if="record.issueStatus==0" @click="choice({selectPersonnelPop:'selectPersonnelPop',id:route.query.id})">去出票</a>
+							<a class="item" v-if="record.isInitiateReduction==1 && record.isReductionPassed==0"  @click="see('modelValue')">查看驳回原因</a>
+							<a class="item" v-if="record.issueStatus==1">查看出票情况</a>
 						</div>
 					</template>
 				</template>
 			</CommonTable>
+		<BaseModal title="查看驳回原因" v-model="modelValue" :width="500">
+			<p>古维管理员 {{gouvyDate[0].lastUpdaterName}} 于 {{gouvyDate[0].lastUpdateTime}} 驳回</p>
+			<p>驳回原因：{{gouvyDate[0].refuesedReason}}</p>
+			<p>您可以重新修改减免申请信息，重新提交审核。</p>
+			<template v-slot:footer>
+				<a-button @click="modelValue = false">取消</a-button>
+			</template>
+		</BaseModal>
 		</div>
 		<div class="item-container">
 			<p class="title">综费产品</p>
@@ -93,7 +102,7 @@
 	</div>
 	<addHotel :hotelId="editId.addHotelPop" v-model="addHotelPop" />
 	<addTicket :ticketId="editId.addTicketPop" v-model="addTicketPop" />
-	<Personnel v-model="selectPersonnelPop" />
+	<Personnel v-model="selectPersonnelPop" :routeId="id" />
 	<reserveTicket :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop" />
 	<reserveTicket :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop"  />
 	<showTicket :ticketId="showId.showTicketPop" v-model="showTicketPop"/>
@@ -110,7 +119,8 @@ import showHotel from './showHotel.vue';
 import { useTraveInfo } from './traveInfo';
 import { accDiv, accMul } from '@/utils/compute';
 import { GroupStatus } from '@/enum';
-
+import BaseModal from '@/components/common/BaseModal.vue';
+const route = useRoute();
 const props = defineProps({
 	onCheck: {
 		type: Boolean,
@@ -148,7 +158,10 @@ const {
 	showHotelPop,
 	showTicketPop,
 	showId,
-	rowRadioSelection
+	rowRadioSelection,
+	id,
+	modelValue,
+	see
 } = useTraveInfo(props, emits);
 onMounted(() => {
 	onSearch();
