@@ -330,8 +330,21 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				},
 				class: 'test',
 			});
-		}
+		},
 	};
+	const rowRadioSelection = {
+
+		type: 'radio',
+		
+		columnTitle:"选择",
+		
+		onSelect: (selectedRowKeys: any, selectedRows: any) => {
+			
+			console.log(selectedRowKeys, selectedRows)
+			
+		},
+	
+	}
 	if(travelStore.reserveStatus)
 	{
 		travelStore.getManagementExpenses(route.query.id)
@@ -341,6 +354,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		...methods,
 		editId,
 		showId,
-		travelStore
+		travelStore,
+		rowRadioSelection
 	};
 }

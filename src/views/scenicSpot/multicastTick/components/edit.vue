@@ -92,6 +92,7 @@ interface forDataType {
 		ticketName: null | string;
 		scenicTicketList: any[];
 		dayStock: string | number | null;
+		ticketDesc: string | null;
 		dateStockList: any[];
 	};
 }
@@ -107,6 +108,7 @@ const formData = reactive<forDataType>({
 		scenicTicketList: [],
 		dayStock: null,
 		dateStockList: [],
+		ticketDesc: null,
 	},
 });
 
@@ -116,7 +118,9 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 	reactive({
 		'data.ticketName': [{ required: true, message: '请填写联票名称' }],
 		'data.dayStock': [{ required: true, message: '请填设置库存' }],
+
 		'data.discountList': [{ required: true, message: '请填写联票规则' }],
+		'data.ticketDesc': [{ required: true, message: '请填写联票描述' }],
 		scenicTicketListId: [{ required: true, message: '请选择子票' }],
 	})
 );

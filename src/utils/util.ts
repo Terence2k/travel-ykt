@@ -1,4 +1,12 @@
+import { ConfirmDailyCharge, FeeModel } from "@/enum";
 import router from "@/router/index";
+import { useTravelStore } from "@/stores/modules/travelManagement";
+import { message } from "ant-design-vue";
+import dayjs from "dayjs";
+import isBetween from 'dayjs/plugin/isBetween'
+
+const travelStore = useTravelStore();
+
 export const to2 = () => {
   window.localStorage.setItem("authorization", "");
   window.localStorage.setItem("userInfo", "");
@@ -204,3 +212,72 @@ export const downloadFile = (response: any, name?: string) => {
     if (navigator.msSaveBlob) navigator.msSaveBlob(blob, fileName);
   }
 };
+
+/**
+ * 
+ * @param model 收费模式
+ * @param price 单价
+ * @returns count 总价
+ */
+
+ export const getPrice = (model: any, price: number) => {
+	let count = 0
+	switch(model) {
+		case FeeModel.Number :
+			count = price * travelStore.touristList.length
+			break;
+		case FeeModel.Price :
+			count = price
+			break;
+	}
+	return count
+}
+
+
+/**
+ * 
+ * @param a 是否按天收费
+ * @param price 单价
+ * @param model 收费模式
+ * @returns countPrice 总价
+ */
+
+export const getAmount = (a:any, price: number, model: any) => {
+	let countPrice = 0
+	switch (a) {
+		case ConfirmDailyCharge.NotDay :
+			countPrice = getPrice(model, price)
+			break;
+		case ConfirmDailyCharge.IsDay :
+			const dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day');
+			countPrice = getPrice(model, price) * dayCount
+			break;
+	}
+	return countPrice
+}
+
+export const selectSpecialDateRange = (start: any, end: any, hotelId: number) => {
+  dayjs.extend(isBetween)
+  const travelStore = useTravelStore()  //下面就每两两进行比较
+  const newHotel = travelStore.hotels.filter((it: any) => it.hotelId == hotelId)
+  const startDate =  newHotel.map((it: any) => it.startDate);
+  const endDate = newHotel.map((it: any) => it.endDate);
+  // console.log(date)
+  let flag = false 
+  for(let i = 0; i < startDate.length; i++){
+    //每次和之前选择的日期范围两两比较
+    const startRes = dayjs(start).isBetween(startDate[i], endDate[i], null, '[]');
+    const endRes = dayjs(end).isBetween(startDate[i], endDate[i], null, '[]');
+    const dateStartRes = dayjs(startDate[i]).isBetween(start, end, null, '[]');
+    const dateEndRes = dayjs(endDate[i]).isBetween(start, end, null, '[]');
+    if(startRes || 
+          endRes ||
+          dateStartRes ||
+          dateEndRes) {
+      flag = true;
+      break;
+    }
+  }
+  console.log(flag)
+  return flag;
+}

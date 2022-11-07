@@ -5,7 +5,7 @@ export async function getBasicInfo(data: any) {
 		url: `${commonPath}/heritage-maintenance-service/public/api/hm-basic-info/get`,
 		method: 'get',
 		data,
-		showLoading: true,
+		showLoading: false
 	});
 }
 //查询基本信息编辑

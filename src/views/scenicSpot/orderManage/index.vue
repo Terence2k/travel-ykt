@@ -28,7 +28,7 @@
 			</SearchItem>
 
 			<template #button>
-				<a-button @click="reset">重置</a-button>
+				<a-button @click="reset" style="margin-right: 30px">重置</a-button>
 				<a-button @click="search">查询</a-button>
 			</template>
 		</CommonSearch>
