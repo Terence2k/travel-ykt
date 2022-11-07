@@ -136,7 +136,7 @@
 </template>
 
 <script lang="ts" setup>
-import { getUserInfo } from '@/utils/util';
+import { getAmount, getUserInfo } from '@/utils/util';
 import { ConfirmDailyCharge, FeeModel, GroupMode, RouteType } from '@/enum';
 import api from '@/api/index';
 import { useTravelStore } from '@/stores/modules/travelManagement';
@@ -292,48 +292,6 @@ const changeRadio = (event:any) =>  {
 
 }
 
-/**
- * 
- * @param model 收费模式
- * @param price 单价
- * @returns count 总价
- */
-
-const getPrice = (model: any, price: number) => {
-	let count = 0
-	switch(model) {
-		case FeeModel.Number :
-			count = price * travelStore.touristList.length
-			break;
-		case FeeModel.Price :
-			count = price
-			break;
-	}
-	return count
-}
-
-
-/**
- * 
- * @param a 是否按天收费
- * @param price 单价
- * @param model 收费模式
- * @returns countPrice 总价
- */
-
-const getAmount = (a:any, price: number, model: any) => {
-	let countPrice = 0
-	switch (a) {
-		case ConfirmDailyCharge.NotDay :
-			countPrice = getPrice(model, price)
-			break;
-		case ConfirmDailyCharge.IsDay :
-			const dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day');
-			countPrice = getPrice(model, price) * dayCount
-			break;
-	}
-	return countPrice
-}
 const findByIdTeamType = async () => {
 	if (!travelStore.teamType) return
 	const formData = new FormData();
@@ -343,19 +301,34 @@ const findByIdTeamType = async () => {
 		const res = await api.travelManagement.findByIdTeamType(formData);
 		
 		for (let i = 0; i < res.productVos.length; i++) {
-			if (res.productVos[i].itemId === 0) {
-				const result = await api.travelManagement.findProductInfo(res.productVos[i].productId)
-				result.peopleCount = travelStore.touristList.length;
-				result.unPrice = result.feeNumber;
-				result.isDay = true;
-				result.dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day')
-				result.totalMoney = getAmount(
-					result.confirmDailyCharge,
-					result.feeNumber,
-					result.feeModel
-				)
-				allFeesProducts.push(result)
+			// 综费产品itemId为4
+			if (res.productVos[i].itemId === 4) {
+				if (!res.productVos[i].productId) {
+					const res = await api.travelManagement.comprehensiveFeeProduct({
+						pageNo: 1,
+						pageSize: 1,
+						status: 1
+					});
+					allFeesProducts = res.content;
+				} else {
+					const result = await api.travelManagement.findProductInfo(res.productVos[i].productId)
+					result.peopleCount = travelStore.touristList.length;
+					result.unPrice = result.feeNumber;
+					result.isDay = true;
+					result.dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day')
+					result.totalMoney = getAmount(
+						result.confirmDailyCharge,
+						result.feeNumber,
+						result.feeModel
+					)
+					allFeesProducts.push(result)
+				}
+			} else if (res.productVos[i].itemId === 2) {
+				
+			} else if (res.productVos[i].itemId === 1) {
+				
 			}
+				
 		}
 		
 		

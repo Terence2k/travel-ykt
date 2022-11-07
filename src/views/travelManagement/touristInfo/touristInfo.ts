@@ -145,37 +145,55 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			);
 		},
 		// 特殊证件判断
-		isUpload(key: any) {
+		isUpload(key: any): {flag: boolean, text: string} {
 			let flag: boolean = false;
+			let text = ''
 			if (state.editableData[key].specialCertificateType) {
 				(!state.editableData[key].specialCertificatePicture
 				|| !state.editableData[key].specialCertificatePicture.length) &&
-				message.error(`请上传游客${state.editableData[key].name}特殊证件图片`)
+				(text = `请上传游客${state.editableData[key].name}特殊证件图片`)
 				flag = false;
 			} else {
 				flag = true;
 			}
-			return flag;
+			return {
+				flag,
+				text
+			};
 		},
 		// 老人判断
-		isOld(key: any) {
+		isOld(key: any): {flag: boolean, text: string} {
 			let flag: boolean = false;
-			if (state.editableData[key].certificateType !== CODEVALUE.TRAVE_CODE.IDENTITY_CARD) return flag = true;
+			let text = ''
+			if (state.editableData[key].certificateType !== CODEVALUE.TRAVE_CODE.IDENTITY_CARD) {
+				return {
+					flag: true,
+					text: ''
+				}
+			};
 
 			const age = getAge(state.editableData[key].certificateNo)
-			if (age < 60) return flag = true;
+			if (age < 60) {
+				return {
+					flag: true,
+					text: ''
+				};
+			}
 
 			if (!state.editableData[key].emergencyContactName) {
-				message.error(`游客中存在60以上的老人，请填写游客${state.editableData[key].name}紧急联系人`)
+				text = `游客中存在60以上的老人，请填写游客${state.editableData[key].name}紧急联系人`
 				flag = false;
 			} else if (!state.editableData[key].emergencyContactPhone) {
-				message.error(`游客中存在60以上的老人，请填写游客${state.editableData[key].name}紧急联系人电话`)
+				text = `游客中存在60以上的老人，请填写游客${state.editableData[key].name}紧急联系人电话`
 				flag = false;
 			} else {
 				flag = true;
 			}
 			
-			return flag;
+			return {
+				flag,
+				text
+			};
 			
 		},
 		addRules(key?: any) {
@@ -204,14 +222,18 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			const res = await validateFields(state.formRef);
 			if (!res) return emits('onSuccess', {touristList: {valid: res, message: '请填写完整游客信息', index: 2}});
 			if (key) {
-				if (!methods.isOld(key)) return;
-				if (!methods.isUpload(key)) return;
+				const result = methods.isOld(key)
+				const isUpload = methods.isUpload(key)
+				if (!result.flag) return message.error(result.text);
+				if (!isUpload.flag) return message.error(isUpload.text);
 				methods.copyData(key);
 				delete state.editableData[key];
 			} else {
 				for (let k in state.editableData) {
-					if (!methods.isOld(k)) return;
-					if (!methods.isUpload(k)) return;
+					const result = methods.isOld(k);
+					const isUpload = methods.isUpload(k);
+					if (!result.flag) return emits('onSuccess', {touristList: {valid: false, message: result.text, index: 2}});
+					if (!isUpload.flag) return emits('onSuccess', {touristList: {valid: false, message: isUpload.text, index: 2}});
 					methods.copyData(k);
 					delete state.editableData[k];
 				}

@@ -109,7 +109,7 @@ export const travelManagement = {
             url: `${commonPath}/settlement-service/public/api/comprehensive-fee-product/page`,
             data,
             method: 'post',
-            showLoading: true
+            showLoading: false
         });
     },
 

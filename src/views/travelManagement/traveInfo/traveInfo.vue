@@ -38,6 +38,7 @@
 		</div>
 		<div class="item-container">
 			<p class="title">综费产品</p>
+			<!--  :row-selection="rowRadioSelection" -->
 			<CommonTable :columns="columns" :dataSource="allFeesProducts" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
 					<template v-if="column.key === 'index'">
@@ -157,6 +158,7 @@ const {
 	showHotelPop,
 	showTicketPop,
 	showId,
+	rowRadioSelection,
 	id,
 	modelValue,
 	see

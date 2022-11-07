@@ -9,23 +9,20 @@
 		<search-item label="景点名称" style="width: 280px">
 			<a-input v-model:value="state.tableData.param.ticketName" placeholder="请输入订单号" allowClear style="width: 180px" />
 		</search-item>
-		<search-item label="团队类型">
+		<search-item label="团队类型" style="width: 280px">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.travelTypeId" style="width: 200px" placeholder="请选择团队类型">
 				<a-select-option v-for="(item, index) in options.teamTypesLists" :value="item.oid" :key="index">{{ item.name }} </a-select-option>
 			</a-select>
 		</search-item>
-		<search-item label="地接社">
+		<search-item label="地接社" style="width: 280px">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.subTravelId" style="width: 200px" placeholder="请选择旅行社名称">
 				<a-select-option v-for="(item, index) in options.earthContactAgencyList" :value="item.travelAgencyId" :key="index"
 					>{{ item.travelAgencyName }}
 				</a-select-option>
 			</a-select>
 		</search-item>
-		<search-item label="核销时间" style="width: 280px">
-			<a-date-picker v-model:value="state.tableData.param.verificationStartTime" style="width: 180px" />
-		</search-item>
 		<search-item label="结算时间" style="width: 280px">
-			<a-date-picker v-model:value="state.tableData.param.settlementStartTime" style="width: 180px" />
+			<a-range-picker v-model:value="state.settlementStartTimeList" @change="settlementStartTimeChange" />
 		</search-item>
 		<template #button>
 			<a-button @click="initList">查询</a-button>
@@ -58,10 +55,10 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import { settlementOptions } from '@/stores/modules/settlement';
-import router from '@/router';
-import { any } from 'vue-types';
+// import { useRouter } from 'vue-router';
+import api from '@/api';
 const options = settlementOptions();
-const route = useRouter();
+// const route = useRouter();
 const columns = computed(() => {
 	const column = [
 		{
@@ -145,13 +142,13 @@ const columns = computed(() => {
 			key: 'scenicPrice',
 		},
 	];
-	if (state.tableData.data.settlementRuleNameList && state.tableData.data.settlementRuleNameList.length) {
-		for (const key in state.tableData.data.settlementRuleNameList) {
+	if (state.tableData.data.settlementRuleList && state.tableData.data.settlementRuleList.length) {
+		for (const key in state.tableData.data.settlementRuleList) {
 			const settlementRules = {
 				title: `结算规则${Number(Number(key) + 1)}`,
 				dataIndex: 'settlementRuleName',
 				key: 'settlementRuleName',
-				data: state.tableData.data.settlementRuleNameList[key],
+				data: state.tableData.data.settlementRuleList[key]['ruleName'],
 			};
 			column.push(settlementRules);
 		}
@@ -166,8 +163,8 @@ const state = reactive({
 			ticketName: '', //门票名称
 			travelTypeId: '', //团队类型id
 			subTravelId: '', //地接社id
-			verificationStartTime: '', //核销开始时间
-			verificationEndTime: '', //核销结束时间
+			// verificationStartTime: '', //核销开始时间
+			// verificationEndTime: '', //核销结束时间
 			settlementStartTime: '', //结算开始时间
 			settlementEndTime: '', //结算结束时间
 			pageSize: 10, //页大小
@@ -176,17 +173,17 @@ const state = reactive({
 		data: [],
 		total: 11,
 		loading: false,
+		settlementStartTimeList: [],
 	},
 });
 // 查询
 const initList = async () => {
-	// state.tableData.loading = true;
-	// let res = await api.byItineraryTicket(state.tableData.param);
-	// const { total, content } = res;
-	// state.tableData.total = total;
-	// const list: [any] = dealData(content);
-	// state.tableData.data = list;
-	// state.tableData.loading = false;
+	state.tableData.loading = true;
+	let res = await api.byItineraryTicket(state.tableData.param);
+	const { total, content } = res;
+	state.tableData.total = total;
+	state.tableData.data = content;
+	state.tableData.loading = false;
 };
 //搜索
 const onHandleCurrentChange = (val: number) => {
@@ -200,13 +197,15 @@ const pageSideChange = (current: number, size: number) => {
 	state.tableData.param.pageSize = size;
 	initList();
 };
-// 跳转结算详情
-const toDetail = (record: any) => {
-	// route.push({
-	// 	path: `/reportManagement/${String(routerName)}/orderList`,
-	// });
+const settlementStartTimeChange = (arr: any) => {
+	if (arr && arr.length > 0) {
+		state.tableData.param.settlementStartTime = arr[0]['$d'];
+		state.tableData.param.settlementEndTime = arr[1]['$d'];
+	} else {
+		state.tableData.param.settlementStartTime = '';
+		state.tableData.param.settlementEndTime = '';
+	}
 };
-
 onMounted(() => {
 	options.getTeamTypeList();
 	options.getGroupSocietyList();

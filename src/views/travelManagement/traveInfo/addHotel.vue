@@ -128,6 +128,10 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 import { message } from 'ant-design-vue/es';
 import { Rule } from 'ant-design-vue/es/form';
 import dayjs, { Dayjs } from 'dayjs';
+import { selectSpecialDateRange } from '@/utils';
+import { Modal } from 'ant-design-vue';
+import { createVNode } from 'vue';
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any ) || {}
 const route = useRoute()
@@ -188,6 +192,10 @@ const handleHotel = (e: any, option: any) => {
 const handleChangCheckIn = () => {
 	disLeave.value = (current: Dayjs): any => current && current < dayjs(formState.arrivalDate).add(1, 'day') || 
 	(dayjs(travelStore.teamTime[1]).add(1, 'day') < current && current)
+	const isAfter = dayjs(dayjs(formState.arrivalDate)).isAfter(dayjs(formState.departureDate).subtract(1, 'day'))
+	if (formState.departureDate && isAfter) {
+		formState.departureDate = '';
+	}
 }
 
 const changeRoomType = (e: any, option: any, index: number) => {
@@ -257,10 +265,10 @@ const getOrderAmount = (data: Array<{[k:string]:any}>, startDate: string, endDat
 	return amount.reduce((prev, next) => prev + next)
 }
 
-const handleOk = async (callback: Function) => {
+const submit = async () => {
 	try {
 		let traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {}
-		await formRef.value.validateFields();
+		
 		// formState.scheduledNumber = formState.roomTypeList.map((it: any) => Number(it.checkInNumber))
 		// .reduce((prev: any, current: any) => prev + current);
 		formState.scheduledRooms = formState.roomTypeList.map((it: any) => Number(it.reserveNumber))
@@ -284,11 +292,45 @@ const handleOk = async (callback: Function) => {
 		// message.success('新增成功');
 		
 		travelStore.setHotels(newFormState, res)
-		callback()
+		// callback()
 	} catch (errorInfo) {
-		callback(false);
+		// callback(false);
 	}
+}
+
+const handleOk = async (callback: Function) => {
+	
+	try {
+		await formRef.value.validateFields();
+		
+	} catch (error) {
+		return callback(false)
+	}
+	const res = selectSpecialDateRange(formState.arrivalDate, formState.departureDate, formState.hotelId);
+	if (!res) {
+		await submit();
+		callback();
+		return
+	}
+	Modal.confirm({
+		title: '添加确认？',
+		icon: createVNode(ExclamationCircleOutlined),
+		content: createVNode('div', { style: 'color: #333;' }, 
+			`存在与本次预定相同的酒店且入离时间存在交叉，如生成新订单则无法计入减免。`),
+		async onOk() {
+			
+			await submit();
+			callback();
+		},
+		onCancel() {
+			callback(false)
+			console.log('Cancel');
+		}
+	});
+	
 };
+
+
 
 
 
