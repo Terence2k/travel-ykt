@@ -375,10 +375,11 @@ export async function getHotelInfoByCompanyId(companyId: number) {
 }
 
 // /hotel-service/public/api/hotel-information/getGuidePriceByHotelId/{hotelId}
+// /hotel-service/public/api/hotel-information/getGuidePriceStarCodeByHotelId/
 
 export async function getPriceByHotelId(hotelId: number) {
 	return request({
-		url: `${commonPath}/hotel-service/public/api/hotel-information/getGuidePriceByHotelId/${hotelId}`,
+		url: `${commonPath}/hotel-service/public/api/hotel-information/getGuidePriceStarCodeByHotelId/${hotelId}`,
 		method: 'get',
 		showLoading: true,
 	});

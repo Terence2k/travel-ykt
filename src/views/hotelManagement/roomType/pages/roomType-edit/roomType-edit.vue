@@ -337,8 +337,8 @@ const initPage = () => {
 			state.hotelId = res?.oid;
 
 			api.getPriceByHotelId(state.hotelId).then((res) => {
-				console.log('诚信指导价：', res);
-				state.price = accDiv(res, 100) || '';
+				console.log('诚信指导价：', res?.price);
+				state.price = accDiv(res?.price, 100) || '';
 			});
 			api
 				.getHotelListInEdit()
