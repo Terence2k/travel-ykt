@@ -1,7 +1,7 @@
 <template>
 	<div class="systemRoomType-modal-wrapper">
 		<BaseModal :title="options.title" v-model="modelValue" @close="handleOk">
-			<a-form :model="formValidate" :rules="rules" :label-col="{ span: 5 }" :wrapper-col="{ span: 16, offset: 1 }" labelAlign="left">
+			<a-form ref="formRef" :model="formValidate" :rules="rules" :label-col="{ span: 5 }" :wrapper-col="{ span: 16, offset: 1 }" labelAlign="left">
 				<a-form-item label="系统房型" name="sysRoomTypeName">
 					<a-input v-model:value="formValidate.sysRoomTypeName" />
 				</a-form-item>
@@ -27,6 +27,7 @@
 import BaseModal from '@/components/common/BaseModal.vue';
 import { Ref } from 'vue';
 import { message } from 'ant-design-vue';
+import { isPositiveInteger } from '@/utils/validator';
 import api from '@/api';
 
 const props = defineProps({
@@ -45,42 +46,51 @@ const formValidate: Ref<Record<string, any>> = ref({});
 const options = reactive({
 	title: '新增系统房型',
 });
+const formRef = ref();
 const rules: any = {
 	sysRoomTypeName: [{ required: true, trigger: 'blur', message: '请输入系统房型' }],
-	roomOccupancyNum: [{ required: true, trigger: 'blur', message: '请输入最多入住人数' }],
+	roomOccupancyNum: [{ required: true, validator: isPositiveInteger, trigger: 'blur', message: '请输入最多入住人数（正整数）' }],
 	sysRoomTypeStatus: [{ required: true, trigger: 'change', message: '请选择状态' }],
 };
 
 const save = () => {
 	console.log('formValidate:', formValidate.value);
-	if (props.params?.oid) {
-		api
-			.editSystemRoomType({
-				oid: formValidate.value.oid,
-				...formValidate.value,
-			})
-			.then((res: any) => {
-				console.log('res:', res);
-				dialogVisible.value = false;
-				message.success('修改成功');
-				props.methods?.success();
-			})
-			.catch((err: any) => {
-				console.log(err);
-			});
-	} else {
-		api
-			.addSystemRoomType(formValidate.value)
-			.then((res: any) => {
-				console.log('res:', res);
-				dialogVisible.value = false;
-				message.success('新增成功');
-				props.methods?.success();
-			})
-			.catch((err: any) => {
-				console.log(err);
-			});
-	}
+	formRef.value
+		.validateFields()
+		.then((res) => {
+			console.log('验证结果', res);
+			if (props.params?.oid) {
+				api
+					.editSystemRoomType({
+						oid: formValidate.value.oid,
+						...formValidate.value,
+					})
+					.then((res: any) => {
+						console.log('res:', res);
+						dialogVisible.value = false;
+						message.success('修改成功');
+						props.methods?.success();
+					})
+					.catch((err: any) => {
+						console.log(err);
+					});
+			} else {
+				api
+					.addSystemRoomType(formValidate.value)
+					.then((res: any) => {
+						console.log('res:', res);
+						dialogVisible.value = false;
+						message.success('新增成功');
+						props.methods?.success();
+					})
+					.catch((err: any) => {
+						console.log(err);
+					});
+			}
+		})
+		.catch((err) => {
+			console.log('提交数据验证失败', err);
+		});
 };
 
 const init = async () => {
