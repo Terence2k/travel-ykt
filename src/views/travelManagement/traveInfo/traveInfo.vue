@@ -29,6 +29,7 @@
 		</div>
 		<div class="item-container">
 			<p class="title">综费产品</p>
+			<!--  :row-selection="rowRadioSelection" -->
 			<CommonTable :columns="columns" :dataSource="allFeesProducts" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
 					<template v-if="column.key === 'index'">
@@ -146,7 +147,8 @@ const {
 	show,
 	showHotelPop,
 	showTicketPop,
-	showId
+	showId,
+	rowRadioSelection
 } = useTraveInfo(props, emits);
 onMounted(() => {
 	onSearch();

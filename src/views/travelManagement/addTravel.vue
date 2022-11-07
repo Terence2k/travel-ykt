@@ -27,6 +27,7 @@ import api from '@/api';
 import { message } from 'ant-design-vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import dayjs, { Dayjs } from 'dayjs';
+import { getAmount } from '@/utils';
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 const route = useRoute();
 const router = useRouter();
@@ -70,6 +71,7 @@ let obj = reactive({
 	data: {},
 });
 const save = (e: any) => {
+	console.log(e)
 	rulesPass.push(e);
 	for (let i = 0; i < rulesPass.length; i++) {
 		obj.data = cloneDeep({
@@ -204,6 +206,19 @@ const getTraveDetail = () => {
 const changeTab = (event: number) => {
 	sendTeam.value = false;
 	if (event === 4) {
+		const allFeesProducts =  travelStore.compositeProducts.map((it:any) => {
+			it.peopleCount = travelStore.touristList.length;
+			it.unPrice = it.feeNumber;
+			it.isDay = true;
+			it.dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day')
+			it.totalMoney = getAmount(
+				it.confirmDailyCharge,
+				it.feeNumber,
+				it.feeModel
+			)
+			return it;
+		})
+		travelStore.setCompositeProducts(allFeesProducts);
 		isSaveBtn.value = false
 		check.value = !check.value;
 	}
