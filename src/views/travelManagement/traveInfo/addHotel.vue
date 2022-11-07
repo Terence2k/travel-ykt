@@ -268,7 +268,7 @@ const getOrderAmount = (data: Array<{[k:string]:any}>, startDate: string, endDat
 const submit = async () => {
 	try {
 		let traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {}
-		await formRef.value.validateFields();
+		
 		// formState.scheduledNumber = formState.roomTypeList.map((it: any) => Number(it.checkInNumber))
 		// .reduce((prev: any, current: any) => prev + current);
 		formState.scheduledRooms = formState.roomTypeList.map((it: any) => Number(it.reserveNumber))
@@ -300,6 +300,12 @@ const submit = async () => {
 
 const handleOk = async (callback: Function) => {
 	
+	try {
+		await formRef.value.validateFields();
+		
+	} catch (error) {
+		return callback(false)
+	}
 	const res = selectSpecialDateRange(formState.arrivalDate, formState.departureDate, formState.hotelId);
 	if (!res) {
 		await submit();
