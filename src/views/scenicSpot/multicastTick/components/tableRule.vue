@@ -6,7 +6,7 @@
 					{{ certifIdList(record.certifId) }}
 				</template> -->
 				<template v-if="column.key === 'discount'">
-					<span v-if="record.discount">{{ record.discount / 10 }}</span>
+					<span v-if="record.discount">{{ record.discount * 10 }} %</span>
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
