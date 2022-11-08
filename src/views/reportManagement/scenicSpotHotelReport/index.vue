@@ -241,10 +241,9 @@ const columns = computed(() => {
 	let nameList: Array<string> = [];
 	if (state.tableData.data && state.tableData.data.length) {
 		console.log('state.tableData.data.length',state.tableData.data.length);
-		
 		for (const key in state.tableData.data) {
 			const data = state.tableData.data[key].settlementRuleList;
-			if (data && data.length && data.length > nameList.length) {
+			if (data && data.length) {
 				for (const subKey in data) {
 					if (!nameList.includes(data[subKey].costName)) {
 						nameList.push(data[subKey].costName);
@@ -261,6 +260,8 @@ const columns = computed(() => {
 			};
 			column.push(settlementRules);
 		}
+		console.log('nameList,',nameList);
+		
 	}
 	const netReceipts = {
 		title: '酒店实收(元)',
@@ -306,82 +307,82 @@ const initList = async () => {
 	state.tableData.total = total;
 	state.tableData.data = content;
 	state.tableData.loading = false;
-	state.tableData.data = [
-			{
-				hotelOrderId: 1,
-				orderNo: "订单编号", //订单编号
-				itineraryNo: "团单编号", //团单编号
-				teamType: 64, //团队类型
-				subTravelOid: 1, //地接社id
-				subTravelName: "地接社名称", //地接社名称
-				settlementTime: "2011-10-10", //结算时间
-				hotelName: "酒店名称", //酒店名称
-				verificationTime: "2011-10-10", //核销时间
-				hotelStarCode: "酒店星级", //酒店星级
-				scheduledRooms: 1, //预定人数
-				actualRooms: 1, //实刷数
-				arrivalDate: "2011-10-10 18:00:00", //入住日期
-				departureDate: "2011-10-10 20:20:00", //离店日期
-				scheduledAmount: 1, //预定金额
-				noVerificationAmount: 1, //未核销金额
-				fullRule: 1, //满减规则-满
-				reduceRule: 1, //满减规则-减
-				reduceAfterAmount: 1, //减免后金额
-				actualFullNumber: 1, //实际减免数量
-				actualFullAmount: 1, //实际减满金额
-				actualAmount: 1, //实际金额
-				hotelPrice: 1, //酒店实收
-				settlementRuleList: [
-					{
-						costName: "规则1", //费用名称
-						settlementCost: 1, //结算费用
-						costType: 1 //结算类型
-					},
-					{
-						costName: "规则2", //费用名称
-						settlementCost: 1, //结算费用
-						costType: 1 //结算类型
-					}
-				] //结算规则名称list
-			},
-			{
-				hotelOrderId: 1,
-				orderNo: "订单编号", //订单编号
-				itineraryNo: "团单编号", //团单编号
-				teamType: 64, //团队类型
-				subTravelOid: 1, //地接社id
-				subTravelName: "地接社名称", //地接社名称
-				settlementTime: "2011-10-10", //结算时间
-				hotelName: "酒店名称", //酒店名称
-				verificationTime: "2011-10-10", //核销时间
-				hotelStarCode: "酒店星级", //酒店星级
-				scheduledRooms: 1, //预定人数
-				actualRooms: 1, //实刷数
-				arrivalDate: "2011-10-10 18:00:00", //入住日期
-				departureDate: "2011-10-10 20:20:00", //离店日期
-				scheduledAmount: 1, //预定金额
-				noVerificationAmount: 1, //未核销金额
-				fullRule: 1, //满减规则-满
-				reduceRule: 1, //满减规则-减
-				reduceAfterAmount: 1, //减免后金额
-				actualFullNumber: 1, //实际减免数量
-				actualFullAmount: 1, //实际减满金额
-				actualAmount: 1, //实际金额
-				hotelPrice: 1, //酒店实收
-				settlementRuleList: [
-					{
-						costName: "规则2", //费用名称
-						settlementCost: 1, //结算费用
-						costType: 1 //结算类型
-					},
-					{
-						costName: "规则3", //费用名称
-						settlementCost: 1, //结算费用
-						costType: 1 //结算类型
-					}
-				] //结算规则名称list
-			}
-		]
+	// state.tableData.data = [
+	// 		{
+	// 			hotelOrderId: 1,
+	// 			orderNo: "订单编号", //订单编号
+	// 			itineraryNo: "团单编号", //团单编号
+	// 			teamType: 64, //团队类型
+	// 			subTravelOid: 1, //地接社id
+	// 			subTravelName: "地接社名称", //地接社名称
+	// 			settlementTime: "2011-10-10", //结算时间
+	// 			hotelName: "酒店名称", //酒店名称
+	// 			verificationTime: "2011-10-10", //核销时间
+	// 			hotelStarCode: "酒店星级", //酒店星级
+	// 			scheduledRooms: 1, //预定人数
+	// 			actualRooms: 1, //实刷数
+	// 			arrivalDate: "2011-10-10 18:00:00", //入住日期
+	// 			departureDate: "2011-10-10 20:20:00", //离店日期
+	// 			scheduledAmount: 1, //预定金额
+	// 			noVerificationAmount: 1, //未核销金额
+	// 			fullRule: 1, //满减规则-满
+	// 			reduceRule: 1, //满减规则-减
+	// 			reduceAfterAmount: 1, //减免后金额
+	// 			actualFullNumber: 1, //实际减免数量
+	// 			actualFullAmount: 1, //实际减满金额
+	// 			actualAmount: 1, //实际金额
+	// 			hotelPrice: 1, //酒店实收
+	// 			settlementRuleList: [
+	// 				{
+	// 					costName: "规则1", //费用名称
+	// 					settlementCost: 1, //结算费用
+	// 					costType: 1 //结算类型
+	// 				},
+	// 				{
+	// 					costName: "规则2", //费用名称
+	// 					settlementCost: 1, //结算费用
+	// 					costType: 1 //结算类型
+	// 				}
+	// 			] //结算规则名称list
+	// 		},
+	// 		{
+	// 			hotelOrderId: 1,
+	// 			orderNo: "订单编号", //订单编号
+	// 			itineraryNo: "团单编号", //团单编号
+	// 			teamType: 64, //团队类型
+	// 			subTravelOid: 1, //地接社id
+	// 			subTravelName: "地接社名称", //地接社名称
+	// 			settlementTime: "2011-10-10", //结算时间
+	// 			hotelName: "酒店名称", //酒店名称
+	// 			verificationTime: "2011-10-10", //核销时间
+	// 			hotelStarCode: "酒店星级", //酒店星级
+	// 			scheduledRooms: 1, //预定人数
+	// 			actualRooms: 1, //实刷数
+	// 			arrivalDate: "2011-10-10 18:00:00", //入住日期
+	// 			departureDate: "2011-10-10 20:20:00", //离店日期
+	// 			scheduledAmount: 1, //预定金额
+	// 			noVerificationAmount: 1, //未核销金额
+	// 			fullRule: 1, //满减规则-满
+	// 			reduceRule: 1, //满减规则-减
+	// 			reduceAfterAmount: 1, //减免后金额
+	// 			actualFullNumber: 1, //实际减免数量
+	// 			actualFullAmount: 1, //实际减满金额
+	// 			actualAmount: 1, //实际金额
+	// 			hotelPrice: 1, //酒店实收
+	// 			settlementRuleList: [
+	// 				{
+	// 					costName: "规则2", //费用名称
+	// 					settlementCost: 1, //结算费用
+	// 					costType: 1 //结算类型
+	// 				},
+	// 				{
+	// 					costName: "规则3", //费用名称
+	// 					settlementCost: 1, //结算费用
+	// 					costType: 1 //结算类型
+	// 				}
+	// 			] //结算规则名称list
+	// 		}
+	// 	]
 	
 };
 //搜索
