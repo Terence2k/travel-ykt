@@ -141,6 +141,7 @@ import { ConfirmDailyCharge, FeeModel, GroupMode, RouteType } from '@/enum';
 import api from '@/api/index';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import dayjs, { Dayjs } from 'dayjs';
+import { cloneDeep } from 'lodash';
 
 interface TeamType {
 	teamType: Array<any>;
@@ -151,7 +152,6 @@ interface TeamType {
 const travelStore = useTravelStore();
 const touristCount = computed(() => travelStore.touristList.length ? travelStore.touristList.length.toString() : 0)
 const route = useRoute()
-
 const page = reactive({
 	teamType: {
 		pageNo: 1,
@@ -306,7 +306,7 @@ const findByIdTeamType = async () => {
 				if (!res.productVos[i].productId) {
 					const res = await api.travelManagement.comprehensiveFeeProduct({
 						pageNo: 1,
-						pageSize: 1,
+						pageSize: 99999,
 						status: 1
 					});
 					allFeesProducts = res.content;
@@ -330,7 +330,9 @@ const findByIdTeamType = async () => {
 			}
 				
 		}
-		
+		if (allFeesProducts.length === 1) {
+			travelStore.curentProduct = cloneDeep(allFeesProducts);
+		}
 		
 		travelStore.setCompositeProducts(allFeesProducts);
 	}
@@ -355,6 +357,7 @@ watch(
 	() => travelStore.teamType,
 	(newVal) => {
 		findByIdTeamType();
+		
 	}
 );
 

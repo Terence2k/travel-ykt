@@ -235,7 +235,7 @@ const examine = (type: string, record: any) => {
 };
 // 查看详情
 const toInfo = (record: any) => {
-	router.push({ path: '/settlementManagement/settlement/info', query: { oid: encodeURIComponent(record.oid) } });
+	router.push({ path: '/travel/travel_manage/travel_detail', query: { oid: encodeURIComponent(record.oid) } });
 };
 onMounted(() => {
 	onSearch();
