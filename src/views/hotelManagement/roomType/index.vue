@@ -169,34 +169,8 @@ const rowSelection = computed(() => {
 
 const router = useRouter();
 
-// let dataSource = ref([
-// 	{
-// 		key: 1,
-// 		oid: 1,
-// 		hotelName: '阳光商务一百酒店',
-// 		starCode: '五星A级',
-// 		openStatus: '开业',
-// 		phone: '2121323232',
-// 		address: '丽江市安平大道1号',
-// 		unitStatus: 0,
-// 		submitTime: '2022年10月19日',
-// 	},
-// 	{
-// 		key: 2,
-// 		oid: 2,
-// 		hotelName: '千千酒店',
-// 		starCode: '三星A级',
-// 		openStatus: '开业',
-// 		phone: '127178278237',
-// 		address: '丽江市热河大道232号',
-// 		unitStatus: 1,
-// 		submitTime: '2022年10月18日',
-// 	},
-// ]);
-
 const dataSource = computed(() => {
 	if (Array.isArray(tableState.tableData.data)) {
-		console.log('数据变化', tableState.tableData.data);
 		return tableState.tableData.data.map((item) => {
 			return {
 				...item,
@@ -206,8 +180,10 @@ const dataSource = computed(() => {
 	}
 });
 
-const getunitStatusName = (unitStatus: number) => {
-	return statusOptionsData.value.find((item) => item.value === unitStatus)?.label || '';
+const getUnitStatusName = (unitStatus: number) => {
+	if (unitStatus || unitStatus === 0) {
+		return statusOptionsData.value.find((item) => item.value === unitStatus)?.label || '';
+	}
 };
 
 const onSearch = () => {
@@ -227,9 +203,8 @@ const onSearch = () => {
 			.getHotelListInAudit()
 			.then((res: any) => {
 				tableState.inAuditRecordNum = res?.length || 0;
-				console.log('res------------------------:', res);
 				tableState.tableData.data = res?.content || res;
-				tableState.tableData.total = res?.total;
+				tableState.tableData.total = res?.total || 0;
 				getHotelStarList();
 			})
 			.catch((err: any) => {
@@ -243,19 +218,12 @@ const onSearch = () => {
 	}
 };
 
-const searchByFilter = () => {
-	tableState.tableData.param.pageNo = 1;
-	onSearch();
-};
-
 const onHandleCurrentChange = (val: number) => {
-	console.log('change:', val);
 	tableState.tableData.param.pageNo = val;
 	onSearch();
 };
 
 const pageSideChange = (current: number, size: number) => {
-	console.log('changePageSize:', size);
 	tableState.tableData.param.pageSize = size;
 	onSearch();
 };

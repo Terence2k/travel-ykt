@@ -54,7 +54,7 @@ import SystemRoomTypeAddUpdate from './components/systemRoomType-add-update/syst
 import { accDiv } from '@/utils/compute';
 import api from '@/api';
 
-const status = ref('');
+const status = ref(undefined); // placeholder 只有在 value = undefined 才会显示，对于其它的 null、0、'' 等等对于 JS 语言都是有意义的值
 let statusOptionsData = [
 	{
 		value: 1,
@@ -122,13 +122,11 @@ const tableState = reactive({
 const dataSource = computed(() => tableState.tableData.data);
 
 const onHandleCurrentChange = (val: number) => {
-	console.log('change:', val);
 	tableState.tableData.param.pageNo = val;
 	onSearch();
 };
 
 const pageSideChange = (current: number, size: number) => {
-	console.log('changePageSize:', size);
 	tableState.tableData.param.pageSize = size;
 	onSearch();
 };
@@ -137,12 +135,12 @@ const onSearch = () => {
 	api
 		.getSystemRoomType(tableState.tableData.param)
 		.then((res: any) => {
-			console.log('res:', res);
-			tableState.tableData.data = res.content;
-			tableState.tableData.total = res.total;
+			console.log('系统房型表格数据:', res);
+			tableState.tableData.data = res?.content || [];
+			tableState.tableData.total = res?.total || 0;
 		})
 		.catch((err: any) => {
-			console.log(err);
+			message.error(err || err?.message || '获取系统房型表格数据失败');
 		});
 };
 
@@ -169,21 +167,19 @@ const toggleSysRoomTypeStatus = (param: any) => {
 		api
 			.enableSystemRoomType(param.oid)
 			.then((res) => {
-				console.log(res);
 				onSearch();
 			})
 			.catch((err: any) => {
-				console.log(err);
+				message.error(err || err?.message || '启用该系统房型失败');
 			});
 	} else {
 		api
 			.disableSystemRoomType(param.oid)
 			.then((res) => {
-				console.log(res);
 				onSearch();
 			})
 			.catch((err: any) => {
-				console.log(err);
+				message.error(err || err?.message || '禁用该系统房型失败');
 			});
 	}
 };
