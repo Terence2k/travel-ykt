@@ -109,6 +109,7 @@ export const useTravelStore = defineStore({
 		traveInfo: {},
 		attachmentList: [],
 		compositeProducts: [],
+		curentProduct: [{oid: ''}],
 		hotels: [],
 		scenicTickets: [],
 		gouvyList:[{
@@ -274,7 +275,12 @@ export const useTravelStore = defineStore({
 		setTeamType(data: any) {
 			this.teamType = data;
 		},
-		setHotels(data: any, oid: string) {
+		setHotels(data: any, oid: string, hotelId: string) {
+
+			if (hotelId) {
+				data.oid = oid;
+				return Object.assign(this.hotels.filter((item: any) => hotelId == item.hotelId)[0], data);
+			}
 			if (data.oid) {
 				Object.assign(this.hotels.filter((item: any) => data.oid == item.oid)[0], data);
 			} else {
@@ -308,7 +314,11 @@ export const useTravelStore = defineStore({
 				}
 			}) as any
 		},
-		setTicket(data: any, oid: string) {
+		setTicket(data: any, oid: string, productId: string) {
+			if (productId) {
+				data.oid = oid;
+				return Object.assign(this.scenicTickets.filter((item: any) => productId == item.scenicId)[0], data);
+			}
 			if (data.oid) {
 				Object.assign(this.scenicTickets.filter((item: any) => data.oid == item.oid)[0], data);
 			} else {

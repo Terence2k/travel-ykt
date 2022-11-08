@@ -34,7 +34,7 @@
 					<template v-if="inputKey.includes(column.key)">
 						<div>
 							<a-form-item v-if="editableData[record.key ? record.key : record.oid]" :name="[record.key ? record.key : record.oid, column.key]">
-								<a-input v-model:value="editableData[record.key ? record.key : record.oid][column.key]" placeholder="请输入" />
+								<a-input @blur="changeIDCard(record.key ? record.key : record.oid, column.key)" v-model:value="editableData[record.key ? record.key : record.oid][column.key]" placeholder="请输入" />
 							</a-form-item>
 
 							<template v-else>
@@ -125,7 +125,8 @@ const {
 	formRef,
 	loadData,
 	handleChange,
-	travelStore
+	travelStore,
+	changeIDCard
 } = useTouristInfo(props, emits);
 </script>
 <style lang="less" scoped>

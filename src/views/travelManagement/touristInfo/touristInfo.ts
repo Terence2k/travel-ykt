@@ -22,6 +22,9 @@ interface DataItem {
 	edit: boolean;
 	emergencyContactName: string;
 	emergencyContactPhone: string;
+	provinceId: string;
+	cityId: string;
+	age: string;
 }
 
 const rules:{[k:string]: any} = {
@@ -29,7 +32,8 @@ const rules:{[k:string]: any} = {
 	certificateNo: [{ required: true, message: '请输入证件号码' }],
 	name: [{ required: true, message: '请输入姓名' }],
 	gender: [{ required: true, message: '请选择性别' }],
-	sourceAddressName: [{ required: true, message: '请选择客源地' }]
+	sourceAddressName: [{ required: true, message: '请选择客源地' }],
+	age: [{ required: true, message: '请输入年龄' }]
 }
 export function useTouristInfo(props: any, emits: any): Record<string, any> {
 	const travelStore = useTravelStore()
@@ -43,7 +47,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 		startRef: {},
 		cityOptions: [],
 		selectKey: ['certificateType', 'gender', 'specialCertificateType'],
-		inputKey: ['certificateNo', 'name', 'emergencyContactName', 'emergencyContactPhone'],
+		inputKey: ['certificateNo', 'name', 'emergencyContactName', 'emergencyContactPhone', 'age'],
 		rulesRef: {},
         onSelect: (record: DataItem, selected: boolean, selectedRows: DataItem[]) => {
             console.log(record, selected, selectedRows);
@@ -76,6 +80,11 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 				dataIndex: 'gender',
 				key: 'gender',
 				data: travelStore.genderList
+			},
+			{
+				title: '年龄',
+				dataIndex: 'age',
+				key: 'age',
 			},
 			{
 				title: '客源地',
@@ -252,9 +261,25 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			console.log(state.tableData)
 		},
 		handleChange(val: any, option: any, key: string) {
-			console.log(val, option)
+			// console.log(val, option)
+			state.editableData[key].provinceId = val[0]
+			state.editableData[key].cityId = val[1]
 			state.editableData[key].sourceAddress = val[val.length - 1];
 			state.editableData[key].sourceAddressName = option.map((it:any) => it.label).join('/')
+		},
+		changeIDCard(key: string, columns: string) {
+
+			if (columns === 'certificateNo' &&
+					state.editableData[key].certificateType === CODEVALUE.TRAVE_CODE.IDENTITY_CARD) {
+
+				if (state.editableData[key].certificateNo.length < 18) {
+					state.editableData[key].age = '';
+					return message.error('请输入正确的身份证')
+				}
+
+				const age: string = getAge(state.editableData[key].certificateNo) as any
+				state.editableData[key].age = age;
+			}
 		}
 	}
 	watch(onCheck, (newVal) => {
@@ -269,6 +294,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 	methods.getCityList('0/1', 0).then(res => {
 		state.cityOptions = res
 	});
+	
 	return {
 		...toRefs(state),
 		...methods,

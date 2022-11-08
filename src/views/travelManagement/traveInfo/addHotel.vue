@@ -2,7 +2,10 @@
 	<BaseModal v-model="dialogVisible" title="选择预定酒店" :width="1100" :onOk="handleOk">
 		<a-form ref="formRef" :model="formState" autocomplete="off" labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 10 }">
 			<a-form-item label="选择星级" name="hotelStarId" :rules="[{ required: true, message: '请选择星级' }]">
-				<a-select v-model:value="formState.hotelStarId" placeholder="请选择星级" @change="handleChange">
+				<a-select 
+					:disabled="productRow.productId &&
+								productRow.productId.toString() ? true : false"
+					v-model:value="formState.hotelStarId" placeholder="请选择星级" @change="handleChange">
 					<a-select-option 
 						:value="item.oid" 
 						v-for="item in hotelData.hotelStart" 
@@ -13,7 +16,10 @@
 			</a-form-item>
 
 			<a-form-item label="选择酒店" name="hotelId" :rules="[{ required: true, message: '请选择酒店' }]">
-				<a-select v-model:value="formState.hotelId" placeholder="请选择酒店" @change="handleHotel">
+				<a-select 
+					:disabled="productRow.productId &&
+								productRow.productId.toString() ? true : false"
+					v-model:value="formState.hotelId" placeholder="请选择酒店" @change="handleHotel">
 					<a-select-option 
 						:value="item.oid" v-for="item in hotelData.hotel" 
 						:key="item.oid"
@@ -158,6 +164,10 @@ const props = defineProps({
 	hotelId: {
 		type: String,
 		default: ''
+	},
+	productRow: {
+		type: Object,
+		default: {}
 	}
 });
 // 酒店数据
@@ -291,7 +301,7 @@ const submit = async () => {
 		
 		// message.success('新增成功');
 		
-		travelStore.setHotels(newFormState, res)
+		travelStore.setHotels(newFormState, res, props.productRow.productId)
 		// callback()
 	} catch (errorInfo) {
 		// callback(false);
@@ -359,8 +369,9 @@ watch(dialogVisible, (newVal) => {
 				formState[k] = '';
 			}
 		}
+		console.log(formState)
 	} else {
-		props.hotelId && api.travelManagement.hotelDetail(props.hotelId).then((res:any) => {
+		!props.productRow.productId && props.hotelId && api.travelManagement.hotelDetail(props.hotelId).then((res:any) => {
 			for (let k in res) {
 				formState[k] = res[k]
 			}
@@ -377,7 +388,16 @@ watch(dialogVisible, (newVal) => {
 				return it;
 			})
 		})
+		formState.hotelId = props.productRow.productId;
+		formState.hotelName = props.productRow.hotelName;
+
+		props.productRow.productId && api.travelManagement.getGuidePriceStarCodeByHotelId(props.productRow.productId)
+											.then((res: any) => {
+											formState.hotelStarId = res.oid
+											handleChange(res.oid, {price: res.price, name: res.starCode})
+										})
 	}
+	
 	emits('update:modelValue', newVal);
 });
 

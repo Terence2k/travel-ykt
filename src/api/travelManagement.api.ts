@@ -252,6 +252,12 @@ export const travelManagement = {
             showLoading: true
         });
     },
-    
+    getGuidePriceStarCodeByHotelId(data: any) {
+        return request({
+            url: `${commonPath}/hotel-service/public/api/hotel-information/getGuidePriceStarCodeByHotelId/${data}`,
+            method: 'get',
+            showLoading: false
+        });
+    },
     
 }
