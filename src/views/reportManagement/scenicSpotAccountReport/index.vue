@@ -39,7 +39,7 @@
 			<CommonTable :dataSource="state.tableData.data" :columns="columns">
 				<template #bodyCell="{ column, record }">
 					<template v-if="column.key === 'settlementRuleName'">
-						<span>{{ column.ruleName }}</span>
+						<span>{{ column.rulePrice }}</span>
 					</template>
 				</template>
 			</CommonTable>
@@ -55,16 +55,37 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from 'vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import { settlementOptions } from '@/stores/modules/settlement';
-// import { useRouter } from 'vue-router';
 import api from '@/api';
+interface TableDataType {}
+interface DataType {
+	itineraryNo: string | number;
+	scenicId: number; //关联景区id
+	scenicName: string | number;
+	ticketId: number;
+	ticketName: string | number;
+	travelTypeId: number; //团队类型id
+	travelTypeName: number; //团队类型名称
+	subTravelId: number; //地接社id
+	subTravelName: number; //地接社名称
+	verificationTime: '2022.03.01 09:00'; //核销时间
+	settlementTime: '2022.03.01 09:00'; //结算时间
+	unitPrice: '1'; //单价
+	reservationNum: 1; //预定数
+	settlementNum: 1; //实刷数
+	breaksNum: 1; //减免数
+	orderPrice: '1'; //预定金额
+	unSettlementPrice: '1'; //未核销金额
+	breaksPrice: '1'; //减免金额
+	ticketPrice: '1'; //票款金额
+	scenicPrice: '1'; //景点实收
+	settlementRuleList: []; //结算规则信息
+}
 const options = settlementOptions();
-// const route = useRouter();
 const columns = computed(() => {
 	const column = [
 		{
@@ -161,10 +182,11 @@ const columns = computed(() => {
 		}
 		for (const key in data) {
 			const settlementRules = {
-				title: `结算规则${Number(Number(key) + 1)}`,
+				// title: `结算规则${Number(Number(key) + 1)}`,
+				title: data[key]['ruleName'],
 				dataIndex: 'settlementRuleName',
 				key: 'settlementRuleName',
-				ruleName: data[key]['ruleName'],
+				rulePrice: data[key]['rulePrice'],
 			};
 			column.push(settlementRules);
 		}
