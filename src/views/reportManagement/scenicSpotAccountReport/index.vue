@@ -200,7 +200,7 @@ const columns = computed(() => {
 	if (state.tableData.data && state.tableData.data.length) {
 		for (const key in state.tableData.data) {
 			const data = state.tableData.data[key].settlementRuleList;
-			if (data && data.length && data.length > nameList.length) {
+			if (data && data.length) {
 				for (const subKey in data) {
 					if (!nameList.includes(data[subKey].ruleName)) {
 						nameList.push(data[subKey].ruleName);
