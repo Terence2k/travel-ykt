@@ -1,28 +1,26 @@
 <template>
-  <div class="container" v-if="state.data.travelOid">
+  <div class="container">
     <div class="page-title">
       行程详情预览和打印
     </div>
     <div class="status-btns">
       <div class="status">
-        当前状态：{{state.params.statusName}}
+        当前状态：{{state.data.statusName}}
       </div>
       <div class="btns">
         <a-button type="primary">打印行程单</a-button>
-        <a-button>打印保单</a-button>
-        <a-button>打印游客名单</a-button>
       </div>
     </div>
     <a-row>
       <a-col :span="17">
-        <a-descriptions :title="`行程单ID：${state.params.itineraryNo}`" bordered>
+        <a-descriptions :title="`行程单ID：${state.data.itineraryNo}`" bordered>
           <a-descriptions-item label="线路名称" :span="3">{{state.data.routeName}}</a-descriptions-item>
           <a-descriptions-item label="组团模式" :span="2">{{state.data.groupTypeName}}</a-descriptions-item>
           <a-descriptions-item label="团队类型">{{state.data.teamTypeName}}</a-descriptions-item>
           <a-descriptions-item label="组团社" :span="2">{{state.data.travelName}}</a-descriptions-item>
-          <a-descriptions-item label="组团社计调" >{{state.data.travelOperator.username}} {{state.data.travelOperator.mobile}}</a-descriptions-item>
+          <a-descriptions-item label="组团社计调" >{{state.data.travelOperatorName}} {{state.data.travelOperatorPhone}}</a-descriptions-item>
           <a-descriptions-item label="地接社" :span="2">{{state.data.subTravelName}}</a-descriptions-item>
-          <a-descriptions-item label="地接社计调">{{state.data.subTravelOperator.username}} {{state.data.subTravelOperator.mobile}}</a-descriptions-item>
+          <a-descriptions-item label="地接社计调">{{state.data.subTravelOperatorName}} {{state.data.subTravelOperatorPhone}}</a-descriptions-item>
           <a-descriptions-item label="游客人数" :span="2">{{state.data.touristCount}}</a-descriptions-item>
           <a-descriptions-item label="古维费应缴人数">{{state.data.guWeiCount}}</a-descriptions-item>
           <a-descriptions-item label="行程开始时间" :span="2">{{state.data.startDate}}</a-descriptions-item>
@@ -48,9 +46,9 @@
       <CommonTable :columns="item.columns" :dataSource="item.dataSource" :scrollY="false">
         <template #bodyCell="{ column, text, index, record }">
             <template v-if="column.key === 'index'">
-                <div>
-                    {{index + 1}}
-                </div>
+              <div>
+                {{(state.param.pageNo - 1) * (state.param.pageSize) + (index + 1)}}
+              </div>
             </template>
             <template v-if="column.key === 'action'">
               <div class="action-btns">
@@ -62,8 +60,7 @@
       <CommonPagination
         :current="state.param.pageNo"
         :page-size="state.param.pageSize"
-        :total="item.dataSource.length"
-        v-if="item.pagination"
+        :total="item.dataSource?.length"
       />
     </div>
 
@@ -92,9 +89,10 @@
       pageNo: 1,
       pageSize: 10,
     },
-    params: {} as any,
     itineraryDetail: {}
   });
+  const orderId = ref();
+  const route = useRouter();
   // 行程单二维码标签样式
   const labelStyle = computed((): CSSProperties => {
     return {
@@ -112,9 +110,9 @@
     };
   });
 
-  const getItineraryDetail = () => {
+  const getItineraryDetail = (orderId: any) => {
     let queryData = {
-      oid: state.params.oid,
+      oid: orderId,
       ...state.param
     }
 	  api.travelManagement.getItineraryDetail(queryData).then((res: any) => {
@@ -126,15 +124,9 @@
 		});
   }
 
-  onMounted(() => {
-    const tempData = localStorage.getItem('tempData');
-    if (tempData) {
-      state.params = JSON.parse(tempData);
-    } else {
-      let { detailInfo } = useRoute().params as any;
-      state.params = JSON.parse(decodeURIComponent(detailInfo));
-    }
-    getItineraryDetail();
+  onBeforeMount(() => {
+    console.log('orderId:', orderId);
+    getItineraryDetail(route.currentRoute.value.query.orderId);
     
   })
 </script>
