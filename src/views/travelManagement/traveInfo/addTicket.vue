@@ -10,6 +10,8 @@
 		>
 			<a-form-item label="选择景区" name="scenicId" :rules="[{ required: true, message: '请选择景区' }]">
 				<a-select 
+					:disabled="productRow.productId &&
+							productRow.productId.toString() ? true : false"
                     v-model:value="formState.scenicId" 
                     placeholder="请选择景区"
                     @change="handleChange">
@@ -106,6 +108,10 @@
 		ticketId: {
 			type: String,
 			default: ''
+		},
+		productRow: {
+			type: Object,
+			default: {}
 		}
 	})
 	
@@ -142,7 +148,7 @@
 			newFormState.totalFee = newFormState.peopleCount * newFormState.unitPrice
 			const res = await api.travelManagement.addTicket(formState)
 			// travelStore.setTicket(newFormState)
-			travelStore.setTicket(newFormState, res)
+			travelStore.setTicket(newFormState, res, props.productRow.productId)
 			
 			callback()
 		} catch (errorInfo) {
@@ -175,13 +181,14 @@
 			}
 		} else {
 			
-			props.ticketId && api.travelManagement.ticketDetail(props.ticketId).then((res:any) => {
+			!props.productRow.productId && props.ticketId && api.travelManagement.ticketDetail(props.ticketId).then((res:any) => {
 				handleChange(res.scenicId, {name: res.scenicName})
 				for (let k in res) {
 					formState[k] = res[k]
 				}
 			})
-			
+			formState.scenicId = props.productRow.productId;
+			props.productRow.productId && handleChange(props.productRow.productId, {name: props.productRow.scenicName})
 		}
 		emits('update:modelValue', newVal)
 	})

@@ -105,7 +105,11 @@ const saveItinerary = (val: any) => {
 	const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 	const itineraryId =  route.query.id || traveListData.oid
 	let ajax = itineraryId ? api.travelManagement.editItinerary : api.travelManagement.saveItinerary;
-
+	// 综费产品 > 1
+	const productRes = travelStore.curentProduct.length
+	if (!productRes) {
+		return message.error('请选择一项综费产品')
+	}
 	return ajax({
 		oid: itineraryId ? itineraryId.toString() : null,
 		attachmentList: travelStore.attachmentList.length ? travelStore.attachmentList :
@@ -132,7 +136,7 @@ const saveItinerary = (val: any) => {
 		basicParam: val.basicParam || {},
 		guideList: travelStore.guideList.filter((it: any) => it.edit),
 		itineraryInfoParam: {
-			compositeProducts: travelStore.compositeProducts,
+			compositeProducts: travelStore.curentProduct,
 		},
 		touristList: travelStore.touristList.filter((it: any) => it.edit),
 		transportList: travelStore.trafficList.filter((it: any) => it.edit),
@@ -194,8 +198,20 @@ const getTraveDetail = () => {
 				return it;
 			})
 			travelStore.setTrafficList(res.transportList);
-			travelStore.hotels = res.hotelList;
-			travelStore.scenicTickets = res.ticketList;
+			res.waitBuyItem.waitBuyHotel = res.waitBuyItem.waitBuyHotel.map((it:any) => {
+				it.hotelId = it.productId;
+				it.hotelName = it.productName
+				return it;
+			})
+			res.waitBuyItem.waitBuyTicket = res.waitBuyItem.waitBuyTicket.map((it:any) => {
+				it.scenicId = it.productId;
+				it.scenicName = it.productName;
+				return it;
+			})
+			const hotel = [...res.waitBuyItem.waitBuyHotel, ...res.hotelList]
+			travelStore.hotels = hotel as any;
+			travelStore.curentProduct = res.productList;
+			travelStore.scenicTickets = [...res.waitBuyItem.waitBuyTicket, ...res.ticketList] as any;
 			travelStore.teamTime = [res.basic.startDate, res.basic.endDate]  as any
 			travelStore.setDisabled = (current: Dayjs): any => {
 				return (dayjs(res.basic.startDate) && dayjs(res.basic.startDate) > current && current) ||

@@ -273,12 +273,14 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			Object.assign(state.tableData.filter((item: any) => key === item.key)[0], state.editableData[key]);
 			delete state.editableData[key];
 		},
-		add(key: string, oid?: any) {
+		add(key: string, popup: string, oid?: any) {
+			console.log(key, oid)
+			editId.productRow = {}
 			editId[key] = ''
 			if (oid) {
 				editId[key] = oid
 			}
-			state[key] = true;
+			state[popup] = true;
 			
 		},
 		show(key: string, oid?: any) {
@@ -338,11 +340,12 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		
 		columnTitle:"选择",
 		
-		onSelect: (selectedRowKeys: any, selectedRows: any) => {
+		onChange: (selectedRowKeys: any, selectedRows: any) => {
 			
 			console.log(selectedRowKeys, selectedRows)
-			
+			travelStore.curentProduct = [selectedRows] as any
 		},
+		selectedRowKeys: [travelStore.curentProduct[0].oid]
 	
 	}
 	if(travelStore.reserveStatus)
