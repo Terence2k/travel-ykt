@@ -70,3 +70,41 @@ export async function editPassWord(data: any) {
 		showLoading: true
 	});
 }
+
+// 根据业态查询企业
+export async function getCompanyByBusinessType(businessType: string) {
+	return request({
+		url: `${commonPath}/customer-service/public/api/company/getCompanyByBusinessType?businessType=${businessType}`,
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		method: 'post',
+		showLoading: false
+	});
+}
+
+// 检查账号
+export async function checkAccount(data: any) {
+  return request({
+    url: `${commonPath}/customer-service/public/api/sys-user/checkAccount`,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    method: 'put',
+    data,
+    showLoading: false
+  });
+}
+
+// 管理员重置用户密码
+export async function adminResetPassword(data: any) {
+  return request({
+    url: `${commonPath}/customer-service/public/api/sys-user/adminResetPassword`,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    method: 'put',
+    data,
+    showLoading: true
+  });
+}

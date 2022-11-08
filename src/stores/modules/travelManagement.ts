@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { GroupMode, GroupStatus, Gender, GuideType, FeeModel, insuranceType, AuditStaus, TakeGroupStatus } from '@/enum';
 import api from '@/api/index';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, toArray } from 'lodash';
 import { AuditField, Field, TakeGroupField } from '@/type';
 import dayjs, { Dayjs } from 'dayjs';
 import { CODEVALUE } from '@/constant';
@@ -109,19 +109,18 @@ export const useTravelStore = defineStore({
 		traveInfo: {},
 		attachmentList: [],
 		compositeProducts: [],
+		curentProduct: [{oid: ''}],
 		hotels: [],
 		scenicTickets: [],
-		gouvyList: [
-			{
+		gouvyList:[{
 				feeName: '古维管理费',
 				touristNum:'',
 				payableNum: '',
 				payablePrice: '',
-				isInitiateReduction: '待接团后由地接社申请',
-				isReductionPassed: '',
+				isInitiateReductionName: '待接团后由地接社申请',
+				isReductionPassedName: '',
 				issueStatusName: '',
-			},
-		],
+			}],
 		teamType: '',
 		feeModel: {
 			[FeeModel.Number]: '人数',
@@ -276,7 +275,12 @@ export const useTravelStore = defineStore({
 		setTeamType(data: any) {
 			this.teamType = data;
 		},
-		setHotels(data: any, oid: string) {
+		setHotels(data: any, oid: string, hotelId: string) {
+
+			if (hotelId) {
+				data.oid = oid;
+				return Object.assign(this.hotels.filter((item: any) => hotelId == item.hotelId)[0], data);
+			}
 			if (data.oid) {
 				Object.assign(this.hotels.filter((item: any) => data.oid == item.oid)[0], data);
 			} else {
@@ -310,7 +314,11 @@ export const useTravelStore = defineStore({
 				}
 			}) as any
 		},
-		setTicket(data: any, oid: string) {
+		setTicket(data: any, oid: string, productId: string) {
+			if (productId) {
+				data.oid = oid;
+				return Object.assign(this.scenicTickets.filter((item: any) => productId == item.scenicId)[0], data);
+			}
 			if (data.oid) {
 				Object.assign(this.scenicTickets.filter((item: any) => data.oid == item.oid)[0], data);
 			} else {
@@ -337,5 +345,10 @@ export const useTravelStore = defineStore({
 			const res = await api.travelManagement.getItineraryStatus();
 			this.itineraryStatusList = res;
 		},
+		async getManagementExpenses(id:any) {
+			const res = await api.getManagementExpenses(2);
+			this.gouvyList=res
+		},
+
 	},
 });

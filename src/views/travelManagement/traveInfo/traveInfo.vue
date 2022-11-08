@@ -8,28 +8,49 @@
 						<span v-if="travelStore.baseInfo.status !=11 ">{{ travelStore.touristList.length }}人 </span>
 					</template>
 					<template v-if="column.key === 'payableNum'">
-						<div class="action-btns" v-if="travelStore.baseInfo.status !=11 ">
+						<div class="action-btns" v-if="!travelStore.reserveStatus">
 							<span >预计{{ travelStore.touristList.length }}人 </span>
 						</div>
-						<div v-if="travelStore.baseInfo.status ==11 " >
+						<div v-if="travelStore.reserveStatus " >
 							<span >预计{{ record.payableNum }}人 </span>
-							<a class="item" @click="choice('selectPersonnelPop')" >选择人数</a>
 						</div>
 					</template>
 					<template v-if="column.key === 'payablePrice'">
-						<span v-if="travelStore.baseInfo.status !=11 ">{{accMul(travelStore.touristList.length,payablePrice)}}元 </span>
+						<span v-if="!travelStore.reserveStatus ">{{accMul(travelStore.touristList.length,payablePrice)}}元 </span>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a class="item"></a>
+							<a class="item" v-if="record.issueStatus==0" @click="choice({selectPersonnelPop:'selectPersonnelPop',id:route.query.id})">去出票</a>
+							<a class="item" v-if="record.isInitiateReduction==1 && record.isReductionPassed==0"  @click="see('modelValue')">查看驳回原因</a>
+							<a class="item" v-if="record.issueStatus==1">查看出票情况</a>
 						</div>
 					</template>
 				</template>
 			</CommonTable>
+		<BaseModal title="查看驳回原因" v-model="modelValue" :width="500">
+			<p>古维管理员 {{gouvyDate[0].lastUpdaterName}} 于 {{gouvyDate[0].lastUpdateTime}} 驳回</p>
+			<p>驳回原因：{{gouvyDate[0].refuesedReason}}</p>
+			<p>您可以重新修改减免申请信息，重新提交审核。</p>
+			<template v-slot:footer>
+				<a-button @click="modelValue = false">取消</a-button>
+			</template>
+		</BaseModal>
 		</div>
 		<div class="item-container">
 			<p class="title">综费产品</p>
-			<CommonTable :columns="columns" :dataSource="allFeesProducts" :scrollY="false">
+			<CommonTable :rowKey="(record)=>record.oid" :row-selection="rowRadioSelection" v-if="allFeesProducts.length > 1" :columns="columns" :dataSource="allFeesProducts" :scrollY="false">
+				<template #bodyCell="{ column, text, index, record }">
+					<template v-if="column.key === 'index'">
+						<div>
+							{{ index + 1 }}
+						</div>
+					</template>
+					<template v-if="column.key === 'feeModel'">
+						{{ column.data[text] }}
+					</template>
+				</template>
+			</CommonTable>
+			<CommonTable v-else :columns="columns" :dataSource="allFeesProducts" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
 					<template v-if="column.key === 'index'">
 						<div>
@@ -55,7 +76,7 @@
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a v-if="travelStore.reserveStatus && record.orderStatus == 0" @click="add('reserveTicketPop', record.oid)">预定</a>
-							<a v-if="travelStore.teamStatus" class="item" @click="add('addTicketPop', record.oid)">编辑</a>
+							<a v-if="travelStore.teamStatus" class="item" @click="add(record.oid ? 'addTicketPop' : 'productRow', 'addTicketPop', record.oid || record)">编辑</a>
 							<a v-if="travelStore.teamStatus" class="item">删除</a>
 							<a class="item" @click="show('showTicketPop', record.oid)">查看</a>
 						</div>
@@ -63,7 +84,7 @@
 				</template>
 			</CommonTable>
 			<div class="footer-btn">
-				<a-button type="primary" @click="add('addTicketPop')" v-if="travelStore.teamStatus">添加</a-button>
+				<a-button type="primary" @click="add('addTicketPop', 'addTicketPop')" v-if="travelStore.teamStatus">添加</a-button>
 			</div>
 		</div>
 		<div class="item-container">
@@ -78,7 +99,7 @@
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a v-if="travelStore.reserveStatus && record.orderStatus == 0" class="item" @click="reserveHotel(record)">预定</a>
-							<a v-if="travelStore.teamStatus" class="item" @click="add('addHotelPop', record.oid)">编辑</a>
+							<a v-if="travelStore.teamStatus" class="item" @click="add(record.oid ? 'addHotelPop' : 'productRow', 'addHotelPop', record.oid || record)">编辑</a>
 							<a v-if="travelStore.teamStatus" class="item" @click="del(index)">删除</a>
 							<a class="item" @click="show('showHotelPop', record.oid)">查看</a>
 						</div>
@@ -86,13 +107,13 @@
 				</template>
 			</CommonTable>
 			<div class="footer-btn">
-				<a-button type="primary" @click="add('addHotelPop')" v-if="travelStore.teamStatus">添加</a-button>
+				<a-button type="primary" @click="add('addHotelPop', 'addHotelPop')" v-if="travelStore.teamStatus">添加</a-button>
 			</div>
 		</div>
 	</div>
-	<addHotel :hotelId="editId.addHotelPop" v-model="addHotelPop" />
-	<addTicket :ticketId="editId.addTicketPop" v-model="addTicketPop" />
-	<Personnel v-model="selectPersonnelPop" />
+	<addHotel :productRow="editId.productRow" :hotelId="editId.addHotelPop" v-model="addHotelPop" />
+	<addTicket :productRow="editId.productRow" :ticketId="editId.addTicketPop" v-model="addTicketPop" />
+	<Personnel v-model="selectPersonnelPop" :routeId="id" />
 	<reserveTicket :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop" />
 	<reserveTicket :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop"  />
 	<showTicket :ticketId="showId.showTicketPop" v-model="showTicketPop"/>
@@ -109,7 +130,8 @@ import showHotel from './showHotel.vue';
 import { useTraveInfo } from './traveInfo';
 import { accDiv, accMul } from '@/utils/compute';
 import { GroupStatus } from '@/enum';
-
+import BaseModal from '@/components/common/BaseModal.vue';
+const route = useRoute();
 const props = defineProps({
 	onCheck: {
 		type: Boolean,
@@ -146,13 +168,20 @@ const {
 	show,
 	showHotelPop,
 	showTicketPop,
-	showId
+	showId,
+	rowRadioSelection,
+	id,
+	modelValue,
+	see
 } = useTraveInfo(props, emits);
 onMounted(() => {
 	onSearch();
 });
 </script>
 <style lang="less" scoped>
+::v-deep(.ant-table-selection-column) {
+	width: 50px;
+}
 .select-guide {
 	width: 115px;
 	color: #d5d5d5;

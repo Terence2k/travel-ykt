@@ -66,6 +66,7 @@
           </template>
         </a-transfer>
         <p class="tip">创建行程单时，是否有必购的项目？不选择即代表无必购项目。</p>
+        <p class="tip" style="color:#ff4d4f">勾选父节点表示选择任意子项目，而非全选</p>
       </a-form-item>
       <a-form-item label="是否启用" name="state">
         <a-radio-group name="state" v-model:value="teamForm.state">

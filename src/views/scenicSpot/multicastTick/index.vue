@@ -7,8 +7,8 @@
 			</SearchItem>
 			<SearchItem label="上架状态">
 				<a-select v-model:value="state.tableData.param.putaway" :allowClear="true" ref="select" style="width: 200px" placeholder="门票名称/关键词">
-					<a-select-option :value="false">下架</a-select-option>
-					<a-select-option :value="true">上架</a-select-option>
+					<a-select-option label="下架" :value="false">下架</a-select-option>
+					<a-select-option label="上架" :value="true">上架</a-select-option>
 				</a-select>
 			</SearchItem>
 			<!-- <SearchItem label="归属景区">
@@ -23,6 +23,7 @@
 				</a-select>
 			</SearchItem> -->
 			<template #button>
+				<a-button @click="reset" style="margin-right: 30px">重置</a-button>
 				<a-button @click="search">查询</a-button>
 			</template>
 		</CommonSearch>
@@ -136,7 +137,20 @@ const columns = [
 		width: 208,
 	},
 ];
-const state = reactive({
+interface stateType {
+	tableData: {
+		data: any[];
+		total: number;
+		loading: boolean;
+		param: {
+			pageNo: number;
+			pageSize: number;
+			ticketName: string;
+			putaway: boolean | null;
+		};
+	};
+}
+const state = reactive<stateType>({
 	tableData: {
 		data: [],
 		total: 400,
@@ -145,6 +159,7 @@ const state = reactive({
 			pageNo: 1,
 			pageSize: 10,
 			ticketName: '',
+			putaway: null,
 		},
 	},
 });
@@ -205,7 +220,12 @@ const initOption = async () => {
 		};
 	});
 };
-
+//重置
+const reset = () => {
+	state.tableData.param.ticketName = '';
+	state.tableData.param.putaway = null;
+	state.tableData.param.pageNo = 1;
+};
 const search = () => {
 	state.tableData.param.pageNo = 1;
 	initPage();

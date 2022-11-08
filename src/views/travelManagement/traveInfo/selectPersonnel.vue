@@ -5,23 +5,32 @@
 				<p>请勾选可减免的游客，提交减免申请：</p>
 			</div>
 			<div class="p">
-				<p>全部游客{{}}名，已减免{{}}人，本次勾选 {{}}人</p>
+				<p>全部游客{{ state.tableData.data.total }}名，已减免{{ state.tableData.data.reduceNum }}人，本次勾选 {{state.tableData.num}}人</p>
 			</div>
-			<CommonTable :row-selection="{ onSelect }" :columns="columns" :dataSource="state.tableData.data" :scrollY="false">
+			<CommonTable :row-selection="{ onSelect,getCheckboxProps }" :columns="columns" :dataSource="state.tableData.data.touristList" rowKey="oid" :scrollY="false">
 				<template #bodyCell="{ column, index, record }">
-					<template v-if="column.key === 'siveFe'">
-						<a-select ref="select" placeholder="选择可减免规则" allowClear>
-							<a-select-option v-for="item in state.tableData.list" :value="item.oid">
+					<template v-if="column.key === 'age'">
+						<div v-if="record.certificateType == 'IDENTITY_CARD'">
+							{{ record.age }}
+						</div>
+						<div v-else>
+							<a-input v-model:value="record.age" style="width: 100px" v-if="record.purchased!=2" ></a-input>
+							<a-input v-model:value="record.age" style="width: 100px" v-else disabled ></a-input>
+						</div>
+					</template>
+					<template v-if="column.key === 'specialCertificateTypeName'">
+						<span v-if="record.purchased">{{record.specialCertificateTypeName}}</span>
+					</template>
+					<template v-if="column.key === 'discountRuleId'">
+						<span v-if="record.purchased==2">{{record.discountRuleName}}</span>
+						<a-select ref="select" placeholder="选择可减免规则" v-model:value="record.discountRuleName" allowClear v-else>
+							<a-select-option v-for="item in state.tableData.list" :value="item.codeValue">
 								{{ item.ruleName }}
 							</a-select-option>
 						</a-select>
 					</template>
-					<template v-if="column.key === 'e'">
-						<a-select ref="select" placeholder="特殊证件类型" allowClear>
-							<a-select-option v-for="item in state.tableData.queryList" :value="item.oid">
-								{{ item.name }}
-							</a-select-option>
-						</a-select>
+					<template v-if="column.key === 'specialCertificateImg'">
+						<img :src="record.specialCertificateImg" />
 					</template>
 				</template>
 			</CommonTable>
@@ -35,7 +44,6 @@
 
 <script setup lang="ts">
 import { ref, Ref, computed, watch, toRefs, reactive } from 'vue';
-import { useRouter } from 'vue-router';
 import CommonTable from '@/components/common/CommonTable.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import BaseModal from '@/components/common/BaseModal.vue';
@@ -49,21 +57,21 @@ const dialogVisible = ref(false);
 const navigatorBar = useNavigatorBar();
 const formValidate: Ref<Record<string, any>> = ref({});
 // import { userList } from '@/api';
-const travelStore = useTravelStore()
+const travelStore = useTravelStore();
 
 const props = defineProps({
 	modelValue: {
 		type: Boolean,
 		default: false,
 	},
-	params: Object,
+	routeId: Object,
 });
-const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
+const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch', 'routeId']);
 const columns = [
 	{
 		title: '游客姓名',
-		dataIndex: 'getBasiclist',
-		key: 'getBasiclist',
+		dataIndex: 'touristName',
+		key: 'touristName',
 	},
 	{
 		title: '身份证号码',
@@ -72,8 +80,9 @@ const columns = [
 	},
 	{
 		title: '性别',
-		dataIndex: 'gender',
-		key: 'gender',
+		dataIndex: 'genderName',
+		key: 'genderName',
+
 	},
 	{
 		title: '年龄',
@@ -119,6 +128,8 @@ const state = reactive({
 		queryList: [],
 		status: '1',
 		pattern: '1',
+		age: '',
+		num:0
 	},
 	title: '',
 	operationModal: {
@@ -128,17 +139,23 @@ const state = reactive({
 });
 const auditRef = ref();
 const init = async () => {
-	console.log('params', props.params);
-	//
+	console.log('params', props.routeId);
 	// formValidate.value = {};
 	// formValidate.value = { ...props.params };
 };
-const onSelect = () => {
-	api.getItineraryTourist(traveListData.itineraryNo).then((res) => {
-		state.tableData.data = res.content;
-		console.log(res, '113');
+const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
+	state.tableData.num=selectedRows.length
+};
+const onSearch = () => {
+	//props.routeId后面传这个
+	api.getItineraryTourist(2).then((res) => {
+		state.tableData.data = res;
 	});
 };
+const getCheckboxProps=(record: any)=>({
+	disabled:record.purchased==2,
+	// defaultChecked:selectedRowKeys.includes(record.purchased==2)
+	})
 const onSearchList = () => {
 	api.getBasiclist({ discountRuleStatus: 1 }).then((res) => {
 		state.tableData.list = res;
@@ -156,7 +173,7 @@ watch(
 		dialogVisible.value = nVal;
 		if (dialogVisible.value) {
 			await init();
-			onSelect();
+			onSearch();
 			onSearchList();
 			dropDownQueryList();
 		}
@@ -164,7 +181,6 @@ watch(
 );
 
 watch(dialogVisible, (nVal) => {
-	console.log(nVal, '1111111111');
 	emit('update:modelValue', nVal);
 });
 </script>
@@ -174,7 +190,7 @@ watch(dialogVisible, (nVal) => {
 	display: flex;
 	justify-content: space-between;
 }
-.p{
+.p {
 	text-align: right;
 }
 </style>

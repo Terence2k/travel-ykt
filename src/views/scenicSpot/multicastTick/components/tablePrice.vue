@@ -3,6 +3,10 @@
 		<a-spin size="large" :spinning="loading" style="min-height: 30vh">
 			<CommonTable :dataSource="tableList" :columns="columnsCount" :scrollY="false" bordered class="left">
 				<template #bodyCell="{ column, record, index }">
+					<template v-if="column.key === 'priceRange'">
+						<span v-if="getMin(record) === getMax(record, index)">{{ getMax(record, index) }} </span>
+						<span v-else>{{ getMin(record) }} - {{ getMax(record, index) }} </span></template
+					>
 					<template v-if="column.key === 'settlementModel'">
 						<a-select v-model:value="record.settlementModel" :allowClear="true" ref="select" placeholder="请选择" :options="settlementModelList">
 						</a-select>
@@ -72,7 +76,7 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import dayjs, { Dayjs } from 'dayjs';
 import { Form } from 'ant-design-vue';
 import Calendar from '@/components/common/calendarDouble.vue';
-import { shijianYMD, getAllDateCN, nextYear } from '@/utils/formatTIme';
+import { shijianYMD, getAllDateCN, nextYear } from '@/utils/formatTime';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 const route = useRouter();
@@ -99,8 +103,8 @@ const columnsCount = ref([
 	},
 	{
 		title: '联票价格估算',
-		dataIndex: 'price',
-		key: 'price',
+		dataIndex: 'priceRange',
+		key: 'priceRange',
 		width: 200,
 		customCell: (record: any, index: number) => {
 			if (record.price && !index) {
@@ -139,6 +143,23 @@ const disabledDate = (current: Dayjs) => {
 	let stat = dayjs(state.data.startDate),
 		end = dayjs(state.data.endDate);
 	return current < stat || current > end;
+};
+
+const getMin = (value: any) => {
+	let min = props.tableList[0]?.price || 0;
+	if (value.price < min) {
+		min = value.price;
+	}
+	return min;
+};
+const getMax = () => {
+	let max = 0;
+	props.tableList?.map((item: any) => {
+		max += item.price;
+		return item;
+	});
+
+	return max;
 };
 //日历
 const currentPrict = ref(null);
