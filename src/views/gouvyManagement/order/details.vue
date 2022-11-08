@@ -1,8 +1,8 @@
 <template>
 	<div class="warp">
-		<header>行程信息</header>
-		<div class="go-div">
-			<a-button type="primary" @click="go">返回上一级</a-button>
+		<div class="top-div">
+			<header>行程信息</header>
+			<a-button type="primary" style="margin-top:15px;" @click="go()">返回上一级</a-button>
 		</div>
 		<a-form labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
 			<a-form-item label="行程类型">
@@ -33,13 +33,27 @@
 				<a-button type="primary" class="success" @click="adopt">审核通过</a-button>
 				<a-button type="primary" class="btn" @click="dialogVisible = true">审核不通过</a-button>
 			</div> -->
-			<div class="title">申请减免人员</div>
+			<div class="title">订单信息</div>
+			<a-form-item label="订单编号">
+				<span>30人</span>
+			</a-form-item>
+			<a-form-item label="当前状态">
+				<span>30人</span>
+			</a-form-item>
+			<a-form-item label="费用明细">
+				<span>30人</span>
+			</a-form-item>
+			<a-form-item label="费用总计">
+				<span>30人</span>
+			</a-form-item>
+			<div class="title">购买人员明细</div>
 			<CommonTable :dataSource="dataSource" :columns="columns">
+				<p>当前古维费已经于 {{}} 全部出票。全部游客{{}}名,已减免{{}}人,实缴{{}}人。</p>
 				<template #bodyCell="{ column, index }">
 					<template v-if="column.key === 'action'">
-						<div class="action-btns">
+						<!-- <div class="action-btns">
 							<a href="javascript:;" @click="download">下载证明</a>
-						</div>
+						</div> -->
 					</template>
 				</template>
 			</CommonTable>
@@ -62,111 +76,80 @@
 import CommonTable from '@/components/common/CommonTable.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import BaseModal from '@/components/common/BaseModal.vue';
-import { ref,reactive} from 'vue';
-import { useRouter } from 'vue-router'
+import { ref, reactive } from 'vue';
+import { useRouter } from 'vue-router';
 import { message } from 'ant-design-vue';
+import api from '@/api';
 const route = useRouter();
 const dialogVisible = ref(false);
 const navigatorBar = useNavigatorBar();
 const tstyle = { 'font-weight': '700' };
-const dataSource = [
-	{
-		index: '1',
-		name: '身份证',
-		age: '441622199903126097',
-		address: '成人',
-		address2: '骆某某',
-		address3: '男',
-		address4: '正常',
-		address5: '减免',
-		address6: '100',
-	},
-];
+const dataSource = [];
 const state = reactive({
 	tableData: {
-		index:{},
-		type:'2'
+		data:[]
 	},
 });
 const columns = [
 	{
-		title: '序号',
-		dataIndex: 'index',
-		key: 'index',
+		title: '购买状态',
+		dataIndex: 'purchasedName',
+		key: 'purchasedName',
 	},
 	{
-		title: '证件类型',
-		dataIndex: 'name',
-		key: 'name',
+		title: '游客姓名',
+		dataIndex: 'touristName',
+		key: 'touristName',
 	},
 	{
-		title: '证件号码',
+		title: '身份证件类型',
+		dataIndex: 'certificateTypeName',
+		key: 'certificateTypeName',
+	},
+	{
+		title: '身份证号码',
+		dataIndex: 'certificateNo',
+		key: 'certificateNo',
+	},
+	{
+		title: '性别',
+		dataIndex: 'genderName',
+		key: 'genderName',
+	},
+	{
+		title: '年龄',
 		dataIndex: 'age',
 		key: 'age',
 	},
 	{
-		title: '身份类型',
-		dataIndex: 'address',
-		key: 'address',
+		title: '联系方式',
+		dataIndex: 'purchased',
+		key: 'purchased',
 	},
 	{
-		title: '姓名',
-		dataIndex: 'address2',
-		key: 'address2',
+		title: '客源地',
+		dataIndex: 'sourceAddressName',
+		key: 'sourceAddressName',
 	},
 	{
-		title: '性别',
-		dataIndex: 'address3',
-		key: 'address3',
+		title: '减免规则',
+		dataIndex: 'discountRuleName',
+		key: 'discountRuleName',
 	},
 	{
-		title: '比对结果',
-		dataIndex: 'address4',
-		key: 'address4',
-	},
-	{
-		title: '身份证明',
-		dataIndex: 'address3',
-		key: 'address3',
-	},
-	{
-		title: '购票情况',
-		dataIndex: 'address5',
-		key: 'address5',
-	},
-	{
-		title: '购票金额（元）',
-		dataIndex: 'address6',
-		key: 'address6',
-	},
-	{
-		title: '操作',
-		key: 'action',
-		fixed: 'right',
-		width: 208,
+		title: '实际缴费金额',
+		dataIndex: 'actualPrice',
+		key: 'actualPrice',
 	},
 ];
-const go =()=>{
-	route.push({ path: '/gouvyManagement/order/list'});
-}
-const cancel =()=>{
-	dialogVisible.value = false
-}
-// const Fail =()=>{
-// 	message.error('审核未通过');
-// 	dialogVisible.value = false
-// 	go()
-// }
-// const adopt =()=>{
-// 	message.success('审核已通过');
-// 	go()
-// }
-const download =()=>{
-	message.success('下载成功');
-	go()
+const go = () => {
+	route.push({ path: '/gouvyManagement/order/list' });
+};
+const onSearch=()=>{
+	
 }
 onMounted(() => {
-	state.tableData.index=route.currentRoute.value?.query
+	onSearch()
 });
 </script>
 
@@ -193,12 +176,12 @@ onMounted(() => {
 		margin-bottom: 16px;
 		border-bottom: 1px solid #f1f2f5;
 	}
-.btn{
-	margin-left: 50px;
-}
-.go-div{
-	width: 100%;
-	text-align: right;
-}
+	.btn {
+		margin-left: 50px;
+	}
+	.top-div{
+		display: flex;
+		justify-content: space-between;
+	}
 }
 </style>

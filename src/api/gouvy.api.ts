@@ -99,3 +99,61 @@ export async function getManagementExpenses(id: number) {
 		showLoading: false,
 	});
 }
+//减免申请记录
+export async function exemptionManagementList(data: any) {
+	return request({
+		url: `${commonPath}/heritage-maintenance-service/public/api/hm-apply-record/page`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
+//行程减免信息详情
+export async function ExemptionManagementDetail(id: number) {
+	return request({
+		url: `${commonPath}/heritage-maintenance-service/public/api/hm-apply-record/detail/${id}`,
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		method: 'get',
+		showLoading: false,
+	});
+}
+//古维订单
+export async function gouvyOrder(data: any) {
+	return request({
+		url: `${commonPath}/heritage-maintenance-service/public/api/hm-order/page`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
+//古维订单提交减免申请
+export async function applyReduction(data: any) {
+	return request({
+		url: `${commonPath}/heritage-maintenance-service/public/api/hm-order/applyReduction`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
+//古维订单提交减免审核不通过
+export async function noAuditFailed(data: any) {
+	return request({
+		url: `${commonPath}/heritage-maintenance-service/public/api/hm-apply-record/auditFailed`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
+//古维订单提交减免审核通过
+export async function AuditFailed(id: number) {
+	return request({
+		url: `${commonPath}/heritage-maintenance-service/public/api/hm-apply-record/auditAdopt/${id}`,
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		method: 'get',
+		showLoading: false,
+	});
+}

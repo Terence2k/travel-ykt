@@ -122,7 +122,7 @@ const columns = [
 		dataIndex: 'actions',
 		key: 'actions',
 		fixed: 'right',
-		width: 120,
+		width: 160,
 	},
 ];
 

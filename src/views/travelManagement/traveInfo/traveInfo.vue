@@ -20,9 +20,9 @@
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a class="item" v-if="record.issueStatus==0" @click="choice({selectPersonnelPop:'selectPersonnelPop',id:route.query.id})">去出票</a>
-							<a class="item" v-if="record.isInitiateReduction==1 && record.isReductionPassed==0"  @click="see('modelValue')">查看驳回原因</a>
-							<a class="item" v-if="record.issueStatus==1">查看出票情况</a>
+							<a class="item" v-if="record.issueStatus==0" @click="choice({selectPersonnelPop:'selectPersonnelPop',id:route.query.id,isReductionPassed:record.isReductionPassed})">去出票</a>
+							<a class="item" v-if="record.isInitiateReduction==1 && record.isReductionPassed==0"  @click="seeReject('modelValue')">查看驳回原因</a>
+							<a class="item" v-if="record.issueStatus==1" @click="see({ticketingValue:'ticketingValue',itineraryId:record.itineraryId})">查看出票情况</a>
 						</div>
 					</template>
 				</template>
@@ -33,6 +33,19 @@
 			<p>您可以重新修改减免申请信息，重新提交审核。</p>
 			<template v-slot:footer>
 				<a-button @click="modelValue = false">取消</a-button>
+			</template>
+		</BaseModal>
+		<BaseModal title="古维出票记录" v-model="ticketingValue" :width="1000">
+			<p>当前古维费已经于  全部出票。全部游客{{ticketingDate.total}}名,已减免{{ticketingDate.reduceNum}}人,实缴{{ticketingDate.paidNum}}人。</p>
+			<CommonTable :columns="ticketingColumns" :dataSource="ticketingDate.touristList" :scrollY="false">
+				<template #bodyCell="{ column, text, index, record }">
+					<template v-if="column.key === 'actualPrice'">
+						<span>{{accDiv(record.actualPrice,100)}}</span>
+					</template>
+				</template>
+			</CommonTable>
+			<template v-slot:footer>
+					<a-button @click="ticketingValue = false">取消</a-button>
 			</template>
 		</BaseModal>
 		</div>
@@ -172,7 +185,12 @@ const {
 	rowRadioSelection,
 	id,
 	modelValue,
-	see
+	seeReject,
+	see,
+	ticketingValue,
+	ticketingColumns,
+	ticketingDate,
+	isReductionPassed
 } = useTraveInfo(props, emits);
 onMounted(() => {
 	onSearch();
