@@ -36,7 +36,13 @@
 	<div>
 		<a-spin size="large" :spinning="state.tableData.loading">
 			<!-- :scroll="{ x: 2800 }" -->
-			<CommonTable :dataSource="state.tableData.data" :columns="columns"> </CommonTable>
+			<CommonTable :dataSource="state.tableData.data" :columns="columns">
+				<template #bodyCell="{ column, record }">
+					<template v-if="column.key === 'settlementRuleName'">
+						<span>{{ column.ruleName }}</span>
+					</template>
+				</template>
+			</CommonTable>
 		</a-spin>
 		<CommonPagination
 			:current="state.tableData.param.pageNo"
@@ -142,13 +148,23 @@ const columns = computed(() => {
 			key: 'scenicPrice',
 		},
 	];
-	if (state.tableData.data.settlementRuleList && state.tableData.data.settlementRuleList.length) {
-		for (const key in state.tableData.data.settlementRuleList) {
+	let data: any = [];
+	if (state.tableData.data && state.tableData.data.length) {
+		for (const key in state.tableData.data) {
+			if (
+				state.tableData.data[key].settlementRuleList &&
+				state.tableData.data[key].settlementRuleList.length &&
+				state.tableData.data[key].settlementRuleList.length > data.length
+			) {
+				data = state.tableData.data[key].settlementRuleList;
+			}
+		}
+		for (const key in data) {
 			const settlementRules = {
 				title: `结算规则${Number(Number(key) + 1)}`,
 				dataIndex: 'settlementRuleName',
 				key: 'settlementRuleName',
-				data: state.tableData.data.settlementRuleList[key]['ruleName'],
+				ruleName: data[key]['ruleName'],
 			};
 			column.push(settlementRules);
 		}
@@ -184,6 +200,40 @@ const initList = async () => {
 	state.tableData.total = total;
 	state.tableData.data = content;
 	state.tableData.loading = false;
+	state.tableData.data = [
+		{
+			itineraryNo: '111', //团单编号
+			scenicId: 1, //关联景区id
+			scenicName: '111', //景区名称
+			ticketId: 1, //票id
+			ticketName: '111', //门票名称
+			travelTypeId: 1, //团队类型id
+			travelTypeName: 111, //团队类型名称
+			subTravelId: 1, //地接社id
+			subTravelName: 111, //地接社名称
+			verificationTime: '2022.03.01 09:00', //核销时间
+			settlementTime: '2022.03.01 09:00', //结算时间
+			unitPrice: '1', //单价
+			reservationNum: 1, //预定数
+			settlementNum: 1, //实刷数
+			breaksNum: 1, //减免数
+			orderPrice: '1', //预定金额
+			unSettlementPrice: '1', //未核销金额
+			breaksPrice: '1', //减免金额
+			ticketPrice: '1', //票款金额
+			scenicPrice: '1', //景点实收
+			settlementRuleList: [
+				{
+					ruleName: '111', //结算规则名称
+					rulePrice: '10', //结算费用
+				},
+				{
+					ruleName: '222', //结算规则名称
+					rulePrice: '22', //结算费用
+				},
+			], //结算规则信息
+		},
+	];
 };
 //搜索
 const onHandleCurrentChange = (val: number) => {
