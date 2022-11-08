@@ -8,3 +8,12 @@ export async function byItineraryTicket(data: any) {
 		showLoading: true,
 	});
 }
+// 酒店账目
+export async function hotelAccountList(data: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/statement/hotel/statement//hotelAccountList`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}

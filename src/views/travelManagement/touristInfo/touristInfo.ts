@@ -22,6 +22,9 @@ interface DataItem {
 	edit: boolean;
 	emergencyContactName: string;
 	emergencyContactPhone: string;
+	provinceId: string;
+	cityId: string;
+	age: string;
 }
 
 const rules:{[k:string]: any} = {
@@ -29,7 +32,8 @@ const rules:{[k:string]: any} = {
 	certificateNo: [{ required: true, message: '请输入证件号码' }],
 	name: [{ required: true, message: '请输入姓名' }],
 	gender: [{ required: true, message: '请选择性别' }],
-	sourceAddressName: [{ required: true, message: '请选择客源地' }]
+	sourceAddressName: [{ required: true, message: '请选择客源地' }],
+	age: [{ required: true, message: '请输入年龄' }]
 }
 export function useTouristInfo(props: any, emits: any): Record<string, any> {
 	const travelStore = useTravelStore()
@@ -43,7 +47,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 		startRef: {},
 		cityOptions: [],
 		selectKey: ['certificateType', 'gender', 'specialCertificateType'],
-		inputKey: ['certificateNo', 'name', 'emergencyContactName', 'emergencyContactPhone'],
+		inputKey: ['certificateNo', 'name', 'emergencyContactName', 'emergencyContactPhone', 'age'],
 		rulesRef: {},
         onSelect: (record: DataItem, selected: boolean, selectedRows: DataItem[]) => {
             console.log(record, selected, selectedRows);
@@ -76,6 +80,11 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 				dataIndex: 'gender',
 				key: 'gender',
 				data: travelStore.genderList
+			},
+			{
+				title: '年龄',
+				dataIndex: 'age',
+				key: 'age',
 			},
 			{
 				title: '客源地',
@@ -145,37 +154,55 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			);
 		},
 		// 特殊证件判断
-		isUpload(key: any) {
+		isUpload(key: any): {flag: boolean, text: string} {
 			let flag: boolean = false;
+			let text = ''
 			if (state.editableData[key].specialCertificateType) {
 				(!state.editableData[key].specialCertificatePicture
 				|| !state.editableData[key].specialCertificatePicture.length) &&
-				message.error(`请上传游客${state.editableData[key].name}特殊证件图片`)
+				(text = `请上传游客${state.editableData[key].name}特殊证件图片`)
 				flag = false;
 			} else {
 				flag = true;
 			}
-			return flag;
+			return {
+				flag,
+				text
+			};
 		},
 		// 老人判断
-		isOld(key: any) {
+		isOld(key: any): {flag: boolean, text: string} {
 			let flag: boolean = false;
-			if (state.editableData[key].certificateType !== CODEVALUE.TRAVE_CODE.IDENTITY_CARD) return flag = true;
+			let text = ''
+			if (state.editableData[key].certificateType !== CODEVALUE.TRAVE_CODE.IDENTITY_CARD) {
+				return {
+					flag: true,
+					text: ''
+				}
+			};
 
 			const age = getAge(state.editableData[key].certificateNo)
-			if (age < 60) return flag = true;
+			if (age < 60) {
+				return {
+					flag: true,
+					text: ''
+				};
+			}
 
 			if (!state.editableData[key].emergencyContactName) {
-				message.error(`游客中存在60以上的老人，请填写游客${state.editableData[key].name}紧急联系人`)
+				text = `游客中存在60以上的老人，请填写游客${state.editableData[key].name}紧急联系人`
 				flag = false;
 			} else if (!state.editableData[key].emergencyContactPhone) {
-				message.error(`游客中存在60以上的老人，请填写游客${state.editableData[key].name}紧急联系人电话`)
+				text = `游客中存在60以上的老人，请填写游客${state.editableData[key].name}紧急联系人电话`
 				flag = false;
 			} else {
 				flag = true;
 			}
 			
-			return flag;
+			return {
+				flag,
+				text
+			};
 			
 		},
 		addRules(key?: any) {
@@ -204,14 +231,18 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			const res = await validateFields(state.formRef);
 			if (!res) return emits('onSuccess', {touristList: {valid: res, message: '请填写完整游客信息', index: 2}});
 			if (key) {
-				if (!methods.isOld(key)) return;
-				if (!methods.isUpload(key)) return;
+				const result = methods.isOld(key)
+				const isUpload = methods.isUpload(key)
+				if (!result.flag) return message.error(result.text);
+				if (!isUpload.flag) return message.error(isUpload.text);
 				methods.copyData(key);
 				delete state.editableData[key];
 			} else {
 				for (let k in state.editableData) {
-					if (!methods.isOld(k)) return;
-					if (!methods.isUpload(k)) return;
+					const result = methods.isOld(k);
+					const isUpload = methods.isUpload(k);
+					if (!result.flag) return emits('onSuccess', {touristList: {valid: false, message: result.text, index: 2}});
+					if (!isUpload.flag) return emits('onSuccess', {touristList: {valid: false, message: isUpload.text, index: 2}});
 					methods.copyData(k);
 					delete state.editableData[k];
 				}
@@ -230,9 +261,25 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			console.log(state.tableData)
 		},
 		handleChange(val: any, option: any, key: string) {
-			console.log(val, option)
+			// console.log(val, option)
+			state.editableData[key].provinceId = val[0]
+			state.editableData[key].cityId = val[1]
 			state.editableData[key].sourceAddress = val[val.length - 1];
 			state.editableData[key].sourceAddressName = option.map((it:any) => it.label).join('/')
+		},
+		changeIDCard(key: string, columns: string) {
+
+			if (columns === 'certificateNo' &&
+					state.editableData[key].certificateType === CODEVALUE.TRAVE_CODE.IDENTITY_CARD) {
+
+				if (state.editableData[key].certificateNo.length < 18) {
+					state.editableData[key].age = '';
+					return message.error('请输入正确的身份证')
+				}
+
+				const age: string = getAge(state.editableData[key].certificateNo) as any
+				state.editableData[key].age = age;
+			}
 		}
 	}
 	watch(onCheck, (newVal) => {
@@ -247,6 +294,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 	methods.getCityList('0/1', 0).then(res => {
 		state.cityOptions = res
 	});
+	
 	return {
 		...toRefs(state),
 		...methods,

@@ -2,7 +2,10 @@
 	<BaseModal v-model="dialogVisible" title="选择预定酒店" :width="1100" :onOk="handleOk">
 		<a-form ref="formRef" :model="formState" autocomplete="off" labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 10 }">
 			<a-form-item label="选择星级" name="hotelStarId" :rules="[{ required: true, message: '请选择星级' }]">
-				<a-select v-model:value="formState.hotelStarId" placeholder="请选择星级" @change="handleChange">
+				<a-select 
+					:disabled="productRow.productId &&
+								productRow.productId.toString() ? true : false"
+					v-model:value="formState.hotelStarId" placeholder="请选择星级" @change="handleChange">
 					<a-select-option 
 						:value="item.oid" 
 						v-for="item in hotelData.hotelStart" 
@@ -13,7 +16,10 @@
 			</a-form-item>
 
 			<a-form-item label="选择酒店" name="hotelId" :rules="[{ required: true, message: '请选择酒店' }]">
-				<a-select v-model:value="formState.hotelId" placeholder="请选择酒店" @change="handleHotel">
+				<a-select 
+					:disabled="productRow.productId &&
+								productRow.productId.toString() ? true : false"
+					v-model:value="formState.hotelId" placeholder="请选择酒店" @change="handleHotel">
 					<a-select-option 
 						:value="item.oid" v-for="item in hotelData.hotel" 
 						:key="item.oid"
@@ -128,6 +134,10 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 import { message } from 'ant-design-vue/es';
 import { Rule } from 'ant-design-vue/es/form';
 import dayjs, { Dayjs } from 'dayjs';
+import { selectSpecialDateRange } from '@/utils';
+import { Modal } from 'ant-design-vue';
+import { createVNode } from 'vue';
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any ) || {}
 const route = useRoute()
@@ -154,6 +164,10 @@ const props = defineProps({
 	hotelId: {
 		type: String,
 		default: ''
+	},
+	productRow: {
+		type: Object,
+		default: {}
 	}
 });
 // 酒店数据
@@ -188,6 +202,10 @@ const handleHotel = (e: any, option: any) => {
 const handleChangCheckIn = () => {
 	disLeave.value = (current: Dayjs): any => current && current < dayjs(formState.arrivalDate).add(1, 'day') || 
 	(dayjs(travelStore.teamTime[1]).add(1, 'day') < current && current)
+	const isAfter = dayjs(dayjs(formState.arrivalDate)).isAfter(dayjs(formState.departureDate).subtract(1, 'day'))
+	if (formState.departureDate && isAfter) {
+		formState.departureDate = '';
+	}
 }
 
 const changeRoomType = (e: any, option: any, index: number) => {
@@ -257,10 +275,10 @@ const getOrderAmount = (data: Array<{[k:string]:any}>, startDate: string, endDat
 	return amount.reduce((prev, next) => prev + next)
 }
 
-const handleOk = async (callback: Function) => {
+const submit = async () => {
 	try {
 		let traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {}
-		await formRef.value.validateFields();
+		
 		// formState.scheduledNumber = formState.roomTypeList.map((it: any) => Number(it.checkInNumber))
 		// .reduce((prev: any, current: any) => prev + current);
 		formState.scheduledRooms = formState.roomTypeList.map((it: any) => Number(it.reserveNumber))
@@ -283,12 +301,46 @@ const handleOk = async (callback: Function) => {
 		
 		// message.success('新增成功');
 		
-		travelStore.setHotels(newFormState, res)
-		callback()
+		travelStore.setHotels(newFormState, res, props.productRow.productId)
+		// callback()
 	} catch (errorInfo) {
-		callback(false);
+		// callback(false);
 	}
+}
+
+const handleOk = async (callback: Function) => {
+	
+	try {
+		await formRef.value.validateFields();
+		
+	} catch (error) {
+		return callback(false)
+	}
+	const res = selectSpecialDateRange(formState.arrivalDate, formState.departureDate, formState.hotelId);
+	if (!res) {
+		await submit();
+		callback();
+		return
+	}
+	Modal.confirm({
+		title: '添加确认？',
+		icon: createVNode(ExclamationCircleOutlined),
+		content: createVNode('div', { style: 'color: #333;' }, 
+			`存在与本次预定相同的酒店且入离时间存在交叉，如生成新订单则无法计入减免。`),
+		async onOk() {
+			
+			await submit();
+			callback();
+		},
+		onCancel() {
+			callback(false)
+			console.log('Cancel');
+		}
+	});
+	
 };
+
+
 
 
 
@@ -317,8 +369,9 @@ watch(dialogVisible, (newVal) => {
 				formState[k] = '';
 			}
 		}
+		console.log(formState)
 	} else {
-		props.hotelId && api.travelManagement.hotelDetail(props.hotelId).then((res:any) => {
+		!props.productRow.productId && props.hotelId && api.travelManagement.hotelDetail(props.hotelId).then((res:any) => {
 			for (let k in res) {
 				formState[k] = res[k]
 			}
@@ -335,7 +388,16 @@ watch(dialogVisible, (newVal) => {
 				return it;
 			})
 		})
+		formState.hotelId = props.productRow.productId;
+		formState.hotelName = props.productRow.hotelName;
+
+		props.productRow.productId && api.travelManagement.getGuidePriceStarCodeByHotelId(props.productRow.productId)
+											.then((res: any) => {
+											formState.hotelStarId = res.oid
+											handleChange(res.oid, {price: res.price, name: res.starCode})
+										})
 	}
+	
 	emits('update:modelValue', newVal);
 });
 

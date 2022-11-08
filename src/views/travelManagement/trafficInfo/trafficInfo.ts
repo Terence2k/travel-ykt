@@ -25,7 +25,8 @@ const rules = {
 	companyName: [{ required: true, message: '请输入车企名称' }],
 	approvedLoad: [{ required: true, message: '请输入核载人数（人）' }],
 	time: [{ required: true, message: '请选择用车时间段' }],
-	driver: [{ required: true, message: '请输入驾驶员' }]
+	driver: [{ required: true, message: '请输入驾驶员' }],
+	driverPhone: [{ required: true, message: '请输入驾驶员手机号' }]
 }
 
 export function useTrafficInfo(props: any, emits: any): Record<string, any> {
@@ -39,7 +40,7 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 		editableData: {},
 		startRef: {},
 		selectKey: ['transportationType', 'licencePlateColor'],
-		inputKey: ['licencePlateNumber', 'companyName', 'approvedLoad', 'driver'], 
+		inputKey: ['licencePlateNumber', 'companyName', 'approvedLoad', 'driver', 'driverPhone'], 
 		rulesRef: {
 			1: {
 				licencePlateNumber: [{ required: true, message: '请选择行程类型' }]
@@ -91,6 +92,11 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 				title: '驾驶员',
 				dataIndex: 'driver',
 				key: 'driver',
+			},
+			{
+				title: '驾驶员手机号',
+				dataIndex: 'driverPhone',
+				key: 'driverPhone',
 			},
 			{
 				title: '操作',

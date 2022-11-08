@@ -1,5 +1,5 @@
 <template>
-	<BaseModal v-model="dialogVisible" title="选择预定酒店" :width="900">
+	<BaseModal v-model="dialogVisible" title="查看酒店" :width="900">
 		<a-form ref="formRef" :model="formState" autocomplete="off" labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 10 }">
 			<a-form-item label="选择星级" name="hotelStarId">
 				{{formState.hotelStar}}

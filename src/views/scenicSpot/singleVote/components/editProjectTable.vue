@@ -255,6 +255,10 @@ const modelValue = ref(false);
 const CreateData = () => {
 	modelValue.value = true;
 	console.log(props.tableList);
+	first.value = false;
+	setTimeout(() => {
+		first.value = true;
+	}, 200);
 	if (type && props.tableList.length > 0) {
 		formValidate.proj = [];
 		props.tableList.map((i: any) => {
@@ -298,7 +302,9 @@ const handleChange = (value: any) => {
 const hadList = (rule: any, value: any) => {
 	let len = value.length;
 	console.log(value, 'value', len, value[0]?.init, !value);
-
+	if (!first.value) {
+		return Promise.resolve();
+	}
 	if (!value) {
 		console.log('空值');
 		return Promise.reject('请填写');
@@ -351,9 +357,9 @@ onMounted(() => {
 	if (pageStatus.value && !type.value) {
 		emits('add-verification-obj-sign', formValidate.initData);
 	}
-	setTimeout(() => {
-		first.value = true;
-	}, 2000);
+	// setTimeout(() => {
+	// 	first.value = true;
+	// }, 2000);
 });
 
 // const setValue = (value: number) => {
@@ -365,7 +371,12 @@ watch(
 	async (nVal) => {
 		if (first.value) {
 			formValidate.proj = [];
-			emits('add-verification-obj', []);
+
+			if (!type.value) {
+				emits('add-verification-obj-sign', [{ init: true }]);
+			} else {
+				emits('add-verification-obj', []);
+			}
 		}
 		if (nVal) {
 			getList(nVal);
