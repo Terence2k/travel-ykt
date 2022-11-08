@@ -1,17 +1,20 @@
 <template>
 	<div>
-		<CommonTable :columns="columns" :dataSource="data">
+		<CommonTable :columns="columns" :dataSource="state.tableData.data">
 			<template #bodyCell="{ column, record }">
+				<template v-if="column.dataIndex === 'itineraryStartDate'">
+					<span>{{ record.itineraryStartDate }}~{{ record.itineraryEndDate }}</span>
+				</template>
 				<template v-if="column.dataIndex === 'actions'">
 					<div class="action-btns">
-						<a @click="toSee">查看</a>
+						<a @click="toSee(record.oid)">查看</a>
 					</div>
 				</template>
 			</template>
 		</CommonTable>
 		<CommonPagination
-			:current="state.tableData.param.pageNo"
-			:page-size="state.tableData.param.pageSize"
+			:current="gouvyStore.gouvyList.refuse.params.pageNo"
+			:page-size="gouvyStore.gouvyList.refuse.params.pageSize"
 			:total="state.tableData.total"
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
@@ -28,49 +31,47 @@ import api from '@/api';
 import { SelectProps, TableColumnsType } from 'ant-design-vue';
 import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
 import details from './details.vue';
+import { GouvyStatus } from '@/enum';
+import { useGouvyStore } from '@/stores/modules/gouvy';
 const router = useRouter();
+const gouvyStore = useGouvyStore();
 const navigatorBar = useNavigatorBar();
 const visible = ref(false);
 const columns = [
 	{
 		title: '行程单号',
-		dataIndex: 'a',
-		key: 'a',
+		dataIndex: 'itineraryNo',
+		key: 'itineraryNo',
 	},
 	{
 		title: '线路名称',
-		dataIndex: 'b',
-		key: 'b',
+		dataIndex: 'routeName',
+		key: 'routeName',
 	},
 	{
 		title: '发团旅行社',
-		dataIndex: 'c',
-		key: 'c',
+		dataIndex: 'travelName',
+		key: 'travelName',
 	},
 	{
 		title: '接团旅行社',
-		dataIndex: 'd',
-		key: 'd',
+		dataIndex: 'subTravelName',
+		key: 'subTravelName',
 	},
 	{
 		title: '行程日期',
-		dataIndex: 'e',
-		key: 'e',
+		dataIndex: 'itineraryStartDate',
+		key: 'itineraryStartDate',
 	},
 	{
 		title: '行程人数',
-		dataIndex: 'f',
-		key: 'f',
+		dataIndex: 'touristNum',
+		key: 'touristNum',
 	},
 	{
 		title: '减免人数',
-		dataIndex: 'g',
-		key: 'g',
-	},
-	{
-		title: '申请减免金额',
-		dataIndex: 'h',
-		key: 'h',
+		dataIndex: 'reduceNum',
+		key: 'reduceNum',
 	},
 	{
 		title: '操作',
@@ -80,42 +81,24 @@ const columns = [
 		width: 160,
 	},
 ];
-
-const data = [
-	{
-		a: '审核失败',
-		b: '2022.2.23',
-		c: '2022.2.24',
-		d: '30',
-		e: '25',
-		f: '2',
-		g: '1100',
-		h: '20',
-		i: '2022.2.23  19:30',
-		m: '1000',
-	},
-];
-
 const state = reactive({
 	tableData: {
-		data: [],
-		total: 0,
+		data: computed(() => gouvyStore.gouvyList.refuse.list),
+		total: computed(() => gouvyStore.gouvyList.refuse.total),
 		loading: false,
 		param: {
 			pageNo: 1,
 			pageSize: 10,
-			phone: null,
-			name: null,
-			auditStatus: null,
+			auditStatus: -1,
 		},
 		type: '1',
 	},
 });
 
 const onHandleCurrentChange = (val: number) => {
-	console.log('change:', val);
-	state.tableData.param.pageNo = val;
-	// onSearch();
+	gouvyStore.gouvyList.refuse.params.pageNo = val;
+	// state.tableData.param.pageNo = val;
+	getRefuseList();
 };
 
 const pageSideChange = (current: number, size: number) => {
@@ -124,20 +107,19 @@ const pageSideChange = (current: number, size: number) => {
 	// onSearch();
 };
 
-// const getCateringList = () => {
-// 	api.getCateringPage(state.tableData.param).then((res: any) => {
-// 		state.tableData.total = res.total;
-// 		state.tableData.data = res.content;
-// 	});
-// };
+const getRefuseList = async () => {
+	gouvyStore.gouvyList.refuse.params.auditStatus = GouvyStatus.refuse;
+	const res = await api.exemptionManagementList(gouvyStore.gouvyList.refuse.params);
+	gouvyStore.setOrderList(res, 'refuse');
+};
 
-const toSee=()=>{
-	router.push({ path: '/gouvyManagement/exemptionManagement/exemption-management_edit'});
+const toSee=(oid :any)=>{
+	router.push({ path: '/gouvyManagement/exemptionManagement/exemption-management_edit' , query: { oid:oid }});
 }
 
 onMounted(() => {
 	// navigatorBar.setNavigator(['订单管理']);
-	// getCateringList();
+	getRefuseList();
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
