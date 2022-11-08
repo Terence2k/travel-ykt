@@ -39,7 +39,7 @@
 			<CommonTable :dataSource="state.tableData.data" :columns="columns">
 				<template #bodyCell="{ column, record }">
 					<template v-if="column.key === 'settlementRuleName'">
-						<span>{{ column.rulePrice }}</span>
+						<span>{{ getSettlementRule(column, record) }}</span>
 					</template>
 				</template>
 			</CommonTable>
@@ -169,24 +169,24 @@ const columns = computed(() => {
 			key: 'scenicPrice',
 		},
 	];
-	let data: any = [];
+	let nameList: Array<string> = [];
 	if (state.tableData.data && state.tableData.data.length) {
 		for (const key in state.tableData.data) {
-			if (
-				state.tableData.data[key].settlementRuleList &&
-				state.tableData.data[key].settlementRuleList.length &&
-				state.tableData.data[key].settlementRuleList.length > data.length
-			) {
-				data = state.tableData.data[key].settlementRuleList;
+			const data = state.tableData.data[key].settlementRuleList;
+			if (data && data.length && data.length > nameList.length) {
+				for (const subKey in data) {
+					if (!nameList.includes(data[subKey].ruleName)) {
+						nameList.push(data[subKey].ruleName);
+					}
+				}
 			}
 		}
-		for (const key in data) {
+		for (const key in nameList) {
 			const settlementRules = {
 				// title: `结算规则${Number(Number(key) + 1)}`,
-				title: data[key]['ruleName'],
+				title: nameList[key],
 				dataIndex: 'settlementRuleName',
 				key: 'settlementRuleName',
-				rulePrice: data[key]['rulePrice'],
 			};
 			column.push(settlementRules);
 		}
@@ -246,12 +246,48 @@ const initList = async () => {
 			scenicPrice: '1', //景点实收
 			settlementRuleList: [
 				{
-					ruleName: '111', //结算规则名称
+					ruleName: '测试1', //结算规则名称
 					rulePrice: '10', //结算费用
 				},
 				{
-					ruleName: '222', //结算规则名称
+					ruleName: '测试2', //结算规则名称
 					rulePrice: '22', //结算费用
+				},
+			], //结算规则信息
+		},
+		{
+			itineraryNo: '111', //团单编号
+			scenicId: 1, //关联景区id
+			scenicName: '111', //景区名称
+			ticketId: 1, //票id
+			ticketName: '111', //门票名称
+			travelTypeId: 1, //团队类型id
+			travelTypeName: 111, //团队类型名称
+			subTravelId: 1, //地接社id
+			subTravelName: 111, //地接社名称
+			verificationTime: '2022.03.01 09:00', //核销时间
+			settlementTime: '2022.03.01 09:00', //结算时间
+			unitPrice: '1', //单价
+			reservationNum: 1, //预定数
+			settlementNum: 1, //实刷数
+			breaksNum: 1, //减免数
+			orderPrice: '1', //预定金额
+			unSettlementPrice: '1', //未核销金额
+			breaksPrice: '1', //减免金额
+			ticketPrice: '1', //票款金额
+			scenicPrice: '1', //景点实收
+			settlementRuleList: [
+				{
+					ruleName: '测试1', //结算规则名称
+					rulePrice: '10', //结算费用
+				},
+				{
+					ruleName: '测试3', //结算规则名称
+					rulePrice: '22', //结算费用
+				},
+				{
+					ruleName: '测试4', //结算规则名称
+					rulePrice: '444', //结算费用
 				},
 			], //结算规则信息
 		},
@@ -283,6 +319,15 @@ onMounted(() => {
 	options.getGroupSocietyList();
 	options.getEarthContactAgencyList();
 	initList();
+});
+const getSettlementRule = computed(() => (column, record) => {
+	const data = record.settlementRuleList;
+	for (const key in data) {
+		if (column.title === data[key].ruleName) {
+			return data[key].rulePrice;
+		}
+	}
+	return '';
 });
 </script>
 <style scoped lang="less"></style>
