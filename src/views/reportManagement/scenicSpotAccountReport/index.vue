@@ -1,13 +1,13 @@
 <template>
 	<CommonSearch>
 		<search-item label="行程单号" style="width: 280px">
-			<a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入转账单号" allowClear style="width: 180px" />
+			<a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入行程单号" allowClear style="width: 180px" />
 		</search-item>
 		<search-item label="景区名称" style="width: 280px">
-			<a-input v-model:value="state.tableData.param.scenicId" placeholder="请输入行程单号" allowClear style="width: 180px" />
+			<a-input v-model:value="state.tableData.param.scenicId" placeholder="请输入景区名称" allowClear style="width: 180px" />
 		</search-item>
 		<search-item label="景点名称" style="width: 280px">
-			<a-input v-model:value="state.tableData.param.ticketName" placeholder="请输入订单号" allowClear style="width: 180px" />
+			<a-input v-model:value="state.tableData.param.ticketName" placeholder="请输入景点名称" allowClear style="width: 180px" />
 		</search-item>
 		<search-item label="团队类型" style="width: 280px">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.travelTypeId" style="width: 200px" placeholder="请选择团队类型">
