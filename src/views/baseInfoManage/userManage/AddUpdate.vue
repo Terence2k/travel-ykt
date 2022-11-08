@@ -183,7 +183,7 @@
     console.log('params', props.params);
     formValidate.value = {};
     if (props.params?.oid) {
-      formValidate.value.businessType = userInfo.sysCompany.businessType;
+      formValidate.value.businessType = props.params.businessType;
       getRoleList(formValidate.value.businessType);
       formValidate.value = { ...props.params };
       formValidate.value.roleIds = formValidate.value.roleList.map((item: any) => item.oid);

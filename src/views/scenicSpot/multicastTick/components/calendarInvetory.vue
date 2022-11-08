@@ -54,7 +54,7 @@
 
 <script setup lang="ts">
 import Calendar from '@/components/common/calendarDouble.vue';
-import { shijianYMD, getAllDateCN, nextYear } from '@/utils/formatTIme';
+import { shijianYMD, getAllDateCN, nextYear } from '@/utils/formatTime';
 import dayjs, { Dayjs } from 'dayjs';
 
 import api from '@/api';
