@@ -17,6 +17,7 @@
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
         <a @click="goToPath(record)">进入预订</a>
+        <a @click="goToPath(record)">行程变更</a>
 			</div>
 		</template>
 				</template>
@@ -108,7 +109,7 @@
 	}
 	const goToPath = (row: any) => {
 		router.push({
-			path: '/travel/travel_manage/add_travel',
+			path: '/travel/take_group/changetravel',
 			query: {
 				id: row.oid,
 				itineraryNo: row.itineraryNo

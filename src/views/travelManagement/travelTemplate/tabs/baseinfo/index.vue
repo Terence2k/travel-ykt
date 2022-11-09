@@ -14,35 +14,56 @@
 			</a-form>
 			<!-- 新增 -->
 			<a-form v-else labelAlign="left" ref="formRef" :model="formState" :rules="rulesRef" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
+				<a-form-item label="模板名称" name="teamType">
+					<a-input v-model:value="formState.teamType" />
+				</a-form-item>
 				<a-form-item label="行程类型" name="teamType">
-					<a-radio-group :options="travaType" v-model:value="formState.teamType" />
+					<a-radio-group v-model:value="formState.teamType" name="radioGroup" style="width: 100%">
+						<a-row type="flex">
+							<a-col :span="8" v-for="item in list.teamType" :key="item.oid" class="mb-2">
+								<a-radio :value="item.oid">{{ item.name }}</a-radio>
+							</a-col>
+						</a-row>
+					</a-radio-group>
 				</a-form-item>
 				<a-form-item label="发团旅行社" name="a">
-					<a-input placeholder="发团旅行社" disabled />
+					<a-input :placeholder="userInfo.sysCompany.name" disabled />
 				</a-form-item>
-				<a-form-item label="做团人" name="a">
-					<a-select ref="select" placeholder="请选择组团社做发团人">
-						<a-select-option value="1">发团人</a-select-option>
+				<a-form-item label="发团计调" name="a">
+					<a-input :placeholder="userInfo.username" disabled />
+				</a-form-item>
+				<a-form-item label="计调电话" name="a">
+					<a-input :placeholder="userInfo.mobile"  disabled/>
+				</a-form-item>
+				<a-form-item label="选择地接社" name="a">
+					<a-select 
+						v-model:value="formState.subTravelOid" 
+						placeholder="请选择地接旅行社" 
+						@change="(val, option) => gettravelOperatorList(val, option)">
+						<a-select-option 
+							:value="item.oid" 
+							:name="item.name"
+							v-for="item in list.subTravelList" 
+							:key="item.oid">
+							{{item.name}}
+						</a-select-option>
+					</a-select>
+				</a-form-item>
+				<a-form-item label="地接社计调" name="a">
+					<a-select v-model:value="formState.subTravelOperatorOid" @change="handleChange" placeholder="请选择地接做团人">
+						<a-select-option 
+							:value="item.oid" 
+							v-for="item in list.travelOperatorList" 
+							:key="item.oid"
+							:name="item.username"
+							:phone="item.mobile"
+							>
+							{{item.username}}
+						</a-select-option>
 					</a-select>
 				</a-form-item>
 				<a-form-item label="联系电话" name="a">
-					<a-input placeholder="请输入联系电话" />
-				</a-form-item>
-				<a-form-item label="地接旅行社" name="a">
-					<a-select ref="select" placeholder="请选择地接旅行社">
-						<a-select-option value="1">地接旅行社</a-select-option>
-					</a-select>
-				</a-form-item>
-				<a-form-item label="地接计调" name="a">
-					<a-select ref="select" placeholder="请选择地接做团人">
-						<a-select-option value="1">地接做团人</a-select-option>
-					</a-select>
-				</a-form-item>
-				<a-form-item label="联系电话" name="a">
-					<a-input placeholder="请输入联系电话" />
-				</a-form-item>
-				<a-form-item label="模板名称" name="a">
-					<a-input />
+					<a-input v-model:value="formState.subTravelOperatorPhone" disabled />
 				</a-form-item>
 			</a-form>
 		</div>
@@ -54,6 +75,7 @@
 
 <script setup lang="ts">
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
+import { getAmount, getUserInfo } from '@/utils/util';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import api from '@/api';
 import { computed, reactive, ref, UnwrapRef, watch } from 'vue';
@@ -66,12 +88,27 @@ const props = defineProps({
 		type: Boolean,
 	},
 });
-// 行程类型枚举
-const travaType = [
-	{ label: '标准团', value: '1' },
-	{ label: '散客网点团', value: '2' },
-	{ label: '休闲通道团', value: '3' },
-];
+
+interface TeamType {
+	teamType: Array<any>;
+	subTravelList: Array<any>;
+	travelOperatorList: Array<any>;
+}
+const page = reactive({
+	teamType: {
+		pageNo: 1,
+		pageSize: 10000,
+	},
+	subTravelList: {
+		pageNo: 1,
+		pageSize: 10000,
+	},
+});
+const list = reactive<TeamType>({
+	teamType: [],
+	subTravelList: [],
+	travelOperatorList: [],
+});
 let addParams: any = {};
 if (route.query.id) {
 } else {
@@ -85,6 +122,24 @@ const type = ref('');
 const emits = defineEmits(['onSuccess']);
 const formState = ref<{ [k: string]: any }>(addParams);
 
+const getTeamTypeList = async () => {
+	// page.teamType
+	const res = await api.commonApi.getTeamTypeList();
+	list.teamType = res;
+};
+
+const getSubtravelList = async () => {
+	const res = await api.travelManagement.getSubtravelList(page.subTravelList);
+	list.subTravelList = res.content;
+}
+
+const gettravelOperatorList = async (travelId: number, option: any) => {
+	formState.value.subTravelOperatorOid = '';
+	formState.value.subTravelName = option.name
+	list.travelOperatorList = await api.travelManagement.gettravelOperatorList({travelId});
+}
+let userInfo: any = {}
+userInfo = getUserInfo()
 const onSubmit = async () => {
 	try {
 		const values = await formRef.value.validateFields();
@@ -112,7 +167,14 @@ const rulesRef = {
 	subTravelOperatorOid: [{ required: true, message: '请选择计调' }],
 	subTravelOid: [{ required: true, message: '请选择地接旅行社' }],
 };
+// const changeRadio = (event:any) =>  {
+// 	travelStore.setTeamType(event.target.value);
 
+// }
+const handleChange = (event: any, option: any) => {
+	formState.value.subTravelOperatorPhone = option.phone
+	formState.value.subTravelOperatorName = option.name
+}
 onMounted(() => {
 	if (route.query?.id) {
 		navigatorBar.setNavigator(['行程模板管理', '新增']);
@@ -120,6 +182,7 @@ onMounted(() => {
 		navigatorBar.setNavigator(['行程模板管理', '查看']);
 	}
 	initPage();
+	getSubtravelList()
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
@@ -130,6 +193,7 @@ watch(
 		onSubmit();
 	}
 );
+getTeamTypeList()
 </script>
 
 <style scoped lang="less">
