@@ -8,6 +8,15 @@ export async function byItineraryTicket(data: any) {
 		showLoading: true,
 	});
 }
+// 景区汇总
+export async function allStatement(data: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/statement/ticket/allStatement`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
 // 酒店账目
 export async function hotelAccountList(data: any) {
 	return request({
