@@ -80,7 +80,7 @@
 import BaseModal from '@/components/common/BaseModal.vue';
 
 import dayjs, { Dayjs } from 'dayjs';
-import { shijianYMD, nextMonth, preMonth } from '@/utils/formatTime';
+import { shijianYMD, nextMonth, preMonth } from '@/utils/formatTIme';
 const emits = defineEmits(['get-current-day', 'clear-current-day', 'get-data', 'save-data']);
 
 const props = defineProps({
