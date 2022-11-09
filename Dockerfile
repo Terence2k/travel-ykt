@@ -2,7 +2,7 @@ FROM node:14.6 AS builder
 WORKDIR /app/
 ADD .npmrc .
 ADD package.json .
-RUN npm install -g pnpm  && pnpm install
+RUN npm install
 ADD . .
 RUN npm run build:{build_env}
 

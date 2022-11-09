@@ -125,9 +125,7 @@
   }
 
   onBeforeMount(() => {
-    console.log('orderId:', orderId);
-    getItineraryDetail(route.currentRoute.value.query.orderId);
-    
+    getItineraryDetail(route.currentRoute.value.query.oid);
   })
 </script>
 <style lang="less" scoped>
