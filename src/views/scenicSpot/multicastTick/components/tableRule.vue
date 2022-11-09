@@ -2,11 +2,13 @@
 	<div class="wrapper">
 		<CommonTable :dataSource="tableList" :columns="columnsCount" :scrollY="false" bordered class="left">
 			<template #bodyCell="{ column, record, index }">
-				<!-- <template v-if="column.key === 'certifId'">
-					{{ certifIdList(record.certifId) }}
-				</template> -->
 				<template v-if="column.key === 'discount'">
-					<span v-if="record.discount">{{ record.discount * 10 }} %</span>
+					<span v-if="record.discount">{{ record.discount * 10 }}%</span>
+					<span v-else> --</span>
+				</template>
+				<template v-if="column.key === 'discountPrice'">
+					<span v-if="record.discountPrice">{{ record.discountPrice / 100 }}</span>
+					<span v-else> --</span>
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
@@ -17,16 +19,22 @@
 		</CommonTable>
 		<a-button type="primary" class="btn" @click="CreateData"> 新增减免规则</a-button>
 		<BaseModal :modelValue="modelValue" title="设置减免规则" width="600px" @cancel="cancel">
-			<a-form :model="formValidate" :label-col="{ span: 3 }" :wrapper-col="{ span: 12, offset: 1 }" labelAlign="left">
-				<a-form-item label="规则名称" class="fz14" v-bind="validateInfos.ruleName">
+			<a-form :rules="rules" ref="formRef" :model="formValidate" :label-col="{ span: 4 }" :wrapper-col="{ span: 12, offset: 1 }" labelAlign="left">
+				<a-form-item label="规则名称" class="fz14" name="ruleName">
 					<a-input v-model:value="formValidate.ruleName" placeholder="规则名称" />
 				</a-form-item>
-				<!-- <a-form-item label="选择必选项" class="fz14" v-bind="validateInfos.certifId">
-					<a-checkbox-group v-model:value="formValidate.certifId" :options="options" />
-				</a-form-item> -->
-				<a-form-item label="折扣" class="fz14" v-bind="validateInfos.discount">
-					<!-- <a-input v-model:value="formValidate.discount" /> -->
-					<a-input-number v-model:value="formValidate.discount" placeholder="折扣" />
+
+				<a-radio-group v-model:value="typeCheck" :wrapper-col="{ span: 12, offset: 1 }">
+					<a-radio :style="radioStyle" :value="1">折扣减免</a-radio>
+
+					<a-radio :style="radioStyle" :value="2">折扣后价格</a-radio>
+				</a-radio-group>
+
+				<a-form-item label="折扣" v-if="typeCheck === 1" class="fz14" name="discount">
+					<a-input-number v-model:value="formValidate.discount" :controls="false" placeholder="折扣" />
+				</a-form-item>
+				<a-form-item label="折后价(元)" v-if="typeCheck === 2" class="fz14" name="discountPrice">
+					<a-input-number min="0" :controls="false" v-model:value="formValidate.discountPrice" placeholder="折后价(元)" />
 				</a-form-item>
 			</a-form>
 			<template v-slot:footer>
@@ -59,21 +67,30 @@ const props = defineProps({
 	// tableList: Array,
 });
 const route = useRouter();
-
+const typeCheck = ref(1);
+const radioStyle = reactive({
+	// display: 'flex',
+	// height: '30px',
+	lineHeight: '30px',
+});
 // const certifIdType = { 140: '学生证', 141: '军官证', 142: '医护证', 143: '教师资格证', 144: '导游证', 145: '导游证' };
 
-// const certifIdList = (certifId: array) => {
-// 	let all = '',
-// 		len = certifId.length || 0;
-// 	console.log(props.tableList);
+// const certifIdList = (certifId: any) => {
+// 	if (certifId) {
+// 		let all = '',
+// 			len = certifId.length;
+// 		console.log(props.tableList);
 
-// 	certifId.map((i, index) => {
-// 		all += certifIdType[i];
+// 		certifId.map((i, index) => {
+// 			all += certifIdType[i];
 
-// 		if (index < len - 1) all += ',';
-// 		return i;
-// 	});
-// 	return all;
+// 			if (index < len - 1) all += ',';
+// 			return i;
+// 		});
+// 		return all;
+// 	} else {
+// 		return '';
+// 	}
 // };
 // const options = [
 // 	{ label: '学生证', value: 140 },
@@ -88,6 +105,7 @@ const useForm = Form.useForm;
 const formValidate = reactive({
 	// certifId: [],
 	discount: null,
+	discountPrice: null,
 	ruleName: '',
 });
 
@@ -108,6 +126,12 @@ const columnsCount = ref([
 		title: '折扣',
 		dataIndex: 'discount',
 		key: 'discount',
+		width: 200,
+	},
+	{
+		title: '折后价(元)',
+		dataIndex: 'discountPrice',
+		key: 'discountPrice',
 		width: 200,
 	},
 	{
@@ -140,31 +164,47 @@ const CreateData = () => {
 
 const cancel = () => {
 	modelValue.value = false;
-	resetFields();
+	formRef.value.resetFields();
 };
+const formRef = ref();
 
 const apply = () => {
-	validate()
+	formRef.value
+		.validate()
 		.then((res) => {
 			cancel();
-			resetFields();
-			console.log(formValidate, res);
-
-			emits('add-rule-obj', toRaw(res));
+			formRef.value.resetFields();
+			let resValue = toRaw(res);
+			console.log(formValidate, res, resValue);
+			if (typeof resValue.discountPrice === 'number') {
+				resValue.discountPrice = Number((Number(resValue.discountPrice.toFixed(2)) * 100).toFixed(2));
+				resValue.discount = null;
+			} else {
+				resValue.discountPrice = null;
+			}
+			emits('add-rule-obj', resValue);
 		})
 		.catch((err) => {
 			console.log('error', err);
 		});
 };
+const rules = reactive({
+	// certifId: [{ required: true, message: '请选择类型' }],
+	discountPrice: [{ required: true, message: '请输入数字' }],
+	discount: [{ required: true, message: '请输入0-10', pattern: /^([0-9]|10)$/ }],
+	ruleName: [{ required: true, message: '请填写' }],
+});
+
 // 表单
-const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
-	formValidate,
-	reactive({
-		// certifId: [{ required: true, message: '请选择类型' }],
-		discount: [{ required: true, message: '请输入0-10', pattern: /^([0-9]|10)$/ }],
-		ruleName: [{ required: true, message: '请填写' }],
-	})
-);
+// const { resetFields, validate, validateInfos } = useForm(
+// 	formValidate,
+// 	reactive({
+// 		// certifId: [{ required: true, message: '请选择类型' }],
+// 		discountPrice: [{ required: typeCheck.value == 2 ? true : false, message: '请输入数字' }],
+// 		// discount: [{ required: typeCheck.value == 1 ? true : false, message: '请输入0-10', pattern: /^([0-9]|10)$/ }],
+// 		ruleName: [{ required: true, message: '请填写' }],
+// 	})
+// );
 
 onMounted(() => {});
 </script>
@@ -187,7 +227,14 @@ onMounted(() => {});
 	}
 }
 .table-area {
-	// margin: 0 10px 0 0;
+	margin: 0 0px 0 0;
 	padding: 0;
+}
+.btn {
+	position: absolute;
+	right: -126px;
+	bottom: -10px;
+	margin-bottom: 10px;
+	// top: 12px;
 }
 </style>

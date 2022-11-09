@@ -75,7 +75,7 @@ const save = () => {
 						props.methods?.success();
 					})
 					.catch((err: any) => {
-						console.log(err);
+						message.error(err || err?.message || '编辑该酒店星级失败');
 					});
 			} else {
 				api
@@ -90,12 +90,12 @@ const save = () => {
 						props.methods?.success();
 					})
 					.catch((err: any) => {
-						console.log(err);
+						message.error(err || err?.message || '新增酒店星级失败');
 					});
 			}
 		})
 		.catch((err) => {
-			console.log('提交数据验证失败', err);
+			console.log('提交数据验证失败', err); // 由于该报错是由不正确的数据类型引起，前端预检验会有明显提示，所以不再用message来提示
 		});
 };
 
@@ -114,7 +114,6 @@ const init = async () => {
 watch(
 	() => props.modelValue,
 	async (nVal) => {
-		console.log('props.modelValue->', nVal);
 		dialogVisible.value = nVal;
 		if (dialogVisible.value) {
 			await init();
@@ -123,12 +122,10 @@ watch(
 );
 
 watch(dialogVisible, (nVal) => {
-	console.log('dialogVisible:', nVal);
 	emit('update:modelValue', nVal);
 });
 
 const handleOk = () => {
-	//console.log('handleOk');
 	dialogVisible.value = false;
 	emit('cancel');
 };
