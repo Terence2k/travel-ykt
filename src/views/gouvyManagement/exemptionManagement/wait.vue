@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<CommonTable :columns="columns" :dataSource="state.tableData.data">
+		<CommonTable :columns="columns" :dataSource="state.tableData.data" :scrollY="false">
 			<template #bodyCell="{ column, record }">
 				<template v-if="column.dataIndex === 'itineraryStartDate'">
 					<span>{{ record.itineraryStartDate }}~{{ record.itineraryEndDate }}</span>
@@ -35,7 +35,6 @@ import { GouvyStatus } from '@/enum';
 import { useGouvyStore } from '@/stores/modules/gouvy';
 const router = useRouter();
 const navigatorBar = useNavigatorBar();
-const visible = ref(false);
 const gouvyStore = useGouvyStore();
 const columns = [
 	{
@@ -113,7 +112,6 @@ const getWaitsList = async () => {
 	gouvyStore.setOrderList(res, 'waits');
 };
 onMounted(() => {
-	// navigatorBar.setNavigator(['订单管理']);
 	getWaitsList();
 });
 onBeforeUnmount(() => {

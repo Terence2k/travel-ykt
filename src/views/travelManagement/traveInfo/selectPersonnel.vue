@@ -48,7 +48,7 @@
 				</template>
 			</CommonTable>
 			<template v-slot:footer>
-				<a-button type="primary" @click="submit" v-if="state.isReductionPassed == '2'" disabled>提交减免申请</a-button>
+				<a-button type="primary" @click="submit" v-if="state.isReductionPassed =='2' " disabled>提交减免申请</a-button>
 				<a-button type="primary" @click="submit" v-else>提交减免申请</a-button>
 				<a-button type="primary">去出票</a-button>
 				<a-button @click="dialogVisible = false">取消</a-button>
@@ -80,8 +80,14 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
-	routeId: Object,
-	isReductionPassed: any,
+	id: {
+		type: String,
+		default: ''
+	},
+	isReductionPassed:{
+		type: String,
+		default: ''
+	}
 });
 const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch', 'routeId']);
 const columns = [
@@ -158,13 +164,11 @@ const state = reactive({
 		isApplydate: false,
 		isExaminedate: false,
 	},
-	isReductionPassed: '',
+	isReductionPassed:''
 });
 const auditRef = ref();
 const init = async () => {
-	state.isReductionPassed = props.isReductionPassed;
-	// formValidate.value = {};
-	// formValidate.value = { ...props.params };
+	state.isReductionPassed=props.isReductionPassed
 };
 const onSelect = (record: any, selected: boolean, selectedRows: any) => {
 	state.tableData.num = selectedRows.length;

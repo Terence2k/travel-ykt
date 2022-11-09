@@ -21,18 +21,14 @@
 				<span>{{ state.tableData.data.subTravelOperatorName }} {{state.tableData.data.subTravelOperatorPhone}}</span>
 			</a-form-item>
 			<a-form-item label="行程人数">
-				<span>{{state.tableData.data.touristNum}}</span>
+				<span>{{state.tableData.data.touristNum}}人</span>
 			</a-form-item>
 			<a-form-item label="应购票人数">
-				<span>{{state.tableData.data.purchaseNum}}</span>
+				<span>{{state.tableData.data.purchaseNum}}人</span>
 			</a-form-item>
 			<a-form-item label="减免人数">
-				<span>{{state.tableData.data.reduceNum}}</span>
+				<span>{{state.tableData.data.reduceNum}}人</span>
 			</a-form-item>
-			<!-- <div v-if="state.tableData.index.index=='1'">
-				<a-button type="primary" class="success" @click="adopt">审核通过</a-button>
-				<a-button type="primary" class="btn" @click="dialogVisible = true">审核不通过</a-button>
-			</div> -->
 			<div class="title">订单信息</div>
 			<a-form-item label="订单编号">
 				<span>{{state.tableData.data.orderNo}}</span>
@@ -46,30 +42,17 @@
 				<p>查验减免： {{state.tableData.data.checkNum}} X {{accDiv(state.tableData.data.unitPrice,100)}} ={{accMul(state.tableData.data.checkNum,accDiv(state.tableData.data.unitPrice,100))}} 元</p>
 			</a-form-item>
 			<a-form-item label="费用总计">
-				<span>{{state.tableData.data.totalPrice}}</span>
+				<span>{{accDiv(state.tableData.data.totalPrice,100)}} 元</span>
 			</a-form-item>
 			<div class="title">购买人员明细</div>
-			<CommonTable :dataSource="state.tableData.data.touristList" :columns="columns" :scrollY="false">
-				<p>当前古维费已经于 {{state.tableData.data}} 全部出票。全部游客{{state.tableData.data}}名,已减免{{state.tableData.data}}人,实缴{{state.tableData.data}}人。</p>
-				<template #bodyCell="{ column, index }">
-					<template v-if="column.key === 'action'">
-						<!-- <div class="action-btns">
-							<a href="javascript:;" @click="download">下载证明</a>
-						</div> -->
+			<p style="text-align: center; font-size: 18px;">当前古维费已经于 {{state.tableData.data.issueTime}} 全部出票。全部游客{{state.tableData.data.touristNum}}名,已减免{{state.tableData.data.reduceNum}}人,实缴{{state.tableData.data.purchaseNum}}人。</p>
+			<CommonTable :dataSource="state.tableData.touristList" :columns="columns" :scrollY="false">
+				<template #bodyCell="{ column, index,record}">
+					<template v-if="column.key === 'actualPrice'">
+						<span>{{accDiv(record.actualPrice,100)}}</span>
 					</template>
 				</template>
 			</CommonTable>
-			<!-- <BaseModal title="审核不通过说明" v-model="dialogVisible">
-			<a-form>
-				<a-form-item label="">
-					<a-textarea placeholder="审核不通过原因" :rows="4" />
-				</a-form-item>
-			</a-form>
-			<template v-slot:footer>
-				<a-button type="primary"  @click="cancel">关闭</a-button>
-				<a-button type="primary" style="width:120px" @click="Fail">确认审核不通过</a-button>
-			</template>
-		</BaseModal> -->
 		</a-form>
 	</div>
 </template>
@@ -84,12 +67,14 @@ import { message } from 'ant-design-vue';
 import { accDiv,accMul} from '@/utils/compute';
 import api from '@/api';
 const route = useRoute();
+const router = useRouter();
 const dialogVisible = ref(false);
 const navigatorBar = useNavigatorBar();
 const tstyle = { 'font-weight': '700' };
 const state = reactive({
 	tableData: {
-		data:[]
+		data:[],
+		touristList:[]
 	},
 });
 const columns = [
@@ -145,11 +130,12 @@ const columns = [
 	},
 ];
 const go = () => {
-	route.push({ path: '/gouvyManagement/order/list' });
+	router.push({ path: '/gouvyManagement/order/list' });
 };
 const detailsList = () => {
 	api.gouvyOrderDetail(route?.query?.oid).then((res) => {
 		state.tableData.data = res;
+		state.tableData.touristList=res.touristList
 	});
 };
 onMounted(() => {

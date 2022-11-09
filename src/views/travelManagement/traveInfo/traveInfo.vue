@@ -126,7 +126,7 @@
 	</div>
 	<addHotel :productRow="editId.productRow" :hotelId="editId.addHotelPop" v-model="addHotelPop" />
 	<addTicket :productRow="editId.productRow" :ticketId="editId.addTicketPop" v-model="addTicketPop" />
-	<Personnel v-model="selectPersonnelPop" :routeId="id" />
+	<Personnel v-model="selectPersonnelPop" :routeId="gouvyId.id" :isReductionPassed="gouvyId.isReductionPassed"/>
 	<reserveTicket :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop" />
 	<reserveTicket :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop"  />
 	<showTicket :ticketId="showId.showTicketPop" v-model="showTicketPop"/>
@@ -182,6 +182,7 @@ const {
 	showHotelPop,
 	showTicketPop,
 	showId,
+	gouvyId,
 	rowRadioSelection,
 	id,
 	modelValue,
