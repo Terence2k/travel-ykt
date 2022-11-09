@@ -166,7 +166,7 @@ import { isIntegerNotMust, isBtnZeroToHundred } from '@/utils/validator';
 import api from '@/api';
 import { updateProductRule } from '@/api/settlementManage.api';
 import { FormState } from '../../productSettlementRule/components/type';
-import { useGeneraRules } from '@/stores/modules/GeneraRules';
+import { useGeneraRules } from '@/stores/modules/generaRules';
 const navigatorBar = useNavigatorBar();
 const generaRulesOptions = useGeneraRules();
 const formRef = ref();

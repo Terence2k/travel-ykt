@@ -82,7 +82,7 @@ import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import api from '@/api';
-import { useGeneraRules } from '@/stores/modules/GeneraRules';
+import { useGeneraRules } from '@/stores/modules/generaRules';
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 const route = useRouter();

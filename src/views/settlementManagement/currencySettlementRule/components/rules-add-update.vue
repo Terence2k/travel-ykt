@@ -59,7 +59,7 @@ import { isIntegerNotMust, isBtnZeroToHundred } from '@/utils/validator';
 import { Ref } from 'vue';
 import lodash from 'lodash';
 import { message } from 'ant-design-vue';
-import { useGeneraRules } from '@/stores/modules/GeneraRules';
+import { useGeneraRules } from '@/stores/modules/generaRules';
 const generaRulesOptions = useGeneraRules();
 const props = defineProps({
 	modelValue: {

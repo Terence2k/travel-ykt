@@ -121,7 +121,7 @@ import { UnwrapRef } from 'vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import api from '@/api';
 import { FormState } from '../../productSettlementRule/components/type';
-import { useGeneraRules } from '@/stores/modules/GeneraRules';
+import { useGeneraRules } from '@/stores/modules/generaRules';
 const navigatorBar = useNavigatorBar();
 const generaRulesOptions = useGeneraRules();
 const formRef = ref();
