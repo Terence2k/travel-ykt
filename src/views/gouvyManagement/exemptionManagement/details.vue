@@ -17,8 +17,8 @@
 			<a-form-item label="行程时间">
 				<span>{{ state.tableData.data.itineraryStartDate }}~{{ state.tableData.data.itineraryEndDate }}</span>
 			</a-form-item>
-			<a-form-item label="联系电话">
-				<span>{{ state.tableData.data.contactPhone }}</span>
+			<a-form-item label="地接社计调">
+				<span>{{ state.tableData.data.subTravelOperatorName }} {{state.tableData.data.subTravelOperatorPhone}}</span>
 			</a-form-item>
 			<a-form-item label="行程人数">
 				<span>{{ state.tableData.data.touristNum }}</span>
@@ -36,7 +36,7 @@
 				<p class="p" v-if="state.tableData.data.auditStatus == '-1'">
 					审核结果：<span class="span"
 						>本次审核已于 {{ state.tableData.data.lastUpdateTime }} 由管理员 {{ state.tableData.data.lastUpdaterName }} 执行驳回; 驳回理由：{{
-							refuesedReason
+							state.tableData.data.refuesedReason
 						}}</span
 					>
 				</p>
@@ -137,17 +137,6 @@ const columns = [
 		title: '特殊证件证明',
 		dataIndex: 'specialCertificateImg',
 		key: 'specialCertificateImg',
-	},
-	{
-		title: '系统自动检查结果',
-		dataIndex: 'address5',
-		key: 'address5',
-	},
-	{
-		title: '操作',
-		key: 'action',
-		fixed: 'right',
-		width: 208,
 	},
 ];
 const cancel = () => {

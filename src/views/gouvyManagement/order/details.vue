@@ -6,28 +6,28 @@
 		</div>
 		<a-form labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
 			<a-form-item label="行程类型">
-				<span>标准团</span>
+				<span>{{state.tableData.data.teamTypeName}}</span>
 			</a-form-item>
 			<a-form-item label="行程单号">
-				<span>YNLJ1569374</span>
+				<span>{{state.tableData.data.itineraryNo}}</span>
 			</a-form-item>
 			<a-form-item label="发团旅行社">
-				<span>黑白水旅行社</span>
+				<span>{{state.tableData.data.travelName}}</span>
 			</a-form-item>
 			<a-form-item label="行程时间">
-				<span>2022.2.23~2022.2.25</span>
+				<span>{{state.tableData.data.itineraryStartDate}}~{{state.tableData.data.itineraryEndDate}}</span>
 			</a-form-item>
-			<a-form-item label="联系电话">
-				<span>18101235678</span>
+			<a-form-item label="地接社计调">
+				<span>{{ state.tableData.data.subTravelOperatorName }} {{state.tableData.data.subTravelOperatorPhone}}</span>
 			</a-form-item>
 			<a-form-item label="行程人数">
-				<span>30人</span>
+				<span>{{state.tableData.data.touristNum}}</span>
 			</a-form-item>
 			<a-form-item label="应购票人数">
-				<span>30人</span>
+				<span>{{state.tableData.data.purchaseNum}}</span>
 			</a-form-item>
 			<a-form-item label="减免人数">
-				<span>30人</span>
+				<span>{{state.tableData.data.reduceNum}}</span>
 			</a-form-item>
 			<!-- <div v-if="state.tableData.index.index=='1'">
 				<a-button type="primary" class="success" @click="adopt">审核通过</a-button>
@@ -35,20 +35,22 @@
 			</div> -->
 			<div class="title">订单信息</div>
 			<a-form-item label="订单编号">
-				<span>30人</span>
+				<span>{{state.tableData.data.orderNo}}</span>
 			</a-form-item>
 			<a-form-item label="当前状态">
-				<span>30人</span>
+				<span>{{state.tableData.data.issueStatusName}}</span>
 			</a-form-item>
 			<a-form-item label="费用明细">
-				<span>30人</span>
+				<p>购票人数： {{state.tableData.data.purchaseNum}} X {{accDiv(state.tableData.data.unitPrice,100)}} ={{accMul(state.tableData.data.purchaseNum,accDiv(state.tableData.data.unitPrice,100))}} 元</p>
+				<p>申请减免： {{state.tableData.data.reduceNum}} X {{accDiv(state.tableData.data.unitPrice,100)}} ={{accMul(state.tableData.data.reduceNum,accDiv(state.tableData.data.unitPrice,100))}} 元</p>
+				<p>查验减免： {{state.tableData.data.checkNum}} X {{accDiv(state.tableData.data.unitPrice,100)}} ={{accMul(state.tableData.data.checkNum,accDiv(state.tableData.data.unitPrice,100))}} 元</p>
 			</a-form-item>
 			<a-form-item label="费用总计">
-				<span>30人</span>
+				<span>{{state.tableData.data.totalPrice}}</span>
 			</a-form-item>
 			<div class="title">购买人员明细</div>
-			<CommonTable :dataSource="dataSource" :columns="columns">
-				<p>当前古维费已经于 {{}} 全部出票。全部游客{{}}名,已减免{{}}人,实缴{{}}人。</p>
+			<CommonTable :dataSource="state.tableData.data.touristList" :columns="columns" :scrollY="false">
+				<p>当前古维费已经于 {{state.tableData.data}} 全部出票。全部游客{{state.tableData.data}}名,已减免{{state.tableData.data}}人,实缴{{state.tableData.data}}人。</p>
 				<template #bodyCell="{ column, index }">
 					<template v-if="column.key === 'action'">
 						<!-- <div class="action-btns">
@@ -79,12 +81,12 @@ import BaseModal from '@/components/common/BaseModal.vue';
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { message } from 'ant-design-vue';
+import { accDiv,accMul} from '@/utils/compute';
 import api from '@/api';
-const route = useRouter();
+const route = useRoute();
 const dialogVisible = ref(false);
 const navigatorBar = useNavigatorBar();
 const tstyle = { 'font-weight': '700' };
-const dataSource = [];
 const state = reactive({
 	tableData: {
 		data:[]
@@ -145,11 +147,13 @@ const columns = [
 const go = () => {
 	route.push({ path: '/gouvyManagement/order/list' });
 };
-const onSearch=()=>{
-	
-}
+const detailsList = () => {
+	api.gouvyOrderDetail(route?.query?.oid).then((res) => {
+		state.tableData.data = res;
+	});
+};
 onMounted(() => {
-	onSearch()
+	detailsList()
 });
 </script>
 

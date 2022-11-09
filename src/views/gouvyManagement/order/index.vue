@@ -30,7 +30,7 @@
 			<a-button type="primary" class="success" @click="download">导出</a-button>
 			<a-button type="primary" class="btn" @click="print">批量打印票据</a-button>
 		</div>
-		<CommonTable :dataSource="state.tableData.data" :columns="columns">
+		<CommonTable :dataSource="state.tableData.data" :columns="columns" :scrollY="false">
 			<template #bodyCell="{ column, index, record }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
@@ -67,6 +67,7 @@ import { useRouter } from 'vue-router';
 import { message } from 'ant-design-vue';
 import { accDiv, accMul } from '@/utils/compute';
 import api from '@/api';
+import { downloadFile } from '@/utils/util';
 const route = useRouter();
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
@@ -177,13 +178,17 @@ const reset = () => {
 	onSearch();
 };
 const download = () => {
+	api.exportGouvyOrder(state.tableData.param).then((res: any) => {
+      	downloadFile(res, '古维订单')
+			message.success('导出成功');
+		})
 	message.success('下载成功');
 };
 onMounted(() => {
 	onSearch();
 });
 onBeforeUnmount(() => {
-	navigatorBar.clearNavigator();
+	// navigatorBar.clearNavigator();
 });
 </script>
 
