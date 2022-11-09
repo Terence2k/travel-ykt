@@ -157,3 +157,24 @@ export async function AuditFailed(id: number) {
 		showLoading: false,
 	});
 }
+// 古维订单导出
+export async function exportGouvyOrder(data: any) {
+	return request({
+		url: `${commonPath}/heritage-maintenance-service/public/api/hm-order/export`,
+		method: 'post',
+		data,
+    	responseType: 'blob',
+		showLoading: false,
+	});
+}
+//古维订单详情
+export async function gouvyOrderDetail(id: number) {
+	return request({
+		url: `${commonPath}/heritage-maintenance-service/public/api/hm-order/detail/${id}`,
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		method: 'get',
+		showLoading: false,
+	});
+}
