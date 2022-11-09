@@ -45,7 +45,7 @@ import drafts from './travelList/drafts.vue';
 import waitingGroup from './travelList/waitingGroup.vue';
 import overtime from './travelList/overtime.vue';
 // import refuseGroup from './travelList/refuseGroup.vue';
-import waitRegiment from './travelList/waitregiment.vue';
+import waitRegiment from './travelList/waitRegiment.vue';
 import haveABall from './travelList/haveABall.vue';
 // import closeAnAccount from './travelList/closeAnAccount.vue';
 import waitingChange from './travelList/waitingChange.vue';
