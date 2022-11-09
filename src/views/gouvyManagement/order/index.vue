@@ -28,14 +28,13 @@
 	<div class="table-area">
 		<div class="list-btn">
 			<a-button type="primary" class="success" @click="download">导出</a-button>
-			<a-button type="primary" class="btn" @click="print">批量打印票据</a-button>
+			<!-- <a-button type="primary" class="btn" @click="print">批量打印票据</a-button> -->
 		</div>
 		<CommonTable :dataSource="state.tableData.data" :columns="columns" :scrollY="false">
 			<template #bodyCell="{ column, index, record }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a href="javascript:;" @click="toSee(record.oid)">查看</a>
-						<!-- <a href="javascript:;" @click="print">打印票据</a> -->
 					</div>
 				</template>
 				<template v-if="column.key === 'itineraryStartDate'">
@@ -149,16 +148,12 @@ const state = reactive({
 
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
-	// state.tableData.param.pageNo = val;
+	state.tableData.param.pageNo = val;
 	// onSearch();
 };
 //查看
 const toSee = (oid:any) => {
 	route.push({ path: '/gouvyManagement/order/order_edit' ,query:{oid:oid}});
-};
-
-const print = () => {
-	message.success('已打印');
 };
 const pageSideChange = (current: number, size: number) => {
 	console.log('changePageSize:', size);
@@ -166,8 +161,10 @@ const pageSideChange = (current: number, size: number) => {
 	// onSearch();
 };
 const onSearch = () => {
-	api.gouvyOrder(state.tableData.param).then((res) => {
+	api.gouvyOrder(state.tableData.param).then((res :any) => {
 		state.tableData.data = res.content;
+		state.tableData.total=res.total
+
 	});
 };
 const reset = () => {
@@ -182,13 +179,11 @@ const download = () => {
       	downloadFile(res, '古维订单')
 			message.success('导出成功');
 		})
-	message.success('下载成功');
 };
 onMounted(() => {
 	onSearch();
 });
 onBeforeUnmount(() => {
-	// navigatorBar.clearNavigator();
 });
 </script>
 

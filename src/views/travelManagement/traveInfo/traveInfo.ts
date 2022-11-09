@@ -30,6 +30,10 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		showTicketPop: '',
 		showHotelPop: '',
 	})
+	const gouvyId = reactive<{[k: string]: any}>({
+		id: '',
+		isReductionPassed: '',
+	})
 	const state = reactive<{ editableData: UnwrapRef<Record<string, DataItem>>; [k: string]: any }>({
 		editableData: {},
 		addHotelPop: false,
@@ -41,8 +45,6 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		payablePrice:'',
 		showTicketPop: false,
 		showHotelPop: false,
-		id:'',
-		isReductionPassed:'',
 		allFeesProducts: computed(() => travelStore.compositeProducts),
 		ticketData: computed(() => travelStore.scenicTickets),
 		holteDate: computed(() => travelStore.hotels),
@@ -349,9 +351,8 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		choice(data :any)
 		{
 			state[data.selectPersonnelPop]=true
-			state.id=data.id,
-			state.isReductionPassed=data.isReductionPassed
-			console.log(data.isReductionPassed,'13131')
+			gouvyId.id=data.id
+			gouvyId.isReductionPassed=data.isReductionPassed
 		},
 		seeReject(key: string)
 		{
@@ -422,6 +423,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		...methods,
 		editId,
 		showId,
+		gouvyId,
 		travelStore,
 		rowRadioSelection
 	};

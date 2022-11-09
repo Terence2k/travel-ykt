@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<CommonTable :columns="columns" :dataSource="state.tableData.data">
+		<CommonTable :columns="columns" :dataSource="state.tableData.data" :scrollY="false">
 			<template #bodyCell="{ column, record }">
 				<template v-if="column.dataIndex === 'itineraryStartDate'">
 					<span>{{ record.itineraryStartDate }}~{{ record.itineraryEndDate }}</span>
@@ -91,13 +91,11 @@ const state = reactive({
 			pageSize: 10,
 			auditStatus: 1,
 		},
-		type: '1',
 	},
 });
 
 const onHandleCurrentChange = (val: number) => {
 	gouvyStore.gouvyList.success.params.pageNo = val;
-	// state.tableData.param.pageNo = val;
 	getSuccessList();
 };
 
@@ -118,7 +116,6 @@ const toSee = (oid :any) => {
 };
 
 onMounted(() => {
-	// navigatorBar.setNavigator(['订单管理']);
 	getSuccessList();
 });
 onBeforeUnmount(() => {

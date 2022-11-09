@@ -35,7 +35,7 @@
 			<div class="center">
 				<p class="p" v-if="state.tableData.data.auditStatus == '-1'">
 					审核结果：<span class="span"
-						>本次审核已于 {{ state.tableData.data.lastUpdateTime }} 由管理员 {{ state.tableData.data.lastUpdaterName }} 执行驳回; 驳回理由：{{
+						>本次审核已于 {{ state.tableData.data.lastUpdateTime }} 由管理员 {{ state.tableData.data.lastUpdaterName }} 执行驳回； 驳回理由：{{
 							state.tableData.data.refuesedReason
 						}}</span
 					>
