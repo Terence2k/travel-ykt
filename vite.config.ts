@@ -63,7 +63,11 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
 					// inlineDynamicImports: true, //支持动态导入
 				},
         external: [
-          "lodash-es"
+          "lodash-es",
+			"@vue/reactivity",
+			"@vue/runtime-core",
+			"@vue/runtime-dom",
+			"vue-types"
         ]
 			},
 		},
