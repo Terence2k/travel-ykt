@@ -18,10 +18,16 @@
 			<a-button type="primary" class="success" @click="add()">新增</a-button>
 		</div>
 		<CommonTable :dataSource="state.tableData.data" :columns="columns">
-			<template #bodyCell="{ column, index }">
+			<template #bodyCell="{ column, index, record }">
+				<template v-if="column.key === 'index'">
+					{{ index + 1 }}
+				</template>
+				<template v-if="column.key === 'auditStatus'">
+					{{ status[record.auditStatus] }}
+				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a href="javascript:;" @click="toEditPage()">编辑座位</a>
+						<a href="javascript:;" @click="toEditPage(record)">编辑座位</a>
 						<a href="javascript:;" @click="del(index)">删除</a>
 					</div>
 				</template>
@@ -50,43 +56,45 @@ import api from '@/api';
 const route = useRouter();
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
-
+const status: any = {
+	TO_AUDIT: '待审核',
+	PASS: '审核通过',
+	AUDITING: '审核中',
+	NO_PASS: '审核不通过',
+};
 const columns = [
 	{
 		title: '序号',
-		dataIndex: 'name',
-		key: 'name',
+		dataIndex: 'index',
+		key: 'index',
+		width: 100,
+		maxWidth: 100,
 	},
 	{
-		title: '演出名称',
-		dataIndex: 'age',
-		key: 'age',
-	},
-	{
-		title: '演出场馆',
+		title: '演出馆名称',
 		dataIndex: 'venueName',
 		key: 'venueName',
+		maxWidth: 200,
 	},
 	{
 		title: '归属景区',
-		dataIndex: 'address2',
-		key: 'address2',
+		dataIndex: 'scenicId',
+		key: 'scenicId',
+		maxWidth: 200,
+	},
+	{
+		title: '分区个数',
+		dataIndex: 'seatCount',
+		key: 'seatCount',
+		maxWidth: 200,
 	},
 	{
 		title: '审核状态',
-		dataIndex: 'address2',
-		key: 'address2',
+		dataIndex: 'auditStatus',
+		key: 'auditStatus',
+		maxWidth: 200,
 	},
-	{
-		title: '开始时间',
-		dataIndex: 'address3',
-		key: 'address3',
-	},
-	{
-		title: '周期',
-		dataIndex: 'address3',
-		key: 'address3',
-	},
+
 	{
 		title: '操作',
 		key: 'action',
@@ -120,8 +128,8 @@ const pageSideChange = (current: number, size: number) => {
 	init();
 };
 //编辑
-const toEditPage = () => {
-	editModelRef.value.open();
+const toEditPage = (record: any) => {
+	editModelRef.value.open(record.oid);
 	// route.push({ path: '/scenic-spot/shows/show-edit' });
 };
 const editModelRef = ref();
@@ -132,23 +140,22 @@ const add = () => {
 };
 
 const init = async () => {
-	// userList(state.tableData.param).then((res) => {
-	// 	console.log(res);
-	// });
 	let res = await api.getShowVenueList(state.tableData.param);
 	state.tableData.data = res.content;
+	state.tableData.total = res.total;
 };
 
 const search = () => {
 	state.tableData.param.pageNo = 1;
 	init();
 };
+
 // 删除提示
 const delShow = ref(false);
 const delOid = ref<null | number>();
 const del = (record: any) => {
 	delShow.value = true;
-	delOid.value = record;
+	delOid.value = record.oid;
 	// emits('del-verification-obj', index);
 };
 const delSubmit = () => {
