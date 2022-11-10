@@ -60,6 +60,7 @@
 <script lang="ts" setup>
 import BaseModal from '@/components/common/BaseModal.vue';
 import api from '@/api';
+import { message } from 'ant-design-vue';
 
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -99,6 +100,88 @@ const props = defineProps({
 	// params: Object,
 	// menuList: Array,
 });
+const disabledDate = (current: Dayjs) => {
+	// Can not select days before today and today
+	return current > dayjs(new Date());
+};
+/**
+ * 时间段去重
+ * 1.获取时间的差值（timestamp）
+ * 2.根据两个时间点生成一个具体时间段的list记录
+ * 3.新增根据index,把生成的数组放进list
+ * 4.编辑根据index,修改list里面的数据
+ */
+const hadRange = ref<any[][]>([]);
+
+const getData = (e: string[], index: number) => {
+	let rangeTime = getTwoTimeList(e[0], e[1]);
+	// console.log(e, 'getData', hadRange.value, rangeTime);
+
+	if (hadRange.value.length > 0) {
+		if (hadRange.value[index]?.length > 0) {
+			hadRange.value[index] = [];
+		}
+		//判断是否在范围里面
+		let isHad = isCurrentRange(rangeTime);
+		console.log(isHad);
+
+		if (isHad) {
+			message.error('已经有重复的日期');
+			formValidate.data.dateList[index].time = [];
+		} else {
+			hadRange.value[index] = rangeTime;
+		}
+	} else {
+		// hadRange.value.push(...range);
+		hadRange.value[index] = rangeTime;
+	}
+};
+
+const getTwoTimeList = (beginTime: string, endTime: string) => {
+	let intervaltime = (new Date(endTime).getTime() - new Date(beginTime).getTime()) / 1000;
+	// console.log(intervaltime);
+
+	let timeList = [];
+
+	for (let i = 0; i < intervaltime + 1; i += 60) {
+		let time = new Date(beginTime).getTime() + i * 1000;
+
+		timeList.push(time);
+	}
+
+	return timeList.map(function (item, index, input) {
+		var date = new Date(item + 8 * 3600 * 1000);
+
+		return date.toJSON().substr(0, 19).replace('T', ' ').replace(/-/g, '-').slice(0, 16);
+	});
+};
+
+const isCurrentRange = (arr: string[]) => {
+	let res = false;
+
+	arr.some((item: string) => {
+		res = hadRange.value?.some((arrRange: string[]) => {
+			return arrRange.includes(item);
+		});
+
+		return res;
+	});
+	return res;
+};
+
+const getAllDateCN = (startTime: Date, endTime: Date) => {
+	const date_all = [];
+	let i = 0;
+	while (endTime.getTime() - startTime.getTime() >= 0) {
+		const year = startTime.getFullYear();
+		const month = (startTime.getMonth() + 1).toString().padStart(2, '0');
+		const day = startTime.getDate().toString().padStart(2, '0');
+		date_all[i] = year + '-' + month + '-' + day;
+		startTime.setDate(startTime.getDate() + 1);
+		i += 1;
+	}
+	return date_all;
+};
 
 const addTimeList = () => {
 	formValidate.data.dateList.push({ time: [] });
@@ -146,14 +229,20 @@ const open = (id: any, status: string | undefined, saerch: string) => {
 	// 	getDeatil(id);
 	// }
 };
-
+const setRange = (start: string, end: string, index: number) => {
+	let range = getTwoTimeList(start, end);
+	hadRange.value[index] = range;
+};
 const getDeatil = async (id: number) => {
 	let res = await api.scenicTicketDetail(id);
 	console.log(res, 'getDeatils');
 	formValidate.data = res;
 	if (formValidate.data.dateList.length > 0) {
-		formValidate.data.dateList = formValidate.data.dateList.map((item) => {
-			return { ...item, time: [item.startDateTime, item.endDateTime] };
+		formValidate.data.dateList = formValidate.data.dateList.map((item, index) => {
+			let start = item.startDateTime,
+				end = item.endDateTime;
+			// setRange(start, end, index);
+			return { ...item, time: [start, end] };
 			// dayjs(' 00:00:00', 'HH:mm')
 		});
 	} else {
@@ -166,6 +255,7 @@ const cancel = () => {
 	formRef.value.resetFields();
 	formValidate.data.dateList = [{ startDateTime: '', endDateTime: '', time: [] }];
 	console.log(modelValue.value, 'modelValue');
+	hadRange.value = [];
 };
 
 defineExpose({
