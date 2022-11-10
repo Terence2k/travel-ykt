@@ -231,8 +231,8 @@ const apply = async () => {
 		.then(async (res: any) => {
 			let params = formValidate.data;
 			params.dateList.map((i: any) => {
-				i.startDateTime = i.time[0];
-				i.endDateTime = i.time[1];
+				i.startDateTime = i.time[0] + ' 00:01';
+				i.endDateTime = i.time[1] + ' 00:01';
 				delete i.time;
 				return i;
 			});
@@ -274,8 +274,8 @@ const getDeatil = async (id: number) => {
 	formValidate.data = res;
 	if (formValidate.data.dateList.length > 0) {
 		formValidate.data.dateList = formValidate.data.dateList.map((item, index) => {
-			let start = item.startDateTime,
-				end = item.endDateTime;
+			let start = item.startDateTime.slice(0, 10),
+				end = item.endDateTime.slice(0, 10);
 			setRange(start, end, index);
 			return { ...item, time: [start, end] };
 			// dayjs(' 00:00:00', 'HH:mm')
