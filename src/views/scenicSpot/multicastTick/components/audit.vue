@@ -8,14 +8,12 @@
 						<a-col :span="19">
 							<a-form-item :name="['dateList', index, 'time']" :rules="formRules.time">
 								<a-range-picker
+									@change="(e) => getData(e, index)"
+									:disabled-date="disabledDate"
 									class="data-item"
 									v-model:value="formValidate.data.dateList[index].time"
-									format="YYYY-MM-DD HH:mm"
-									valueFormat="YYYY-MM-DD HH:mm"
-									:show-time="{
-										hideDisabledOptions: true,
-										defaultValue: [dayjs(' 00:00:00', 'HH:mm'), dayjs('23:59:59', 'HH:mm')],
-									}"
+									format="YYYY-MM-DD"
+									valueFormat="YYYY-MM-DD"
 								/>
 							</a-form-item>
 							<div class="btn-wrapper inner">
@@ -100,9 +98,43 @@ const props = defineProps({
 	// params: Object,
 	// menuList: Array,
 });
-const disabledDate = (current: Dayjs) => {
+/**
+ * 禁用日期设置
+ * 1. 获取前一天时间戳
+ * 2. 判别当前是否在已选日期list的中
+ */
+const disabledDate = (e: Dayjs, index: number) => {
+	// console.log(hadRange.value.length > 0);
+	let preDay = new Date(new Date().getTime() - 24 * 60 * 60 * 1000);
+
 	// Can not select days before today and today
-	return current > dayjs(new Date());
+	if (hadRange.value.length > 0) {
+		// if (hadRange.value[index]?.length > 0) {
+		// 	bufferDateArr.value = hadRange.value[index];
+		// 	// hadRange.value[index] = [];
+		// }
+		//判断是否在范围里面
+		let isHad = isCurrentDate(e);
+		return new Date(shijianYMD(e)).getTime() < preDay.getTime() || isHad ? true : false;
+	} else {
+		return new Date(shijianYMD(e)).getTime() < preDay.getTime();
+	}
+};
+
+const shijianYMD = (timestamp: any) => {
+	const time = new Date(timestamp),
+		year = time.getFullYear(),
+		month = (time.getMonth() + 1).toString().padStart(2, '0'),
+		date = time.getDate().toString().padStart(2, '0');
+	return year + '-' + month + '-' + date;
+};
+
+const isCurrentDate = (day: Dayjs) => {
+	let now = shijianYMD(day),
+		res = hadRange.value?.some((arrRange: string[]) => {
+			return arrRange.includes(now);
+		});
+	return res;
 };
 /**
  * 时间段去重
@@ -114,7 +146,7 @@ const disabledDate = (current: Dayjs) => {
 const hadRange = ref<any[][]>([]);
 
 const getData = (e: string[], index: number) => {
-	let rangeTime = getTwoTimeList(e[0], e[1]);
+	let rangeTime = getAllDateCN(new Date(e[0]), new Date(e[1]));
 	// console.log(e, 'getData', hadRange.value, rangeTime);
 
 	if (hadRange.value.length > 0) {
@@ -203,7 +235,7 @@ const apply = () => {
 				return i;
 			});
 			console.log(res, params);
-			let apiRes = api.scenicTicketDown(params);
+			let apiRes = await api.scenicTicketDown(params);
 			console.log(apiRes, 'apiRes');
 			emits('down-page');
 			cancel();
@@ -228,9 +260,10 @@ const open = (id: any, status: string | undefined, searchkey: string) => {
 	// }
 };
 const setRange = (start: string, end: string, index: number) => {
-	let range = getTwoTimeList(start, end);
+	let range = getAllDateCN(new Date(start), new Date(end));
 	hadRange.value[index] = range;
 };
+
 const getDeatil = async (id: number) => {
 	let res = await api.scenicTicketDetail(id);
 	console.log(res, 'getDeatils');
@@ -239,7 +272,7 @@ const getDeatil = async (id: number) => {
 		formValidate.data.dateList = formValidate.data.dateList.map((item, index) => {
 			let start = item.startDateTime,
 				end = item.endDateTime;
-			// setRange(start, end, index);
+			setRange(start, end, index);
 			return { ...item, time: [start, end] };
 			// dayjs(' 00:00:00', 'HH:mm')
 		});
