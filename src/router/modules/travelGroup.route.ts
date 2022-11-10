@@ -151,6 +151,18 @@ export default [
 					// isDetail: true, // 在左侧的导航栏不会展示
 				},
 			},
+			// individualGroupOperators
+			{
+				path: 'individualGroupOperators',
+				name: 'individualGroupOperators',
+				component: () => import('@/views/individualGroupOperators/index.vue'),
+				meta: {
+					title: '散客拼团操作员管理',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					// isDetail: true, // 在左侧的导航栏不会展示
+				},
+			},
 			// touristsElectronicContract
 			{
 				path: 'touristsElectronicContract',
