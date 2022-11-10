@@ -93,7 +93,7 @@ import SearchItem from '@/components/common/CommonSearchItem.vue';
 import DelModal from '@/components/common/DelModal.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import api from '@/api';
-import { useGeneraRules } from '@/stores/modules/GeneraRules';
+import { useGeneraRules } from '@/stores/modules/generaRules';
 import { message } from 'ant-design-vue/es';
 const navigatorBar = useNavigatorBar();
 const generaRulesOptions = useGeneraRules();

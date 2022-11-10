@@ -57,7 +57,7 @@ import dayjs, { Dayjs } from 'dayjs';
 
 import api from '@/api';
 import { message } from 'ant-design-vue';
-import { shijianYMD, getAllDateCN, nextYear } from '@/utils/formatTime';
+import { shijianYMD, getAllDateCN, nextYear } from '@/utils/formatTIme';
 
 //自定义价格列表
 const setDayPriceList = ref([

@@ -298,10 +298,21 @@ export default [
 					{
 						path: 'take_group_list',
 						component: () => import('@/views/travelManagement/travelTakeGroupList.vue'),
-
 						name: 'take_group_list',
 						meta: {
 							// title: '接团行程管理',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'changetravel',
+						component: () => import('@/views/travelManagement/travelTakeGroupList/chang.vue'),
+						activeMeun: 'take_group_list',
+						name: 'changetravel',
+						meta: {
+							title: '新增行程',
 							// icon: 'liulanqi',
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示

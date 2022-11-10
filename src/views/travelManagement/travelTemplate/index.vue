@@ -68,28 +68,43 @@ interface DataSourceItem {
 const columns = [
 	{
 		title: '模板名称',
-		dataIndex: 'cateringName',
-		key: 'cateringName',
+		dataIndex: 'templateName',
+		key: 'templateName',
 	},
 	{
-		title: '导游电话',
-		dataIndex: 'orderNum',
-		key: 'orderNum',
+		title: '团队类型',
+		dataIndex: 'teamTypeName',
+		key: 'teamTypeName',
 	},
 	{
-		title: '导游证号',
-		dataIndex: 'price',
-		key: 'price',
+		title: '地接社',
+		dataIndex: 'teamTypeName',
+		key: 'teamTypeName',
 	},
 	{
-		title: '所属旅行社',
-		dataIndex: 'status',
-		key: 'status',
+		title: '地接社计调',
+		dataIndex: 'subTravelOperatorName',
+		key: 'subTravelOperatorName',
+	},
+	{
+		title: '合作导游',
+		dataIndex: 'guideNames',
+		key: 'guideNames',
+	},
+	{
+		title: '包含酒店',
+		dataIndex: 'hotelNames',
+		key: 'hotelNames',
+	},
+	{
+		title: '包含景区',
+		dataIndex: 'scenicNames',
+		key: 'scenicNames',
 	},
 	{
 		title: '状态',
-		dataIndex: 'companyName',
-		key: 'companyName',
+		dataIndex: 'status',
+		key: 'status',
 	},
 	{
 		title: '操作',
@@ -99,16 +114,6 @@ const columns = [
 	},
 ];
 
-const data = [
-	{
-		cateringName:'王某某',
-		orderNum:'13567345698',
-		price:'NKQ7960F',
-		status:'丽江黑白水旅行社',
-		companyName:'暂停带团'
-	}
-]
-
 const state = reactive({
 	tableData: {
 		data: [],
@@ -117,9 +122,6 @@ const state = reactive({
 		param: {
 			pageNo: 1,
 			pageSize: 10,
-			shopPhone: null,
-			shopId: null,
-			status: null,
 		},
 	},
 	params: {},
@@ -128,7 +130,7 @@ const state = reactive({
 
 // 气泡框
 const confirm = (e: MouseEvent) => {
-	message.success('允许带团')
+	message.success('允许带团');
 };
 
 const cancel = (e: MouseEvent) => {};
@@ -160,24 +162,23 @@ const rowSelection = computed(() => {
 const cateringStoreName = computed(() => scenicSpotOptions.cateringStoreName);
 
 const getList = async (): Promise<void> => {
-	// api.getProductPage(state.tableData.param).then((res: any) => {
-	// 	state.tableData.total = res.total;
-	// 	const list: [any] = dealData(res.content);
-	// 	state.tableData.data = list;
-	// });
-	await scenicSpotOptions.getCateringStoreName();
+	api.travelManagement.getTravelTemplateList(state.tableData.param).then((res: any) => {
+		state.tableData.total = res.total;
+		// const list: [any] = dealData(res.content);
+		// state.tableData.data = list;
+	});
 };
 const status = {
 	false: '停用',
 	true: '启用',
 };
-const dealData = (params: [any]) => {
-	params.map((i: any) => {
-		i.status = status[i.status];
-		return i;
-	});
-	return params;
-};
+// const dealData = (params: [any]) => {
+// 	params.map((i: any) => {
+// 		i.status = status[i.status];
+// 		return i;
+// 	});
+// 	return params;
+// };
 
 const openeditPage = (record: any) => {
 	router.push({ path: '/travel/travelTtemplate/info', query: { id: record.oid } });
