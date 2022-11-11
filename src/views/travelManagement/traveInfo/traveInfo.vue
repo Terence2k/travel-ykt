@@ -17,6 +17,7 @@
 					</template>
 					<template v-if="column.key === 'payablePrice'">
 						<span v-if="!travelStore.reserveStatus ">{{accMul(travelStore.touristList.length,payablePrice)}}元 </span>
+						<span v-else>{{accDiv(record.payablePrice,100)}}元 </span>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">

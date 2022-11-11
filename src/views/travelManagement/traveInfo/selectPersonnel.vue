@@ -35,6 +35,7 @@
 							@change="(val: any, option: any) => ruleChange(val, option, record.key ? record.key : record.oid)"
 							v-model:value="record.discountRuleId"
 							allowClear
+							:disabled="state.disabledValue"
 							v-else
 						>
 							<a-select-option v-for="item in state.tableData.list" :item="item" :key="item.oid" :value="item.oid">
@@ -159,6 +160,7 @@ const state = reactive({
 		num: 0,
 		submitList: [],
 	},
+	disabledValue:true,
 	title: '',
 	operationModal: {
 		isApplydate: false,
@@ -173,6 +175,12 @@ const init = async () => {
 const onSelect = (record: any, selected: boolean, selectedRows: any) => {
 	state.tableData.num = selectedRows.length;
 	state.tableData.submitList = selectedRows;
+	if(selected)
+	{
+		state.disabledValue=false
+	}else{
+		state.disabledValue=true
+	}
 };
 const submit = () => {
 	//props.routeId后面传这个
@@ -215,6 +223,13 @@ const ruleChange = (value: any, { item }: any, key: any) => {
 		let data = state.tableData.data.touristList.filter((it: any) => it.oid === key);
 		data.map((i: any) => {
 			(i.specialCertificateType = item.discountType), (i.specialCertificateTypeName = item.discountConditionName);
+			return i;
+		});
+	}
+	else{
+		let data = state.tableData.data.touristList.filter((it: any) => it.oid === key);
+		data.map((i: any) => {
+			(i.specialCertificateType = item.discountType), (i.specialCertificateTypeName ='');
 			return i;
 		});
 	}
