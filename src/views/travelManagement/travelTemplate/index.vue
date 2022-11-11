@@ -24,9 +24,7 @@
 					<div class="action-btns">
 						<a @click="openInfoPage(record)">查看</a>
 						<a @click="openeditPage(record)">编辑</a>
-						<a-popconfirm title="确认是否允许带团" ok-text="确认" cancel-text="取消" @confirm="confirm" @cancel="cancel">
-							<a>允许带团</a>
-						</a-popconfirm>
+						<a @click="openModel(record)">{{record.oid ? '启用' : '禁用'}}</a>
 					</div>
 				</template>
 			</template>
@@ -57,7 +55,6 @@ import { settlementOptions } from '@/stores/modules/settlement';
 const options = settlementOptions();
 const scenicSpotOptions = useScenicSpotOption();
 const travelStore = useTravelStore();
-
 const navigatorBar = useNavigatorBar();
 
 const router = useRouter();
@@ -156,15 +153,11 @@ const pageSideChange = (current: number, size: number) => {
 
 const rowSelection = computed(() => {
 	return {
-		// onChange: (selectedRowKeys: (string | number)[], selectedRows: DataSourceItem[]) => {
-		// 	console.log('1',`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-		// },
+
 		onSelect: (record: DataSourceItem, selected: boolean, selectedRows: DataSourceItem[]) => {
 			console.log(record, selected, selectedRows);
 		},
-		// onSelectAll: (selected: boolean, selectedRows: DataSourceItem[], changeRows: DataSourceItem[]) => {
-		// 	console.log(selected, selectedRows, changeRows);
-		// },
+	
 	};
 });
 
@@ -173,7 +166,6 @@ const cateringStoreName = computed(() => scenicSpotOptions.cateringStoreName);
 const getList = async (): Promise<void> => {
 	api.travelManagement.getTravelTemplateList(state.tableData.param).then((res: any) => {
 		state.tableData.total = res.total;
-		// const list: [any] = dealData(res.content);
 		state.tableData.data = res.content;
 	});
 };
@@ -186,13 +178,6 @@ const status = {
 	false: '停用',
 	true: '启用',
 };
-// const dealData = (params: [any]) => {
-// 	params.map((i: any) => {
-// 		i.status = status[i.status];
-// 		return i;
-// 	});
-// 	return params;
-// };
 
 const openeditPage = (record: any) => {
 	const Cedit = 0;
@@ -208,7 +193,10 @@ const AddPage = (id: any) => {
 	travelStore.scenicTickets = []
 	router.push({ path: '/travel/travelTtemplate/info', query: { Cedit: Cedit } });
 };
-
+const openModel = (record: any) => {
+	console.log(record.oid);
+	
+};
 onMounted(() => {
 	navigatorBar.setNavigator(['行程模板管理']);
 	getList();
@@ -217,6 +205,11 @@ onMounted(() => {
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
 });
+const handleOk = async (callback: Function) => {
+	setTimeout(() => {
+		callback();
+	}, 2000);
+};
 </script>
 
 <style scoped lang="less">

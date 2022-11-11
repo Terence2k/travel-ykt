@@ -299,17 +299,17 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			});
 		},
 	};
-	const rowRadioSelection = {
-		type: 'radio',
+	// const rowRadioSelection = {
+	// 	type: 'radio',
 
-		columnTitle: '选择',
+	// 	columnTitle: '选择',
 
-		onChange: (selectedRowKeys: any, selectedRows: any) => {
-			console.log(selectedRowKeys, selectedRows);
-			travelStore.curentProduct = [selectedRows] as any;
-		},
-		selectedRowKeys: [travelStore.curentProduct[0].oid],
-	};
+	// 	onChange: (selectedRowKeys: any, selectedRows: any) => {
+	// 		console.log(selectedRowKeys, selectedRows);
+	// 		travelStore.curentProduct = [selectedRows] as any;
+	// 	},
+	// 	selectedRowKeys: [travelStore.curentProduct[0].oid],
+	// };
 	if (travelStore.reserveStatus) {
 		travelStore.getManagementExpenses(route.query.oid);
 	}
@@ -320,6 +320,6 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		showId,
 		gouvyId,
 		travelStore,
-		rowRadioSelection,
+		// rowRadioSelection,
 	};
 }
