@@ -202,9 +202,9 @@ const getTypeName = computed(() => (str: string) => {
 		}
 	}
 	if (str === 'productType') {
-		const idx = generaRulesOptions.productTypeList.findIndex((item: any) => item.value === formState.productType);
+		const idx = generaRulesOptions.currencyProductTypeList.findIndex((item: any) => item.value === formState.productType);
 		if (idx !== -1) {
-			return generaRulesOptions.productTypeList[idx]['name'];
+			return generaRulesOptions.currencyProductTypeList[idx]['name'];
 		}
 	}
 	if (str === 'ruleStatus') {
