@@ -109,7 +109,7 @@ export const useTravelStore = defineStore({
 		traveInfo: {},
 		attachmentList: [],
 		compositeProducts: [],
-		curentProduct: [{oid: ''}],
+		curentProduct: [] as any,
 		hotels: [],
 		scenicTickets: [],
 		gouvyList:[{

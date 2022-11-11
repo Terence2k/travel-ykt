@@ -332,6 +332,8 @@ const findByIdTeamType = async () => {
 		}
 		if (allFeesProducts.length === 1) {
 			travelStore.curentProduct = cloneDeep(allFeesProducts);
+		} else if (allFeesProducts.length === 0) {
+			travelStore.curentProduct = [];
 		}
 		
 		travelStore.setCompositeProducts(allFeesProducts);
