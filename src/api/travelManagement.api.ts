@@ -266,6 +266,21 @@ export const travelManagement = {
             showLoading: false,
             data,
         });
-    }
+    },
+    saveChangeTravel(data: any, showLoading: boolean) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/template/modify`,
+            method: 'post',
+            data,
+            showLoading:false
+        });
+    },
+    saveChangeTraveldetail(oid: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/template/detail/${oid}`,
+            method: 'get',
+            showLoading:false
+        });
+    },
     
 }

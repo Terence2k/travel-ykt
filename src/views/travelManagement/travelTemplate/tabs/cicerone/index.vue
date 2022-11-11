@@ -1,37 +1,18 @@
 <template>
 	<div class="table-container">
 		<p class="tips">选择导游（提交后系统会自动联系导游接单）</p>
-		<a-form 
+		<a-form
 			ref="formRef"
 			:rules="rulesRef"
 			:model="editableData"
 			autocomplete="off"
 			labelAlign="left"
 		>
-			<CommonTable :columns="columns" :dataSource="tableData" :scrollY="false">
+			<CommonTable :columns="route.query.Cedit ?columns:columnstwo" :dataSource="tableData" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
 					<template v-if="column.key === 'index'">
 						<div>
 							{{index + 1}}
-						</div>
-					</template>
-					<template v-if="column.key === 'time'">
-						<div>
-							<a-form-item 
-								v-if="editableData[record.key ? record.key : record.oid]" 
-								:name="[record.key ? record.key : record.oid, 'time']">
-									<a-range-picker
-										v-model:value="editableData[record.key ? record.key : record.oid][column.key]"
-										show-time
-										format="YYYY-MM-DD HH:mm:ss"
-										value-format="YYYY-MM-DD HH:mm:ss"
-									/>
-							</a-form-item>
-							<template v-else>
-								{{ record.startDate }}
-								-
-								{{record.endDate}}
-							</template>
 						</div>
 					</template>
 
@@ -66,27 +47,24 @@
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a class="item" v-if="!editableData[record.key ? record.key : record.oid]"  @click="edit(record.key ? record.key : record.oid)">编辑</a>
-							<a class="item" v-else @click="save(record.key ? record.key : record.oid)">确定</a>
-							<a class="item" @click="del(index)">删除</a>
+							<a class="item" :class="{'disabled': !travelStore.teamStatus}" v-if="!editableData[record.key ? record.key : record.oid]"  @click="edit(record.key ? record.key : record.oid)">编辑</a>
+							<a class="item" :class="{'disabled': !travelStore.teamStatus}" v-else @click="save(record.key ? record.key : record.oid)">确定</a>
+							<a class="item" :class="{'disabled': !travelStore.teamStatus}" @click="del(index)">删除</a>
 						</div>
 					</template>
 				</template>
 			</CommonTable>
+			
 		</a-form>
-		<div class="footer-btn">
-			<a-button type="primary" @click="add">添加</a-button>
+		<div class="footer-btn" v-if="travelStore.teamStatus">
+			<a-button type="primary" @click="add" v-if="route.query.Cedit" >添加</a-button>
 		</div>
 	</div> 
 </template>
 <script lang="ts" setup>
 import { CaretDownOutlined } from '@ant-design/icons-vue';
 import CommonTable from '@/components/common/CommonTable.vue';
-import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import { useGuideInfo } from './ciceroneinfo';
-
-const navigatorBar = useNavigatorBar();
-const route = useRouter();
 
 const props = defineProps({
 	onCheck: {
@@ -104,30 +82,8 @@ const {
 	formRef,
 	getGuideList, 
 	add,
-	del, guideData, guideChange } = useGuideInfo(props, emits)
+	del, guideData, guideChange, travelStore ,route,columnstwo } = useGuideInfo(props, emits)
 	getGuideList()
-
-// 初始化
-const initPage = async (): Promise<void> => {
-	// if (route.currentRoute.value?.query?.id) {
-	// 	api.getProductInfo(route.currentRoute.value?.query?.id).then((res: any) => {
-	// 		formData.data = res;
-	// 	});
-	// }
-};
-
-onMounted(() => {
-	if (route.currentRoute.value?.query?.id) {
-		navigatorBar.setNavigator(['行程模板管理', '新增']);
-	} else {
-		navigatorBar.setNavigator(['行程模板管理', '查看']);
-	}
-	initPage();
-});
-onBeforeUnmount(() => {
-	navigatorBar.clearNavigator();
-});
-
 </script>
 <style lang="less" scoped>
 	.tips {
@@ -146,5 +102,8 @@ onBeforeUnmount(() => {
 		display: flex;
 		justify-content: flex-end;
 		margin: 16px 20px;
+	}
+	.action{
+		display: none;
 	}
 </style>
