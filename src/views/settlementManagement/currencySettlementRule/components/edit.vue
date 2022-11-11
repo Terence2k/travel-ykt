@@ -25,7 +25,7 @@
 					v-model:value="formState.productType"
 					placeholder="请选择结算产品"
 					allowClear
-					:options="generaRulesOptions.productTypeList.map((item) => ({ value: item.value, label: item.name }))"
+					:options="generaRulesOptions.currencyProductTypeList.map((item) => ({ value: item.value, label: item.name }))"
 				>
 				</a-select>
 			</a-form-item>

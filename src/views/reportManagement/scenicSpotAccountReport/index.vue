@@ -4,7 +4,13 @@
 			<a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入行程单号" allowClear style="width: 180px" />
 		</search-item>
 		<search-item label="景区名称" style="width: 280px">
-			<a-input v-model:value="state.tableData.param.scenicId" placeholder="请输入景区名称" allowClear style="width: 180px" />
+			<a-select
+				v-model:value="state.tableData.param.scenicId"
+				placeholder="请选择景区名称"
+				allowClear
+				:options="state.viewList.map((item) => ({ value: item.ticketId, label: item.ticketName }))"
+			>
+			</a-select>
 		</search-item>
 		<search-item label="景点名称" style="width: 280px">
 			<a-input v-model:value="state.tableData.param.ticketName" placeholder="请输入景点名称" allowClear style="width: 180px" />
@@ -15,14 +21,14 @@
 			</a-select>
 		</search-item>
 		<search-item label="地接社" style="width: 280px">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.subTravelId" style="width: 200px" placeholder="请选择旅行社名称">
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.subTravelId" style="width: 200px" placeholder="请选择地接社名称">
 				<a-se+lect-option v-for="(item, index) in options.earthContactAgencyList" :value="item.travelAgencyId" :key="index"
 					>{{ item.travelAgencyName }}
 				</a-se+lect-option>
 			</a-select>
 		</search-item>
 		<search-item label="结算时间" style="width: 280px">
-			<a-range-picker v-model:value="state.tableData.settlementStartTimeList" @change="settlementStartTimeChange" />
+			<a-range-picker v-model:value="state.times" @change="timeChange" />
 		</search-item>
 		<template #button>
 			<a-button @click="initList">查询</a-button>
@@ -64,6 +70,7 @@ import type { TableColumnsType } from 'ant-design-vue';
 import api from '@/api';
 interface StateType {
 	tableData: TableDataType;
+	viewList: Array<any>;
 }
 interface TableDataType {
 	param: ParamType;
@@ -74,14 +81,14 @@ interface TableDataType {
 }
 interface ParamType {
 	itineraryNo?: number | string; //行程单号
-	scenicId?: number | string; //关联景区id
+	scenicId?: number | string | null; //关联景区id
 	ticketName?: number | string; //门票名称
-	travelTypeId?: number | string; //团队类型id
-	subTravelId?: number | string; //地接社id
+	travelTypeId?: number | string | null; //团队类型id
+	subTravelId?: number | string | null; //地接社id
 	// verificationStartTime: '', //核销开始时间
 	// verificationEndTime: '', //核销结束时间
-	settlementStartTime?: number | string; //结算开始时间
-	settlementEndTime?: number | string; //结算结束时间
+	settlementStartTime: number | string | null; //结算开始时间
+	settlementEndTime: number | string | null; //结算结束时间
 	pageSize?: number; //页大小
 	pageNo?: number; //页号
 }
@@ -224,10 +231,10 @@ const state = reactive<StateType>({
 	tableData: {
 		param: {
 			itineraryNo: '', //行程单号
-			scenicId: '', //关联景区id
+			scenicId: null, //关联景区id
 			ticketName: '', //门票名称
-			travelTypeId: '', //团队类型id
-			subTravelId: '', //地接社id
+			travelTypeId: null, //团队类型id
+			subTravelId: null, //地接社id
 			// verificationStartTime: '', //核销开始时间
 			// verificationEndTime: '', //核销结束时间
 			settlementStartTime: '', //结算开始时间
@@ -240,6 +247,7 @@ const state = reactive<StateType>({
 		loading: false,
 		settlementStartTimeList: [],
 	},
+	viewList: [],
 });
 // 查询
 const initList = async () => {
@@ -320,6 +328,12 @@ const initList = async () => {
 	// 	},
 	// ];
 };
+// 获取景区下拉列表
+const getViewList = async () => {
+	const result = await api.getViewList();
+	state.viewList = result;
+	console.log(state.viewList, `state.viewList`);
+};
 //搜索
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
@@ -346,7 +360,17 @@ onMounted(() => {
 	options.getGroupSocietyList();
 	options.getEarthContactAgencyList();
 	initList();
+	getViewList();
 });
+const timeChange = (arr: any) => {
+	if (arr && arr.length > 0) {
+		state.tableData.param.settlementStartTime = arr[0]['$d'];
+		state.tableData.param.settlementEndTime = arr[1]['$d'];
+	} else {
+		state.tableData.param.settlementStartTime = null;
+		state.tableData.param.settlementEndTime = null;
+	}
+};
 const getSettlementRule = computed(() => (column: TableColumnsType, record: DataType) => {
 	const data = record.settlementRuleList;
 	for (const key in data) {

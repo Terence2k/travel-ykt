@@ -1,6 +1,6 @@
 <template>
 	<div class="trave-contaner">
-		<a-tabs v-model:activeKey="activeKey" @change="changeTab">
+		<a-tabs v-model:activeKey="activeKey">
 			<a-tab-pane v-for="(item, index) in pages" :key="index" :tab="item.label">
 				<component @onSuccess="save" :onCheck="check" :is="item.name"></component>
 			</a-tab-pane>
@@ -106,8 +106,8 @@ const saveItinerary = (val: any) => {
 	const itineraryId =  route.query.id || traveListData.oid
 	let ajax = itineraryId ? api.travelManagement.editItinerary : api.travelManagement.saveItinerary;
 	// 综费产品 > 1
-	const productRes = travelStore.curentProduct.length
-	if (!productRes) {
+	const productRes = travelStore.compositeProducts.length > 1
+	if (productRes) {
 		return message.error('请选择一项综费产品')
 	}
 	return ajax({
@@ -219,9 +219,9 @@ const getTraveDetail = () => {
 			}
 		});
 };
-const changeTab = (event: number) => {
-	sendTeam.value = false;
-	if (event === 4) {
+
+watch(activeKey, newVal => {
+	if (newVal === 4) {
 		const allFeesProducts =  travelStore.compositeProducts.map((it:any) => {
 			it.peopleCount = travelStore.touristList.length;
 			it.unPrice = it.feeNumber;
@@ -238,7 +238,7 @@ const changeTab = (event: number) => {
 		isSaveBtn.value = false
 		check.value = !check.value;
 	}
-};
+})
 
 getTraveDetail();
 travelStore.getItineraryStatus();
