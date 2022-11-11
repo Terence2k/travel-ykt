@@ -110,8 +110,8 @@ const columns = [
 	},
 	{
 		title: '联系方式',
-		dataIndex: 'purchased',
-		key: 'purchased',
+		dataIndex: '',
+		key: '',
 	},
 	{
 		title: '客源地',

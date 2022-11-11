@@ -150,6 +150,7 @@ const Fail = () => {
 	api.noAuditFailed({oid: state.tableData.data.oid,refuesedReason: state.refuesedReason}).then((res) => {
 		message.error('审核未通过');
 		dialogVisible.value = false;
+		go()
 	});
 };
 const adopt = () => {
