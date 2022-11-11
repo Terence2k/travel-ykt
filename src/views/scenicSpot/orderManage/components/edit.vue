@@ -37,7 +37,7 @@
 							{{ certificateTypeList[record.certificateType] }}
 						</template>
 						<template v-if="column.key === 'specialPic'">
-							<a-image :width="200" :height="200" :src="record.specialPic" :fallback="error" />
+							<a-image :width="100" :height="70" :src="record.specialPic" :fallback="error" />
 						</template>
 						<template v-if="column.key === 'verificationStatus'"> {{ record.verificationStatus ? '已核销' : '未核销' }} </template>
 						<template v-if="column.key === 'action'">
@@ -335,7 +335,7 @@ const reset = (): void => {
 //初始化页面
 const initPage = async (): Promise<void> => {
 	let res = await api.getViewOrderDetails(route.currentRoute.value?.query?.oid);
-	// formData.data = res;
+	formData.data = res;
 	// formData.data.oid = parseInt(route.currentRoute.value?.query?.oid);
 };
 
