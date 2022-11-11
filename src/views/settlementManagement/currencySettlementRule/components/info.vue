@@ -121,7 +121,7 @@ import { UnwrapRef } from 'vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import api from '@/api';
 import { FormState } from '../../productSettlementRule/components/type';
-import { useGeneraRules } from '@/stores/modules/GeneraRules';
+import { useGeneraRules } from '@/stores/modules/generaRules';
 const navigatorBar = useNavigatorBar();
 const generaRulesOptions = useGeneraRules();
 const formRef = ref();
@@ -202,9 +202,9 @@ const getTypeName = computed(() => (str: string) => {
 		}
 	}
 	if (str === 'productType') {
-		const idx = generaRulesOptions.productTypeList.findIndex((item: any) => item.value === formState.productType);
+		const idx = generaRulesOptions.currencyProductTypeList.findIndex((item: any) => item.value === formState.productType);
 		if (idx !== -1) {
-			return generaRulesOptions.productTypeList[idx]['name'];
+			return generaRulesOptions.currencyProductTypeList[idx]['name'];
 		}
 	}
 	if (str === 'ruleStatus') {

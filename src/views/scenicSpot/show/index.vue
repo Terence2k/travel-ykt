@@ -21,6 +21,9 @@
 		</div>
 		<CommonTable :dataSource="dataSource" :columns="columns">
 			<template #bodyCell="{ column, index }">
+				<template v-if="column.key === 'index'">
+					{{ index }}
+				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a href="javascript:;" @click="toEditPage()">编辑</a>
@@ -61,8 +64,8 @@ const dataSource = [
 const columns = [
 	{
 		title: '序号',
-		dataIndex: 'name',
-		key: 'name',
+		dataIndex: 'index',
+		key: 'index',
 	},
 	{
 		title: '演出名称',

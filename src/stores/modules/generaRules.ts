@@ -10,6 +10,13 @@ export const useGeneraRules = defineStore('generaRules', {
 			{ value: 2, name: '酒店' },
 			{ value: 3, name: '餐饮' },
 		],
+		currencyProductTypeList: [
+			{ value: 1, name: '景区' },
+			{ value: 2, name: '酒店' },
+			{ value: 3, name: '餐饮' },
+			{ value: 4, name: '综费产品' },
+			{ value: 5, name: '古维' },
+		],
 		ruleStatusList: [
 			{ value: 1, name: '启用' },
 			{ value: 0, name: '禁用' },

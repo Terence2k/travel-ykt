@@ -25,7 +25,7 @@
 					v-model:value="formState.productType"
 					placeholder="请选择结算产品"
 					allowClear
-					:options="generaRulesOptions.productTypeList.map((item) => ({ value: item.value, label: item.name }))"
+					:options="generaRulesOptions.currencyProductTypeList.map((item) => ({ value: item.value, label: item.name }))"
 				>
 				</a-select>
 			</a-form-item>
@@ -166,7 +166,7 @@ import { isIntegerNotMust, isBtnZeroToHundred } from '@/utils/validator';
 import api from '@/api';
 import { updateProductRule } from '@/api/settlementManage.api';
 import { FormState } from '../../productSettlementRule/components/type';
-import { useGeneraRules } from '@/stores/modules/GeneraRules';
+import { useGeneraRules } from '@/stores/modules/generaRules';
 const navigatorBar = useNavigatorBar();
 const generaRulesOptions = useGeneraRules();
 const formRef = ref();

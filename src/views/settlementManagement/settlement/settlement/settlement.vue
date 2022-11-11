@@ -125,9 +125,11 @@ const tipSubmit = async () => {
 	// 组合转账
 	if (modalData.value.type == 'combination') {
 		api.exportReconciliation(modalData.value.data).then((res: any) => {
-      downloadFile(res, '组合转账')
+      	downloadFile(res, '组合转账')
 			message.success('操作成功');
 			onSearch();
+			// 取消勾选
+			state.selectedRowKeys = [];
 		})
 			tipCancel();
 	}
@@ -171,9 +173,10 @@ const state = reactive({
 // 当前选择列
 const rowSelection = computed(() => {
 	return {
+		selectedRowKeys: state.selectedRowKeys,
 		onChange: (selectedRowKeys: [], selectedRows: any) => {
-		state.selectedRowKeys = selectedRowKeys;
-	},
+			state.selectedRowKeys = selectedRowKeys;
+		},
 	}
 })
 const onHandleCurrentChange = (val: number) => {
@@ -254,7 +257,7 @@ const transfer = (type: string, record: any) => {
 };
 // 查看详情
 const toInfo = (record: any) => {
-	router.push({ path: '/settlementManagement/settlement/info', query: { oid: encodeURIComponent(record.oid) } });
+	router.push({ path: '/travel/travel_manage/travel_detail', query: { oid: encodeURIComponent(record.oid) } });
 };
 onMounted(() => {
 	onSearch();

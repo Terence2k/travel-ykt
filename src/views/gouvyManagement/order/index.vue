@@ -1,23 +1,24 @@
 <template>
 	<CommonSearch>
 		<SearchItem label="是否存在减免">
-			<a-select ref="select" style="width: 200px" placeholder="请选择减免情况">
-				<a-select-option value="0">是</a-select-option>
-				<a-select-option value="1">否</a-select-option>
+			<a-select ref="select" style="width: 200px" placeholder="请选择减免情况" v-model:value="state.tableData.param.isReductionExist">
+				<a-select-option value="1">是</a-select-option>
+				<a-select-option value="0">否</a-select-option>
 			</a-select>
 		</SearchItem>
-		<SearchItem label="审核状态">
-			<a-select ref="select" style="width: 200px" placeholder="请选择审核状态">
-				<a-select-option value="待审核">待审核</a-select-option>
-				<a-select-option value="审核通过">审核通过</a-select-option>
-				<a-select-option value="审核不通过">审核不通过</a-select-option>
-			</a-select>
+		<SearchItem label="接团旅行社">
+			<a-input placeholder="请输入行程单号" style="width: 200px" v-model:value="state.tableData.param.subTravelName" />
 		</SearchItem>
 		<SearchItem label="行程时间">
-			<a-date-picker :show-time="{ format: 'HH:mm' }" format="YYYY-MM-DD HH:mm" value-format="YYYY-MM-DD HH:mm" placeholder="请选择行程时间" />
+			<a-date-picker
+				format="YYYY-MM-DD"
+				value-format="YYYY-MM-DD"
+				placeholder="请选择行程开始时间"
+				v-model:value="state.tableData.param.itineraryStartDate"
+			/>
 		</SearchItem>
 		<SearchItem label="行程单号">
-			<a-input placeholder="请输入行程单号" style="width: 200px" />
+			<a-input placeholder="请输入行程单号" style="width: 200px" v-model:value="state.tableData.param.itineraryNo" />
 		</SearchItem>
 		<template #button>
 			<a-button @click="reset">重置</a-button>
@@ -27,16 +28,20 @@
 	<div class="table-area">
 		<div class="list-btn">
 			<a-button type="primary" class="success" @click="download">导出</a-button>
-			<a-button type="primary" class="btn" @click="print">批量打印票据</a-button>
+			<!-- <a-button type="primary" class="btn" @click="print">批量打印票据</a-button> -->
 		</div>
-		<CommonTable :dataSource="dataSource" :columns="columns">
-			<template #bodyCell="{ column, index }">
+		<CommonTable :dataSource="state.tableData.data" :columns="columns" :scrollY="false">
+			<template #bodyCell="{ column, index, record }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a href="javascript:;" @click="toSee">查看</a>
-						<!-- <a href="javascript:;" @click="toExamine">审核</a> -->
-						<!-- <a href="javascript:;" @click="print">打印票据</a> -->
+						<a href="javascript:;" @click="toSee(record.oid)">查看</a>
 					</div>
+				</template>
+				<template v-if="column.key === 'itineraryStartDate'">
+					<a-span>{{ record.itineraryStartDate }}~ {{ record.itineraryEndDate }}</a-span>
+				</template>
+				<template v-if="column.key === 'totalPrice'">
+					<a-span>{{ accDiv(record.totalPrice, 100) }}</a-span>
 				</template>
 			</template>
 		</CommonTable>
@@ -59,78 +64,62 @@ import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { message } from 'ant-design-vue';
+import { accDiv, accMul } from '@/utils/compute';
+import api from '@/api';
+import { downloadFile } from '@/utils/util';
 const route = useRouter();
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
-const dataSource = [
-	{
-		key: '1',
-		name: 'YNLJ135680',
-		age: '黑白水旅行社',
-		add: '白鹿旅行社',
-		address: '2022.2.23~2022.2.25',
-		address2: '30',
-		address3: '40',
-		address4: '5',
-		address6: '是',
-		status: '待审核',
-	},
-];
 const columns = [
 	{
 		title: '行程单号',
-		dataIndex: 'name',
-		key: 'name',
+		dataIndex: 'itineraryNo',
+		key: 'itineraryNo',
 	},
 	{
 		title: '发团旅行社',
-		dataIndex: 'age',
-		key: 'age',
+		dataIndex: 'travelName',
+		key: 'travelName',
 	},
 	{
 		title: '接团旅行社',
-		dataIndex: 'add',
-		key: 'add',
+		dataIndex: 'subTravelName',
+		key: 'subTravelName',
 	},
 	{
 		title: '行程时间',
-		dataIndex: 'address',
-		key: 'address',
+		dataIndex: 'itineraryStartDate',
+		key: 'itineraryStartDate',
 	},
 	{
-		title: '行程人数',
-		dataIndex: 'address2',
-		key: 'address2',
+		title: '行程总人数',
+		dataIndex: 'touristNum',
+		key: 'touristNum',
 	},
 	{
-		title: '应购买人数',
-		dataIndex: 'address3',
-		key: 'address3',
-	},
-	{
-		title: '全额购买人数',
-		dataIndex: 'address3',
-		key: 'address3',
+		title: '缴费人数',
+		dataIndex: 'purchaseNum',
+		key: 'purchaseNum',
 	},
 	{
 		title: '减免人数',
-		dataIndex: 'address3',
-		key: 'address3',
-	},
-	{
-		title: '费用（元）',
-		dataIndex: 'address3',
-		key: 'address3',
+		dataIndex: 'reduceNum',
+		key: 'reduceNum',
 	},
 	{
 		title: '是否存在减免',
-		dataIndex: 'address6',
-		key: 'address6',
+		dataIndex: 'isReductionExistName',
+		key: 'isReductionExistName',
 	},
 	{
-		title: '审核状态',
-		dataIndex: 'status',
-		key: 'status',
+		title: '费用总计（元）',
+		dataIndex: 'totalPrice',
+		key: 'totalPrice',
+	},
+	{
+		title: '线下查验状态',
+		dataIndex: 'checkStatusName',
+		key: 'checkStatusName',
 	},
 	{
 		title: '操作',
@@ -149,25 +138,22 @@ const state = reactive({
 		param: {
 			pageNo: 1,
 			pageSize: 10,
+			itineraryStartDate: '',
+			itineraryNo: '',
+			subTravelName: '',
+			isReductionExist: '',
 		},
 	},
 });
 
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
-	// state.tableData.param.pageNo = val;
+	state.tableData.param.pageNo = val;
 	// onSearch();
 };
 //查看
-const toSee = () => {
-	route.push({ path: '/gouvyManagement/order/order_edit' });
-};
-//审核
-const toExamine = () => {
-	route.push({ path: '/gouvyManagement/order/order_edit', query: { index: 1 } });
-};
-const print = () => {
-	message.success('已打印');
+const toSee = (oid:any) => {
+	route.push({ path: '/gouvyManagement/order/order_edit' ,query:{oid:oid}});
 };
 const pageSideChange = (current: number, size: number) => {
 	console.log('changePageSize:', size);
@@ -175,24 +161,29 @@ const pageSideChange = (current: number, size: number) => {
 	// onSearch();
 };
 const onSearch = () => {
-	// userList(state.tableData.param).then((res) => {
-	// 	console.log(res);
-	// });
-};
-const reset =()=>{
+	api.gouvyOrder(state.tableData.param).then((res :any) => {
+		state.tableData.data = res.content;
+		state.tableData.total=res.total
 
-}
-const download =()=>{
-	message.success('下载成功');
-}
+	});
+};
+const reset = () => {
+	state.tableData.param.isReductionExist = '';
+	state.tableData.param.itineraryNo = '';
+	state.tableData.param.subTravelName = '';
+	state.tableData.param.itineraryStartDate = '';
+	onSearch();
+};
+const download = () => {
+	api.exportGouvyOrder(state.tableData.param).then((res: any) => {
+      	downloadFile(res, '古维订单')
+			message.success('导出成功');
+		})
+};
 onMounted(() => {
-	// navigatorBar
-	// 重新定义面包屑
-	// navigatorBar.clearNavigator();
-	// navigatorBar.setNavigator(['演出票']);
+	onSearch();
 });
 onBeforeUnmount(() => {
-	navigatorBar.clearNavigator();
 });
 </script>
 

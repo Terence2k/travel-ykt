@@ -318,3 +318,12 @@ export async function getWriteOffRecordDetails(oid: number) {
 		showLoading: true,
 	});
 }
+
+//获取核销记录详情
+export async function getShowVenueDetail(oid: number) {
+	return request({
+		url: `${commonPath}/	ticket-service/public/api/scenic-venue/${oid}`,
+		method: 'get',
+		showLoading: true,
+	});
+}

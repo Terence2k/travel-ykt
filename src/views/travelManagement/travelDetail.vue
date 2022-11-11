@@ -50,9 +50,15 @@
                 {{(state.param.pageNo - 1) * (state.param.pageSize) + (index + 1)}}
               </div>
             </template>
+            <!-- 时段 -->
+            <template v-if="column.key === 'time'">
+              <div>
+                {{record.startDate}} - {{record.endDate}}
+              </div>
+            </template>
             <template v-if="column.key === 'action'">
               <div class="action-btns">
-                <a>退订</a>
+                <a>查看订单</a>
               </div>
             </template>
         </template>
@@ -61,6 +67,7 @@
         :current="state.param.pageNo"
         :page-size="state.param.pageSize"
         :total="item.dataSource?.length"
+        v-if="item.pagination"
       />
     </div>
 
@@ -125,9 +132,7 @@
   }
 
   onBeforeMount(() => {
-    console.log('orderId:', orderId);
-    getItineraryDetail(route.currentRoute.value.query.orderId);
-    
+    getItineraryDetail(route.currentRoute.value.query.oid);
   })
 </script>
 <style lang="less" scoped>

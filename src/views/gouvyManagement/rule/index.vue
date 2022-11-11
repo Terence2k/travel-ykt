@@ -20,7 +20,7 @@
 			<a-col :span="10"></a-col>
 			<a-col :span="2"> <a-button type="primary" class="btn" @click="add({ handle: 'add' })">添加</a-button></a-col>
 		</a-row>
-		<CommonTable :dataSource="state.tableData.Data" :columns="columns">
+		<CommonTable :dataSource="state.tableData.Data" :columns="columns" :scrollY="false">
 			<template #bodyCell="{ column, index, record }">
 				<template v-if="column.key === 'discount'">
 					<a-span>{{ accDiv(record.discount, 100) }}</a-span>

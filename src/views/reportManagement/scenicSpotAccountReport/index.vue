@@ -1,13 +1,19 @@
 <template>
 	<CommonSearch>
 		<search-item label="行程单号" style="width: 280px">
-			<a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入转账单号" allowClear style="width: 180px" />
+			<a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入行程单号" allowClear style="width: 180px" />
 		</search-item>
 		<search-item label="景区名称" style="width: 280px">
-			<a-input v-model:value="state.tableData.param.scenicId" placeholder="请输入行程单号" allowClear style="width: 180px" />
+			<a-select
+				v-model:value="state.tableData.param.scenicId"
+				placeholder="请选择景区名称"
+				allowClear
+				:options="state.viewList.map((item) => ({ value: item.ticketId, label: item.ticketName }))"
+			>
+			</a-select>
 		</search-item>
 		<search-item label="景点名称" style="width: 280px">
-			<a-input v-model:value="state.tableData.param.ticketName" placeholder="请输入订单号" allowClear style="width: 180px" />
+			<a-input v-model:value="state.tableData.param.ticketName" placeholder="请输入景点名称" allowClear style="width: 180px" />
 		</search-item>
 		<search-item label="团队类型" style="width: 280px">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.travelTypeId" style="width: 200px" placeholder="请选择团队类型">
@@ -15,14 +21,14 @@
 			</a-select>
 		</search-item>
 		<search-item label="地接社" style="width: 280px">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.subTravelId" style="width: 200px" placeholder="请选择旅行社名称">
-				<a-select-option v-for="(item, index) in options.earthContactAgencyList" :value="item.travelAgencyId" :key="index"
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.subTravelId" style="width: 200px" placeholder="请选择地接社名称">
+				<a-se+lect-option v-for="(item, index) in options.earthContactAgencyList" :value="item.travelAgencyId" :key="index"
 					>{{ item.travelAgencyName }}
-				</a-select-option>
+				</a-se+lect-option>
 			</a-select>
 		</search-item>
 		<search-item label="结算时间" style="width: 280px">
-			<a-range-picker v-model:value="state.settlementStartTimeList" @change="settlementStartTimeChange" />
+			<a-range-picker v-model:value="state.times" @change="timeChange" />
 		</search-item>
 		<template #button>
 			<a-button @click="initList">查询</a-button>
@@ -60,34 +66,62 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import { settlementOptions } from '@/stores/modules/settlement';
+import type { TableColumnsType } from 'ant-design-vue';
 import api from '@/api';
-interface TableDataType {}
+interface StateType {
+	tableData: TableDataType;
+	viewList: Array<any>;
+}
+interface TableDataType {
+	param: ParamType;
+	data: Array<DataType>;
+	total: number;
+	loading: boolean;
+	settlementStartTimeList: Array<any>;
+}
+interface ParamType {
+	itineraryNo?: number | string; //行程单号
+	scenicId?: number | string | null; //关联景区id
+	ticketName?: number | string; //门票名称
+	travelTypeId?: number | string | null; //团队类型id
+	subTravelId?: number | string | null; //地接社id
+	// verificationStartTime: '', //核销开始时间
+	// verificationEndTime: '', //核销结束时间
+	settlementStartTime: number | string | null; //结算开始时间
+	settlementEndTime: number | string | null; //结算结束时间
+	pageSize?: number; //页大小
+	pageNo?: number; //页号
+}
 interface DataType {
-	itineraryNo: string | number;
-	scenicId: number; //关联景区id
-	scenicName: string | number;
-	ticketId: number;
-	ticketName: string | number;
-	travelTypeId: number; //团队类型id
-	travelTypeName: number; //团队类型名称
-	subTravelId: number; //地接社id
-	subTravelName: number; //地接社名称
-	verificationTime: '2022.03.01 09:00'; //核销时间
-	settlementTime: '2022.03.01 09:00'; //结算时间
-	unitPrice: '1'; //单价
-	reservationNum: 1; //预定数
-	settlementNum: 1; //实刷数
-	breaksNum: 1; //减免数
-	orderPrice: '1'; //预定金额
-	unSettlementPrice: '1'; //未核销金额
-	breaksPrice: '1'; //减免金额
-	ticketPrice: '1'; //票款金额
-	scenicPrice: '1'; //景点实收
-	settlementRuleList: []; //结算规则信息
+	itineraryNo?: string | number;
+	scenicId?: number; //关联景区id
+	scenicName?: string | number;
+	ticketId?: number;
+	ticketName?: string | number;
+	travelTypeId?: number; //团队类型id
+	travelTypeName?: number; //团队类型名称
+	subTravelId?: number; //地接社id
+	subTravelName?: number; //地接社名称
+	verificationTime?: string; //核销时间
+	settlementTime?: string; //结算时间
+	unitPrice?: string | number; //单价
+	reservationNum?: number; //预定数
+	settlementNum?: number; //实刷数
+	breaksNum?: number; //减免数
+	orderPrice?: string | number; //预定金额
+	unSettlementPrice?: string | number; //未核销金额
+	breaksPrice?: string | number; //减免金额
+	ticketPrice?: string | number; //票款金额
+	scenicPrice?: string | number; //景点实收
+	settlementRuleList: Array<SettlementRuleListType>; //结算规则信息
+}
+interface SettlementRuleListType {
+	ruleName: string; //结算规则名称
+	rulePrice: string; //结算费用
 }
 const options = settlementOptions();
 const columns = computed(() => {
-	const column = [
+	const column: TableColumnsType = [
 		{
 			title: '团单编号',
 			dataIndex: 'itineraryNo',
@@ -173,7 +207,7 @@ const columns = computed(() => {
 	if (state.tableData.data && state.tableData.data.length) {
 		for (const key in state.tableData.data) {
 			const data = state.tableData.data[key].settlementRuleList;
-			if (data && data.length && data.length > nameList.length) {
+			if (data && data.length) {
 				for (const subKey in data) {
 					if (!nameList.includes(data[subKey].ruleName)) {
 						nameList.push(data[subKey].ruleName);
@@ -193,14 +227,14 @@ const columns = computed(() => {
 	}
 	return column;
 });
-const state = reactive({
+const state = reactive<StateType>({
 	tableData: {
 		param: {
 			itineraryNo: '', //行程单号
-			scenicId: '', //关联景区id
+			scenicId: null, //关联景区id
 			ticketName: '', //门票名称
-			travelTypeId: '', //团队类型id
-			subTravelId: '', //地接社id
+			travelTypeId: null, //团队类型id
+			subTravelId: null, //地接社id
 			// verificationStartTime: '', //核销开始时间
 			// verificationEndTime: '', //核销结束时间
 			settlementStartTime: '', //结算开始时间
@@ -213,6 +247,7 @@ const state = reactive({
 		loading: false,
 		settlementStartTimeList: [],
 	},
+	viewList: [],
 });
 // 查询
 const initList = async () => {
@@ -222,76 +257,82 @@ const initList = async () => {
 	state.tableData.total = total;
 	state.tableData.data = content;
 	state.tableData.loading = false;
-	state.tableData.data = [
-		{
-			itineraryNo: '111', //团单编号
-			scenicId: 1, //关联景区id
-			scenicName: '111', //景区名称
-			ticketId: 1, //票id
-			ticketName: '111', //门票名称
-			travelTypeId: 1, //团队类型id
-			travelTypeName: 111, //团队类型名称
-			subTravelId: 1, //地接社id
-			subTravelName: 111, //地接社名称
-			verificationTime: '2022.03.01 09:00', //核销时间
-			settlementTime: '2022.03.01 09:00', //结算时间
-			unitPrice: '1', //单价
-			reservationNum: 1, //预定数
-			settlementNum: 1, //实刷数
-			breaksNum: 1, //减免数
-			orderPrice: '1', //预定金额
-			unSettlementPrice: '1', //未核销金额
-			breaksPrice: '1', //减免金额
-			ticketPrice: '1', //票款金额
-			scenicPrice: '1', //景点实收
-			settlementRuleList: [
-				{
-					ruleName: '测试1', //结算规则名称
-					rulePrice: '10', //结算费用
-				},
-				{
-					ruleName: '测试2', //结算规则名称
-					rulePrice: '22', //结算费用
-				},
-			], //结算规则信息
-		},
-		{
-			itineraryNo: '111', //团单编号
-			scenicId: 1, //关联景区id
-			scenicName: '111', //景区名称
-			ticketId: 1, //票id
-			ticketName: '111', //门票名称
-			travelTypeId: 1, //团队类型id
-			travelTypeName: 111, //团队类型名称
-			subTravelId: 1, //地接社id
-			subTravelName: 111, //地接社名称
-			verificationTime: '2022.03.01 09:00', //核销时间
-			settlementTime: '2022.03.01 09:00', //结算时间
-			unitPrice: '1', //单价
-			reservationNum: 1, //预定数
-			settlementNum: 1, //实刷数
-			breaksNum: 1, //减免数
-			orderPrice: '1', //预定金额
-			unSettlementPrice: '1', //未核销金额
-			breaksPrice: '1', //减免金额
-			ticketPrice: '1', //票款金额
-			scenicPrice: '1', //景点实收
-			settlementRuleList: [
-				{
-					ruleName: '测试1', //结算规则名称
-					rulePrice: '10', //结算费用
-				},
-				{
-					ruleName: '测试3', //结算规则名称
-					rulePrice: '22', //结算费用
-				},
-				{
-					ruleName: '测试4', //结算规则名称
-					rulePrice: '444', //结算费用
-				},
-			], //结算规则信息
-		},
-	];
+	// state.tableData.data = [
+	// 	{
+	// 		itineraryNo: '111', //团单编号
+	// 		scenicId: 1, //关联景区id
+	// 		scenicName: '111', //景区名称
+	// 		ticketId: 1, //票id
+	// 		ticketName: '111', //门票名称
+	// 		travelTypeId: 1, //团队类型id
+	// 		travelTypeName: 111, //团队类型名称
+	// 		subTravelId: 1, //地接社id
+	// 		subTravelName: 111, //地接社名称
+	// 		verificationTime: '2022.03.01 09:00', //核销时间
+	// 		settlementTime: '2022.03.01 09:00', //结算时间
+	// 		unitPrice: '1', //单价
+	// 		reservationNum: 1, //预定数
+	// 		settlementNum: 1, //实刷数
+	// 		breaksNum: 1, //减免数
+	// 		orderPrice: '1', //预定金额
+	// 		unSettlementPrice: '1', //未核销金额
+	// 		breaksPrice: '1', //减免金额
+	// 		ticketPrice: '1', //票款金额
+	// 		scenicPrice: '1', //景点实收
+	// 		settlementRuleList: [
+	// 			{
+	// 				ruleName: '测试1', //结算规则名称
+	// 				rulePrice: '10', //结算费用
+	// 			},
+	// 			{
+	// 				ruleName: '测试2', //结算规则名称
+	// 				rulePrice: '22', //结算费用
+	// 			},
+	// 		], //结算规则信息
+	// 	},
+	// 	{
+	// 		itineraryNo: '111', //团单编号
+	// 		scenicId: 1, //关联景区id
+	// 		scenicName: '111', //景区名称
+	// 		ticketId: 1, //票id
+	// 		ticketName: '111', //门票名称
+	// 		travelTypeId: 1, //团队类型id
+	// 		travelTypeName: 111, //团队类型名称
+	// 		subTravelId: 1, //地接社id
+	// 		subTravelName: 111, //地接社名称
+	// 		verificationTime: '2022.03.01 09:00', //核销时间
+	// 		settlementTime: '2022.03.01 09:00', //结算时间
+	// 		unitPrice: '1', //单价
+	// 		reservationNum: 1, //预定数
+	// 		settlementNum: 1, //实刷数
+	// 		breaksNum: 1, //减免数
+	// 		orderPrice: '1', //预定金额
+	// 		unSettlementPrice: '1', //未核销金额
+	// 		breaksPrice: '1', //减免金额
+	// 		ticketPrice: '1', //票款金额
+	// 		scenicPrice: '1', //景点实收
+	// 		settlementRuleList: [
+	// 			{
+	// 				ruleName: '测试1', //结算规则名称
+	// 				rulePrice: '10', //结算费用
+	// 			},
+	// 			{
+	// 				ruleName: '测试3', //结算规则名称
+	// 				rulePrice: '22', //结算费用
+	// 			},
+	// 			{
+	// 				ruleName: '测试4', //结算规则名称
+	// 				rulePrice: '444', //结算费用
+	// 			},
+	// 		], //结算规则信息
+	// 	},
+	// ];
+};
+// 获取景区下拉列表
+const getViewList = async () => {
+	const result = await api.getViewList();
+	state.viewList = result;
+	console.log(state.viewList, `state.viewList`);
 };
 //搜索
 const onHandleCurrentChange = (val: number) => {
@@ -319,8 +360,18 @@ onMounted(() => {
 	options.getGroupSocietyList();
 	options.getEarthContactAgencyList();
 	initList();
+	getViewList();
 });
-const getSettlementRule = computed(() => (column, record) => {
+const timeChange = (arr: any) => {
+	if (arr && arr.length > 0) {
+		state.tableData.param.settlementStartTime = arr[0]['$d'];
+		state.tableData.param.settlementEndTime = arr[1]['$d'];
+	} else {
+		state.tableData.param.settlementStartTime = null;
+		state.tableData.param.settlementEndTime = null;
+	}
+};
+const getSettlementRule = computed(() => (column: TableColumnsType, record: DataType) => {
 	const data = record.settlementRuleList;
 	for (const key in data) {
 		if (column.title === data[key].ruleName) {

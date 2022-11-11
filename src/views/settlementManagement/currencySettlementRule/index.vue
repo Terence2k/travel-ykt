@@ -7,7 +7,9 @@
 		</search-item>
 		<search-item label="结算产品">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.productType" style="width: 200px" placeholder="请选择结算产品">
-				<a-select-option :value="item.value" v-for="item in generaRulesOptions.productTypeList" :key="item.name">{{ item.name }}</a-select-option>
+				<a-select-option :value="item.value" v-for="item in generaRulesOptions.currencyProductTypeList" :key="item.name">{{
+					item.name
+				}}</a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="费用名称">
@@ -36,6 +38,21 @@
 				:scroll="{ x: '100%', y: '100%' }"
 			>
 				<template #bodyCell="{ column, record, index }">
+					<!-- 收费名称 -->
+					<template v-if="column.key === 'chargeCount'">
+						<span v-if="record.chargeModel === 1">{{ record.chargeCount }}%</span>
+						<span v-if="record.chargeModel === 2">{{ record.chargeCount }}人</span>
+						<span v-if="record.chargeModel === 3">{{ (record.chargeCount / 100).toFixed(2) }}元</span>
+					</template>
+					<template v-if="column.key === 'action'">
+						<div class="action-btns">
+							<a href="javascript:;" @click="toCheck(record)">查看</a>
+							<a href="javascript:;" @click="toEditPage(record)">编辑</a>
+							<a v-if="record.ruleStatus === 1" href="javascript:;" @click="showTip('state', 0, record)">禁用</a>
+							<a v-if="record.ruleStatus === 0" href="javascript:;" @click="showTip('state', 1, record)">启用</a>
+							<a href="javascript:;" @click="showTip('index', index, record)">删除</a>
+						</div>
+					</template>
 					<!-- 团队类型 -->
 					<template v-if="column.key === 'teamTypeId'">
 						<span>{{ getTeamTypeName(record.teamTypeId) }}</span>
@@ -54,21 +71,6 @@
 						<span v-if="record.deductionModel === 1">冻结金额</span>
 						<span v-if="record.deductionModel === 2">核销金额</span>
 						<span v-else></span>
-					</template>
-					<!-- 收费名称 -->
-					<template v-if="column.key === 'chargeCount'">
-						<span v-if="record.chargeModel === 1">{{ record.chargeCount }}%</span>
-						<span v-if="record.chargeModel === 2">{{ record.chargeCount }}人</span>
-						<span v-if="record.chargeModel === 3">{{ (record.chargeCount / 100).toFixed(2) }}元</span>
-					</template>
-					<template v-if="column.key === 'action'">
-						<div class="action-btns">
-							<a href="javascript:;" @click="toCheck(record)">查看</a>
-							<a href="javascript:;" @click="toEditPage(record)">编辑</a>
-							<a v-if="record.ruleStatus === 1" href="javascript:;" @click="showTip('state', 0, record)">禁用</a>
-							<a v-if="record.ruleStatus === 0" href="javascript:;" @click="showTip('state', 1, record)">启用</a>
-							<a href="javascript:;" @click="showTip('index', index, record)">删除</a>
-						</div>
 					</template>
 				</template>
 			</CommonTable>
@@ -93,7 +95,7 @@ import SearchItem from '@/components/common/CommonSearchItem.vue';
 import DelModal from '@/components/common/DelModal.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import api from '@/api';
-import { useGeneraRules } from '@/stores/modules/GeneraRules';
+import { useGeneraRules } from '@/stores/modules/generaRules';
 import { message } from 'ant-design-vue/es';
 const navigatorBar = useNavigatorBar();
 const generaRulesOptions = useGeneraRules();

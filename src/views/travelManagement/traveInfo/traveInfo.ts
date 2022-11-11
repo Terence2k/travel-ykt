@@ -30,21 +30,26 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		showTicketPop: '',
 		showHotelPop: '',
 	})
+	const gouvyId = reactive<{[k: string]: any}>({
+		id: '',
+		isReductionPassed: '',
+	})
 	const state = reactive<{ editableData: UnwrapRef<Record<string, DataItem>>; [k: string]: any }>({
 		editableData: {},
 		addHotelPop: false,
 		addTicketPop: false,
 		modelValue:false,
+		ticketingValue:false,
 		reserveTicketPop: false,
 		selectPersonnelPop:false,
 		payablePrice:'',
 		showTicketPop: false,
 		showHotelPop: false,
-		id:'',
 		allFeesProducts: computed(() => travelStore.compositeProducts),
 		ticketData: computed(() => travelStore.scenicTickets),
 		holteDate: computed(() => travelStore.hotels),
 		gouvyDate:computed(() => travelStore.gouvyList),
+		ticketingDate:[],
 		tableData: [
 			{
 				key: '1',
@@ -153,6 +158,59 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				key: 'action',
 				fixed: 'right',
 			},
+		],
+		ticketingColumns:[
+			{
+				title:'购买状态',
+				dataIndex:'purchasedName',
+				key:'purchasedName'
+			},
+			{
+				title:'游客姓名',
+				dataIndex:'touristName',
+				key:'touristName'
+			},
+			{
+				title:'身份证件类型',
+				dataIndex:'certificateTypeName',
+				key:'certificateTypeName'
+			},
+			{
+				title:'身份证号码',
+				dataIndex:'certificateNo',
+				key:'certificateNo'
+			},
+			{
+				title:'性别',
+				dataIndex:'genderName',
+				key:'genderName'
+			},
+			{
+				title:'年龄',
+				dataIndex:'age',
+				key:'age'
+			},
+			{
+				title:'联系方式',
+				dataIndex:'purchased',
+				key:'purchased'
+			},
+			{
+				title:'客源地',
+				dataIndex:'sourceAddressName',
+				key:'sourceAddressName'
+			},
+			{
+				title:'减免规则',
+				dataIndex:'discountRuleName',
+				key:'discountRuleName'
+			},
+			{
+				title:'实际缴费金额',
+				dataIndex:'actualPrice',
+				key:'actualPrice'
+			}
+
 		],
 		ticketColumns: [
 			{
@@ -293,13 +351,21 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		choice(data :any)
 		{
 			state[data.selectPersonnelPop]=true
-			state.id=data.id
-			console.log(state.id,'13131')
+			gouvyId.id=data.id
+			gouvyId.isReductionPassed=data.isReductionPassed
 		},
-		see(key: string)
+		seeReject(key: string)
 		{
 			state[key] = true;
 			console.log(key)
+		},
+		see(data :any)
+		{
+			state[data.ticketingValue]=true
+			api.getItineraryTourist(data.itineraryId).then((res) => {
+				console.log(res,'213131231')
+				state.ticketingDate=res
+			});
 		},
 		onSearch () {
 			api.getBasicInfo().then((res) => {
@@ -358,6 +424,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		...methods,
 		editId,
 		showId,
+		gouvyId,
 		travelStore,
 		rowRadioSelection
 	};

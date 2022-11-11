@@ -5,10 +5,53 @@ const sharedOnCell = (_, index) => {
 };
 
 export const getOptions = (props: any) => {
+  let guideOption = {
+    columns: [
+      {
+        title: '编号',
+        key: 'index',
+      },
+      {
+        title: '导游姓名',
+        dataIndex: 'guideName',
+        key: 'guideName',
+      },
+      {
+        title: '导游星级',
+        dataIndex: 'guideTypeName',
+        key: 'guideTypeName',
+      },
+      {
+        title: '导游证编号',
+        dataIndex: 'guideCertificateNo',
+        key: 'guideCertificateNo',
+      },
+      {
+        title: '性别',
+        dataIndex: 'genderName',
+        key: 'genderName',
+      },
+      {
+        title: '导游电话',
+        dataIndex: 'guidePhone',
+        key: 'guidePhone',
+      },
+      {
+        title: '已选带团时间',
+        dataIndex: 'time',
+        key: 'time',
+      },
+    ],
+    title: '导游信息',
+    descriptions: 
+      `（共<span style="color: red;">${props.guideList?.length}</span>人）`,
+    dataSource: props.guideList,
+    pagination: false
+  }
   let touristOption = {
     columns: [
       {
-        title: '序号',
+        title: '编号',
         key: 'index',
       },
       {
@@ -37,9 +80,9 @@ export const getOptions = (props: any) => {
         key: 'phone',
       },
       {
-        title: '紧急联系人',
-        dataIndex: 'emergencyContactName',
-        key: 'emergencyContactName',
+        title: '客源地',
+        dataIndex: 'sourceAddressName',
+        key: 'sourceAddressName',
       },
       {
         title: '健康码',
@@ -47,68 +90,175 @@ export const getOptions = (props: any) => {
         key: 'healthCodeName',
       },
       {
-        title: '古维费减免资格',
-        dataIndex: 'isDerate',
-        key: 'isDerate',
+        title: '中高风险',
+        dataIndex: '',
+        key: '',
+      },
+      {
+        title: '特殊证件',
+        dataIndex: 'specialCertificateType',
+        key: 'specialCertificateType',
       },
     ],
     title: '游客信息',
     descriptions: 
-      `共<span style="color: red;">${props.touristList?.total}</span>人，
-      古维待缴人数：<span style="color: red;">${props.basic?.guWeiCount}</span>，
-      待缴费用：<span style="color: red;">￥${props.basic?.totalFee || 0}</span>`,
+      `（共<span style="color: red;">${props.touristList?.total}</span>人）`,
     dataSource: props.touristList?.content,
     pagination: true
   }
-  let insuranceOption = {
+  let trafficOption = {
     columns: [
       {
-        title: '保险方案名称',
+        title: '编号',
+        key: 'index',
+      },
+      {
+        title: '交通类型',
+        dataIndex: 'transportationType',
+        key: 'transportationType',
+      },
+      {
+        title: '车牌号',
+        dataIndex: 'licencePlateNumber',
+        key: 'licencePlateNumber',
+      },
+      {
+        title: '车牌颜色',
+        dataIndex: 'licencePlateColor',
+        key: 'licencePlateColor',
+      },
+      {
+        title: '车企名称',
+        dataIndex: 'companyName',
+        key: 'companyName',
+      },
+      {
+        title: '核载人数',
+        dataIndex: 'approvedLoad',
+        key: 'approvedLoad',
+      },
+      {
+        title: '用车时段',
+        dataIndex: 'time',
+        key: 'time',
+      },
+      {
+        title: '驾驶员',
+        dataIndex: 'driver',
+        key: 'driver',
+      },
+    ],
+    title: '交通信息',
+    descriptions: 
+      `（共<span style="color: red;">${props.transportList?.length}</span>条）`,
+    dataSource: props.transportList,
+    pagination: false
+  }
+  let guweiOption = {
+    columns: [
+      {
+        title: '费用名称',
         dataIndex: 'insuranceName',
         key: 'insuranceName',
       },
       {
-        title: '人数',
+        title: '团队游客人数',
         dataIndex: 'peopleCount',
         key: 'peopleCount',
       },
       {
-        title: '险种',
+        title: '应缴人数',
         dataIndex: 'insuranceType',
         key: 'insuranceType',
       },
       {
-        title: '保障天数',
+        title: '应缴总金额（元）',
         dataIndex: 'protectDays',
         key: 'protectDays',
       },
       {
-        title: '保险生效时间',
+        title: '是否发起过减免申请',
         dataIndex: 'startDate',
         key: 'startDate',
       },
       {
-        title: '保险失效时间',
+        title: '减免申请是否通过',
         dataIndex: 'endDate',
         key: 'endDate',
       },
       {
-        title: '预估保费（元）',
+        title: '出票状态',
         dataIndex: 'totalFee',
         key: 'totalFee',
       },
       {
-        title: '保险购买渠道',
+        title: '操作',
         dataIndex: 'buyChannel',
         key: 'buyChannel',
       },
     ],
-    title: '保险购买信息',
+    title: '古维管理费',
     descriptions: 
-      `共<span style="color: red;">${props.touristInsurance?.length}</span>人，
-      保险购买状态：${props.touristInsurance?.length? props.touristInsurance[0].isBuy : ''}，
-      预估保费：<span style="color: red;">${props.touristInsurance?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0)}</span>元`,
-    dataSource: props.touristInsurance,
+      `共<span style="color: red;">${0}</span>人`,
+    dataSource: [],
+  }
+  let productOption = {
+    columns: [
+      {
+        title: '序号',
+        dataIndex: 'index',
+        key: 'index',
+      },
+      {
+        title: '费用名称',
+        dataIndex: 'insuranceName',
+        key: 'insuranceName',
+      },
+      {
+        title: '结算归属',
+        dataIndex: 'peopleCount',
+        key: 'peopleCount',
+      },
+      {
+        title: '收费模式',
+        dataIndex: 'insuranceType',
+        key: 'insuranceType',
+      },
+      {
+        title: '是否按天收取',
+        dataIndex: 'protectDays',
+        key: 'protectDays',
+      },
+      {
+        title: '单价（元）',
+        dataIndex: 'startDate',
+        key: 'startDate',
+      },
+      {
+        title: '人数',
+        dataIndex: 'endDate',
+        key: 'endDate',
+      },
+      {
+        title: '行程天数',
+        dataIndex: 'totalFee',
+        key: 'totalFee',
+      },
+      {
+        title: '总金额（元）',
+        dataIndex: 'totalFee',
+        key: 'totalFee',
+      },
+      {
+        title: '操作',
+        dataIndex: 'buyChannel',
+        key: 'buyChannel',
+      },
+    ],
+    title: '综费产品',
+    descriptions: 
+      `费用总计<span style="color: red;">${0}</span>元，订单状态：`,
+    dataSource: [],
   }
   let hotelListOption = {
     columns: [
@@ -118,9 +268,9 @@ export const getOptions = (props: any) => {
         key: 'hotelName',
       },
       {
-        title: '入住人数',
-        dataIndex: 'peopleCount',
-        key: 'peopleCount',
+        title: '可入住人数',
+        dataIndex: '',
+        key: '',
       },
       {
         title: '房型',
@@ -148,40 +298,44 @@ export const getOptions = (props: any) => {
         key: 'endDate',
       },
       {
-        title: '预估住宿费用（元）',
-        dataIndex: 'totalFee',
-        key: 'totalFee',
+        title: '费用总计（元）',
+        dataIndex: 'orderFee',
+        key: 'orderFee',
       },
       {
-        title: '审核状态',
-        dataIndex: 'statusName',
-        key: 'statusName',
+        title: '订单状态',
+        dataIndex: 'orderStatusName',
+        key: 'orderStatusName',
       },
     ],
-    title: '已预订酒店',
+    title: '酒店费用',
     descriptions: 
       `已预订<span style="color: red;">${props.hotelList?.length}</span>个酒店，
-      入住人数：<span style="color: red;">${props.hotelList?.reduce((prev: any, curr: any) => prev + curr.peopleCount, 0)}</span>人；
       房间数量：<span style="color: red;">${props.hotelList?.reduce((prev: any, curr: any) => prev + curr.roomCount, 0)}</span>;
-      预估费用：<span style="color: red;">${props.hotelList?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0)}</span>元`,
+      费用总计：<span style="color: red;">${props.hotelList?.reduce((prev: any, curr: any) => prev + curr.orderFee, 0)}</span>元`,
     dataSource: props.hotelList,
   }
   let ticketListOption = {
     columns: [
       {
-        title: '景区门票',
+        title: '序号',
+        dataIndex: 'index',
+        key: 'index',
+      },
+      {
+        title: '景区名称',
         dataIndex: 'scenicName',
         key: 'scenicName',
       },
       {
-        title: '门票类型',
-        dataIndex: 'ticketTypeName',
-        key: 'ticketTypeName',
+        title: '游玩日期',
+        dataIndex: 'startDate',
+        key: 'startDate',
       },
       {
-        title: '门票数量',
-        dataIndex: 'ticketCount',
-        key: 'ticketCount',
+        title: '门票名称',
+        dataIndex: 'ticketName',
+        key: 'ticketName',
       },
       {
         title: '单价（元）',
@@ -189,85 +343,24 @@ export const getOptions = (props: any) => {
         key: 'unitPrice',
       },
       {
-        title: '总价（元）',
-        dataIndex: 'totalFee',
-        key: 'totalFee',
+        title: '团队游客人数',
+        dataIndex: '',
+        key: '',
       },
       {
-        title: '入园时间',
-        dataIndex: 'startDate',
-        key: 'startDate',
-      },
-      {
-        title: '离园时间',
-        dataIndex: 'endDate',
-        key: 'endDate',
-      },
-      {
-        title: '购买状态',
-        dataIndex: 'buyStatusName',
-        key: 'buyStatusName',
-      },
-      {
-        title: '操作',
-        key: 'action',
-        fixed: 'right',
-        width: 208
-      },
-    ],
-    title: '已预订景区',
-    descriptions: 
-      `已预订<span style="color: red;">${props.ticketList?.length}</span>个景区，
-      门票数量：<span style="color: red;">${props.ticketList?.reduce((prev: any, curr: any) => prev + curr.ticketCount, 0)}</span>；
-      预估费用：<span style="color: red;">${props.ticketList?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0)}</span>元`,
-    dataSource: props.ticketList,
-  }
-  let cateringListOption = {
-    columns: [
-      {
-        title: '就餐时间',
-        dataIndex: 'cateringTime',
-        key: 'cateringTime',
-      },
-      {
-        title: '餐次',
-        dataIndex: 'meals',
-        key: 'meals',
-      },
-      {
-        title: '餐厅名称',
-        dataIndex: 'cateringName',
-        key: 'cateringName',
-      },
-      {
-        title: '就餐类型',
-        dataIndex: 'cateringTypeName',
-        key: 'cateringTypeName',
-      },
-      {
-        title: '就餐描述',
-        dataIndex: 'cateringDesc',
-        key: 'cateringDesc',
-      },
-      {
-        title: '人均单价（元）',
-        dataIndex: 'unitPrice',
-        key: 'unitPrice',
-      },
-      {
-        title: '就餐人数',
+        title: '购票人数',
         dataIndex: 'peopleCount',
         key: 'peopleCount',
       },
       {
-        title: '预估费用',
+        title: '费用（元）',
         dataIndex: 'totalFee',
         key: 'totalFee',
       },
       {
-        title: '购买状态',
-        dataIndex: 'buyStatusName',
-        key: 'buyStatusName',
+        title: '订单状态',
+        dataIndex: 'orderStatusName',
+        key: 'orderStatusName',
       },
       {
         title: '操作',
@@ -276,18 +369,42 @@ export const getOptions = (props: any) => {
         width: 208
       },
     ],
-    title: '已预订餐饮',
+    title: '景区费用',
     descriptions: 
-      `已预订<span style="color: red;">${props.cateringList?.length}</span>个餐厅，
-      就餐人数：<span style="color: red;">${props.cateringList?.reduce((prev: any, curr: any) => prev + curr.peopleCount, 0)}</span>；
-      预估费用：<span style="color: red;">${props.cateringList?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0)}</span>元`,
-    dataSource: props.cateringList,
+      `已预订<span style="color: red;">${props.ticketList?.length}</span>个景区，
+      游玩人数：<span style="color: red;">${props.ticketList?.reduce((prev: any, curr: any) => prev + curr.peopleCount, 0)}</span>；
+      费用总计：<span style="color: red;">${props.ticketList?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0) || 0}</span>元`,
+    dataSource: props.ticketList,
+  }
+  let attachmentOption = {
+    columns: [
+      {
+        title: '序号',
+        dataIndex: 'index',
+        key: 'index',
+      },
+      {
+        title: '附件名称',
+        dataIndex: 'attachmentTypeName',
+        key: 'attachmentTypeName',
+      },
+      {
+        title: '附件url',
+        dataIndex: 'attachmentUrl',
+        key: 'attachmentUrl',
+      }
+    ],
+    title: '已上传的附件',
+    dataSource: props.attachmentList,
   }
   return {
+    guideOption,
     touristOption,
-    insuranceOption,
+    trafficOption,
+    guweiOption,
+    productOption,
     hotelListOption,
     ticketListOption,
-    cateringListOption
+    attachmentOption
   }
 }

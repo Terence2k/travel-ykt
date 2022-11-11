@@ -14,7 +14,7 @@
 				<a-input disabled v-model:value="state.tableData.data.endTime" />
 			</a-form-item>
 			<p v-if="formValidate.row.ticketType == '0'">
-				<CommonTable :dataSource="state.tableData.data" :columns="columns">
+				<CommonTable :dataSource="state.tableData.data" :columns="columns" :scrollY="false">
 					<template #bodyCell="{ column, index, record }">
 						<template v-if="column.key === 'time'">
 							<a-span v-if="record.startTime && record.endTime">有效核销时间段为当天的{{ record.startTime }}分至{{ record.endTime }}分</a-span>
@@ -23,7 +23,7 @@
 				</CommonTable>
 			</p>
 			<p v-if="formValidate.row.ticketType == '1'">
-				<CommonTable :dataSource="state.tableData.data" :columns="singleColumns">
+				<CommonTable :dataSource="state.tableData.data" :columns="singleColumns" :scrollY="false">
 					<template #bodyCell="{ column, index, record }">
 						<template v-if="column.key === 'time'">
 							<div class="table-div">

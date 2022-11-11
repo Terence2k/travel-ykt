@@ -62,9 +62,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
 					manualChunks: configManualChunk,
 					// inlineDynamicImports: true, //支持动态导入
 				},
-        external: [
-          "lodash-es"
-        ]
+				external: [],
 			},
 		},
 	};

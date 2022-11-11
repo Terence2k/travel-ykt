@@ -65,7 +65,7 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
-import { shijianc, shijiancTOYMD } from '@/utils/formatTime';
+import { shijianc, shijiancTOYMD } from '@/utils/formatTIme';
 import { useCommonEnum } from '@/stores/modules/commonEnum';
 import api from '@/api';
 

@@ -259,5 +259,13 @@ export const travelManagement = {
             showLoading: false
         });
     },
+    getTravelTemplateList(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/template/list`,
+            method: 'get',
+            showLoading: false,
+            data,
+        });
+    }
     
 }

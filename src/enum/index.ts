@@ -49,6 +49,12 @@ export enum HotelStatus{
   cancal =0, //取消
   finish =3,   //完成
 }
+// 古维减免状态
+export enum GouvyStatus{
+  waits = 0,   //待审核
+  success = 1,//审核通过2
+  refuse = -1, //审核不通过-1
+}
 
 // 线路类型
 export enum RouteType {

@@ -38,7 +38,7 @@ export default [
 					},
 					{
 						path: 'order_edit',
-						component: () => import('@/views/gouvyManagement/exemptionManagement/details.vue'),
+						component: () => import('@/views/gouvyManagement/order/details.vue'),
 						name: 'order_edit',
 						meta: {
 							title: '查看',

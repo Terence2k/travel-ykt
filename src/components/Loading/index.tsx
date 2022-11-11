@@ -1,5 +1,5 @@
 import { createVNode, render } from "vue";
-import Loading from "./loading.vue";
+import Loading from "./Loading.vue";
 const loading = () => {
   let container: HTMLElement | null = null;
   const show = (zindex?: number) => {
