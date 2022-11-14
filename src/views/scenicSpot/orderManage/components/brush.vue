@@ -40,7 +40,7 @@ interface formType {
 	};
 }
 
-const formValidate = reactive({
+const formValidate = reactive<formType>({
 	data: {
 		ticketId: null,
 		ticketType: 'UNITE',

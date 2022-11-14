@@ -5,6 +5,8 @@ import { defineProps } from 'vue';
 import type { UnwrapRef } from 'vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import { CODEVALUE } from '@/constant'
+import api from '@/api';
+import { message } from 'ant-design-vue';
 interface DataItem {
 	transportationType: string;
 	driver: string,
@@ -128,8 +130,12 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 			)
 			state.editableData[key].edit = true
 		},
-		del(key: string) {
-			state.tableData.splice(key, 1)
+		async del(record: any, index: number) {
+			// let key = record.key ? record.key : record.oid;
+			record.oid && await api.travelManagement.deleteTraffic([record.oid]);
+			state.tableData.splice(index, 1);
+			message.success('删除成功');
+			// 
 		},
 		save: async (key?: string) => {
 			await methods.addRules(key)

@@ -267,6 +267,46 @@ export const travelManagement = {
             data,
         });
     },
+    deleteTourist(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itineraryTourist/batchDelete`,
+            method: 'delete',
+            showLoading: true,
+            data,
+        });
+    },
+    deleteGuide(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itineraryGuide/batchDelete`,
+            method: 'delete',
+            showLoading: true,
+            data,
+        });
+    },
+    deleteTraffic(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itineraryTransport/batchDelete`,
+            method: 'delete',
+            showLoading: true,
+            data,
+        });
+    },
+    deleteHotel(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/hotel/batchDelete`,
+            method: 'delete',
+            showLoading: true,
+            data,
+        });
+    },
+    deleteTicket(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/ticket/batchDelete`,
+            method: 'delete',
+            showLoading: true,
+            data,
+        });
+    },
      // 判断行程单的行程信息是否可发起变更
      checkVerifyByItineraryId(id: any) {
         return request({
