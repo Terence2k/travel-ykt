@@ -33,6 +33,12 @@
 						<template v-if="column.key === 'index'">
 							{{ index + 1 }}
 						</template>
+						<template v-if="column.key === 'certificateType'">
+							{{ certificateTypeList[record.certificateType] }}
+						</template>
+						<template v-if="column.key === 'specialPic'">
+							<a-image v-if="record.specialPic" :width="100" :height="70" :src="record.specialPic" :fallback="error" />
+						</template>
 						<template v-if="column.key === 'verificationStatus'"> {{ record.verificationStatus ? '已核销' : '未核销' }} </template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
@@ -73,6 +79,14 @@ const navigatorBar = useNavigatorBar();
 const scenicSpotOptions = useScenicSpotOption();
 
 const activeStatus = ref('1');
+//图片报错显示
+const error =
+	'data:image/png;base64,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';
+//证件枚举
+const certificateTypeList = {
+	PASSPORT: '护照',
+	IDENTITY_CARD: '身份证',
+};
 
 // 数据
 const formData = reactive({
@@ -101,13 +115,14 @@ const formData = reactive({
 		}, //订单详情信息
 		orderPersonInfoList: [
 			{
-				certificateType: '证件类型名称', //证件类型名称
+				certificateType: 'IDENTITY_CARD', //证件类型名称
 				certificateNo: '证件号', //证件号
 				gender: '性别', //性别: true 男 false 女
 				personName: '人员名称', //人员名称
 				sourceAddress: '客源地', //客源地
 				specialNo: '特殊证件号', //特殊证件号
-				specialPic: '特殊证件图片', //特殊证件图片.jpg/png...
+				specialPic:
+					'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F8%2F55402f62682e3.jpg&refer=http%3A%2F%2Fpic1.win4000.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1670745661&t=9a04e58c6f2167fb66bbc889e666f8a4', //特殊证件图片.jpg/png...
 				specialType: '特殊证件类型名称', //特殊证件类型(按照字典175)
 				verificationStatus: true,
 			},
@@ -115,98 +130,6 @@ const formData = reactive({
 	},
 });
 
-const dataSource = [
-	{
-		key: '1',
-		name: '王某某',
-		age: 32,
-		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
-		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
-	},
-	{
-		key: '2',
-		name: '张某某',
-		age: 42,
-		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
-		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
-	},
-	{
-		key: '3',
-		name: '张某某',
-		age: 42,
-		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
-		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
-	},
-	{
-		key: '1',
-		name: '王某某',
-		age: 32,
-		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
-		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
-	},
-	{
-		key: '2',
-		name: '张某某',
-		age: 42,
-		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
-		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
-	},
-	{
-		key: '2',
-		name: '张某某',
-		age: 42,
-		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
-		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
-	},
-	{
-		key: '3',
-		name: '张某某',
-		age: 42,
-		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
-		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
-	},
-	{
-		key: '1',
-		name: '王某某',
-		age: 32,
-		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
-		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
-	},
-	{
-		key: '2',
-		name: '张某某',
-		age: 42,
-		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
-		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
-	},
-	{
-		key: '3',
-		name: '张某某',
-		age: 42,
-		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
-		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
-	},
-];
 const columns = [
 	{
 		title: '序号',
@@ -256,6 +179,46 @@ const columns = [
 	},
 ];
 
+//合并错误提示
+const errorInfos = computed(() => {
+	return mergeValidateInfo(toArray(validateInfos).splice(0, 4));
+});
+
+//初始化下拉列表
+const initOpeion = async () => {
+	await scenicSpotOptions.getBusinessTypeOption();
+	await scenicSpotOptions.getAllAreaProvice(0);
+};
+
+// 下拉选择
+const popupScroll = () => {
+	console.log('popupScroll');
+};
+
+// 提交
+const onSubmit = async () => {
+	validate()
+		.then((res) => {
+			console.log(toRaw(formData.data), 'psss');
+			save(toRaw(formData.data));
+		})
+		.catch((err) => {
+			console.log('error', err);
+		});
+};
+
+// 重置
+const reset = (): void => {
+	resetFields();
+};
+
+//初始化页面
+const initPage = async (): Promise<void> => {
+	let res = await api.getViewOrderDetails(route.currentRoute.value?.query?.oid);
+	formData.data = res;
+	// formData.data.oid = parseInt(route.currentRoute.value?.query?.oid);
+};
+
 // 表单
 const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
 	formData,
@@ -281,47 +244,13 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 		'data.bank': [{ required: true, message: '请填写还款行' }],
 	})
 );
-//初始化下拉列表
-const initOpeion = async () => {
-	await scenicSpotOptions.getBusinessTypeOption();
-	await scenicSpotOptions.getAllAreaProvice(0);
-};
-// 下拉选择
-const popupScroll = () => {
-	console.log('popupScroll');
-};
 
-// 提交
-const onSubmit = async () => {
-	validate()
-		.then((res) => {
-			console.log(toRaw(formData.data), 'psss');
-			save(toRaw(formData.data));
-		})
-		.catch((err) => {
-			console.log('error', err);
-		});
-};
 const save = async (params: object) => {
 	let res = await api.changeScenicSpotInformation(params);
 	if (res) {
 		message.success('保存成功');
 		route.push({ path: '/scenic-spot/information/list' });
 	}
-};
-//合并错误提示
-const errorInfos = computed(() => {
-	return mergeValidateInfo(toArray(validateInfos).splice(0, 4));
-});
-// 重置
-const reset = (): void => {
-	resetFields();
-};
-//初始化页面
-const initPage = async (): Promise<void> => {
-	let res = await api.getViewOrderDetails(route.currentRoute.value?.query?.oid);
-	formData.data = res;
-	// formData.data.oid = parseInt(route.currentRoute.value?.query?.oid);
 };
 
 // 自定义面包屑
@@ -330,6 +259,7 @@ onMounted(async () => {
 	await initPage();
 	// await initOpeion();
 });
+
 onBeforeUnmount(() => {
 	// navigatorBar.clearNavigator();
 });

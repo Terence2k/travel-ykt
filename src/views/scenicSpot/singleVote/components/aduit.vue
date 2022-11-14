@@ -61,7 +61,7 @@ import api from '@/api';
 import { message } from 'ant-design-vue';
 
 import dayjs, { Dayjs } from 'dayjs';
-
+import type { Rule } from 'ant-design-vue/es/form';
 const modelValue = ref(false);
 const route = useRouter();
 
@@ -85,7 +85,7 @@ const formValidate = reactive<formValidateType>({
 
 const formRef = ref();
 
-const formRules: any = {
+const formRules: Record<string, Rule[]> = {
 	time: [{ required: true, message: '请选择时间' }],
 	downReason: [{ required: true, message: '请填写' }],
 };
@@ -105,7 +105,7 @@ const bufferDateArr = ref<string[]>([]);
  * 1. 获取前一天时间戳
  * 2. 判别当前是否在已选日期list的中
  */
-const disabledDate = (e: Dayjs, index: number) => {
+const disabledDate = (e: Dayjs) => {
 	// console.log(hadRange.value.length > 0);
 	let preDay = new Date(new Date().getTime() - 24 * 60 * 60 * 1000);
 

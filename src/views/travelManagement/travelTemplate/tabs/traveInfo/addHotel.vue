@@ -26,36 +26,6 @@
 						:name="item.hotelName">{{ item.hotelName }}</a-select-option>
 				</a-select>
 			</a-form-item>
-
-			<a-form-item label="行程人数">
-				<span>{{travelStore.touristList.length}}人</span>
-			</a-form-item>
-			<a-form-item label="诚信指定价">
-				<span>{{honestyGuidePrice}}元</span>
-			</a-form-item>
-
-			<a-form-item label="入住日期" name="arrivalDate" :rules="[{ required: true, message: '请选择入住日期' }]">
-				<a-date-picker style="width: 100%"
-					:disabled-date="travelStore.setDisabled"
-					@change="handleChangCheckIn"
-					:show-time="{ format: 'HH:mm:ss' }" 
-					format="YYYY-MM-DD HH:mm:ss" 
-					value-format="YYYY-MM-DD HH:mm:ss" 
-					v-model:value="formState.arrivalDate" />
-			</a-form-item>
-
-			<a-form-item label="离店日期"
-				name="departureDate" 
-				:rules="[{ required: true, message: '请选择离店日期' }]">
-				<a-date-picker style="width: 100%" 
-					:disabled-date="disLeave"
-					:disabled="formState.arrivalDate === ''"
-					placeholder="请先选择入住时间"
-					:show-time="{ format: 'HH:mm:ss' }"  
-					format="YYYY-MM-DD HH:mm:ss" 
-					value-format="YYYY-MM-DD HH:mm:ss" 
-					v-model:value="formState.departureDate" />
-			</a-form-item>
 			<div v-for="(room, index) in formState.roomTypeList" :key="index">
 				<h3>房型{{ index + 1 }}</h3>
 				<a-form-item label="预定房型" :name="['roomTypeList', index, 'hotelRoomTypeId']" :rules="[{ required: true, message: '请选择预定房型' }]">
@@ -71,31 +41,14 @@
 							:num="item.roomOccupancyNum">{{ item.roomTypeName }}</a-select-option>
 					</a-select>
 				</a-form-item>
-				<a-form-item 
-					label="订房数量" 
-					:name="['roomTypeList', index, 'reserveNumber']" 
-					:rules="[{ required: true, validator: (_rule: Rule, value: string) => validateCheckNum(_rule, value, index) }]">
-					<a-input v-model:value="room.reserveNumber" />
-				</a-form-item>
-				<!-- <a-form-item
-					label="入住总人数"
-					:name="['roomTypeList', index, 'checkInNumber']"
-					:rules="[{ required: true, validator: (_rule: Rule, value: string) => validateCheckIn(_rule, value, index) }]"
-				>
-					<div class="d-flex">
-						<a-input v-model:value="room.checkInNumber" />
-					</div>
-				</a-form-item> -->
 				<a-form-item
-					label="单价"
+					label=""
 					:name="['roomTypeList', index, 'unitPrice']"
 					:wrapper-col="{ span: 16 }"
 					:rules="[{ required: true, message: '请输入您与酒店线下协商好的价格' }]"
 				>
 					<div class="d-flex align-item-center">
-						<div style="width: 500px">诚信指导价：{{honestyGuidePrice}}元 + </div>
-						<a-input @change="handleMoeny(index, room.unitPrice)" v-model:value="room.unitPrice" placeholder="请输入您与酒店线下协商好的价格" />
-						<div style="width: 200px; text-align: right; margin-right: 30px">{{formState.roomTypeList[index].orderAmount}}元</div>
+						
 						<div class="d-flex" style="margin-left: 32px">
 							<a-button @click="delRoom(index)" :class="{ visable: formState.roomTypeList.length === 1 }">删除</a-button>
 							<a-button
@@ -109,19 +62,6 @@
 					</div>
 				</a-form-item>
 			</div>
-
-			<a-form-item label="订单金额">
-				<a-input v-model:value="formState.orderFee" disabled placeholder="无需填写，填写房间数量后自动计算" />
-				<span class="gary">如果符合满16减1标准，则自动优惠减扣。</span>
-			</a-form-item>
-
-			<a-form-item label="订单编号">
-				<a-input v-model:value="formState.hotelOrderNo" disabled placeholder="无需填写，订单提交后自动生成" />
-			</a-form-item>
-
-			<a-form-item label="订单生成时间">
-				<a-input v-model:value="formState.createTime" disabled placeholder="无需填写，订单提交后自动生成" />
-			</a-form-item>
 		</a-form>
 	</BaseModal>
 </template>
@@ -225,13 +165,9 @@ const handleMoeny = (i: number, e: string) => {
 }
 
 const handleChange = async (id: number, option: any) => {
-	formState.honestyGuidePrice = option.price;
+	formState.honestyGuidePrice = option.price
 	formState.hotelStarCode = option.name;
 	hotelData.hotel = await api.getHotelInfoByRated(id);
-	for (let i = 0; i < formState.roomTypeList.length; i++) {
-		formState.roomTypeList[i].orderAmount = honestyGuidePrice.value + 
-		parseFloat(formState.roomTypeList[i].unitPrice);
-	}
 
 };
 

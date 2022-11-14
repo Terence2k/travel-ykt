@@ -7,47 +7,41 @@ import { validateRules, validateFields, generateGuid } from '@/utils';
 import api from '@/api/index';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 interface DataItem {
+	oid:any,
 	time: string;
-	endDate: string,
-	startDate: string,
-	belongTravelAgencyName: string,
-	guideName: string,
-	guidePhone: string,
-	guideType: string | number,
-	guideCertificateNo: string,	
-	guideOid: string | number,
-	belongTravelOid: string
+	endDate: string;
+	startDate: string;
+	belongTravelAgencyName: string;
+	guideName: string;
+	guidePhone: string;
+	guideType: string | number;
+	guideCertificateNo: string;
+	guideOid: string | number;
+	belongTravelOid: string;
 }
 
 const rules = {
-	time: [{ required: true, message: '请选择带团时间' }],
-	guideOid: [{ required: true, message: '请选择导游' }]
-}
+	guideOid: [{ required: true, message: '请选择导游' }],
+};
 
 export function useGuideInfo(props: any, emits: any): Record<string, any> {
 	const { onCheck } = toRefs(props);
-	const travelStore = useTravelStore()
-	const route = useRoute()
-	const state = reactive<{editableData: UnwrapRef<Record<string, DataItem>>, [k:string]: any}>({
+	const travelStore = useTravelStore();
+	const route = useRoute();
+	const state = reactive<{ editableData: UnwrapRef<Record<string, DataItem>>; [k: string]: any }>({
 		editableData: {},
 		guideParams: {
 			pageNo: 1,
 			pageSize: 10,
-			queryType: 2
+			queryType: 2,
 		},
 		guideData: [],
-		tableData: route.query.id ? travelStore.guideList : [],
+		tableData: computed(() => travelStore.guideList),
 		columns: [
 			{
 				title: ' 序号 ',
 				key: 'index',
-				width: '80px'
-			},
-			{
-				title: '已选带团时间',
-				dataIndex: 'time',
-				key: 'time',
-				width: '250px'
+				width: '80px',
 			},
 			{
 				title: '已选导游',
@@ -68,7 +62,7 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 				title: '导游类型',
 				dataIndex: 'guideType',
 				key: 'guideType',
-				data: travelStore.guideType
+				data: travelStore.guideType,
 			},
 			{
 				title: '签约旅行社',
@@ -78,108 +72,129 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 			{
 				title: '操作',
 				key: 'action',
-				fixed: 'right'
+				fixed: 'right',
+				className:'action',
+			},
+		],
+		columnstwo: [
+			{
+				title: ' 序号 ',
+				key: 'index',
+				width: '80px',
+			},
+			{
+				title: '已选导游',
+				dataIndex: 'guideName',
+				key: 'guideName',
+			},
+			{
+				title: '导游电话',
+				dataIndex: 'guidePhone',
+				key: 'guidePhone',
+			},
+			{
+				title: '导游编号',
+				dataIndex: 'guideCertificateNo',
+				key: 'guideCertificateNo',
+			},
+			{
+				title: '导游类型',
+				dataIndex: 'guideType',
+				key: 'guideType',
+				data: travelStore.guideType,
+			},
+			{
+				title: '签约旅行社',
+				dataIndex: 'belongTravelAgencyName',
+				key: 'belongTravelAgencyName',
 			}
 		],
 		rulesRef: {
 			1: {
-				guideName: [{ required: true, message: '请选择行程类型' }]
-			}
+				guideName: [{ required: true, message: '请选择行程类型' }],
+			},
 		},
-		formRef: null
+		formRef: null,
 	});
 
 	const methods = {
-		copyData(key:any) {
-			// Object.assign方法用于将所有可枚举属性的值从一个或多个源对象复制到目标对象
-			Object.assign(
-				state.tableData.filter((item:any) => key === (item.key ? item.key : item.oid))[0], 
-				state.editableData[key]
-			);
+		copyData(key: any) {
+			Object.assign(state.tableData.filter((item: any) => key == (item.key ? item.key : item.oid))[0], state.editableData[key]);
 		},
 		addRules(key?: any) {
-			state.rulesRef = {}
-			const rule = validateRules(rules, state.editableData, key)
+			state.rulesRef = {};
+			const rule = validateRules(rules, state.editableData, key);
 			for (let k in rule) {
-				state.rulesRef[k] = rule[k]
+				state.rulesRef[k] = rule[k];
 			}
 		},
 		edit: (key: string) => {
-			const cur = cloneDeep(
-				// filter用于对数组进行过滤。创建一个新数组，新数组中的元素是通过检查指定数组中符合条件的所有元素。
-				state.tableData.filter((item:any) => key === (item.key ? item.key : item.oid))[0]
-			);
-			cur.time = cur.startDate && 
-						cur.endDate && 
-						[cur.startDate, cur.endDate] || [];
+			const cur = cloneDeep(state.tableData.filter((item: any) => key == (item.key ? item.key : item.oid))[0]);
+			// 标记该数据是否编辑
+			// cur.edit = true;
 			state.editableData[key] = cur;
 		},
 		del(key: string) {
-			console.log(key)
+			console.log(key);
 			state.tableData.splice(key, 1);
 			// state.tableData = state.tableData.filter((item: any) => key !== (item.key ? item.key : item.oid));
 		},
 
 		save: async (key?: string) => {
-			state.rulesRef = {}
-			const rule = await validateRules(rules, state.editableData, key)
+			state.rulesRef = {};
+			const rule = await validateRules(rules, state.editableData, key);
 			for (let k in rule) {
-				state.rulesRef[k] = rule[k]
+				state.rulesRef[k] = rule[k];
 			}
 			const res = await validateFields(state.formRef);
-			
-			if (!res) return emits('onSuccess', {guideList: res});
+
+			if (!res) return emits('onSuccess', { guideList: { valid: res, message: '请填写完整导游信息', index: 1 } });
 			if (key) {
-				state.editableData[key].startDate = state.editableData[key].time[0]
-				state.editableData[key].endDate = state.editableData[key].time[1]
-				methods.copyData(key)
+				methods.copyData(key);
 				delete state.editableData[key];
 			} else {
 				for (let k in state.editableData) {
-					state.editableData[k].startDate = state.editableData[k].time[0]
-					state.editableData[k].endDate = state.editableData[k].time[1]
-					methods.copyData(k)
+					methods.copyData(k);
 					delete state.editableData[k];
 				}
-				emits('onSuccess', {guideList: state.tableData});
+				emits('onSuccess', { guideList: state.tableData });
 			}
-			travelStore.setGuideList(state.tableData)
+			travelStore.setGuideList(state.tableData);
 		},
 
 		add: () => {
-			// 生成随机id
 			let key = generateGuid();
-			state.tableData.push({key});
+			state.tableData.push({ key, edit: true, oid: null || route.query?.oid });
 			methods.edit(key);
-			console.log(state.tableData)
+			console.log(state.tableData);			
 		},
 
 		async getGuideList() {
 			const res = await api.travelManagement.getGuideList(state.guideParams);
 			state.guideData = res.content;
 		},
-		guideChange(value:any, { item }: any, key:any) {
+		guideChange(value: any, { item }: any, key: any) {
 			state.editableData[key] = {
 				...state.editableData[key],
+				oid: route.query?.oid || null,
 				guidePhone: item.phone,
-				belongTravelOid: item.belongTravelAgencyId,
-				guideType: item.guideType || 2,	
+				guideType: item.guideType || 2,
 				guideCertificateNo: item.guideCertificateNo,
-				guideOid: item.oid,	
-				belongTravelAgencyName: item.belongTravelAgencyName,
-				guideName: item.guideName	
-			}
-			methods.copyData(key)
-		}
-		
-	}
+				guideOid: item.oid,
+				guideName: item.guideName,
+			};
+			methods.copyData(key);
+		},
+	};
 	watch(onCheck, (newVal) => {
 		// console.log(newVal)
-		methods.addRules()
-		methods.save()
-	})
+		methods.addRules();
+		methods.save();
+	});
 	return {
 		...toRefs(state),
-		...methods
-	}
+		...methods,
+		travelStore,
+		route
+	};
 }

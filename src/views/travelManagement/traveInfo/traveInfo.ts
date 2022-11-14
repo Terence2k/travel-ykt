@@ -411,7 +411,8 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			console.log(selectedRowKeys, selectedRows)
 			travelStore.curentProduct = [selectedRows] as any
 		},
-		selectedRowKeys: [travelStore.curentProduct[0].oid]
+		
+		selectedRowKeys: [travelStore.curentProduct[0]?.oid]
 	
 	}
 	if(travelStore.reserveStatus)
