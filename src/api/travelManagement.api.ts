@@ -331,7 +331,7 @@ export const travelManagement = {
     changeItineraryBasic(data: any) {
        return request({
            url: `${commonPath}/travel-agency-service/public/api/itinerary/change/changeItineraryBasic`,
-           method: 'get',
+           method: 'post',
            showLoading: false,
            data,
        });
