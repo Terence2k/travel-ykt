@@ -88,8 +88,46 @@ const certificateTypeList = {
 	IDENTITY_CARD: '身份证',
 };
 
+interface formDataType {
+	name: string;
+	sub: any;
+	data: {
+		orderInfo: {
+			travelType: string | null;
+			itineraryNo: string | null;
+			sendTravelName: string | null;
+			localTravelName: string | null;
+			sendTravelPhone: string | null;
+			schoolTime: string | null;
+			verificationTime: string | null;
+			bookTime: string | null;
+			travelCount: number | null;
+			bookCount: number | null;
+			verificationCount: number | null;
+			orderAmount: number | null;
+			settleAmount: number | null;
+			orderNo: string | null;
+			ticketName: string | null;
+			ticketType: string | null;
+		};
+		orderPersonInfoList: [
+			{
+				certificateType: string;
+				certificateNo: string;
+				gender: string;
+				personName: string;
+				sourceAddress: string;
+				specialNo: string;
+				specialPic: string;
+				specialType: string;
+				verificationStatus: boolean;
+			}
+		];
+	};
+}
+
 // 数据
-const formData = reactive({
+const formData = reactive<formDataType>({
 	name: '',
 	sub: {
 		name: '',

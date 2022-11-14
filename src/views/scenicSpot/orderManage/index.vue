@@ -108,7 +108,26 @@ import ApplyChange from './components/brush.vue';
 const navigatorBar = useNavigatorBar();
 const ticketType = ['联票', '单票', '演出票'];
 // import { userList } from '@/api';
-const dataSource = [
+
+interface writeOffStatusOptionsDataType {
+	[K: number]: string;
+	0: string;
+	1: string;
+	2: string;
+	3: string;
+	[-1]: string;
+}
+
+//核销状态
+let writeOffStatusOptionsData = reactive<writeOffStatusOptionsDataType>({
+	0: '待预定',
+	1: '已预定',
+	2: '已核销',
+	3: '已结算',
+	[-1]: '已作废',
+});
+
+const dataSource = ref([
 	{
 		orderNo: 'XXX20221027ABC',
 		itineraryNo: 'LYF000000001',
@@ -179,16 +198,7 @@ const dataSource = [
 		verificationCount: '30',
 		orderAmount: 1100,
 	},
-];
-
-//核销状态
-let writeOffStatusOptionsData = {
-	0: '待预定',
-	1: '已预定',
-	2: '已核销',
-	3: '已结算',
-	[-1]: '已作废',
-};
+]);
 
 const columns = [
 	{
@@ -271,7 +281,24 @@ const columns = [
 	},
 ];
 
-const state = reactive({
+interface stateType {
+	tableData: {
+		data: any[];
+		total: number;
+		loading: boolean;
+		param: {
+			schoolDate: string | null | number;
+			verificationTime: string | null | number;
+			sendTravelName: string | null | number;
+			orderState: string | null | number;
+			itineraryNo: string | null | number;
+			pageNo: string | null | number;
+			pageSize: string | null | number;
+		};
+	};
+}
+
+const state = reactive<stateType>({
 	tableData: {
 		data: [],
 		total: 400,
