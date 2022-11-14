@@ -5,7 +5,7 @@ import type { UnwrapRef } from 'vue';
 import { validateRules, validateFields, generateGuid } from '@/utils';
 
 import api from '@/api/index';
-import { useTravelStore } from '@/stores/modules/travelManagement';
+import { useTravelStore } from '@/stores/modules/travelManagementDetail';
 interface DataItem {
 	time: string;
 	endDate: string,

@@ -35,11 +35,20 @@
 
 		<a-tabs v-model:activeKey="state.tableData.param.orderState" @tabClick="changePageStatus">
 			<a-tab-pane key="" tab="全部"> </a-tab-pane>
-			<a-tab-pane :key="0" tab="未开始"> </a-tab-pane>
-			<a-tab-pane :key="1" tab="进行中"> </a-tab-pane>
-			<a-tab-pane :key="2" tab="已完成"> </a-tab-pane>
-			<a-tab-pane :key="3" tab="已过期"> </a-tab-pane>
-			<a-tab-pane :key="4" tab="已取消"> </a-tab-pane>
+			<a-tab-pane :key="0" tab="待预定"> </a-tab-pane>
+			<a-tab-pane :key="1" tab="已预定"> </a-tab-pane>
+			<a-tab-pane :key="2" tab="已核销"> </a-tab-pane>
+			<a-tab-pane :key="3" tab="已结算"> </a-tab-pane>
+			<a-tab-pane :key="-1" tab="已作废"> </a-tab-pane>
+			<!-- <a-tab-pane :key="0" tab="已下单"> </a-tab-pane>
+			<a-tab-pane :key="1" tab="已预定"> </a-tab-pane>
+			<a-tab-pane :key="2" tab="预支付"> </a-tab-pane>
+			<a-tab-pane :key="3" tab="已支付"> </a-tab-pane>
+			<a-tab-pane :key="4" tab="已核销"> </a-tab-pane>
+			<a-tab-pane :key="5" tab="已结算"> </a-tab-pane>
+			<a-tab-pane :key="6" tab="已转账"> </a-tab-pane>
+			<a-tab-pane :key="-2" tab="已过期"> </a-tab-pane>
+			<a-tab-pane :key="-3" tab="已作废"> </a-tab-pane> -->
 		</a-tabs>
 		<div class="table-area">
 			<CommonTable :dataSource="state.tableData.data" :columns="columns">
@@ -52,6 +61,9 @@
 					</template>
 					<template v-if="column.key === 'ticketType'">
 						{{ ticketType[record.ticketType] }}
+					</template>
+					<template v-if="column.key === 'orderStatus'">
+						{{ writeOffStatusOptionsData[record.orderStatus] }}
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns" v-if="state.tableData.param.orderState !== 2">
@@ -92,11 +104,30 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import api from '@/api';
 import viewTable from './components/table.vue';
-import ApplyChange from './components/applyChange.vue';
+import ApplyChange from './components/brush.vue';
 const navigatorBar = useNavigatorBar();
 const ticketType = ['联票', '单票', '演出票'];
 // import { userList } from '@/api';
-const dataSource = [
+
+interface writeOffStatusOptionsDataType {
+	[K: number]: string;
+	0: string;
+	1: string;
+	2: string;
+	3: string;
+	[-1]: string;
+}
+
+//核销状态
+let writeOffStatusOptionsData = reactive<writeOffStatusOptionsDataType>({
+	0: '待预定',
+	1: '已预定',
+	2: '已核销',
+	3: '已结算',
+	[-1]: '已作废',
+});
+
+const dataSource = ref([
 	{
 		orderNo: 'XXX20221027ABC',
 		itineraryNo: 'LYF000000001',
@@ -167,7 +198,8 @@ const dataSource = [
 		verificationCount: '30',
 		orderAmount: 1100,
 	},
-];
+]);
+
 const columns = [
 	{
 		title: '订单编号',
@@ -249,7 +281,24 @@ const columns = [
 	},
 ];
 
-const state = reactive({
+interface stateType {
+	tableData: {
+		data: any[];
+		total: number;
+		loading: boolean;
+		param: {
+			schoolDate: string | null | number;
+			verificationTime: string | null | number;
+			sendTravelName: string | null | number;
+			orderState: string | null | number;
+			itineraryNo: string | null | number;
+			pageNo: string | null | number;
+			pageSize: string | null | number;
+		};
+	};
+}
+
+const state = reactive<stateType>({
 	tableData: {
 		data: [],
 		total: 400,
@@ -322,8 +371,16 @@ const init = async () => {
 	state.tableData.total = res.total;
 	console.log(res);
 };
+
+const initOption = async () => {
+	// let res = api.getDictionary(139);
+	let res = api.commonApi.getVerifyListType('IDENTITY_CARD');
+	console.log(res);
+};
+
 onMounted(() => {
 	init();
+	// initOption();
 	// navigatorBar.setNavigator(['订单管理']);
 });
 onBeforeUnmount(() => {

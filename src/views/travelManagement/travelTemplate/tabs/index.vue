@@ -3,27 +3,45 @@
 		<div class="trave-contaner">
 			<a-tabs v-model:activeKey="activeKey">
 				<a-tab-pane v-for="(item, index) in pages" :key="index" :tab="item.label">
-					<component @onSuccess="save" :onCheck="check" :is="item.name" v-if="index == activeKey"></component>
+					<component @onSuccess="save" :onCheck="check" :is="item.name"></component>
 				</a-tab-pane>
 			</a-tabs>
-			<div class="footer" v-if="typei != 1">
-				<a-button type="primary" @click="check = !check">保存</a-button>
-				<a-button type="primary" @click="activeKey = activeKey + 1">下一步</a-button>
+			<div class="footer" v-if="route.query.Cedit">
+				<div class="footer-btn">
+					<a-button
+						type="primary"
+						v-if="activeKey == 2"
+						@click="
+							() => {
+								check = !check;
+								sendTeam = false;
+								isSaveBtn = true;
+							}
+						"
+						>保存</a-button
+					>
+					<a-button type="primary" v-if="activeKey < 2" @click="activeKey = activeKey + 1">下一步</a-button>
+				</div>
 			</div>
 		</div>
 	</div>
 </template>
 <script lang="ts" setup>
 import baseinfo from './baseinfo/index.vue';
+import api from '@/api';
 import cicerone from './cicerone/index.vue';
-import travelled from './travelled/index.vue';
+import travelled from './traveInfo/traveInfo.vue';
 import { ref, onMounted, reactive } from 'vue';
+import { useTravelStore } from '@/stores/modules/travelManagement';
 import { cloneDeep, debounce } from 'lodash';
 import { message } from 'ant-design-vue';
+const travelStore = useTravelStore();
 const route = useRoute();
 const router = useRouter();
 const activeKey = ref(0);
-const check = ref(false);
+const check = ref(false); //触发保存
+const sendTeam = ref(false); //发团判断
+const isSaveBtn = ref(false); //是否点击保存按钮
 const pages = [
 	{
 		name: baseinfo,
@@ -55,9 +73,43 @@ const save = (e: any) => {
 };
 // 保存接口
 const saveItinerary = (val: any) => {
-	message.success('保存成功');
-	router.push('/travel/travelTtemplate/list');
+	// if(isSaveBtn.value){
+	// 	if (!travelStore.guideList.length) return message.error('请选择带团导游');
+	// }
+	let ajax = api.travelManagement.saveChangeTravel;
+	return ajax(
+		{
+			basicParam: val.basicParam || {},
+			guideList: travelStore.guideList.filter((it: any) => it.edit),
+		},
+		isSaveBtn.value
+	).then((res: any) => {
+		if (isSaveBtn.value) {
+			router.push('/travel/travelTtemplate/list');
+			let msg = route.query.oid ? '编辑成功' : '新增成功';
+			message.success(msg);
+		}
+	});
+	// message.success('保存成功');
+	// router.push('/travel/travelTtemplate/list');
 };
+const getTraveDetail = () => {
+	if (!route.query.oid) {
+		travelStore.setBaseInfo({});
+		travelStore.setGuideList([]);
+		return;
+	}
+	api.travelManagement.saveChangeTraveldetail(route.query.oid).then((res: any) => {
+		res.basic.teamId = res.basic.itineraryNo;
+		res.basic.time = [res.basic.startDate, res.basic.endDate];
+		res.basic.touristNum = res.basic.touristCount || 0;
+		travelStore.setBaseInfo(res.basic);
+		travelStore.setGuideList(res.guideList);
+		travelStore.hotels = res.hotelList
+		travelStore.scenicTickets = res.ticketList
+	});
+};
+getTraveDetail();
 // 防抖debounce，只执行一次saveItinerary
 const debounceFun = debounce((val) => {
 	console.log(val);
