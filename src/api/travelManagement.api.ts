@@ -266,6 +266,46 @@ export const travelManagement = {
             showLoading: false,
             data,
         });
-    }
+    },
+    deleteTourist(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itineraryTourist/batchDelete`,
+            method: 'delete',
+            showLoading: true,
+            data,
+        });
+    },
+    deleteGuide(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itineraryGuide/batchDelete`,
+            method: 'delete',
+            showLoading: true,
+            data,
+        });
+    },
+    deleteTraffic(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itineraryTransport/batchDelete`,
+            method: 'delete',
+            showLoading: true,
+            data,
+        });
+    },
+    deleteHotel(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/hotel/batchDelete`,
+            method: 'delete',
+            showLoading: true,
+            data,
+        });
+    },
+    deleteTicket(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/ticket/batchDelete`,
+            method: 'delete',
+            showLoading: true,
+            data,
+        });
+    },
     
 }

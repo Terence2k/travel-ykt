@@ -6,6 +6,7 @@ import { validateRules, validateFields, generateGuid } from '@/utils';
 
 import api from '@/api/index';
 import { useTravelStore } from '@/stores/modules/travelManagement';
+import { message } from 'ant-design-vue';
 interface DataItem {
 	time: string;
 	endDate: string,
@@ -113,9 +114,11 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 			cur.edit = true;
 			state.editableData[key] = cur;
 		},
-		del(key: string) {
-			console.log(key)
-			state.tableData.splice(key, 1);
+		async del(record: any, index: number) {
+			// let key = record.key ? record.key : record.oid;
+			record.oid && await api.travelManagement.deleteGuide([record.oid]);
+			state.tableData.splice(index, 1);
+			message.success('删除成功');
 			// state.tableData = state.tableData.filter((item: any) => key !== (item.key ? item.key : item.oid));
 		},
 
