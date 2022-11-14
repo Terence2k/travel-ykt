@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { validateRules, validateFields, generateGuid } from '@/utils';
 import { defineProps } from 'vue';
 import type { UnwrapRef } from 'vue';
-import { useTravelStore } from '@/stores/modules/travelManagement';
+import { useTravelStore } from '@/stores/modules/travelManagementDetail';
 import { CODEVALUE } from '@/constant'
 interface DataItem {
 	transportationType: string;
