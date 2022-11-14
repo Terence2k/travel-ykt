@@ -7,7 +7,7 @@
 		</a-tabs>
 		<div class="footer d-flex justify-content-between">
 			<div class="footer-btn">
-				<a-button type="primary" >保存修改</a-button>
+				<a-button type="primary">保存修改</a-button>
 				<a-button type="primary" @click="activeKey = activeKey + 1">下一步</a-button>
 			</div>
 		</div>
@@ -76,7 +76,6 @@ const save = (e: any) => {
 };
 
 const sendGroup = async (id: string) => {
-
 	// const formData = new FormData();
 	// formData.append('itineraryId', id)
 	// try {
@@ -87,7 +86,7 @@ const sendGroup = async (id: string) => {
 	// } catch (error) {
 	// 	sendTeam.value = false
 	// }
-}
+};
 
 const saveItinerary = (val: any) => {
 	// if (!travelStore.teamStatus) return
@@ -145,11 +144,8 @@ const saveItinerary = (val: any) => {
 	// 		let msg = route.query.id ? '编辑成功' : '新增成功'
 	// 		message.success(msg);
 	// 	}
-		
 	// });
 };
-
-
 
 // const debounceFun = debounce((val) => {
 // 	for (let k in val) {
@@ -174,11 +170,23 @@ const getTraveDetail = () => {
 		.then((res: any) => {
 			travelStore.setBaseInfo(res.basic);
 			travelStore.setGuideList(res.guideList);
-			res.transportList = res.transportList.map((it:any) => {
-				it.time = [it.startDate, it.endDate]
+			res.transportList = res.transportList.map((it: any) => {
+				it.time = [it.startDate, it.endDate];
 				return it;
-			})
+			});
 			travelStore.setTrafficList(res.transportList);
+
+			let dis = null;
+			if (res.basic) {
+				dis = (current: Dayjs) => {
+					return (
+						(dayjs(res.basic.startDate) && dayjs(res.basic.startDate) > current && current) ||
+						(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).add(1, 'day') < current && current)
+					);
+				};
+			}
+				travelStore.setDisabled = dis as any;
+			
 		});
 };
 const changeTab = (event: number) => {
