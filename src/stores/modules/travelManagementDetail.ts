@@ -50,10 +50,32 @@ export const useTravelStore = defineStore({
 		},
 		baseInfo: [],
 		guideList:[],
-		trafficList:[]
+		trafficList:[],
+		IDCard: [],
+		specialId:[],
+		trafficType: [],
+		trafficColor: [],
 	}),
 	getters: {},
 	actions: {
+		async getTraveCode(codeValue: string, type: string) {
+			if (type === 'IDCard' && this.IDCard.length) return;
+			const res = await api.commonApi.getCodeValue({ codeValue });
+			switch (type) {
+				case 'IDCard':
+					this.IDCard = res;
+					break;
+				case 'specialId':
+					this.specialId = res;
+					break;
+				case 'trafficType':
+					this.trafficType = res;
+					break;
+				case 'trafficColor':
+					this.trafficColor = res;
+					break;
+			}
+		},
 		setBaseInfo(data: any) {
 			this.baseInfo = data;
 		},

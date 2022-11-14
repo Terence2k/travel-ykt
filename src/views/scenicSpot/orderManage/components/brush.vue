@@ -65,8 +65,6 @@ const props = defineProps({
 	// 	type: Boolean,
 	// 	default: false,
 	// },
-	// params: Object,
-	// menuList: Array,
 });
 
 const addTimeList = () => {

@@ -367,24 +367,17 @@ const init = async () => {
 	let res = await api.getViewOrderList(state.tableData.param);
 	state.tableData.loading = false;
 	state.tableData.data = res.content;
-	// state.tableData.data = dataSource;
 	state.tableData.total = res.total;
 	console.log(res);
 };
 
 const initOption = async () => {
-	// let res = api.getDictionary(139);
 	let res = api.commonApi.getVerifyListType('IDENTITY_CARD');
 	console.log(res);
 };
 
 onMounted(() => {
 	init();
-	// initOption();
-	// navigatorBar.setNavigator(['订单管理']);
-});
-onBeforeUnmount(() => {
-	// navigatorBar.clearNavigator();
 });
 </script>
 

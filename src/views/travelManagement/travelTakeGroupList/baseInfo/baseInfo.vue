@@ -111,6 +111,8 @@ const rulesRef = {
 
 const formState = computed(() => travelStore.baseInfo);
 
+
+
 const onSubmit = async () => {
 	try {
 		const values = await formRef.value.validateFields();
@@ -124,7 +126,7 @@ const handleChangeTime = (event: any) => {
 	// let dis = null;
 	// if (event) {
 	// 	formState.value.startDate = event[0];
-	// 	formState.value.endDate = event[1];
+	// 	formState.value.endDate = travelStore.baseInfo.endDate;
 	// 	dis = (current: Dayjs) => {
 	// 		return (dayjs(event[0]) && dayjs(event[0]) > current && current) || (dayjs(event[1]) && dayjs(event[1]).add(1, 'day') < current && current);
 	// 	};
@@ -211,12 +213,12 @@ const findByIdTeamType = async () => {
 .mb-2 {
 	margin-bottom: 5px;
 }
-.div-time{
-	display:flex;
-	justify-content:space-between;
+.div-time {
+	display: flex;
+	justify-content: space-between;
 }
-.div-btn{
+.div-btn {
 	margin-left: 30px;
-	margin-top:5px;
+	margin-top: 5px;
 }
 </style>
