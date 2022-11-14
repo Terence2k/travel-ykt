@@ -286,7 +286,16 @@ export const travelManagement = {
             showLoading: false,
             data,
         });
-    },
+    },  
+    // 变更导游、交通、附件
+    changeItineraryBasic(data: any) {
+       return request({
+           url: `${commonPath}/travel-agency-service/public/api/itinerary/change/changeItineraryBasic`,
+           method: 'get',
+           showLoading: false,
+           data,
+       });
+   },
     saveChangeTravel(data: any, showLoading: boolean) {
         return request({
             url: `${commonPath}/travel-agency-service/public/api/itinerary/template/modify`,

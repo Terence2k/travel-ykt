@@ -49,7 +49,8 @@ export const useTravelStore = defineStore({
 			return (current && current < dayjs().subtract(1, 'day')) || current > dayjs().startOf('day');
 		},
 		baseInfo: [],
-		guideList:[]
+		guideList:[],
+		trafficList:[]
 	}),
 	getters: {},
 	actions: {
@@ -58,6 +59,9 @@ export const useTravelStore = defineStore({
 		},
 		setGuideList(list: any) {
 			this.guideList = list;
+		},
+		setTrafficList(list: any) {
+			this.trafficList = list;
 		},
 	},
 });

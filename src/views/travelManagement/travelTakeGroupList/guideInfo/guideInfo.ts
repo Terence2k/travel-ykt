@@ -156,6 +156,9 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 			const res = await api.travelManagement.getGuideList(state.guideParams);
 			state.guideData = res.content;
 		},
+		aa:()=>{
+			console.log(state.tableData,'12313')
+		},
 		guideChange(value:any, { item }: any, key:any) {
 			state.editableData[key] = {
 				...state.editableData[key],

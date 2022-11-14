@@ -10,60 +10,63 @@
 			:wrapper-col="{ span: 7 }"
 		>
 			<a-form-item label="线路名称" name="routeName">
-				<span>{{formState.routeName}}</span>
+				<span>{{ formState.routeName }}</span>
 			</a-form-item>
 			<a-form-item label="行程类型" name="teamType">
-				<span>{{formState.teamTypeName}}</span>
+				<span>{{ formState.teamTypeName }}</span>
 			</a-form-item>
 
 			<a-form-item label="组团社（发团）" name="travelName">
-				<span>{{formState.travelName}}</span>
+				<span>{{ formState.travelName }}</span>
 			</a-form-item>
 
 			<a-form-item label="组团社计调">
-				<span>{{formState.travelOperatorName}}</span>
+				<span>{{ formState.travelOperatorName }}</span>
 			</a-form-item>
 
 			<a-form-item label="组团社计调电话" name="travelOperatorPhone">
-				<span>{{formState.travelOperatorPhone}}</span>
+				<span>{{ formState.travelOperatorPhone }}</span>
 			</a-form-item>
 			<!--  v-if="teamGroupType === GroupMode.TeamGroup" -->
 			<div>
 				<a-form-item label="地接旅行社" name="subTravelOid">
-					<span>{{formState.subTravelName}}</span>
+					<span>{{ formState.subTravelName }}</span>
 				</a-form-item>
 
 				<a-form-item label="地接计调" name="subTravelOperatorOid">
-					<span>{{formState.subTravelOperatorName}}</span>
+					<span>{{ formState.subTravelOperatorName }}</span>
 				</a-form-item>
 
 				<a-form-item label="地接社计调电话" name="subTravelOperatorPhone">
-					<span>{{formState.subTravelOperatorPhone}}</span>
+					<span>{{ formState.subTravelOperatorPhone }}</span>
 				</a-form-item>
 			</div>
 
 			<a-form-item label="游客人数" name="touristNum">
-				<span>{{formState.touristCount}}</span>
+				<span>{{ formState.touristCount }}</span>
 			</a-form-item>
 			<a-form-item label="行程时间" name="time">
-				<span>{{formState.startDate}}~{{formState.endDate}}</span>
-				<span>修改时间</span>
-				<!-- <a-range-picker
-					style="width: 100%"
-					@change="handleChangeTime"
-					:disabled-date="disabledDate"
-					v-model:value="formState.time"
-					show-time
-					format="YYYY-MM-DD HH:mm:ss"
-					value-format="YYYY-MM-DD HH:mm:ss"
-				/> -->
+				<div class="div-time">
+					<span>{{ formState.startDate }}~{{ formState.endDate }}</span>
+					<!-- <a-range-picker
+						style="width: 100%"
+						@change="handleChangeTime"
+						:disabled-date="disabledDate"
+						v-model:value="formState.time"
+						show-time
+						format="YYYY-MM-DD HH:mm:ss"
+						value-format="YYYY-MM-DD HH:mm:ss"
+					/> -->
+					<!-- <a-button type="primary" size="small" class="div-btn">修改时间</a-button> -->
+				</div>
 			</a-form-item>
 
 			<a-form-item label="行程单号" name="teamId">
-				<span>{{formState.itineraryNo}}</span>
+				<span>{{ formState.itineraryNo }}</span>
 			</a-form-item>
 			<a-form-item label="行程当前状态" name="teamId">
-				<span>{{formState.statusName}}</span> </a-form-item>
+				<span>{{ formState.statusName }}</span>
+			</a-form-item>
 			<a-form-item label="关联行程单" name="teamId">
 				<!-- <span>{{formState}}</span> -->
 			</a-form-item>
@@ -103,11 +106,10 @@ const props = defineProps({
 
 const emits = defineEmits(['onSuccess']);
 const rulesRef = {
-	time: [{ required: true, message: '请选择行程时间' }]
+	time: [{ required: true, message: '请选择行程时间' }],
 };
 
 const formState = computed(() => travelStore.baseInfo);
-
 
 const onSubmit = async () => {
 	try {
@@ -133,11 +135,9 @@ const handleChangeTime = (event: any) => {
 	// 		return (current && current < dayjs().endOf('day')) || current > dayjs().startOf('day');
 	// 	};
 	// }
-
 	// travelStore.setDisabled = dis as any;
 	// travelStore.teamTime = event;
 };
-
 
 const findByIdTeamType = async () => {
 	// if (!travelStore.teamType) return;
@@ -146,7 +146,6 @@ const findByIdTeamType = async () => {
 	// if (travelStore.teamType) {
 	// 	let allFeesProducts = [];
 	// 	const res = await api.travelManagement.findByIdTeamType(formData);
-
 	// 	for (let i = 0; i < res.productVos.length; i++) {
 	// 		// 综费产品itemId为4
 	// 		if (res.productVos[i].itemId === 4) {
@@ -173,7 +172,6 @@ const findByIdTeamType = async () => {
 	// 	if (allFeesProducts.length === 1) {
 	// 		travelStore.curentProduct = cloneDeep(allFeesProducts);
 	// 	}
-
 	// 	travelStore.setCompositeProducts(allFeesProducts);
 	// }
 };
@@ -212,5 +210,13 @@ const findByIdTeamType = async () => {
 }
 .mb-2 {
 	margin-bottom: 5px;
+}
+.div-time{
+	display:flex;
+	justify-content:space-between;
+}
+.div-btn{
+	margin-left: 30px;
+	margin-top:5px;
 }
 </style>

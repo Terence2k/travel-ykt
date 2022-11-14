@@ -18,7 +18,7 @@ import baseInfo from './baseInfo/baseInfo.vue';
 import guideInfo from './guideInfo/guideInfo.vue';
 // import touristInfo from './touristInfo/touristInfo.vue';
 // import traveInfo from './traveInfo/traveInfo.vue';
-// import trafficInfo from './trafficInfo/trafficInfo.vue';
+import trafficInfo from './trafficInfo/trafficInfo.vue';
 // import fileInfo from './fileInfo/fileInfo.vue';
 import { cloneDeep, debounce } from 'lodash';
 import api from '@/api';
@@ -47,10 +47,10 @@ const pages = [
 	// 	name: touristInfo,
 	// 	label: '游客信息',
 	// },
-	// {
-	// 	name: trafficInfo,
-	// 	label: '交通信息',
-	// },
+	{
+		name: trafficInfo,
+		label: '交通信息',
+	},
 	// {
 	// 	name: traveInfo,
 	// 	label: '行程信息',
@@ -174,6 +174,11 @@ const getTraveDetail = () => {
 		.then((res: any) => {
 			travelStore.setBaseInfo(res.basic);
 			travelStore.setGuideList(res.guideList);
+			res.transportList = res.transportList.map((it:any) => {
+				it.time = [it.startDate, it.endDate]
+				return it;
+			})
+			travelStore.setTrafficList(res.transportList);
 		});
 };
 const changeTab = (event: number) => {
