@@ -312,7 +312,7 @@ export default [
 						activeMeun: 'take_group_list',
 						name: 'changetravel',
 						meta: {
-							title: '新增行程',
+							title: '行程变更',
 							// icon: 'liulanqi',
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示

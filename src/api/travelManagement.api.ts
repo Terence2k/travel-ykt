@@ -266,6 +266,25 @@ export const travelManagement = {
             showLoading: false,
             data,
         });
-    }
-    
+    },
+     // 判断行程单的行程信息是否可发起变更
+     checkVerifyByItineraryId(id: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/change/checkVerifyByItineraryId/${id}`,
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            method: 'get',
+            showLoading: true
+        });
+    },
+     // 变更详情
+     changDetail(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/detail`,
+            method: 'get',
+            showLoading: false,
+            data,
+        });
+    },
 }

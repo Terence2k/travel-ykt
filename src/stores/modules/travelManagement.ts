@@ -348,7 +348,6 @@ export const useTravelStore = defineStore({
 		async getManagementExpenses(id:any) {
 			const res = await api.getManagementExpenses(2);
 			this.gouvyList=res
-		},
-
+		}
 	},
 });
