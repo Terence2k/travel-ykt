@@ -22,14 +22,6 @@ interface DataItem {
 	specialCertificatePicture: []
 }
 
-const rules:{[k:string]: any} = {
-	certificateType: [{ required: true, message: '请选择行证件类型' }],
-	certificateNo: [{ required: true, message: '请输入证件号码' }],
-	name: [{ required: true, message: '请输入姓名' }],
-	gender: [{ required: true, message: '请选择性别' }],
-	insuranceType: [{ required: true, message: '请选择险种' }],
-	addressId: [{ required: true, message: '请选择客源地' }]
-}
 export function useInsurance(props: any, emits: any): Record<string, any> {
 	const travelStore = useTravelStore()
 	const route = useRoute();
@@ -49,7 +41,7 @@ export function useInsurance(props: any, emits: any): Record<string, any> {
         onSelect: (record: DataItem, selected: boolean, selectedRows: DataItem[]) => {
             console.log(record, selected, selectedRows);
         },
-		tableData: route.query.id ? travelStore.touristList : [],
+		tableData: travelStore.touristList,
 		tableData2:[],
 		columns: [
 			{
@@ -166,109 +158,9 @@ export function useInsurance(props: any, emits: any): Record<string, any> {
 	});
 
 	const methods = {
-		async getCityList(data:any, length: number) {
-			const res = await api.commonApi.getCityList(data);
-			return res.map((item:any) => {
-				return {
-					value: item.oid,
-					label: item.name,
-					isLeaf: length >=3 ? true : false
-				}
-			})
-		},
-		loadData (selectedOptions:any) {
-			console.log(selectedOptions)
-			const targetOption = selectedOptions[selectedOptions.length - 1];
-			targetOption.loading = true;
-			const length = selectedOptions.length + 1
-			methods.getCityList(`${targetOption.value}/${length}`, length).then(res => {
-				targetOption.children = res
-				targetOption.loading = false;
-			})
-		},
-		copyData(key:any) {
-			Object.assign(
-				state.tableData.filter((item:any) => key === (item.key ? item.key : item.oid))[0], 
-				state.editableData[key]
-			);
-		},
-		// 特殊证件判断
-		isUpload(key: any) {
-			let flag: boolean = false;
-			if (state.editableData[key].specialCertificateType) {
-				(!state.editableData[key].specialCertificatePicture
-				|| !state.editableData[key].specialCertificatePicture.length) &&
-				message.error(`请上传游客${state.editableData[key].name}特殊证件图片`)
-				flag = false;
-			} else {
-				flag = true;
-			}
-			return flag;
-		},
-		addRules(key?: any) {
-			state.rulesRef = {}
-			
-			const rule = validateRules(rules, state.editableData, key)
-			
-			for (let k in rule) {
-				state.rulesRef[k] = rule[k]
-			}
-		},
-		edit: (key: string) => {
-			console.log(key,'111111111111');
-			state.editableData[key] = cloneDeep(
-				state.tableData.filter((item:any, index: number) => key === (item.key ? item.key : item.oid))[0]
-			)
-		},
-		del(key: string) {
-			console.log(key)
-			state.tableData.splice(key, 1);
-			state.tableData = state.tableData.filter((item: any) => key !== (item.key ? item.key : item.oid));
-		},
-		save: async (key?: string) => {
-			
-			await methods.addRules(key)
-			const res = await validateFields(state.formRef);
-			if (!res) return emits('onSuccess', {touristList: res});
-			if (key) {
-				if (!methods.isUpload(key)) return;
-				methods.copyData(key);
-				delete state.editableData[key];
-			} else {
-				for (let k in state.editableData) {
-					if (!methods.isUpload(k)) return;
-					methods.copyData(k);
-					delete state.editableData[k];
-				}
-				emits('onSuccess', {touristList: state.tableData});
-			}
-			travelStore.setTouristList(state.tableData)
-			
-		},
-		add: () => {
-			let key = generateGuid();
-			state.tableData.push({key});
-			methods.edit(key);
-			console.log(state.tableData)
-		},
-		handleChange(val: any, option: any, key: string) {
-			console.log(val, option,)
-			state.editableData[key].sourceAddress = val[val.length - 1];
-			state.editableData[key].sourceAddressName = option.map((it:any) => it.label).join('')
-		}
+		
 	}
-	watch(onCheck, (newVal) => {
-		// console.log(newVal)
-		methods.addRules()
-		methods.save()
-	})
 	
-	
-	travelStore.getTraveCode(CODEVALUE.TRAVE_CODE.IDCARD, 'IDCard');
-	travelStore.getTraveCode(CODEVALUE.TRAVE_CODE.SPECIALID, 'specialId');
-	methods.getCityList('0/1', 0).then(res => {
-		state.cityOptions = res
-	});
 	return {
 		...toRefs(state),
 		...methods
