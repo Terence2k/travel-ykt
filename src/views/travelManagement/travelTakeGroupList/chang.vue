@@ -7,7 +7,7 @@
 		</a-tabs>
 		<div class="footer d-flex justify-content-between">
 			<div class="footer-btn">
-				<a-button type="primary" >保存修改</a-button>
+				<a-button type="primary" @click="saveOrder">保存修改</a-button>
 				<a-button type="primary" @click="activeKey = activeKey + 1">下一步</a-button>
 			</div>
 		</div>
@@ -74,6 +74,23 @@ const save = (e: any) => {
 	// 	});
 	// }
 };
+
+const saveOrder = () => {
+  console.log('基础信息：', travelStore.baseInfo);
+  
+  let queryData = {
+    oid: travelStore.baseInfo.oid,
+    attachmentList: travelStore.attachmentList,
+    guideList: travelStore.guideList,
+    transportList: travelStore.trafficList
+   };
+	api.travelManagement.changeItineraryBasic(queryData)
+		.then((res: any) => {
+      console.log('保存修改：', res);
+      
+      message.success('保存成功')
+		});
+}
 
 const sendGroup = async (id: string) => {
 
