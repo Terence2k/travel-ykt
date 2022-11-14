@@ -37,7 +37,7 @@
 							{{ certificateTypeList[record.certificateType] }}
 						</template>
 						<template v-if="column.key === 'specialPic'">
-							<a-image :width="100" :height="70" :src="record.specialPic" :fallback="error" />
+							<a-image v-if="record.specialPic" :width="100" :height="70" :src="record.specialPic" :fallback="error" />
 						</template>
 						<template v-if="column.key === 'verificationStatus'"> {{ record.verificationStatus ? '已核销' : '未核销' }} </template>
 						<template v-if="column.key === 'action'">
@@ -88,8 +88,46 @@ const certificateTypeList = {
 	IDENTITY_CARD: '身份证',
 };
 
+interface formDataType {
+	name: string;
+	sub: any;
+	data: {
+		orderInfo: {
+			travelType: string | null;
+			itineraryNo: string | null;
+			sendTravelName: string | null;
+			localTravelName: string | null;
+			sendTravelPhone: string | null;
+			schoolTime: string | null;
+			verificationTime: string | null;
+			bookTime: string | null;
+			travelCount: number | null;
+			bookCount: number | null;
+			verificationCount: number | null;
+			orderAmount: number | null;
+			settleAmount: number | null;
+			orderNo: string | null;
+			ticketName: string | null;
+			ticketType: string | null;
+		};
+		orderPersonInfoList: [
+			{
+				certificateType: string;
+				certificateNo: string;
+				gender: string;
+				personName: string;
+				sourceAddress: string;
+				specialNo: string;
+				specialPic: string;
+				specialType: string;
+				verificationStatus: boolean;
+			}
+		];
+	};
+}
+
 // 数据
-const formData = reactive({
+const formData = reactive<formDataType>({
 	name: '',
 	sub: {
 		name: '',
@@ -130,98 +168,6 @@ const formData = reactive({
 	},
 });
 
-const dataSource = [
-	{
-		key: '1',
-		name: '王某某',
-		age: 32,
-		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
-		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
-	},
-	{
-		key: '2',
-		name: '张某某',
-		age: 42,
-		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
-		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
-	},
-	{
-		key: '3',
-		name: '张某某',
-		age: 42,
-		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
-		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
-	},
-	{
-		key: '1',
-		name: '王某某',
-		age: 32,
-		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
-		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
-	},
-	{
-		key: '2',
-		name: '张某某',
-		age: 42,
-		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
-		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
-	},
-	{
-		key: '2',
-		name: '张某某',
-		age: 42,
-		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
-		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
-	},
-	{
-		key: '3',
-		name: '张某某',
-		age: 42,
-		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
-		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
-	},
-	{
-		key: '1',
-		name: '王某某',
-		age: 32,
-		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
-		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
-	},
-	{
-		key: '2',
-		name: '张某某',
-		age: 42,
-		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
-		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
-	},
-	{
-		key: '3',
-		name: '张某某',
-		age: 42,
-		address: '西湖区湖底公园1号',
-		address1: '西湖区湖底公园1号',
-		address2: '西湖区湖底公园1号',
-		address3: '西湖区湖底公园1号',
-	},
-];
 const columns = [
 	{
 		title: '序号',
@@ -271,6 +217,46 @@ const columns = [
 	},
 ];
 
+//合并错误提示
+const errorInfos = computed(() => {
+	return mergeValidateInfo(toArray(validateInfos).splice(0, 4));
+});
+
+//初始化下拉列表
+const initOpeion = async () => {
+	await scenicSpotOptions.getBusinessTypeOption();
+	await scenicSpotOptions.getAllAreaProvice(0);
+};
+
+// 下拉选择
+const popupScroll = () => {
+	console.log('popupScroll');
+};
+
+// 提交
+const onSubmit = async () => {
+	validate()
+		.then((res) => {
+			console.log(toRaw(formData.data), 'psss');
+			save(toRaw(formData.data));
+		})
+		.catch((err) => {
+			console.log('error', err);
+		});
+};
+
+// 重置
+const reset = (): void => {
+	resetFields();
+};
+
+//初始化页面
+const initPage = async (): Promise<void> => {
+	let res = await api.getViewOrderDetails(route.currentRoute.value?.query?.oid);
+	formData.data = res;
+	// formData.data.oid = parseInt(route.currentRoute.value?.query?.oid);
+};
+
 // 表单
 const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
 	formData,
@@ -296,47 +282,13 @@ const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField }
 		'data.bank': [{ required: true, message: '请填写还款行' }],
 	})
 );
-//初始化下拉列表
-const initOpeion = async () => {
-	await scenicSpotOptions.getBusinessTypeOption();
-	await scenicSpotOptions.getAllAreaProvice(0);
-};
-// 下拉选择
-const popupScroll = () => {
-	console.log('popupScroll');
-};
 
-// 提交
-const onSubmit = async () => {
-	validate()
-		.then((res) => {
-			console.log(toRaw(formData.data), 'psss');
-			save(toRaw(formData.data));
-		})
-		.catch((err) => {
-			console.log('error', err);
-		});
-};
 const save = async (params: object) => {
 	let res = await api.changeScenicSpotInformation(params);
 	if (res) {
 		message.success('保存成功');
 		route.push({ path: '/scenic-spot/information/list' });
 	}
-};
-//合并错误提示
-const errorInfos = computed(() => {
-	return mergeValidateInfo(toArray(validateInfos).splice(0, 4));
-});
-// 重置
-const reset = (): void => {
-	resetFields();
-};
-//初始化页面
-const initPage = async (): Promise<void> => {
-	let res = await api.getViewOrderDetails(route.currentRoute.value?.query?.oid);
-	formData.data = res;
-	// formData.data.oid = parseInt(route.currentRoute.value?.query?.oid);
 };
 
 // 自定义面包屑
@@ -345,6 +297,7 @@ onMounted(async () => {
 	await initPage();
 	// await initOpeion();
 });
+
 onBeforeUnmount(() => {
 	// navigatorBar.clearNavigator();
 });

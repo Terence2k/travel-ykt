@@ -70,7 +70,7 @@
 						<div class="action-btns">
 							<a class="item" :class="{'disabled': !travelStore.teamStatus}" v-if="!editableData[record.key ? record.key : record.oid]" @click="edit(record.key ? record.key : record.oid)">编辑</a>
 							<a class="item" :class="{'disabled': !travelStore.teamStatus}" v-else @click="save(record.key ? record.key : record.oid)">确定</a>
-							<a class="item" :class="{'disabled': !travelStore.teamStatus}" @click="del(index)">删除</a>
+							<a class="item" :class="{'disabled': !travelStore.teamStatus}" @click="del(record, index)">删除</a>
 						</div>
 					</template>
 				</template>
@@ -78,7 +78,7 @@
 		</a-form>
 		<div class="footer-btn">
 			<a-button v-if="travelStore.teamStatus" type="primary" @click="add">添加</a-button>
-			<a-button v-if="travelStore.teamStatus">批量删除</a-button>
+			<a-button v-if="travelStore.teamStatus" @click="bathDel">批量删除</a-button>
 		</div>
 		<div class="">
 			<div>
@@ -121,6 +121,7 @@ const {
 	cityOptions,
 	add,
 	del,
+	bathDel,
 	rulesRef,
 	formRef,
 	loadData,

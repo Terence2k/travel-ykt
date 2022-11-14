@@ -25,6 +25,8 @@ interface DataItem {
 	provinceId: string;
 	cityId: string;
 	age: string;
+	oid: number;
+	key: string;
 }
 
 const rules:{[k:string]: any} = {
@@ -46,11 +48,15 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 		editableData: {},
 		startRef: {},
 		cityOptions: [],
+		delOid: [],
+		delKey: [],
 		selectKey: ['certificateType', 'gender', 'specialCertificateType'],
 		inputKey: ['certificateNo', 'name', 'emergencyContactName', 'emergencyContactPhone', 'age'],
 		rulesRef: {},
         onSelect: (record: DataItem, selected: boolean, selectedRows: DataItem[]) => {
             console.log(record, selected, selectedRows);
+			state.delOid = selectedRows.filter(item => item.oid).map(it => it.oid);
+			state.delKey = selectedRows.filter(item => !item.oid).map(it => it.key);
         },
 		tableData: computed(() => travelStore.touristList),
 		columns: [
@@ -220,10 +226,22 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			)
 			state.editableData[key].edit = true
 		},
-		del(key: string) {
-			console.log(key)
-			state.tableData.splice(key, 1);
-			// state.tableData = state.tableData.filter((item: any) => key !== (item.key ? item.key : item.oid));
+		async del(record: any, index: number) {
+			// let key = record.key ? record.key : record.oid;
+			record.oid && await api.travelManagement.deleteTourist([record.oid]);
+			state.tableData.splice(index, 1);
+			message.success('删除成功');
+			// 
+		},
+		async bathDel() {
+
+			state.delOid.length && await api.travelManagement.deleteTourist(state.delOid);
+
+			travelStore.touristList = travelStore.touristList.filter((item: any) => !state.delOid.includes(item.oid) &&
+					!state.delKey.includes(item.key));
+
+			message.success('删除成功');
+			
 		},
 		save: async (key?: string) => {
 			

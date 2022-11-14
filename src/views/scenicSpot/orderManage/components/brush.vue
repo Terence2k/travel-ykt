@@ -26,7 +26,6 @@ import api from '@/api';
 import { message } from 'ant-design-vue';
 
 import dayjs, { Dayjs } from 'dayjs';
-import type { Rule } from 'ant-design-vue/es/form';
 
 const modelValue = ref(false);
 const route = useRouter();
@@ -50,10 +49,9 @@ const formValidate = reactive<formType>({
 		dateList: [{ startDateTime: '', endDateTime: '', time: [] }],
 	},
 });
-
 const formRef = ref();
 
-const formRules: Record<string, Rule[]> = {
+const formRules: any = {
 	time: [{ required: true, message: '请选择时间' }],
 	applyNum: [{ required: true, message: '请填写' }],
 };
@@ -82,7 +80,7 @@ const del = (index: number) => {
 const apply = () => {
 	formRef.value
 		.validateFields()
-		.then(async (res) => {
+		.then(async (res: any) => {
 			cancel();
 			message.success('改刷成功');
 			// let params = formValidate.data;
@@ -100,17 +98,14 @@ const apply = () => {
 			console.log(err);
 		});
 };
-
 const toHistoryPage = () => {
 	route.push('/scenic-spot/sold-out-history');
 };
-
 // 打开弹窗
-const open = (id: number) => {
+const open = (id: number | null) => {
 	modelValue.value = true;
 	formValidate.data.ticketId = id;
 };
-
 // 关闭弹窗
 const cancel = () => {
 	modelValue.value = false;

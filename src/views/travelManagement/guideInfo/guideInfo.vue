@@ -69,7 +69,7 @@
 						<div class="action-btns">
 							<a class="item" :class="{'disabled': !travelStore.teamStatus}" v-if="!editableData[record.key ? record.key : record.oid]"  @click="edit(record.key ? record.key : record.oid)">编辑</a>
 							<a class="item" :class="{'disabled': !travelStore.teamStatus}" v-else @click="save(record.key ? record.key : record.oid)">确定</a>
-							<a class="item" :class="{'disabled': !travelStore.teamStatus}" @click="del(index)">删除</a>
+							<a class="item" :class="{'disabled': !travelStore.teamStatus}" @click="del(record, index)">删除</a>
 						</div>
 					</template>
 				</template>

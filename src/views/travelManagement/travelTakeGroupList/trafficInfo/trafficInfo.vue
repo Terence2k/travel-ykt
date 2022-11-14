@@ -41,7 +41,6 @@
 						<div>
 							<a-form-item v-if="editableData[record.key ? record.key : record.oid]" :name="[record.key ? record.key : record.oid, column.key]">
 								<a-range-picker
-									:disabled-date="travelStore.setDisabled"
 									v-model:value="editableData[record.key ? record.key : record.oid][column.key]"
 									show-time
 									format="YYYY-MM-DD HH:mm:ss"
@@ -57,15 +56,15 @@
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a class="item" :class="{'disabled': !travelStore.teamStatus}" v-if="!editableData[record.key ? record.key : record.oid]" @click="edit(record.key ? record.key : record.oid)">编辑</a>
-							<a class="item" :class="{'disabled': !travelStore.teamStatus}" v-else @click="save(record.key ? record.key : record.oid)">确定</a>
-							<a class="item" :class="{'disabled': !travelStore.teamStatus}" @click="del(index)">删除</a>
+							<a class="item"  v-if="!editableData[record.key ? record.key : record.oid]" @click="edit(record.key ? record.key : record.oid)">编辑</a>
+							<a class="item"  v-else @click="save(record.key ? record.key : record.oid)">确定</a>
+							<a class="item"  @click="del(index)">删除</a>
 						</div>
 					</template>
 				</template>
 			</CommonTable>
 		</a-form>
-		<div class="footer-btn" v-if="travelStore.teamStatus">
+		<div class="footer-btn" >
 			<a-button type="primary" @click="add">添加</a-button>
 			<!-- <a-button>批量删除</a-button> -->
 		</div>

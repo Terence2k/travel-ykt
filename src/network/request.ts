@@ -48,6 +48,14 @@ const fetch = async (options: OptionsProp) => {
         headers,
         responseType
       });
+      case "delete":
+      return axios.request({
+        url: url,
+        data,
+        method: 'DELETE',
+        headers,
+        responseType
+      });
     /**
      * {
      *  'name':'file'

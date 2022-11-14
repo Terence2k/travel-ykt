@@ -225,7 +225,6 @@ watch(activeKey, newVal => {
 		const allFeesProducts =  travelStore.compositeProducts.map((it:any) => {
 			it.peopleCount = travelStore.touristList.length;
 			it.unPrice = it.feeNumber;
-			it.isDay = true;
 			it.dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day')
 			it.totalMoney = getAmount(
 				it.confirmDailyCharge,

@@ -5,7 +5,7 @@ import type { UnwrapRef } from 'vue';
 import { validateRules, validateFields, generateGuid } from '@/utils';
 
 import api from '@/api/index';
-import { useTravelStore } from '@/stores/modules/travelManagement';
+import { useTravelStore } from '@/stores/modules/travelManagementDetail';
 interface DataItem {
 	time: string;
 	endDate: string,
@@ -155,6 +155,9 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 		async getGuideList() {
 			const res = await api.travelManagement.getGuideList(state.guideParams);
 			state.guideData = res.content;
+		},
+		aa:()=>{
+			console.log(state.tableData,'12313')
 		},
 		guideChange(value:any, { item }: any, key:any) {
 			state.editableData[key] = {
