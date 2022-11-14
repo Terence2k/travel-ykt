@@ -129,7 +129,9 @@ const success = () => {
 				router.push({ path: '/hotelManagement/hotelOrder/index' });
 				message.success('审核成功')
 			})
-			.catch((err: any) => {});
+			.catch((err: any) => {
+				message.error(err)
+			});
 	});
 };
 const notAuditing = () => {
