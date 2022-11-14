@@ -17,11 +17,21 @@
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
 				<a @click="goToPath(record)">查看行程单</a>
-				<a>行程变更</a>
+				<a @click="goToChange(record)">行程变更</a>
 			</div>
 		</template>
 				</template>
 		</CommonTable>
+		<BaseModal title="可变更项目提醒" v-model="modelValue" :width="400">
+			<p>
+				当前行程单已有订单发生过核销，当前只允许变更导游信息、交通信息、附件信息 ，不可变更行程信息。是否要继续变更？
+				如线下游客发生了调整，可填报新行程。
+			</p>
+			<template v-slot:footer>
+				<a-button type="primary">填报新行程</a-button>
+				<a-button @click="continueChange()">继续变更</a-button>
+			</template>
+		</BaseModal>
 		<CommonPagination
 			:current="state.params.pageNo"
 			:page-size="state.params.pageSize"
@@ -36,12 +46,14 @@
 	import CommonPagination from '@/components/common/CommonPagination.vue';
 
 	import api from '@/api/index';
+	import BaseModal from '@/components/common/BaseModal.vue';
 
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, GroupStatus } from '@/enum'
 
 	const travelStore = useTravelStore();
 	const router = useRouter()
+	const modelValue =ref(false)
 	const state = reactive({
 		total: computed(() => travelStore.traveList.haveABall.total),
 		params: {
@@ -49,6 +61,8 @@
 				pageSize: 10,
 				status: 1
 		},
+		id:'',
+		itineraryNo:'',
 		tableData: computed(() => travelStore.traveList.haveABall.list),
 		columns: [
 			{
@@ -118,6 +132,31 @@
 			}
 		})
 	}
+	const continueChange = () => {
+	router.push({
+		path: '/travel/take_group/changetravel',
+		query: {
+			id: state.id,
+			itineraryNo: state.itineraryNo,
+		},
+	});
+};
+	const goToChange = (row: any) => {
+	(state.id = row.oid), (state.itineraryNo = row.itineraryNo);
+	api.travelManagement.checkVerifyByItineraryId(row.itineraryNo).then((res) => {
+		if (res.data) {
+			router.push({
+				path: '/travel/take_group/changetravel',
+				query: {
+					id: row.oid,
+					itineraryNo: row.itineraryNo,
+				},
+			});
+		} else {
+			modelValue.value = true;
+		}
+	});
+};
 	const onHandleCurrentChange = () => {
 
 	}
