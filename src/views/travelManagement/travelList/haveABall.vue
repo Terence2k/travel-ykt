@@ -17,7 +17,7 @@
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
 				<a @click="goToPath(record)">查看行程单</a>
-				<a>催促地接社</a>
+				<a>行程变更</a>
 			</div>
 		</template>
 				</template>
