@@ -16,8 +16,9 @@
 
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
-				<a @click="goToPath(record)">查看行程单</a>
+				<a @click="goToPath(record)">行程详情</a>
 				<a @click="goToChange(record)">行程变更</a>
+				<a>查看日志</a>
 			</div>
 		</template>
 				</template>
@@ -91,11 +92,11 @@
 					dataIndex: 'routeName',
 					key: 'routeName',
 			},
-			{
-					title: '组团社',
-					dataIndex: 'travelName',
-					key: 'travelName',
-			},
+			// {
+			// 		title: '组团社',
+			// 		dataIndex: 'travelName',
+			// 		key: 'travelName',
+			// },
 			{
 					title: '地接社',
 					dataIndex: 'subTravelName',
@@ -103,13 +104,13 @@
 			},
 			{
 					title: '出团时间',
-					dataIndex: 'time',
-					key: 'time',
+					dataIndex: 'startDate',
+					key: 'startDate',
 			},
 			{
 					title: '团队类型',
-					dataIndex: 'groupTypeStr',
-					key: 'groupTypeStr',
+					dataIndex: 'teamTypeName',
+					key: 'teamTypeName',
 			},
 			{
 					title: '带队导游',
@@ -120,6 +121,11 @@
 					title: '团客人数',
 					dataIndex: 'touristCount',
 					key: 'touristCount',
+			},
+			{
+					title: '行程状态',
+					dataIndex: 'statusName',
+					key: 'statusName',
 			},
 			{
 					title: '操作',
@@ -135,13 +141,19 @@
 		travelStore.setTraveList(res, 'haveABall')
 	}
 	const goToPath = (row: any) => {
-		router.push({
-			path: '/travel/travel_manage/add_travel',
-			query: {
-				id: row.oid,
-				itineraryNo: row.itineraryNo
-			}
-		})
+		// router.push({
+		// 	path: '/travel/travel_manage/add_travel',
+		// 	query: {
+		// 		id: row.oid,
+		// 		itineraryNo: row.itineraryNo
+		// 	}
+		// })
+		router.push({ 
+			path: '/travel/travel_manage/travel_detail', 
+			query: { 
+				oid: encodeURIComponent(row.oid) 
+			} 
+		});
 	}
 	const changeMission = () => {
 		router.push({

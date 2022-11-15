@@ -17,6 +17,7 @@
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
 				<a>置为草稿</a>
+				<a>查看日志</a>
 			</div>
 		</template>
 				</template>
@@ -64,25 +65,35 @@
 					dataIndex: 'routeName',
 					key: 'routeName',
 			},
-			{
-					title: '组团社',
-					dataIndex: 'travelName',
-					key: 'travelName',
-			},
+			// {
+			// 		title: '组团社',
+			// 		dataIndex: 'travelName',
+			// 		key: 'travelName',
+			// },
 			{
 					title: '地接社',
 					dataIndex: 'subTravelName',
 					key: 'subTravelName',
 			},
 			{
-					title: '审核超时时间',
+					title: '原定行程时间',
+					dataIndex: 'time',
+					key: 'time',
+			},
+			{
+					title: '团队类型',
+					dataIndex: 'teamTypeName',
+					key: 'teamTypeName',
+			},
+			{
+					title: '团客人数',
 					dataIndex: 'touristCount',
 					key: 'touristCount',
 			},
 			{
-					title: '审核类型',
-					dataIndex: 'groupTypeStr',
-					key: 'groupTypeStr',
+					title: '过期原因',
+					dataIndex: 'touristCount1',
+					key: 'touristCount1',
 			},
 			{
 					title: '操作',
