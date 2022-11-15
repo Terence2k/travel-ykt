@@ -391,6 +391,9 @@ const getProductTypeName = computed(() => (value: number) => {
 	return '';
 });
 const getProductName = computed(() => (productSonType: string, chargeProductSonId: number) => {
+	if (Number(chargeProductSonId) === 0) {
+		return '联票';
+	}
 	if (state.productSonList.length > 0) {
 		const idx: number = state.productSonList.findIndex((item) => item.productSonId === chargeProductSonId);
 		if (idx !== -1) {
