@@ -23,7 +23,7 @@
 		</CommonTable>
 		<BaseModal title="选择可变更项目" v-model="modelValue" :width="500">
 			<div class="model-div">
-				<a-button type="primary" style="width:120px">修改出团信息</a-button>
+				<a-button type="primary" style="width:120px" @click="changeMission">修改出团信息</a-button>
 				<p>包括导游、交通信息、附件内容，散团前均可修改</p>
 			</div>
 			<div class="model-div">
@@ -31,11 +31,11 @@
 				<p>包括行程时间、景区、酒店、餐饮等，未核销时可修改</p>
 			</div>
 			<div class="model-div">
-				<a-button type="primary" style="width:120px">添加游客</a-button>
+				<a-button type="primary" style="width:120px" @click="addTourist">添加游客</a-button>
 				<p>如有新增游客，可发起一条新行程单的填报</p>
 			</div>
 			<div class="model-div">
-				<a-button type="primary" style="width:120px">撤销并重提</a-button>
+				<a-button type="primary" style="width:120px" @click="revoke">撤销并重提</a-button>
 				<p>如需删除、修改游客，未核销时可撤销原行程单，重新填报</p>
 			</div>
 			<template v-slot:footer>
@@ -136,7 +136,25 @@ const goToPath = (row: any) => {
 		},
 	});
 };
-const continueChange = () => {
+const addTourist = () => {
+		router.push({
+			path: '/travel/take_group/addTourist',
+			query: {
+				id: state.id,
+				itineraryNo: state.itineraryNo,
+			},
+		});
+	};
+	const revoke = () => {
+		router.push({
+			path: '/travel/take_group/revoke',
+			query: {
+				id: state.id,
+				itineraryNo: state.itineraryNo,
+			},
+		});
+	};
+const changeMission = () => {
 	router.push({
 		path: '/travel/take_group/changetravel',
 		query: {

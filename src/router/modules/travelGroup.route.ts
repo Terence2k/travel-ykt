@@ -318,6 +318,26 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
+					{
+						path: 'addTourist',
+						component: () => import('@/views/travelManagement/travelTakeGroupList/addTourist/addTourist.vue'),
+						activeMeun: 'take_group_list',
+						name: 'addTourist',
+						meta: {
+							title: '添加游客',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'revoke',
+						component: () => import('@/views/travelManagement/travelTakeGroupList/revoke/revoke.vue'),
+						activeMeun: 'take_group_list',
+						name: 'revoke',
+						meta: {
+							title: '撤销并重提',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
 				],
 			},
 			{
