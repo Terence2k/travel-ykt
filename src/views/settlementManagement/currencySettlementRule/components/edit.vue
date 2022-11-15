@@ -299,7 +299,11 @@ const editItem = (e: any, index: number) => {
 };
 const rulesSubmit = (e: any) => {
 	if (e.params.add) {
-		formState.splitList.push(e.form);
+		if (formState.splitList) {
+			formState.splitList.push(e.form);
+		} else {
+			formState.splitList = [e.form];
+		}
 	} else {
 		console.log(e);
 		console.log(e.params.index);
