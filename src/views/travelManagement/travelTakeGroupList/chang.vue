@@ -14,7 +14,7 @@
 	</div>
 </template>
 <script lang="ts" setup>
-import baseInfo from './baseInfo/baseInfo.vue';
+// import baseInfo from './baseInfo/baseInfo.vue';
 import guideInfo from './guideInfo/guideInfo.vue';
 // import touristInfo from './touristInfo/touristInfo.vue';
 // import traveInfo from './traveInfo/traveInfo.vue';
@@ -35,10 +35,10 @@ const check = ref(false); //触发保存
 const sendTeam = ref(false); //发团判断
 const isSaveBtn = ref(false); //是否点击保存按钮
 const pages = [
-	{
-		name: baseInfo,
-		label: '基本信息管理',
-	},
+	// {
+	// 	name: baseInfo,
+	// 	label: '基本信息管理',
+	// },
 	{
 		name: guideInfo,
 		label: '导游信息',
