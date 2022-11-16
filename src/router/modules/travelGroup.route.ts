@@ -318,6 +318,18 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
+					{
+						path: 'modify_o_product',
+						component: () => import('@/views/travelManagement/travelTakeGroupList/Modifyproduct/edit.vue'),
+						activeMeun: 'take_group',
+						name: 'modify_o_product',
+						meta: {
+							title: '修改预定产品',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
 				],
 			},
 			{
