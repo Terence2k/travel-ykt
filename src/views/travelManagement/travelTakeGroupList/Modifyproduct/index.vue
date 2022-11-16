@@ -2,7 +2,7 @@
 	<div class="warp">
 		<div class="header_top">
 			<div class="title">请根据实际需要，调整行程时间，或已预订的产品，重新提交变更。</div>
-			<a-button>进入修改</a-button>
+			<a-button @click="openEdit(state.Data)">进入修改</a-button>
 		</div>
 		<div class="warp_contant">
 			<div class="warp_head">
@@ -10,43 +10,22 @@
 				<span>2022.10.01 09:00:00 — 2022.10.02 19:00:00</span>
 			</div>
 		</div>
-		<div class="warp_contant">
-			<div class="warp_head">
-				<span class="warp_title">酒店费用</span>
-				<span>（已预订<e>1</e>个酒店，最大可入住人数：<e>30</e>人；房间数量：<e>17</e>；费用总计：<e>12050.00</e>元）</span>
-			</div>
-            <CommonTable :dataSource="state.tableData" :columns="state.hotelcolumns" rowKey="oid" style="padding: 0;">
-				<template #button> </template>
+		<div v-for="item in getOptions(state.Data)">
+			<div class="page-title" style="margin-top: 20px;">{{ item.title }}<span class="descriptions" v-html="item.descriptions"></span></div>
+			<CommonTable :columns="item.columns" :dataSource="item.dataSource" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
 					<template v-if="column.key === 'index'">
 						<div>
 							{{ (state.params.pageNo - 1) * state.params.pageSize + (index + 1) }}
 						</div>
 					</template>
-					<template v-if="column.key === 'action'">
-						<div class="action-btns">
-							<a>查看订单</a>
-						</div>
-					</template>
-				</template>
-			</CommonTable>
-		</div>
-		<div class="warp_contant">
-			<div class="warp_head">
-				<span class="warp_title">景区费用</span>
-				<span>（已预订<e>1</e>个景区，游玩人数：<e>30</e>人；门票数量：<e>17</e>；费用总计：<e>12050.00</e>元）</span>
-			</div>
-            <CommonTable :dataSource="state.tableData" :columns="state.ticketcolumns" rowKey="oid" style="padding: 0;">
-				<template #button> </template>
-				<template #bodyCell="{ column, text, index, record }">
-					<template v-if="column.key === 'index'">
-						<div>
-							{{ (state.params.pageNo - 1) * state.params.pageSize + (index + 1) }}
-						</div>
+					<!-- 时段 -->
+					<template v-if="column.key === 'time'">
+						<div>{{ record.startDate }} - {{ record.endDate }}</div>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a>查看订单</a>
+							<a @click="opendetail(record)">查看订单</a>
 						</div>
 					</template>
 				</template>
@@ -56,125 +35,64 @@
 </template>
 <script lang="ts" setup>
 import CommonTable from '@/components/common/CommonTable.vue';
+import api from '@/api';
+import { useTravelStore } from '@/stores/modules/travelManagementDetail';
+import { getOptions } from './deatli';
 
+const travelStore = useTravelStore();
+const route = useRoute();
+const router = useRouter();
 const state = reactive({
 	params: {
 		pageNo: 1,
 		pageSize: 10,
 	},
-	tableData: '',
-	hotelcolumns: [
-		{
-			title: '酒店名称',
-			dataIndex: 'itineraryNo',
-			key: 'itineraryNo',
-		},
-		{
-			title: '可入住人数',
-			dataIndex: 'routeName',
-			key: 'routeName',
-		},
-		{
-			title: '房型',
-			dataIndex: 'subTravelName',
-			key: 'subTravelName',
-		},
-		{
-			title: '房间数量',
-			dataIndex: 'time',
-			key: 'time',
-		},
-		{
-			title: '入住天数',
-			dataIndex: 'groupTypeStr',
-			key: 'groupTypeStr',
-		},
-		{
-			title: '入住时间',
-			dataIndex: 'guides',
-			key: 'guides',
-		},
-		{
-			title: '离店时间',
-			dataIndex: 'touristCount',
-			key: 'touristCount',
-		},
-        {
-			title: '费用总计(元)',
-			dataIndex: 'touristCount',
-			key: 'touristCount',
-		},
-        {
-			title: '订单状态',
-			dataIndex: 'touristCount',
-			key: 'touristCount',
-		},
-		{
-			title: '操作',
-			fixed: 'right',
-			key: 'action',
-		},
-	],
-    ticketcolumns:[
-        {
-            title: ' 序号 ',
-            key: 'index',
-            width: '80px'
-        },
-        {
-			title: '景区名称',
-			dataIndex: 'itineraryNo',
-			key: 'itineraryNo',
-		},
-		{
-			title: '游玩日期',
-			dataIndex: 'routeName',
-			key: 'routeName',
-		},
-		{
-			title: '门店名称',
-			dataIndex: 'subTravelName',
-			key: 'subTravelName',
-		},
-		{
-			title: '单价(元)',
-			dataIndex: 'time',
-			key: 'time',
-		},
-		{
-			title: '团队游客人数',
-			dataIndex: 'groupTypeStr',
-			key: 'groupTypeStr',
-		},
-		{
-			title: '购票人数',
-			dataIndex: 'guides',
-			key: 'guides',
-		},
-        {
-			title: '费用总计(元)',
-			dataIndex: 'touristCount',
-			key: 'touristCount',
-		},
-        {
-			title: '订单状态',
-			dataIndex: 'touristCount',
-			key: 'touristCount',
-		},
-		{
-			title: '操作',
-			fixed: 'right',
-			key: 'action',
-		},
-    ]
+	Data: {},
 });
 
+const opendetail = (record:any)=> {
+
+}
+const openEdit = (data:any)=> {
+	router.push({
+		path: '/travel/take_group/modify_product_edit',
+	});
+}
+const install = () => {
+	api.travelManagement
+		.changDetail({
+			oid: route.query.oid,
+			pageNo: 1,
+			pageSize: 100000,
+		})
+		.then((res: any) => {
+			state.Data = res;
+			travelStore.hotelList = res.hotelList;
+			travelStore.ticketsList = res.ticketList
+		});
+};
+install();
 </script>
 <style lang="less" scoped>
 .warp {
-	display: flex;
-	flex-wrap: wrap;
-	padding: 24px 20px;
+	padding: 20px 20px;
+	.page-title {
+		line-height: 44px;
+		font-size: 16px;
+		font-weight: bold;
+		color: #1e2226;
+		.descriptions {
+			margin-left: 5px;
+		}
+	}
+  .table-area {
+    padding: 0;
+  }
+  :deep(.qr-code.ant-descriptions-item-content) {
+    height: 384px;
+    text-align: center;
+    color: #9DA0A4;
+  }
 	.header_top {
 		width: 100%;
 		display: flex;
@@ -189,11 +107,15 @@ const state = reactive({
 	}
 	.warp_contant {
 		width: 100%;
-		padding: 40px 0px;
+		padding: 20px 0px 0 0;
 		.warp_head {
+			font-size: 16px;
+			font-family: Microsoft YaHei UI;
+			color: #1e2226;
+			margin-right: 5px;
 			.warp_title {
-				margin-right: 40px;
 				font-weight: bold;
+				margin-right: 5px;
 			}
 		}
 	}

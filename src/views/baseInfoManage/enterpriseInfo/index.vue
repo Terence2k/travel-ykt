@@ -44,6 +44,14 @@
             </a-button>
           </div>
         </a-form-item>
+        <a-form-item name="legalPersonUrl" label="法人身份证附件">
+          <div class="flex">
+            <Upload ref="imgUploadRef" v-model:value="form.legalPersonUrl" :disabled="getStatus('legalPersonUrl')"/>
+            <a-button type="primary" class="status-btn" @click="changeDisabledStatus('legalPersonUrl')" v-if="showChangeBtns('legalPersonUrl')">
+              {{ getStatus('legalPersonUrl') ? '修改' : '确定' }}
+            </a-button>
+          </div>
+        </a-form-item>
         <!-- 旅行社、旅游集团、酒店、景区、餐饮 -->
         <template v-if="['TRAVEL', 'GROUP', 'HOTEL', 'TICKET', 'CATERING'].includes(userInfo.sysCompany.businessType)">
           <a-form-item name="legalPerson" label="法定代表人">
@@ -112,7 +120,7 @@
           </a-form-item>
           <a-form-item name="businessLicenseUrl" label="营业执照">
             <div class="flex">
-              <Upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl" :disabled="getStatus('businessLicenseUrl')"/>
+              <Upload ref="imgUploadRef" v-model="form.businessLicenseUrl" :disabled="getStatus('businessLicenseUrl')"/>
               <a-button type="primary" class="status-btn" @click="changeDisabledStatus('businessLicenseUrl')" v-if="showChangeBtns('businessLicenseUrl')">
                 {{ getStatus('businessLicenseUrl') ? '修改' : '确定' }}
               </a-button>
@@ -161,9 +169,28 @@
         <template v-if="userInfo.sysCompany.businessType == 'TRAVEL'">
           <a-form-item name="businessLicenseUrl1" label="经营许可证">
             <div class="flex">
-              <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl1" :disabled="getStatus('businessLicenseUrl1')"/>
+              <Upload ref="imgUploadRef" v-model:value="form.businessLicenseUrl1" :disabled="getStatus('businessLicenseUrl1')"/>
               <a-button type="primary" class="status-btn" @click="changeDisabledStatus('businessLicenseUrl1')" v-if="showChangeBtns('businessLicenseUrl1')">
                 {{ getStatus('businessLicenseUrl1') ? '修改' : '确定' }}
+              </a-button>
+            </div>
+          </a-form-item>
+          <a-form-item name="licenseNo" label="12301旅行社许可证号">
+            <div class="flex">
+              <a-input v-model:value="form.licenseNo" placeholder="请输入法定代表人" :disabled="getStatus('licenseNo')"/>
+              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('licenseNo')" v-if="showChangeBtns('licenseNo')">
+                {{ getStatus('licenseNo') ? '修改' : '确定' }}
+              </a-button>
+            </div>
+          </a-form-item>
+          <a-form-item name="isIndividual" label="是否为散客中心">
+            <div class="flex">
+              <a-radio-group v-model:value="form.isIndividual" :disabled="getStatus('isIndividual')">
+                <a-radio :value="1">是</a-radio>
+                <a-radio :value="0">否</a-radio>
+              </a-radio-group>
+              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('isIndividual')" v-if="showChangeBtns('isIndividual')">
+                {{ getStatus('isIndividual') ? '修改' : '确定' }}
               </a-button>
             </div>
           </a-form-item>
@@ -372,6 +399,8 @@ const formRules: Record<string, Rule[]> = {
   bank: [{ required: true, trigger: 'blur', message: '请输入开户行' }],
   bankAccount: [{ required: true, trigger: 'blur', message: '请输入公司账号' }],
   // businessLicenseUrl1: [{ required: true, trigger: 'change', message: '请上传经营许可' }],
+  // licenseNo: [{ required: true, trigger: 'blur', message: '请输入12301旅行社许可证号' }],
+  // isIndividual: [{ required: true, trigger: 'change', message: '请选择是否为散客中心' }],
   unitStatus: [{ required: true, trigger: 'change', message: '请选择开业状态' }],
   hotelStarId: [{ required: true, trigger: 'change', message: '请选择酒店星级' }],
   scenicLevel: [{ required: true, trigger: 'change', message: '请选择景区等级' }],

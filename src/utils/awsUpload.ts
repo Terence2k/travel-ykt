@@ -24,7 +24,9 @@ const generateFilename = (fileName: any) => {
 const newAwsObj = () => {
   return new Promise<{
     aws: any;
-    bucket: any;
+    bucket: string;
+    filePath: string;
+    prefix: string;
   }>(async (resolve, reject) => {
     const res = await api.commonApi.cosUploadUrl();
     const awsTempKey = res;
@@ -38,11 +40,14 @@ const newAwsObj = () => {
           accessKeyId: awsTempKey.accessKeyId,
           secretAccessKey: awsTempKey.secretAccessKey,
           endpoint: awsTempKey.hostName,
+          sessionToken: awsTempKey.sessionToken,
           s3ForcePathStyle: awsTempKey.s3ForcePathStyle,
           signatureVersion: awsTempKey.signatureVersion,
           sslEnabled: awsTempKey.sslEnabled
         }),
-        bucket: awsTempKey.bucket
+        bucket: awsTempKey.bucket,
+        filePath: awsTempKey.hostName,
+        prefix: awsTempKey.prefix
       });
     }
   });
@@ -52,8 +57,8 @@ const awsUploadFile = (options: any) => {
   return new Promise<{
     files: { url: string; name: string; fileName: string; size: number }[];
   }>(async (resolve, reject) => {
-    const { files, onProgress } = options;
-    const { aws, bucket } = await newAwsObj();
+    const { files, onProgress, businessType } = options;
+    const { aws, bucket, filePath, prefix } = await newAwsObj();
     if (!aws) {
       handleUploadErr(reject, '生成 aws 实例失败');
     } else {
@@ -69,18 +74,16 @@ const awsUploadFile = (options: any) => {
           console.log(item);
           const filename = generateFilename(item.name);
           aws.putObject({
-            Key: item.name,
-            Bucket: bucket, 
+            Key: `${businessType.toLowerCase()}Pic/${item.name}`,
+            Bucket: `${bucket}${prefix}`,
             ContentType: item.type,
             Body: item,
-            StorageClass: "STANDARD_IA",
           }, async (err: any, data: any) => {
             console.log(err);
             console.log(data);
             if (data) {
               console.log(err);
-              console.log(data);
-              const fileUrl = `https://${data.Location}`;
+              const fileUrl = `http://${filePath}/${bucket}/${item.name}`;
               downloadFiles.push({
                 url: fileUrl,
                 name: filename,
@@ -98,6 +101,9 @@ const awsUploadFile = (options: any) => {
                   handleUploadErr(reject, 'aws 上传发生错误');
                 }
               }
+            }
+            if (err) {
+              handleUploadErr(reject, 'aws 上传发生错误');
             }
           });
         })
