@@ -71,12 +71,12 @@ const pages = [
 		value: HotelStatus.refuse,
 		chart: 'refuse',
 	},
-	// {
-	// 	name: cancal,
-	// 	label: hotelStore.HotelOrderStatus[HotelStatus.cancal],
-	// 	value: HotelStatus.cancal,
-	// 	chart: 'cancal',
-	// },
+	{
+		name: cancal,
+		label: hotelStore.HotelOrderStatus[HotelStatus.cancal],
+		value: HotelStatus.cancal,
+		chart: 'cancal',
+	},
 	// {
 	// 	name: finish,
 	// 	label: hotelStore.HotelOrderStatus[HotelStatus.finish],
