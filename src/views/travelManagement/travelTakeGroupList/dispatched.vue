@@ -185,19 +185,13 @@
 	}
 	const goToChange = (row: any) => {
 	(state.id = row.oid), (state.itineraryNo = row.itineraryNo);
-	// api.travelManagement.checkVerifyByItineraryId(row.itineraryNo).then((res) => {
-	// 	if (res.data) {
-	// 		router.push({
-	// 			path: '/travel/take_group/changetravel',
-	// 			query: {
-	// 				id: row.oid,
-	// 				itineraryNo: row.itineraryNo,
-	// 			},
-	// 		});
-	// 	} else {
+	api.travelManagement.checkVerifyByItineraryId(row.itineraryNo).then((res) => {
+		if (res.data) {
 			modelValue.value = true;
-	// 	}
-	// });
+		}else{
+			message.error('该行程单发生过核销不可变更')
+		}
+	});
 };
   const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
     console.log(record, selected, selectedRows);
