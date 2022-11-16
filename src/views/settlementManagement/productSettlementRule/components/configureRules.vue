@@ -19,9 +19,9 @@
 					</template>
 					<!-- 产品类型 -->
 					<template v-if="column.key === 'productType'">
-						<span v-if="state.tableData.param['productSonType'] === 'ONE'">单票</span>
-						<span v-if="state.tableData.param['productSonType'] === 'SHOW'">演出票</span>
-						<span v-if="state.tableData.param['productSonType'] === 'UNITE'">{{
+						<span v-if="Number(state.tableData.param['productSonType']) === 1">单票</span>
+						<span v-if="Number(state.tableData.param['productSonType']) === 2">演出票</span>
+						<span v-if="Number(state.tableData.param['productSonType']) === 0">{{
 							getProductName(record.productSonType, record.chargeProductSonId)
 						}}</span>
 					</template>
@@ -75,58 +75,65 @@ import { message } from 'ant-design-vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import api from '@/api';
 import { useGeneraRules } from '@/stores/modules/generaRules';
+import { number } from 'vue-types';
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 const route = useRouter();
 
-const columns = [
-	{
-		title: '团队类型',
-		dataIndex: 'teamTypeId',
-		key: 'teamTypeId',
-	},
-	{
-		title: '结算产品',
-		dataIndex: 'productType',
-		key: 'productType',
-	},
-	{
-		title: '费用名称',
-		dataIndex: 'costName',
-		key: 'costName',
-	},
-	{
-		title: '收费金额',
-		dataIndex: 'chargeCount',
-		key: 'chargeCount',
-	},
-	{
-		title: '扣费模式',
-		dataIndex: 'deductionModel',
-		key: 'deductionModel',
-	},
-	{
-		title: '费用说明',
-		dataIndex: 'costExplanation',
-		key: 'costExplanation',
-	},
-	{
-		title: '状态',
-		dataIndex: 'ruleStatus',
-		key: 'ruleStatus',
-	},
-	{
-		title: '优先级',
-		dataIndex: 'level',
-		key: 'level',
-	},
-	{
-		title: '操作',
-		key: 'action',
-		fixed: 'right',
-		width: 208,
-	},
-];
+const columns = computed(() => {
+	const column = [
+		{
+			title: '团队类型',
+			dataIndex: 'teamTypeId',
+			key: 'teamTypeId',
+		},
+		{
+			title: '费用名称',
+			dataIndex: 'costName',
+			key: 'costName',
+		},
+		{
+			title: '收费金额',
+			dataIndex: 'chargeCount',
+			key: 'chargeCount',
+		},
+		{
+			title: '扣费模式',
+			dataIndex: 'deductionModel',
+			key: 'deductionModel',
+		},
+		{
+			title: '费用说明',
+			dataIndex: 'costExplanation',
+			key: 'costExplanation',
+		},
+		{
+			title: '状态',
+			dataIndex: 'ruleStatus',
+			key: 'ruleStatus',
+		},
+		{
+			title: '优先级',
+			dataIndex: 'level',
+			key: 'level',
+		},
+		{
+			title: '操作',
+			key: 'action',
+			fixed: 'right',
+			width: 208,
+		},
+	];
+	if (Number(state.tableData.param.productType) === 1) {
+		const productType = {
+			title: '结算产品',
+			dataIndex: 'productType',
+			key: 'productType',
+		};
+		column.splice(1, 0, productType);
+	}
+	return column;
+});
 
 const state = reactive({
 	tableData: {
@@ -383,7 +390,10 @@ const getProductTypeName = computed(() => (value: number) => {
 	}
 	return '';
 });
-const getProductName = computed(() => (productSonType: string, chargeProductSonId: numebr) => {
+const getProductName = computed(() => (productSonType: string, chargeProductSonId: number) => {
+	if (Number(chargeProductSonId) === 0) {
+		return '联票';
+	}
 	if (state.productSonList.length > 0) {
 		const idx: number = state.productSonList.findIndex((item) => item.productSonId === chargeProductSonId);
 		if (idx !== -1) {

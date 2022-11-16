@@ -1,0 +1,122 @@
+<template>
+	<div class="table-area">
+		<div class="p">
+			<p>当前行程共有{{}}名游客，已经添加过{{}}次游客。您可以继续添加</p>
+			<a-tooltip>
+				<template #title>
+					如行程中需要增加游客，需要为新游客发起新的 行程填报，点击添加游客按钮，系统将引导您填 报新行程单。如线下有游客未到，无需删除，最
+					终结算时以线下实际核销数据为准。</template
+				>
+				<span class="d-span">(游客添加规则说明)</span>
+			</a-tooltip>
+		</div>
+		<CommonTable :row-selection="{}" :columns="columns" rowKey="oid" :scrollY="false"> </CommonTable>
+		<div class="add-div">
+			<a-button type="primary" @click="modelValue=true">添加游客</a-button>
+		</div>
+		<BaseModal title="添加游客提醒" v-model="modelValue" :width="400" @close="">
+			<p>如需添加新游客，需要为新游客填报新的 行程单，原行程单依然有效。系统会自动 记录新行程单与原行程单的关联关系。</p>
+			<template v-slot:footer>
+				<a-button @click="modelValue = false">取消</a-button>
+				<a-button type="primary">填报新行程单</a-button>
+			</template>
+		</BaseModal>
+	</div>
+</template>
+
+<script setup lang="ts">
+import { ref, Ref, computed, watch, toRefs, reactive } from 'vue';
+import CommonTable from '@/components/common/CommonTable.vue';
+import BaseModal from '@/components/common/BaseModal.vue';
+import { useNavigatorBar } from '@/stores/modules/navigatorBar';
+import { useTravelStore } from '@/stores/modules/travelManagement';
+import { message } from 'ant-design-vue';
+import api from '@/api';
+import { any, object, string } from 'vue-types';
+const route = useRouter();
+const dialogVisible = ref(false);
+const navigatorBar = useNavigatorBar();
+const formValidate: Ref<Record<string, any>> = ref({});
+const travelStore = useTravelStore();
+const modelValue =ref(false)
+const columns = [
+	{
+		title: '姓名',
+		dataIndex: 'touristName',
+		key: 'touristName',
+	},
+	{
+		title: '身份证件类型',
+		dataIndex: 'certificateTypeName',
+		key: 'certificateTypeName',
+	},
+	{
+		title: '身份证号码',
+		dataIndex: 'certificateNo',
+		key: 'certificateNo',
+	},
+	{
+		title: '性别',
+		dataIndex: 'genderName',
+		key: 'genderName',
+	},
+	{
+		title: '客源地',
+		dataIndex: 'sourceAddressName',
+		key: 'sourceAddressName',
+	},
+	{
+		title: '联系电话',
+		dataIndex: 'discountRuleId',
+		key: 'discountRuleId',
+	},
+	{
+		title: '中高风险地区判断',
+		dataIndex: 'specialCertificateTypeName',
+		key: 'specialCertificateTypeName',
+	},
+	{
+		title: '健康码状态',
+		dataIndex: 'specialCertificateTypeName',
+		key: 'specialCertificateTypeName',
+	},
+	{
+		title: '特殊证件类型',
+		dataIndex: 'specialCertificateTypeName',
+		key: 'specialCertificateTypeName',
+	},
+	{
+		title: '特殊证件照片',
+		dataIndex: 'specialCertificateImg',
+		key: 'specialCertificateImg',
+	},
+];
+const state = reactive({
+	tableData: {
+		data: [],
+	},
+});
+const auditRef = ref();
+const init = async () => {};
+</script>
+
+<style lang="less" scoped>
+.top {
+	display: flex;
+	justify-content: space-between;
+}
+.p {
+	width: 90%;
+	margin: 10px auto;
+	display: flex;
+	justify-content: space-between;
+}
+.d-span {
+	color: rgb(14, 171, 241);
+	cursor: pointer;
+}
+.add-div {
+	margin-top: 30px;
+	text-align: right;
+}
+</style>

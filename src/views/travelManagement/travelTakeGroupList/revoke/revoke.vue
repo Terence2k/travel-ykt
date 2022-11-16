@@ -1,0 +1,491 @@
+<template>
+	<div class="top">
+		<p>当前行程单还未发生核销，可以撤销作废，并重新填报、提交发团。</p>
+		<a-button type="primary" @click="reRecokeAuditVisible = true">确认撤销</a-button>
+	</div>
+	<div class="table_box">
+		<p class="top-p">行程单ID:</p>
+		<table class="info_table" cellpadding="16px" border="1">
+			<tr class="row">
+				<td class="key">线路名称</td>
+				<td class="value" colspan="3">{{}}</td>
+			</tr>
+			<tr class="row">
+				<td class="key">填报模式</td>
+				<td class="value">{{}}</td>
+				<td class="key">团队类型</td>
+				<td class="value">{{}}</td>
+			</tr>
+			<tr class="row">
+				<td class="key">组团社</td>
+				<td class="value">{{}}</td>
+				<td class="key">组团社计调</td>
+				<td class="value">{{}}</td>
+			</tr>
+			<tr class="row">
+				<td class="key">地接社</td>
+				<td class="value">{{}}</td>
+				<td class="key">地接社计调</td>
+				<td class="value">{{}}</td>
+			</tr>
+			<tr class="row">
+				<td class="key">游客人数</td>
+				<td class="value">{{}}</td>
+				<td class="key">古维费应缴人数</td>
+				<td class="value">{{}}</td>
+			</tr>
+			<tr class="row">
+				<td class="key">行程时间</td>
+				<td class="value">{{}}</td>
+				<td class="key">综费应缴人数</td>
+				<td class="value">{{}}</td>
+			</tr>
+			<tr class="row">
+				<td class="key">已添加景区</td>
+				<td class="value">{{}}</td>
+				<td class="key">已添加酒店</td>
+				<td class="value">{{}}</td>
+			</tr>
+			<tr class="row">
+				<td class="key">已添加餐厅</td>
+				<td class="value">{{}}</td>
+				<td class="key">行程冻结金额(元)</td>
+				<td class="value">{{}}</td>
+			</tr>
+			<tr class="row">
+				<td class="key">关联行程单</td>
+				<td class="value">{{}}</td>
+				<td class="key">保险购买方</td>
+				<td class="value">{{}}</td>
+			</tr>
+		</table>
+		<p class="top-p">导游信息(共2人)</p>
+		<CommonTable :columns="guide" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px"> </CommonTable>
+		<p class="top-p">游客信息(共30人)</p>
+		<CommonTable :columns="tourist" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px"> </CommonTable>
+		<p class="top-p">交通信息(共30人)</p>
+		<CommonTable :columns="trafficInfo" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px"> </CommonTable>
+		<p class="top-p">古维管理费 (共30人,古维待缴人数:25,应缴费用:￥1250.00 订单状态：待出票)</p>
+		<CommonTable :columns="gouvy" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px"> </CommonTable>
+		<p class="top-p">综费产品(费用总计:800.00元，订单状态：待预订)</p>
+		<CommonTable :columns="comprehensive" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px"> </CommonTable>
+		<p class="top-p">酒店费用(已预订1个酒店,最大可入住人数:30人;房间数量:17;费用总计:12050.00元)</p>
+		<CommonTable :columns="hotel" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px"> </CommonTable>
+		<p class="top-p">景区费用(已预订2个景区,游玩人数:30人;门票数量:30;费用总计:1050.00元)</p>
+		<CommonTable :columns="scenic" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px"> </CommonTable>
+		<p class="top-p">已上传的附件</p>
+		<CommonTable :columns="enclosure" rowKey="oid" :scrollY="false"> </CommonTable>
+	</div>
+	<BaseModal title="撤销、重提提醒" v-model="reRecokeAuditVisible">
+		<p>是否确认撤销该行程？系统将先自动作废当前 行程单，之后您需要重新填报一条新行程单。 系统会自动记录新行程单与当前行程单的关联</p>
+		<template v-slot:footer>
+			<a-button @click="reRecokeAuditVisible = false">取消</a-button>
+			<a-button type="primary">继续</a-button>
+		</template>
+	</BaseModal>
+</template>
+<script lang="ts" setup>
+import CommonTable from '@/components/common/CommonTable.vue';
+import CommonPagination from '@/components/common/CommonPagination.vue';
+import BaseModal from '@/components/common/BaseModal.vue';
+import { message } from 'ant-design-vue';
+import { Modal } from 'ant-design-vue';
+import api from '@/api/index';
+import { AuditStaus } from '@/enum';
+const state = reactive({
+	total: 0,
+	params: {
+		pageNo: 1,
+		pageSize: 10,
+	},
+	tableData: [],
+});
+const guide = [
+	{
+		title: '导游姓名',
+		dataIndex: 'touristName',
+		key: 'touristName',
+	},
+	{
+		title: '导游星级',
+		dataIndex: 'certificateTypeName',
+		key: 'certificateTypeName',
+	},
+	{
+		title: '导游证编号',
+		dataIndex: 'certificateNo',
+		key: 'certificateNo',
+	},
+	{
+		title: '性别',
+		dataIndex: 'genderName',
+		key: 'genderName',
+	},
+	{
+		title: '导游电话',
+		dataIndex: 'sourceAddressName',
+		key: 'sourceAddressName',
+	},
+	{
+		title: '已选带团时间',
+		dataIndex: 'discountRuleId',
+		key: 'discountRuleId',
+	},
+];
+const tourist = [
+	{
+		title: '游客姓名',
+		dataIndex: 'touristName',
+		key: 'touristName',
+	},
+	{
+		title: '证件类型',
+		dataIndex: 'certificateTypeName',
+		key: 'certificateTypeName',
+	},
+	{
+		title: '证件号码',
+		dataIndex: 'certificateNo',
+		key: 'certificateNo',
+	},
+	{
+		title: '性别',
+		dataIndex: 'genderName',
+		key: 'genderName',
+	},
+	{
+		title: '联系方式',
+		dataIndex: 'sourceAddressName',
+		key: 'sourceAddressName',
+	},
+	{
+		title: '客源地',
+		dataIndex: 'discountRuleId',
+		key: 'discountRuleId',
+	},
+	{
+		title: '健康码',
+		dataIndex: 'discountRuleId',
+		key: 'discountRuleId',
+	},
+	{
+		title: '中高风险',
+		dataIndex: 'discountRuleId',
+		key: 'discountRuleId',
+	},
+	{
+		title: '特殊证件',
+		dataIndex: 'discountRuleId',
+		key: 'discountRuleId',
+	},
+];
+const trafficInfo = [
+	{
+		title: '交通类型',
+		dataIndex: 'touristName',
+		key: 'touristName',
+	},
+	{
+		title: '车牌号',
+		dataIndex: 'certificateTypeName',
+		key: 'certificateTypeName',
+	},
+	{
+		title: '车牌颜色',
+		dataIndex: 'certificateNo',
+		key: 'certificateNo',
+	},
+	{
+		title: '车企名称',
+		dataIndex: 'genderName',
+		key: 'genderName',
+	},
+	{
+		title: '核载人数',
+		dataIndex: 'sourceAddressName',
+		key: 'sourceAddressName',
+	},
+	{
+		title: '用车时段',
+		dataIndex: 'discountRuleId',
+		key: 'discountRuleId',
+	},
+	{
+		title: '驾驶员',
+		dataIndex: 'discountRuleId',
+		key: 'discountRuleId',
+	},
+];
+const gouvy = [
+	{
+		title: '费用名称',
+		dataIndex: 'touristName',
+		key: 'touristName',
+	},
+	{
+		title: '团队游客人数',
+		dataIndex: 'certificateTypeName',
+		key: 'certificateTypeName',
+	},
+	{
+		title: '应缴人数',
+		dataIndex: 'certificateNo',
+		key: 'certificateNo',
+	},
+	{
+		title: '应缴总金额（元）',
+		dataIndex: 'genderName',
+		key: 'genderName',
+	},
+	{
+		title: '是否发起过减免申请',
+		dataIndex: 'sourceAddressName',
+		key: 'sourceAddressName',
+	},
+	{
+		title: '减免申请是否通过',
+		dataIndex: 'discountRuleId',
+		key: 'discountRuleId',
+	},
+	{
+		title: '出票状态',
+		dataIndex: 'discountRuleId',
+		key: 'discountRuleId',
+	},
+	{
+		title: '操作',
+		dataIndex: 'action',
+		key: 'action',
+	},
+];
+const comprehensive = [
+	{
+		title: '费用名称',
+		dataIndex: 'touristName',
+		key: 'touristName',
+	},
+	{
+		title: '结算归属',
+		dataIndex: 'certificateTypeName',
+		key: 'certificateTypeName',
+	},
+	{
+		title: '收费模式',
+		dataIndex: 'certificateNo',
+		key: 'certificateNo',
+	},
+	{
+		title: '是否按天收取',
+		dataIndex: 'genderName',
+		key: 'genderName',
+	},
+	{
+		title: '单价（元）',
+		dataIndex: 'sourceAddressName',
+		key: 'sourceAddressName',
+	},
+	{
+		title: '人数',
+		dataIndex: 'discountRuleId',
+		key: 'discountRuleId',
+	},
+	{
+		title: '行程天数',
+		dataIndex: 'discountRuleId',
+		key: 'discountRuleId',
+	},
+	{
+		title: '总金额（元）',
+		dataIndex: 'discountRuleId',
+		key: 'discountRuleId',
+	},
+	{
+		title: '操作',
+		dataIndex: 'action',
+		key: 'action',
+	},
+];
+const hotel = [
+	{
+		title: '酒店名称',
+		dataIndex: 'touristName',
+		key: 'touristName',
+	},
+	{
+		title: '可入住人数',
+		dataIndex: 'certificateTypeName',
+		key: 'certificateTypeName',
+	},
+	{
+		title: '房型',
+		dataIndex: 'certificateNo',
+		key: 'certificateNo',
+	},
+	{
+		title: '房间数量',
+		dataIndex: 'genderName',
+		key: 'genderName',
+	},
+	{
+		title: '入住天数',
+		dataIndex: 'sourceAddressName',
+		key: 'sourceAddressName',
+	},
+	{
+		title: '入住时间',
+		dataIndex: 'discountRuleId',
+		key: 'discountRuleId',
+	},
+	{
+		title: '离店时间',
+		dataIndex: 'discountRuleId',
+		key: 'discountRuleId',
+	},
+	{
+		title: '费用总计（元）',
+		dataIndex: 'discountRuleId',
+		key: 'discountRuleId',
+	},
+	{
+		title: '订单状态',
+		dataIndex: 'discountRuleId',
+		key: 'discountRuleId',
+	},
+	{
+		title: '操作',
+		dataIndex: 'action',
+		key: 'action',
+	},
+];
+const scenic = [
+	{
+		title: '景区名称',
+		dataIndex: 'touristName',
+		key: 'touristName',
+	},
+	{
+		title: '游玩日期',
+		dataIndex: 'certificateTypeName',
+		key: 'certificateTypeName',
+	},
+	{
+		title: '门票名称',
+		dataIndex: 'certificateNo',
+		key: 'certificateNo',
+	},
+	{
+		title: '单价（元）',
+		dataIndex: 'genderName',
+		key: 'genderName',
+	},
+	{
+		title: '团队游客人数',
+		dataIndex: 'sourceAddressName',
+		key: 'sourceAddressName',
+	},
+	{
+		title: '购票人数',
+		dataIndex: 'discountRuleId',
+		key: 'discountRuleId',
+	},
+	{
+		title: '费用（元）',
+		dataIndex: 'discountRuleId',
+		key: 'discountRuleId',
+	},
+	{
+		title: '订单状态',
+		dataIndex: 'discountRuleId',
+		key: 'discountRuleId',
+	},
+	{
+		title: '操作',
+		dataIndex: 'action',
+		key: 'action',
+	},
+];
+const enclosure = [
+	{
+		title: '旅行合同',
+		dataIndex: 'touristName',
+		key: 'touristName',
+	},
+	{
+		title: '委托接待协议',
+		dataIndex: 'certificateTypeName',
+		key: 'certificateTypeName',
+	},
+	{
+		title: '包车合同',
+		dataIndex: 'certificateNo',
+		key: 'certificateNo',
+	},
+	{
+		title: '保险单',
+		dataIndex: 'genderName',
+		key: 'genderName',
+	},
+];
+const reRecokeAuditVisible = ref(false);
+</script>
+<style scoped lang="less">
+.table_box {
+	max-height: 80vh;
+	// padding: 1px 0;
+	// overflow: auto;
+	width: 95%;
+	margin: 0 auto;
+	.row {
+		width: 100%;
+		font-size: 14px;
+		font-family: Microsoft YaHei UI;
+		font-weight: 400;
+		color: #1e2226;
+		border: 1px solid #e9e9e9;
+		td {
+			text-align: center;
+		}
+	}
+
+	.change_table {
+		width: 100%;
+
+		.key,
+		.key_hd {
+			width: 150px;
+		}
+
+		.key_hd {
+			background: rgba(245, 247, 250, 0.39);
+		}
+
+		.value {
+			min-width: 300px;
+		}
+	}
+
+	.info_table {
+		width: 100%;
+
+		.key {
+			width: 150px;
+			background: rgba(245, 247, 250, 0.39);
+		}
+		margin-bottom: 20px;
+	}
+	.top-p {
+		font-size: 18px;
+		margin-bottom: 20px;
+		margin-left: 10px;
+	}
+}
+.top {
+	width: 95%;
+	display: flex;
+	justify-content: space-between;
+	margin: 0 auto;
+	border-bottom: 3px solid rgb(121, 121, 121);
+	padding: 10px 0px;
+	margin-bottom: 10px;
+}
+</style>

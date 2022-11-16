@@ -14,12 +14,12 @@
 	</div>
 </template>
 <script lang="ts" setup>
-import baseInfo from './baseInfo/baseInfo.vue';
+// import baseInfo from './baseInfo/baseInfo.vue';
 import guideInfo from './guideInfo/guideInfo.vue';
 // import touristInfo from './touristInfo/touristInfo.vue';
 // import traveInfo from './traveInfo/traveInfo.vue';
 import trafficInfo from './trafficInfo/trafficInfo.vue';
-// import fileInfo from './fileInfo/fileInfo.vue';
+import fileInfo from './fileInfo/fileInfo.vue';
 import { cloneDeep, debounce } from 'lodash';
 import api from '@/api';
 import { message } from 'ant-design-vue';
@@ -35,10 +35,10 @@ const check = ref(false); //触发保存
 const sendTeam = ref(false); //发团判断
 const isSaveBtn = ref(false); //是否点击保存按钮
 const pages = [
-	{
-		name: baseInfo,
-		label: '基本信息管理',
-	},
+	// {
+	// 	name: baseInfo,
+	// 	label: '基本信息管理',
+	// },
 	{
 		name: guideInfo,
 		label: '导游信息',
@@ -55,10 +55,10 @@ const pages = [
 	// 	name: traveInfo,
 	// 	label: '行程信息',
 	// },
-	// {
-	// 	name: fileInfo,
-	// 	label: '附件上传',
-	// }
+	{
+		name: fileInfo,
+		label: '附件上传',
+	}
 ];
 let rulesPass = reactive<{ [k: string]: any }>([]);
 let obj = reactive({
@@ -76,8 +76,6 @@ const save = (e: any) => {
 };
 
 const saveOrder = () => {
-  console.log('基础信息：', travelStore.baseInfo);
-  
   let queryData = {
     oid: travelStore.baseInfo.oid,
     attachmentList: travelStore.attachmentList,
@@ -87,8 +85,8 @@ const saveOrder = () => {
 	api.travelManagement.changeItineraryBasic(queryData)
 		.then((res: any) => {
       console.log('保存修改：', res);
-      
-      message.success('修改成功')
+      router.go(-1)
+      message.success('变更成功')
 		});
 }
 
