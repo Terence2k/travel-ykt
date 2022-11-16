@@ -327,7 +327,7 @@ export default [
 							title: '修改预定产品',
 							// icon: 'liulanqi',
 							// auth: ["admin"],
-							isDetail: true, // 在左侧的导航栏不会展示
+							isDetail: false, // 在左侧的导航栏不会展示
 						},
 					},
 					{
