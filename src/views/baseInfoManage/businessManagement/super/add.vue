@@ -2,7 +2,7 @@
   <div class="add_box">
     <div class="title">
       <span>
-        添加新的企业（录入基本信息1）：
+        添加新的企业（录入基本信息）：
       </span>
       <span class="close_btn" @click="back">
         <close-outlined />
@@ -87,6 +87,16 @@
           <a-input v-model:value="form.creditCode" placeholder="请输入统一社会信用代码">
           </a-input>
         </a-form-item>
+        <a-form-item name="licenseNo" label="12301旅行社许可证号" v-show="formRules?.licenseNo">
+          <a-input v-model:value="form.licenseNo" placeholder="请输入12301旅行社许可证号">
+          </a-input>
+        </a-form-item>
+        <a-form-item name="isIndividual" label="是否为散客中心" v-show="formRules?.isIndividual">
+          <a-radio-group v-model:value="form.isIndividual">
+            <a-radio :value="1">是</a-radio>
+            <a-radio :value="0">否</a-radio>
+          </a-radio-group>
+        </a-form-item>
         <a-form-item name="businessLicenseUrl" label="营业执照" v-show="formRules?.businessLicenseUrl">
           <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl" @done="uploadDown">
           </img-upload>
@@ -135,6 +145,7 @@ import type { Rule } from 'ant-design-vue/es/form';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
 import {
+  commonFormRules5,
   commonFormRules6,
   commonFormRules9,
   commonFormRules7,
@@ -143,6 +154,7 @@ import {
   condition2,
   condition3,
   condition4,
+  condition5,
   disabledBeforeDate,
   disabledAfterDate
 } from '@/views/baseInfoManage/businessManagement/super/common'
@@ -176,7 +188,10 @@ type detailsType = {
   businessLicenseUrl?: string,
   account?: string,
   password?: string,
-  checkPass?: string
+  checkPass?: string,
+  licenseNo?: string,
+  isIndividual?: 0 | 1,
+
 }
 const form = reactive<detailsType>({
   regionCode: [],
@@ -184,6 +199,7 @@ const form = reactive<detailsType>({
   password: '',
   checkPass: '',
   accountType: 1,
+  isIndividual: 1,
   name: undefined,
   businessLicenseUrl: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
 })
@@ -228,6 +244,7 @@ const formRules6 = { ...commonFormRules6, ...common }
 const formRules9 = { ...commonFormRules9, ...common }
 const formRules7 = { ...commonFormRules7, ...common }
 const formRules8 = { ...commonFormRules8, ...common }
+const formRules5 = { ...commonFormRules5, ...common }
 const formRules = ref<Record<string, Rule[]>>({})
 formRules.value = formRules6
 onActivated(() => {
@@ -268,6 +285,8 @@ const optionChange = (value: string) => {
     formRules.value = formRules7
   } else if (condition4.includes(value)) {
     formRules.value = formRules8
+  } else if (condition5.includes(value)) {
+    formRules.value = formRules5
   }
 }
 const regionChange = () => {

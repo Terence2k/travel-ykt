@@ -12,7 +12,7 @@
         </a-select-option>
       </a-select>
     </search-item> -->
-    <search-item label="旅行社">
+    <search-item label="旅行社" v-show="isSuper">
       <a-input v-model:value="tableData.param.travelName" placeholder="请输入旅行社名称" allowClear />
     </search-item>
     <search-item label="门店名称">
@@ -29,7 +29,7 @@
         </a-select-option>
       </a-select>
     </search-item> -->
-    <search-item label="旅行社">
+    <search-item label="旅行社" v-show="isSuper">
       <a-input v-model:value="tableData1.param.travelName" placeholder="请输入旅行社名称" allowClear />
     </search-item>
     <search-item label="门店名称">
@@ -45,9 +45,6 @@
       <a-tab-pane key="1" tab="已审核">
         <CommonTable :dataSource="tableData.data" :columns="columns">
           <template #bodyCell="{ column, record, index }">
-            <template v-if="column.key === 'index'">
-              {{ index + 1 }}
-            </template>
             <template v-if="column.key === 'action'">
               <div class="action-btns">
                 <a @click="checkDetails(record.oid)">查看</a>
@@ -71,7 +68,7 @@
         </div>
       </a-tab-pane>
       <a-tab-pane key="2" tab="待审核">
-        <CommonTable :dataSource="tableData1.data" :columns="columns">
+        <CommonTable :dataSource="tableData1.data" :columns="columns1">
           <template #bodyCell="{ column, record, index }">
             <template v-if="column.key === 'index'">
               {{ index + 1 }}
@@ -89,7 +86,7 @@
         <div class="buttom_box">
           <div>共 <span style="color:#de0025;">{{ tableData1.total }}</span> 个待审核的散客门店</div>
           <CommonPagination v-model:current="tableData1.param.pageNo" v-model:page-size="tableData1.param.pageSize"
-            :total="tableData1.total" @change="onHandleCurrentChange" @showSizeChange="pageSideChange" />
+            :total="tableData1.total" @change="onHandleCurrentChange1" @showSizeChange="pageSideChange1" />
         </div>
       </a-tab-pane>
       <template #rightExtra>
@@ -206,7 +203,7 @@
     </div>
   </CommonModal>
   <CommonModal :title="registerAuditTitle" v-model:visible="registerAuditVisible" @close="registerAuditVisible = false"
-    @conform="registerAuditConform" :conform-text="'确定'">
+    @conform="registerAuditConform" :conform-text="'确定'" :key="registerAuditTitle">
     <span v-if="isRegiste">
       您即将批准 {{ detailsForm['storeName'] }} 散客门店新开通的申请
     </span>
@@ -215,7 +212,7 @@
     </span>
   </CommonModal>
   <CommonModal :title="failTitle" v-model:visible="failVisible" @close="failClose" @cancel="failClose"
-    @conform="failConform" :conform-text="'确定'">
+    @conform="failConform" :conform-text="'确定'" :key="failTitle">
     <!-- <a-form ref="failFormRef" :model="failForm" :rules="failFormRules" name="fail-form" autocomplete="off"
       labelAlign="left" :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
       <a-form-item name="auditRemark" label="驳回原因">
@@ -399,6 +396,59 @@ const columns = [
     key: 'personLiablePhone',
   },
   {
+    title: '启用状态',
+    dataIndex: 'enableSatusName',
+    key: 'enableSatusName',
+  },
+  {
+    title: '操作',
+    key: 'action',
+    fixed: 'right',
+    width: 208
+  },
+]
+const columns1 = [
+  {
+    title: '序号',
+    dataIndex: 'index',
+    key: 'index',
+  },
+  {
+    title: '所属旅行社',
+    dataIndex: 'companyName',
+    key: 'companyName',
+  },
+  {
+    title: '门店名称',
+    dataIndex: 'storeName',
+    key: 'storeName',
+  },
+  {
+    title: '门店地址',
+    dataIndex: 'storeAddress',
+    key: 'storeAddress',
+  },
+  {
+    title: '门店电话',
+    dataIndex: 'storePhone',
+    key: 'storePhone',
+  },
+  {
+    title: '门店负责人',
+    dataIndex: 'personLiableName',
+    key: 'personLiableName',
+  },
+  {
+    title: '负责人电话',
+    dataIndex: 'personLiablePhone',
+    key: 'personLiablePhone',
+  },
+  {
+    title: '审核类型',
+    dataIndex: 'auditType',
+    key: 'auditType',
+  },
+  /* {
     title: '门店审核状态',
     dataIndex: 'auditStatusName',
     key: 'auditStatusName',
@@ -407,7 +457,7 @@ const columns = [
     title: '信息审核状态',
     dataIndex: 'informationAuditStatusName',
     key: 'informationAuditStatusName',
-  },
+  }, */
   {
     title: '启用状态',
     dataIndex: 'enableSatusName',
@@ -431,8 +481,9 @@ const detailsKeys = {
   filingNo: '备案号',
   authorizationCode: '授权码',
   enableSatusName: '启用状态',
-  auditStatusName: '门店审核状态',
-  informationAuditStatusName: '信息审核状态',
+  auditType: '审核类型',
+  /* auditStatusName: '门店审核状态',
+  informationAuditStatusName: '信息审核状态', */
   createTime: '门店创建时间'
 }
 const contractOptions = [
@@ -452,10 +503,17 @@ const onHandleCurrentChange = (val: number) => {
   state.tableData.param.pageNo = val;
   onSearch();
 }
-
 const pageSideChange = (current: number, size: number) => {
   state.tableData.param.pageSize = size;
   onSearch();
+}
+const onHandleCurrentChange1 = (val: number) => {
+  state.tableData1.param.pageNo = val;
+  onAuditSearch();
+}
+const pageSideChange1 = (current: number, size: number) => {
+  state.tableData1.param.pageSize = size;
+  onAuditSearch();
 }
 const onSearch = async () => {
   const { content, total } = await api.selectIndividualStoreList(state.tableData.param)
@@ -489,8 +547,13 @@ const onAuditSearch = async () => {
   state.tableData1.total = total
 }
 const onQuery = () => {
-  state.tableData.param.pageNo = 1;
-  onSearch()
+  if (activeKey.value === '1') {
+    state.tableData.param.pageNo = 1;
+    onSearch()
+  } else if (activeKey.value === '2') {
+    state.tableData1.param.pageNo = 1;
+    onAuditSearch()
+  }
 }
 const modalCancel = () => {
   state.modalVisible = false
