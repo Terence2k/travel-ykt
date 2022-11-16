@@ -32,11 +32,11 @@
 							</div>
 						</template> -->
 						<template #bodyCell="{ column, record }">
-							<template v-if="column.dataIndex === 'scenicId'">
+							<!-- <template v-if="column.dataIndex === 'scenicId'">
 								<div class="cell-scenicId">
 									<span class="item">{{ getScenicSpotNameById(record.scenicId) }}</span>
 								</div>
-							</template>
+							</template> -->
 							<!-- <template v-if="column.dataIndex === 'auditStatus'">
 								<div class="cell-auditStatus">
 									<span class="item">{{ getAuditStatusNameById(record.auditStatus) }}</span>
@@ -99,8 +99,8 @@ const columns: TableColumnsType = [
 	},
 	{
 		title: '归属景区',
-		dataIndex: 'scenicId',
-		key: 'scenicId',
+		dataIndex: 'scenicName',
+		key: 'scenicName',
 		width: 400,
 	},
 	// {
