@@ -2,7 +2,7 @@
 	<div class="table-area">
 		<div class="p">
 			<p>当前行程共有{{}}名游客，已经添加过{{}}次游客。您可以继续添加</p>
-			<a-tooltip>
+			<a-tooltip color="cyan">
 				<template #title>
 					如行程中需要增加游客，需要为新游客发起新的 行程填报，点击添加游客按钮，系统将引导您填 报新行程单。如线下有游客未到，无需删除，最
 					终结算时以线下实际核销数据为准。</template

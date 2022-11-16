@@ -198,16 +198,16 @@ const getTraveDetail = () => {
 				return it;
 			})
 			travelStore.setTrafficList(res.transportList);
-			res.waitBuyItem.waitBuyHotel = res.waitBuyItem.waitBuyHotel.map((it:any) => {
+			res.waitBuyItem.waitBuyHotel = res.waitBuyItem.waitBuyHotel ? res.waitBuyItem.waitBuyHotel.map((it:any) => {
 				it.hotelId = it.productId;
 				it.hotelName = it.productName
 				return it;
-			})
-			res.waitBuyItem.waitBuyTicket = res.waitBuyItem.waitBuyTicket.map((it:any) => {
+			}) : [];
+			res.waitBuyItem.waitBuyTicket = res.waitBuyItem.waitBuyTicket ? res.waitBuyItem.waitBuyTicket.map((it:any) => {
 				it.scenicId = it.productId;
 				it.scenicName = it.productName;
 				return it;
-			})
+			}) : [];
 			const hotel = [...res.waitBuyItem.waitBuyHotel, ...res.hotelList]
 			travelStore.hotels = hotel as any;
 			travelStore.curentProduct = res.productList;

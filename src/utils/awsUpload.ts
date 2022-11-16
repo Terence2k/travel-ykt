@@ -24,7 +24,8 @@ const generateFilename = (fileName: any) => {
 const newAwsObj = () => {
   return new Promise<{
     aws: any;
-    bucket: any;
+    bucket: string;
+    filePath: string
   }>(async (resolve, reject) => {
     const res = await api.commonApi.cosUploadUrl();
     const awsTempKey = res;
@@ -38,11 +39,13 @@ const newAwsObj = () => {
           accessKeyId: awsTempKey.accessKeyId,
           secretAccessKey: awsTempKey.secretAccessKey,
           endpoint: awsTempKey.hostName,
+          sessionToken: awsTempKey.sessionToken,
           s3ForcePathStyle: awsTempKey.s3ForcePathStyle,
           signatureVersion: awsTempKey.signatureVersion,
           sslEnabled: awsTempKey.sslEnabled
         }),
-        bucket: awsTempKey.bucket
+        bucket: awsTempKey.bucket,
+        filePath: awsTempKey.hostName
       });
     }
   });
@@ -53,7 +56,7 @@ const awsUploadFile = (options: any) => {
     files: { url: string; name: string; fileName: string; size: number }[];
   }>(async (resolve, reject) => {
     const { files, onProgress } = options;
-    const { aws, bucket } = await newAwsObj();
+    const { aws, bucket, filePath } = await newAwsObj();
     if (!aws) {
       handleUploadErr(reject, '生成 aws 实例失败');
     } else {
@@ -73,14 +76,12 @@ const awsUploadFile = (options: any) => {
             Bucket: bucket, 
             ContentType: item.type,
             Body: item,
-            StorageClass: "STANDARD_IA",
           }, async (err: any, data: any) => {
             console.log(err);
             console.log(data);
             if (data) {
               console.log(err);
-              console.log(data);
-              const fileUrl = `https://${data.Location}`;
+              const fileUrl = `http://${filePath}/${bucket}/${item.name}`;
               downloadFiles.push({
                 url: fileUrl,
                 name: filename,
@@ -98,6 +99,9 @@ const awsUploadFile = (options: any) => {
                   handleUploadErr(reject, 'aws 上传发生错误');
                 }
               }
+            }
+            if (err) {
+              handleUploadErr(reject, 'aws 上传发生错误');
             }
           });
         })

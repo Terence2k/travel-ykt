@@ -62,6 +62,7 @@
 
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, GroupStatus } from '@/enum'
+	import { message } from 'ant-design-vue';
 
 	const travelStore = useTravelStore();
 	const router = useRouter()
@@ -185,19 +186,13 @@
 	const goToChange = (row: any) => {
 	state.id = row.oid,
 	state.itineraryNo = row.itineraryNo
-	// api.travelManagement.checkVerifyByItineraryId(row.itineraryNo).then((res) => {
-	// 	if (res.data) {
-	// 		router.push({
-	// 			path: '/travel/take_group/changetravel',
-	// 			query: {
-	// 				id: row.oid,
-	// 				itineraryNo: row.itineraryNo,
-	// 			},
-	// 		});
-	// 	} else {
+		api.travelManagement.checkVerifyByItineraryId(row.itineraryNo).then((res) => {
+		if (res) {
 			modelValue.value = true;
-	// 	}
-	// });
+		}else{
+			message.error('该行程单发生过核销不可变更')
+		}
+	});
 };
 
 const openModifyproduct = () => {
