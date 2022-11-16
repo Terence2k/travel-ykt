@@ -25,7 +25,8 @@ const newAwsObj = () => {
   return new Promise<{
     aws: any;
     bucket: string;
-    filePath: string
+    filePath: string;
+    prefix: string;
   }>(async (resolve, reject) => {
     const res = await api.commonApi.cosUploadUrl();
     const awsTempKey = res;
@@ -45,7 +46,8 @@ const newAwsObj = () => {
           sslEnabled: awsTempKey.sslEnabled
         }),
         bucket: awsTempKey.bucket,
-        filePath: awsTempKey.hostName
+        filePath: awsTempKey.hostName,
+        prefix: awsTempKey.prefix
       });
     }
   });
@@ -55,8 +57,8 @@ const awsUploadFile = (options: any) => {
   return new Promise<{
     files: { url: string; name: string; fileName: string; size: number }[];
   }>(async (resolve, reject) => {
-    const { files, onProgress } = options;
-    const { aws, bucket, filePath } = await newAwsObj();
+    const { files, onProgress, businessType } = options;
+    const { aws, bucket, filePath, prefix } = await newAwsObj();
     if (!aws) {
       handleUploadErr(reject, '生成 aws 实例失败');
     } else {
@@ -72,8 +74,8 @@ const awsUploadFile = (options: any) => {
           console.log(item);
           const filename = generateFilename(item.name);
           aws.putObject({
-            Key: item.name,
-            Bucket: bucket, 
+            Key: `${businessType.toLowerCase()}Pic/${item.name}`,
+            Bucket: `${bucket}${prefix}`,
             ContentType: item.type,
             Body: item,
           }, async (err: any, data: any) => {

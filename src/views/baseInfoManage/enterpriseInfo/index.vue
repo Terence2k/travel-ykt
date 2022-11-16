@@ -44,6 +44,14 @@
             </a-button>
           </div>
         </a-form-item>
+        <a-form-item name="legalPersonUrl" label="法人身份证附件">
+          <div class="flex">
+            <Upload ref="imgUploadRef" v-model:value="form.legalPersonUrl" :disabled="getStatus('legalPersonUrl')"/>
+            <a-button type="primary" class="status-btn" @click="changeDisabledStatus('legalPersonUrl')" v-if="showChangeBtns('legalPersonUrl')">
+              {{ getStatus('legalPersonUrl') ? '修改' : '确定' }}
+            </a-button>
+          </div>
+        </a-form-item>
         <!-- 旅行社、旅游集团、酒店、景区、餐饮 -->
         <template v-if="['TRAVEL', 'GROUP', 'HOTEL', 'TICKET', 'CATERING'].includes(userInfo.sysCompany.businessType)">
           <a-form-item name="legalPerson" label="法定代表人">
@@ -112,7 +120,7 @@
           </a-form-item>
           <a-form-item name="businessLicenseUrl" label="营业执照">
             <div class="flex">
-              <Upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl" :disabled="getStatus('businessLicenseUrl')"/>
+              <Upload ref="imgUploadRef" v-model="form.businessLicenseUrl" :disabled="getStatus('businessLicenseUrl')"/>
               <a-button type="primary" class="status-btn" @click="changeDisabledStatus('businessLicenseUrl')" v-if="showChangeBtns('businessLicenseUrl')">
                 {{ getStatus('businessLicenseUrl') ? '修改' : '确定' }}
               </a-button>
@@ -161,7 +169,7 @@
         <template v-if="userInfo.sysCompany.businessType == 'TRAVEL'">
           <a-form-item name="businessLicenseUrl1" label="经营许可证">
             <div class="flex">
-              <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl1" :disabled="getStatus('businessLicenseUrl1')"/>
+              <Upload ref="imgUploadRef" v-model:value="form.businessLicenseUrl1" :disabled="getStatus('businessLicenseUrl1')"/>
               <a-button type="primary" class="status-btn" @click="changeDisabledStatus('businessLicenseUrl1')" v-if="showChangeBtns('businessLicenseUrl1')">
                 {{ getStatus('businessLicenseUrl1') ? '修改' : '确定' }}
               </a-button>
