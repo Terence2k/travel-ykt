@@ -185,24 +185,24 @@
 	};
 	const goToChange = (row: any) => {
 	state.id = row.oid,
-	state.itineraryNo = row.itineraryNo
-		api.travelManagement.checkVerifyByItineraryId(row.itineraryNo).then((res) => {
-		if (res.data) {
+	// state.itineraryNo = row.itineraryNo	 
+	// 	api.travelManagement.checkVerifyByItineraryId(row.itineraryNo).then((res) => {
+	// 	if (res.data) {
 			modelValue.value = true;
-		}else{
-			message.error('该行程单发生过核销不可变更')
-		}
-	});
+	// 	}else{
+	// 		message.error('该行程单发生过核销不可变更')
+	// 	}
+	// });
 };
 
 const openModifyproduct = () => {
 	router.push({
 		path: '/travel/take_group/modify_o_product',
-		// query: {
-		// 	id: state.id,
-		// 	itineraryNo: state.itineraryNo,
-		// },
+		query: {
+			oid: state.id,
+		},
 	});
+	
 }
 	const onHandleCurrentChange = () => {
 

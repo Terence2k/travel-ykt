@@ -55,6 +55,8 @@ export const useTravelStore = defineStore({
 		specialId:[],
 		trafficType: [],
 		trafficColor: [],
+		hotelList:[],
+		ticketsList:[],
     attachmentList: [],
 	}),
 	getters: {},

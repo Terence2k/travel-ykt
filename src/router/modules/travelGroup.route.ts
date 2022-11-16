@@ -320,11 +320,23 @@ export default [
 					},
 					{
 						path: 'modify_o_product',
-						component: () => import('@/views/travelManagement/travelTakeGroupList/Modifyproduct/edit.vue'),
+						component: () => import('@/views/travelManagement/travelTakeGroupList/Modifyproduct/index.vue'),
 						activeMeun: 'take_group',
 						name: 'modify_o_product',
 						meta: {
-							title: '修改预定产品',
+							title: '预定产品信息',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'modify_product_edit',
+						component: () => import('@/views/travelManagement/travelTakeGroupList/Modifyproduct/edit.vue'),
+						activeMeun: 'take_group',
+						name: 'modify_product_edit',
+						meta: {
+							title: '修改预定产品信息',
 							// icon: 'liulanqi',
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示

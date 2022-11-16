@@ -15,21 +15,26 @@
 			<div class="warp_head">
 				<span class="warp_title">酒店费用</span>
 			</div>
-            <CommonTable :dataSource="state.tableData" :columns="state.hotelcolumns" rowKey="oid" style="padding: 0;">
-				<template #button> </template>
+            <CommonTable :columns="hotelColumns" :dataSource="holteDate" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
 					<template v-if="column.key === 'index'">
 						<div>
-							{{ (state.params.pageNo - 1) * state.params.pageSize + (index + 1) }}
+							{{ index + 1 }}
 						</div>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a>查看订单</a>
+							<a v-if="travelStore.reserveStatus && record.orderStatus == 0" class="item" @click="reserveHotel(record)">预定</a>
+							<a v-if="travelStore.teamStatus" class="item" @click="add(record.oid ? 'addHotelPop' : 'productRow', 'addHotelPop', record.oid || record)">编辑</a>
+							<a v-if="travelStore.teamStatus" class="item" @click="del(index)">删除</a>
+							<a class="item" @click="show('showHotelPop', record.oid)">查看</a>
 						</div>
 					</template>
 				</template>
 			</CommonTable>
+			<div class="footer-btn">
+				<a-button type="primary" @click="add('addHotelPop', 'addHotelPop')" v-if="travelStore.teamStatus">添加</a-button>
+			</div>
 		</div>
 		<div class="warp_contant">
 			<div class="warp_head">
@@ -51,6 +56,8 @@
 				</template>
 			</CommonTable>
 		</div>
+		<addHotel :productRow="editId.productRow" :hotelId="editId.addHotelPop" v-model="addHotelPop" />
+	<addTicket :productRow="editId.productRow" :ticketId="editId.addTicketPop" v-model="addTicketPop" />
 	</div>
 </template>
 <script lang="ts" setup>
