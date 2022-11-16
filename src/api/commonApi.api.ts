@@ -53,4 +53,11 @@ export const commonApi = {
 			showLoading: false,
 		});
 	},
+	cosUploadUrl(data: any) {
+		return request({
+			url: `${commonPath}/customer-service/public/api/common/eos/secret/config`,
+			method: 'get',
+			showLoading: false,
+		});
+	},
 };

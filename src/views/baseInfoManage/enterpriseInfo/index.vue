@@ -112,7 +112,7 @@
           </a-form-item>
           <a-form-item name="businessLicenseUrl" label="营业执照">
             <div class="flex">
-              <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl" :disabled="getStatus('businessLicenseUrl')"/>
+              <Upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl" :disabled="getStatus('businessLicenseUrl')"/>
               <a-button type="primary" class="status-btn" @click="changeDisabledStatus('businessLicenseUrl')" v-if="showChangeBtns('businessLicenseUrl')">
                 {{ getStatus('businessLicenseUrl') ? '修改' : '确定' }}
               </a-button>
@@ -342,6 +342,7 @@ import { message } from 'ant-design-vue';
 import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import { getUserInfo } from '@/utils/util';
+import Upload from '@/components/common/imageWrapper.vue';
 
 const formRef = ref()
 const loading = ref(false)
