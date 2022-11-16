@@ -23,7 +23,7 @@ export const useHotelStore = defineStore({
 			[HotelStatus.waits]: '待审核',
 			[HotelStatus.success]: '审核通过',
 			[HotelStatus.refuse]: '审核不通过',
-			[HotelStatus.cancal]: '已取消',
+			[HotelStatus.cancal]: '未提交',
 			[HotelStatus.finish]: '已完成',
 		},
 		HotelList: {

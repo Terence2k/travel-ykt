@@ -111,6 +111,18 @@ watch(
 					label: item.ticketName,
 				};
 			});
+			const targetId = formValidate?.value?.scenicId;
+			const targetName = formValidate?.value?.scenicName;
+			console.log('景区id为：', targetId);
+			if (scenicSpotOptionsData?.value?.find((item) => item.value == targetId)) {
+				console.log('找到目标景区id，无需多余操作');
+			} else {
+				console.log('找不到目标景区id，自动补上');
+				scenicSpotOptionsData.value.push({
+					value: targetId,
+					label: targetName,
+				});
+			}
 		});
 		dialogVisible.value = nVal;
 		if (dialogVisible.value) {
