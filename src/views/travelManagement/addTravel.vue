@@ -8,7 +8,7 @@
 		<div class="footer d-flex justify-content-between" v-if="travelStore.teamStatus">
 			<div class="footer-btn">
 				<a-button type="primary" @click="() => { check = !check; sendTeam = false; isSaveBtn = true }">保存</a-button>
-				<a-button type="primary" @click="activeKey = activeKey + 1">下一步</a-button>
+				<a-button v-show="activeKey < pages.length - 1" type="primary" @click="activeKey = activeKey + 1">下一步</a-button>
 			</div>
 			<div class="submit-btn" @click="() => { check = !check; sendTeam = true; isSaveBtn = false }">提交发团</div>
 		</div>
@@ -198,16 +198,16 @@ const getTraveDetail = () => {
 				return it;
 			})
 			travelStore.setTrafficList(res.transportList);
-			res.waitBuyItem.waitBuyHotel = res.waitBuyItem.waitBuyHotel.map((it:any) => {
+			res.waitBuyItem.waitBuyHotel = res.waitBuyItem.waitBuyHotel ? res.waitBuyItem.waitBuyHotel.map((it:any) => {
 				it.hotelId = it.productId;
 				it.hotelName = it.productName
 				return it;
-			})
-			res.waitBuyItem.waitBuyTicket = res.waitBuyItem.waitBuyTicket.map((it:any) => {
+			}) : [];
+			res.waitBuyItem.waitBuyTicket = res.waitBuyItem.waitBuyTicket ? res.waitBuyItem.waitBuyTicket.map((it:any) => {
 				it.scenicId = it.productId;
 				it.scenicName = it.productName;
 				return it;
-			})
+			}) : [];
 			const hotel = [...res.waitBuyItem.waitBuyHotel, ...res.hotelList]
 			travelStore.hotels = hotel as any;
 			travelStore.curentProduct = res.productList;

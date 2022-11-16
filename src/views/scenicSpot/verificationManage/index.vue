@@ -37,11 +37,11 @@
 									<span class="item">{{ getScenicSpotNameById(record.scenicId) }}</span>
 								</div>
 							</template>
-							<template v-if="column.dataIndex === 'auditStatus'">
+							<!-- <template v-if="column.dataIndex === 'auditStatus'">
 								<div class="cell-auditStatus">
 									<span class="item">{{ getAuditStatusNameById(record.auditStatus) }}</span>
 								</div>
-							</template>
+							</template> -->
 							<template v-if="column.dataIndex === 'actions'">
 								<div class="cell-actions">
 									<span class="item" @click="addOrUpdate({ row: record, handle: 'update' })">编辑</span>
@@ -95,20 +95,20 @@ const columns: TableColumnsType = [
 		title: '演出票名称',
 		dataIndex: 'itemName',
 		key: 'itemName',
-		width: 150,
+		width: 300,
 	},
 	{
 		title: '归属景区',
 		dataIndex: 'scenicId',
 		key: 'scenicId',
-		width: 150,
+		width: 400,
 	},
-	{
-		title: '审核状态',
-		dataIndex: 'auditStatus',
-		key: 'auditStatus',
-		width: '40%',
-	},
+	// {
+	// 	title: '审核状态',
+	// 	dataIndex: 'auditStatus',
+	// 	key: 'auditStatus',
+	// 	width: '40%',
+	// },
 	// {
 	// 	title: '平台上架状态',
 	// 	dataIndex: 'platformLaunchStatus',

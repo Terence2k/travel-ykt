@@ -16,8 +16,9 @@
 
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
-				<a @click="goToPath(record)">查看行程单</a>
+				<a @click="goToPath(record)">行程详情</a>
 				<a @click="goToChange(record)">行程变更</a>
+				<a>查看日志</a>
 			</div>
 		</template>
 				</template>
@@ -28,7 +29,7 @@
 				<p>包括导游、交通信息、附件内容，散团前均可修改</p>
 			</div>
 			<div class="model-div">
-				<a-button type="primary" style="width:120px">修改预订产品</a-button>
+				<a-button type="primary" style="width:120px" @click="openModifyproduct()">修改预订产品</a-button>
 				<p>包括行程时间、景区、酒店、餐饮等，未核销时可修改</p>
 			</div>
 			<div class="model-div">
@@ -92,11 +93,11 @@
 					dataIndex: 'routeName',
 					key: 'routeName',
 			},
-			{
-					title: '组团社',
-					dataIndex: 'travelName',
-					key: 'travelName',
-			},
+			// {
+			// 		title: '组团社',
+			// 		dataIndex: 'travelName',
+			// 		key: 'travelName',
+			// },
 			{
 					title: '地接社',
 					dataIndex: 'subTravelName',
@@ -104,13 +105,13 @@
 			},
 			{
 					title: '出团时间',
-					dataIndex: 'time',
-					key: 'time',
+					dataIndex: 'startDate',
+					key: 'startDate',
 			},
 			{
 					title: '团队类型',
-					dataIndex: 'groupTypeStr',
-					key: 'groupTypeStr',
+					dataIndex: 'teamTypeName',
+					key: 'teamTypeName',
 			},
 			{
 					title: '带队导游',
@@ -121,6 +122,11 @@
 					title: '团客人数',
 					dataIndex: 'touristCount',
 					key: 'touristCount',
+			},
+			{
+					title: '行程状态',
+					dataIndex: 'statusName',
+					key: 'statusName',
 			},
 			{
 					title: '操作',
@@ -136,13 +142,19 @@
 		travelStore.setTraveList(res, 'haveABall')
 	}
 	const goToPath = (row: any) => {
-		router.push({
-			path: '/travel/travel_manage/add_travel',
-			query: {
-				id: row.oid,
-				itineraryNo: row.itineraryNo
-			}
-		})
+		// router.push({
+		// 	path: '/travel/travel_manage/add_travel',
+		// 	query: {
+		// 		id: row.oid,
+		// 		itineraryNo: row.itineraryNo
+		// 	}
+		// })
+		router.push({ 
+			path: '/travel/travel_manage/travel_detail', 
+			query: { 
+				oid: encodeURIComponent(row.oid) 
+			} 
+		});
 	}
 	const changeMission = () => {
 		router.push({
@@ -182,6 +194,16 @@
 		}
 	});
 };
+
+const openModifyproduct = () => {
+	router.push({
+		path: '/travel/take_group/modify_o_product',
+		// query: {
+		// 	id: state.id,
+		// 	itineraryNo: state.itineraryNo,
+		// },
+	});
+}
 	const onHandleCurrentChange = () => {
 
 	}

@@ -88,7 +88,7 @@ export default [
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
-						props: true
+						props: true,
 					},
 					{
 						path: 'modifyEnterpriseInfo/name/:name/addressDetail/:addressDetail/legalPerson/:legalPerson/managementRange/:managementRange/registeredCapital/:registeredCapital/establishTime/:establishTime/businessTerm/:businessTerm/contactName/:contactName/phone/:phone/accountType/:accountType/bankAccountName/:bankAccountName/accountAddress/:accountAddress/bankAccount/:bankAccount/businessLicenseUrl/:businessLicenseUrl/manageUrl/:manageUrl/oid/:oid',
@@ -137,7 +137,7 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
-				]
+				],
 			},
 			// storeManagement
 			{
@@ -210,7 +210,7 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
-				]
+				],
 			},
 			// tourGuideManage
 			{
@@ -313,6 +313,18 @@ export default [
 						name: 'changetravel',
 						meta: {
 							title: '行程变更',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'modify_o_product',
+						component: () => import('@/views/travelManagement/travelTakeGroupList/Modifyproduct/edit.vue'),
+						activeMeun: 'take_group',
+						name: 'modify_o_product',
+						meta: {
+							title: '修改预定产品',
 							// icon: 'liulanqi',
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示

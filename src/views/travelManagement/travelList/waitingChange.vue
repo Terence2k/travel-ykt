@@ -17,6 +17,7 @@
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
 				<a>去审核</a>
+				<a>查看日志</a>
 			</div>
 		</template>
 				</template>
@@ -81,8 +82,8 @@
 			},
 			{
 					title: '团队类型',
-					dataIndex: 'groupTypeStr',
-					key: 'groupTypeStr',
+					dataIndex: 'teamTypeName',
+					key: 'teamTypeName',
 			},
 			{
 					title: '团客人数',
@@ -91,8 +92,8 @@
 			},
 			{
 					title: '当前状态',
-					dataIndex: 'touristCount',
-					key: 'touristCount',
+					dataIndex: 'statusName',
+					key: 'statusName',
 			},
 			{
 					title: '操作',

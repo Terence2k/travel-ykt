@@ -68,29 +68,34 @@
 					key: 'routeName',
 			},
 			{
+					title: '组团社',
+					dataIndex: 'travelName',
+					key: 'travelName',
+			},
+			{
 					title: '地接社',
 					dataIndex: 'subTravelName',
 					key: 'subTravelName',
 			},
 			{
-					title: '行程时间',
-					dataIndex: 'time',
-					key: 'time',
-			},
-			{
 					title: '团队类型',
-					dataIndex: 'groupTypeStr',
-					key: 'groupTypeStr',
+					dataIndex: 'teamTypeName',
+					key: 'teamTypeName',
 			},
-			{
-					title: '带队导游',
-					dataIndex: 'guides',
-					key: 'guides',
-			},
+			// {
+			// 		title: '带队导游',
+			// 		dataIndex: 'guides',
+			// 		key: 'guides',
+			// },
 			{
 					title: '团客人数',
 					dataIndex: 'touristCount',
 					key: 'touristCount',
+			},
+			{
+					title: '已冻结金额',
+					dataIndex: 'touristCount1',
+					key: 'touristCount1',
 			},
 			{
 					title: '操作',
