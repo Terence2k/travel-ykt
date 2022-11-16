@@ -3,10 +3,9 @@
 		<a-upload
 			:maxCount="1"
 			v-model:file-list="fileList"
-			action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
 			list-type="picture-card"
 			:beforeUpload="beforeUpload"
-			:uploadFile="uploadFile"
+      :customRequest="uploadFile"
 			accept=".jpg,.png"
 			@preview="handlePreview"
 		>
@@ -23,6 +22,8 @@ import { PlusOutlined } from '@ant-design/icons-vue';
 import { defineComponent, ref } from 'vue';
 import type { UploadProps } from 'ant-design-vue';
 import { message } from 'ant-design-vue';
+import awsUploadFile from '@/utils/awsUpload';
+
 const getBase64 = (file: File) => {
 	return new Promise((resolve, reject) => {
 		const reader = new FileReader();
@@ -44,13 +45,24 @@ const beforeUpload = (file: any) => {
 };
 
 // 上传文件
-const uploadFile = async (event: any) => {
-	console.log('shanghcuan ', event);
-
-	const file = new FormData();
-	file.append('file', event.file);
-	// const { path } = await api.resource.uploadFile(file);
-	// state.ruleForm.businessLicense = path;
+const uploadFile = async (options: any) => {
+    console.log('options:', options)
+    try {
+      const { files } = await awsUploadFile({
+        files: [options.file],
+        onProgress: options.onProgress
+      });
+      console.log('files', files);
+      
+      options.onSuccess(
+        { success: true, msg: '上传成功', data: { filePath: files[0].url } },
+        { name: files[0].name, url: files[0].url },
+        files
+      );
+    } catch (e) {
+      console.log(e);
+      options.onError(e);
+    }
 };
 const previewVisible = ref(false);
 const previewImage = ref('');
