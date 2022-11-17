@@ -358,4 +358,11 @@ export const travelManagement = {
             showLoading:false
         });
     },
+    deleteTrave(itineraryId: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/delete/${itineraryId}`,
+            method: 'delete',
+            showLoading:false
+        });
+    },
 }

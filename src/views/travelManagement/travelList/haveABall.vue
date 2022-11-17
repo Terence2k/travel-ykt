@@ -45,8 +45,8 @@
 			</template>
 		</BaseModal>
 		<CommonPagination
-			:current="state.params.pageNo"
-			:page-size="state.params.pageSize"
+			:current="travelStore.traveList.haveABall.params.pageNo"
+			:page-size="travelStore.traveList.haveABall.params.pageSize"
 			:total="state.total"
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
@@ -195,17 +195,18 @@
 	});
 };
 
-const openModifyproduct = () => {
-	router.push({
-		path: '/travel/take_group/modify_o_product',
-		query: {
-			oid: state.id,
-		},
-	});
-	
-}
-	const onHandleCurrentChange = () => {
-
+	const openModifyproduct = () => {
+		router.push({
+			path: '/travel/take_group/modify_o_product',
+			query: {
+				oid: state.id,
+			},
+		});
+		
+	}
+	const onHandleCurrentChange = (e:any) => {
+		travelStore.traveList.haveABall.params.pageNo = e
+		onSearch()
 	}
 	const pageSideChange = () => {
 

@@ -23,8 +23,8 @@
 				</template>
 		</CommonTable>
 		<CommonPagination
-			:current="state.params.pageNo"
-			:page-size="state.params.pageSize"
+			:current="travelStore.traveList.waitRegiment.params.pageNo"
+			:page-size="travelStore.traveList.waitRegiment.params.pageSize"
 			:total="state.total"
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
@@ -130,7 +130,7 @@
 	}
 
 	const onHandleCurrentChange = (e:any) => {
-		travelStore.traveList.drafts.params.pageNo = e
+		travelStore.traveList.waitRegiment.params.pageNo = e
 		onSearch()
 	}
 	const pageSideChange = () => {
