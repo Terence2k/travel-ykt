@@ -32,15 +32,18 @@
       </address-selector>
     </a-form-item>
     <a-form-item name="businessLicenseUrl" label="营业执照">
-      <img-upload ref="imgUploadRef" v-model:uploadedFile="$attrs.model.businessLicenseUrl" @done="uploadDown">
-      </img-upload>
+      <Upload v-model="$attrs.model.businessLicenseUrl" :maxCount="1" />
+      <!-- <img-upload ref="imgUploadRef" v-model:uploadedFile="$attrs.model.businessLicenseUrl" @done="uploadDown">
+      </img-upload> -->
     </a-form-item>
     <slot name="submit"></slot>
+    
   </a-form>
 </template>
 
 <script setup lang="ts">
-import imgUpload from '@/views/baseInfoManage/businessManagement/components/imgUpload.vue';
+import Upload from '@/components/common/imageWrapper.vue';
+// import imgUpload from '@/views/baseInfoManage/businessManagement/components/imgUpload.vue';
 import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
 // import { useBusinessManageOption } from '@/stores/modules/businessManage';
 import { useAttrs } from 'vue'

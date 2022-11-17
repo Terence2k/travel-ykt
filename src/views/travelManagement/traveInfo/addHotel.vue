@@ -142,6 +142,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any ) || {}
 const route = useRoute()
 const roomList = {
+	orderAmount: 0,
 	checkInNumber: '', //入住人数
 	hotelRoomTypeId: '', //房型id
 	unitPrice: 0, //房型单价
@@ -189,7 +190,9 @@ let formState = reactive<{[k: string]: any}>({
 const honestyGuidePrice = computed(() => formState.honestyGuidePrice / 100)
 
 const addRoom = () => {
-	formState.roomTypeList.push({ ...roomList });
+	const room = cloneDeep(roomList)
+	room.orderAmount = honestyGuidePrice.value;
+	formState.roomTypeList.push({ ...room });
 };
 const delRoom = (index: number) => {
 	formState.roomTypeList.splice(index, 1);

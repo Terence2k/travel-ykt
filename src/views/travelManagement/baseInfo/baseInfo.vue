@@ -131,6 +131,9 @@
 			<a-form-item label="行程单号" name="teamId">
 				<a-input v-model:value="formState.teamId" disabled placeholder="保存草稿后自动生成" />
 			</a-form-item>
+			<a-form-item label="自编团号">
+				<a-input v-model:value="formState.selfTeamNo" placeholder="请输入自编团号" />
+			</a-form-item>
 		</a-form>
 	</div>
 </template>

@@ -27,9 +27,9 @@
 				</a-select>
 			</a-form-item>
 
-			<a-form-item label="行程人数">
+			<!-- <a-form-item label="行程人数">
 				<span>{{travelStore.touristList.length}}人</span>
-			</a-form-item>
+			</a-form-item> -->
 			<a-form-item label="诚信指定价">
 				<span>{{honestyGuidePrice}}元</span>
 			</a-form-item>
@@ -276,8 +276,6 @@ const getOrderAmount = (data: Array<{[k:string]:any}>, startDate: string, endDat
 }
 
 const submit = async () => {
-	console.log(11);
-	
 	try {
 		let traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {}
 		
@@ -286,7 +284,7 @@ const submit = async () => {
 		formState.scheduledRooms = formState.roomTypeList.map((it: any) => Number(it.reserveNumber))
 		.reduce((prev: any, current: any) => prev + current);
 		// formState.tripNumber = travelStore.touristList.length;
-		formState.itineraryId = route.query.id || traveListData.oid
+		// formState.itineraryId = route.query.id || traveListData.oid
 		formState.orderAmount = getOrderAmount(formState.roomTypeList, formState.arrivalDate, formState.departureDate)
 		
 		// if (Number((formState.scheduledNumber / travelStore.touristList.length).toFixed) < 0.8) {

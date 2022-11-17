@@ -285,7 +285,6 @@ export const useTravelStore = defineStore({
 			this.teamType = data;
 		},
 		setHotels(data: any, oid: string, hotelId: string) {
-
 			if (hotelId) {
 				data.oid = oid;
 				return Object.assign(this.hotels.filter((item: any) => hotelId == item.hotelId)[0], data);
