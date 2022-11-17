@@ -1,10 +1,10 @@
 <template>
 	<div class="warp">
 		<!-- <header>基本信息</header> -->
-		<div class="title">基本信息</div>
+		<!-- <div class="title">基本信息</div> -->
 
 		<a-form labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 10 }">
-			<a-form-item label="结算状态" required>
+			<!-- <a-form-item label="结算状态" required>
 				<span>{{ formData.data.accountingIsNormal == 1 ? '正常' : formData.data.accountingIsNormal == 2 ? '异常' : '-' }}</span>
 			</a-form-item>
 			<a-form-item label="团队类型" required>
@@ -33,9 +33,9 @@
 			</a-form-item>
 			<a-form-item label="结算费用" required>
 				<span>{{ formData.data.settlementCost }}</span>
-			</a-form-item>
+			</a-form-item> -->
 
-			<div class="title titleMargin">结算信息</div>
+			<div class="title">结算信息</div>
 			<CommonTable :dataSource="formData.settlementInformationVOList" :columns="columns" :scrollY="false" :scroll="{ y: '300px' }">
 				<template #bodyCell="{ column, record, index }">
 					<!-- 费用归属 -->
@@ -57,7 +57,7 @@
 		</a-form>
 		<div class="footer">
 			<div class="tooter-btn">
-				<a-button type="primary" @click.prevent="toPass">审核通过</a-button>
+				<a-button type="primary" @click.prevent="toPass" v-if="formData.showExamineBtn">审核通过</a-button>
 				<a-button @click.prevent="onCancel">取消</a-button>
 			</div>
 		</div>
@@ -138,6 +138,7 @@ const columns = [
 const formData: any = reactive({
 	data: {},
 	settlementInformationVOList: [],
+	showExamineBtn: false,
 });
 // 缓存编辑表格模态框数据
 const adjustData = ref({
@@ -157,7 +158,7 @@ const tipSubmit = async () => {
 		message.success('操作成功');
 		// 返回上级列表
 		onCancel();
-	})
+	});
 	tipCancel();
 };
 const tipCancel = () => {
@@ -166,12 +167,12 @@ const tipCancel = () => {
 };
 // 审核通过
 const toPass = () => {
-	modalData.value.params = { title: '审核通过', content: '是否确定所选数据审核通过？' }
+	modalData.value.params = { title: '审核通过', content: '是否确定所选数据审核通过？' };
 	modalData.value.data = {
-		'status': 15,
-		'itineraryNoList' : route.currentRoute.value?.query.itineraryNo
-	}
-	modalData.value.show = true
+		status: 15,
+		itineraryNoList: route.currentRoute.value?.query.itineraryNo,
+	};
+	modalData.value.show = true;
 };
 // 结算明细
 const itemDetail = (oid: any) => {
@@ -180,12 +181,16 @@ const itemDetail = (oid: any) => {
 };
 //初始化页面
 const initPage = async (): Promise<void> => {
-	api.examineDetail(route.currentRoute.value?.query.itineraryNo).then((res: any) => {
-		formData.data = res;
-		formData.settlementInformationVOList = res.settlementInformationVOList;
-	}).catch(() => {
-		onCancel()
-	});
+	formData.showExamineBtn = route.currentRoute.value?.query.showExamineBtn == 'true' ? true : false;
+	api
+		.examineDetail(route.currentRoute.value?.query.itineraryNo)
+		.then((res: any) => {
+			formData.data = res;
+			formData.settlementInformationVOList = res.settlementInformationVOList;
+		})
+		.catch(() => {
+			onCancel();
+		});
 };
 
 onMounted(() => {
@@ -225,9 +230,6 @@ onMounted(() => {
 		font-weight: bold;
 		color: #1e2226;
 		box-sizing: content-box;
-	}
-	.titleMargin {
-		margin-top: 24px;
 		margin-bottom: 20px;
 	}
 	.footer {

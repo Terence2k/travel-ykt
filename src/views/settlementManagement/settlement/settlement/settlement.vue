@@ -257,7 +257,7 @@ const transfer = (type: string, record: any) => {
 };
 // 查看详情
 const toInfo = (record: any) => {
-	router.push({ path: '/travel/travel_manage/travel_detail', query: { oid: encodeURIComponent(record.oid) } });
+	router.push({ path: '/settlementManagement/settlement/examineInfo', query: { itineraryNo: encodeURIComponent(record.itineraryNo) } });
 };
 onMounted(() => {
 	onSearch();
