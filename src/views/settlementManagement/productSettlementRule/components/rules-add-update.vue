@@ -8,6 +8,9 @@
 			:wrapper-col="{ span: 16, offset: 1 }"
 			placeholder="请选择分账单位"
 		>
+			<a-form-item label="分账名称" name="splitName">
+				<a-input v-model:value="formValidate.splitName" placeholder="请输入分账名称" />
+			</a-form-item>
 			<a-form-item label="分账单位" name="companyType">
 				<a-select
 					ref="select"
@@ -96,6 +99,7 @@ const options = reactive({
 const formValidate: Ref<Record<string, any>> = ref({});
 
 const rules: any = {
+	splitName: [{ required: true, trigger: 'blur', message: '请输入分账名称' }],
 	companyType: [{ required: true, trigger: 'blur', message: '请输入分账单位' }],
 	level: [{ required: true, validator: isIntegerNotMust, trigger: 'blur' }],
 	priority: [{ required: true, validator: isIntegerNotMust, trigger: 'blur' }],
