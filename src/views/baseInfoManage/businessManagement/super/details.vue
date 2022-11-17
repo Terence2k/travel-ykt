@@ -96,6 +96,8 @@ const getComputedVal = computed(() => (key: string, val: any) => {
     return name
   } else if (key === 'scenicLevel') {
     return val ? val + 'A' : ''
+  } else if (key === 'isIndividual') {
+    return val == 1 ? '是' : '否'
   } else {
     return val
   }

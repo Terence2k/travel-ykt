@@ -303,6 +303,8 @@ const getComputedVal = computed(() => (key: string, val: any) => {
 		return val == 1 || val == true ? '是' : '否'
 	} else if (key === 'scenicLevel') {
 		return val ? val + 'A' : ''
+	} else if (key === 'isIndividual') {
+		return val == 1 ? '是' : '否'
 	} else {
 		return val
 	}
@@ -557,6 +559,8 @@ const keyNameList = {
 	bank: '开户行',
 	bankAccount: '公司账号',
 	creditCode: '统一社会信用代码',
+	licenseNo: "12301旅行社许可证号",
+	isIndividual: "是否为散客中心",
 	businessLicenseUrl: '营业执照',
 	// manageUrl: '经营许可证',
 	hotelStarCode: '星级',

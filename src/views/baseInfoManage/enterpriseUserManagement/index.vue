@@ -9,12 +9,12 @@
       </template>
       <template v-if="column.key === 'roleList'">
         <span v-for="item, index in record.roleList">
-          {{`${item.roleName}${index == record.roleList.length - 1? '' : '，' }`}}
+          {{ `${item.roleName}${index == record.roleList.length - 1 ? '' : '，'}` }}
         </span>
       </template>
       <template v-if="column.key === 'action'">
         <div class="action-btns">
-          <a @click="addOrUpdate({ row:record, handle: 'update' })">编辑</a>
+          <a @click="addOrUpdate({ row: record, handle: 'update' })">编辑</a>
           <a @click="resetPassword(record.oid)">重制密码</a>
           <a @click="disable(0, record.oid)" v-show="record.state === 1">禁用</a>
           <a @click="disable(1, record.oid)" v-show="record.state === 0">启用</a>
@@ -31,9 +31,10 @@
     <a-form ref="teamRef" :model="form" :rules="formRules" name="addTeam" autocomplete="off" :label-col="{ span: 6 }"
       :wrapper-col="{ span: 18 }">
       <a-form-item name="roleIds" label="管理员角色">
-        <a-select v-model:value="form.roleIds" placeholder="请选择管理员角色">
+        <a-select v-model:value="form.roleIds" placeholder="请选择管理员角色" mode="multiple">
           <a-select-option v-for="item in roleOption" :value="item.roleId" :key="item.roleId">{{
-          item.roleName }}
+              item.roleName
+          }}
           </a-select-option>
         </a-select>
       </a-form-item>
@@ -86,9 +87,14 @@ const columns = [
     key: 'username',
   },
   {
-    title: '管理员手机号（登录账号）',
+    title: '管理员手机号',
     dataIndex: 'mobile',
     key: 'mobile',
+  },
+  {
+    title: '管理员账号',
+    dataIndex: 'account',
+    key: 'account',
   },
   {
     title: '管理员角色',
@@ -102,8 +108,8 @@ const columns = [
   },
   {
     title: '最后登录时间',
-    dataIndex: 'creatorName',
-    key: 'creatorName',
+    dataIndex: 'lastLoginTime',
+    key: 'lastLoginTime',
   },
   {
     title: '最后修改时间',
@@ -208,8 +214,6 @@ const addOrUpdate = ({ row, handle }: addInterface) => {
   modalVisible.value = true
   if (handle === 'add') {
     title.value = '添加管理员用户'
-    form.companyId = state.companyId
-    form.account = form.mobile
     state.isAdd = true
   } else if (handle === 'update') {
     title.value = '编辑管理员用户'
@@ -256,13 +260,15 @@ const closeModal = () => {
 const save = () => {
   teamRef.value.validate().then(async (val: any) => {
     if (state.isAdd) {
-      api.addUser(toRaw(form)).then(res => {
+      form.companyId = state.companyId
+      form.account = form.mobile
+      api.addUser(toRaw(form)).then((res: any) => {
         message.success('添加管理员成功！');
         onSearch();
         closeModal();
       })
     } else {
-      api.editUser(toRaw(form)).then(res => {
+      api.editUser(toRaw(form)).then((res: any) => {
         message.success('编辑管理员成功！');
         onSearch();
         closeModal();
