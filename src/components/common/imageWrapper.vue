@@ -71,11 +71,18 @@ const uploadFile = async (options: any) => {
       });
       console.log('files', files);
       options.onSuccess(
-        { success: true, msg: '上传成功', data: { filePath: files[0].url } },
-        { name: files[0].name, url: files[0].url },
+        { success: true, msg: '上传成功', data: { filePath: files[0] } },
+        { name: files[0], url: files[0] },
         files
       );
-    return emit('update:modelValue', files?.map((item: any) => item.url));
+      let tempData = fileList.value?.map((item: any) => {
+        if (item.url) {
+          return item.url;
+        } else {
+          return item.response.data.filePath;
+        }
+      })
+    return emit('update:modelValue', tempData?.join(','));
     } catch (e) {
       console.log(e);
       options.onError(e);
@@ -83,21 +90,6 @@ const uploadFile = async (options: any) => {
 };
 const previewVisible = ref(false);
 const previewImage = ref('');
-
-// const fileList = ref<UploadProps['fileList']>([
-//   {
-//     uid: '-1',
-//     name: 'image.png',
-//     status: 'done',
-//     url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-//   },
-//   {
-//     uid: '-2',
-//     name: 'image.png',
-//     status: 'done',
-//     url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-//   },
-// ]);
 const fileList = ref<UploadProps['fileList']>([]);
 //关闭预览
 const handleCancel = () => {
@@ -111,7 +103,9 @@ const handlePreview = async (file: UploadProps['fileList'][number]) => {
 	previewVisible.value = true;
 };
 const removeImg = (file: any) => {
-  emit('update:modelValue', fileList.value?.map((item: any) => item.url));
+  setTimeout(() => {
+    emit('update:modelValue', fileList.value?.map((item: any) => item.url).join(','));
+  }, 0);
   
 }
 
@@ -119,7 +113,16 @@ watch(
 	() => props.modelValue,
 	async (nVal) => {
     console.log('modelValue:', nVal);
-    
+    if (nVal) {
+      fileList.value = nVal.split(',').map((item: any, index: any) => {
+        return {
+          uid: index.toString(),
+          name: item,
+          status: 'done',
+          url: item,
+        }
+      })
+    }
 	}
 );
 onMounted(() => {
