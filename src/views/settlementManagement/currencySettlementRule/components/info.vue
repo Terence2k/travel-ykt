@@ -145,6 +145,11 @@ const formState: UnwrapRef<FormState> = reactive({
 });
 const columns = ref([
 	{
+		title: '分账名称',
+		dataIndex: 'splitName',
+		key: 'splitName',
+	},
+	{
 		title: '分账单位',
 		dataIndex: 'companyType',
 		key: 'companyType',
