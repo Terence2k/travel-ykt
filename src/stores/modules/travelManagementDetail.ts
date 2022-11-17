@@ -39,7 +39,7 @@ export const takeGroupListParams = {
 	},
 };
 export const useTravelStore = defineStore({
-	id: 'travel',
+	id: 'Travel',
 	state: () => ({
 		guideType: {
 			[GuideType.UnderGuide]: '直属导游',
@@ -85,6 +85,10 @@ export const useTravelStore = defineStore({
 		},
 		setGuideList(list: any) {
 			this.guideList = list;
+		},
+		logs(){
+			console.log(123);
+			
 		},
 		setTrafficList(list: any) {
 			this.trafficList = list;
