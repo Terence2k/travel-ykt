@@ -2,16 +2,16 @@
 	<div class="warp">
 		<div class="header_top">
 			<div class="title">请根据实际需要，调整行程时间，或已预订的产品，重新提交变更。</div>
-			<a-button @click="openEdit(state.Data)">进入修改</a-button>
+			<a-button @click="openEdit" type="primary">进入修改</a-button>
 		</div>
 		<div class="warp_contant">
 			<div class="warp_head">
 				<span class="warp_title">行程时间</span>
-				<span>2022.10.01 09:00:00 — 2022.10.02 19:00:00</span>
+				<span>{{state.startDate}} — {{state.endDate}}</span>
 			</div>
 		</div>
 		<div v-for="item in getOptions(state.Data)">
-			<div class="page-title" style="margin-top: 20px;">{{ item.title }}<span class="descriptions" v-html="item.descriptions"></span></div>
+			<div class="page-title" style="margin-top: 20px">{{ item.title }}<span class="descriptions" v-html="item.descriptions"></span></div>
 			<CommonTable :columns="item.columns" :dataSource="item.dataSource" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
 					<template v-if="column.key === 'index'">
@@ -38,6 +38,7 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import api from '@/api';
 import { useTravelStore } from '@/stores/modules/travelManagementDetail';
 import { getOptions } from './deatli';
+import dayjs, { Dayjs } from 'dayjs';
 
 const travelStore = useTravelStore();
 const route = useRoute();
@@ -48,16 +49,17 @@ const state = reactive({
 		pageSize: 10,
 	},
 	Data: {},
+	startDate:{},
+	endDate:{}
 });
 
-const opendetail = (record:any)=> {
-
-}
-const openEdit = (data:any)=> {
+const opendetail = (record: any) => {};
+const openEdit = (data: any) => {
 	router.push({
 		path: '/travel/take_group/modify_product_edit',
+		query: { oid: route.query.oid },
 	});
-}
+};
 const install = () => {
 	api.travelManagement
 		.changDetail({
@@ -67,8 +69,23 @@ const install = () => {
 		})
 		.then((res: any) => {
 			state.Data = res;
+			state.startDate = res.basic.startDate
+			state.endDate = res.basic.endDate
 			travelStore.hotelList = res.hotelList;
-			travelStore.ticketsList = res.ticketList
+			travelStore.ticketsList = res.ticketList;
+			let dis = null;
+			if (res) {
+				dis = (current: Dayjs) => {
+					return (
+						(dayjs(res.basic.startDate) && dayjs(res.basic.startDate) > current && current) ||
+						(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).add(1, 'day') < current && current)
+					);
+				};
+			}
+				travelStore.setDisabled = dis as any;
+				const time:any = []
+			 	time.push(res.basic.startDate,res.basic.endDate)
+				travelStore.teamTime = time			
 		});
 };
 install();
@@ -85,14 +102,14 @@ install();
 			margin-left: 5px;
 		}
 	}
-  .table-area {
-    padding: 0;
-  }
-  :deep(.qr-code.ant-descriptions-item-content) {
-    height: 384px;
-    text-align: center;
-    color: #9DA0A4;
-  }
+	.table-area {
+		padding: 0;
+	}
+	:deep(.qr-code.ant-descriptions-item-content) {
+		height: 384px;
+		text-align: center;
+		color: #9da0a4;
+	}
 	.header_top {
 		width: 100%;
 		display: flex;

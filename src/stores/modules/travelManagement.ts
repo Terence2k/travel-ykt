@@ -41,6 +41,15 @@ export const takeGroupListParams = {
 		isSend: false,
 	},
 };
+export const auditListParams = {
+	total: 0,
+	list: [],
+	params: {
+		pageNo: 1,
+		pageSize: 10,
+		status: 0,
+	},
+};
 export const useTravelStore = defineStore({
 	id: 'travel',
 	state: () => ({
@@ -138,10 +147,10 @@ export const useTravelStore = defineStore({
 			waitRegiment: cloneDeep(traveListParams),
 		},
 		auditList: {
-			financeSendGroup: cloneDeep(traveListParams),
-			financeChange: cloneDeep(traveListParams),
-			administrativeSendGroup: cloneDeep(traveListParams),
-			administrativeChange: cloneDeep(traveListParams),
+			financeSendGroup: cloneDeep(auditListParams),
+			financeChange: cloneDeep(auditListParams),
+			administrativeSendGroup: cloneDeep(auditListParams),
+			administrativeChange: cloneDeep(auditListParams),
 		},
 		takeGroupList: {
 			drafts: cloneDeep(takeGroupListParams),
@@ -276,7 +285,6 @@ export const useTravelStore = defineStore({
 			this.teamType = data;
 		},
 		setHotels(data: any, oid: string, hotelId: string) {
-
 			if (hotelId) {
 				data.oid = oid;
 				return Object.assign(this.hotels.filter((item: any) => hotelId == item.hotelId)[0], data);

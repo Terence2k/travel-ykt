@@ -83,8 +83,9 @@
             </a-input>
           </a-form-item>
           <a-form-item name="businessLicenseUrl" label="营业执照" v-show="formRules?.businessLicenseUrl">
-            <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl" @done="uploadDown">
-            </img-upload>
+            <!-- <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl" @done="uploadDown">
+            </img-upload> -->
+            <Upload v-model="form.businessLicenseUrl" :maxCount="1" />
           </a-form-item>
           <a-form-item>
             <a-button type="primary" @click="submit" style="margin-right:20px" :loading="loading">保存</a-button>

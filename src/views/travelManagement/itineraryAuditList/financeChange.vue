@@ -4,7 +4,7 @@
 		<template #bodyCell="{ column, text, index, record }">
 			<template v-if="column.key === 'index'">
 				<div>
-						{{(state.params.pageNo - 1) * (state.params.pageSize) + (index + 1)}}
+						{{(travelStore.auditList.financeChange.params.pageNo - 1) * (travelStore.auditList.financeChange.params.pageSize) + (index + 1)}}
 				</div>
 		</template>
 
@@ -16,8 +16,8 @@
 				</template>
 		</CommonTable>
 		<CommonPagination
-			:current="state.params.pageNo"
-			:page-size="state.params.pageSize"
+			:current="travelStore.auditList.financeChange.params.pageNo"
+			:page-size="travelStore.auditList.financeChange.params.pageSize"
 			:total="state.total"
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
@@ -104,13 +104,13 @@
 
 	const travelStore = useTravelStore();
 	const state = reactive({
-		total: 0,
+		total: computed(() => travelStore.auditList.financeChange.total),
 		params: {
 				pageNo: 1,
 				pageSize: 10,
 				status: 1
 		},
-		tableData: [],
+		tableData: computed(() => travelStore.auditList.financeChange.list),
     detail: {} as any,
 		columns: [
 			{
@@ -169,13 +169,12 @@
   const rejectAuditVisible = ref(false);
   const rejectReason = ref('');
 	const onSearch = async () => {
-		const res = await travelStore.getAuditList({pageNo: 1, pageSize: 10, status: AuditStaus.FinanceChange});
-		state.tableData = res.content
-		state.total = res.total;
-    state.tableData.forEach( async (item: any) => {
-      item.auditInfo = await getAuditButton(item.auditUuid);
-    })
-      console.log('state.tableData:', state.tableData)
+		travelStore.auditList.financeChange.params.status = AuditStaus.FinanceChange;
+		const res = await travelStore.getAuditList(travelStore.auditList.financeChange.params);
+    // res.content.forEach( async (item: any) => {
+    //   item.auditInfo = await getAuditButton(item.auditUuid);
+    // })
+		travelStore.setAuditList(res, 'financeChange');
 	}
   const cancel = (): any => {
     changeAuditVisible.value = false;
@@ -256,8 +255,9 @@
       state.detail = backup;
     });
   }
-	const onHandleCurrentChange = () => {
-
+	const onHandleCurrentChange = (e: any) => {
+		travelStore.auditList.financeChange.params.pageNo = e
+		onSearch()
 	}
 	const pageSideChange = () => {
 

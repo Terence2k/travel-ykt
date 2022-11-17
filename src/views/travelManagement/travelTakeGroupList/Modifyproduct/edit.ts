@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash';
 import dayjs from 'dayjs';
 import { createVNode, UnwrapRef } from 'vue';
 import api from '@/api';
-import { useTravelStore } from '@/stores/modules/travelManagement';
+import { useTravelStore } from '@/stores/modules/travelManagementDetail';
 import { stat } from 'fs';
 import { ConfirmDailyCharge, FeeModel } from '@/enum';
 import { message, Modal } from 'ant-design-vue';
@@ -45,10 +45,8 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		payablePrice:'',
 		showTicketPop: false,
 		showHotelPop: false,
-		allFeesProducts: computed(() => travelStore.compositeProducts),
-		ticketData: computed(() => travelStore.scenicTickets),
-		holteDate: computed(() => travelStore.hotels),
-		gouvyDate:computed(() => travelStore.gouvyList),
+		ticketData: computed(() => travelStore.ticketsList),
+		holteDate: computed(() => travelStore.hotelList),
 		ticketingDate:[],
 		tableData: [
 			{
@@ -68,97 +66,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			pageNo: 1,
 			pageSize: 999,
 		},
-		columns: [
-			{
-				title: ' 序号 ',
-				key: 'index',
-				width: '80px',
-			},
-			{
-				title: '费用名称',
-				dataIndex: 'comprehensiveFeeProductName',
-				key: 'comprehensiveFeeProductName',
-			},
-			{
-				title: '结算归属',
-				dataIndex: 'belongCompanyName',
-				key: 'belongCompanyName',
-			},
-			{
-				title: '收费模式',
-				dataIndex: 'feeModel',
-				key: 'feeModel',
-				data: travelStore.feeModel,
-			},
-			{
-				title: '是否按天收取',
-				dataIndex: 'confirmDailyChargeName',
-				key: 'confirmDailyChargeName',
-			},
-			{
-				title: '单价（元）',
-				dataIndex: 'feeNumber',
-				key: 'feeNumber',
-			},
-			{
-				title: '人数',
-				dataIndex: 'peopleCount',
-				key: 'peopleCount',
-			},
-			{
-				title: '行程天数',
-				dataIndex: 'dayCount',
-				key: 'dayCount',
-			},
-			{
-				title: '金额（元）',
-				dataIndex: 'totalMoney',
-				key: 'totalMoney',
-			},
-		],
-		gouvyColumns:[
-			{
-				title:'费用名称',
-				dataIndex: 'feeName',
-				key: 'feeName',
-			},
-			{
-				title:'团队游客人数',
-				dataIndex: 'touristNum',
-				key: 'touristNum',
 
-			},
-			{
-				title:'应缴人数',
-				dataIndex: 'payableNum',
-				key: 'payableNum',
-			},
-			{
-				title:'应缴总金额',
-				dataIndex: 'payablePrice',
-				key: 'payablePrice',
-			},
-			{
-				title:'是否发起过减免申请',
-				dataIndex: 'isInitiateReductionName',
-				key: 'isInitiateReductionName',
-			},
-			{
-				title:'减免申请是否通过',
-				dataIndex: 'isReductionPassedName',
-				key: 'isReductionPassedName',
-			},
-			{
-				title:'出票状态',
-				dataIndex: 'issueStatusName',
-				key: 'issueStatusName',
-			},
-			{
-				title: '操作',
-				key: 'action',
-				fixed: 'right',
-			},
-		],
 		ticketingColumns:[
 			{
 				title:'购买状态',
@@ -339,7 +247,6 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				editId[key] = oid
 			}
 			state[popup] = true;
-			
 		},
 		show(key: string, oid?: any) {
 			showId[key] = ''
@@ -382,16 +289,16 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				icon: createVNode(CheckOutlined),
 				content: createVNode('div', { style: 'color: #333;' }, 
 				 `您即将提交${row.startDate}日入住 “${row.hotelName}” 的订单，
-				 		行程人数（${travelStore.touristList.length}人），
+				 		行程人数（${travelStore.hotelList.length}人），
 						${str.join('，')}，订单金额（${row.orderFee}元）。`),
 				onOk() {
 					const formData = new FormData();
 					formData.append('oid', row.oid)
 					
-					api.travelManagement.reserveHotel(formData).then((res:any) => {
-						travelStore.setHotelsStatus(row.oid)
-						message.success('预定成功')
-					})
+					// api.travelManagement.reserveHotel(formData).then((res:any) => {
+					// 	travelStore.setHotelsStatus(row.oid)
+					// 	message.success('预定成功')
+					// })
 				},
 				onCancel() {
 					console.log('Cancel');
@@ -400,24 +307,29 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			});
 		},
 	};
-	const rowRadioSelection = {
+	const install =()=>{
+		console.log(travelStore.ticketsList,'123456');
+		
+	}
+	install()
+	// const rowRadioSelection = {
 
-		type: 'radio',
+	// 	type: 'radio',
 		
-		columnTitle:"选择",
+	// 	columnTitle:"选择",
 		
-		onChange: (selectedRowKeys: any, selectedRows: any) => {
+	// 	onChange: (selectedRowKeys: any, selectedRows: any) => {
 			
-			console.log(selectedRowKeys, selectedRows)
-			travelStore.curentProduct = [selectedRows] as any
-		},
-		selectedRowKeys: [travelStore.curentProduct[0].oid]
+	// 		console.log(selectedRowKeys, selectedRows)
+	// 		travelStore.curentProduct = [selectedRows] as any
+	// 	},
+	// 	// selectedRowKeys: [travelStore.curentProduct[0].oid]
 	
-	}
-	if(travelStore.reserveStatus)
-	{
-		travelStore.getManagementExpenses(route.query.id)
-	}
+	// }
+	// if(travelStore.reserveStatus)
+	// {
+	// 	travelStore.getManagementExpenses(route.query.id)
+	// }
 	return {
 		...toRefs(state),
 		...methods,
@@ -425,6 +337,5 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		showId,
 		gouvyId,
 		travelStore,
-		rowRadioSelection
 	};
 }
