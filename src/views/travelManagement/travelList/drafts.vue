@@ -23,8 +23,9 @@
         <template v-if="column.key === 'action'">
           <div class="action-btns">
             <a @click="goToPath(record)">编辑</a>
-            <!-- <a>邀请地接社编辑</a> -->
+            <a>邀请地接社编辑</a>
             <a @click="sendGroup(record.oid)">发团</a>
+			<a>删除</a>
           </div>
         </template>
 			</template>
@@ -80,14 +81,19 @@
 				key: 'subTravelName',
 			},
 			{
+				title: '填报模式',
+				dataIndex: 'groupTypeName',
+				key: 'groupTypeName',
+			},
+			{
 				title: '行程时间',
 				dataIndex: 'time',
 				key: 'time',
 			},
 			{
 				title: '团队类型',
-				dataIndex: 'groupTypeStr',
-				key: 'groupTypeStr',
+				dataIndex: 'teamTypeName',
+				key: 'teamTypeName',
 			},
 			{
 				title: '带队导游',
@@ -100,9 +106,15 @@
 				key: 'touristCount',
 			},
 			{
+				title: '草稿编辑状态',
+				dataIndex: 'touristCount1',
+				key: 'touristCount1',
+			},
+			{
 				title: '操作',
 				fixed: 'right',
 				key: 'action',
+				width: 250
 			}
 		]
 	})

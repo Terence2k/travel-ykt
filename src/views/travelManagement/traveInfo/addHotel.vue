@@ -225,9 +225,13 @@ const handleMoeny = (i: number, e: string) => {
 }
 
 const handleChange = async (id: number, option: any) => {
-	formState.honestyGuidePrice = option.price
+	formState.honestyGuidePrice = option.price;
 	formState.hotelStarCode = option.name;
 	hotelData.hotel = await api.getHotelInfoByRated(id);
+	for (let i = 0; i < formState.roomTypeList.length; i++) {
+		formState.roomTypeList[i].orderAmount = honestyGuidePrice.value + 
+		parseFloat(formState.roomTypeList[i].unitPrice);
+	}
 
 };
 

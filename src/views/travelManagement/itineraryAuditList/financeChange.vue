@@ -10,7 +10,7 @@
 
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
-				<a @click="auditStatus(record)" v-if="record.auditInfo?.length">去审核</a>
+				<a @click="auditStatus(record)">去审核</a>
 			</div>
 		</template>
 				</template>

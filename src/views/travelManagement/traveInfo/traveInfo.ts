@@ -348,6 +348,16 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			}
 			state[key] = true;
 		},
+		async delTicket(record: any, index: number) {
+			record.oid && await api.travelManagement.deleteTicket([record.oid]);
+			state.ticketData.splice(index, 1);
+			message.success('删除成功');
+		},
+		async delHotel(record: any, index: number) {
+			record.oid && await api.travelManagement.deleteHotel([record.oid]);
+			state.holteDate.splice(index, 1);
+			message.success('删除成功');
+		},
 		choice(data :any)
 		{
 			state[data.selectPersonnelPop]=true
@@ -411,7 +421,8 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			console.log(selectedRowKeys, selectedRows)
 			travelStore.curentProduct = [selectedRows] as any
 		},
-		selectedRowKeys: [travelStore.curentProduct[0].oid]
+		
+		selectedRowKeys: [travelStore.curentProduct[0]?.oid]
 	
 	}
 	if(travelStore.reserveStatus)

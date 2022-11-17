@@ -1,16 +1,18 @@
 <template>
 	<div class="clearfix">
 		<a-upload
-			:maxCount="1"
+			:maxCount="maxCount"
 			v-model:file-list="fileList"
-			action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
 			list-type="picture-card"
 			:beforeUpload="beforeUpload"
-			:uploadFile="uploadFile"
+      :customRequest="uploadFile"
 			accept=".jpg,.png"
 			@preview="handlePreview"
+      @remove="removeImg"
 		>
-			<div style="margin-top: 8px">上传图片</div>
+			<div style="margin-top: 8px">
+        上传图片
+      </div>
 		</a-upload>
 
 		<a-modal :visible="previewVisible" title="预览图片" :footer="null" @cancel="handleCancel">
@@ -23,6 +25,21 @@ import { PlusOutlined } from '@ant-design/icons-vue';
 import { defineComponent, ref } from 'vue';
 import type { UploadProps } from 'ant-design-vue';
 import { message } from 'ant-design-vue';
+import awsUploadFile from '@/utils/awsUpload';
+import { getUserInfo } from '@/utils/util';
+
+const props = defineProps({
+	modelValue: {
+		type: String,
+	},
+	maxCount: {
+    type: Number,
+    default: 99
+  },
+});
+const emit = defineEmits(['update:modelValue']);
+const userInfo = getUserInfo();
+
 const getBase64 = (file: File) => {
 	return new Promise((resolve, reject) => {
 		const reader = new FileReader();
@@ -44,25 +61,36 @@ const beforeUpload = (file: any) => {
 };
 
 // 上传文件
-const uploadFile = async (event: any) => {
-	console.log('shanghcuan ', event);
-
-	const file = new FormData();
-	file.append('file', event.file);
-	// const { path } = await api.resource.uploadFile(file);
-	// state.ruleForm.businessLicense = path;
+const uploadFile = async (options: any) => {
+    console.log('options:', options)
+    try {
+      const { files } = await awsUploadFile({
+        files: [options.file],
+        onProgress: options.onProgress,
+        businessType: userInfo.sysCompany.businessType
+      });
+      console.log('files', files);
+      options.onSuccess(
+        { success: true, msg: '上传成功', data: { filePath: files[0] } },
+        { name: files[0], url: files[0] },
+        files
+      );
+      let tempData = fileList.value?.map((item: any) => {
+        if (item.url) {
+          return item.url;
+        } else {
+          return item.response.data.filePath;
+        }
+      })
+    return emit('update:modelValue', tempData?.join(','));
+    } catch (e) {
+      console.log(e);
+      options.onError(e);
+    }
 };
 const previewVisible = ref(false);
 const previewImage = ref('');
-
-const fileList = ref<UploadProps['fileList']>([
-	{
-		uid: '-1',
-		name: 'image.png',
-		status: 'done',
-		url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-	},
-]);
+const fileList = ref<UploadProps['fileList']>([]);
 //关闭预览
 const handleCancel = () => {
 	previewVisible.value = false;
@@ -74,6 +102,32 @@ const handlePreview = async (file: UploadProps['fileList'][number]) => {
 	previewImage.value = file.url || file.preview;
 	previewVisible.value = true;
 };
+const removeImg = (file: any) => {
+  setTimeout(() => {
+    emit('update:modelValue', fileList.value?.map((item: any) => item.url).join(','));
+  }, 0);
+  
+}
+
+watch(
+	() => props.modelValue,
+	async (nVal) => {
+    console.log('modelValue:', nVal);
+    if (nVal) {
+      fileList.value = nVal.split(',').map((item: any, index: any) => {
+        return {
+          uid: index.toString(),
+          name: item,
+          status: 'done',
+          url: item,
+        }
+      })
+    }
+	}
+);
+onMounted(() => {
+    console.log('modelValue:', props.modelValue);
+})
 </script>
 <style>
 /* you can make up upload button and sample style by using stylesheets */

@@ -309,12 +309,17 @@ const findByIdTeamType = async () => {
 						pageSize: 99999,
 						status: 1
 					});
-					allFeesProducts = res.content;
+					allFeesProducts = res.content.map((it: any) => {
+						it.isDaily = it.confirmDailyCharge ? true : false;
+						it.productName = it.comprehensiveFeeProductName;
+						return it;
+					});
 				} else {
 					const result = await api.travelManagement.findProductInfo(res.productVos[i].productId)
 					result.peopleCount = travelStore.touristList.length;
 					result.unPrice = result.feeNumber;
-					result.isDay = true;
+					result.isDaily = result.confirmDailyCharge ? true : false;
+					result.productName = result.comprehensiveFeeProductName;
 					result.dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day')
 					result.totalMoney = getAmount(
 						result.confirmDailyCharge,
@@ -332,6 +337,8 @@ const findByIdTeamType = async () => {
 		}
 		if (allFeesProducts.length === 1) {
 			travelStore.curentProduct = cloneDeep(allFeesProducts);
+		} else if (allFeesProducts.length === 0) {
+			travelStore.curentProduct = [];
 		}
 		
 		travelStore.setCompositeProducts(allFeesProducts);

@@ -8,9 +8,16 @@
 			:wrapper-col="{ span: 16, offset: 1 }"
 			placeholder="请选择分账单位"
 		>
+			<a-form-item label="分账名称" name="splitName">
+				<a-input v-model:value="formValidate.splitName" placeholder="请输入分账名称" />
+			</a-form-item>
 			<a-form-item label="分账单位" name="companyType">
-				<a-select ref="select" v-model:value="formValidate.companyType" style="width: 100%"
-					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.codeValue, label: item.name }))">
+				<a-select
+					ref="select"
+					v-model:value="formValidate.companyType"
+					style="width: 100%"
+					:options="generaRulesOptions.prepaidCompanyList.map((item) => ({ value: item.codeValue, label: item.name }))"
+				>
 				</a-select>
 			</a-form-item>
 			<a-form-item label="扣款模式">
@@ -75,7 +82,7 @@ const props = defineProps({
 	methods: Object,
 });
 const { modelValue } = toRefs(props);
-const state: UnwrapRef<any> = reactive({
+const state = reactive({
 	chargeModelList: [
 		{ value: 1, name: '百分比' },
 		{ value: 2, name: '价格' },
@@ -88,6 +95,7 @@ const options = reactive({
 const formValidate: Ref<Record<string, any>> = ref({});
 
 const rules: any = {
+	splitName: [{ required: true, trigger: 'blur', message: '请输入分账名称' }],
 	companyType: [{ required: true, trigger: 'blur', message: '请输入分账单位' }],
 	level: [{ required: true, validator: isIntegerNotMust, trigger: 'blur' }],
 	priority: [{ required: true, validator: isIntegerNotMust, trigger: 'blur' }],

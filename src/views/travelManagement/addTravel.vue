@@ -1,6 +1,6 @@
 <template>
 	<div class="trave-contaner">
-		<a-tabs v-model:activeKey="activeKey" @change="changeTab">
+		<a-tabs v-model:activeKey="activeKey">
 			<a-tab-pane v-for="(item, index) in pages" :key="index" :tab="item.label">
 				<component @onSuccess="save" :onCheck="check" :is="item.name"></component>
 			</a-tab-pane>
@@ -8,7 +8,7 @@
 		<div class="footer d-flex justify-content-between" v-if="travelStore.teamStatus">
 			<div class="footer-btn">
 				<a-button type="primary" @click="() => { check = !check; sendTeam = false; isSaveBtn = true }">保存</a-button>
-				<a-button type="primary" @click="activeKey = activeKey + 1">下一步</a-button>
+				<a-button v-show="activeKey < pages.length - 1" type="primary" @click="activeKey = activeKey + 1">下一步</a-button>
 			</div>
 			<div class="submit-btn" @click="() => { check = !check; sendTeam = true; isSaveBtn = false }">提交发团</div>
 		</div>
@@ -106,8 +106,8 @@ const saveItinerary = (val: any) => {
 	const itineraryId =  route.query.id || traveListData.oid
 	let ajax = itineraryId ? api.travelManagement.editItinerary : api.travelManagement.saveItinerary;
 	// 综费产品 > 1
-	const productRes = travelStore.curentProduct.length
-	if (!productRes) {
+	const productRes = travelStore.compositeProducts.length > 1
+	if (productRes) {
 		return message.error('请选择一项综费产品')
 	}
 	return ajax({
@@ -198,19 +198,19 @@ const getTraveDetail = () => {
 				return it;
 			})
 			travelStore.setTrafficList(res.transportList);
-			res.waitBuyItem.waitBuyHotel = res.waitBuyItem.waitBuyHotel.map((it:any) => {
+			res.waitBuyItem.waitBuyHotel = res.waitBuyItem.waitBuyHotel ? res.waitBuyItem.waitBuyHotel.map((it:any) => {
 				it.hotelId = it.productId;
 				it.hotelName = it.productName
 				return it;
-			})
-			res.waitBuyItem.waitBuyTicket = res.waitBuyItem.waitBuyTicket.map((it:any) => {
+			}) : [];
+			res.waitBuyItem.waitBuyTicket = res.waitBuyItem.waitBuyTicket ? res.waitBuyItem.waitBuyTicket.map((it:any) => {
 				it.scenicId = it.productId;
 				it.scenicName = it.productName;
 				return it;
-			})
+			}) : [];
 			const hotel = [...res.waitBuyItem.waitBuyHotel, ...res.hotelList]
 			travelStore.hotels = hotel as any;
-			travelStore.curentProduct = res.productList;
+			// travelStore.curentProduct = res.productList;
 			travelStore.scenicTickets = [...res.waitBuyItem.waitBuyTicket, ...res.ticketList] as any;
 			travelStore.teamTime = [res.basic.startDate, res.basic.endDate]  as any
 			travelStore.setDisabled = (current: Dayjs): any => {
@@ -219,13 +219,12 @@ const getTraveDetail = () => {
 			}
 		});
 };
-const changeTab = (event: number) => {
-	sendTeam.value = false;
-	if (event === 4) {
+
+watch(activeKey, newVal => {
+	if (newVal === 4) {
 		const allFeesProducts =  travelStore.compositeProducts.map((it:any) => {
 			it.peopleCount = travelStore.touristList.length;
 			it.unPrice = it.feeNumber;
-			it.isDay = true;
 			it.dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day')
 			it.totalMoney = getAmount(
 				it.confirmDailyCharge,
@@ -238,7 +237,7 @@ const changeTab = (event: number) => {
 		isSaveBtn.value = false
 		check.value = !check.value;
 	}
-};
+})
 
 getTraveDetail();
 travelStore.getItineraryStatus();

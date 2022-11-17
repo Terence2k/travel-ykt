@@ -88,7 +88,7 @@ export default [
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
-						props: true
+						props: true,
 					},
 					{
 						path: 'modifyEnterpriseInfo/name/:name/addressDetail/:addressDetail/legalPerson/:legalPerson/managementRange/:managementRange/registeredCapital/:registeredCapital/establishTime/:establishTime/businessTerm/:businessTerm/contactName/:contactName/phone/:phone/accountType/:accountType/bankAccountName/:bankAccountName/accountAddress/:accountAddress/bankAccount/:bankAccount/businessLicenseUrl/:businessLicenseUrl/manageUrl/:manageUrl/oid/:oid',
@@ -137,7 +137,7 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
-				]
+				],
 			},
 			// storeManagement
 			{
@@ -222,7 +222,7 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
-				]
+				],
 			},
 			// tourGuideManage
 			{
@@ -324,9 +324,53 @@ export default [
 						activeMeun: 'take_group_list',
 						name: 'changetravel',
 						meta: {
-							title: '新增行程',
+							title: '行程变更',
 							// icon: 'liulanqi',
 							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'modify_o_product',
+						component: () => import('@/views/travelManagement/travelTakeGroupList/Modifyproduct/index.vue'),
+						activeMeun: 'take_group',
+						name: 'modify_o_product',
+						meta: {
+							title: '预定产品信息',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'modify_product_edit',
+						component: () => import('@/views/travelManagement/travelTakeGroupList/Modifyproduct/edit.vue'),
+						activeMeun: 'take_group',
+						name: 'modify_product_edit',
+						meta: {
+							title: '修改预定产品信息',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'addTourist',
+						component: () => import('@/views/travelManagement/travelTakeGroupList/addTourist/addTourist.vue'),
+						activeMeun: 'take_group_list',
+						name: 'addTourist',
+						meta: {
+							title: '添加游客',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'revoke',
+						component: () => import('@/views/travelManagement/travelTakeGroupList/revoke/revoke.vue'),
+						activeMeun: 'take_group_list',
+						name: 'revoke',
+						meta: {
+							title: '撤销并重提',
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},

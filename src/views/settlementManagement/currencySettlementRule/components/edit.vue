@@ -25,7 +25,7 @@
 					v-model:value="formState.productType"
 					placeholder="请选择结算产品"
 					allowClear
-					:options="generaRulesOptions.productTypeList.map((item) => ({ value: item.value, label: item.name }))"
+					:options="generaRulesOptions.currencyProductTypeList.map((item) => ({ value: item.value, label: item.name }))"
 				>
 				</a-select>
 			</a-form-item>
@@ -191,6 +191,11 @@ const formState: UnwrapRef<FormState> = reactive({
 });
 const columns = ref([
 	{
+		title: '分账名称',
+		dataIndex: 'splitName',
+		key: 'splitName',
+	},
+	{
 		title: '分账单位',
 		dataIndex: 'companyType',
 		key: 'companyType',
@@ -299,7 +304,11 @@ const editItem = (e: any, index: number) => {
 };
 const rulesSubmit = (e: any) => {
 	if (e.params.add) {
-		formState.splitList.push(e.form);
+		if (formState.splitList) {
+			formState.splitList.push(e.form);
+		} else {
+			formState.splitList = [e.form];
+		}
 	} else {
 		console.log(e);
 		console.log(e.params.index);

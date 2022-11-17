@@ -41,6 +41,15 @@ export const takeGroupListParams = {
 		isSend: false,
 	},
 };
+export const auditListParams = {
+	total: 0,
+	list: [],
+	params: {
+		pageNo: 1,
+		pageSize: 10,
+		status: 0,
+	},
+};
 export const useTravelStore = defineStore({
 	id: 'travel',
 	state: () => ({
@@ -109,7 +118,7 @@ export const useTravelStore = defineStore({
 		traveInfo: {},
 		attachmentList: [],
 		compositeProducts: [],
-		curentProduct: [{oid: ''}],
+		curentProduct: [] as any,
 		hotels: [],
 		scenicTickets: [],
 		gouvyList:[{
@@ -138,10 +147,10 @@ export const useTravelStore = defineStore({
 			waitRegiment: cloneDeep(traveListParams),
 		},
 		auditList: {
-			financeSendGroup: cloneDeep(traveListParams),
-			financeChange: cloneDeep(traveListParams),
-			administrativeSendGroup: cloneDeep(traveListParams),
-			administrativeChange: cloneDeep(traveListParams),
+			financeSendGroup: cloneDeep(auditListParams),
+			financeChange: cloneDeep(auditListParams),
+			administrativeSendGroup: cloneDeep(auditListParams),
+			administrativeChange: cloneDeep(auditListParams),
 		},
 		takeGroupList: {
 			drafts: cloneDeep(takeGroupListParams),
@@ -348,7 +357,6 @@ export const useTravelStore = defineStore({
 		async getManagementExpenses(id:any) {
 			const res = await api.getManagementExpenses(2);
 			this.gouvyList=res
-		},
-
+		}
 	},
 });

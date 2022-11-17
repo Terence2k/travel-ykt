@@ -16,7 +16,8 @@
 
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
-				<a @click="goToPath(record)">查看</a>
+				<a @click="goToPath(record)">行程详情</a>
+				<a>查看日志</a>
 			</div>
 		</template>
 				</template>
@@ -66,34 +67,35 @@
 					key: 'routeName',
 			},
 			{
-					title: '组团社',
-					dataIndex: 'travelName',
-					key: 'travelName',
+					title: '团队类型',
+					dataIndex: 'teamTypeName',
+					key: 'teamTypeName',
 			},
+			// {
+			// 		title: '组团社',
+			// 		dataIndex: 'travelName',
+			// 		key: 'travelName',
+			// },
 			{
 					title: '地接社',
 					dataIndex: 'subTravelName',
 					key: 'subTravelName',
 			},
-			{
-					title: '原定行程时间',
-					dataIndex: 'time',
-					key: 'time',
-			},
-			{
-					title: '团队类型',
-					dataIndex: 'groupTypeStr',
-					key: 'groupTypeStr',
-			},
+			// {
+			// 		title: '原定行程时间',
+			// 		dataIndex: 'time',
+			// 		key: 'time',
+			// },
+			
 			{
 					title: '团客人数',
 					dataIndex: 'touristCount',
 					key: 'touristCount',
 			},
 			{
-					title: '撤销时间',
-					dataIndex: 'touristCount',
-					key: 'touristCount',
+					title: '散团时间',
+					dataIndex: 'endDate',
+					key: 'endDate',
 			},
 			{
 					title: '操作',
@@ -118,13 +120,19 @@
 		console.log(record, selected, selectedRows);
 	}
 	const goToPath = (row: any) => {
-		router.push({
-			path: '/travel/travel_manage/add_travel',
-			query: {
-				id: row.oid,
-				itineraryNo: row.itineraryNo
-			}
-		})
+		// router.push({
+		// 	path: '/travel/travel_manage/add_travel',
+		// 	query: {
+		// 		id: row.oid,
+		// 		itineraryNo: row.itineraryNo
+		// 	}
+		// })
+		router.push({ 
+			path: '/travel/travel_manage/travel_detail', 
+			query: { 
+				oid: encodeURIComponent(row.oid) 
+			} 
+		});
 	}
 	onSearch()
 </script>

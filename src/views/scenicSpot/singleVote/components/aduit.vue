@@ -8,14 +8,12 @@
 						<a-col :span="19">
 							<a-form-item :name="['dateList', index, 'time']" :rules="formRules.time">
 								<a-range-picker
+									@change="(e) => getData(e, index)"
 									class="data-item"
 									v-model:value="formValidate.data.dateList[index].time"
-									format="YYYY-MM-DD HH:mm"
-									valueFormat="YYYY-MM-DD HH:mm"
-									:show-time="{
-										hideDisabledOptions: true,
-										defaultValue: [dayjs(' 00:00:00', 'HH:mm'), dayjs('23:59:59', 'HH:mm')],
-									}"
+									format="YYYY-MM-DD "
+									valueFormat="YYYY-MM-DD "
+									:disabled-Date="(e) => disabledDate(e, index)"
 								/>
 							</a-form-item>
 							<div class="btn-wrapper inner">
@@ -60,9 +58,10 @@
 <script lang="ts" setup>
 import BaseModal from '@/components/common/BaseModal.vue';
 import api from '@/api';
+import { message } from 'ant-design-vue';
 
 import dayjs, { Dayjs } from 'dayjs';
-
+import type { Rule } from 'ant-design-vue/es/form';
 const modelValue = ref(false);
 const route = useRouter();
 
@@ -86,7 +85,7 @@ const formValidate = reactive<formValidateType>({
 
 const formRef = ref();
 
-const formRules: any = {
+const formRules: Record<string, Rule[]> = {
 	time: [{ required: true, message: '请选择时间' }],
 	downReason: [{ required: true, message: '请填写' }],
 };
@@ -100,12 +99,130 @@ const props = defineProps({
 	// menuList: Array,
 });
 
+const bufferDateArr = ref<string[]>([]);
+/**
+ * 禁用日期设置
+ * 1. 获取前一天时间戳
+ * 2. 判别当前是否在已选日期list的中
+ */
+const disabledDate = (e: Dayjs) => {
+	// console.log(hadRange.value.length > 0);
+	let preDay = new Date(new Date().getTime() - 24 * 60 * 60 * 1000);
+
+	// Can not select days before today and today
+	if (hadRange.value.length > 0) {
+		// if (hadRange.value[index]?.length > 0) {
+		// 	bufferDateArr.value = hadRange.value[index];
+		// 	// hadRange.value[index] = [];
+		// }
+		//判断是否在范围里面
+		let isHad = isCurrentDate(e);
+		return new Date(shijianYMD(e)).getTime() < preDay.getTime() || isHad ? true : false;
+	} else {
+		return new Date(shijianYMD(e)).getTime() < preDay.getTime();
+	}
+};
+
+const shijianYMD = (timestamp: any) => {
+	const time = new Date(timestamp),
+		year = time.getFullYear(),
+		month = (time.getMonth() + 1).toString().padStart(2, '0'),
+		date = time.getDate().toString().padStart(2, '0');
+	return year + '-' + month + '-' + date;
+};
+
+const isCurrentDate = (day: Dayjs) => {
+	let now = shijianYMD(day),
+		res = hadRange.value?.some((arrRange: string[]) => {
+			return arrRange.includes(now);
+		});
+	return res;
+};
+/**
+ * 时间段去重
+ * 1.获取时间的差值（timestamp）
+ * 2.根据两个时间点生成一个具体时间段的list记录
+ * 3.新增根据index,把生成的数组放进list
+ * 4.编辑根据index,修改list里面的数据
+ */
+const hadRange = ref<any[][]>([]);
+
+const getData = (e: string[], index: number) => {
+	let rangeTime = getAllDateCN(new Date(e[0]), new Date(e[1]));
+	// console.log(e, 'getData', hadRange.value, rangeTime);
+
+	if (hadRange.value.length > 0) {
+		if (hadRange.value[index]?.length > 0) {
+			hadRange.value[index] = [];
+		}
+		//判断是否在范围里面
+		let isHad = isCurrentRange(rangeTime);
+
+		if (isHad) {
+			message.error('已经有重复的日期');
+			formValidate.data.dateList[index].time = [];
+		} else {
+			hadRange.value[index] = rangeTime;
+		}
+	} else {
+		// hadRange.value.push(...range);
+		hadRange.value[index] = rangeTime;
+	}
+};
+
+const getTwoTimeList = (beginTime: string, endTime: string) => {
+	let intervaltime = (new Date(endTime).getTime() - new Date(beginTime).getTime()) / 1000;
+	// console.log(intervaltime);
+
+	let timeList = [];
+
+	for (let i = 0; i < intervaltime + 1; i += 60) {
+		let time = new Date(beginTime).getTime() + i * 1000;
+
+		timeList.push(time);
+	}
+
+	return timeList.map(function (item, index, input) {
+		var date = new Date(item + 8 * 3600 * 1000);
+
+		return date.toJSON().substr(0, 19).replace('T', ' ').replace(/-/g, '-').slice(0, 16);
+	});
+};
+
+const isCurrentRange = (arr: string[]) => {
+	let res = false;
+
+	arr.some((item: string) => {
+		res = hadRange.value?.some((arrRange: string[]) => {
+			return arrRange.includes(item);
+		});
+
+		return res;
+	});
+	return res;
+};
+
+const getAllDateCN = (startTime: Date, endTime: Date) => {
+	const date_all = [];
+	let i = 0;
+	while (endTime.getTime() - startTime.getTime() >= 0) {
+		const year = startTime.getFullYear();
+		const month = (startTime.getMonth() + 1).toString().padStart(2, '0');
+		const day = startTime.getDate().toString().padStart(2, '0');
+		date_all[i] = year + '-' + month + '-' + day;
+		startTime.setDate(startTime.getDate() + 1);
+		i += 1;
+	}
+	return date_all;
+};
+
 const addTimeList = () => {
 	formValidate.data.dateList.push({ time: [] });
 };
 
 const del = (index: number) => {
 	formValidate.data.dateList.splice(index, 1);
+	hadRange.value.splice(index, 1);
 };
 const emits = defineEmits(['done']);
 const apply = async () => {
@@ -114,8 +231,8 @@ const apply = async () => {
 		.then(async (res: any) => {
 			let params = formValidate.data;
 			params.dateList.map((i: any) => {
-				i.startDateTime = i.time[0];
-				i.endDateTime = i.time[1];
+				i.startDateTime = i.time[0] + ' 00:01';
+				i.endDateTime = i.time[1] + ' 00:01';
 				delete i.time;
 				return i;
 			});
@@ -146,14 +263,21 @@ const open = (id: any, status: string | undefined, saerch: string) => {
 	// 	getDeatil(id);
 	// }
 };
+const setRange = (start: string, end: string, index: number) => {
+	let range = getAllDateCN(new Date(start), new Date(end));
+	hadRange.value[index] = range;
+};
 
 const getDeatil = async (id: number) => {
 	let res = await api.scenicTicketDetail(id);
 	console.log(res, 'getDeatils');
 	formValidate.data = res;
 	if (formValidate.data.dateList.length > 0) {
-		formValidate.data.dateList = formValidate.data.dateList.map((item) => {
-			return { ...item, time: [item.startDateTime, item.endDateTime] };
+		formValidate.data.dateList = formValidate.data.dateList.map((item, index) => {
+			let start = item.startDateTime.slice(0, 10),
+				end = item.endDateTime.slice(0, 10);
+			setRange(start, end, index);
+			return { ...item, time: [start, end] };
 			// dayjs(' 00:00:00', 'HH:mm')
 		});
 	} else {
@@ -166,6 +290,7 @@ const cancel = () => {
 	formRef.value.resetFields();
 	formValidate.data.dateList = [{ startDateTime: '', endDateTime: '', time: [] }];
 	console.log(modelValue.value, 'modelValue');
+	hadRange.value = [];
 };
 
 defineExpose({

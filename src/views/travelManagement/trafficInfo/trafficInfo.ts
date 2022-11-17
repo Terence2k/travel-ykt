@@ -5,6 +5,8 @@ import { defineProps } from 'vue';
 import type { UnwrapRef } from 'vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import { CODEVALUE } from '@/constant'
+import api from '@/api';
+import { message } from 'ant-design-vue';
 interface DataItem {
 	transportationType: string;
 	driver: string,
@@ -19,7 +21,7 @@ interface DataItem {
 }
 
 const rules = {
-	transportationType: [{ required: true, message: '请选择交通类型' }],
+	transportationType: [{ required: true, message: '请输入交通类型' }],
 	licencePlateNumber: [{ required: true, message: '请输入车牌号' }],
 	licencePlateColor: [{ required: true, message: '请选择车牌颜色' }],
 	companyName: [{ required: true, message: '请输入车企名称' }],
@@ -39,8 +41,8 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 		formRef: null,
 		editableData: {},
 		startRef: {},
-		selectKey: ['transportationType', 'licencePlateColor'],
-		inputKey: ['licencePlateNumber', 'companyName', 'approvedLoad', 'driver', 'driverPhone'], 
+		selectKey: ['licencePlateColor'],
+		inputKey: ['transportationType', 'licencePlateNumber', 'companyName', 'approvedLoad', 'driver', 'driverPhone'], 
 		rulesRef: {
 			1: {
 				licencePlateNumber: [{ required: true, message: '请选择行程类型' }]
@@ -128,8 +130,12 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 			)
 			state.editableData[key].edit = true
 		},
-		del(key: string) {
-			state.tableData.splice(key, 1)
+		async del(record: any, index: number) {
+			// let key = record.key ? record.key : record.oid;
+			record.oid && await api.travelManagement.deleteTraffic([record.oid]);
+			state.tableData.splice(index, 1);
+			message.success('删除成功');
+			// 
 		},
 		save: async (key?: string) => {
 			await methods.addRules(key)
