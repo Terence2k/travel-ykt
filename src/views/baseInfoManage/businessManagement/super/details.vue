@@ -14,7 +14,7 @@
           <tr class="row" v-for="(value, key) in detailsArrList" :key="key">
             <td class="key">{{ keyNameList[key] }}</td>
 
-            <td class="value" v-if="['manageUrl', 'businessLicenseUrl'].includes(key) && value">
+            <td class="value" v-if="['manageUrl', 'businessLicenseUrl', 'legalPersonUrl'].includes(key) && value">
               <a-image width="200px" :src="value" />
             </td>
             <td class="value" v-else-if="key === 'regionCode'">
@@ -38,9 +38,14 @@ import api from '@/api';
 import { string } from 'vue-types';
 const router = useRouter();
 const route = useRoute();
+const formPath = ref('apply')
+router.beforeEach((to, from, next) => {
+  formPath.value = from.name
+  next()
+})
 const back = () => {
   router.push({
-    name: 'apply'
+    name: formPath.value
   })
 }
 type queryParamsType = {

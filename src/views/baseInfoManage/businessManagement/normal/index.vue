@@ -135,7 +135,8 @@
         <tr class="row" v-for="(item, index) in changeKeys" :key="index">
           <td class="key">{{ keyNameList[item] }}</td>
 
-          <td class="value" v-if="['manageUrl', 'businessLicenseUrl'].includes(item) && oldArrList[item]">
+          <td class="value"
+            v-if="['manageUrl', 'businessLicenseUrl', 'legalPersonUrl'].includes(item) && oldArrList[item]">
             <a-image width="200px" :src="oldArrList[item]" />
           </td>
           <td class="value" v-else-if="item === 'regionCode'">
@@ -145,7 +146,8 @@
           </td>
           <td class="value" v-else>{{ getComputedVal(item, oldArrList[item]) }}</td>
 
-          <td class="value" v-if="['manageUrl', 'businessLicenseUrl'].includes(item) && newArrList[item]">
+          <td class="value"
+            v-if="['manageUrl', 'businessLicenseUrl', 'legalPersonUrl'].includes(item) && newArrList[item]">
             <a-image width="200px" :src="newArrList[item]" />
           </td>
           <td class="value" v-else-if="item === 'regionCode'">
