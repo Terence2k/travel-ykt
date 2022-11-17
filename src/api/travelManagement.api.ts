@@ -315,7 +315,7 @@ export const travelManagement = {
               'Content-Type': 'application/x-www-form-urlencoded',
             },
             method: 'get',
-            showLoading: true
+            showLoading: false
         });
     },
      // 变更详情

@@ -47,9 +47,9 @@
 				</a-select>
 			</a-form-item>
 
-			<a-form-item label="行程人数" name="travelName">
+			<!-- <a-form-item label="行程人数" name="travelName">
 				<span>{{travelStore.touristList.length}}人</span>
-			</a-form-item>
+			</a-form-item> -->
 
             <a-form-item label="门票价格" name="travelName">
 				<span>{{ticketPrice}}元</span>

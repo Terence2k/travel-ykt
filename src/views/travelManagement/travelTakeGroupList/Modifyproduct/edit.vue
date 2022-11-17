@@ -11,15 +11,14 @@
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a v-if="travelStore.reserveStatus && record.orderStatus == 0" class="item" @click="reserveHotel(record)">预定</a>
-							<a v-if="travelStore.teamStatus" class="item" @click="add(record.oid ? 'addHotelPop' : 'productRow', 'addHotelPop', record.oid || record)">编辑</a>
-							<a v-if="travelStore.teamStatus" class="item" @click="del(index)">删除</a>
+							<a class="item" @click="add(record.oid ? 'addHotelPop' : 'productRow', 'addHotelPop', record.oid || record)">编辑</a>
+							<a class="item" @click="del(index)">删除</a>
 						</div>
 					</template>
 				</template>
 			</CommonTable>
 			<div class="footer-btn">
-				<a-button type="primary" @click="add('addHotelPop', 'addHotelPop')" v-if="travelStore.teamStatus">添加</a-button>
+				<a-button type="primary" @click="add('addHotelPop', 'addHotelPop')">添加</a-button>
 			</div>
 		</div>
 		<div class="item-container">
@@ -34,15 +33,14 @@
 
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a v-if="travelStore.reserveStatus && record.orderStatus == 0" @click="add('reserveTicketPop', record.oid)">预定</a>
-							<a v-if="travelStore.teamStatus" class="item" @click="add(record.oid ? 'addTicketPop' : 'productRow', 'addTicketPop', record.oid || record)">编辑</a>
-							<a v-if="travelStore.teamStatus" class="item">删除</a>
+							<a class="item" @click="add(record.oid ? 'addTicketPop' : 'productRow', 'addTicketPop', record.oid || record)">编辑</a>
+							<a class="item">删除</a>
 						</div>
 					</template>
 				</template>
 			</CommonTable>
 			<div class="footer-btn">
-				<a-button type="primary" @click="add('addTicketPop', 'addTicketPop')" v-if="travelStore.teamStatus">添加</a-button>
+				<a-button type="primary" @click="add('addTicketPop', 'addTicketPop')">添加</a-button>
 			</div>
 		</div>
 		<div class="footer"><a-button type="primary">提交审核</a-button></div>

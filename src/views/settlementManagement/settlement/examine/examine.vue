@@ -1,6 +1,12 @@
 <template>
 	<div>
-		<CommonTable :dataSource="state.tableData.data" :scroll="{ x: '100%',y: '100%' }" rowKey="itineraryNo" :columns="columns" :row-selection="rowSelection">
+		<CommonTable
+			:dataSource="state.tableData.data"
+			:scroll="{ x: '100%', y: '100%' }"
+			rowKey="itineraryNo"
+			:columns="columns"
+			:row-selection="rowSelection"
+		>
 			<template #button>
 				<div class="btn">
 					<a-button type="primary" @click="examine('all', null)">审核通过</a-button>
@@ -15,7 +21,7 @@
 				</template>
 				<!-- 行程费用 单位转成元-->
 				<template v-if="column.key === 'totalFee'">
-					{{ (record.totalFee / 100) > 0 ? (record.totalFee / 100).toFixed(2) : 0}}
+					{{ record.totalFee / 100 > 0 ? (record.totalFee / 100).toFixed(2) : 0 }}
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
@@ -47,8 +53,8 @@ import DelModal from '@/components/common/DelModal.vue';
 
 const props = defineProps({
 	params: Object,
-	status: Number
-})
+	status: Number,
+});
 const router = useRouter();
 const columns = [
 	{
@@ -107,7 +113,7 @@ const modalData = ref({
 	show: false,
 	params: {},
 	data: {}, // 传参对象
-	type: ''
+	type: '',
 });
 const tipSubmit = async () => {
 	// 重新结算
@@ -115,15 +121,15 @@ const tipSubmit = async () => {
 		api.settlementUpdate(modalData.value.data).then((res: any) => {
 			message.success('操作成功');
 			onSearch();
-		})
+		});
 		tipCancel();
 	}
-	// 申请转账
+	// 审核
 	if (modalData.value.type == 'examine') {
 		api.settlementUpdate(modalData.value.data).then((res: any) => {
 			message.success('操作成功');
 			onSearch();
-		})
+		});
 		tipCancel();
 	}
 };
@@ -146,7 +152,7 @@ const state = reactive({
 			subTravelId: null,
 			startDate: null,
 			endDate: null,
-			status: null, 
+			status: null,
 		},
 	},
 	selectedRowKeys: [],
@@ -156,10 +162,10 @@ const state = reactive({
 const rowSelection = computed(() => {
 	return {
 		onChange: (selectedRowKeys: [], selectedRows: any) => {
-		state.selectedRowKeys = selectedRowKeys;
-	},
-	}
-})
+			state.selectedRowKeys = selectedRowKeys;
+		},
+	};
+});
 
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
@@ -176,21 +182,21 @@ const pageSideChange = (current: number, size: number) => {
 // 数据处理
 const dealData = (params: [any]) => {
 	params.map((i: any) => {
-		i.timeText = i.startDate + ' - ' + i.endDate
+		i.timeText = i.startDate + ' - ' + i.endDate;
 		return i;
 	});
 	return params;
 };
 
-const onSearch = async() => {
+const onSearch = async () => {
 	// 处理父组件传递筛选条件
-	state.tableData.param.status = props?.status
-	state.tableData.param.teamTypeId = props.params?.teamTypeId
-	state.tableData.param.itineraryNo = props.params?.itineraryNo
-	state.tableData.param.travelId = props.params?.travelId
-	state.tableData.param.subTravelId = props.params?.subTravelId
-	state.tableData.param.startDate = props.params?.time ? props.params?.time[0] :  null
-	state.tableData.param.endDate = props.params?.time ? props.params?.time[1] : null
+	state.tableData.param.status = props?.status;
+	state.tableData.param.teamTypeId = props.params?.teamTypeId;
+	state.tableData.param.itineraryNo = props.params?.itineraryNo;
+	state.tableData.param.travelId = props.params?.travelId;
+	state.tableData.param.subTravelId = props.params?.subTravelId;
+	state.tableData.param.startDate = props.params?.time ? props.params?.time[0] : null;
+	state.tableData.param.endDate = props.params?.time ? props.params?.time[1] : null;
 	state.tableData.loading = true;
 	let res = await api.getItinerarySettlement(state.tableData.param);
 	const { total, content } = res;
@@ -201,41 +207,45 @@ const onSearch = async() => {
 	console.log(state.tableData.param);
 };
 // 向父组件暴露方法
-defineExpose({ onSearch })
+defineExpose({ onSearch });
 // 重新结算
-const reclosing = ((record: any) => {
-	modalData.value.params = { title: '重新结算', content: '你即将对行程单重新结算，是否确定执行？' }
-	modalData.value.type = 'reclosing'
+const reclosing = (record: any) => {
+	modalData.value.params = { title: '重新结算', content: '你即将对行程单重新结算，是否确定执行？' };
+	modalData.value.type = 'reclosing';
 	modalData.value.data = {
-		'status': 14,
-		'itineraryNoList' : [record.itineraryNo]
-	}
-	modalData.value.show = true
-})
+		status: 14,
+		itineraryNoList: [record.itineraryNo],
+	};
+	modalData.value.show = true;
+};
 // 审核通过
 const examine = (type: string, record: any) => {
 	// type:one单项  all批量
 	if (type == 'one') {
 		// 单项跳转审核详情页
-		router.push({ path: '/settlementManagement/settlement/examineInfo', query: { itineraryNo: encodeURIComponent(record.itineraryNo) } });
+		router.push({
+			path: '/settlementManagement/settlement/examineInfo',
+			query: { itineraryNo: encodeURIComponent(record.itineraryNo), showExamineBtn: 'true' },
+		});
 	} else {
 		// 判断是否有选择项
 		if (state.selectedRowKeys.length == 0) {
 			message.warn('请先选择审核项');
 			return;
 		}
-		modalData.value.params = { title: '审核通过', content: '是否确定所选数据审核通过' }
-		modalData.value.type = 'examine'
+		modalData.value.params = { title: '审核通过', content: '是否确定所选数据审核通过' };
+		modalData.value.type = 'examine';
 		modalData.value.data = {
-			'status': 15,
-			'itineraryNoList' : state.selectedRowKeys
-		}
-		modalData.value.show = true
+			status: 15,
+			itineraryNoList: state.selectedRowKeys,
+		};
+		modalData.value.show = true;
 	}
 };
 // 查看详情
 const toInfo = (record: any) => {
-	router.push({ path: '/travel/travel_manage/travel_detail', query: { oid: encodeURIComponent(record.oid) } });
+	// router.push({ path: '/travel/travel_manage/travel_detail', query: { oid: encodeURIComponent(record.oid) } });
+	router.push({ path: '/settlementManagement/settlement/examineInfo', query: { itineraryNo: encodeURIComponent(record.itineraryNo) } });
 };
 onMounted(() => {
 	onSearch();
