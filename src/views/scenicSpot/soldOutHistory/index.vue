@@ -3,7 +3,7 @@
 		<div>
 			<CommonSearch>
 				<search-item label="输入搜索">
-					<a-input v-model:value="state.tableData.param.name" placeholder="请输入" />
+					<a-input v-model:value="state.tableData.param.ticketName" placeholder="请输入" />
 				</search-item>
 				<search-item label="门票分类">
 					<a-select ref="select" style="width: 200px" placeholder="请选择门票分类" v-model:value="state.tableData.param.auditStatus">
@@ -14,6 +14,7 @@
 				</search-item>
 
 				<template #button>
+					<a-button @click="reset" style="margin-right: 30px">重置</a-button>
 					<a-button @click="search">查询</a-button>
 				</template>
 			</CommonSearch>
@@ -162,6 +163,11 @@ const open = () => {
 const cancel = () => {
 	modelValue.value = false;
 };
+const reset = () => {
+	state.tableData.param.ticketName = '';
+	state.tableData.param.auditStatus = null;
+	search();
+};
 const onSearch = () => {
 	console.log('cancle');
 };
@@ -175,7 +181,7 @@ const state = reactive({
 			pageSize: 10,
 			scenicLevel: null, //景区等级(字典序号)
 			auditStatus: null, //审核状态（-1未提交  0待审核  1审核通过  2审核未通过）
-			name: '',
+			ticketName: '',
 		},
 	},
 });
@@ -240,7 +246,7 @@ const dealData = (params: [any]) => {
 const isSearch = () => {
 	console.log(router.query);
 	route.push('/scenic-spot/sold-out-history');
-	state.tableData.param.name = router.query.name;
+	state.tableData.param.ticketName = router.query.name;
 	initList();
 };
 onMounted(() => {
