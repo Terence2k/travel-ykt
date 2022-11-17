@@ -142,6 +142,11 @@ const formState: UnwrapRef<FormState> = reactive({
 });
 const columns = ref([
 	{
+		title: '分账名称',
+		dataIndex: 'splitName',
+		key: 'splitName',
+	},
+	{
 		title: '分账单位',
 		dataIndex: 'companyType',
 		key: 'companyType',
@@ -173,7 +178,7 @@ const init = async () => {
 	// await getTeamType();
 	await productRuleDetail(id);
 	const { productId, productType, productSonType } = route.currentRoute.value.query;
-	if (query.productType === 1) {
+	if (Number(query.productType) === 1) {
 		let productRuleList = await api.productRuleList({
 			productId,
 			productType,
@@ -213,14 +218,14 @@ const edit = () => {
 	let querySearch = {};
 	if (Number(query.productType) === 1) {
 		querySearch = {
-			oid: encodeURIComponent(oid.value),
+			oid: encodeURIComponent(query.oid),
 			productId: encodeURIComponent(query.productId),
 			productType: encodeURIComponent(query.productType),
 			productSonType: encodeURIComponent(query.productSonType),
 		};
 	} else {
 		querySearch = {
-			oid: encodeURIComponent(oid.value),
+			oid: encodeURIComponent(query.oid),
 			productId: encodeURIComponent(query.productId),
 			productType: encodeURIComponent(query.productType),
 		};

@@ -76,7 +76,7 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import dayjs, { Dayjs } from 'dayjs';
 import { Form } from 'ant-design-vue';
 import Calendar from '@/components/common/calendarDouble.vue';
-import { shijianYMD, getAllDateCN, nextYear } from '@/utils/formatTIme';
+import { shijianYMD, getAllDateCN, nextYear } from '@/utils/formatTimes';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 const route = useRouter();
