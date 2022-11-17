@@ -55,20 +55,16 @@ const newAwsObj = () => {
 
 const awsUploadFile = (options: any) => {
   return new Promise<{
-    files: { url: string; name: string; fileName: string; size: number }[];
+    files: string[];
   }>(async (resolve, reject) => {
+    // businessType业态
     const { files, onProgress, businessType } = options;
     const { aws, bucket, filePath, prefix } = await newAwsObj();
     if (!aws) {
       handleUploadErr(reject, '生成 aws 实例失败');
     } else {
       try {
-        const downloadFiles: {
-          url: string;
-          name: string;
-          fileName: string;
-          size: number;
-        }[] = [];
+        const downloadFiles:string[] = [];
         const filesLength = files.length - 1;
         files.forEach((item: any, index: number) => {
           console.log(item);
@@ -83,13 +79,8 @@ const awsUploadFile = (options: any) => {
             console.log(data);
             if (data) {
               console.log(err);
-              const fileUrl = `http://${filePath}/${bucket}/${item.name}`;
-              downloadFiles.push({
-                url: fileUrl,
-                name: filename,
-                fileName: item.name,
-                size: item.size
-              });
+              const fileUrl = `http://${filePath}/${bucket}${prefix}/${businessType.toLowerCase()}Pic/${item.name}`;
+              downloadFiles.push(fileUrl);
               if (filesLength === index) {
                 if (!downloadFiles.length) {
                   handleUploadErr(reject, 'aws 上传发生错误');

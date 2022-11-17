@@ -46,7 +46,7 @@
         </a-form-item>
         <a-form-item name="legalPersonUrl" label="法人身份证附件">
           <div class="flex">
-            <Upload ref="imgUploadRef" v-model:value="form.legalPersonUrl" :disabled="getStatus('legalPersonUrl')"/>
+            <Upload v-model="form.legalPersonUrl" :disabled="getStatus('legalPersonUrl')" :maxCount="1"/>
             <a-button type="primary" class="status-btn" @click="changeDisabledStatus('legalPersonUrl')" v-if="showChangeBtns('legalPersonUrl')">
               {{ getStatus('legalPersonUrl') ? '修改' : '确定' }}
             </a-button>
@@ -120,7 +120,7 @@
           </a-form-item>
           <a-form-item name="businessLicenseUrl" label="营业执照">
             <div class="flex">
-              <Upload ref="imgUploadRef" v-model="form.businessLicenseUrl" :disabled="getStatus('businessLicenseUrl')"/>
+              <Upload v-model="form.businessLicenseUrl" :disabled="getStatus('businessLicenseUrl')" :maxCount="1"/>
               <a-button type="primary" class="status-btn" @click="changeDisabledStatus('businessLicenseUrl')" v-if="showChangeBtns('businessLicenseUrl')">
                 {{ getStatus('businessLicenseUrl') ? '修改' : '确定' }}
               </a-button>
@@ -169,7 +169,7 @@
         <template v-if="userInfo.sysCompany.businessType == 'TRAVEL'">
           <a-form-item name="businessLicenseUrl1" label="经营许可证">
             <div class="flex">
-              <Upload ref="imgUploadRef" v-model:value="form.businessLicenseUrl1" :disabled="getStatus('businessLicenseUrl1')"/>
+              <Upload v-model="form.businessLicenseUrl1" :disabled="getStatus('businessLicenseUrl1')" :maxCount="1"/>
               <a-button type="primary" class="status-btn" @click="changeDisabledStatus('businessLicenseUrl1')" v-if="showChangeBtns('businessLicenseUrl1')">
                 {{ getStatus('businessLicenseUrl1') ? '修改' : '确定' }}
               </a-button>

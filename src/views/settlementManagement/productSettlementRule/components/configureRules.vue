@@ -227,7 +227,7 @@ const toEditPage = (record: any) => {
 //查看
 const toCheck = (record: any) => {
 	let query = {};
-	if (state.tableData.param.productType === 1) {
+	if (Number(state.tableData.param.productType) === 1) {
 		query = {
 			oid: encodeURIComponent(record.oid),
 			productId: encodeURIComponent(state.tableData.param.productId),
@@ -241,6 +241,7 @@ const toCheck = (record: any) => {
 			productType: encodeURIComponent(state.tableData.param.productType),
 		};
 	}
+
 	route.push({
 		path: '/settlementManagement/productSettlementRule/info',
 		query,

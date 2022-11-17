@@ -4,7 +4,7 @@
 		<a-button type="primary" @click="reRecokeAuditVisible = true">确认撤销</a-button>
 	</div>
 	<div class="table_box">
-		<p class="top-p">行程单ID:</p>
+		<p class="top-p">行程单ID:<span></span></p>
 		<table class="info_table" cellpadding="16px" border="1">
 			<tr class="row">
 				<td class="key">线路名称</td>
@@ -59,19 +59,19 @@
 				<td class="value">{{}}</td>
 			</tr>
 		</table>
-		<p class="top-p">导游信息(共2人)</p>
+		<p class="top-p">导游信息<span></span></p>
 		<CommonTable :columns="guide" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px"> </CommonTable>
-		<p class="top-p">游客信息(共30人)</p>
+		<p class="top-p">游客信息<span></span></p>
 		<CommonTable :columns="tourist" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px"> </CommonTable>
-		<p class="top-p">交通信息(共30人)</p>
+		<p class="top-p">交通信息<span></span></p>
 		<CommonTable :columns="trafficInfo" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px"> </CommonTable>
-		<p class="top-p">古维管理费 (共30人,古维待缴人数:25,应缴费用:￥1250.00 订单状态：待出票)</p>
+		<p class="top-p">古维管理费 <span>(共30人,古维待缴人数:25,应缴费用:￥1250.00 订单状态：待出票)</span></p>
 		<CommonTable :columns="gouvy" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px"> </CommonTable>
-		<p class="top-p">综费产品(费用总计:800.00元，订单状态：待预订)</p>
+		<p class="top-p">综费产品<span>(费用总计:800.00元，订单状态：待预订)</span></p>
 		<CommonTable :columns="comprehensive" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px"> </CommonTable>
-		<p class="top-p">酒店费用(已预订1个酒店,最大可入住人数:30人;房间数量:17;费用总计:12050.00元)</p>
+		<p class="top-p">酒店费用<span>(已预订1个酒店,最大可入住人数:30人;房间数量:17;费用总计:12050.00元)</span></p>
 		<CommonTable :columns="hotel" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px"> </CommonTable>
-		<p class="top-p">景区费用(已预订2个景区,游玩人数:30人;门票数量:30;费用总计:1050.00元)</p>
+		<p class="top-p">景区费用<span>(已预订2个景区,游玩人数:30人;门票数量:30;费用总计:1050.00元)</span></p>
 		<CommonTable :columns="scenic" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px"> </CommonTable>
 		<p class="top-p">已上传的附件</p>
 		<CommonTable :columns="enclosure" rowKey="oid" :scrollY="false"> </CommonTable>
@@ -474,6 +474,7 @@ const reRecokeAuditVisible = ref(false);
 		margin-bottom: 20px;
 	}
 	.top-p {
+		font-weight: bold;
 		font-size: 18px;
 		margin-bottom: 20px;
 		margin-left: 10px;
