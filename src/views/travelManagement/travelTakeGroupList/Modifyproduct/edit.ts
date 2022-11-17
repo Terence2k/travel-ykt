@@ -247,7 +247,6 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				editId[key] = oid
 			}
 			state[popup] = true;
-			
 		},
 		show(key: string, oid?: any) {
 			showId[key] = ''
@@ -308,6 +307,11 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			});
 		},
 	};
+	const install =()=>{
+		console.log(travelStore.ticketsList,'123456');
+		
+	}
+	install()
 	// const rowRadioSelection = {
 
 	// 	type: 'radio',

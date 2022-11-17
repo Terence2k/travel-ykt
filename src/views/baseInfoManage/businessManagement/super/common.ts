@@ -31,7 +31,7 @@ const keyNameList = {
   shopPhone: '店铺联系电话',
   cateringDesc: '其他'
 }
-// 旅行社、旅游集团
+// 旅游集团
 const keyNameList1 = {
   businessType: '企业类型',
   name: '企业名称',
@@ -98,10 +98,34 @@ const keyNameList6 = {
   contactName: '联系人',
   phone: '联系电话',
 }
+// 旅行社
+const keyNameList7 = {
+  businessType: '企业类型',
+  name: '企业名称',
+  regionCode: '企业所属地区',
+  addressDetail: '企业详情地址',
+  legalPerson: '法定代表人',
+  managementRange: '经营范围',
+  registeredCapital: '注册资本',
+  establishTime: '成立日期',
+  businessTerm: '营业期限',
+  contactName: '联系人',
+  phone: '联系电话',
+  accountType: '公司账户类型',
+  bankAccountName: '公司账户名称',
+  bank: '开户行',
+  bankAccount: '公司账号',
+  creditCode: '统一社会信用代码',
+  licenseNo: "12301旅行社许可证号",
+  isIndividual: "是否为散客中心",
+  businessLicenseUrl: '营业执照',
+}
 function getKeylist(businessType: string) {
   let keys
   switch (businessType) {
     case 'TRAVEL':
+      keys = keyNameList7
+      break;
     case 'GROUP':
       keys = keyNameList1
       break;
@@ -127,7 +151,7 @@ function getKeylist(businessType: string) {
   return keys
 }
 
-// 旅行社、旅游集团、酒店、景区、餐厅
+// 旅游集团、酒店、景区、餐厅
 const commonFormRules6: Record<string, Rule[]> = {
   businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
   name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
@@ -178,14 +202,38 @@ const commonFormRules8: Record<string, Rule[]> = {
   contactName: [{ required: true, trigger: 'blur', message: '请输入联系人姓名' }],
   phone: [{ required: true, trigger: 'blur', message: '请输入联系电话' }],
 }
-// 旅行社、旅游集团、酒店、景区、餐厅
-const condition1 = ['TRAVEL', 'GROUP', 'HOTEL', 'TICKET', 'CATERING']
+// 旅行社
+const commonFormRules5: Record<string, Rule[]> = {
+  businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
+  name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
+  regionCode: [{ required: true, trigger: 'blur', message: '请选择企业所属地区' }],
+  addressDetail: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
+  legalPerson: [{ required: true, trigger: 'blur', message: '请输入法定代表人' }],
+  managementRange: [{ required: true, trigger: 'blur', message: '请输入经营范围' }],
+  registeredCapital: [{ required: true, trigger: 'blur', message: '请输入注册资本' }],
+  establishTime: [{ required: true, trigger: 'blur', message: '请选择成立日期' }],
+  businessTerm: [{ required: true, trigger: 'blur', message: '请选择营业期限' }],
+  contactName: [{ required: true, trigger: 'blur', message: '请输入联系人姓名' }],
+  phone: [{ required: true, trigger: 'blur', message: '请输入联系电话' }],
+  accountType: [{ required: true, trigger: 'blur', message: '请选择公司账户类型' }],
+  bankAccountName: [{ required: true, trigger: 'blur', message: '请输入公司账户名称' }],
+  bank: [{ required: true, trigger: 'blur', message: '请输入开户行' }],
+  bankAccount: [{ required: true, trigger: 'blur', message: '请输入公司账号' }],
+  creditCode: [{ required: true, trigger: 'blur', message: '请输入统一社会信用代码' }],
+  licenseNo: [{ required: true, trigger: 'blur', message: '请输入旅行社许可证号' }],
+  isIndividual: [{ required: true, trigger: 'blur', message: '选择是否为散客中心' }],
+  businessLicenseUrl: [{ required: true, trigger: 'blur', message: '请上传营业执照照片' }],
+}
+// 旅游集团、酒店、景区、餐厅
+const condition1 = ['GROUP', 'HOTEL', 'TICKET', 'CATERING']
 // 一卡通
 const condition2 = ['YKT']
 // 监理、古维管理部门
 const condition3 = ['SUPERVISE', 'ANCIENT_UYGUR']
 // 旅游协会、文旅局
 const condition4 = ['ASSOCIATION', 'CULTURE_BUREAU']
+// 旅行社
+const condition5 = ['TRAVEL']
 // 对象扁平化
 const flat = (target: any) => {
   let obj: any = {};
@@ -218,6 +266,7 @@ const disabledAfterDate = (current: Dayjs) => {
 };
 export {
   getKeylist,
+  commonFormRules5,
   commonFormRules6,
   commonFormRules9,
   commonFormRules7,
@@ -226,6 +275,7 @@ export {
   condition2,
   condition3,
   condition4,
+  condition5,
   flat,
   disabledBeforeDate,
   disabledAfterDate
