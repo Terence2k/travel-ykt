@@ -53,7 +53,7 @@
 				@change="onHandleCurrentChange" @showSizeChange="pageSideChange" />
 		</div>
 	</div>
-	<CommonModal title="新增字典" v-model:visible="modalVisible" @cancel="cancel" @close="cancel" @conform="save">
+	<CommonModal :title="modalTitle" v-model:visible="modalVisible" @cancel="cancel" @close="cancel" @conform="save">
 		<a-form :model="dictionaryForm" name="addDictionary" autocomplete="off" :label-col="labelCol"
 			:wrapper-col="wrapperCol">
 			<a-form-item label="字典名称" name="name" v-bind="validateInfos.name">
@@ -64,7 +64,7 @@
 			</a-form-item>
 		</a-form>
 	</CommonModal>
-	<CommonModal title="新增字典详情" v-model:visible="detailsModalVisible" @cancel="detailsCancel" @close="detailsCancel"
+	<CommonModal :title="modalTitle1" v-model:visible="detailsModalVisible" @cancel="detailsCancel" @close="detailsCancel"
 		@conform="detailsSave">
 		<a-form :model="detailsDictionaryForm" name="addDictionaryDetails" autocomplete="off" :label-col="labelCol"
 			:wrapper-col="wrapperCol">
@@ -75,6 +75,9 @@
 			</a-form-item>
 			<a-form-item label="字典标签" name="name" v-bind="detailsForm.validateInfos.name">
 				<a-input v-model:value="detailsDictionaryForm.name" placeholder="请输入字典标签" />
+			</a-form-item>
+			<a-form-item label="字典ID" name="codeValue" v-bind="detailsForm.validateInfos.codeValue">
+				<a-input v-model:value="detailsDictionaryForm.codeValue" placeholder="请输入字典ID" />
 			</a-form-item>
 			<a-form-item label="排序" name="sort" v-bind="detailsForm.validateInfos.sort">
 				<a-select ref="select" v-model:value="detailsDictionaryForm.sort" placeholder="请选择排序">
@@ -120,6 +123,11 @@ const detailsColumns = [
 		title: '字典标签',
 		dataIndex: 'name',
 		key: 'name',
+	},
+	{
+		title: '字典ID',
+		dataIndex: 'codeValue',
+		key: 'codeValue',
 	},
 	{
 		title: '排序',
@@ -179,6 +187,7 @@ const state = reactive({
 	},
 	detailsDictionaryForm: {
 		name: '',
+		codeValue: '',
 		parentId: '',
 		sort: '',
 		oid: ''
@@ -191,8 +200,8 @@ const state = reactive({
 	isDetailsAdd: false,
 	sortList: []
 });
-let isAdd = false;
-let detailsAdd = false;
+let isAdd = ref(false);
+let detailsAdd = ref(false);
 let {
 	tableData,
 	detailsTableData,
@@ -204,7 +213,12 @@ let {
 	isDetailsAdd,
 	sortList
 } = toRefs(state)
-
+const modalTitle = computed(() => {
+	return isAdd.value ? '新增字典' : '编辑字典'
+})
+const modalTitle1 = computed(() => {
+	return detailsAdd.value ? '新增字典详情' : '编辑字典详情'
+})
 interface addInterface {
 	row?: any
 	handle: 'update' | 'add'
@@ -212,9 +226,9 @@ interface addInterface {
 const addOrUpdate = ({ row, handle }: addInterface) => {
 	state.modalVisible = true
 	if (handle === 'add') {
-		isAdd = true
+		isAdd.value = true
 	} else {
-		isAdd = false
+		isAdd.value = false
 		state.dictionaryForm.name = row?.name;
 		state.dictionaryForm.codeValue = row?.codeValue;
 		state.dictionaryForm.oid = row?.oid;
@@ -243,15 +257,17 @@ const getSortList = async () => {
 	state.sortList = res
 }
 
-const detailsAddOrUpdate = ({ row, handle }: addInterface) => {
+const detailsAddOrUpdate = async ({ row, handle }: addInterface) => {
 	state.detailsModalVisible = true;
 	state.detailsDictionaryForm.parentId = state.detailsDictionarySelect.oid;
-	getSortList();
+	await getSortList();
 	if (handle === 'add') {
-		detailsAdd = true
+		detailsAdd.value = true
+		state.detailsDictionaryForm.sort = state.sortList[0]
 	} else {
-		detailsAdd = false
+		detailsAdd.value = false
 		state.detailsDictionaryForm.name = row.name;
+		state.detailsDictionaryForm.codeValue = row.codeValue;
 		state.detailsDictionaryForm.sort = row.sort;
 		state.detailsDictionaryForm.oid = row.oid;
 	}
@@ -305,6 +321,12 @@ const detailsForm = useForm(
 				message: '请输入选择所属字典！',
 			},
 		],
+		codeValue: [
+			{
+				required: true,
+				message: '请输入字典ID',
+			},
+		],
 		sort: [
 			{
 				required: true,
@@ -327,7 +349,7 @@ const detailsCancel = () => {
 const save = () => {
 	validate()
 		.then(async (res) => {
-			if (isAdd) {
+			if (isAdd.value) {
 				const res = await api.addDictionary(toRaw(dictionaryForm.value));
 				if (res) {
 					message.success('新增数据字典成功！');
@@ -354,7 +376,7 @@ const save = () => {
 const detailsSave = () => {
 	detailsForm.validate()
 		.then(async (res) => {
-			if (detailsAdd) {
+			if (detailsAdd.value) {
 				const res = await api.addDictionary(toRaw(detailsDictionaryForm.value));
 				if (res) {
 					message.success('新增字典详情成功！');
