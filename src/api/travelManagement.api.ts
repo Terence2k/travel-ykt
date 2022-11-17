@@ -351,4 +351,11 @@ export const travelManagement = {
             showLoading:false
         });
     },
+    travelChangeOrderProduct(itineraryId: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/change/changeProduct/${itineraryId}`,
+            method: 'post',
+            showLoading:false
+        });
+    },
 }

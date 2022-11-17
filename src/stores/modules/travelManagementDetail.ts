@@ -51,10 +51,13 @@ export const useTravelStore = defineStore({
 		baseInfo: [] as any,
 		guideList:[],
 		trafficList:[],
+		teamTime: [],
 		IDCard: [],
 		specialId:[],
 		trafficType: [],
 		trafficColor: [],
+		hotelList:[],
+		ticketsList:[],
     attachmentList: [],
 	}),
 	getters: {},
@@ -85,6 +88,35 @@ export const useTravelStore = defineStore({
 		},
 		setTrafficList(list: any) {
 			this.trafficList = list;
+		},
+		SeetHotels(data: any, oid: any, hotelId: string) {
+
+			if (hotelId) {
+				data.oid = oid;
+				return Object.assign(this.hotelList.filter((item: any) => hotelId == item.hotelId)[0], data);
+			}
+			if (data.oid) {
+				Object.assign(this.hotelList.filter((item: any) => data.oid == item.oid)[0], data);
+			} else {
+				data.oid = oid;
+				let newData = [...this.hotelList, data];
+				this.hotelList = newData as any;
+				console.log(this.hotelList, data, newData);
+			}
+		},
+		SsetTicket(data: any, oid: string, productId: string) {
+			if (productId) {
+				data.oid = oid;
+				return Object.assign(this.ticketsList.filter((item: any) => productId == item.scenicId)[0], data);
+			}
+			if (data.oid) {
+				Object.assign(this.ticketsList.filter((item: any) => data.oid == item.oid)[0], data);
+			} else {
+				data.oid = oid;
+				let newData = [...this.ticketsList, data];
+				this.ticketsList = newData as any;
+				console.log(this.ticketsList, data, newData);
+			}
 		},
 	},
 });

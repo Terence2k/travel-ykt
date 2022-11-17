@@ -152,6 +152,7 @@ export function shijianc(timestamp: Date) {
 
 	return year + '-' + month + '-' + date + ' ' + hours + ':' + minute + ':' + second;
 }
+
 export function shijianYMD(timestamp: any) {
 	const time = new Date(timestamp),
 		year = time.getFullYear(),

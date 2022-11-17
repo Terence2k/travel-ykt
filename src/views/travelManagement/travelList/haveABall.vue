@@ -184,8 +184,8 @@
 		});
 	};
 	const goToChange = (row: any) => {
-	state.id = row.oid,
-	state.itineraryNo = row.itineraryNo
+	state.id = row.oid;
+	state.itineraryNo = row.itineraryNo;
 		api.travelManagement.checkVerifyByItineraryId(row.itineraryNo).then((res) => {
 		if (res) {
 			modelValue.value = true;
@@ -198,11 +198,11 @@
 const openModifyproduct = () => {
 	router.push({
 		path: '/travel/take_group/modify_o_product',
-		// query: {
-		// 	id: state.id,
-		// 	itineraryNo: state.itineraryNo,
-		// },
+		query: {
+			oid: state.id,
+		},
 	});
+	
 }
 	const onHandleCurrentChange = () => {
 

@@ -2,4 +2,4 @@ export { request } from '@/network/request';
 export { commonPath } from './config';
 export * from './util';
 export * from './validator';
-export * from './formatTIme';
+export * from './formatTimes';

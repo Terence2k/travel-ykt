@@ -210,7 +210,7 @@ const getTraveDetail = () => {
 			}) : [];
 			const hotel = [...res.waitBuyItem.waitBuyHotel, ...res.hotelList]
 			travelStore.hotels = hotel as any;
-			travelStore.curentProduct = res.productList;
+			// travelStore.curentProduct = res.productList;
 			travelStore.scenicTickets = [...res.waitBuyItem.waitBuyTicket, ...res.ticketList] as any;
 			travelStore.teamTime = [res.basic.startDate, res.basic.endDate]  as any
 			travelStore.setDisabled = (current: Dayjs): any => {
