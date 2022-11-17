@@ -23,8 +23,8 @@
 				</template>
 		</CommonTable>
 		<CommonPagination
-			:current="state.params.pageNo"
-			:page-size="state.params.pageSize"
+			:current="travelStore.traveList.waitingGroup.params.pageNo"
+			:page-size="travelStore.traveList.waitingGroup.params.pageSize"
 			:total="state.total"
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
@@ -109,8 +109,9 @@
 		const res = await travelStore.getTravelList(travelStore.traveList.waitingGroup.params);
 		travelStore.setTraveList(res, 'waitingGroup')
 	}
-	const onHandleCurrentChange = () => {
-
+	const onHandleCurrentChange = (e:any) => {
+		travelStore.traveList.waitingGroup.params.pageNo = e
+		onSearch()
 	}
 	const pageSideChange = () => {
 

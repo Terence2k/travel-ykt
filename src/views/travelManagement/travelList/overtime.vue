@@ -23,8 +23,8 @@
 				</template>
 		</CommonTable>
 		<CommonPagination
-			:current="state.params.pageNo"
-			:page-size="state.params.pageSize"
+			:current="travelStore.traveList.overtime.params.pageNo"
+			:page-size="travelStore.traveList.overtime.params.pageSize"
 			:total="state.total"
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
@@ -108,8 +108,9 @@
 		
 		travelStore.setTraveList(res, 'overtime')
 	}
-	const onHandleCurrentChange = () => {
-
+	const onHandleCurrentChange = (e:any) => {
+		travelStore.traveList.overtime.params.pageNo = e
+		onSearch()
 	}
 	const pageSideChange = () => {
 
