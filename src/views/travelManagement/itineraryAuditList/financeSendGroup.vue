@@ -171,9 +171,9 @@
 	const onSearch = async () => {
 		travelStore.auditList.financeSendGroup.params.status = AuditStaus.FinanceSendGroup;
 		const res = await travelStore.getAuditList(travelStore.auditList.financeSendGroup.params);
-    res.content.forEach( async (item: any) => {
-      item.auditInfo = await getAuditButton(item.auditUuid);
-    })
+    // res.content.forEach( async (item: any) => {
+    //   item.auditInfo = await getAuditButton(item.auditUuid);
+    // })
 		travelStore.setAuditList(res, 'financeSendGroup');
 	}
   const cancel = (): any => {
@@ -252,7 +252,7 @@
       state.detail = backup;
     });
   }
-	const onHandleCurrentChange = (e) => {
+	const onHandleCurrentChange = (e: any) => {
 		travelStore.auditList.financeSendGroup.params.pageNo = e
 		onSearch()
 	}
