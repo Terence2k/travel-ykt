@@ -5,7 +5,8 @@ import api from '@/api';
 export const useBusinessManageOption = defineStore('businessManage', {
 	state: () => ({
 		businessTypeOption: [],
-    companyOptions: []
+		companyOptions: [],
+		operatorRoleOptions: []
 	}),
 	getters: {},
 	actions: {
@@ -25,6 +26,12 @@ export const useBusinessManageOption = defineStore('businessManage', {
 				this.companyOptions = res;
 			});
 		},
+		// 获取中心操作员和门店操作员
+		getCenterAndOutletOperator() {
+			api.centerAndOutletOperator().then((res: any) => {
+				this.operatorRoleOptions = res;
+			});
+		}
 	},
 });
 

@@ -61,3 +61,11 @@ export function auditIndividualStoreInformationContrast(oid: string | number) {
     showLoading: true
   });
 }
+// 门店下拉
+export function individualStoreListByCompanyId(oid: string | number) {
+  return request({
+    url: oid ? `${commonPart}individualStoreListByCompanyId?companyId=${oid}` : `${commonPart}individualStoreListByCompanyId`,
+    method: 'post',
+    showLoading: true
+  });
+}
