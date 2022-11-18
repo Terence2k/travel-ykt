@@ -29,7 +29,7 @@
 		</div>
 		<div class="item-container">
 			<p class="title">酒店住宿</p>
-			<CommonTable :columns="route.query.Cedit ?  hotelColumns : hotelColumnstwo" :dataSource="holteDate" :scrollY="false">
+			<CommonTable :columns="route.query.Cedit ? hotelColumns : hotelColumnstwo" :dataSource="holteDate" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
 					<template v-if="column.key === 'index'">
 						<div>
