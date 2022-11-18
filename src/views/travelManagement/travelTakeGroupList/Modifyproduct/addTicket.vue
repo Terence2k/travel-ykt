@@ -47,9 +47,9 @@
 				</a-select>
 			</a-form-item>
 
-			<!-- <a-form-item label="行程人数" name="travelName">
+			<a-form-item label="行程人数" name="travelName">
 				<span>{{travelStore.touristList.length}}人</span>
-			</a-form-item> -->
+			</a-form-item>
 
             <a-form-item label="门票价格" name="travelName">
 				<span>{{ticketPrice}}元</span>
@@ -141,15 +141,13 @@
 			await formRef.value.validateFields()
 			formState.unitPrice = ticketPrice.value
 			formState.itineraryId = route.query.id || traveListData.oid
-			// formState.peopleCount = travelStore.touristList.length
+			formState.peopleCount = travelStore.touristList.length
 			const newFormState = cloneDeep(formState)
-			console.log(formState.oid);
-
-			// newFormState.reservePeopleCount = formState.peopleCount
-			// newFormState.totalFee = newFormState.peopleCount * newFormState.unitPrice
+			newFormState.reservePeopleCount = formState.peopleCount
+			newFormState.totalFee = newFormState.peopleCount * newFormState.unitPrice
 			// const res = await api.travelManagement.addTicket(formState)
 			// travelStore.setTicket(newFormState)
-			travelStore.SsetTicket(newFormState, formState.oid, props.productRow.productId)
+			travelStore.SsetTicket(newFormState, formState.oid?formState.oid:null, props.productRow.productId)
 			
 			callback()
 		} catch (errorInfo) {

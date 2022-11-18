@@ -94,8 +94,11 @@ const uploadFile = async (options: any) => {
         files)
     return emit('update:modelValue', tempData?.join(','));
     } catch (e) {
-      console.log(e);
-      options.onError(e);
+      options.onError();
+      options.status = 'error';
+      console.log('fileList:', fileList.value);
+      fileList.value = fileList.value?.filter((ele: any) => ele.status == 'done');
+      message.error('图片上传失败');
       emit('result', { success: false, msg: '上传失败' })
     }
 };
@@ -122,15 +125,15 @@ const removeImg = (file: any) => {
 }
 
 const handleImage = (val: any) => {
-      fileList.value = val.split(',').map((item: any, index: any) => {
-        return {
-          uid: index.toString(),
-          name: item,
-          status: 'done',
-          url: item,
-          index: index
-        }
-      })
+  fileList.value = val.split(',').map((item: any, index: any) => {
+    return {
+      uid: index.toString(),
+      name: item,
+      status: 'done',
+      url: item,
+      index: index
+    }
+  })
 }
 
 watch(
@@ -143,7 +146,7 @@ watch(
 	}
 );
 onMounted(() => {
-  handleImage(props.modelValue);
+  if (props.modelValue) handleImage(props.modelValue);
 })
 </script>
 <style lang="less" scoped>

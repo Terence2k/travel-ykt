@@ -51,14 +51,14 @@
 			<template v-slot:footer>
 				<a-button type="primary" @click="submit" v-if="state.isReductionPassed =='2' " disabled>提交减免申请</a-button>
 				<a-button type="primary" @click="submit" v-else>提交减免申请</a-button>
-				<a-button type="primary" @click="ticketingvalue=true">去出票</a-button>
+				<a-button type="primary" @click="ticketing">去出票</a-button>
 				<a-button @click="dialogVisible = false">取消</a-button>
 			</template>
 		</BaseModal>
 		<BaseModal title="出票提醒" v-model="ticketingvalue" :width="400">
 			<p v-if="state.isInitiateReduction=='0'">您的古维订单还未提交过减免申请，现在出票只能按照全员购买的价格扣款。是否继续出票？</p>
 			<p v-if="state.isReductionPassed=='2'">您的古维订单已提交过减免申请，正在等待管理员审核。现在出票可能会错失费用减免机会。是否继续出票？</p>
-			<p>您的古维订单还可以继续提交减免申请，现在出票可能会错失费用减免机会。是否继续出票？</p>
+			<p v-if="state.isReductionPassed!='2' && state.isInitiateReduction!='0'">您的古维订单还可以继续提交减免申请，现在出票可能会错失费用减免机会。是否继续出票？</p>
 			<template v-slot:footer>
 				<a-button type="primary" @click="goTicketing">确认出票</a-button>
 				<a-button @click="ticketingvalue = false">取消出票</a-button>
@@ -218,7 +218,7 @@ const submit = () => {
 		}),
 	};
 	if (data.reduceTouristList.length == 0) {
-		message.error('请选择减免规则');
+		message.error('请勾选减免游客');
 		return false;
 	}
 	let discountRuleId = state.tableData.submitList.some((item, index) => {
@@ -265,8 +265,21 @@ const onSearchList = () => {
 		state.tableData.list = res;
 	});
 };
+const ticketing =()=>{
+	if (state.tableData.submitList.length ==0) {
+		message.error('请勾选减免游客');
+		return false;
+	}
+	let discountRuleId = state.tableData.submitList.some((item, index) => {
+		return item.discountRuleId == null;
+	});
+	if (discountRuleId) {
+		message.error('请选择减免规则');
+		return false;
+	}
+	ticketingvalue.value=true
+}
 const goTicketing =()=>{
-	// console.log(props.routeId)
 	api.issue(2).then((res) => {
 		message.success('出团成功')
 	});
