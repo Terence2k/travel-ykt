@@ -1,6 +1,32 @@
 <template>
 	<div class="table-container">
+		<div class="header_top">
+			<div class="head_title">当前正在变更行程信息，请根据实际需要，调整行程时间，添加或调整需要预订的产品，重新提交审核。</div>
+		</div>
 		<div class="item-container">
+			<div class="title" v-if="tiemformshow == false">
+				行程时间
+				<span style="margin-left: 40px">{{ startTime }} —— {{ endTime }}</span>
+				<span class="time_btn" @click="changTiemshow">修改时间</span>
+			</div>
+			<div v-else style="margin-top:20px">
+				<a-form :model="timeformState" ref="timeformRef">
+				<a-form-item >
+					<span slot="label" class="title" >行程时间</span>
+					<a-range-picker
+					style="margin-left: 40px;"
+					:disabled-date="disabledDate"
+					v-model:value="timeformState.time"
+					show-time
+					format="YYYY-MM-DD HH:mm:ss"
+					value-format="YYYY-MM-DD HH:mm:ss"
+				/>				
+				<span class="time_btn"  @click="changTiemshow">确定</span>
+				</a-form-item>
+			</a-form>
+			</div>
+			
+
 			<p class="title">酒店住宿</p>
 			<CommonTable :columns="hotelColumns" :dataSource="holteDate" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
@@ -43,7 +69,7 @@
 				<a-button type="primary" @click="add('addTicketPop', 'addTicketPop')">添加</a-button>
 			</div>
 		</div>
-		<div class="footer"><a-button type="primary">提交审核</a-button></div>
+		<div class="footer"><a-button type="primary" @click="submitReview">提交审核</a-button></div>
 	</div>
 	<addHotel :productRow="editId.productRow" :hotelId="editId.addHotelPop" v-model="addHotelPop" />
 	<addTicket :productRow="editId.productRow" :ticketId="editId.addTicketPop" v-model="addTicketPop" />
@@ -112,7 +138,15 @@ const {
 	ticketingValue,
 	ticketingColumns,
 	ticketingDate,
-	isReductionPassed
+	isReductionPassed,
+	submitReview,
+	timeformState,
+	startTime,
+	endTime,
+	disabledDate,
+	tiemformshow,
+	timeformRef,
+	changTiemshow
 } = useTraveInfo(props, emits);
 onMounted(() => {
 	onSearch();
@@ -122,9 +156,21 @@ onMounted(() => {
 ::v-deep(.ant-table-selection-column) {
 	width: 50px;
 }
-.table-container{
-	padding: 20px 0;
-	.footer{
+.header_top {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	padding: 20px 16px;
+	border-bottom: 1px solid #f1f2f5;
+	.head_title {
+		font-size: 16px;
+		font-family: Microsoft YaHei UI;
+		color: #1e2226;
+	}
+}
+.table-container {
+	padding: 0 0 20px 0;
+	.footer {
 		width: 100%;
 		text-align: center;
 	}
@@ -146,6 +192,12 @@ onMounted(() => {
 	font-weight: bold;
 	padding-left: 20px;
 	margin-top: 20px;
+}
+.time_btn{
+	margin-left: 40px;
+	font-size: 14px;
+	cursor: pointer;
+	color: rgb(49, 167, 218);
 }
 .item-container {
 	&:first-of-type {
