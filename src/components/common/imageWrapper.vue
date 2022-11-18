@@ -72,7 +72,7 @@ const uploadFile = async (options: any) => {
       const { files } = await awsUploadFile({
         files: [options.file],
         onProgress: options.onProgress,
-        businessType: userInfo.sysCompany.businessType || 'form'
+        businessType: userInfo.sysCompany?.businessType || 'form'
       });
       console.log('files', files);
       options.onSuccess(
