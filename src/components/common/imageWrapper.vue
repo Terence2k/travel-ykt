@@ -121,12 +121,8 @@ const removeImg = (file: any) => {
   
 }
 
-watch(
-	() => props.modelValue,
-	async (nVal) => {
-    console.log('modelValue:', nVal);
-    if (nVal) {
-      fileList.value = nVal.split(',').map((item: any, index: any) => {
+const handleImage = (val: any) => {
+      fileList.value = val.split(',').map((item: any, index: any) => {
         return {
           uid: index.toString(),
           name: item,
@@ -135,11 +131,19 @@ watch(
           index: index
         }
       })
+}
+
+watch(
+	() => props.modelValue,
+	async (nVal) => {
+    console.log('modelValue:', nVal);
+    if (nVal) {
+      handleImage(nVal);
     }
 	}
 );
 onMounted(() => {
-    console.log('modelValue:', props.modelValue);
+  handleImage(props.modelValue);
 })
 </script>
 <style lang="less" scoped>
