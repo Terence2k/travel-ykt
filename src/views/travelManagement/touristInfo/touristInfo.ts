@@ -320,6 +320,11 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			state.editableData[key].specialCertificatePicture = state.editableData[key].specialCertificatePicture ? 
 					state.editableData[key].specialCertificatePicture : []
 			state.editableData[key].specialCertificatePicture.push(url.data.filePath);
+		},
+		removeImg(file: any, key: any) {
+			console.log(state.editableData[key])
+			state.editableData[key].specialCertificatePicture.splice(file.index, 1);
+			console.log(file, key)
 		}
 	}
 	watch(onCheck, (newVal) => {
