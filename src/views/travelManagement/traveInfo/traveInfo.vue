@@ -21,7 +21,7 @@
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a class="item"  @click="choice({selectPersonnelPop:'selectPersonnelPop',id:route.query.id,isReductionPassed:record.isReductionPassed,isInitiateReduction:record.isInitiateReduction})">去出票</a>
+							<a class="item" v-if="record.issueStatus==0" @click="choice({selectPersonnelPop:'selectPersonnelPop',id:route.query.id,isReductionPassed:record.isReductionPassed,isInitiateReduction:record.isInitiateReduction})">去出票</a>
 							<a class="item" v-if="record.isInitiateReduction==1 && record.isReductionPassed==0"  @click="seeReject('modelValue')">查看驳回原因</a>
 							<a class="item" v-if="record.issueStatus==1" @click="see({ticketingValue:'ticketingValue',itineraryId:record.itineraryId})">查看出票情况</a>
 						</div>
