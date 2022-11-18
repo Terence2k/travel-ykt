@@ -21,7 +21,7 @@
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a class="item" v-if="record.issueStatus==0" @click="choice({selectPersonnelPop:'selectPersonnelPop',id:route.query.id,isReductionPassed:record.isReductionPassed})">去出票</a>
+							<a class="item"  @click="choice({selectPersonnelPop:'selectPersonnelPop',id:route.query.id,isReductionPassed:record.isReductionPassed,isInitiateReduction:record.isInitiateReduction})">去出票</a>
 							<a class="item" v-if="record.isInitiateReduction==1 && record.isReductionPassed==0"  @click="seeReject('modelValue')">查看驳回原因</a>
 							<a class="item" v-if="record.issueStatus==1" @click="see({ticketingValue:'ticketingValue',itineraryId:record.itineraryId})">查看出票情况</a>
 						</div>
@@ -127,7 +127,7 @@
 	</div>
 	<addHotel :productRow="editId.productRow" :hotelId="editId.addHotelPop" v-model="addHotelPop" />
 	<addTicket :productRow="editId.productRow" :ticketId="editId.addTicketPop" v-model="addTicketPop" />
-	<Personnel v-model="selectPersonnelPop" :routeId="gouvyId.id" :isReductionPassed="gouvyId.isReductionPassed"/>
+	<Personnel v-model="selectPersonnelPop" :routeId="gouvyId.id" :isReductionPassed="gouvyId.isReductionPassed" :isInitiateReduction="gouvyId.isInitiateReduction" />
 	<reserveTicket :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop" />
 	<reserveTicket :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop"  />
 	<showTicket :ticketId="showId.showTicketPop" v-model="showTicketPop"/>
@@ -193,7 +193,8 @@ const {
 	ticketingValue,
 	ticketingColumns,
 	ticketingDate,
-	isReductionPassed
+	isReductionPassed,
+	isInitiateReduction
 } = useTraveInfo(props, emits);
 onMounted(() => {
 	onSearch();
