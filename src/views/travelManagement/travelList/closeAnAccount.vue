@@ -22,8 +22,8 @@
 				</template>
 		</CommonTable>
 		<CommonPagination
-			:current="state.params.pageNo"
-			:page-size="state.params.pageSize"
+			:current="travelStore.traveList.closeAnAccount.params.pageNo"
+			:page-size="travelStore.traveList.closeAnAccount.params.pageSize"
 			:total="state.total"
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
@@ -107,8 +107,9 @@
 		
 		travelStore.setTraveList(res, 'closeAnAccount')
 	}
-	const onHandleCurrentChange = () => {
-
+	const onHandleCurrentChange = (e:any) => {
+		travelStore.traveList.closeAnAccount.params.pageNo = e
+		onSearch()
 	}
 	const pageSideChange = () => {
 

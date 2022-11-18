@@ -5,11 +5,15 @@
 				<template #bodyCell="{ column, record, index }">
 					<template v-if="column.key === 'priceRange'">
 						<span v-if="getMin(record) === getMax(record, index)">{{ getMax(record, index) }} </span>
-						<span v-else>{{ getMin(record) }} - {{ getMax(record, index) }} </span></template
+
+						<span v-else>{{ getMin(record) / 100 }} - {{ getMax(record, index) / 100 }} </span></template
 					>
 					<template v-if="column.key === 'settlementModel'">
 						<a-select v-model:value="record.settlementModel" :allowClear="true" ref="select" placeholder="请选择" :options="settlementModelList">
 						</a-select>
+					</template>
+					<template v-if="column.key === 'price'">
+						{{ record.price / 100 }}
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
@@ -53,15 +57,7 @@
 						</p> -->
 						<p>
 							<span class="label">按日设置</span>
-							<a-input-number
-								:min="0"
-								:max="9999999999"
-								v-model:value="currentPrict"
-								:formatter="(value) => value.replace(/\D/g, '')"
-								:parser="(value) => value.replace(/\D/g, '')"
-								placeholder="输入当日票价"
-								style="width: 200px"
-							/>
+							<a-input-number :min="0" :max="9999999999" v-model:value="currentPrict" placeholder="输入当日票价" style="width: 200px" />
 							<a-button @click="createDateItem">确定</a-button>
 						</p>
 					</div>
@@ -79,6 +75,7 @@ import Calendar from '@/components/common/calendarDouble.vue';
 import { shijianYMD, getAllDateCN, nextYear } from '@/utils/formatTimes';
 import api from '@/api';
 import { message } from 'ant-design-vue';
+import { accDiv } from '@/utils/compute.js';
 const route = useRouter();
 const loading = ref(false);
 // 数据
@@ -150,6 +147,7 @@ const getMin = (value: any) => {
 	if (value.price < min) {
 		min = value.price;
 	}
+
 	return min;
 };
 const getMax = () => {
@@ -245,7 +243,7 @@ const createDateItem = () => {
 
 		setDayPriceList.value.map((i: any, index: number) => {
 			let arrindex = arr.indexOf(shijianYMD(i.stockDate)),
-				obj = { stockDate: i.stockDate, ticketPrice: currentPrict.value };
+				obj = { stockDate: i.stockDate, ticketPrice: currentPrict.value ? Number((Number(currentPrict.value.toFixed(2)) * 100).toFixed(2)) : null };
 			console.log(arrindex, shijianYMD(i.stockDate), arr);
 
 			if (arrindex > -1) {
@@ -257,10 +255,13 @@ const createDateItem = () => {
 		// console.log(arr, 'arr');
 
 		arr.map((i) => {
-			createItem({ stockDate: i, ticketPrice: currentPrict.value });
+			createItem({ stockDate: i, ticketPrice: currentPrict.value ? Number((Number(currentPrict.value.toFixed(2)) * 100).toFixed(2)) : null });
 		});
 	} else {
-		let obj = { stockDate: currentDay.value, ticketPrice: currentPrict.value };
+		let obj = {
+			stockDate: currentDay.value,
+			ticketPrice: currentPrict.value ? Number((Number(currentPrict.value.toFixed(2)) * 100).toFixed(2)) : null,
+		};
 
 		setDayPriceList.value.map((i: any, index: number) => {
 			if (i.stockDate === currentDay.value) {

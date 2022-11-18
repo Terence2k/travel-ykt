@@ -1,6 +1,6 @@
 <template>
-	<div class="clearfix">
-		<a-upload
+	<div class="img-container">
+		<a-upload-dragger
 			:maxCount="maxCount"
 			v-model:file-list="fileList"
 			list-type="picture-card"
@@ -9,11 +9,13 @@
 			accept=".jpg,.png"
 			@preview="handlePreview"
       @remove="removeImg"
+      :disabled="disabled"
 		>
-			<div style="margin-top: 8px">
-        上传图片
+			<div>
+        <slot></slot>
+        <div v-if="!slotDefault">上传图片</div>
       </div>
-		</a-upload>
+		</a-upload-dragger>
 
 		<a-modal :visible="previewVisible" title="预览图片" :footer="null" @cancel="handleCancel">
 			<img alt="example" style="width: 100%" :src="previewImage" />
@@ -36,9 +38,14 @@ const props = defineProps({
     type: Number,
     default: 99
   },
+  disabled: {
+    type: Boolean,
+    default: false
+  }
 });
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'result', 'remove']);
 const userInfo = getUserInfo();
+const slotDefault = !!useSlots().default;
 
 const getBase64 = (file: File) => {
 	return new Promise((resolve, reject) => {
@@ -67,7 +74,7 @@ const uploadFile = async (options: any) => {
       const { files } = await awsUploadFile({
         files: [options.file],
         onProgress: options.onProgress,
-        businessType: userInfo.sysCompany.businessType
+        businessType: userInfo.sysCompany?.businessType || 'form'
       });
       console.log('files', files);
       options.onSuccess(
@@ -82,10 +89,14 @@ const uploadFile = async (options: any) => {
           return item.response.data.filePath;
         }
       })
+      emit('result', { success: true, msg: '上传成功', data: { filePath: files[0] } },
+        { name: files[0], url: files[0] },
+        files)
     return emit('update:modelValue', tempData?.join(','));
     } catch (e) {
       console.log(e);
       options.onError(e);
+      emit('result', { success: false, msg: '上传失败' })
     }
 };
 const previewVisible = ref(false);
@@ -103,6 +114,7 @@ const handlePreview = async (file: UploadProps['fileList'][number]) => {
 	previewVisible.value = true;
 };
 const removeImg = (file: any) => {
+  emit('remove', {url: file.url, index: file.index})
   setTimeout(() => {
     emit('update:modelValue', fileList.value?.map((item: any) => item.url).join(','));
   }, 0);
@@ -120,6 +132,7 @@ watch(
           name: item,
           status: 'done',
           url: item,
+          index: index
         }
       })
     }
@@ -129,7 +142,7 @@ onMounted(() => {
     console.log('modelValue:', props.modelValue);
 })
 </script>
-<style>
+<style lang="less" scoped>
 /* you can make up upload button and sample style by using stylesheets */
 .ant-upload-select-picture-card i {
 	font-size: 32px;
@@ -139,5 +152,15 @@ onMounted(() => {
 .ant-upload-select-picture-card .ant-upload-text {
 	margin-top: 8px;
 	color: #666;
+}
+.img-container {
+  span {
+    display: flex;
+  }
+}
+::v-deep(.ant-upload) {
+  width: 102px;
+  height: 102px;
+  margin-right: 10px;
 }
 </style>

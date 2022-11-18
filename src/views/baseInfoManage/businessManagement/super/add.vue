@@ -97,9 +97,14 @@
             <a-radio :value="0">否</a-radio>
           </a-radio-group>
         </a-form-item>
+
+        <a-form-item name="legalPersonUrl" label="法人身份证附件" v-show="formRules?.legalPersonUrl">
+          <Upload v-model="form.legalPersonUrl" :maxCount="1" />
+        </a-form-item>
         <a-form-item name="businessLicenseUrl" label="营业执照" v-show="formRules?.businessLicenseUrl">
-          <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl" @done="uploadDown">
-          </img-upload>
+          <Upload v-model="form.businessLicenseUrl" :maxCount="1" />
+          <!-- <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl" @done="uploadDown">
+          </img-upload> -->
         </a-form-item>
         <a-form-item label="创建超级管理员账号">
         </a-form-item>
@@ -139,7 +144,8 @@ import { useRouter, useRoute } from 'vue-router';
 import { CloseOutlined } from '@ant-design/icons-vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
-import imgUpload from '@/views/baseInfoManage/businessManagement/components/imgUpload.vue';
+import Upload from '@/components/common/imageWrapper.vue';
+// import imgUpload from '@/views/baseInfoManage/businessManagement/components/imgUpload.vue';
 // import { useBusinessManageOption } from '@/stores/modules/businessManage';
 import type { Rule } from 'ant-design-vue/es/form';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
@@ -191,7 +197,7 @@ type detailsType = {
   checkPass?: string,
   licenseNo?: string,
   isIndividual?: 0 | 1,
-
+  legalPersonUrl?: string
 }
 const form = reactive<detailsType>({
   regionCode: [],
@@ -201,7 +207,7 @@ const form = reactive<detailsType>({
   accountType: 1,
   isIndividual: 1,
   name: undefined,
-  businessLicenseUrl: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+  businessLicenseUrl: ''
 })
 const rest = () => {
   formRef.value.resetFields()
@@ -323,6 +329,7 @@ const saveConform = () => {
 const tipCancel = () => {
   tipVisible.value = false
   formRef.value.resetFields()
+  form.businessLicenseUrl = undefined
 }
 /* const tipConform = () => {
   tipVisible.value = false

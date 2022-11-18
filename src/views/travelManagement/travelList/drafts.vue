@@ -23,9 +23,9 @@
         <template v-if="column.key === 'action'">
           <div class="action-btns">
             <a @click="goToPath(record)">编辑</a>
-            <a>邀请地接社编辑</a>
+            <a v-if="record.groupType == GroupMode.TeamGroup">邀请地接社编辑</a>
             <a @click="sendGroup(record.oid)">发团</a>
-			<a>删除</a>
+			<a @click="deleteTrave(record.oid)">删除</a>
           </div>
         </template>
 			</template>
@@ -127,6 +127,12 @@
 	const onHandleCurrentChange = (e:any) => {
 		travelStore.traveList.drafts.params.pageNo = e
 		onSearch()
+	}
+	const deleteTrave = (id: number) => {
+		api.travelManagement.deleteTrave(id).then((res: any) => {
+			onSearch()
+			message.success('删除成功')
+		})
 	}
 	const pageSideChange = () => {
 
