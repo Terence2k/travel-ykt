@@ -192,7 +192,10 @@ const getTraveDetail = () => {
 			travelStore.setBaseInfo(res.basic);
 			travelStore.setFileInfo(res.attachmentList);
 			travelStore.setGuideList(res.guideList);
-			travelStore.setTouristList(res.touristList.content);
+			travelStore.setTouristList(res.touristList.content.map((it: any) => {
+				it.specialCertificatePicture = it.specialCertificatePicture.split(',');
+				return it;
+			}));
 			res.transportList = res.transportList.map((it:any) => {
 				it.time = [it.startDate, it.endDate]
 				return it;
