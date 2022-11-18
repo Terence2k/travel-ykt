@@ -89,7 +89,7 @@
 
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a v-if="travelStore.reserveStatus && record.orderStatus == 0" @click="add('reserveTicketPop', record.oid)">预定</a>
+							<a v-if="travelStore.reserveStatus && record.orderStatus == 0" @click="add('reserveTicketPop', 'reserveTicketPop', record.oid)">预定</a>
 							<a v-if="travelStore.teamStatus" class="item" @click="add(record.oid ? 'addTicketPop' : 'productRow', 'addTicketPop', record.oid || record)">编辑</a>
 							<a v-if="travelStore.teamStatus" class="item" @click="delTicket(record, index)">删除</a>
 							<a class="item" @click="show('showTicketPop', record.oid)">查看</a>

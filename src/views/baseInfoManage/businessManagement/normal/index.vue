@@ -135,7 +135,8 @@
         <tr class="row" v-for="(item, index) in changeKeys" :key="index">
           <td class="key">{{ keyNameList[item] }}</td>
 
-          <td class="value" v-if="['manageUrl', 'businessLicenseUrl'].includes(item) && oldArrList[item]">
+          <td class="value"
+            v-if="['manageUrl', 'businessLicenseUrl', 'legalPersonUrl'].includes(item) && oldArrList[item]">
             <a-image width="200px" :src="oldArrList[item]" />
           </td>
           <td class="value" v-else-if="item === 'regionCode'">
@@ -145,7 +146,8 @@
           </td>
           <td class="value" v-else>{{ getComputedVal(item, oldArrList[item]) }}</td>
 
-          <td class="value" v-if="['manageUrl', 'businessLicenseUrl'].includes(item) && newArrList[item]">
+          <td class="value"
+            v-if="['manageUrl', 'businessLicenseUrl', 'legalPersonUrl'].includes(item) && newArrList[item]">
             <a-image width="200px" :src="newArrList[item]" />
           </td>
           <td class="value" v-else-if="item === 'regionCode'">
@@ -174,7 +176,8 @@ const route = useRoute();
 const goTo = (value: any, name: string) => {
   let newObj: any = {
     oid: encodeURIComponent(JSON.stringify(value.travelId)),
-    businessType: encodeURIComponent(JSON.stringify(value.businessType))
+    businessType: encodeURIComponent(JSON.stringify(value.businessType)),
+    fromPath: encodeURIComponent(JSON.stringify('memberReview')),
   }
   router.push({
     name: name,
@@ -182,6 +185,7 @@ const goTo = (value: any, name: string) => {
   })
 }
 const props = defineProps<{
+  type?: string,
   groupId?: number
 }>()
 const activeKey = ref('1')

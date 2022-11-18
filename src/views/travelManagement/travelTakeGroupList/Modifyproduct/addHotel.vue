@@ -27,9 +27,9 @@
 				</a-select>
 			</a-form-item>
 
-			<a-form-item label="行程人数">
+			<!-- <a-form-item label="行程人数">
 				<span>{{travelStore.touristList.length}}人</span>
-			</a-form-item>
+			</a-form-item> -->
 			<a-form-item label="诚信指定价">
 				<span>{{honestyGuidePrice}}元</span>
 			</a-form-item>
@@ -130,7 +130,7 @@
 import BaseModal from '@/components/common/BaseModal.vue';
 import api from '@/api';
 import { cloneDeep, debounce } from 'lodash';
-import { useTravelStore } from '@/stores/modules/travelManagement';
+import { useTravelStore } from '@/stores/modules/travelManagementDetail';
 import { message } from 'ant-design-vue/es';
 import { Rule } from 'ant-design-vue/es/form';
 import dayjs, { Dayjs } from 'dayjs';
@@ -142,7 +142,6 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any ) || {}
 const route = useRoute()
 const roomList = {
-	orderAmount: 0,
 	checkInNumber: '', //入住人数
 	hotelRoomTypeId: '', //房型id
 	unitPrice: 0, //房型单价
@@ -190,9 +189,7 @@ let formState = reactive<{[k: string]: any}>({
 const honestyGuidePrice = computed(() => formState.honestyGuidePrice / 100)
 
 const addRoom = () => {
-	const room = cloneDeep(roomList)
-	room.orderAmount = honestyGuidePrice.value;
-	formState.roomTypeList.push({ ...room });
+	formState.roomTypeList.push({ ...roomList });
 };
 const delRoom = (index: number) => {
 	formState.roomTypeList.splice(index, 1);
@@ -228,13 +225,9 @@ const handleMoeny = (i: number, e: string) => {
 }
 
 const handleChange = async (id: number, option: any) => {
-	formState.honestyGuidePrice = option.price;
+	formState.honestyGuidePrice = option.price
 	formState.hotelStarCode = option.name;
 	hotelData.hotel = await api.getHotelInfoByRated(id);
-	for (let i = 0; i < formState.roomTypeList.length; i++) {
-		formState.roomTypeList[i].orderAmount = honestyGuidePrice.value + 
-		parseFloat(formState.roomTypeList[i].unitPrice);
-	}
 
 };
 
@@ -286,29 +279,29 @@ const submit = async () => {
 	try {
 		let traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {}
 		
-		// formState.scheduledNumber = formState.roomTypeList.map((it: any) => Number(it.checkInNumber))
-		// .reduce((prev: any, current: any) => prev + current);
+		formState.scheduledNumber = formState.roomTypeList.map((it: any) => Number(it.checkInNumber))
+		.reduce((prev: any, current: any) => prev + current);
 		formState.scheduledRooms = formState.roomTypeList.map((it: any) => Number(it.reserveNumber))
 		.reduce((prev: any, current: any) => prev + current);
-		formState.tripNumber = travelStore.touristList.length;
-		formState.itineraryId = route.query.id || traveListData.oid
+		// formState.tripNumber = travelStore.touristList.length;
+		// formState.itineraryId = route.query.id || traveListData.oid
 		formState.orderAmount = getOrderAmount(formState.roomTypeList, formState.arrivalDate, formState.departureDate)
 		
 		// if (Number((formState.scheduledNumber / travelStore.touristList.length).toFixed) < 0.8) {
 		// 	return message.error('入住总人数不低于团客总数的80%')
 		// }
 		const newFormState = cloneDeep(formState)
-		newFormState.startDate = newFormState.arrivalDate
-		newFormState.endDate = newFormState.departureDate
-		newFormState.hotelStar = newFormState.hotelStarCode
-		newFormState.orderFee = newFormState.orderAmount
-		newFormState.reservePeopleCount = newFormState.roomTypeList.map((it:any) => Number(it.checkInNumber)).reduce((prev: number, next: number) => prev + next)
-		newFormState.roomCount = newFormState.roomTypeList.map((it:any) => Number(it.reserveNumber)).reduce((prev: number, next: number) => prev + next)
-		const res = await api.travelManagement.addHotel(formState);
+		// newFormState.startDate = newFormState.arrivalDate
+		// newFormState.endDate = newFormState.departureDate
+		// newFormState.hotelStar = newFormState.hotelStarCode
+		// newFormState.orderFee = newFormState.orderAmount
+		// newFormState.reservePeopleCount = newFormState.roomTypeList.map((it:any) => Number(it.checkInNumber)).reduce((prev: number, next: number) => prev + next)
+		// newFormState.roomCount = newFormState.roomTypeList.map((it:any) => Number(it.reserveNumber)).reduce((prev: number, next: number) => prev + next)
+		// const res = await api.travelManagement.addHotel(formState);
 		
 		// message.success('新增成功');
 		
-		travelStore.setHotels(newFormState, res, props.productRow.productId)
+		travelStore.SeetHotels(newFormState, formState.oid, props.productRow.productId)
 		// callback()
 	} catch (errorInfo) {
 		// callback(false);

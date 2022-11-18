@@ -39,7 +39,7 @@ export const takeGroupListParams = {
 	},
 };
 export const useTravelStore = defineStore({
-	id: 'travel',
+	id: 'Travel',
 	state: () => ({
 		guideType: {
 			[GuideType.UnderGuide]: '直属导游',
@@ -51,6 +51,7 @@ export const useTravelStore = defineStore({
 		baseInfo: [] as any,
 		guideList:[],
 		trafficList:[],
+		teamTime: [],
 		IDCard: [],
 		specialId:[],
 		trafficType: [],
@@ -85,8 +86,46 @@ export const useTravelStore = defineStore({
 		setGuideList(list: any) {
 			this.guideList = list;
 		},
+		logs(){
+			console.log(123);
+			
+		},
 		setTrafficList(list: any) {
 			this.trafficList = list;
+		},
+		SeetHotelsList(list: any) {
+			console.log(list,'1231313213')
+			// this.hotelList = list;
+		},
+		SeetHotels(data: any, oid: any, hotelId: string) {
+
+			if (hotelId) {
+				data.oid = oid;
+				return Object.assign(this.hotelList.filter((item: any) => hotelId == item.hotelId)[0], data);
+			}
+			if (data.oid) {
+				Object.assign(this.hotelList.filter((item: any) => data.oid == item.oid)[0], data);
+			} else {
+				data.oid = oid;
+				let newData = [...this.hotelList, data];
+				this.hotelList = newData as any;
+				console.log(this.hotelList, data, newData);
+			}
+		},
+		setTicket(data: any, oid: string, productId: string) {
+			console.log(123131313)
+			// if (productId) {
+			// 	data.oid = oid;
+			// 	return Object.assign(this.ticketsList.filter((item: any) => productId == item.scenicId)[0], data);
+			// }
+			// if (data.oid) {
+			// 	Object.assign(this.ticketsList.filter((item: any) => data.oid == item.oid)[0], data);
+			// } else {
+			// 	data.oid = oid;
+			// 	let newData = [...this.ticketsList, data];
+			// 	this.ticketsList = newData as any;
+			// 	console.log(this.ticketsList, data, newData);
+			// }
 		},
 	},
 });

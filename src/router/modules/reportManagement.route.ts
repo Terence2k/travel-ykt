@@ -340,6 +340,26 @@ export default [
 					},
 				],
 			},
+			{
+				path: 'managementCenterGeneralReport',
+				name: 'managementCenterGeneralReport',
+				redirect: '/reportManagement/managementCenterGeneralReport/list',
+				meta: {
+					title: '管理中心总账报表',
+					isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/reportManagement/managementCenterGeneralReport/index.vue'),
+						name: 'managementCenterGeneralReportList',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
 		],
 	},
 ];

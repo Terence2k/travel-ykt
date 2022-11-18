@@ -14,7 +14,6 @@
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a @click="settlement('one', record)">下团结算</a>
-						<a @click="toInfo(record)">查看</a>
 					</div>
 				</template>
 			</template>
@@ -203,10 +202,7 @@ const settlement = (type: string, record: any) => {
 	}
 	modalData.value.show = true
 };
-// 查看详情
-const toInfo = (record: any) => {
-	router.push({ path: '/travel/travel_manage/travel_detail', query: { oid: encodeURIComponent(record.oid) } });
-};
+
 onMounted(() => {
 	// getRoleList();
 	onSearch();

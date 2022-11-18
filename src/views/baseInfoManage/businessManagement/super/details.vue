@@ -14,7 +14,7 @@
           <tr class="row" v-for="(value, key) in detailsArrList" :key="key">
             <td class="key">{{ keyNameList[key] }}</td>
 
-            <td class="value" v-if="['manageUrl', 'businessLicenseUrl'].includes(key) && value">
+            <td class="value" v-if="['manageUrl', 'businessLicenseUrl', 'legalPersonUrl'].includes(key) && value">
               <a-image width="200px" :src="value" />
             </td>
             <td class="value" v-else-if="key === 'regionCode'">
@@ -38,14 +38,10 @@ import api from '@/api';
 import { string } from 'vue-types';
 const router = useRouter();
 const route = useRoute();
-const back = () => {
-  router.push({
-    name: 'apply'
-  })
-}
 type queryParamsType = {
   oid?: string,
-  businessType?: string
+  businessType?: string,
+  fromPath?: string
 }
 const props = defineProps<queryParamsType>()
 const detailsArrList = ref<any>({})
@@ -96,6 +92,8 @@ const getComputedVal = computed(() => (key: string, val: any) => {
     return name
   } else if (key === 'scenicLevel') {
     return val ? val + 'A' : ''
+  } else if (key === 'isIndividual') {
+    return val == 1 ? '是' : '否'
   } else {
     return val
   }
@@ -120,6 +118,11 @@ const getData = async () => {
     } else {
       detailsArrList.value[key] = res[key]
     }
+  })
+}
+const back = () => {
+  router.push({
+    name: queryParams.fromPath
   })
 }
 onActivated(() => {

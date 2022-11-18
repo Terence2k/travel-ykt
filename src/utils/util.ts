@@ -28,7 +28,7 @@ export const getToken = () => {
   };
 }
 export const getUserInfo = () => {
-  return JSON.parse(<string>localStorage.getItem('userInfo'));
+  return JSON.parse(<string>localStorage.getItem('userInfo') || '{}');
 }
 
 export const saveToken = (token: any) => {

@@ -222,7 +222,8 @@
 				<tr class="row" v-for="(item, index) in changeKeys" :key="index">
 					<td class="key">{{ keyNameList[item] }}</td>
 
-					<td class="value" v-if="['manageUrl', 'businessLicenseUrl'].includes(item) && oldArrList[item]">
+					<td class="value"
+						v-if="['manageUrl', 'businessLicenseUrl', 'legalPersonUrl'].includes(item) && oldArrList[item]">
 						<a-image width="200px" :src="oldArrList[item]" />
 					</td>
 					<td class="value" v-else-if="item === 'regionCode'">
@@ -232,7 +233,8 @@
 					</td>
 					<td class="value" v-else>{{ getComputedVal(item, oldArrList[item]) }}</td>
 
-					<td class="value" v-if="['manageUrl', 'businessLicenseUrl'].includes(item) && newArrList[item]">
+					<td class="value"
+						v-if="['manageUrl', 'businessLicenseUrl', 'legalPersonUrl'].includes(item) && newArrList[item]">
 						<a-image width="200px" :src="newArrList[item]" />
 					</td>
 					<td class="value" v-else-if="item === 'regionCode'">
@@ -266,7 +268,8 @@ const route = useRoute();
 const goTo = (value: any, name: string) => {
 	let newObj: any = {
 		oid: encodeURIComponent(JSON.stringify(value.oid)),
-		businessType: encodeURIComponent(JSON.stringify(value.businessType))
+		businessType: encodeURIComponent(JSON.stringify(value.businessType)),
+		fromPath: encodeURIComponent(JSON.stringify('apply')),
 	}
 	router.push({
 		name: name,
@@ -275,6 +278,7 @@ const goTo = (value: any, name: string) => {
 }
 const props = defineProps<{
 	type?: string,
+	groupId?: number
 }>()
 const activeKey = ref('1')
 const modalVisible = ref(false)
@@ -303,6 +307,8 @@ const getComputedVal = computed(() => (key: string, val: any) => {
 		return val == 1 || val == true ? '是' : '否'
 	} else if (key === 'scenicLevel') {
 		return val ? val + 'A' : ''
+	} else if (key === 'isIndividual') {
+		return val == 1 ? '是' : '否'
 	} else {
 		return val
 	}
@@ -557,6 +563,9 @@ const keyNameList = {
 	bank: '开户行',
 	bankAccount: '公司账号',
 	creditCode: '统一社会信用代码',
+	licenseNo: "12301旅行社许可证号",
+	isIndividual: "是否为散客中心",
+	legalPersonUrl: "法人身份证附件",
 	businessLicenseUrl: '营业执照',
 	// manageUrl: '经营许可证',
 	hotelStarCode: '星级',

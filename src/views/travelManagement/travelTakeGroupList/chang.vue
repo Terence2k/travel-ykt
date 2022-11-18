@@ -190,7 +190,6 @@ const getTraveDetail = () => {
 				return it;
 			});
 			travelStore.setTrafficList(res.transportList);
-			
 			let dis = null;
 			if (res.basic) {
 				dis = (current: Dayjs) => {

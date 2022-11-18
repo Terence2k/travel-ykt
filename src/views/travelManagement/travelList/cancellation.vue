@@ -23,8 +23,8 @@
 				</template>
 		</CommonTable>
 		<CommonPagination
-			:current="state.params.pageNo"
-			:page-size="state.params.pageSize"
+			:current="travelStore.traveList.cancellation.params.pageNo"
+			:page-size="travelStore.traveList.cancellation.params.pageSize"
 			:total="state.total"
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
@@ -110,8 +110,9 @@
 		
 		travelStore.setTraveList(res, 'cancellation')
 	}
-	const onHandleCurrentChange = () => {
-
+	const onHandleCurrentChange = (e:any) => {
+		travelStore.traveList.cancellation.params.pageNo = e
+		onSearch()
 	}
 	const pageSideChange = () => {
 

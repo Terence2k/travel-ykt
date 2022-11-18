@@ -92,7 +92,7 @@ export default [
 						},
 					},
 					{
-						path: 'details/businessType/:businessType/oid/:oid',
+						path: 'details/businessType/:businessType/oid/:oid/fromPath/:fromPath',
 						component: () => import('@/views/baseInfoManage/businessManagement/super/details.vue'),
 						name: 'details',
 						meta: {
