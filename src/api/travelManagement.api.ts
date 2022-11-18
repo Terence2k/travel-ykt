@@ -315,7 +315,7 @@ export const travelManagement = {
               'Content-Type': 'application/x-www-form-urlencoded',
             },
             method: 'get',
-            showLoading: true
+            showLoading: false
         });
     },
      // 变更详情
@@ -357,6 +357,13 @@ export const travelManagement = {
         return request({
             url: `${commonPath}/travel-agency-service/public/api/itinerary/template/detail/${oid}`,
             method: 'get',
+            showLoading:false
+        });
+    },
+    deleteTrave(itineraryId: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/delete/${itineraryId}`,
+            method: 'delete',
             showLoading:false
         });
     },

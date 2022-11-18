@@ -1,45 +1,66 @@
 <template>
-	<div class="upload-file">
-		<div>
-			<p>旅行合同上传：</p>
-			<Upload>
-				<img src="@/assets/svg/upload.svg" alt="" />
-				<div class="tips">点击或将文件拖拽到这里上传</div>
-				<div class="extension">支持扩展名：.doc .docx .pdf .jpg</div>
-			</Upload>
-		</div>
-		<a-button type="primary">签署合同</a-button>
+	<div class="addMore">
+		<span @click="addMore">新增更多附件</span>
 	</div>
-	<div class="upload-file">
+	<div class="upload-file" v-for="item, index in fileUrl" :key="index">
 		<div>
-			<p>旅行合同上传：</p>
-			<Upload>
+			<p v-if="item.oid && item.attachmentType !== 4">{{item.attachmentName}}</p>
+			<a-input style="margin: 10px 0; width: 316px;" v-else v-model:value="item.attachmentName" placeholder="请输入合同名称" />
+			<Upload v-model="item.attachmentUrl" :max-count="1">
 				<img src="@/assets/svg/upload.svg" alt="" />
 				<div class="tips">点击或将文件拖拽到这里上传</div>
-				<div class="extension">支持扩展名：.doc .docx .pdf .jpg</div>
+				<div class="extension">支持扩展名：.png .jpg</div>
 			</Upload>
 		</div>
-	</div>
-	<div class="upload-file">
-		<div>
-			<p>旅行合同上传：</p>
-			<Upload>
-				<img src="@/assets/svg/upload.svg" alt="" />
-				<div class="tips">点击或将文件拖拽到这里上传</div>
-				<div class="extension">支持扩展名：.doc .docx .pdf .jpg</div>
-			</Upload>
-		</div>
+		<!-- <a-button type="primary">签署合同</a-button> -->
 	</div>
 </template>
 <script lang="ts" setup>
-import Upload from '@/components/common/Upload.vue';
+import Upload from '@/components/common/imageWrapper.vue';
+import { useTravelStore } from '@/stores/modules/travelManagement';
 const props = defineProps({
 	onCheck: {
 		type: Boolean,
 	},
 });
+
+const travelStore = useTravelStore();
+const other = {
+	attachmentName: '',
+	attachmentType: 4,
+	attachmentUrl: '',
+	oid: null
+}
+const fileUrl = computed(() => travelStore.attachmentList)
+
+const addMore = () => {
+	fileUrl.value.push(other)
+}
+console.log(fileUrl.value, 'fileUrl--------------')
+watch(() => props.onCheck, (newVal) => {
+	// console.log(newVal)
+	travelStore.setFileInfo(fileUrl);
+	console.log(travelStore.attachmentList)
+})
 </script>
 <style lang="less" scoped>
+.addMore {
+	display: flex;
+	justify-content: flex-end;
+	margin-right: 20px;
+	span {
+		display: inline-block;
+		width: 124px;
+		height: 32px;
+		background-color: #36B374;
+		border-radius: 2px;
+		text-align: center;
+		line-height: 32px;
+		color: #fff;
+		font-size: 14px;
+		cursor: pointer;
+	}
+}
 .upload-file {
 	display: flex;
 	align-items: flex-end;
@@ -67,8 +88,29 @@ const props = defineProps({
 		font-size: 12px;
 	}
 	::v-deep(.ant-upload-drag) {
+		width: 318px;
+		height: 190px;
+		flex: 1;
+		border: 1px solid #d5d5d5;
 		border: 1px dashed #d3d4d6;
 		background-color: #f9fafc;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	::v-deep(.ant-upload-btn ) {
+		flex: 1;
+		& > div {
+			height: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-direction: column;
+		}
+	}
+	::v-deep(.ant-upload-list-picture-card-container) {
+		width: 318px;
+		height: 190px;
 	}
 }
 </style>

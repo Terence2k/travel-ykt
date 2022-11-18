@@ -116,7 +116,26 @@ export const useTravelStore = defineStore({
 		touristList: [],
 		trafficList: [],
 		traveInfo: {},
-		attachmentList: [],
+		attachmentList: [
+			{
+				attachmentName: '旅行合同上传：',
+				attachmentType: 1,
+				attachmentUrl: '',
+				oid: null
+			},
+			{
+				attachmentName: '委托接待协议上传：',
+				attachmentType: 2,
+				attachmentUrl: '',
+				oid: null
+			},
+			{
+				attachmentName: '包车合同上传：',
+				attachmentType: 3,
+				attachmentUrl: '',
+				oid: null
+			}
+		],
 		compositeProducts: [],
 		curentProduct: [] as any,
 		hotels: [],
@@ -285,7 +304,6 @@ export const useTravelStore = defineStore({
 			this.teamType = data;
 		},
 		setHotels(data: any, oid: string, hotelId: string) {
-
 			if (hotelId) {
 				data.oid = oid;
 				return Object.assign(this.hotels.filter((item: any) => hotelId == item.hotelId)[0], data);

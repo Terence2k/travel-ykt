@@ -119,7 +119,7 @@ const props = defineProps({
 	},
 	title: {
 		type: String,
-		default: '设置减免规则',
+		default: '设置价格日历',
 	},
 	range: {
 		type: Array,
@@ -135,7 +135,7 @@ const isCurrentDay = (timestamp: Dayjs) => {
 		isHad: any = props.setList.filter((i: any) => i.stockDate == day);
 
 	if (isHad.length > 0) {
-		return typeof isHad[0].ticketPrice === 'number' ? '￥' + isHad[0].ticketPrice : '';
+		return typeof isHad[0].ticketPrice === 'number' ? '￥' + isHad[0].ticketPrice / 100 : '';
 	} else {
 		return '';
 	}

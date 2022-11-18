@@ -94,6 +94,10 @@ export const useTravelStore = defineStore({
 		setTrafficList(list: any) {
 			this.trafficList = list;
 		},
+		SeetHotelsList(list: any) {
+			console.log(list,'1231313213')
+			// this.hotelList = list;
+		},
 		SeetHotels(data: any, oid: any, hotelId: string) {
 
 			if (hotelId) {
@@ -109,19 +113,20 @@ export const useTravelStore = defineStore({
 				console.log(this.hotelList, data, newData);
 			}
 		},
-		SsetTicket(data: any, oid: string, productId: string) {
-			if (productId) {
-				data.oid = oid;
-				return Object.assign(this.ticketsList.filter((item: any) => productId == item.scenicId)[0], data);
-			}
-			if (data.oid) {
-				Object.assign(this.ticketsList.filter((item: any) => data.oid == item.oid)[0], data);
-			} else {
-				data.oid = oid;
-				let newData = [...this.ticketsList, data];
-				this.ticketsList = newData as any;
-				console.log(this.ticketsList, data, newData);
-			}
+		setTicket(data: any, oid: string, productId: string) {
+			console.log(123131313)
+			// if (productId) {
+			// 	data.oid = oid;
+			// 	return Object.assign(this.ticketsList.filter((item: any) => productId == item.scenicId)[0], data);
+			// }
+			// if (data.oid) {
+			// 	Object.assign(this.ticketsList.filter((item: any) => data.oid == item.oid)[0], data);
+			// } else {
+			// 	data.oid = oid;
+			// 	let newData = [...this.ticketsList, data];
+			// 	this.ticketsList = newData as any;
+			// 	console.log(this.ticketsList, data, newData);
+			// }
 		},
 	},
 });

@@ -22,27 +22,11 @@
 				</p>
 				<p>
 					<span class="label">库存:</span>
-					<a-input-number
-						:min="0"
-						:max="99999"
-						v-model:value="currentInventory"
-						:formatter="(value) => value.replace(/\D/g, '')"
-						:parser="(value) => value.replace(/\D/g, '')"
-						placeholder="输入库存"
-						style="width: 200px"
-					/>
+					<a-input-number :min="0" :max="99999" v-model:value="currentInventory" placeholder="输入库存" style="width: 200px" />
 				</p>
 				<p>
 					<span class="label">按日设置</span>
-					<a-input-number
-						:min="0"
-						:max="9999999999"
-						v-model:value="currentPrict"
-						:formatter="(value) => value.replace(/\D/g, '')"
-						:parser="(value) => value.replace(/\D/g, '')"
-						placeholder="输入当日票价"
-						style="width: 200px"
-					/>
+					<a-input-number :min="0" :max="9999999999" v-model:value="currentPrict" placeholder="输入当日票价" style="width: 200px" />
 					<a-button @click="createDateItem">确定</a-button>
 				</p>
 			</div>
@@ -116,7 +100,11 @@ const createDateItem = () => {
 
 		setDayPriceList.value.map((i, index) => {
 			let arrindex = arr.indexOf(i.stockDate),
-				obj = { stockDate: i.stockDate, ticketPrice: currentPrict.value, stock: currentInventory.value };
+				obj = {
+					stockDate: i.stockDate,
+					ticketPrice: currentPrict.value ? Number((Number(currentPrict.value.toFixed(2)) * 100).toFixed(2)) : null,
+					stock: currentInventory.value,
+				};
 			console.log(arrindex, i.stockDate, arr);
 
 			if (arrindex > -1) {
@@ -127,11 +115,19 @@ const createDateItem = () => {
 		});
 
 		arr.map((i) => {
-			createItem({ stockDate: i, ticketPrice: currentPrict.value, stock: currentInventory.value });
+			createItem({
+				stockDate: i,
+				ticketPrice: currentPrict.value ? Number((Number(currentPrict.value.toFixed(2)) * 100).toFixed(2)) : null,
+				stock: currentInventory.value,
+			});
 		});
 	} else {
 		// 时间点
-		let obj = { stockDate: currentDay.value, ticketPrice: currentPrict.value, stock: currentInventory.value };
+		let obj = {
+			stockDate: currentDay.value,
+			ticketPrice: currentPrict.value ? Number((Number(currentPrict.value.toFixed(2)) * 100).toFixed(2)) : null,
+			stock: currentInventory.value,
+		};
 
 		setDayPriceList.value.map((i, index) => {
 			if (i.stockDate === currentDay.value) {

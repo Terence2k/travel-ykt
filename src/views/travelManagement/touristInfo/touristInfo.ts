@@ -44,6 +44,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 	const IDCard = computed(() => travelStore.IDCard)
 	const specialId = computed(() => travelStore.specialId)
 	const state = reactive<{editableData: UnwrapRef<Record<string, DataItem>>, [k:string]: any}>({
+		fileUrl: '',
 		formRef: null,
 		editableData: {},
 		startRef: {},
@@ -69,64 +70,76 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 				title: '证件类型',
 				dataIndex: 'certificateType',
 				key: 'certificateType',
-				data: IDCard
+				data: IDCard,
+				width: 200,
 			},
 			{
 				title: '证件号码',
 				dataIndex: 'certificateNo',
-				key: 'certificateNo'
+				key: 'certificateNo',
+				width: 200,
 			},
 			{
 				title: '姓名',
 				dataIndex: 'name',
 				key: 'name',
+				width: 200,
 			},
 			{
 				title: '性别',
 				dataIndex: 'gender',
 				key: 'gender',
-				data: travelStore.genderList
+				data: travelStore.genderList,
+				width: 200,
 			},
 			{
 				title: '年龄',
 				dataIndex: 'age',
 				key: 'age',
+				width: 200,
 			},
 			{
 				title: '客源地',
 				dataIndex: 'sourceAddressName',
 				key: 'sourceAddressName',
+				width: 200,
 			},
 			{
 				title: '健康状态',
 				dataIndex: 'healthCode',
 				key: 'healthCode',
+				width: 200,
 			},
 			{
 				title: '紧急联系人',
 				dataIndex: 'emergencyContactName',
 				key: 'emergencyContactName',
+				width: 200,
 			},
 			{
 				title: '紧急联系人电话',
 				dataIndex: 'emergencyContactPhone',
 				key: 'emergencyContactPhone',
+				width: 200,
 			},
 			{
 				title: '特殊证件类型',
 				dataIndex: 'specialCertificateType',
 				key: 'specialCertificateType',
-				data: specialId
+				data: specialId,
+				width: 200,
 			},
             {
 				title: '证件图片',
 				dataIndex: 'specialCertificatePicture',
 				key: 'specialCertificatePicture',
+				width: 400,
 			},
 			{
 				title: '操作',
 				key: 'action',
-				fixed: 'right'
+				fixed: 'right',
+				width: 100,
 			}
 		]
 	});
@@ -163,11 +176,14 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 		isUpload(key: any): {flag: boolean, text: string} {
 			let flag: boolean = false;
 			let text = ''
+			console.log(state.editableData[key].specialCertificatePicture)
 			if (state.editableData[key].specialCertificateType) {
-				(!state.editableData[key].specialCertificatePicture
-				|| !state.editableData[key].specialCertificatePicture.length) &&
-				(text = `请上传游客${state.editableData[key].name}特殊证件图片`)
-				flag = false;
+				if (!state.editableData[key].specialCertificatePicture?.length) {
+					text = `请上传游客${state.editableData[key].name}特殊证件图片`
+					flag = false;
+				} else {
+					flag = true;
+				}
 			} else {
 				flag = true;
 			}
@@ -224,6 +240,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			state.editableData[key] = cloneDeep(
 				state.tableData.filter((item:any, index: number) => key == (item.key ? item.key : item.oid))[0]
 			)
+			state.fileUrl = state.editableData[key].specialCertificatePicture.join(',')
 			state.editableData[key].edit = true
 		},
 		async del(record: any, index: number) {
@@ -298,6 +315,16 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 				const age: string = getAge(state.editableData[key].certificateNo) as any
 				state.editableData[key].age = age;
 			}
+		},
+		changeUpload(url: any, key: any) {
+			state.editableData[key].specialCertificatePicture = state.editableData[key].specialCertificatePicture ? 
+					state.editableData[key].specialCertificatePicture : []
+			state.editableData[key].specialCertificatePicture.push(url.data.filePath);
+		},
+		removeImg(file: any, key: any) {
+			console.log(state.editableData[key])
+			state.editableData[key].specialCertificatePicture.splice(file.index, 1);
+			console.log(file, key)
 		}
 	}
 	watch(onCheck, (newVal) => {

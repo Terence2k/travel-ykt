@@ -33,6 +33,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 	const gouvyId = reactive<{[k: string]: any}>({
 		id: '',
 		isReductionPassed: '',
+		isInitiateReduction:''
 	})
 	const state = reactive<{ editableData: UnwrapRef<Record<string, DataItem>>; [k: string]: any }>({
 		editableData: {},
@@ -363,6 +364,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			state[data.selectPersonnelPop]=true
 			gouvyId.id=data.id
 			gouvyId.isReductionPassed=data.isReductionPassed
+			gouvyId.isInitiateReduction=data.isInitiateReduction
 		},
 		seeReject(key: string)
 		{

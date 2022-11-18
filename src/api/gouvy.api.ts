@@ -178,3 +178,14 @@ export async function gouvyOrderDetail(id: number) {
 		showLoading: false,
 	});
 }
+//古维订单出票
+export async function issue(id: number) {
+	return request({
+		url: `${commonPath}/heritage-maintenance-service/public/api/hm-order/issue/${id}`,
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		method: 'get',
+		showLoading: false,
+	});
+}
