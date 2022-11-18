@@ -64,7 +64,25 @@
 						</span>
 					</template>
 					<template v-if="column.key === 'specialCertificatePicture'">
-						<Upload class="upload-img"></Upload>
+						<!-- <Upload class="upload-img"></Upload> -->
+						<div>
+							<div v-if="!editableData[record.key ? record.key : record.oid]">
+								<a-image
+									v-for="url in record.specialCertificatePicture"
+									:key="url"
+									:width="50"
+									:src="url"
+								/>
+							</div>
+							<Upload 
+								v-else
+								v-model="fileUrl"
+								@remove="($event) => removeImg($event, record.key ? record.key : record.oid)"
+								@result="($event) => changeUpload($event, record.key ? record.key : record.oid)" :maxCount="2">
+								<plus-outlined></plus-outlined>
+							</Upload>
+
+						</div>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
@@ -100,8 +118,9 @@
 </template>
 <script lang="ts" setup>
 import CommonTable from '@/components/common/CommonTable.vue';
-import Upload from '@/components/common/Upload.vue';
+import Upload from '@/components/common/imageWrapper.vue';
 import { useTouristInfo } from './touristInfo';
+import { PlusOutlined } from '@ant-design/icons-vue';
 
 const props = defineProps({
 	onCheck: {
@@ -127,7 +146,10 @@ const {
 	loadData,
 	handleChange,
 	travelStore,
-	changeIDCard
+	changeIDCard,
+	changeUpload,
+	fileUrl,
+	removeImg
 } = useTouristInfo(props, emits);
 </script>
 <style lang="less" scoped>
@@ -141,21 +163,39 @@ const {
 }
 
 .upload-img,::v-deep(.ant-upload-drag) {
-	width: 64px;
-	height: 34px;
-	border: 1px solid #d5d5d5;
-	background-color: #fff;
+	width: 64px !important;
+	height: 34px !important;
+	border: 1px solid #d5d5d5 !important;
+	background-color: #fff !important;
 }
 .upload-img,::v-deep(.ant-upload-drag .ant-upload) {
-	padding: 5px 0;
+	padding: 5px 0 !important;
+	width: 100% !important;
+	height: 100%;
+}
+::v-deep(.ant-upload-list) {
+	width: 64px;
+	height: 34px;
+	display: flex;
+	flex: 1;
+}
+::v-deep(.ant-upload-list-picture-card-container) {
+	width: 100%;
+	height: 100%;	
+}
+::v-deep(.ant-upload-list-item) {
+	padding: 0;
 }
 .upload-img,::v-deep(.ant-upload-drag .anticon-plus) {
-	color: #777;
-	font-size: 16px;
+	color: #777 !important;
+	font-size: 16px !important;
 }
 
 ::v-deep(.ant-select-selection-placeholder) {
 	color: #333;
+}
+::v-deep(.ant-image) {
+	margin-left: 10px;
 }
 .footer-btn {
 	display: flex;
