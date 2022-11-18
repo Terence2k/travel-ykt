@@ -42,7 +42,7 @@ const props = defineProps({
     default: false
   }
 });
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'result']);
 const userInfo = getUserInfo();
 
 const getBase64 = (file: File) => {
@@ -87,10 +87,14 @@ const uploadFile = async (options: any) => {
           return item.response.data.filePath;
         }
       })
+      emit('result', { success: true, msg: '上传成功', data: { filePath: files[0] } },
+        { name: files[0], url: files[0] },
+        files)
     return emit('update:modelValue', tempData?.join(','));
     } catch (e) {
       console.log(e);
       options.onError(e);
+      emit('result', { success: false, msg: '上传失败' })
     }
 };
 const previewVisible = ref(false);
