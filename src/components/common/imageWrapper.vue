@@ -1,6 +1,6 @@
 <template>
-	<div class="clearfix">
-		<a-upload
+	<div class="img-container">
+		<a-upload-dragger
 			:maxCount="maxCount"
 			v-model:file-list="fileList"
 			list-type="picture-card"
@@ -10,10 +10,11 @@
 			@preview="handlePreview"
       @remove="removeImg"
 		>
-			<div style="margin-top: 8px">
-        上传图片
+			<div>
+        <slot></slot>
+        <div v-if="!slotDefault">上传图片</div>
       </div>
-		</a-upload>
+		</a-upload-dragger>
 
 		<a-modal :visible="previewVisible" title="预览图片" :footer="null" @cancel="handleCancel">
 			<img alt="example" style="width: 100%" :src="previewImage" />
@@ -39,6 +40,7 @@ const props = defineProps({
 });
 const emit = defineEmits(['update:modelValue']);
 const userInfo = getUserInfo();
+const slotDefault = !!useSlots().default;
 
 const getBase64 = (file: File) => {
 	return new Promise((resolve, reject) => {
@@ -129,7 +131,7 @@ onMounted(() => {
     console.log('modelValue:', props.modelValue);
 })
 </script>
-<style>
+<style lang="less" scoped>
 /* you can make up upload button and sample style by using stylesheets */
 .ant-upload-select-picture-card i {
 	font-size: 32px;
@@ -139,5 +141,15 @@ onMounted(() => {
 .ant-upload-select-picture-card .ant-upload-text {
 	margin-top: 8px;
 	color: #666;
+}
+.img-container {
+  span {
+    display: flex;
+  }
+}
+::v-deep(.ant-upload) {
+  width: 102px;
+  height: 102px;
+  margin-right: 10px;
 }
 </style>
