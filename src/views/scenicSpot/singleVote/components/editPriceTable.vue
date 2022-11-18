@@ -2,24 +2,10 @@
 	<CommonTable :dataSource="tableList" :columns="columnsCount" :scrollY="false" bordered>
 		<template #bodyCell="{ column, record }">
 			<template v-if="column.key === 'wateryPrice'">
-				<a-input-number
-					:controls="false"
-					:formatter="(value) => value.replace(/\D/g, '')"
-					:parser="(value) => value.replace(/\D/g, '')"
-					v-model:value="formData.data.wateryPrice"
-					placeholder="输入"
-					@change="changePrice"
-				/>
+				<a-input-number :controls="false" v-model:value="formData.data.wateryPrice" placeholder="输入" @change="changePrice" />
 			</template>
 			<template v-if="column.key === 'price'">
-				<a-input-number
-					:controls="false"
-					:formatter="(value) => value.replace(/\D/g, '')"
-					:parser="(value) => value.replace(/\D/g, '')"
-					v-model:value="formData.data.price"
-					placeholder="输入"
-					@change="changePrice"
-				/>
+				<a-input-number :controls="false" v-model:value="formData.data.price" placeholder="输入" @change="changePrice" />
 			</template>
 		</template>
 	</CommonTable>

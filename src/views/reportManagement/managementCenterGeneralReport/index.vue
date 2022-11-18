@@ -43,7 +43,9 @@
 		<a-spin size="large" :spinning="state.tableData.loading">
 			<!--  -->
 			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }" bordered>
-				<template #bodyCell="{ column, record }"> </template>
+				<template #bodyCell="{ column, record }">
+					<template v-if="column.key === 'ruleMap'"> {{ getRulePrice(record, column) }} </template>
+				</template>
 			</CommonTable>
 		</a-spin>
 		<CommonPagination
@@ -352,6 +354,12 @@ const columns = computed(() => {
 		},
 	]);
 	const data = state.tableData.data;
+	/**
+	 * 先获取数据源，根据数据源的综费产品列表渲染到表头上
+	 * 再把数据进行整理 把数据源所有数据和表头一一对应存到 ruleMap
+	 * 再根据 ruleMap 进行遍历判断
+	 */
+	const ruleMap: any = [];
 	// 把综费产品两个数组整合到表头上
 	for (let index = 0; index < data.length; index++) {
 		// 综费产品 - 导服费
@@ -364,6 +372,7 @@ const columns = computed(() => {
 				const comprehensiveGuideVo = {
 					title: `${vo.comprehensiveFeeProductName}`,
 					dataIndex: `${vo.comprehensiveFeeProductId}`,
+					id: `${vo.comprehensiveFeeProductId}`,
 					key: 'comprehensiveGuideVoList',
 					children: [
 						{
@@ -381,6 +390,26 @@ const columns = computed(() => {
 					],
 				};
 				column.value.push(comprehensiveGuideVo);
+				// 把数据源和表头整理到ruleMap
+				const title = `comprehensiveGuideVoList-${vo.comprehensiveFeeProductId}`;
+				if (!ruleMap[title]) {
+					ruleMap[title] = { column: {}, data: [] };
+				}
+				ruleMap[title]['column'] = column.value[column.value.length - 1].children;
+				ruleMap[title]['data'].push(vo['ruleList']);
+				ruleMap[title]['columnParent'] = column.value[column.value.length - 1];
+			} else {
+				// 把数据源和表头整理到ruleMap
+				const title = `comprehensiveGuideVoList-${vo.comprehensiveFeeProductId}`;
+				if (!ruleMap[title]) {
+					ruleMap[title] = { column: {}, data: [] };
+				}
+				const idx = column.value.findIndex((item) => {
+					return item.title === vo.comprehensiveFeeProductName;
+				});
+				ruleMap[title]['column'] = column.value[idx].children;
+				ruleMap[title]['data'].push(vo['ruleList']);
+				ruleMap[title]['columnParent'] = column.value[idx];
 			}
 		}
 		//综费产品-除导服费外
@@ -410,17 +439,36 @@ const columns = computed(() => {
 					],
 				};
 				column.value.push(comprehensiveGuideVo);
+				// 把数据源和表头整理到ruleMap
+				const title = `comprehensiveVoList-${vo.comprehensiveFeeProductId}`;
+				if (!ruleMap[title]) {
+					ruleMap[title] = { column: {}, data: [] };
+				}
+				ruleMap[title]['column'] = column.value[column.value.length - 1].children;
+				ruleMap[title]['data'].push(vo['ruleList']);
+				ruleMap[title]['columnParent'] = column.value[column.value.length - 1];
+			} else {
+				// 把数据源和表头整理到ruleMap
+				const title = `comprehensiveVoList-${vo.comprehensiveFeeProductId}`;
+				if (!ruleMap[title]) {
+					ruleMap[title] = { column: {}, data: [] };
+				}
+				const idx = column.value.findIndex((item) => {
+					return item.title === vo.comprehensiveFeeProductName;
+				});
+				ruleMap[title]['column'] = column.value[idx].children;
+				ruleMap[title]['data'].push(vo['ruleList']);
+				ruleMap[title]['columnParent'] = column.value[idx];
 			}
 		}
 	}
-	// 把所有带有结算规则的数据进行配置表头结算规则
-	const ruleMap: any = [];
+	// 把所有带有结算规则的数据进行数据整理
 	for (let index = 0; index < data.length; index++) {
 		for (const key in data[index]) {
-			// 先对于除综费产品外的数据进行处理
-			if (key.includes('Vo') && !key.includes('List')) {
+			if (key.includes('Vo')) {
 				for (let j = 0; j < column.value.length; j++) {
-					if (column.value[j].key === key) {
+					// 对于除综费产品外的数据进行处理
+					if (!key.includes('List') && column.value[j].key === key) {
 						if (!ruleMap[key]) {
 							ruleMap[key] = { column: {}, data: [] };
 						}
@@ -431,10 +479,35 @@ const columns = computed(() => {
 			}
 		}
 	}
-	console.log(ruleMap, `ruleMap`);
+	// 将结算规则配置到表头
 	for (const key in ruleMap) {
-		console.log(ruleMap[key]);
+		// ruleMap[key]['column'] 表头 ruleMap[key]['data'] 配置规则数据
+		for (const subKey in ruleMap[key]['data']) {
+			const ruleList = ruleMap[key]['data'][subKey];
+			for (const t in ruleList) {
+				const isHasRule = ruleMap[key]['column'].some((item: any) => {
+					return item.title === ruleList[t].ruleName;
+				});
+				// 判断标有是否已经存在数据
+				if (!isHasRule) {
+					const rule: any = {
+						title: `${ruleList[t].ruleName}`,
+						dataIndex: 'ruleMap',
+						key: 'ruleMap',
+						ruleName: `${ruleList[t].ruleName}`,
+						width: 180,
+						parent: key,
+					};
+					if (key.includes('List')) {
+						rule['columnParentName'] = ruleMap[key]['columnParent']['title'];
+					}
+					ruleMap[key]['column'].push(rule);
+				}
+			}
+		}
 	}
+	console.log(ruleMap, `ruleMap`);
+
 	return column.value;
 });
 const comprehensiveGuideVoListIds = ref([]);
@@ -505,7 +578,7 @@ const initList = async () => {
 				actualPrice: '1', //实收
 				ruleList: [
 					{
-						ruleName: '1', //规则名称
+						ruleName: '结算规则', //规则名称
 						rulePrice: '1', //结算费用
 					},
 				], //结算规则
@@ -516,7 +589,7 @@ const initList = async () => {
 				actualPrice: '1', //实收
 				ruleList: [
 					{
-						ruleName: '1', //规则名称
+						ruleName: '结算规则', //规则名称
 						rulePrice: '1', //结算费用
 					},
 				], //结算规则
@@ -525,7 +598,7 @@ const initList = async () => {
 				actualPrice: '1', //实收
 				ruleList: [
 					{
-						ruleName: '1', //规则名称
+						ruleName: '结算规则', //规则名称
 						rulePrice: '1', //结算费用
 					},
 				], //结算规则
@@ -534,7 +607,7 @@ const initList = async () => {
 				actualPrice: '1', //实收
 				ruleList: [
 					{
-						ruleName: '1', //规则名称
+						ruleName: '结算规则', //规则名称
 						rulePrice: '1', //结算费用
 					},
 				], //结算规则
@@ -543,7 +616,7 @@ const initList = async () => {
 				actualPrice: '1', //实收
 				ruleList: [
 					{
-						ruleName: '1', //规则名称
+						ruleName: '结算规则', //规则名称
 						rulePrice: '1', //结算费用
 					},
 				], //结算规则
@@ -552,7 +625,7 @@ const initList = async () => {
 				actualPrice: '1', //实收
 				ruleList: [
 					{
-						ruleName: '1', //规则名称
+						ruleName: '结算规则', //规则名称
 						rulePrice: '1', //结算费用
 					},
 				], //结算规则
@@ -561,7 +634,7 @@ const initList = async () => {
 				actualPrice: '1', //实收
 				ruleList: [
 					{
-						ruleName: '1', //规则名称
+						ruleName: '结算规则', //规则名称
 						rulePrice: '1', //结算费用
 					},
 				], //结算规则
@@ -570,7 +643,7 @@ const initList = async () => {
 				actualPrice: '1', //实收
 				ruleList: [
 					{
-						ruleName: '1', //规则名称
+						ruleName: '结算规则', //规则名称
 						rulePrice: '1', //结算费用
 					},
 				], //结算规则
@@ -579,7 +652,7 @@ const initList = async () => {
 				actualPrice: '1', //实收
 				ruleList: [
 					{
-						ruleName: '1', //规则名称
+						ruleName: '结算规则', //规则名称
 						rulePrice: '1', //结算费用
 					},
 				], //结算规则
@@ -592,8 +665,12 @@ const initList = async () => {
 					groupActualPrice: '1', //集团实收
 					ruleList: [
 						{
-							ruleName: '1', //规则名称
-							rulePrice: '1', //结算费用
+							ruleName: '结算规则-0001', //规则名称
+							rulePrice: '1222', //结算费用
+						},
+						{
+							ruleName: '结算规则-0002', //规则名称
+							rulePrice: '1322', //结算费用
 						},
 					], //结算规则
 				},
@@ -606,8 +683,12 @@ const initList = async () => {
 					actualPrice: '1', //实收
 					ruleList: [
 						{
-							ruleName: '1', //规则名称
-							rulePrice: '1', //结算费用
+							ruleName: '结算规则-0001', //规则名称
+							rulePrice: '13333', //结算费用
+						},
+						{
+							ruleName: '结算规则-0002', //规则名称
+							rulePrice: '13333', //结算费用
 						},
 					], //结算规则
 				},
@@ -633,6 +714,24 @@ const initList = async () => {
 					},
 				], //结算规则
 			}, //古维费用
+			comprehensiveGuideVoList: [
+				{
+					comprehensiveFeeProductId: 1, //综费产品id
+					comprehensiveFeeProductName: '综费产品-导服费', //综费产品名称
+					travelActualPrice: '1', //旅行社实收
+					groupActualPrice: '1', //集团实收
+					ruleList: [
+						{
+							ruleName: '结算规则-0011', //规则名称
+							rulePrice: '1222', //结算费用
+						},
+						{
+							ruleName: '结算规则-0022', //规则名称
+							rulePrice: '1322', //结算费用
+						},
+					], //结算规则
+				},
+			], //综费产品-导服费
 		},
 		{
 			hmVo: {
@@ -654,6 +753,24 @@ const initList = async () => {
 					},
 				], //结算规则
 			}, //古维费用
+			comprehensiveGuideVoList: [
+				{
+					comprehensiveFeeProductId: 1, //综费产品id
+					comprehensiveFeeProductName: '综费产品-导服费', //综费产品名称
+					travelActualPrice: '1', //旅行社实收
+					groupActualPrice: '1', //集团实收
+					ruleList: [
+						{
+							ruleName: '结算规则-0001', //规则名称
+							rulePrice: '1222', //结算费用
+						},
+						{
+							ruleName: '结算规则-0004', //规则名称
+							rulePrice: '1322', //结算费用
+						},
+					], //结算规则
+				},
+			], //综费产品-导服费
 		},
 	];
 };
@@ -700,5 +817,29 @@ const timeChange = (arr: any) => {
 		state.tableData.param.settlementEndTime = null;
 	}
 };
+const getRulePrice = computed(() => (record: any, column: any) => {
+	const ruleColumnKey = column.parent.split('-')[0];
+	// 综费产品
+	if (ruleColumnKey.includes('List')) {
+		for (const key in record[ruleColumnKey]) {
+			if (column.columnParentName === record[ruleColumnKey][key]['comprehensiveFeeProductName']) {
+				for (const subKey in record[ruleColumnKey][key].ruleList) {
+					if (column.title === record[ruleColumnKey][key].ruleList[subKey].ruleName) {
+						return `${record[ruleColumnKey][key].ruleList[subKey].rulePrice}`;
+					}
+				}
+			}
+		}
+	}
+	// 除综费产品外
+	if (record[ruleColumnKey] && record[ruleColumnKey].ruleList && record[ruleColumnKey].ruleList.length) {
+		for (const key in record[ruleColumnKey].ruleList) {
+			if (column.title === record[ruleColumnKey].ruleList[key].ruleName) {
+				return `${record[ruleColumnKey].ruleList[key].rulePrice}`;
+			}
+		}
+	}
+	return `暂无数据`;
+});
 </script>
 <style scoped lang="less"></style>
