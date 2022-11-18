@@ -92,6 +92,12 @@
         <td class="value">{{ details.bankAccount }}</td>
       </tr>
       <tr class="row">
+        <td class="key">法人身份证附件</td>
+        <td class="value">
+          <a-image width="200px" :src="details.legalPersonUrl" />
+        </td>
+      </tr>
+      <tr class="row">
         <td class="key">营业执照</td>
         <td class="value">
           <a-image width="200px" :src="details.businessLicenseUrl" />
@@ -132,7 +138,9 @@ type detailsType = {
   businessLicenseUrl?: string,
   manageUrl?: string,
   oid?: string | number,
-  bank?: string
+  companyId?: string | number,
+  bank?: string,
+  legalPersonUrl?: string,
 }
 type stateType = {
   baseInfo: {
@@ -181,7 +189,7 @@ type paramsType = {
 }
 const membership = () => {
   const params: paramsType = {
-    id: state.details.oid as number,
+    id: state.details.companyId as number,
     contactName: state.details.contactName as string,
     phone: state.details.phone as string
   }

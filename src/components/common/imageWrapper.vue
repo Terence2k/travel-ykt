@@ -9,8 +9,9 @@
 			accept=".jpg,.png"
 			@preview="handlePreview"
       @remove="removeImg"
+      :disabled="disabled"
 		>
-			<div>
+			<div v-if="fileList?.length < maxCount">
         <slot></slot>
         <div v-if="!slotDefault">上传图片</div>
       </div>
@@ -37,6 +38,10 @@ const props = defineProps({
     type: Number,
     default: 99
   },
+  disabled: {
+    type: Boolean,
+    default: false
+  }
 });
 const emit = defineEmits(['update:modelValue']);
 const userInfo = getUserInfo();
@@ -69,7 +74,7 @@ const uploadFile = async (options: any) => {
       const { files } = await awsUploadFile({
         files: [options.file],
         onProgress: options.onProgress,
-        businessType: userInfo.sysCompany.businessType
+        businessType: userInfo.sysCompany?.businessType || 'form'
       });
       console.log('files', files);
       options.onSuccess(

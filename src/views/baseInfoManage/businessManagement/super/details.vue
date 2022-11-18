@@ -38,19 +38,10 @@ import api from '@/api';
 import { string } from 'vue-types';
 const router = useRouter();
 const route = useRoute();
-const formPath = ref('apply')
-router.beforeEach((to, from, next) => {
-  formPath.value = from.name
-  next()
-})
-const back = () => {
-  router.push({
-    name: formPath.value
-  })
-}
 type queryParamsType = {
   oid?: string,
-  businessType?: string
+  businessType?: string,
+  fromPath?: string
 }
 const props = defineProps<queryParamsType>()
 const detailsArrList = ref<any>({})
@@ -127,6 +118,11 @@ const getData = async () => {
     } else {
       detailsArrList.value[key] = res[key]
     }
+  })
+}
+const back = () => {
+  router.push({
+    name: queryParams.fromPath
   })
 }
 onActivated(() => {

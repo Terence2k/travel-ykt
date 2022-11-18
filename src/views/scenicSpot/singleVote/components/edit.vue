@@ -68,7 +68,15 @@
 				<a-input v-model:value="formData.data.dayStock" placeholder="输入每日库存" />
 			</a-form-item>
 			<a-form-item label="票价" name="data.wateryPrice" :wrapper-col="{ span: 12 }" v-bind="errorPriceInfos" style="margin-bottom: 10px">
-				<EditPriceTable :tableList="[{ wateryPrice: formData.data.wateryPrice, price: formData.data.price }]" @change-price="changePrice" />
+				<EditPriceTable
+					:tableList="[
+						{
+							wateryPrice: formData.data.wateryPrice ? formData.data.wateryPrice / 100 : null,
+							price: formData.data.price ? formData.data.price / 100 : null,
+						},
+					]"
+					@change-price="changePrice"
+				/>
 			</a-form-item>
 			<a-form-item label="费用包含">
 				<a-textarea v-model:value="formData.data.ticketDesc" placeholder="请输入费用包含" :rows="4" />
@@ -255,8 +263,9 @@ const onSubmit = async () => {
 const changePrice = (val: any) => {
 	const { wateryPrice, price } = val;
 	console.log('emit get ', val);
-	formData.data.wateryPrice = wateryPrice;
-	formData.data.price = price;
+
+	formData.data.wateryPrice = wateryPrice ? Number((Number(wateryPrice.toFixed(2)) * 100).toFixed(2)) : null;
+	formData.data.price = price ? Number((Number(price.toFixed(2)) * 100).toFixed(2)) : null;
 };
 
 // const getOptionalVerificationCount = (val: any) => {

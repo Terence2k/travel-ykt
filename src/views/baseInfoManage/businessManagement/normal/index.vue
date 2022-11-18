@@ -176,7 +176,8 @@ const route = useRoute();
 const goTo = (value: any, name: string) => {
   let newObj: any = {
     oid: encodeURIComponent(JSON.stringify(value.travelId)),
-    businessType: encodeURIComponent(JSON.stringify(value.businessType))
+    businessType: encodeURIComponent(JSON.stringify(value.businessType)),
+    fromPath: encodeURIComponent(JSON.stringify('memberReview')),
   }
   router.push({
     name: name,
@@ -184,6 +185,7 @@ const goTo = (value: any, name: string) => {
   })
 }
 const props = defineProps<{
+  type?: string,
   groupId?: number
 }>()
 const activeKey = ref('1')
