@@ -46,7 +46,7 @@
         </a-form-item>
         <a-form-item name="legalPersonUrl" label="法人身份证附件">
           <div class="flex">
-            <Upload v-model="form.legalPersonUrl" :disabled="getStatus('legalPersonUrl')" :maxCount="1"/>
+            <Upload v-model="form.legalPersonUrl" :disabled="getStatus('legalPersonUrl')" :maxCount="1" @remove="getImage"/>
             <a-button type="primary" class="status-btn" @click="changeDisabledStatus('legalPersonUrl')" v-if="showChangeBtns('legalPersonUrl')">
               {{ getStatus('legalPersonUrl') ? '修改' : '确定' }}
             </a-button>
@@ -425,6 +425,11 @@ const getHotelStarList = async () => {
 // 获取景区等级下拉数据
 const getScenicLevels = async () => {
   scenicLevelList.value = await api.getScenicLevels();
+}
+
+const getImage = (options: any) => {
+  console.log('getImage:', options);
+  
 }
 
 const initOpeion = async () => {

@@ -43,7 +43,7 @@ const props = defineProps({
     default: false
   }
 });
-const emit = defineEmits(['update:modelValue', 'result']);
+const emit = defineEmits(['update:modelValue', 'result', 'remove']);
 const userInfo = getUserInfo();
 const slotDefault = !!useSlots().default;
 
@@ -114,6 +114,7 @@ const handlePreview = async (file: UploadProps['fileList'][number]) => {
 	previewVisible.value = true;
 };
 const removeImg = (file: any) => {
+  emit('remove', {url: file.url, index: file.index})
   setTimeout(() => {
     emit('update:modelValue', fileList.value?.map((item: any) => item.url).join(','));
   }, 0);
@@ -131,6 +132,7 @@ watch(
           name: item,
           status: 'done',
           url: item,
+          index: index
         }
       })
     }
