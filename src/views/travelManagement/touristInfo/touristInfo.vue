@@ -77,6 +77,7 @@
 							<Upload 
 								v-else
 								v-model="fileUrl"
+								@remove="($event) => removeImg($event, record.key ? record.key : record.oid)"
 								@result="($event) => changeUpload($event, record.key ? record.key : record.oid)" :maxCount="2">
 								<plus-outlined></plus-outlined>
 							</Upload>
@@ -147,7 +148,8 @@ const {
 	travelStore,
 	changeIDCard,
 	changeUpload,
-	fileUrl
+	fileUrl,
+	removeImg
 } = useTouristInfo(props, emits);
 </script>
 <style lang="less" scoped>
