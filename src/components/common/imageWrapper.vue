@@ -11,7 +11,7 @@
       @remove="removeImg"
       :disabled="disabled"
 		>
-			<div v-if="fileList?.length < maxCount">
+			<div>
         <slot></slot>
         <div v-if="!slotDefault">上传图片</div>
       </div>
