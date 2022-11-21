@@ -173,7 +173,7 @@ const getTraveDetail = () => {
 			travelStore.setFileInfo(res.attachmentList);
 			travelStore.setGuideList(res.guideList);
 			travelStore.setTouristList(res.touristList.content.map((it: any) => {
-				it.specialCertificatePicture = it.specialCertificatePicture.split(',');
+				it.specialCertificatePicture = it.specialCertificatePicture?.split(',');
 				return it;
 			}));
 			res.transportList = res.transportList.map((it:any) => {
@@ -200,7 +200,7 @@ const getTraveDetail = () => {
 				return (dayjs(res.basic.startDate) && dayjs(res.basic.startDate) > current && current) ||
 					(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).add(1, 'day') < current && current)
 			}
-			activeKey.value = Number(route.query.tab);
+			setTimeout(() => activeKey.value = Number(route.query.tab))
 		});
 };
 

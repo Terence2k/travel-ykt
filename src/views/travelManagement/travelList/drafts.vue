@@ -107,8 +107,8 @@
 			},
 			{
 				title: '草稿编辑状态',
-				dataIndex: 'touristCount1',
-				key: 'touristCount1',
+				dataIndex: 'childStatusName',
+				key: 'childStatusName',
 			},
 			{
 				title: '操作',

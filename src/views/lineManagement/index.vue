@@ -1,44 +1,122 @@
 <template>
-  <CommonSearch>
-    <search-item label="适用范围">
-      <a-select placeholder="请选择适用范围" v-model:value="tableData.param.businessType" allowClear>
-        <a-select-option v-for="item in enableOption" :value="item.codeValue">{{ item.name }}
-        </a-select-option>
-      </a-select>
-    </search-item>
-    <search-item label="线路名称">
-      <a-input v-model:value="tableData.param.name" placeholder="请输入线路名称" />
-    </search-item>
-    <template #button>
-      <a-button @click="onQuery">查询</a-button>
-    </template>
-  </CommonSearch>
-  <CommonTable :dataSource="tableData.data" :columns="columns">
-    <template #button>
-      <a-button type="primary" @click="addOrUpdate({ handle: 'add' })">创建新路线</a-button>
-    </template>
-    <template #bodyCell="{ column, record }">
-      <template v-if="column.key === 'action'">
-        <div class="action-btns">
-          <a @click="addOrUpdate({ row: record, handle: 'update' })">修改</a>
-          <a @click="">禁用</a>
-          <a @click="">启用</a>
+  <search v-model:value="tableData.param" @query="onQuery" v-show="activeKey === '1'"></search>
+  <search v-model:value="tableData1.param" @query="onQuery" v-show="activeKey === '2'"></search>
+
+  <div class="tabs_box">
+    <a-badge :count="tableData1.total" class="rebadge" />
+    <a-tabs v-model:activeKey="activeKey" @change="tabsChange">
+      <a-tab-pane key="1" tab="已审核">
+        <CommonTable :dataSource="tableData.data" :columns="columns">
+          <template #bodyCell="{ column, record, index }">
+            <template v-if="column.key === 'index'">
+              {{ index + 1 }}
+            </template>
+            <template v-if="column.key === 'storeName'">
+              <span v-if="record.operatorRole === '中心操作员'">/</span>
+              <span v-else>{{ record.storeName }}</span>
+            </template>
+            <template v-if="column.key === 'action'">
+              <div class="action-btns">
+                <a @click="checkDetails(record)">查看</a>
+                <a @click="addOrUpdate({ row: record, handle: 'update' })">修改</a>
+                <!-- <a-popconfirm title="是否要禁用该操作员？禁用后该操作员不可再登录一卡通平台。" ok-text="确认" cancel-text="取消"
+                  @confirm="disable(0, record.userId)">
+                  <a v-show="record.enableSatus">禁用</a>
+                </a-popconfirm>
+                <a-popconfirm title="是否要启用该操作员？启用后该操作员可恢复登录、散拼业务权限。" ok-text="确认" cancel-text="取消"
+                  @confirm="disable(1, record.userId)">
+                  <a v-show="!record.enableSatus">启用</a>
+                </a-popconfirm> -->
+              </div>
+            </template>
+          </template>
+        </CommonTable>
+        <div class="buttom_box">
+          <div>共 <span style="color:#de0025;">{{ tableData.total }}</span> 条线路</div>
+          <CommonPagination v-model:current="tableData.param.pageNo" v-model:page-size="tableData.param.pageSize"
+            :total="tableData.total" @change="onHandleCurrentChange" @showSizeChange="pageSideChange" />
         </div>
+      </a-tab-pane>
+      <a-tab-pane key="2" tab="待审核">
+        <CommonTable :dataSource="tableData1.data" :columns="columns1">
+          <template #bodyCell="{ column, record, index }">
+            <template v-if="column.key === 'index'">
+              {{ index + 1 }}
+            </template>
+            <template v-if="column.key === 'storeName'">
+              <span v-if="record.operatorRole === '中心操作员'">/</span>
+              <span v-else>{{ record.storeName }}</span>
+            </template>
+            <template v-if="column.key === 'action'">
+              <div class="action-btns">
+                <template v-if="isSuper">
+                  <a @click="auditStore(record)">去审核</a>
+                </template>
+                <a @click="checkDetails(record)">查看</a>
+              </div>
+            </template>
+          </template>
+        </CommonTable>
+        <div class="buttom_box">
+          <div>共 <span style="color:#de0025;">{{ tableData1.total }}</span> 条线路</div>
+          <CommonPagination v-model:current="tableData1.param.pageNo" v-model:page-size="tableData1.param.pageSize"
+            :total="tableData1.total" @change="onHandleCurrentChange1" @showSizeChange="pageSideChange1" />
+        </div>
+      </a-tab-pane>
+      <template #rightExtra>
+        <a-button type="primary" @click="addOrUpdate({ handle: 'add' })">创建新路线</a-button>
+        <a-button type="primary" @click="changeVisible = true">test</a-button>
       </template>
-    </template>
-  </CommonTable>
-  <div class="buttom_box">
-    <div>共 <span style="color:#de0025;">{{ tableData.total }}</span> 条线路</div>
-    <CommonPagination v-model:current="tableData.param.pageNo" v-model:page-size="tableData.param.pageSize"
-      :total="tableData.total" @change="onHandleCurrentChange" @showSizeChange="pageSideChange" />
+    </a-tabs>
   </div>
+
   <CommonModal :title="state.title" v-model:visible="modalVisible" @cancel="cancel" @close="cancel"
     :conform-text="'提交审核'" width="40%">
     <a-form ref="teamRef" :model="form" :rules="formRules" name="addStore" autocomplete="off" :label-col="labelCol"
       :wrapper-col="{ span: 24 }">
-      <a-form-item name="username" label="线路名称">
-        <a-input v-model:value="form.username" placeholder="请输入线路名称">
+      <a-form-item name="lineName" label="线路名称">
+        <a-input v-model:value="form.lineName" placeholder="请输入线路名称，30字以内" show-count :maxlength="30">
         </a-input>
+      </a-form-item>
+      <a-form-item name="lineDescribe" label="线路描述">
+        <a-textarea v-model:value="form.lineDescribe" placeholder="请输入线路描述，300字以内" show-count :maxlength="300" />
+      </a-form-item>
+      <a-form-item label="适用范围">
+        <a-form-item name="suitableRange" v-if="rolesLevel === 1">
+          <a-radio-group v-model:value="form.suitableRange">
+            <a-radio :style="radioStyle" :value="1">全部旅行社全部门店可用</a-radio>
+            <a-radio :style="radioStyle" :value="2">指定旅行社</a-radio>
+            <a-radio :style="radioStyle" :value="3">指定门店</a-radio>
+          </a-radio-group>
+        </a-form-item>
+        <a-form-item name="suitableRange" v-if="rolesLevel === 2">
+          <a-radio-group v-model:value="form.suitableRange">
+            <a-radio :style="radioStyle" :value="2">本旅行社</a-radio>
+            <a-radio :style="radioStyle" :value="3">指定门店</a-radio>
+          </a-radio-group>
+          <!-- 选择门店 -->
+        </a-form-item>
+        <a-form-item name="suitableRange" v-if="rolesLevel === 3">
+          <a-radio-group v-model:value="form.suitableRange">
+            <a-radio :style="radioStyle" :value="3">本门店</a-radio>
+          </a-radio-group>
+        </a-form-item>
+        <a-form-item v-show="travelVisible">
+          <a-select placeholder="选择旅行社" v-model:value="form.value" allowClear @change="">
+            <a-select-option v-for="item in businessTypeOption" :value="item.codeValue">{{
+                item.name
+            }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item v-show="storeVisible">
+          <a-select placeholder="选择门店" v-model:value="form.business" allowClear @change="() => { }">
+            <a-select-option v-for="item in businessTypeOption" :value="item.codeValue" :disabled="item.disabled">{{
+                item.name
+            }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
       </a-form-item>
       <!-- <a-form-item name="mobile" label="包含景区">
         <a-select placeholder="请选择一个景区" mode="multiple" v-model:value="form.scene" allowClear>
@@ -155,19 +233,78 @@
       </a-form-item>
     </a-form>
   </CommonModal>
+  <CommonModal title="查看线路详情" v-model:visible="detailsVisible" :conform-text="'关闭'" @conform="detailsClose"
+    @cancel="detailsClose" :is-cancel="false">
+    <div class="table_box">
+      <table class="info_table" cellpadding="16px" border="1">
+        <tr class="row" v-for="(value, key) in detailsKeys">
+          <td class="key">{{ value }}</td>
+          <td class="value">{{ detailsForm[key] }}</td>
+        </tr>
+      </table>
+    </div>
+  </CommonModal>
+  <CommonModal title="审核线路" v-model:visible="auditVisible" @cancel="auditCancel" @close="failVisible = true"
+    :conform-text="'通过'" :cancel-text="'驳回'" @conform="registerAuditVisible = true">
+    提交审核时间：
+    <div class="table_box">
+      <table class="info_table" cellpadding="16px" border="1">
+        <tr class="row" v-for="(value, key) in detailsKeys">
+          <td class="key">{{ value }}</td>
+          <td class="value">{{ detailsForm[key] }}</td>
+        </tr>
+      </table>
+    </div>
+  </CommonModal>
+  <CommonModal title="线路修改审核" v-model:visible="changeVisible" @cancel="changeCancel" @close="failVisible = true"
+    :conform-text="'通过'" :cancel-text="'驳回'" @conform="registerAuditVisible = true" width="50%">
+    <div class="table_box">
+      <table class="change_table" cellpadding="16px" border="1">
+        <tr class="row">
+          <th class="key_hd">信息项</th>
+          <th class="key_hd">修改前</th>
+          <th class="key_hd">修改后</th>
+        </tr>
+        <tr class="row" v-for="(item, index) in changeKeys" :key="index">
+          <td class="key">{{ compareKeys[item] }}</td>
+          <td class="value">{{ oldArrList[item] }}</td>
+          <td class="value">{{ newArrList[item] }}</td>
+        </tr>
+      </table>
+    </div>
+  </CommonModal>
+  <CommonModal :title="registerAuditTitle" v-model:visible="registerAuditVisible" @close="registerAuditVisible = false"
+    @conform="registerAuditConform" :conform-text="'确定'" :key="registerAuditTitle">
+    <span v-if="isRegiste">
+      您即将批准 昆明康辉旅行社 创建的散客线路玉龙雪山1日游当日往返线路，审核通过，可用于发起散客电子合同、散客拼团。请仔细确认
+    </span>
+    <span v-else>
+      您即将批准 昆明康辉旅行社 修改的散客线路玉龙雪山1日游当日往返线路，审核通过，可用于发起散客电子合同、散客拼团。请仔细确认
+    </span>
+  </CommonModal>
+  <CommonModal :title="failTitle" v-model:visible="failVisible" @close="failClose" @cancel="failClose"
+    @conform="failConform" :conform-text="'确定'" :key="failTitle">
+    <a-form layout="vertical" ref="failFormRef" :model="failForm" :rules="failFormRules" name="fail-form"
+      autocomplete="off" labelAlign="left">
+      <a-form-item name="auditRemark" :label="`驳回 昆明康辉旅行社 的线路${isRegiste ? '创建' : '修改'}，填写驳回理由：`">
+        <a-textarea v-model:value="failForm.auditRemark" placeholder="请输入驳回原因" :rows="2">
+        </a-textarea>
+      </a-form-item>
+    </a-form>
+  </CommonModal>
 </template>
 
 <script setup lang="ts">
-import CommonTable from '@/components/common/CommonTable.vue'
-import CommonPagination from '@/components/common/CommonPagination.vue'
-import CommonSearch from '@/components/common/CommonSearch.vue'
-import SearchItem from '@/components/common/CommonSearchItem.vue'
+import CommonTable from '@/components/common/CommonTable.vue';
+import CommonPagination from '@/components/common/CommonPagination.vue';
+import search from '@/views/lineManagement/search.vue';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons-vue';
 import api from '@/api';
 import { useRouter, useRoute } from 'vue-router';
+import type { Rule } from 'ant-design-vue/es/form';
 const router = useRouter();
-const route = useRoute()
+const route = useRoute();
 interface Domain {
   value: string | undefined | number;
   business: string | undefined | number;
@@ -187,17 +324,79 @@ const state = reactive({
     param: {
       pageNo: 1,
       pageSize: 10,
-      businessType: undefined,
-      regionCode: undefined,
-      auditStatus: undefined,
-      name: undefined,
-      provinceId: undefined,
-      cityId: undefined,
-      areaId: undefined
+      suitableRange: undefined,
+      lineName: undefined,
+      auditStatus: 1, // 已审核
     },
   },
-  modalVisible: false
+  tableData1: {
+    data: [],
+    total: 0,
+    loading: false,
+    param: {
+      pageNo: 1,
+      pageSize: 10,
+      suitableRange: undefined,
+      lineName: undefined,
+      auditStatus: 2, // 待审核
+    },
+  },
+  rolesLevel: 3, // 1:文旅局超管、一卡通超管,2:旅行社超管、中心操作员,3:门店操作员
+  modalVisible: false,
+  detailsVisible: false,
+  auditVisible: false,
+  failVisible: false,
+  registerAuditVisible: false,
+  changeVisible: false,
+  isRegiste: true,
 });
+const {
+  tableData,
+  tableData1,
+  rolesLevel,
+  modalVisible,
+  detailsVisible,
+  auditVisible,
+  failVisible,
+  registerAuditVisible,
+  changeVisible,
+  isRegiste,
+} = toRefs(state)
+const radioStyle = reactive({
+  display: 'flex',
+  height: '30px',
+  lineHeight: '30px',
+});
+const activeKey = ref('1')
+type detailsKeysType = {
+  lineName?: string,
+  lineDescribe?: string,
+  creatorName?: string,
+  suitableRangeName?: string,
+  hotelCompanyName?: string,
+  ticketCompanyName?: string,
+  priceTypeName?: string,
+  enableSatusName?: string,
+  auditStatusName?: string,
+}
+const detailsForm = ref<detailsKeysType>({})
+const detailsKeys = {
+  lineName: '线路名称',
+  lineDescribe: '线路描述',
+  creatorName: '创建人',
+  suitableRangeName: '适用范围',
+  hotelCompanyName: '包含酒店',
+  ticketCompanyName: '包含景区',
+  priceTypeName: '一口价',
+  enableSatusName: '启用状态',
+  auditStatusName: '审核状态',
+}
+const compareKeys = {
+  operatorName: '操作员姓名',
+  operatorPhone: '操作员电话',
+  certificateNo: '证件号',
+  enableSatusName: '启用状态',
+}
 const form = reactive({
   domains: [{
     value: undefined,
@@ -214,8 +413,27 @@ const form = reactive({
     key: Date.now(),
   }]
 })
+const failForm = reactive({
+  auditTypeCode: 18, // 18: 创建散客门店.,19:修改散客门店信息
+  auditRemark: '',
+  uuid: '',
+  roleId: '',
+  businessType: '',
+  /* 
+  2 审核通过
+  3 审核不通过
+   */
+  auditStatus: 2
+})
+const failFormRules: Record<string, Rule[]> = {
+  auditRemark: [{ required: true, trigger: 'blur', message: '请输入驳回原因' }],
+}
 const teamRef = ref()
+const failFormRef = ref()
 const formRules = {}
+const newArrList = ref<any>({})
+const oldArrList = ref<any>({})
+const changeKeys = ref<string[]>([])
 const labelCol = { style: { width: '110px' } }
 const enableOption = [
   { codeValue: 0, name: '本社全部部门可用' },
@@ -287,6 +505,72 @@ const businessOption = computed(() => (val: number | undefined) => {
     return []
   }
 })
+const registerAuditTitle = computed(() => {
+  return isRegiste.value ? '二次确认' : '二次确认'
+})
+const failTitle = computed(() => {
+  return isRegiste.value ? '驳回确认' : '驳回确认'
+})
+const travelVisible = computed(() => {
+  if (rolesLevel.value === 1) {
+    if (form.suitableRange === 3) {
+      return true
+    }
+  } else {
+    return false
+  }
+})
+const storeVisible = computed(() => {
+  if (rolesLevel.value === 1) {
+    if (form.suitableRange === 3) {
+      return true
+    }
+  } else {
+    return false
+  }
+})
+const tabsChange = () => { };
+const checkDetails = async (record: any) => {
+};
+const detailsClose = () => {
+  state.detailsVisible = false
+  detailsForm.value = {}
+}
+const auditCancel = () => {
+  state.auditVisible = false
+  detailsForm.value = {}
+}
+const registerAuditConform = () => { }
+const failConform = async () => {
+  // 审核不通过
+  /* failFormRef.value.validateFields().then(async () => {
+    // 审核不通过
+    failForm.auditStatus = 3
+    let res = await api.auditCompany(toRaw(failForm))
+    if (res) {
+      message.success('驳回成功！')
+      auditVisible.value = false
+      failVisible.value = false
+      changeVisible.value = false
+      onSearch()
+      onAuditSearch()
+    } else {
+      message.error('驳回失败！')
+    }
+  }) */
+}
+const failClose = () => {
+  // failFormRef.value.resetFields()
+  failVisible.value = false
+}
+const changeCancel = () => {
+  newArrList.value = {}
+  oldArrList.value = {}
+  changeKeys.value = []
+}
+
+
+
 const setOption = () => {
   sceneOption1.value.forEach(element => {
     element.disabled = false
@@ -349,7 +633,7 @@ const sceneDeselect = (val: number | string | undefined, options: any[]) => {
     }
   }
 }
-const { tableData, modalVisible } = toRefs(state)
+
 const columns = [
   {
     title: '序号',
@@ -357,39 +641,97 @@ const columns = [
     key: 'index',
   },
   {
-    title: '线路',
-    dataIndex: 'businessTypeName',
-    key: 'businessTypeName',
+    title: '线路名称',
+    dataIndex: 'lineName',
+    key: 'lineName',
   },
   {
     title: '一口价',
-    dataIndex: 'regionName',
-    key: 'regionName',
+    dataIndex: 'priceTypeName',
+    key: 'priceTypeName',
   },
   {
     title: '包含景区',
-    dataIndex: 'creditCode',
-    key: 'creditCode',
+    dataIndex: 'ticketCompanyName',
+    key: 'ticketCompanyName',
   },
   {
     title: '包含酒店',
-    dataIndex: 'businessLicenseUrl',
-    key: 'businessLicenseUrl',
+    dataIndex: 'hotelCompanyName',
+    key: 'hotelCompanyName',
   },
   {
-    title: '创建方',
-    dataIndex: 'businessLicenseUrl',
-    key: 'businessLicenseUrl',
+    title: '创建人',
+    dataIndex: 'creatorName',
+    key: 'creatorName',
   },
   {
     title: '适用范围',
-    dataIndex: 'businessLicenseUrl',
-    key: 'businessLicenseUrl',
+    dataIndex: 'suitableRangeName',
+    key: 'suitableRangeName',
   },
   {
     title: '启用状态',
-    dataIndex: 'businessLicenseUrl',
-    key: 'businessLicenseUrl',
+    dataIndex: 'enableSatusName',
+    key: 'enableSatusName',
+  },
+  {
+    title: '审核结果',
+    dataIndex: 'auditStatusName',
+    key: 'auditStatusName',
+  },
+  {
+    title: '操作',
+    key: 'action',
+    fixed: 'right',
+    width: 208
+  },
+]
+const columns1 = [
+  {
+    title: '序号',
+    dataIndex: 'index',
+    key: 'index',
+  },
+  {
+    title: '线路名称',
+    dataIndex: 'lineName',
+    key: 'lineName',
+  },
+  {
+    title: '一口价',
+    dataIndex: 'priceTypeName',
+    key: 'priceTypeName',
+  },
+  {
+    title: '包含景区',
+    dataIndex: 'ticketCompanyName',
+    key: 'ticketCompanyName',
+  },
+  {
+    title: '包含酒店',
+    dataIndex: 'hotelCompanyName',
+    key: 'hotelCompanyName',
+  },
+  {
+    title: '创建人',
+    dataIndex: 'creatorName',
+    key: 'creatorName',
+  },
+  {
+    title: '适用范围',
+    dataIndex: 'suitableRangeName',
+    key: 'suitableRangeName',
+  },
+  {
+    title: '提交时间',
+    dataIndex: 'submitTime',
+    key: 'submitTime',
+  },
+  {
+    title: '审核类型',
+    dataIndex: 'auditType',
+    key: 'auditType',
   },
   {
     title: '操作',
@@ -402,12 +744,20 @@ const onHandleCurrentChange = (val: number) => {
   state.tableData.param.pageNo = val;
   onSearch();
 }
-
 const pageSideChange = (current: number, size: number) => {
   state.tableData.param.pageSize = size;
   onSearch();
 }
+const onHandleCurrentChange1 = (val: number) => {
+  state.tableData1.param.pageNo = val;
+  onAuditSearch();
+}
+const pageSideChange1 = (current: number, size: number) => {
+  state.tableData1.param.pageSize = size;
+  onAuditSearch();
+}
 const onSearch = () => { }
+const onAuditSearch = () => { }
 const onQuery = () => {
   state.tableData.param.pageNo = 1;
   onSearch()
@@ -456,9 +806,48 @@ const removeSights = (item: Sights, domainsList: Sights[], options: any[]) => {
   }
   sightsChange()
 };
+const getUserInfo = () => {
+  let userInfo: any = window.localStorage.getItem('userInfo');
+  userInfo = JSON.parse(userInfo);
+  const { sysCompany: { oid }, sysRoles } = userInfo
+  const roleCode = sysRoles.map((item: any) => {
+    // 文旅局超管、一卡通超管、旅行社超管、中心操作员、门店操作员
+    if (['CULTURE_BUREAU_SUPER_ADMIN', 'PLATFORM_SUPER_ADMIN', 'TRAVEL_SUPER_ADMIN', 'CENTER_OPERATOR', 'OUTLET_OPERATOR'].includes(item.roleCode)) {
+      return item.roleCode
+    }
+  })
+  if (roleCode.includes('CULTURE_BUREAU_SUPER_ADMIN') || roleCode.includes('PLATFORM_SUPER_ADMIN')) {
+    // 文旅局超管、一卡通超管
+    state.rolesLevel = 1
+  } else if (roleCode.includes('TRAVEL_SUPER_ADMIN') || roleCode.includes('CENTER_OPERATOR')) {
+    // 旅行社超管、中心操作员
+    state.rolesLevel = 2
+  } else if (roleCode.includes('OUTLET_OPERATOR')) {
+    // 门店操作员
+    state.rolesLevel = 3
+  }
+}
+onMounted(() => {
+  getUserInfo()
+})
 </script>
 
 <style scoped lang="scss">
+.tabs_box {
+  position: relative;
+  padding: 20px;
+
+  .rebadge {
+    position: absolute;
+    left: 165px;
+    top: 25px;
+  }
+}
+
+.table-area {
+  padding: unset;
+}
+
 .buttom_box {
   padding: 0 20px;
   width: 100%;
@@ -482,5 +871,46 @@ const removeSights = (item: Sights, domainsList: Sights[], options: any[]) => {
 
 .mr8 {
   margin-right: 8px;
+}
+
+.table_box {
+  max-height: 60vh;
+  padding: 1px 0;
+  overflow: auto;
+
+  .row {
+    width: 100%;
+    font-size: 14px;
+    font-family: Microsoft YaHei UI;
+    font-weight: 400;
+    color: #1E2226;
+    border: 1px solid #E9E9E9;
+  }
+
+  .change_table {
+    width: 100%;
+
+    .key,
+    .key_hd {
+      width: 150px;
+    }
+
+    .key_hd {
+      background: rgba(245, 247, 250, 0.39);
+    }
+
+    .value {
+      min-width: 300px;
+    }
+  }
+
+  .info_table {
+    width: 100%;
+
+    .key {
+      width: 150px;
+      background: rgba(245, 247, 250, 0.39);
+    }
+  }
 }
 </style>
