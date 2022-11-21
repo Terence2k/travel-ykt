@@ -157,9 +157,9 @@ const cancel = (): any => {
 	rejectAuditVisible.value = false;
 	onSearch();
 };
-const auditStatus = (row: any) => {
+const auditStatus = async (row: any) => {
 	console.log('row:', row);
-	getDetail(row.changeId, row);
+	await getDetail(row.changeId, row);
 	changeAuditVisible.value = true;
 };
 const getAuditButton = async (uuid: string) => {
@@ -221,9 +221,9 @@ const rejectAudit = () => {
 			console.error(err);
 		});
 };
-const getDetail = (id: any, row: any) => {
+const getDetail = async (id: any, row: any) => {
 	const backup = row;
-	api.travelManagement
+	await api.travelManagement
 		.getItineraryChangeProductHistory(id)
 		.then((res: any) => {
 			state.newHotelList=res.newHotelList,
