@@ -48,6 +48,12 @@ export const auditListParams = {
 		pageNo: 1,
 		pageSize: 10,
 		status: 0,
+		startDate: '',
+		endDate: '',
+		time: [],
+		keyWord: '',
+		keyWordType: 1,
+		groupType: '',
 	},
 };
 export const useTravelStore = defineStore({
@@ -273,6 +279,14 @@ export const useTravelStore = defineStore({
 		},
 		async getAuditList(params: object) {
 			let res = await api.travelManagement.getAuditList(params);
+			res.content = res.content.map((it: TraveDataItem) => {
+				it.time = it.startDate + '-' + it.endDate;
+				return it;
+			});
+			return res;
+		},
+		async getChangeItineraryList(params: object) {
+			let res = await api.travelManagement.getChangeItineraryList(params);
 			res.content = res.content.map((it: TraveDataItem) => {
 				it.time = it.startDate + '-' + it.endDate;
 				return it;

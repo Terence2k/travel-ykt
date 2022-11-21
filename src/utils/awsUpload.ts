@@ -35,6 +35,7 @@ const newAwsObj = () => {
     } else {
       console.log('awsTempKey:', awsTempKey);
       resolve({
+        // @ts-ignore
         aws: new AWS.S3({
           apiVersion: awsTempKey.apiVersion,
           accessKeyId: awsTempKey.accessKeyId,
