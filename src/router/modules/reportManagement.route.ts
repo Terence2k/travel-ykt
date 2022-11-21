@@ -360,6 +360,26 @@ export default [
 					},
 				],
 			},
+			{
+				path: 'earthingGeneralReport',
+				name: 'earthingGeneralReport',
+				redirect: '/reportManagement/earthingGeneralReport/list',
+				meta: {
+					title: '地接总账',
+					isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/reportManagement/earthingGeneralReport/index.vue'),
+						name: 'earthingGeneralReportList',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
 		],
 	},
 ];
