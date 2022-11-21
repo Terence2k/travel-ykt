@@ -12,11 +12,16 @@
 			</search-item>
 
 			<search-item label="行程时间">
-				<a-range-picker v-model:value="travelStore.auditList[chart].params.time" show-time format="YYYY-MM-DD HH:mm" value-format="YYYY-MM-DD HH:mm" />
+				<a-range-picker
+					v-model:value="travelStore.auditList[chart].params.time"
+					show-time
+					format="YYYY-MM-DD HH:mm"
+					value-format="YYYY-MM-DD HH:mm"
+				/>
 			</search-item>
 
 			<template #button>
-        <a-button style="margin-right: 30px" @click="reset">重置</a-button>
+				<a-button style="margin-right: 30px" @click="reset">重置</a-button>
 				<a-button type="primary" @click="onSearch">查询</a-button>
 			</template>
 		</CommonSearch>
@@ -89,9 +94,14 @@ const onSearch = async () => {
 	travelStore.auditList[chartField].params.endDate = storeParams.time[1];
 	let params = cloneDeep(travelStore.auditList[chartField].params);
 	params.groupType = params.groupType === '0' ? '' : params.groupType;
-	const res = await travelStore.getAuditList(params);
-
-	travelStore.setAuditList(res, chartField);
+	if (params.status == 0) {
+		const res = await travelStore.getChangeItineraryList(params);
+		travelStore.setAuditList(res, chartField);
+		console.log(res,'res')
+	} else {
+		const res = await travelStore.getAuditList(params);
+		travelStore.setAuditList(res, chartField);
+	}
 };
 //重置
 const reset = () => {
