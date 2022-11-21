@@ -361,6 +361,26 @@ export default [
 				],
 			},
 			{
+				path: 'managementCenterDetailsReport',
+				name: 'managementCenterDetailsReport',
+				redirect: '/reportManagement/managementCenterDetailsReport/list',
+				meta: {
+					title: '管理中心明细报表',
+					isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/reportManagement/managementCenterDetailsReport/index.vue'),
+						name: 'managementCenterDetailsReportList',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
+			{
 				path: 'earthingGeneralReport',
 				name: 'earthingGeneralReport',
 				redirect: '/reportManagement/earthingGeneralReport/list',
