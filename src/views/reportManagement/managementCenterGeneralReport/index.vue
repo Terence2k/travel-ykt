@@ -1,27 +1,19 @@
 <template>
 	<CommonSearch>
-		<search-item label="行程单号" style="width: 280px">
-			<a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入行程单号" allowClear style="width: 180px" />
-		</search-item>
-		<search-item label="景区名称" style="width: 280px">
-			<a-select
-				v-model:value="state.tableData.param.scenicId"
-				placeholder="请选择景区名称"
-				allowClear
-				:options="state.viewList.map((item) => ({ value: item.ticketId, label: item.ticketName }))"
-			>
-			</a-select>
-		</search-item>
-		<search-item label="景点名称" style="width: 280px">
-			<a-input v-model:value="state.tableData.param.ticketName" placeholder="请输入景点名称" allowClear style="width: 180px" />
-		</search-item>
 		<search-item label="团队类型" style="width: 280px">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.travelTypeId" style="width: 200px" placeholder="请选择团队类型">
 				<a-select-option v-for="(item, index) in options.teamTypesLists" :value="item.oid" :key="index">{{ item.name }} </a-select-option>
 			</a-select>
 		</search-item>
-		<search-item label="地接社" style="width: 280px">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.subTravelId" style="width: 200px" placeholder="请选择地接社名称">
+		<search-item label="组团社">
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.travelId" style="width: 200px" placeholder="请选择旅行社名称">
+				<a-select-option v-for="(item, index) in options.groupSocietyList" :value="item.travelAgencyId" :key="index"
+					>{{ item.travelAgencyName }}
+				</a-select-option>
+			</a-select>
+		</search-item>
+		<search-item label="地接社">
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.subTravelId" style="width: 200px" placeholder="请选择旅行社名称">
 				<a-select-option v-for="(item, index) in options.earthContactAgencyList" :value="item.travelAgencyId" :key="index"
 					>{{ item.travelAgencyName }}
 				</a-select-option>
@@ -66,9 +58,10 @@ import CommonSearch from '@/components/common/CommonSearch.vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
-import { settlementOptions } from '@/stores/modules/settlement';
 import type { TableColumnsType } from 'ant-design-vue';
 import api from '@/api';
+import { settlementOptions } from '@/stores/modules/settlement';
+const options = settlementOptions();
 interface StateType {
 	tableData: TableDataType;
 	viewList: Array<any>;
@@ -81,17 +74,13 @@ interface TableDataType {
 	settlementStartTimeList: Array<any>;
 }
 interface ParamType {
-	itineraryNo?: number | string; //行程单号
-	scenicId?: number | string | null; //关联景区id
-	ticketName?: number | string; //门票名称
-	travelTypeId?: number | string | null; //团队类型id
-	subTravelId?: number | string | null; //地接社id
-	// verificationStartTime: '', //核销开始时间
-	// verificationEndTime: '', //核销结束时间
-	settlementStartTime: number | string | null; //结算开始时间
-	settlementEndTime: number | string | null; //结算结束时间
-	pageSize?: number; //页大小
-	pageNo?: number; //页号
+	travelId: string | number | null; //组团社id
+	subTravelId: string | number | null; //地接社id
+	settlementTimeStart: string | number | null; //结算开始时间
+	settlementTimeEnd: string | number | null; //结算结束时间
+	travelTypeId: string | number | null; //团队类型id
+	pageNo: number; //页号
+	pageSize: number; //页大小
 }
 interface DataType {
 	travelId?: number; //组团社id
@@ -152,7 +141,6 @@ interface ruleListType {
 	ruleName: string; //规则名称
 	rulePrice: string; //结算费用
 }
-const options = settlementOptions();
 const columns = computed(() => {
 	const column = ref<TableColumnsType>([
 		{
@@ -533,7 +521,6 @@ const columns = computed(() => {
 			}
 		}
 	}
-	console.log(column.value, `column.value`);
 
 	return column.value;
 });
@@ -542,17 +529,13 @@ const comprehensiveVoListIds = ref([]);
 const state = reactive<StateType>({
 	tableData: {
 		param: {
-			itineraryNo: '', //行程单号
-			scenicId: null, //关联景区id
-			ticketName: '', //门票名称
-			travelTypeId: null, //团队类型id
+			travelId: null, //组团社id
 			subTravelId: null, //地接社id
-			// verificationStartTime: '', //核销开始时间
-			// verificationEndTime: '', //核销结束时间
-			settlementStartTime: '', //结算开始时间
-			settlementEndTime: '', //结算结束时间
-			pageSize: 10, //页大小
+			settlementTimeStart: '', //结算开始时间
+			settlementTimeEnd: '', //结算结束时间
+			travelTypeId: null, //团队类型id
 			pageNo: 1, //页号
+			pageSize: 10, //页大小
 		},
 		data: [],
 		total: 11,
@@ -563,173 +546,172 @@ const state = reactive<StateType>({
 });
 // 查询
 const initList = async () => {
-	// state.tableData.loading = true;
-	// let res = await api.byItineraryTicket(state.tableData.param);
-	// const { total, content } = res;
-	// state.tableData.total = total;
-	// state.tableData.data = content;
-	// state.tableData.loading = false;
-	state.tableData.data = [
-		{
-			travelId: 1, //组团社id
-			travelName: '组团社', //组团社名称
-			subTravelId: 1, //地接社id
-			subTravelName: '地接社', //地接社名称
-			travelTypeId: 1, //团队类型id
-			travelTypeName: '888', //团队类型名称
-			peopleNum: 200, //人数
-			frozenPrice: '888', //团款
-			settlementPrice: '888', //核销总费用
-			unSettlementPrice: '888', //未消费费用
-			hmVo: {
-				frozenPrice: '888', //冻结金额
-				settlementPrice: '888', //已核销金额
-				actualPrice: '654', //实收
-				ruleList: [
-					{
-						ruleName: '结算规则-001', //规则名称
-						rulePrice: '100', //结算费用
-					},
-					{
-						ruleName: '结算规则-002', //规则名称
-						rulePrice: '200', //结算费用
-					},
-					{
-						ruleName: '结算规则-003', //规则名称
-						rulePrice: '200', //结算费用
-					},
-				], //结算规则
-			}, //古维费用
-			ticketVo: {
-				frozenPrice: '888', //冻结金额
-				settlementPrice: '888', //已核销金额
-				actualPrice: '345', //实收
-				ruleList: [
-					{
-						ruleName: '结算规则', //规则名称
-						rulePrice: '1', //结算费用
-					},
-				], //结算规则
-			}, //景区
-			hotelVo: {
-				frozenPrice: '888', //冻结金额
-				settlementPrice: '888', //已核销金额
-				actualPrice: '123', //实收
-				ruleList: [
-					{
-						ruleName: '结算规则', //规则名称
-						rulePrice: '888', //结算费用
-					},
-				], //结算规则
-			}, //酒店
-			cateringVo: {
-				actualPrice: '888', //实收
-				ruleList: [
-					{
-						ruleName: '结算规则', //规则名称
-						rulePrice: '19999', //结算费用
-					},
-				], //结算规则
-			}, //餐饮
-			superviseVo: {
-				actualPrice: '444', //实收
-				ruleList: [
-					{
-						ruleName: '结算规则', //规则名称
-						rulePrice: '888', //结算费用
-					},
-				], //结算规则
-			}, //监理
-			associationVo: {
-				actualPrice: '574', //实收
-				ruleList: [
-					{
-						ruleName: '结算规则', //规则名称
-						rulePrice: '888', //结算费用
-					},
-				], //结算规则
-			}, //协会
-			groupVo: {
-				actualPrice: '2534', //实收
-				ruleList: [
-					{
-						ruleName: '结算规则', //规则名称
-						rulePrice: '888', //结算费用
-					},
-				], //结算规则
-			}, //集团
-			cultureBureauVo: {
-				actualPrice: '24514', //实收
-				ruleList: [
-					{
-						ruleName: '结算规则', //规则名称
-						rulePrice: '888', //结算费用
-					},
-				], //结算规则
-			}, //文旅局
-			yktVo: {
-				actualPrice: '345111', //实收
-				ruleList: [
-					{
-						ruleName: '结算规则', //规则名称
-						rulePrice: '888', //结算费用
-					},
-				], //结算规则
-			}, //一卡通
-			subTravelVo: {
-				actualPrice: '634343', //实收
-				unSettlementPrice: '1', //未消费费用
-				ruleList: [
-					{
-						ruleName: '结算规则', //规则名称
-						rulePrice: '888123', //结算费用
-					},
-				], //结算规则
-			}, //地接社
-			comprehensiveGuideVoList: [
-				{
-					comprehensiveFeeProductId: 1, //综费产品id
-					comprehensiveFeeProductName: '综费产品-导服费', //综费产品名称
-					travelActualPrice: '1888', //旅行社实收
-					groupActualPrice: '1888', //集团实收
-					ruleList: [
-						{
-							ruleName: '结算规则-0001', //规则名称
-							rulePrice: '1222', //结算费用
-						},
-						{
-							ruleName: '结算规则-0002', //规则名称
-							rulePrice: '1322', //结算费用
-						},
-					], //结算规则
-				},
-			], //综费产品-导服费
-			comprehensiveVoList: [
-				{
-					comprehensiveFeeProductId: 1, //综费产品id
-					comprehensiveFeeProductName: '综费产品-除导服费外', //综费产品名称
-					belongCompany: '1888', //费用归属  取字典父级code_value=BUSINESS_TYPE的所有子级
-					actualPrice: '1888', //实收
-					ruleList: [
-						{
-							ruleName: '结算规则-0001', //规则名称
-							rulePrice: '13333', //结算费用
-						},
-						{
-							ruleName: '结算规则-0002', //规则名称
-							rulePrice: '13333', //结算费用
-						},
-					], //结算规则
-				},
-			], //综费产品-除导服费外
-		},
-	];
+	state.tableData.loading = true;
+	let res = await api.statementList(state.tableData.param);
+	const { total, content } = res;
+	state.tableData.total = total;
+	state.tableData.data = content;
+	state.tableData.loading = false;
+	// state.tableData.data = [
+	// 	{
+	// 		travelId: 1, //组团社id
+	// 		travelName: '组团社', //组团社名称
+	// 		subTravelId: 1, //地接社id
+	// 		subTravelName: '地接社', //地接社名称
+	// 		travelTypeId: 1, //团队类型id
+	// 		travelTypeName: '888', //团队类型名称
+	// 		peopleNum: 200, //人数
+	// 		frozenPrice: '888', //团款
+	// 		settlementPrice: '888', //核销总费用
+	// 		unSettlementPrice: '888', //未消费费用
+	// 		hmVo: {
+	// 			frozenPrice: '888', //冻结金额
+	// 			settlementPrice: '888', //已核销金额
+	// 			actualPrice: '654', //实收
+	// 			ruleList: [
+	// 				{
+	// 					ruleName: '结算规则-001', //规则名称
+	// 					rulePrice: '100', //结算费用
+	// 				},
+	// 				{
+	// 					ruleName: '结算规则-002', //规则名称
+	// 					rulePrice: '200', //结算费用
+	// 				},
+	// 				{
+	// 					ruleName: '结算规则-003', //规则名称
+	// 					rulePrice: '200', //结算费用
+	// 				},
+	// 			], //结算规则
+	// 		}, //古维费用
+	// 		ticketVo: {
+	// 			frozenPrice: '888', //冻结金额
+	// 			settlementPrice: '888', //已核销金额
+	// 			actualPrice: '345', //实收
+	// 			ruleList: [
+	// 				{
+	// 					ruleName: '结算规则', //规则名称
+	// 					rulePrice: '1', //结算费用
+	// 				},
+	// 			], //结算规则
+	// 		}, //景区
+	// 		hotelVo: {
+	// 			frozenPrice: '888', //冻结金额
+	// 			settlementPrice: '888', //已核销金额
+	// 			actualPrice: '123', //实收
+	// 			ruleList: [
+	// 				{
+	// 					ruleName: '结算规则', //规则名称
+	// 					rulePrice: '888', //结算费用
+	// 				},
+	// 			], //结算规则
+	// 		}, //酒店
+	// 		cateringVo: {
+	// 			actualPrice: '888', //实收
+	// 			ruleList: [
+	// 				{
+	// 					ruleName: '结算规则', //规则名称
+	// 					rulePrice: '19999', //结算费用
+	// 				},
+	// 			], //结算规则
+	// 		}, //餐饮
+	// 		superviseVo: {
+	// 			actualPrice: '444', //实收
+	// 			ruleList: [
+	// 				{
+	// 					ruleName: '结算规则', //规则名称
+	// 					rulePrice: '888', //结算费用
+	// 				},
+	// 			], //结算规则
+	// 		}, //监理
+	// 		associationVo: {
+	// 			actualPrice: '574', //实收
+	// 			ruleList: [
+	// 				{
+	// 					ruleName: '结算规则', //规则名称
+	// 					rulePrice: '888', //结算费用
+	// 				},
+	// 			], //结算规则
+	// 		}, //协会
+	// 		groupVo: {
+	// 			actualPrice: '2534', //实收
+	// 			ruleList: [
+	// 				{
+	// 					ruleName: '结算规则', //规则名称
+	// 					rulePrice: '888', //结算费用
+	// 				},
+	// 			], //结算规则
+	// 		}, //集团
+	// 		cultureBureauVo: {
+	// 			actualPrice: '24514', //实收
+	// 			ruleList: [
+	// 				{
+	// 					ruleName: '结算规则', //规则名称
+	// 					rulePrice: '888', //结算费用
+	// 				},
+	// 			], //结算规则
+	// 		}, //文旅局
+	// 		yktVo: {
+	// 			actualPrice: '345111', //实收
+	// 			ruleList: [
+	// 				{
+	// 					ruleName: '结算规则', //规则名称
+	// 					rulePrice: '888', //结算费用
+	// 				},
+	// 			], //结算规则
+	// 		}, //一卡通
+	// 		subTravelVo: {
+	// 			actualPrice: '634343', //实收
+	// 			unSettlementPrice: '1', //未消费费用
+	// 			ruleList: [
+	// 				{
+	// 					ruleName: '结算规则', //规则名称
+	// 					rulePrice: '888123', //结算费用
+	// 				},
+	// 			], //结算规则
+	// 		}, //地接社
+	// 		comprehensiveGuideVoList: [
+	// 			{
+	// 				comprehensiveFeeProductId: 1, //综费产品id
+	// 				comprehensiveFeeProductName: '综费产品-导服费', //综费产品名称
+	// 				travelActualPrice: '1888', //旅行社实收
+	// 				groupActualPrice: '1888', //集团实收
+	// 				ruleList: [
+	// 					{
+	// 						ruleName: '结算规则-0001', //规则名称
+	// 						rulePrice: '1222', //结算费用
+	// 					},
+	// 					{
+	// 						ruleName: '结算规则-0002', //规则名称
+	// 						rulePrice: '1322', //结算费用
+	// 					},
+	// 				], //结算规则
+	// 			},
+	// 		], //综费产品-导服费
+	// 		comprehensiveVoList: [
+	// 			{
+	// 				comprehensiveFeeProductId: 1, //综费产品id
+	// 				comprehensiveFeeProductName: '综费产品-除导服费外', //综费产品名称
+	// 				belongCompany: '1888', //费用归属  取字典父级code_value=BUSINESS_TYPE的所有子级
+	// 				actualPrice: '1888', //实收
+	// 				ruleList: [
+	// 					{
+	// 						ruleName: '结算规则-0001', //规则名称
+	// 						rulePrice: '13333', //结算费用
+	// 					},
+	// 					{
+	// 						ruleName: '结算规则-0002', //规则名称
+	// 						rulePrice: '13333', //结算费用
+	// 					},
+	// 				], //结算规则
+	// 			},
+	// 		], //综费产品-除导服费外
+	// 	},
+	// ];
 };
 // // 获取景区下拉列表
 // const getViewList = async () => {
 // 	const result = await api.getViewList();
 // 	state.viewList = result;
-// 	console.log(state.viewList, `state.viewList`);
 // };
 //搜索
 const onHandleCurrentChange = (val: number) => {
@@ -756,6 +738,9 @@ onMounted(() => {
 	// options.getTeamTypeList();
 	// options.getGroupSocietyList();
 	// options.getEarthContactAgencyList();
+	options.getTeamTypeList();
+	options.getGroupSocietyList();
+	options.getEarthContactAgencyList();
 	initList();
 	// getViewList();
 });
