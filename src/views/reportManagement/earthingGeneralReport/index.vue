@@ -3,21 +3,21 @@
 		<search-item label="行程单号" style="width: 280px">
 			<a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入行程单号" allowClear style="width: 180px" />
 		</search-item>
-        <search-item label="组团社">
+		<search-item label="组团社">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.travelId" style="width: 200px" placeholder="请选择旅行社名称">
 				<a-select-option v-for="(item, index) in options.groupSocietyList" :value="item.travelAgencyId" :key="index"
 					>{{ item.travelAgencyName }}
 				</a-select-option>
 			</a-select>
 		</search-item>
-        <search-item label="地接社">
+		<search-item label="地接社">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.subTravelId" style="width: 200px" placeholder="请选择地接社名称">
 				<a-select-option v-for="(item, index) in options.earthContactAgencyList" :value="item.travelAgencyId" :key="index"
 					>{{ item.travelAgencyName }}
 				</a-select-option>
 			</a-select>
 		</search-item>
-		<search-item label="团队类型" >
+		<search-item label="团队类型">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.travelTypeId" style="width: 200px" placeholder="请选择团队类型">
 				<a-select-option v-for="(item, index) in options.teamTypesLists" :value="item.oid" :key="index">{{ item.name }} </a-select-option>
 			</a-select>
@@ -37,7 +37,7 @@
 	<div>
 		<a-spin size="large" :spinning="state.tableData.loading">
 			<!--  -->
-			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }" bordered>
+			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }" >
 				<template #bodyCell="{ column, record }">
 					<!-- 结算规则 -->
 					<template v-if="column.key === 'ruleMap'"> {{ getRulePrice(record, column) }} </template>
@@ -78,7 +78,7 @@ interface TableDataType {
 interface ParamType {
 	itineraryNo?: number | string; //行程单号
 	travelTypeId?: number | string | null; //团队类型id
-    travelId?: number | string | null; //组团社id
+	travelId?: number | string | null; //组团社id
 	subTravelId?: number | string | null; //地接社id
 	settlementStartTime: number | string | null; //结算开始时间
 	settlementEndTime: number | string | null; //结算结束时间
@@ -180,31 +180,31 @@ const columns = computed(() => {
 			key: 'unSettlementPrice',
 			width: 100,
 		},
-        {
+		{
 			title: '酒店冻结',
 			dataIndex: 'unSettlementPrice',
 			key: 'unSettlementPrice',
 			width: 100,
 		},
-        {
+		{
 			title: '景点冻结',
 			dataIndex: 'unSettlementPrice',
 			key: 'unSettlementPrice',
 			width: 100,
 		},
-        {
+		{
 			title: '餐费冻结',
 			dataIndex: 'unSettlementPrice',
 			key: 'unSettlementPrice',
 			width: 100,
 		},
-        {
+		{
 			title: '导服费冻结',
 			dataIndex: 'unSettlementPrice',
 			key: 'unSettlementPrice',
 			width: 100,
 		},
-        {
+		{
 			title: '标餐费冻结',
 			dataIndex: 'unSettlementPrice',
 			key: 'unSettlementPrice',
@@ -232,19 +232,19 @@ const columns = computed(() => {
 					key: 'hmVo',
 					width: 100,
 				},
-                {
+				{
 					title: '餐费',
 					dataIndex: 'actualPrice',
 					key: 'hmVo',
 					width: 100,
 				},
-                {
+				{
 					title: '古维',
 					dataIndex: 'actualPrice',
 					key: 'hmVo',
 					width: 100,
 				},
-                {
+				{
 					title: '手续费',
 					dataIndex: 'actualPrice',
 					key: 'hmVo',
@@ -256,7 +256,7 @@ const columns = computed(() => {
 			title: '地接社',
 			key: 'subTravelVo',
 			children: [
-                {
+				{
 					title: '未核销费用',
 					dataIndex: 'unSettlementPrice',
 					key: 'subTravelVo',
@@ -347,15 +347,7 @@ const columns = computed(() => {
 					key: 'comprehensiveVoList',
 					children: [
 						{
-							title: '手续费',
-							dataIndex: 'belongCompany',
-							id: `${vo.comprehensiveFeeProductId}`,
-							key: 'comprehensiveVoList',
-							width: 100,
-							parentTitle: `${vo.comprehensiveFeeProductName}`,
-						},
-						{
-							title: '旅行社实收',
+							title: `${vo.belongCompany}实收`,
 							dataIndex: 'actualPrice',
 							id: `${vo.comprehensiveFeeProductId}`,
 							key: 'comprehensiveVoList',
@@ -443,7 +435,7 @@ const state = reactive<StateType>({
 		param: {
 			itineraryNo: '', //行程单号
 			travelTypeId: null, //团队类型id
-            travelId: null, // 组团社id
+			travelId: null, // 组团社id
 			subTravelId: null, //地接社id
 			settlementStartTime: '', //结算开始时间
 			settlementEndTime: '', //结算结束时间
@@ -490,11 +482,11 @@ const initList = async () => {
 						ruleName: '手续费', //规则名称
 						rulePrice: '123', //结算费用
 					},
-                    {
+					{
 						ruleName: '导服费', //规则名称
 						rulePrice: '888', //结算费用
 					},
-                    {
+					{
 						ruleName: '餐费', //规则名称
 						rulePrice: '888123', //结算费用
 					},
@@ -522,7 +514,7 @@ const initList = async () => {
 				{
 					comprehensiveFeeProductId: 1, //综费产品id
 					comprehensiveFeeProductName: '综费产品-餐费', //综费产品名称
-					belongCompany: '1888', //费用归属  取字典父级code_value=BUSINESS_TYPE的所有子级
+					belongCompany: '旅行社', //费用归属  取字典父级code_value=BUSINESS_TYPE的所有子级
 					actualPrice: '1888', //实收
 					ruleList: [
 						{
@@ -551,15 +543,7 @@ const pageSideChange = (current: number, size: number) => {
 	state.tableData.param.pageSize = size;
 	initList();
 };
-// const settlementStartTimeChange = (arr: any) => {
-// 	if (arr && arr.length > 0) {
-// 		state.tableData.param.settlementStartTime = arr[0]['$d'];
-// 		state.tableData.param.settlementEndTime = arr[1]['$d'];
-// 	} else {
-// 		state.tableData.param.settlementStartTime = '';
-// 		state.tableData.param.settlementEndTime = '';
-// 	}
-// };
+
 onMounted(() => {
 	options.getTeamTypeList();
 	options.getGroupSocietyList();
@@ -633,14 +617,14 @@ const getColumnRecord = computed(() => (record: any, column: any, name: string) 
 });
 </script>
 <style scoped lang="less">
-// ::v-deep(.ant-table-thead > tr > th, .ant-table-tbody > tr > td, .ant-table tfoot > tr > th, .ant-table tfoot > tr > td) {
-// 	padding: 16px 0;
-// }
-// ::v-deep(.ant-table-thead > tr > th) {
-// 	text-align: center;
-// }
-// ::v-deep(.ant-table-thead > tr > th) {
-// 	border-right: 1px solid #f0f0f0;
-// 	border-bottom: 1px solid #f0f0f0 !important;
-// }
+::v-deep(.ant-table-thead > tr > th, .ant-table-tbody > tr > td, .ant-table tfoot > tr > th, .ant-table tfoot > tr > td) {
+	padding: 16px 0;
+}
+::v-deep(.ant-table-thead > tr > th) {
+	text-align: center;
+}
+::v-deep(.ant-table-thead > tr > th) {
+	border-right: 1px solid #f0f0f0;
+	border-bottom: 1px solid #f0f0f0 !important;
+}
 </style>
