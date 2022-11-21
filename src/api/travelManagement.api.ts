@@ -327,6 +327,15 @@ export const travelManagement = {
             data,
         });
     },  
+     // 变更详情审核
+     travelChangeOrderProduct(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/change/changeProduct`,
+            method: 'post',
+            showLoading: false,
+            data,
+        });
+    },  
     // 变更导游、交通、附件
     changeItineraryBasic(data: any) {
        return request({
@@ -348,13 +357,6 @@ export const travelManagement = {
         return request({
             url: `${commonPath}/travel-agency-service/public/api/itinerary/template/detail/${oid}`,
             method: 'get',
-            showLoading:false
-        });
-    },
-    travelChangeOrderProduct(itineraryId: any) {
-        return request({
-            url: `${commonPath}/travel-agency-service/public/api/itinerary/change/changeProduct/${itineraryId}`,
-            method: 'post',
             showLoading:false
         });
     },

@@ -51,6 +51,7 @@ export const useTravelStore = defineStore({
 		baseInfo: [] as any,
 		guideList:[],
 		trafficList:[],
+		touristList: [],
 		teamTime: [],
 		IDCard: [],
 		specialId:[],

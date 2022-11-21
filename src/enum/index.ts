@@ -100,10 +100,10 @@ export enum insuranceType{
 
 // 审核状态类型
 export enum AuditStaus {
+  FinanceChange, // 待财务审核（变更）0
   AdministrativeSendGroup = 3, // 待管理部门审核（发团）3
   AdministrativeChange, // 待管理部门审核（变更）4
   FinanceSendGroup, // 带财务审核（发团）5
-  FinanceChange, // 待财务审核（变更）6
 }
 
 // 接团状态类型

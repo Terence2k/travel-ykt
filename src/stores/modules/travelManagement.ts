@@ -48,6 +48,12 @@ export const auditListParams = {
 		pageNo: 1,
 		pageSize: 10,
 		status: 0,
+		startDate: '',
+		endDate: '',
+		time: [],
+		keyWord: '',
+		keyWordType: 1,
+		groupType: '',
 	},
 };
 export const useTravelStore = defineStore({

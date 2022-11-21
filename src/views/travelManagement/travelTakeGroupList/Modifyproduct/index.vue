@@ -78,7 +78,7 @@ const install = () => {
 				dis = (current: Dayjs) => {
 					return (
 						(dayjs(res.basic.startDate) && dayjs(res.basic.startDate) > current && current) ||
-						(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).add(1, 'day') < current && current)
+						(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).add(0, 'day') < current && current)
 					);
 				};
 			}
