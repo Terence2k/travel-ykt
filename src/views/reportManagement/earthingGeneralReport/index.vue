@@ -3,31 +3,26 @@
 		<search-item label="行程单号" style="width: 280px">
 			<a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入行程单号" allowClear style="width: 180px" />
 		</search-item>
-		<search-item label="景区名称" style="width: 280px">
-			<a-select
-				v-model:value="state.tableData.param.scenicId"
-				placeholder="请选择景区名称"
-				allowClear
-				:options="state.viewList.map((item) => ({ value: item.ticketId, label: item.ticketName }))"
-			>
+        <search-item label="组团社">
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.travelId" style="width: 200px" placeholder="请选择旅行社名称">
+				<a-select-option v-for="(item, index) in options.groupSocietyList" :value="item.travelAgencyId" :key="index"
+					>{{ item.travelAgencyName }}
+				</a-select-option>
 			</a-select>
 		</search-item>
-		<search-item label="景点名称" style="width: 280px">
-			<a-input v-model:value="state.tableData.param.ticketName" placeholder="请输入景点名称" allowClear style="width: 180px" />
-		</search-item>
-		<search-item label="团队类型" style="width: 280px">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.travelTypeId" style="width: 200px" placeholder="请选择团队类型">
-				<a-select-option v-for="(item, index) in options.teamTypesLists" :value="item.oid" :key="index">{{ item.name }} </a-select-option>
-			</a-select>
-		</search-item>
-		<search-item label="地接社" style="width: 280px">
+        <search-item label="地接社">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.subTravelId" style="width: 200px" placeholder="请选择地接社名称">
 				<a-select-option v-for="(item, index) in options.earthContactAgencyList" :value="item.travelAgencyId" :key="index"
 					>{{ item.travelAgencyName }}
 				</a-select-option>
 			</a-select>
 		</search-item>
-		<search-item label="结算时间" style="width: 280px">
+		<search-item label="团队类型" >
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.travelTypeId" style="width: 200px" placeholder="请选择团队类型">
+				<a-select-option v-for="(item, index) in options.teamTypesLists" :value="item.oid" :key="index">{{ item.name }} </a-select-option>
+			</a-select>
+		</search-item>
+		<search-item label="结算时间">
 			<a-range-picker v-model:value="state.times" @change="timeChange" />
 		</search-item>
 		<template #button>
@@ -82,12 +77,9 @@ interface TableDataType {
 }
 interface ParamType {
 	itineraryNo?: number | string; //行程单号
-	scenicId?: number | string | null; //关联景区id
-	ticketName?: number | string; //门票名称
 	travelTypeId?: number | string | null; //团队类型id
+    travelId?: number | string | null; //组团社id
 	subTravelId?: number | string | null; //地接社id
-	// verificationStartTime: '', //核销开始时间
-	// verificationEndTime: '', //核销结束时间
 	settlementStartTime: number | string | null; //结算开始时间
 	settlementEndTime: number | string | null; //结算结束时间
 	pageSize?: number; //页大小
@@ -105,15 +97,7 @@ interface DataType {
 	settlementPrice?: string; //核销总费用
 	unSettlementPrice?: string; //未消费费用
 	hmVo?: voType; //古维费用
-	ticketVo?: voType; //景区
-	hotelVo?: voType; //酒店
-	cateringVo?: superviseVoType; //餐饮
-	groupVo?: superviseVoType; //集团
-	cultureBureauVo?: superviseVoType; //文旅局
-	yktVo?: superviseVoType; //一卡通
 	subTravelVo?: subTravelVoType; //地接社
-	superviseVo?: superviseVoType; //监理
-	associationVo?: superviseVoType; //协会
 	comprehensiveGuideVoList?: Array<comprehensiveGuideVoListType>; //综费产品-导服费
 	comprehensiveVoList?: Array<comprehensiveVoListType>; //综费产品-除导服费外
 }
@@ -122,7 +106,6 @@ interface voType {
 	frozenPrice: string; //冻结金额
 	settlementPrice: string; //已核销金额
 	actualPrice: string; //实收
-	ruleList: Array<ruleListType>;
 }
 // 餐饮 监理 协会 集团 文旅局 一卡通 地接社
 interface superviseVoType {
@@ -192,163 +175,79 @@ const columns = computed(() => {
 			width: 100,
 		},
 		{
-			title: '未消费费用',
+			title: '古维费冻结',
+			dataIndex: 'unSettlementPrice',
+			key: 'unSettlementPrice',
+			width: 100,
+		},
+        {
+			title: '酒店冻结',
+			dataIndex: 'unSettlementPrice',
+			key: 'unSettlementPrice',
+			width: 100,
+		},
+        {
+			title: '景点冻结',
+			dataIndex: 'unSettlementPrice',
+			key: 'unSettlementPrice',
+			width: 100,
+		},
+        {
+			title: '餐费冻结',
+			dataIndex: 'unSettlementPrice',
+			key: 'unSettlementPrice',
+			width: 100,
+		},
+        {
+			title: '导服费冻结',
+			dataIndex: 'unSettlementPrice',
+			key: 'unSettlementPrice',
+			width: 100,
+		},
+        {
+			title: '标餐费冻结',
 			dataIndex: 'unSettlementPrice',
 			key: 'unSettlementPrice',
 			width: 100,
 		},
 		{
-			title: '古维费用',
+			title: '未消费款项',
 			key: 'hmVo',
 			children: [
 				{
-					title: '冻结金额',
+					title: '小计',
 					dataIndex: 'frozenPrice',
 					key: 'hmVo',
 					width: 100,
 				},
 				{
-					title: '已核销金额',
+					title: '酒店',
 					dataIndex: 'settlementPrice',
 					key: 'hmVo',
 					width: 100,
 				},
 				{
-					title: '实收',
+					title: '景点',
 					dataIndex: 'actualPrice',
 					key: 'hmVo',
 					width: 100,
 				},
-			],
-		},
-		{
-			title: '景区',
-			key: 'ticketVo',
-			children: [
-				{
-					title: '冻结金额',
-					dataIndex: 'frozenPrice',
-					key: 'ticketVo',
-					width: 100,
-				},
-				{
-					title: '已核销金额',
-					dataIndex: 'settlementPrice',
-					key: 'ticketVo',
-					width: 100,
-				},
-				{
-					title: '实收',
+                {
+					title: '餐费',
 					dataIndex: 'actualPrice',
-					key: 'ticketVo',
+					key: 'hmVo',
 					width: 100,
 				},
-			],
-		},
-		{
-			title: '酒店',
-			key: 'hotelVo',
-			children: [
-				{
-					title: '冻结金额',
-					dataIndex: 'frozenPrice',
-					key: 'hotelVo',
-					width: 100,
-				},
-				{
-					title: '已核销金额',
-					dataIndex: 'settlementPrice',
-					key: 'hotelVo',
-					width: 100,
-				},
-				{
-					title: '实收',
+                {
+					title: '古维',
 					dataIndex: 'actualPrice',
-					key: 'hotelVo',
+					key: 'hmVo',
 					width: 100,
 				},
-			],
-		},
-		{
-			title: '餐饮',
-			key: 'cateringVo',
-			children: [
-				{
-					title: '冻结金额',
-					dataIndex: 'frozenPrice',
-					key: 'cateringVo',
-					width: 100,
-				},
-				{
-					title: '已核销金额',
-					dataIndex: 'settlementPrice',
-					key: 'cateringVo',
-					width: 100,
-				},
-				{
-					title: '实收',
+                {
+					title: '手续费',
 					dataIndex: 'actualPrice',
-					key: 'cateringVo',
-					width: 100,
-				},
-			],
-		},
-		{
-			title: '监理',
-			key: 'superviseVo',
-			children: [
-				{
-					title: '实收',
-					dataIndex: 'actualPrice',
-					key: 'superviseVo',
-					width: 100,
-				},
-			],
-		},
-		{
-			title: '协会',
-			key: 'associationVo',
-			children: [
-				{
-					title: '实收',
-					dataIndex: 'actualPrice',
-					key: 'associationVo',
-					width: 100,
-				},
-			],
-		},
-		{
-			title: '集团',
-			key: 'groupVo',
-			children: [
-				{
-					title: '实收',
-					dataIndex: 'actualPrice',
-					key: 'groupVo',
-					width: 100,
-				},
-			],
-		},
-		{
-			title: '文旅局',
-			key: 'cultureBureauVo',
-			children: [
-				{
-					title: '实收',
-					dataIndex: 'actualPrice',
-					key: 'cultureBureauVo',
-					width: 100,
-				},
-			],
-		},
-		{
-			title: '一卡通',
-			key: 'yktVo',
-			children: [
-				{
-					title: '实收',
-					dataIndex: 'actualPrice',
-					key: 'yktVo',
+					key: 'hmVo',
 					width: 100,
 				},
 			],
@@ -357,15 +256,15 @@ const columns = computed(() => {
 			title: '地接社',
 			key: 'subTravelVo',
 			children: [
-				{
-					title: '实收',
-					dataIndex: 'actualPrice',
+                {
+					title: '未核销费用',
+					dataIndex: 'unSettlementPrice',
 					key: 'subTravelVo',
 					width: 100,
 				},
 				{
-					title: '未消费费用',
-					dataIndex: 'unSettlementPrice',
+					title: '实收',
+					dataIndex: 'actualPrice',
 					key: 'subTravelVo',
 					width: 100,
 				},
@@ -395,7 +294,7 @@ const columns = computed(() => {
 					key: 'comprehensiveGuideVoList',
 					children: [
 						{
-							title: '旅行社实收',
+							title: '地接实收',
 							dataIndex: 'travelActualPrice',
 							id: `${vo.comprehensiveFeeProductId}`,
 							key: 'comprehensiveGuideVoList',
@@ -403,7 +302,7 @@ const columns = computed(() => {
 							parentTitle: `${vo.comprehensiveFeeProductName}`,
 						},
 						{
-							title: '集团实收',
+							title: '集团代收',
 							dataIndex: 'groupActualPrice',
 							id: `${vo.comprehensiveFeeProductId}`,
 							key: 'comprehensiveGuideVoList',
@@ -448,7 +347,7 @@ const columns = computed(() => {
 					key: 'comprehensiveVoList',
 					children: [
 						{
-							title: '费用归属',
+							title: '手续费',
 							dataIndex: 'belongCompany',
 							id: `${vo.comprehensiveFeeProductId}`,
 							key: 'comprehensiveVoList',
@@ -456,7 +355,7 @@ const columns = computed(() => {
 							parentTitle: `${vo.comprehensiveFeeProductName}`,
 						},
 						{
-							title: '实收',
+							title: '旅行社实收',
 							dataIndex: 'actualPrice',
 							id: `${vo.comprehensiveFeeProductId}`,
 							key: 'comprehensiveVoList',
@@ -483,7 +382,7 @@ const columns = computed(() => {
 				const idx = column.value.findIndex((item) => {
 					return item.title === vo.comprehensiveFeeProductName;
 				});
-				ruleMap[title]['column'] = column.value[idx].children;
+				ruleMap[title]['column'] = column.value[idx]?.children;
 				ruleMap[title]['data'].push(vo['ruleList']);
 				ruleMap[title]['columnParent'] = column.value[idx];
 			}
@@ -543,12 +442,9 @@ const state = reactive<StateType>({
 	tableData: {
 		param: {
 			itineraryNo: '', //行程单号
-			scenicId: null, //关联景区id
-			ticketName: '', //门票名称
 			travelTypeId: null, //团队类型id
+            travelId: null, // 组团社id
 			subTravelId: null, //地接社id
-			// verificationStartTime: '', //核销开始时间
-			// verificationEndTime: '', //核销结束时间
 			settlementStartTime: '', //结算开始时间
 			settlementEndTime: '', //结算结束时间
 			pageSize: 10, //页大小
@@ -585,103 +481,21 @@ const initList = async () => {
 				frozenPrice: '888', //冻结金额
 				settlementPrice: '888', //已核销金额
 				actualPrice: '654', //实收
-				ruleList: [
-					{
-						ruleName: '结算规则-001', //规则名称
-						rulePrice: '100', //结算费用
-					},
-					{
-						ruleName: '结算规则-002', //规则名称
-						rulePrice: '200', //结算费用
-					},
-					{
-						ruleName: '结算规则-003', //规则名称
-						rulePrice: '200', //结算费用
-					},
-				], //结算规则
 			}, //古维费用
-			ticketVo: {
-				frozenPrice: '888', //冻结金额
-				settlementPrice: '888', //已核销金额
-				actualPrice: '345', //实收
-				ruleList: [
-					{
-						ruleName: '结算规则', //规则名称
-						rulePrice: '1', //结算费用
-					},
-				], //结算规则
-			}, //景区
-			hotelVo: {
-				frozenPrice: '888', //冻结金额
-				settlementPrice: '888', //已核销金额
-				actualPrice: '123', //实收
-				ruleList: [
-					{
-						ruleName: '结算规则', //规则名称
-						rulePrice: '888', //结算费用
-					},
-				], //结算规则
-			}, //酒店
-			cateringVo: {
-				actualPrice: '888', //实收
-				ruleList: [
-					{
-						ruleName: '结算规则', //规则名称
-						rulePrice: '19999', //结算费用
-					},
-				], //结算规则
-			}, //餐饮
-			superviseVo: {
-				actualPrice: '444', //实收
-				ruleList: [
-					{
-						ruleName: '结算规则', //规则名称
-						rulePrice: '888', //结算费用
-					},
-				], //结算规则
-			}, //监理
-			associationVo: {
-				actualPrice: '574', //实收
-				ruleList: [
-					{
-						ruleName: '结算规则', //规则名称
-						rulePrice: '888', //结算费用
-					},
-				], //结算规则
-			}, //协会
-			groupVo: {
-				actualPrice: '2534', //实收
-				ruleList: [
-					{
-						ruleName: '结算规则', //规则名称
-						rulePrice: '888', //结算费用
-					},
-				], //结算规则
-			}, //集团
-			cultureBureauVo: {
-				actualPrice: '24514', //实收
-				ruleList: [
-					{
-						ruleName: '结算规则', //规则名称
-						rulePrice: '888', //结算费用
-					},
-				], //结算规则
-			}, //文旅局
-			yktVo: {
-				actualPrice: '345111', //实收
-				ruleList: [
-					{
-						ruleName: '结算规则', //规则名称
-						rulePrice: '888', //结算费用
-					},
-				], //结算规则
-			}, //一卡通
 			subTravelVo: {
 				actualPrice: '634343', //实收
 				unSettlementPrice: '1', //未消费费用
 				ruleList: [
 					{
-						ruleName: '结算规则', //规则名称
+						ruleName: '手续费', //规则名称
+						rulePrice: '123', //结算费用
+					},
+                    {
+						ruleName: '导服费', //规则名称
+						rulePrice: '888', //结算费用
+					},
+                    {
+						ruleName: '餐费', //规则名称
 						rulePrice: '888123', //结算费用
 					},
 				], //结算规则
@@ -707,7 +521,7 @@ const initList = async () => {
 			comprehensiveVoList: [
 				{
 					comprehensiveFeeProductId: 1, //综费产品id
-					comprehensiveFeeProductName: '综费产品-除导服费外', //综费产品名称
+					comprehensiveFeeProductName: '综费产品-餐费', //综费产品名称
 					belongCompany: '1888', //费用归属  取字典父级code_value=BUSINESS_TYPE的所有子级
 					actualPrice: '1888', //实收
 					ruleList: [
@@ -725,12 +539,6 @@ const initList = async () => {
 		},
 	];
 };
-// // 获取景区下拉列表
-// const getViewList = async () => {
-// 	const result = await api.getViewList();
-// 	state.viewList = result;
-// 	console.log(state.viewList, `state.viewList`);
-// };
 //搜索
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
@@ -753,11 +561,10 @@ const pageSideChange = (current: number, size: number) => {
 // 	}
 // };
 onMounted(() => {
-	// options.getTeamTypeList();
-	// options.getGroupSocietyList();
-	// options.getEarthContactAgencyList();
+	options.getTeamTypeList();
+	options.getGroupSocietyList();
+	options.getEarthContactAgencyList();
 	initList();
-	// getViewList();
 });
 const timeChange = (arr: any) => {
 	if (arr && arr.length > 0) {
@@ -825,4 +632,15 @@ const getColumnRecord = computed(() => (record: any, column: any, name: string) 
 	return '';
 });
 </script>
-<style scoped lang="less"></style>
+<style scoped lang="less">
+// ::v-deep(.ant-table-thead > tr > th, .ant-table-tbody > tr > td, .ant-table tfoot > tr > th, .ant-table tfoot > tr > td) {
+// 	padding: 16px 0;
+// }
+// ::v-deep(.ant-table-thead > tr > th) {
+// 	text-align: center;
+// }
+// ::v-deep(.ant-table-thead > tr > th) {
+// 	border-right: 1px solid #f0f0f0;
+// 	border-bottom: 1px solid #f0f0f0 !important;
+// }
+</style>
