@@ -70,7 +70,7 @@ const awsUploadFile = (options: any) => {
           console.log(item);
           const filename = generateFilename(item.name);
           aws.putObject({
-            Key: `${businessType.toLowerCase()}Pic/${item.name}`,
+            Key: `${businessType.toLowerCase()}Pic/${filename}`,
             Bucket: `${bucket}${prefix}`,
             ContentType: item.type,
             Body: item,
@@ -79,7 +79,7 @@ const awsUploadFile = (options: any) => {
             console.log(data);
             if (data) {
               console.log(err);
-              const fileUrl = `http://${filePath}/${bucket}${prefix}/${businessType.toLowerCase()}Pic/${item.name}`;
+              const fileUrl = `http://${filePath}/${bucket}${prefix}/${businessType.toLowerCase()}Pic/${filename}`;
               downloadFiles.push(fileUrl);
               if (filesLength === index) {
                 if (!downloadFiles.length) {
