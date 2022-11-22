@@ -42,6 +42,7 @@ export const useGeneraRules = defineStore('generaRules', {
 			{ value: 2, name: '核销金额' },
 		],
 		hotelRatedList: [], //酒店星级
+		getDictionaryList: [], // 报表费用归属数据
 	}),
 	getters: {},
 	actions: {
@@ -69,6 +70,14 @@ export const useGeneraRules = defineStore('generaRules', {
 				api.currencySettlementHotelRatedList().then((res: any) => {
 					console.log(res, `res123312`);
 					this.hotelRatedList = res;
+				});
+			}
+		},
+		// 获取报表的字典
+		getDictionary() {
+			if (!this.getDictionaryList.length) {
+				api.commonApi.getCodeValue({ codeValue: 'BUSINESS_TYPE' }).then((res: any) => {
+					this.getDictionaryList = res;
 				});
 			}
 		},

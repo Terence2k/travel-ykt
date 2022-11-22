@@ -26,3 +26,12 @@ export async function hotelAccountList(data: any) {
 		showLoading: true,
 	});
 }
+// 管理中心总账
+export async function statementList(data: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/statement/managementCenter/statement/byTravel`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}

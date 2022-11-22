@@ -48,6 +48,12 @@ export const auditListParams = {
 		pageNo: 1,
 		pageSize: 10,
 		status: 0,
+		startDate: '',
+		endDate: '',
+		time: [],
+		keyWord: '',
+		keyWordType: 1,
+		groupType: '',
 	},
 };
 export const useTravelStore = defineStore({
@@ -282,6 +288,14 @@ export const useTravelStore = defineStore({
 			});
 			return res;
 		},
+		async getChangeItineraryList(params: object) {
+			let res = await api.travelManagement.getChangeItineraryList(params);
+			res.content = res.content.map((it: TraveDataItem) => {
+				it.time = it.startDate + '-' + it.endDate;
+				return it;
+			});
+			return res;
+		},
 		setTouristList(list: any) {
 			this.touristList = list;
 		},
@@ -376,7 +390,7 @@ export const useTravelStore = defineStore({
 			this.itineraryStatusList = res;
 		},
 		async getManagementExpenses(id:any) {
-			const res = await api.getManagementExpenses(2);
+			const res = await api.getManagementExpenses(id);
 			this.gouvyList=res
 		}
 	},
