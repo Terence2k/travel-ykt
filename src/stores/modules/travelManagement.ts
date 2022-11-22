@@ -387,7 +387,7 @@ export const useTravelStore = defineStore({
 			this.itineraryStatusList = res;
 		},
 		async getManagementExpenses(id:any) {
-			const res = await api.getManagementExpenses(2);
+			const res = await api.getManagementExpenses(id);
 			this.gouvyList=res
 		}
 	},
