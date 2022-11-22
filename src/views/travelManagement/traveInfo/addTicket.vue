@@ -52,7 +52,7 @@
 			</a-form-item>
 
             <a-form-item label="门票价格" name="travelName">
-				<span>{{ticketPrice}}元</span>
+				<span>{{ticketPrice / 100 || 0}}元</span>
 			</a-form-item>
 
 
@@ -145,6 +145,7 @@
 			formState.peopleCount = travelStore.touristList.length
 			const newFormState = cloneDeep(formState)
 			newFormState.reservePeopleCount = formState.peopleCount
+			newFormState.unitPrice = ticketPrice.value / 100;
 			newFormState.totalFee = newFormState.peopleCount * newFormState.unitPrice
 			const res = await api.travelManagement.addTicket(formState)
 			// travelStore.setTicket(newFormState)

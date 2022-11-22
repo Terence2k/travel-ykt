@@ -138,6 +138,7 @@ import { selectSpecialDateRange } from '@/utils';
 import { Modal } from 'ant-design-vue';
 import { createVNode } from 'vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import {accAdd, accDiv} from '@/utils/compute.js'
 
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any ) || {}
 const route = useRoute()
@@ -224,7 +225,8 @@ const getHotelStarList = async () => {
 	hotelData.hotelStart = await api.commonApi.getHotelStarList();	
 };
 const handleMoeny = (i: number, e: string) => {
-	formState.roomTypeList[i].orderAmount = honestyGuidePrice.value + parseFloat(e) || honestyGuidePrice.value;
+	
+	formState.roomTypeList[i].orderAmount = accAdd(honestyGuidePrice.value, parseFloat(e) || 0);
 }
 
 const handleChange = async (id: number, option: any) => {
@@ -232,8 +234,8 @@ const handleChange = async (id: number, option: any) => {
 	formState.hotelStarCode = option.name;
 	hotelData.hotel = await api.getHotelInfoByRated(id);
 	for (let i = 0; i < formState.roomTypeList.length; i++) {
-		formState.roomTypeList[i].orderAmount = honestyGuidePrice.value + 
-		parseFloat(formState.roomTypeList[i].unitPrice);
+		formState.roomTypeList[i].orderAmount = accAdd(honestyGuidePrice.value,
+		parseFloat(formState.roomTypeList[i].unitPrice));
 	}
 
 };
@@ -285,26 +287,31 @@ const getOrderAmount = (data: Array<{[k:string]:any}>, startDate: string, endDat
 const submit = async () => {
 	try {
 		let traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {}
-		
+		const form = cloneDeep(formState);
 		// formState.scheduledNumber = formState.roomTypeList.map((it: any) => Number(it.checkInNumber))
 		// .reduce((prev: any, current: any) => prev + current);
-		formState.scheduledRooms = formState.roomTypeList.map((it: any) => Number(it.reserveNumber))
+		form.roomTypeList = form.roomTypeList.map((it: any) => {
+			it.unitPrice = it.unitPrice * 100;
+			it.orderAmount = it.orderAmount * 100
+			return it
+		})
+		form.scheduledRooms = form.roomTypeList.map((it: any) => Number(it.reserveNumber))
 		.reduce((prev: any, current: any) => prev + current);
-		formState.tripNumber = travelStore.touristList.length;
-		formState.itineraryId = route.query.id || traveListData.oid
-		formState.orderAmount = getOrderAmount(formState.roomTypeList, formState.arrivalDate, formState.departureDate)
+		form.tripNumber = travelStore.touristList.length;
+		form.itineraryId = route.query.id || traveListData.oid
+		form.orderAmount = getOrderAmount(form.roomTypeList, form.arrivalDate, form.departureDate)
 		
 		// if (Number((formState.scheduledNumber / travelStore.touristList.length).toFixed) < 0.8) {
 		// 	return message.error('入住总人数不低于团客总数的80%')
 		// }
-		const newFormState = cloneDeep(formState)
+		const newFormState = cloneDeep(form)
 		newFormState.startDate = newFormState.arrivalDate
 		newFormState.endDate = newFormState.departureDate
 		newFormState.hotelStar = newFormState.hotelStarCode
-		newFormState.orderFee = newFormState.orderAmount
+		newFormState.orderFee = newFormState.orderAmount / 100
 		newFormState.reservePeopleCount = newFormState.roomTypeList.map((it:any) => Number(it.checkInNumber)).reduce((prev: number, next: number) => prev + next)
 		newFormState.roomCount = newFormState.roomTypeList.map((it:any) => Number(it.reserveNumber)).reduce((prev: number, next: number) => prev + next)
-		const res = await api.travelManagement.addHotel(formState);
+		const res = await api.travelManagement.addHotel(form);
 		
 		// message.success('新增成功');
 		
@@ -383,6 +390,7 @@ watch(dialogVisible, (newVal) => {
 				formState[k] = res[k]
 			}
 			formState.arrivalDate = res.startDate
+			formState.orderFee = formState.orderFee / 100
 			formState.departureDate = res.endDate
 			let price = hotelData.hotelStart.filter((it:any) => it.oid == res.hotelStarId)[0].price
 			handleChange(res.hotelStarId, {name: res.hotelStar, price: price})
@@ -391,7 +399,9 @@ watch(dialogVisible, (newVal) => {
 				it.roomTypeLimitPeople = it.limitPeople
 				// it.checkInNumber = it.roomCount
 				it.hotelRoomTypeId = it.roomTypeId
-				it.orderAmount = it.unitPrice
+				it.orderAmount = it.unitPrice / 100
+				it.unitPrice = it.increaseAmount / 100
+				// it.increaseAmount = it.increaseAmount / 100
 				return it;
 			})
 		})

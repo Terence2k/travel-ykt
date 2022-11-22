@@ -240,7 +240,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			state.editableData[key] = cloneDeep(
 				state.tableData.filter((item:any, index: number) => key == (item.key ? item.key : item.oid))[0]
 			)
-			state.fileUrl = state.editableData[key].specialCertificatePicture.join(',')
+			state.fileUrl = state.editableData[key].specialCertificatePicture?.join(',')
 			state.editableData[key].edit = true
 		},
 		async del(record: any, index: number) {

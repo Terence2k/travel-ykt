@@ -35,3 +35,12 @@ export async function statementList(data: any) {
 		showLoading: true,
 	});
 }
+// 管理中心明细账
+export async function statementByItinerary(data: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/statement/managementCenter/statement/byItinerary`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
