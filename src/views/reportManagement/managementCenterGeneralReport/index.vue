@@ -59,91 +59,9 @@ import SearchItem from '@/components/common/CommonSearchItem.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import api from '@/api';
-import { useGeneraRules } from '@/stores/modules/generaRules';
 import { settlementOptions } from '@/stores/modules/settlement';
-import { fixedColumn } from '.';
-const generaRulesOptions = useGeneraRules();
+import { StateType, DataType, fixedColumn } from '.';
 const options = settlementOptions();
-interface StateType {
-	tableData: TableDataType;
-	viewList: Array<any>;
-}
-interface TableDataType {
-	param: ParamType;
-	data: Array<DataType>;
-	total: number;
-	loading: boolean;
-	settlementStartTimeList: Array<any>;
-	belongCompany: Array<any>;
-}
-interface ParamType {
-	travelId: string | number | null; //组团社id
-	subTravelId: string | number | null; //地接社id
-	settlementTimeStart: string | number | null; //结算开始时间
-	settlementTimeEnd: string | number | null; //结算结束时间
-	travelTypeId: string | number | null; //团队类型id
-	pageNo: number; //页号
-	pageSize: number; //页大小
-}
-interface DataType {
-	travelId?: number; //组团社id
-	travelName?: string; //组团社名称
-	subTravelId?: number; //地接社id
-	subTravelName?: string; //地接社名称
-	travelTypeId?: number; //团队类型id
-	travelTypeName?: string; //团队类型名称
-	peopleNum?: number; //人数
-	frozenPrice?: string; //团款
-	settlementPrice?: string; //核销总费用
-	unSettlementPrice?: string; //未消费费用
-	hmVo?: voType; //古维费用
-	ticketVo?: voType; //景区
-	hotelVo?: voType; //酒店
-	cateringVo?: superviseVoType; //餐饮
-	groupVo?: superviseVoType; //集团
-	cultureBureauVo?: superviseVoType; //文旅局
-	yktVo?: superviseVoType; //一卡通
-	subTravelVo?: subTravelVoType; //地接社
-	superviseVo?: superviseVoType; //监理
-	associationVo?: superviseVoType; //协会
-	comprehensiveGuideVoList?: Array<comprehensiveGuideVoListType>; //综费产品-导服费
-	comprehensiveVoList?: Array<comprehensiveVoListType>; //综费产品-除导服费外
-}
-// 古维费用 景区 酒店
-interface voType {
-	frozenPrice: string; //冻结金额
-	settlementPrice: string; //已核销金额
-	actualPrice: string; //实收
-	ruleList: Array<ruleListType>;
-}
-// 餐饮 监理 协会 集团 文旅局 一卡通 地接社
-interface superviseVoType {
-	actualPrice: string; //实收
-	ruleList: Array<ruleListType>;
-}
-// 综费产品-导服费
-interface comprehensiveGuideVoListType {
-	comprehensiveFeeProductId: number; //综费产品id
-	comprehensiveFeeProductName: string; //综费产品名称
-	travelActualPrice: string; //旅行社实收
-	groupActualPrice: string; //集团实收
-	ruleList: Array<ruleListType>;
-}
-interface subTravelVoType extends superviseVoType {
-	unSettlementPrice: string;
-}
-// 综费产品-除导服费外
-interface comprehensiveVoListType {
-	comprehensiveFeeProductId: number; //综费产品id
-	comprehensiveFeeProductName: string; //综费产品名称
-	belongCompany: string; //费用归属  取字典父级code_value=BUSINESS_TYPE的所有子级
-	actualPrice: string; //实收
-	ruleList: Array<ruleListType>;
-}
-interface ruleListType {
-	ruleName: string; //规则名称
-	rulePrice: string; //结算费用
-}
 const columns = computed(() => {
 	const column = ref<TableColumnsType>([]);
 	column.value = fixedColumn;
@@ -316,7 +234,6 @@ const state = reactive<StateType>({
 			pageNo: 1, //页号
 			pageSize: 10, //页大小
 		},
-		belongCompany: [],
 		data: [],
 		total: 11,
 		loading: false,
