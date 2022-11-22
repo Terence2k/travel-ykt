@@ -118,19 +118,22 @@ export const useTravelStore = defineStore({
 		traveInfo: {},
 		attachmentList: [
 			{
-				attachmentName: '旅行合同上传：',
+				attachmentName: '',
+				attachmentTypeName: '旅行合同上传：',
 				attachmentType: 1,
 				attachmentUrl: '',
 				oid: null
 			},
 			{
-				attachmentName: '委托接待协议上传：',
+				attachmentName: '',
+				attachmentTypeName: '委托接待协议上传：',
 				attachmentType: 2,
 				attachmentUrl: '',
 				oid: null
 			},
 			{
-				attachmentName: '包车合同上传：',
+				attachmentName: '',
+				attachmentTypeName: '包车合同上传：',
 				attachmentType: 3,
 				attachmentUrl: '',
 				oid: null
