@@ -170,7 +170,7 @@ const getTraveDetail = () => {
 			res.basic.time = [res.basic.startDate, res.basic.endDate];
 			res.basic.touristNum = res.basic.touristCount || 0;
 			travelStore.setBaseInfo(res.basic);
-			travelStore.setFileInfo(res.attachmentList);
+			res.attachmentList.length && travelStore.setFileInfo(res.attachmentList);
 			travelStore.setGuideList(res.guideList);
 			travelStore.setTouristList(res.touristList.content.map((it: any) => {
 				it.specialCertificatePicture = it.specialCertificatePicture?.split(',');
@@ -191,7 +191,10 @@ const getTraveDetail = () => {
 				it.scenicName = it.productName;
 				return it;
 			}) : [];
-			const hotel = [...res.waitBuyItem.waitBuyHotel, ...res.hotelList]
+			const hotel = [...res.waitBuyItem.waitBuyHotel, ...res.hotelList.map((it:any) => {
+				it.orderFee = it.orderFee / 100;
+				return it;
+			})]
 			travelStore.hotels = hotel as any;
 			// travelStore.curentProduct = res.productList;
 			travelStore.scenicTickets = [...res.waitBuyItem.waitBuyTicket, ...res.ticketList] as any;
@@ -200,7 +203,7 @@ const getTraveDetail = () => {
 				return (dayjs(res.basic.startDate) && dayjs(res.basic.startDate) > current && current) ||
 					(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).add(1, 'day') < current && current)
 			}
-			setTimeout(() => activeKey.value = Number(route.query.tab))
+			route.query.tab && setTimeout(() => activeKey.value = Number(route.query.tab))
 		});
 };
 

@@ -4,8 +4,11 @@
 	</div>
 	<div class="upload-file" v-for="item, index in fileUrl" :key="index">
 		<div>
-			<p v-if="item.oid && item.attachmentType !== 4">{{item.attachmentName}}</p>
-			<a-input style="margin: 10px 0; width: 316px;" v-else v-model:value="item.attachmentName" placeholder="请输入合同名称" />
+			<p v-if="item.attachmentType !== 4">{{item.attachmentTypeName}}</p>
+			<div v-else>
+				<!-- <p v-if="item.oid">{{item.attachmentName}}</p> -->
+				<a-input style="margin: 10px 0; width: 316px;" v-model:value="item.attachmentName" placeholder="请输入合同名称" />
+			</div>
 			<Upload v-model="item.attachmentUrl" :max-count="1">
 				<img src="@/assets/svg/upload.svg" alt="" />
 				<div class="tips">点击或将文件拖拽到这里上传</div>
@@ -24,11 +27,14 @@ const props = defineProps({
 	},
 });
 
+const emits = defineEmits(['onSuccess'])
+
 const travelStore = useTravelStore();
 const other = {
 	attachmentName: '',
 	attachmentType: 4,
 	attachmentUrl: '',
+	attachmentTypeName: '其他',
 	oid: null
 }
 const fileUrl = computed(() => travelStore.attachmentList)
@@ -39,7 +45,10 @@ const addMore = () => {
 console.log(fileUrl.value, 'fileUrl--------------')
 watch(() => props.onCheck, (newVal) => {
 	// console.log(newVal)
-	travelStore.setFileInfo(fileUrl);
+
+	travelStore.setFileInfo(fileUrl.value);
+	const valid = fileUrl.value.some(it => it.attachmentType === 4 && !it.attachmentName)
+	emits('onSuccess', {attachmentList: {valid: !valid, message: '请填写其他附件类型的名称', index: 5}})
 	console.log(travelStore.attachmentList)
 })
 </script>

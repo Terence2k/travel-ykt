@@ -1,7 +1,7 @@
 <template>
     <BaseModal v-model="dialogVisible" title="选择订票人员" :width="1000" :onOk="reserveTicket">
         <div v-if="dialogVisible">
-            <CommonTable row-key="oid" :row-selection="{onSelect}" :columns="columns" :dataSource="travelStore.touristList" :scrollY="false">
+            <CommonTable row-key="oid" :row-selection="{onSelect, onSelectAll}" :columns="columns" :dataSource="travelStore.touristList" :scrollY="false">
                 <template #bodyCell="{ column, text, index, record }">
                     <template v-if="column.key === 'index'">
                         <div>
@@ -18,9 +18,19 @@
                             {{ travelStore.genderList.filter((it: any) => it.codeValue === text)[0]?.name }}
                         </div>
                     </template>
-                    <template v-if="column.key === 'certificatePicture'">
+                    <template v-if="column.key === 'specialCertificateType'">
                         <div>
-                            <img src="" alt="">
+                            {{ specialId.filter((it: any) => it.codeValue === text)[0]?.name }}
+                        </div>
+                    </template>
+                    <template v-if="column.key === 'specialCertificatePicture'">
+                        <div>
+                            <a-image
+                                v-for="url in record.specialCertificatePicture"
+                                :key="url"
+                                :width="50"
+                                :src="url"
+                            />
                         </div>
                     </template>
                 </template>
@@ -51,6 +61,7 @@ import { CODEVALUE } from '@/constant';
     const travelStore = useTravelStore()
     const emits = defineEmits(['update:modelValue'])
     const IDCard = computed(() => travelStore.IDCard)
+    const specialId = computed(() => travelStore.specialId)
     const columns = [
         {
             title: ' 序号 ',
@@ -103,6 +114,10 @@ import { CODEVALUE } from '@/constant';
     const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
 		reserveParams.reservePeopleList = cloneDeep(selectedRows)
     }
+    const onSelectAll = (selected: any, selectedRows: any, changeRows: any) => {
+        // console.log(selected, selectedRows, changeRows)
+        reserveParams.reservePeopleList = cloneDeep(selectedRows)
+    }
     const dialogVisible = ref(false);
     
     const ticketInfo: any = ref({})
@@ -154,7 +169,10 @@ import { CODEVALUE } from '@/constant';
 		
 	}
     travelStore.getTraveCode(CODEVALUE.TRAVE_CODE.IDCARD, 'IDCard');
+    travelStore.getTraveCode(CODEVALUE.TRAVE_CODE.SPECIALID, 'specialId');
 </script>
 <style lang="scss" scoped>
-
+::v-deep(.ant-image) {
+	margin-left: 10px;
+}
 </style>
