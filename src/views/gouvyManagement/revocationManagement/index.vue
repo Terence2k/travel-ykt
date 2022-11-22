@@ -1,29 +1,18 @@
 <template>
 	<a-spin size="large" :spinning="state.tableData.loading" style="min-height: 50vh">
 		<CommonSearch>
-			<SearchItem label="入园日期">
+			<SearchItem label="接团社">
+				<a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入行程单号" style="width: 200px" />
+			</SearchItem>
+
+			<SearchItem label="出团日期">
 				<a-date-picker format="YYYY-MM-DD " value-format="YYYY-MM-DD " v-model:value="state.tableData.param.schoolDate" placeholder="入园日期" />
 			</SearchItem>
-			<SearchItem label="核销日期">
-				<a-date-picker
-					format="YYYY-MM-DD "
-					value-format="YYYY-MM-DD "
-					v-model:value="state.tableData.param.verificationTime"
-					placeholder="入园日期"
-				/>
-				<!-- <a-date-picker
-					v-model:value="state.tableData.param.verificationTime"
-					:show-time="{ format: 'HH:mm:ss' }"
-					format="YYYY-MM-DD HH:mm:ss"
-					value-format="YYYY-MM-DD HH:mm:ss"
-					placeholder="核销日期"
-					style="width: 120px"
-				/> -->
-			</SearchItem>
+
 			<SearchItem label="行程单号">
 				<a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入行程单号" style="width: 200px" />
 			</SearchItem>
-			<SearchItem label="旅行社名称">
+			<SearchItem label="行程路线">
 				<a-input v-model:value="state.tableData.param.sendTravelName" placeholder="请输入旅行社名称" style="width: 200px" />
 			</SearchItem>
 
@@ -34,46 +23,31 @@
 		</CommonSearch>
 
 		<a-tabs v-model:activeKey="state.tableData.param.orderState" @tabClick="changePageStatus">
-			<a-tab-pane key="" tab="全部"> </a-tab-pane>
-			<a-tab-pane :key="0" tab="待预定"> </a-tab-pane>
-			<a-tab-pane :key="1" tab="已预定"> </a-tab-pane>
-			<a-tab-pane :key="2" tab="已核销"> </a-tab-pane>
-			<a-tab-pane :key="3" tab="已结算"> </a-tab-pane>
-			<a-tab-pane :key="-1" tab="已作废"> </a-tab-pane>
-			<!-- <a-tab-pane :key="0" tab="已下单"> </a-tab-pane>
-			<a-tab-pane :key="1" tab="已预定"> </a-tab-pane>
-			<a-tab-pane :key="2" tab="预支付"> </a-tab-pane>
-			<a-tab-pane :key="3" tab="已支付"> </a-tab-pane>
-			<a-tab-pane :key="4" tab="已核销"> </a-tab-pane>
-			<a-tab-pane :key="5" tab="已结算"> </a-tab-pane>
-			<a-tab-pane :key="6" tab="已转账"> </a-tab-pane>
-			<a-tab-pane :key="-2" tab="已过期"> </a-tab-pane>
-			<a-tab-pane :key="-3" tab="已作废"> </a-tab-pane> -->
+			<a-tab-pane :key="0" tab="审核通过"> </a-tab-pane>
+			<a-tab-pane :key="1">
+				<template #tab>
+					<div class="title-tab">
+						待审核
+						<a-badge :count="10" class="rebadge" />
+					</div>
+				</template>
+			</a-tab-pane>
+			<a-tab-pane :key="2" tab="审核驳回"> </a-tab-pane>
 		</a-tabs>
+
 		<div class="table-area">
 			<CommonTable :dataSource="state.tableData.data" :columns="columns">
-				<template #bodyCell="{ column, record }">
-					<template v-if="column.key === 'orderAmount'">
-						<span v-if="typeof record.orderAmount === 'number'">
-							{{ record.orderAmount / 100 }}
-						</span>
-						<span v-else> - </span>
+				<template #bodyCell="{ column, record, index }">
+					<template v-if="column.key === 'index'">
+						{{ index + 1 }}
 					</template>
-					<template v-if="column.key === 'ticketType'">
-						{{ ticketType[record.ticketType] }}
-					</template>
-					<template v-if="column.key === 'orderStatus'">
-						{{ writeOffStatusOptionsData[record.orderStatus] }}
-					</template>
+
 					<template v-if="column.key === 'action'">
-						<div class="action-btns" v-if="state.tableData.param.orderState !== 2">
-							<a href="javascript:;" @click="toDetail(record)">查看</a>
-							<a href="javascript:;" @click="toVerifivcation(record)">核销记录</a>
-						</div>
-						<div class="action-btns" v-else>
+						<a href="javascript:;" @click="toDetail(record)">去审核</a>
+						<!-- <div class="action-btns" v-else>
 							<a href="javascript:;" @click="applyTchange">申请改刷</a>
 							<a href="javascript:;" @click="toDetail(record)">查看</a>
-						</div>
+						</div> -->
 					</template>
 				</template>
 			</CommonTable>
@@ -87,7 +61,8 @@
 
 			<div class="footer">
 				<div class="tooter-btn">
-					<a-button type="primary" @click="exportBtn">导出</a-button>
+					共<span style="color: red">{{ 11 }}</span
+					>条撤销待审核订单
 				</div>
 			</div>
 		</div>
@@ -104,31 +79,12 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import api from '@/api';
 import viewTable from './components/table.vue';
-import ApplyChange from './components/applyChange.vue';
+import ApplyChange from './components/audit.vue';
 import { useScenicSpotOption } from '@/stores/modules/scenicSpot';
 
 const scenicSpotOptions = useScenicSpotOption();
 const navigatorBar = useNavigatorBar();
-const ticketType = ['联票', '单票', '演出票'];
 // import { userList } from '@/api';
-
-interface writeOffStatusOptionsDataType {
-	[K: number]: string;
-	0: string;
-	1: string;
-	2: string;
-	3: string;
-	[-1]: string;
-}
-
-//核销状态
-let writeOffStatusOptionsData = reactive<writeOffStatusOptionsDataType>({
-	0: '待预定',
-	1: '已预定',
-	2: '已核销',
-	3: '已结算',
-	[-1]: '已作废',
-});
 
 const dataSource = ref([
 	{
@@ -205,77 +161,79 @@ const dataSource = ref([
 
 const columns = [
 	{
-		title: '订单编号',
+		title: '序号',
+		dataIndex: 'index',
+		key: 'index',
+		width: 80,
+	},
+	{
+		title: '原始行程单号',
 		dataIndex: 'orderNo',
 		key: 'orderNo',
 		width: 200,
 	},
 	{
-		title: '行程单号',
+		title: '线路名称',
 		dataIndex: 'itineraryNo',
 		key: 'itineraryNo',
 		width: 120,
 	},
 	{
-		title: '旅行社名称',
+		title: '发团社',
 		dataIndex: 'localTravelName',
 		key: 'localTravelName',
 		width: 120,
 	},
 	{
-		title: '门票名称',
+		title: '接团社',
 		dataIndex: 'ticketName',
 		key: 'ticketName',
 		width: 120,
 	},
+
 	{
-		title: '门票分类',
-		dataIndex: 'ticketType',
-		key: 'ticketType',
-		width: 80,
-	},
-	{
-		title: '入园日期',
+		title: '行程人数',
 		dataIndex: 'schoolDate',
 		key: 'schoolDate',
 		width: 120,
 	},
 	{
-		title: '核销时间',
+		title: '原始减免人数',
+		dataIndex: 'schoolDate',
+		key: 'schoolDate',
+		width: 120,
+	},
+	{
+		title: '出票状态',
+		dataIndex: 'ticketType',
+		key: 'ticketType',
+		width: 80,
+	},
+	{
+		title: '查验状态',
+		dataIndex: 'ticketType',
+		key: 'ticketType',
+		width: 80,
+	},
+	{
+		title: '撤销时间',
 		dataIndex: 'verificationTime',
 		key: 'verificationTime',
 		width: 140,
 	},
 	{
-		title: '预定时间',
+		title: '重提后变更人数',
 		dataIndex: 'bookTime',
 		key: 'bookTime',
 		width: 140,
 	},
 	{
-		title: '核销状态',
+		title: '变更人数是否超过10%',
 		dataIndex: 'orderStatus',
 		key: 'orderStatus',
 		width: 80,
 	},
-	{
-		title: '订票人数',
-		dataIndex: 'bookCount',
-		key: 'bookCount',
-		width: 80,
-	},
-	{
-		title: '核销人数',
-		dataIndex: 'verificationCount',
-		key: 'verificationCount',
-		width: 80,
-	},
-	{
-		title: '订单金额（元）',
-		dataIndex: 'orderAmount',
-		key: 'orderAmount',
-		width: 120,
-	},
+
 	{
 		title: '操作',
 		key: 'action',
@@ -310,7 +268,7 @@ const state = reactive<stateType>({
 			schoolDate: '',
 			verificationTime: '',
 			sendTravelName: '',
-			orderState: '',
+			orderState: 0,
 			itineraryNo: null,
 			pageNo: 1,
 			pageSize: 10,
@@ -327,8 +285,8 @@ const applyTchange = () => {
 };
 
 //改变状态
-const changePageStatus = (e: any) => {
-	state.tableData.param.orderState = e;
+const changePageStatus = (value: number) => {
+	state.tableData.param.orderState = value;
 	search();
 };
 //重置
@@ -342,12 +300,13 @@ const reset = () => {
 //查看
 const route = useRouter();
 const toDetail = (record: any) => {
-	route.push({ path: '/scenic-spot/order-manage/edit', query: { oid: record.orderNo } });
+	applyTchange();
+	// route.push({ path: '/scenic-spot/order-manage/edit', query: { oid: record.orderNo } });
 };
 //查看
 const toVerifivcation = (record: any) => {
-	scenicSpotOptions.setVerification(record.orderNo);
-	route.push({ path: '/scenic-spot/verificationRecord', query: { oid: record.orderNo } });
+	// scenicSpotOptions.setVerification(record.orderNo);
+	// route.push({ path: '/scenic-spot/verificationRecord', query: { oid: record.orderNo } });
 };
 
 //导出
@@ -381,7 +340,11 @@ const initOption = async () => {
 };
 
 onMounted(() => {
-	init();
+	// init();
+	navigatorBar.setNavigator(['古维管理', '撤销重提管理']);
+});
+onBeforeUnmount(() => {
+	navigatorBar.clearNavigator();
 });
 </script>
 
@@ -398,6 +361,13 @@ onMounted(() => {
 .ant-tabs-top > .ant-tabs-nav {
 	margin: 0;
 }
+.title-tab {
+	position: relative;
+	.rebadge {
+		position: absolute;
+		top: -10px;
+	}
+}
 
 .footer {
 	position: fixed;
@@ -411,7 +381,8 @@ onMounted(() => {
 	z-index: 101;
 
 	.tooter-btn {
-		width: 60%;
+		// width: 100%;
+		width: 200px;
 		margin-left: 16px;
 	}
 	button:first-of-type {

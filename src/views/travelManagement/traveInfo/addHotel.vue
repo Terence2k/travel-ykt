@@ -39,6 +39,8 @@
 					:disabled-date="travelStore.setDisabled"
 					@change="handleChangCheckIn"
 					:show-time="{ format: 'HH:mm:ss' }" 
+					dropdownClassName="hidden-date-picker"
+					:disabled-time="disCheckInTime"
 					format="YYYY-MM-DD HH:mm:ss" 
 					value-format="YYYY-MM-DD HH:mm:ss" 
 					v-model:value="formState.arrivalDate" />
@@ -50,7 +52,9 @@
 				<a-date-picker style="width: 100%" 
 					:disabled-date="disLeave"
 					:disabled="formState.arrivalDate === ''"
-					placeholder="请先选择入住时间"
+					dropdownClassName="hidden-date-picker"
+					:disabled-time="disLeaveTime"
+					placeholder="请先选择离店时间"
 					:show-time="{ format: 'HH:mm:ss' }"  
 					format="YYYY-MM-DD HH:mm:ss" 
 					value-format="YYYY-MM-DD HH:mm:ss" 
@@ -134,7 +138,7 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 import { message } from 'ant-design-vue/es';
 import { Rule } from 'ant-design-vue/es/form';
 import dayjs, { Dayjs } from 'dayjs';
-import { selectSpecialDateRange } from '@/utils';
+import { disabledRangeTime, selectSpecialDateRange } from '@/utils';
 import { Modal } from 'ant-design-vue';
 import { createVNode } from 'vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
@@ -152,6 +156,21 @@ const roomList = {
 };
 const travelStore = useTravelStore()
 const formRef = ref();
+
+
+const disCheckInTime = computed(() => {
+	const isCurrent = dayjs(travelStore.baseInfo.startDate).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD')
+	const start = dayjs().isBefore(dayjs(travelStore.baseInfo.startDate))
+	const disTime = start || isCurrent ? travelStore.setStarEndHMS.start : {
+		hour: 0,
+		min: 0,
+		second: 0
+	}
+	return disabledRangeTime(disTime, disTime);
+})
+const disLeaveTime = computed(() => {
+	return disabledRangeTime(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end);
+})
 
 let disLeave = ref((current: Dayjs) => {
 	return current && current < dayjs().subtract(1, 'day') || 
@@ -444,4 +463,4 @@ getHotelStarList();
 	font-size: 12px;
 }
 </style>
->
+
