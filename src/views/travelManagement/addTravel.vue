@@ -27,7 +27,7 @@ import api from '@/api';
 import { message } from 'ant-design-vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import dayjs, { Dayjs } from 'dayjs';
-import { getAmount } from '@/utils';
+import { disabledRangeTime, getAmount } from '@/utils';
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 const route = useRoute();
 const router = useRouter();
@@ -150,6 +150,50 @@ watch(obj, (newVal) => {
 	debounceFun(newVal.data);
 });
 
+const disDate = (res: any) => {
+	const start = dayjs().isBefore(dayjs(res.basic.startDate))
+	const isCurrent = dayjs(res.basic.startDate).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD')
+	let dis = null;
+	console.log(start)
+	if (!start || !isCurrent) {
+		dis = (current: Dayjs) => {
+			return (current && current < dayjs().subtract(1, 'day')) || 
+					(dayjs(res.basic.endDate) && dayjs(res.basic.endDate) < current && current);
+		}
+	} else {
+		dis = (current: Dayjs): any => {
+				return (dayjs(res.basic.startDate) && dayjs(res.basic.startDate) > current && current) ||
+					(dayjs(res.basic.endDate) && dayjs(res.basic.endDate) < current && current)
+			};
+	}
+	return dis;
+}
+
+const disTime = (res: any) => {
+	const isCurrent = dayjs(travelStore.baseInfo.startDate).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD')
+	const startFlag = dayjs().isBefore(dayjs(travelStore.baseInfo.startDate))
+	let start = {
+		hour: dayjs(res.basic.startDate).hour(),
+		min: dayjs(res.basic.startDate).minute(),
+		second: dayjs(res.basic.startDate).second()
+	}
+	start = startFlag || isCurrent ? start : {
+		hour: 0,
+		min: 0,
+		second: 0
+	}
+	
+	let end = {
+		hour: dayjs(res.basic.endDate).hour(),
+		min: dayjs(res.basic.endDate).minute(),
+		second: dayjs(res.basic.endDate).second()
+	}
+	return {
+		start, 
+		end
+	}
+}
+
 const getTraveDetail = () => {
 	const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 	if (!route.query.id && !traveListData.oid) {
@@ -199,10 +243,14 @@ const getTraveDetail = () => {
 			// travelStore.curentProduct = res.productList;
 			travelStore.scenicTickets = [...res.waitBuyItem.waitBuyTicket, ...res.ticketList] as any;
 			travelStore.teamTime = [res.basic.startDate, res.basic.endDate]  as any
-			travelStore.setDisabled = (current: Dayjs): any => {
-				return (dayjs(res.basic.startDate) && dayjs(res.basic.startDate) > current && current) ||
-					(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).add(1, 'day') < current && current)
-			}
+			travelStore.setDisabled = disDate(res);
+			
+			
+			
+
+			travelStore.setStarEndHMS = disTime(res)
+
+			travelStore.setDisabledTime = disabledRangeTime(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end) as any;
 			route.query.tab && setTimeout(() => activeKey.value = Number(route.query.tab))
 		});
 };

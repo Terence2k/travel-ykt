@@ -387,4 +387,13 @@ export const travelManagement = {
             showLoading: false
         });
     },
+     // 变更驳回审核
+     changeItineraryAudit(data: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/change/changeItineraryAudit`,
+            method: 'post',
+            showLoading: false,
+            data,
+        });
+    },
 }

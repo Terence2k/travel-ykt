@@ -34,7 +34,7 @@
 				<tr class="row">
 					<td class="key">行程信息</td>
 					<td class="value">
-						<div style="margin-bottom:20px" v-if="state.oldHotelList.length>0">
+						<div style="margin-bottom:20px" >
 							<p style="text-align:left; margin-bottom: 0px;">酒店：</p>
 							<p v-for="(item, index) in state.oldHotelList" :key="index">							
 							<span>{{ state.oldHotelList[index].hotelName }}，</span> 
@@ -43,7 +43,7 @@
 							<span>{{ dayjs(state.oldHotelList[index].endDate).diff(state.oldHotelList[index].startDate, 'day') }}天，</span>
 							<span>费用总计 <span style="color: red">{{ state.oldHotelList[index].orderFee / 100 }}</span>元；</span></p>
 						</div>
-						<div v-if="state.oldTicketList.length>0">
+						<div >
 							<p style="text-align:left; margin-bottom: 0px;">景区：</p>
 							<p v-for="(item, index) in state.oldTicketList" :key="index">							
 							<span>{{ state.oldTicketList[index].scenicName }}，</span> 
@@ -53,7 +53,7 @@
 						</div>
 					</td>
 					<td class="value">
-						<div style="margin-bottom:20px" v-if="state.newHotelList.length>0">
+						<div style="margin-bottom:20px" >
 							<p style="text-align:left; margin-bottom: 0px;">酒店：</p>
 							<p v-for="(item, index) in state.newHotelList" :key="index">							
 							<span>{{ state.newHotelList[index].hotelName }}，</span> 
@@ -62,7 +62,7 @@
 							<span>{{ dayjs(state.newHotelList[index].endDate).diff(state.newHotelList[index].startDate, 'day') }}天，</span>
 							<span>费用总计 <span style="color: red">{{ state.newHotelList[index].orderFee / 100 }}</span>元；</span></p>
 						</div>
-						<div v-if="state.newTicketList.length>0">
+						<div >
 							<p style="text-align:left; margin-bottom: 0px;">景区：</p>			
 							<p v-for="(item, index) in state.newTicketList" :key="index">							
 							<span>{{ state.newTicketList[index].scenicName }}，</span> 
@@ -89,8 +89,8 @@
 		</template>
 	</BaseModal>
 	<BaseModal title="驳回确认" v-model="rejectAuditVisible">
-		驳回 {{ state.detail.travelOperatorName }} 申请的行程变更申请，填写驳回理由：
-		<a-textarea v-model:value="rejectReason" placeholder="请填写驳回理由" :rows="4" />
+		驳回 {{ state.rowDate.subTravelName }} 申请的行程变更申请，填写驳回理由：
+		<a-textarea v-model:value="auditRemark" placeholder="请填写驳回理由" :rows="4" />
 		<template v-slot:footer>
 			<a-button @click="rejectAuditVisible = false">取消</a-button>
 			<a-button type="primary" @click="rejectAudit">确定</a-button>
@@ -116,13 +116,13 @@ const state = reactive({
 		status: 1,
 	},
 	tableData: computed(() => travelStore.auditList.financeChange.list),
-	detail: {} as any,
 	oldHotelList: [] as any,
 	newHotelList: [] as any,
 	oldTicketList: [] as any,
 	newTicketList: [] as any,
 	newOrderAmount: '' as any,
 	oldOrderAmount: '' as any,
+	rowDate:[] as any,
 	columns: [
 		{
 			title: ' 序号 ',
@@ -178,7 +178,7 @@ const state = reactive({
 });
 const changeAuditVisible = ref(false);
 const rejectAuditVisible = ref(false);
-const rejectReason = ref('');
+const auditRemark = ref('');
 const onSearch = async () => {
 	travelStore.auditList.financeChange.params.status = AuditStaus.FinanceChange;
 	const res = await travelStore.getChangeItineraryList(travelStore.auditList.financeChange.params);
@@ -194,7 +194,6 @@ const cancel = (): any => {
 	onSearch();
 };
 const auditStatus = async (row: any) => {
-	console.log('row:', row);
 	await getDetail(row.changeId, row);
 	changeAuditVisible.value = true;
 };
@@ -213,16 +212,17 @@ const sendAudit = (status: any) => {
 			closable: true,
 			centered: true,
 			icon: false,
-			content: `您即将批准 ${state.detail.travelOperatorName} 申请的行程变更申请，是否同意？`,
+			content: `您即将批准 ${state.rowDate.subTravelName} 申请的行程变更申请，变更后冻结金额将调整为 ${state.newOrderAmount/100} 元？是否同意？是否同意？`,
 			onOk() {
 				const queryData = {
-					rejectReason: rejectReason.value, //审核描述
-					itineraryId: state.detail.oid, //uuid
+					auditStatus:2,
+					auditRemark: auditRemark.value, //审核描述
+					changeId:state.rowDate.changeId, //changeId
 					isPass: true,
 				};
 				console.log('queryData:', queryData);
 				api.travelManagement
-					.financeAudit(queryData)
+					.changeItineraryAudit(queryData)
 					.then((res: any) => {
 						console.log('审核返回信息：', res);
 						message.success('保存成功');
@@ -241,13 +241,14 @@ const sendAudit = (status: any) => {
 };
 const rejectAudit = () => {
 	const queryData = {
-		rejectReason: rejectReason.value, //审核描述
-		itineraryId: state.detail.oid, //uuid
+		auditStatus:3,
+		auditRemark: auditRemark.value, //审核描述
+		changeId:state.rowDate.changeId , //uuid
 		isPass: false,
 	};
 	console.log('queryData:', queryData);
 	api.travelManagement
-		.financeAudit(queryData)
+		.changeItineraryAudit(queryData)
 		.then((res: any) => {
 			console.log('审核返回信息：', res);
 			message.success('保存成功');
@@ -258,6 +259,7 @@ const rejectAudit = () => {
 		});
 };
 const getDetail = async (id: any, row: any) => {
+	state.rowDate=row;
 	const backup = row;
 	await api.travelManagement
 		.getItineraryChangeProductHistory(id)
