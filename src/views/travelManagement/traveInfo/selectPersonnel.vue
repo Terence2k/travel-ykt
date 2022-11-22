@@ -201,7 +201,7 @@ const onSelect = (record: any, selected: boolean, selectedRows: any) => {
 const submit = () => {
 	//props.routeId后面传这个
 	let data = {
-		itineraryId: 2,
+		itineraryId: props.routeId,
 		reduceTouristList: state.tableData.submitList.map((item: any) => {
 			return {
 				touristId: item.touristId,
@@ -252,7 +252,7 @@ const ruleChange = (value: any, { item }: any, key: any) => {
 };
 const onSearch = () => {
 	//props.routeId后面传这个
-	api.getItineraryTourist(2).then((res) => {
+	api.getItineraryTourist(props.routeId).then((res) => {
 		state.tableData.data = res;
 	});
 };
@@ -266,10 +266,10 @@ const onSearchList = () => {
 	});
 };
 const ticketing =()=>{
-	if (state.tableData.submitList.length ==0) {
-		message.error('请勾选减免游客');
-		return false;
-	}
+	// if (state.tableData.submitList.length ==0) {
+	// 	message.error('请勾选减免游客');
+	// 	return false;
+	// }
 	let discountRuleId = state.tableData.submitList.some((item, index) => {
 		return item.discountRuleId == null;
 	});
@@ -280,8 +280,9 @@ const ticketing =()=>{
 	ticketingvalue.value=true
 }
 const goTicketing =()=>{
-	api.issue(2).then((res) => {
-		message.success('出团成功')
+	api.issue(props.routeId).then((res) => {
+		message.success('出票成功')
+		ticketingvalue.value=false
 	});
 }
 //查询证件列表
