@@ -20,7 +20,7 @@
 			</a-select>
 		</search-item>
 		<search-item label="结算时间" style="width: 280px">
-			<a-range-picker v-model:value="state.times" @change="timeChange" />
+			<a-range-picker v-model:value="state.tableData.settlementStartTimeList" @change="timeChange" />
 		</search-item>
 		<template #button>
 			<a-button @click="initList">查询</a-button>
@@ -398,22 +398,18 @@ const pageSideChange = (current: number, size: number) => {
 	initList();
 };
 onMounted(() => {
-	// options.getTeamTypeList();
-	// options.getGroupSocietyList();
-	// options.getEarthContactAgencyList();
 	options.getTeamTypeList();
 	options.getGroupSocietyList();
 	options.getEarthContactAgencyList();
 	initList();
-	// getViewList();
 });
 const timeChange = (arr: any) => {
 	if (arr && arr.length > 0) {
-		state.tableData.param.settlementStartTime = arr[0]['$d'];
-		state.tableData.param.settlementEndTime = arr[1]['$d'];
+		state.tableData.param.settlementTimeStart = arr[0]['$d'];
+		state.tableData.param.settlementTimeEnd = arr[1]['$d'];
 	} else {
-		state.tableData.param.settlementStartTime = null;
-		state.tableData.param.settlementEndTime = null;
+		state.tableData.param.settlementTimeStart = null;
+		state.tableData.param.settlementTimeEnd = null;
 	}
 };
 </script>
