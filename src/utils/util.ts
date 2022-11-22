@@ -2,7 +2,7 @@ import { ConfirmDailyCharge, FeeModel } from "@/enum";
 import router from "@/router/index";
 import { useTravelStore } from "@/stores/modules/travelManagement";
 import { message } from "ant-design-vue";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import isBetween from 'dayjs/plugin/isBetween'
 
 const travelStore = useTravelStore();
@@ -281,3 +281,30 @@ export const selectSpecialDateRange = (start: any, end: any, hotelId: number) =>
   console.log(flag)
   return flag;
 }
+
+const range = (start: number, end: number) => {
+	const result = [];
+
+	for (let i = start; i < end; i++) {
+		result.push(i);
+	}
+
+	return result;
+};
+
+export const disabledRangeTime = (start: any, end: any) => {
+	return (_: Dayjs, type: 'start' | 'end') => {
+		if (type === 'start') {
+			return {
+				disabledHours: () => range(0, 24).splice(0, start.hour),
+				disabledMinutes: () => range(0, 60).splice(0, start.min),
+				disabledSeconds: () => range(0, 60).splice(0, start.second),
+			};
+		}
+		return {
+			disabledHours: () => range(0, 24).splice(0, end.hour),
+			disabledMinutes: () => range(0, 60).splice(0, end.min),
+			disabledSeconds: () => range(0, 60).splice(0, end.second),
+		};
+	}
+};

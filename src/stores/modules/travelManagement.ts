@@ -114,9 +114,14 @@ export const useTravelStore = defineStore({
 			groupType: '',
 			status: '',
 		},
+		setStarEndHMS: {
+			start: {},
+			end: {}
+		},
 		setDisabled: (current: Dayjs) => {
 			return (current && current < dayjs().subtract(1, 'day')) || current > dayjs().startOf('day');
 		},
+		setDisabledTime: () => {},
 		teamTime: [],
 		guideList: [],
 		touristList: [],

@@ -139,7 +139,7 @@
 </template>
 
 <script lang="ts" setup>
-import { getAmount, getUserInfo } from '@/utils/util';
+import { disabledRangeTime, getAmount, getUserInfo } from '@/utils/util';
 import { ConfirmDailyCharge, FeeModel, GroupMode, RouteType } from '@/enum';
 import api from '@/api/index';
 import { useTravelStore } from '@/stores/modules/travelManagement';
@@ -267,15 +267,43 @@ const handleChange = (event: any, option: any) => {
 	formState.value.subTravelOperatorPhone = option.phone
 	formState.value.subTravelOperatorName = option.name
 }
+
+
+
 const handleChangeTime = (event: any) => {
-	let dis = null
+	let dis = null;
+	let disTime = null;
 	if (event) {
 		formState.value.startDate = event[0];
 		formState.value.endDate = event[1];
-		dis = (current: Dayjs) => {
-			return (dayjs(event[0]) && dayjs(event[0]) > current && current) ||
-			(dayjs(event[1]) && dayjs(event[1]).add(1, 'day') < current && current)
+
+		let start = {
+			hour: 0,
+			min: 0,
+			second: 0
 		}
+
+		let end = {
+			hour: 0,
+			min: 0,
+			second: 0
+		}
+
+		start.hour = dayjs(event[0]).hour();
+		start.min = dayjs(event[0]).minute();
+		start.second = dayjs(event[0]).second();
+		end.hour = dayjs(event[1]).hour();
+		end.min = dayjs(event[1]).minute();
+		end.second = dayjs(event[1]).second();
+		console.log(start, end, '---------')
+		dis = (current: Dayjs) => {
+			
+			return (dayjs(event[0]) && dayjs(event[0]) > current && current) ||
+			(dayjs(event[1]) && dayjs(event[1]) < current && current)
+		}
+
+		disTime = disabledRangeTime(start, end);
+		console.log(dis, '---------')
 	} else {
 		formState.value.startDate = '';
 		formState.value.endDate = '';
@@ -286,9 +314,12 @@ const handleChangeTime = (event: any) => {
 	}
 	
 	travelStore.setDisabled = dis as any;
-	travelStore.teamTime = event 
+	travelStore.setDisabledTime = disTime as any;
+	travelStore.teamTime = event; 
 	
 }
+
+
 
 const changeRadio = (event:any) =>  {
 	travelStore.setTeamType(event.target.value);
