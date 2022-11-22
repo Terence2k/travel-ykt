@@ -105,6 +105,9 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import api from '@/api';
 import viewTable from './components/table.vue';
 import ApplyChange from './components/brush.vue';
+import { useScenicSpotOption } from '@/stores/modules/scenicSpot';
+
+const scenicSpotOptions = useScenicSpotOption();
 const navigatorBar = useNavigatorBar();
 const ticketType = ['联票', '单票', '演出票'];
 // import { userList } from '@/api';
@@ -343,6 +346,7 @@ const toDetail = (record: any) => {
 };
 //查看
 const toVerifivcation = (record: any) => {
+	scenicSpotOptions.setVerification(record.orderNo);
 	route.push({ path: '/scenic-spot/verificationRecord', query: { oid: record.orderNo } });
 };
 

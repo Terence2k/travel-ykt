@@ -9,6 +9,7 @@ export const useScenicSpotOption = defineStore('scenicSpot', {
 		cityList: [],
 		areaList: [],
 		cateringStoreName: [],
+		varificatinPageValue: '',
 	}),
 	getters: {},
 	actions: {
@@ -23,14 +24,14 @@ export const useScenicSpotOption = defineStore('scenicSpot', {
 		},
 
 		//餐饮获取门店名称data
-		getCateringStoreName(){
-			api.getCateringStore().then((res:any) => {
-				console.log('2323',res);
+		getCateringStoreName() {
+			api.getCateringStore().then((res: any) => {
+				console.log('2323', res);
 				const data = res.map((i: any) => {
 					return { shopName: i.shopName, shopId: i.shopId };
 				});
 				this.cateringStoreName = data;
-			})
+			});
 		},
 
 		/**
@@ -77,6 +78,13 @@ export const useScenicSpotOption = defineStore('scenicSpot', {
 		//清除 辖区
 		cleanArae() {
 			this.areaList = [];
+		},
+		//设置核销记录
+		setVerification(value: string) {
+			this.varificatinPageValue = value;
+		},
+		cleanVerification() {
+			this.varificatinPageValue = '';
 		},
 	},
 });

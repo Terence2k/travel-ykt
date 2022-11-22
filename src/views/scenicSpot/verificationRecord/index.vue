@@ -84,6 +84,18 @@ import dayjs from 'dayjs';
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import api from '@/api';
+import { useScenicSpotOption } from '@/stores/modules/scenicSpot';
+
+const scenicSpotOptions = useScenicSpotOption();
+console.log(scenicSpotOptions.$state.varificatinPageValue, 'scenicSpotOptions.varificatinPageValue');
+
+const isFromSearch = () => {
+	if (scenicSpotOptions.$state.varificatinPageValue) {
+		tableState.tableData.param.orderNo = scenicSpotOptions.$state.varificatinPageValue;
+		searchByFilter();
+		scenicSpotOptions.cleanVerification();
+	}
+};
 
 interface DataSourceItem {
 	key: string | number;
@@ -256,6 +268,7 @@ const openDisplayPage = (record) => {
 };
 
 onMounted(() => {
+	isFromSearch();
 	onSearch();
 });
 </script>
