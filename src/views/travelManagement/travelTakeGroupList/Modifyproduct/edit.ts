@@ -35,7 +35,6 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		isReductionPassed: '',
 	});
 
-
 	const state = reactive<{ editableData: UnwrapRef<Record<string, DataItem>>; [k: string]: any }>({
 		editableData: {},
 		addHotelPop: false,
@@ -49,13 +48,14 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		showHotelPop: false,
 		ticketData: computed(() => travelStore.ticketsList),
 		holteDate: computed(() => travelStore.hotelList),
+		newticket:[],
 		ticketingDate: [],
 		itineraryId: '',
 		startTime: '',
 		endTime: '',
-		timeformState : reactive({}),
-		timeformRef : ref(''),
-		tiemformshow:false,
+		timeformState: reactive({}),
+		timeformRef: ref(''),
+		tiemformshow: false,
 		tableData: [
 			{
 				key: '1',
@@ -248,14 +248,31 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			Object.assign(state.tableData.filter((item: any) => key === item.key)[0], state.editableData[key]);
 			delete state.editableData[key];
 		},
-		add(key: string, popup: string, oid?: any) {
-			console.log(key, oid);
-			editId.productRow = {};
-			editId[key] = '';
+		add(key: string, popup: string, oid: string, record?: any) {
+			console.log(record);
+			if (record) {
+				editId.productRow = record;
+			} else {
+				editId.productRow = {};
+				editId[key] = '';
+			}
 			if (oid) {
 				editId[key] = oid;
 			}
 			state[popup] = true;
+		},
+		delhotel(key: string) {
+			if(state.holteDate[key].oid){
+				state.holteDate[key] = { ...state.holteDate[key] , ...{deleted : true} }
+			}
+			state.holteDate.splice(key, 1);			
+		},
+		delticket(key: string) {			
+			if(state.ticketData[key].oid){
+				state.newticket.push({ ...state.ticketData[key] , ...{deleted : true} })
+			}
+			
+			state.ticketData.splice(key, 1);			
 		},
 		show(key: string, oid?: any) {
 			showId[key] = '';
@@ -276,7 +293,6 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		see(data: any) {
 			state[data.ticketingValue] = true;
 			api.getItineraryTourist(data.itineraryId).then((res) => {
-				console.log(res, '213131231');
 				state.ticketingDate = res;
 			});
 		},
@@ -316,23 +332,23 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			});
 		},
 	};
-	const changTiemshow =() => {
-		state.tiemformshow = !state.tiemformshow
-		if(state.timeformState.time){
-			state.startTime = state.timeformState.time[0]
-			state.endTime = state.timeformState.time[1]
+	const changTiemshow = () => {
+		state.tiemformshow = !state.tiemformshow;
+		if (state.timeformState.time) {
+			state.startTime = state.timeformState.time[0];
+			state.endTime = state.timeformState.time[1];
 			let dis = null;
-				dis = (current: Dayjs) => {
-					return (
-						(dayjs(state.startTime ) && dayjs(state.startTime ) > current && current) ||
-						(dayjs(state.endTime) && dayjs(state.endTime).add(0, 'day') < current && current)
-					);
-				};
-			
-				travelStore.setDisabled = dis as any;
-				travelStore.teamTime = state.timeformState.time		
+			dis = (current: Dayjs) => {
+				return (
+					(dayjs(state.startTime) && dayjs(state.startTime) >= current && current) ||
+					(dayjs(state.endTime) && dayjs(state.endTime).add(1, 'day') <= current && current)
+				);
+			};
+
+			travelStore.setDisabled = dis as any;
+			travelStore.teamTime = state.timeformState.time;
 		}
-	}
+	};
 	const install = () => {
 		api.travelManagement
 			.changDetail({
@@ -345,13 +361,14 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				state.endTime = res.basic.endDate;
 				travelStore.hotelList = res.hotelList;
 				travelStore.ticketsList = res.ticketList;
+				travelStore.touristList = res.touristList.content;
 				state.itineraryId = res.basic.oid;
 				let dis = null;
 				if (res) {
 					dis = (current: Dayjs) => {
 						return (
-							(dayjs(res.basic.startDate) && dayjs(res.basic.startDate) > current && current) ||
-							(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).add(1, 'day') < current && current)
+							(dayjs(res.basic.startDate) && dayjs(res.basic.startDate).subtract(1, 'day') >= current && current) ||
+							(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).add(0, 'day') <= current && current)
 						);
 					};
 				}
@@ -361,35 +378,72 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				travelStore.teamTime = time;
 			});
 	};
-	const submitReview = () => {
-		let ajax = api.travelManagement.travelChangeOrderProduct;
-		return ajax({
-			itineraryId: state.itineraryId,
-			startDate:state.startTime,
-			endDate:state.endTime,
-			reserveHotelParams: travelStore.hotelList,
-			addTicketParams: travelStore.ticketsList,
-		}).then((res: any) => {});
+	const submitReview = async (callback: Function) => {
+		const start = ref();
+		const end = ref();
+		if (state.timeformState.time) {
+			end.value = dayjs(dayjs(state.timeformState.time[1]).format('YYYY-MM-DD')).valueOf();
+			start.value = dayjs(dayjs(state.timeformState.time[0]).format('YYYY-MM-DD')).valueOf();
+		}
+
+		for (let index = 0; index < travelStore.hotelList.length; index++) {
+			const hoteltime = dayjs(travelStore.hotelList[index].startDate).valueOf();
+			if (hoteltime > end.value || hoteltime < start.value) {
+				Modal.confirm({
+					title: '保存失败',
+					icon: createVNode(ExclamationCircleOutlined),
+					content: createVNode('div', { style: 'color: #333;' }, `您修改了行程时间。当前填写的酒店预订时间冲突！`),
+					async onOk() {return false},
+					onCancel() {return false},
+				});
+				return false
+			}
+		}
+
+		for (let index = 0; index < travelStore.ticketsList.length; index++) {
+			const tickettime = dayjs(travelStore.ticketsList[index].startDate).valueOf();
+			if (tickettime > end.value || tickettime < start.value) {
+				Modal.confirm({
+					title: '保存失败',
+					icon: createVNode(ExclamationCircleOutlined),
+					content: createVNode('div', { style: 'color: #333;' }, `您修改了行程时间。当前填写的景区预订时间冲突！`),
+					async onOk() {return false},
+					onCancel() {return false},
+				});
+				return false
+			}
+		}
+
+		Audits()
+		// }
+		// if(state.startTime){
+
+		// 	});
 	};
+
+	const Audits = () => {
+		// let ajax = api.travelManagement.travelChangeOrderProduct;
+		// return ajax({
+		// 	itineraryId: state.itineraryId,
+		// 	startDate: state.timeformState.time[0],
+		// 	endDate: state.timeformState.time[1],
+		// 	reserveHotelParams: travelStore.hotelList,
+		// 	addTicketParams: travelStore.ticketsList,
+		// }).then((res: any) => {});
+		console.log('state.ticketData:', state.ticketData);
+		console.log('state.newticket:', state.newticket);
+		// state.newticket.push(state.ticketData)
+		// console.log('state.newticket:', state.newticket);
+
+		// state.ticketData = [...state.newTicket]
+		// state.ticketData = 
+	console.log([...state.newTicket, ...state.ticketData]);
+	
+		
+	};
+
 	install();
-	// const rowRadioSelection = {
 
-	// 	type: 'radio',
-
-	// 	columnTitle:"选择",
-
-	// 	onChange: (selectedRowKeys: any, selectedRows: any) => {
-
-	// 		console.log(selectedRowKeys, selectedRows)
-	// 		travelStore.curentProduct = [selectedRows] as any
-	// 	},
-	// 	// selectedRowKeys: [travelStore.curentProduct[0].oid]
-
-	// }
-	// if(travelStore.reserveStatus)
-	// {
-	// 	travelStore.getManagementExpenses(route.query.id)
-	// }
 	return {
 		...toRefs(state),
 		...methods,
@@ -400,6 +454,6 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		install,
 		submitReview,
 		disabledDate,
-		changTiemshow
+		changTiemshow,
 	};
 }

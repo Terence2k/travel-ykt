@@ -54,11 +54,14 @@ export const getOptions = (props: any) => {
         ],
         title: '酒店费用',
         descriptions: 
-          `已预订<span style="color: red;">${props.hotelList?.length}</span>个酒店，
-          最大可入住人数：<span style="color: red;">${props.hotelList?.reduce((prev: any, curr: any) => prev + curr.roomCount, 0)}</span>；
-          房间数量：<span style="color: red;">${props.hotelList?.reduce((prev: any, curr: any) => prev + curr.roomCount, 0)}</span>；
-          费用总计：<span style="color: red;">${props.hotelList?.reduce((prev: any, curr: any) => prev + curr.orderFee, 0)}</span>元`,
-        dataSource: props.hotelList,
+          `已预订<span style="color: red;">${props.hotelList?props.hotelList?.length:props.newHotelList?.length}</span>个酒店，
+          最大可入住人数：<span style="color: red;">${props.hotelList ? props.hotelList?.reduce((prev: any, curr: any) => prev + curr.roomCount, 0):
+            props.newHotelList?.reduce((prev: any, curr: any) => prev + curr.roomCount, 0)}</span>；
+          房间数量：<span style="color: red;">${props.hotelList?props.hotelList.reduce((prev: any, curr: any) => prev + curr.roomCount, 0):
+            props.newHotelList?.reduce((prev: any, curr: any) => prev + curr.roomCount, 0)}</span>；
+          费用总计：<span style="color: red;">${props.hotelList?props.hotelList?.reduce((prev: any, curr: any) => prev + curr.orderFee, 0) || 0:
+            props.newHotelList?.reduce((prev: any, curr: any) => prev + curr.orderFee, 0) || 0}</span>元`,
+        dataSource: props.hotelList?props?.hotelList:props?.newHotelList,
     })
     let ticketcolumns = reactive({
         columns: [
@@ -114,11 +117,14 @@ export const getOptions = (props: any) => {
             },
         ],
         title: '景区费用',
-        descriptions: `已预订<span style="color: red;">${props.ticketList?.length}</span>个景区，
-          游玩人数：<span style="color: red;">${props.ticketList?.reduce((prev: any, curr: any) => prev + curr.peopleCount, 0)}</span>；
-          门票数量：<span style="color: red;">${props.ticketList?.reduce((prev: any, curr: any) => prev + curr.peopleCount, 0)}</span>；
-          费用总计：<span style="color: red;">${props.ticketList?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0) || 0}</span>元`,
-        dataSource: props.ticketList,
+        descriptions: `已预订<span style="color: red;">${props.ticketList ? props.ticketList?.length : props.newTicketList?.length}</span>个景区，
+          游玩人数：<span style="color: red;">${props.ticketList ? props.ticketList?.reduce((prev: any, curr: any) => prev + curr.peopleCount, 0) :
+            props.newTicketList?.reduce((prev: any, curr: any) => prev + curr.peopleCount, 0)}</span>；
+          门票数量：<span style="color: red;">${props.ticketList ? props.ticketList.reduce((prev: any, curr: any) => prev + curr.peopleCount, 0) :
+            props.newTicketList?.reduce((prev: any, curr: any) => prev + curr.peopleCount, 0)}</span>；
+          费用总计：<span style="color: red;">${props.ticketList ? props.ticketList.reduce((prev: any, curr: any) => prev + curr.totalFee, 0) || 0 :
+            props.newTicketList?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0) || 0}</span>元`,
+        dataSource: props.ticketList ? props?.ticketList : props.newTicketList,
     })
     return{
         hotelcolumns,

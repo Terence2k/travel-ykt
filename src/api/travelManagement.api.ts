@@ -367,4 +367,18 @@ export const travelManagement = {
             showLoading:false
         });
     },
+    getProductChangeAudit(itineraryId: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/change/getItineraryProductChangeAudit/${itineraryId}`,
+            method: 'get',
+            showLoading:false
+        });
+    },
+    getProductChangeAuditDetail(itineraryId: any) {
+        return request({
+            url: `${commonPath}/travel-agency-service/public/api/itinerary/change/getNoPassItineraryProductChange/${itineraryId}`,
+            method: 'get',
+            showLoading:false
+        });
+    },
 }
