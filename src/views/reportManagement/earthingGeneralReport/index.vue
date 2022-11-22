@@ -43,6 +43,13 @@
 					<template v-if="column.key === 'ruleMap'"> {{ getRulePrice(record, column) }} </template>
 					<template v-if="column.dataIndex.includes('tualPrice')"> {{ getActualPrice(record, column) }} </template>
 					<template v-if="column.dataIndex.includes('belongCompany')"> {{ getBelongCompany(record, column) }} </template>
+					<!-- 综费冻结 -->
+					<template v-if="column.key === 'settlementRuleNameGuide'">
+						{{ getSettlementRuleGuide(record, column) }}
+					</template>
+					<template v-if="column.key === 'settlementRuleName'">
+						{{ getSettlementRule(record, column) }}
+					</template>
 				</template>
 			</CommonTable>
 		</a-spin>
@@ -198,79 +205,55 @@ const columns = computed(() => {
 			key: 'unSettlementPrice',
 			width: 100,
 		},
-		{
-			title: '导服费冻结',
-			dataIndex: 'unSettlementPrice',
-			key: 'unSettlementPrice',
-			width: 100,
-		},
-		{
-			title: '标餐费冻结',
-			dataIndex: 'unSettlementPrice',
-			key: 'unSettlementPrice',
-			width: 100,
-		},
-		{
-			title: '未消费款项',
-			key: 'hmVo',
-			children: [
-				{
-					title: '小计',
-					dataIndex: 'frozenPrice',
-					key: 'hmVo',
-					width: 100,
-				},
-				{
-					title: '酒店',
-					dataIndex: 'settlementPrice',
-					key: 'hmVo',
-					width: 100,
-				},
-				{
-					title: '景点',
-					dataIndex: 'actualPrice',
-					key: 'hmVo',
-					width: 100,
-				},
-				{
-					title: '餐费',
-					dataIndex: 'actualPrice',
-					key: 'hmVo',
-					width: 100,
-				},
-				{
-					title: '古维',
-					dataIndex: 'actualPrice',
-					key: 'hmVo',
-					width: 100,
-				},
-				{
-					title: '手续费',
-					dataIndex: 'actualPrice',
-					key: 'hmVo',
-					width: 100,
-				},
-			],
-		},
-		{
-			title: '地接社',
-			key: 'subTravelVo',
-			children: [
-				{
-					title: '未核销费用',
-					dataIndex: 'unSettlementPrice',
-					key: 'subTravelVo',
-					width: 100,
-				},
-				{
-					title: '实收',
-					dataIndex: 'actualPrice',
-					key: 'subTravelVo',
-					width: 100,
-				},
-			],
-		},
 	]);
+	// 拼接遍历综费冻结费用
+	let nameList: Array<string> = [];
+	if (state.tableData.data && state.tableData.data.length) {
+		for (const key in state.tableData.data) {
+			// 遍历导服费综费列表
+			const data = state.tableData.data[key].comprehensiveGuideVoList;
+			if (data && data.length) {
+				for (const subKey in data) {
+					if (!nameList.includes(data[subKey].comprehensiveFeeProductName)) {
+						nameList.push(data[subKey].comprehensiveFeeProductName);
+					}
+				}
+			}
+		}
+		for (const key in nameList) {
+			const settlementRules = {
+				title: `${nameList[key]}冻结`,
+				dataIndex: 'settlementRuleNameGuide',
+				key: 'settlementRuleNameGuide',
+				width: 150
+			};
+			column.value.push(settlementRules);
+		}
+	}
+	// 拼接遍历综费冻结费用
+	let guideNameList: Array<string> = [];
+	if (state.tableData.data && state.tableData.data.length) {
+		for (const key in state.tableData.data) {
+			// 遍历除导服费外综费列表
+			const data = state.tableData.data[key].comprehensiveVoList;
+			if (data && data.length) {
+				for (const subKey in data) {
+					if (!guideNameList.includes(data[subKey].comprehensiveFeeProductName)) {
+						guideNameList.push(data[subKey].comprehensiveFeeProductName);
+					}
+				}
+			}
+		}
+		for (const key in guideNameList) {
+			const settlementRules = {
+				title: `${guideNameList[key]}冻结`,
+				dataIndex: 'settlementRuleName',
+				key: 'settlementRuleName',
+				width: 150
+			};
+			column.value.push(settlementRules);
+		}
+	}
 	const data = state.tableData.data;
 	/**
 	 * 先获取数据源，根据数据源的综费产品列表渲染到表头上
@@ -380,6 +363,68 @@ const columns = computed(() => {
 			}
 		}
 	}
+	const notConsumed = {
+		title: '未消费款项',
+		key: 'hmVo',
+		children: [
+			{
+				title: '小计',
+				dataIndex: 'frozenPrice',
+				key: 'hmVo',
+				width: 100,
+			},
+			{
+				title: '酒店',
+				dataIndex: 'settlementPrice',
+				key: 'hmVo',
+				width: 100,
+			},
+			{
+				title: '景点',
+				dataIndex: 'actualPrice',
+				key: 'hmVo',
+				width: 100,
+			},
+			{
+				title: '餐费',
+				dataIndex: 'actualPrice',
+				key: 'hmVo',
+				width: 100,
+			},
+			{
+				title: '古维',
+				dataIndex: 'actualPrice',
+				key: 'hmVo',
+				width: 100,
+			},
+			{
+				title: '手续费',
+				dataIndex: 'actualPrice',
+				key: 'hmVo',
+				width: 100,
+			},
+		],
+	};
+	column.value.push(notConsumed);
+	const subTravel = {
+		title: '地接社',
+		key: 'subTravelVo',
+		children: [
+			{
+				title: '未核销费用',
+				dataIndex: 'unSettlementPrice',
+				key: 'subTravelVo',
+				width: 100,
+			},
+			{
+				title: '实收',
+				dataIndex: 'actualPrice',
+				key: 'subTravelVo',
+				width: 100,
+			},
+		],
+	};
+	column.value.push(subTravel);
 	// 把所有带有结算规则的数据进行数据整理
 	for (let index = 0; index < data.length; index++) {
 		for (const key in data[index]) {
@@ -419,12 +464,11 @@ const columns = computed(() => {
 					if (key.includes('List')) {
 						rule['columnParentName'] = ruleMap[key]['columnParent']['title'];
 					}
-					ruleMap[key]['column'].push(rule);
+					ruleMap[key]['column'].unshift(rule);
 				}
 			}
 		}
 	}
-	console.log(column.value, `column.value`);
 
 	return column.value;
 });
@@ -533,13 +577,11 @@ const initList = async () => {
 };
 //搜索
 const onHandleCurrentChange = (val: number) => {
-	console.log('change:', val);
 	state.tableData.param.pageNo = val;
 	initList();
 };
 //翻页
 const pageSideChange = (current: number, size: number) => {
-	console.log('changePageSize:', size);
 	state.tableData.param.pageSize = size;
 	initList();
 };
@@ -612,6 +654,26 @@ const getBelongCompany = computed(() => (record: any, column: any) => {
 const getColumnRecord = computed(() => (record: any, column: any, name: string) => {
 	if (record[column.key]) {
 		return record[column.key][name] ? record[column.key][name] : '';
+	}
+	return '';
+});
+// 综费名称--导服费外
+const getSettlementRule = computed(() => (column, record) => {
+	const data = column.comprehensiveVoList;
+	for (const key in data) {
+		if (record.title == `${data[key].comprehensiveFeeProductName}冻结`) {
+			return data[key].actualPrice || data[key].actualPrice;
+		}
+	}
+	return '';
+});
+// 综费名称--导服费
+const getSettlementRuleGuide = computed(() => (column, record) => {
+	const data = column.comprehensiveGuideVoList;
+	for (const key in data) {
+		if (record.title == `${data[key].comprehensiveFeeProductName}冻结`) {
+			return data[key].travelActualPrice;
+		}
 	}
 	return '';
 });
