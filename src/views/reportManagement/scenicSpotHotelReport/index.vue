@@ -240,7 +240,6 @@ const columns = computed(() => {
 	];
 	let nameList: Array<string> = [];
 	if (state.tableData.data && state.tableData.data.length) {
-		console.log('state.tableData.data.length',state.tableData.data.length);
 		for (const key in state.tableData.data) {
 			const data = state.tableData.data[key].settlementRuleList;
 			if (data && data.length) {
@@ -260,7 +259,6 @@ const columns = computed(() => {
 			};
 			column.push(settlementRules);
 		}
-		console.log('nameList,',nameList);
 		
 	}
 	const netReceipts = {
@@ -387,13 +385,11 @@ const initList = async () => {
 };
 //搜索
 const onHandleCurrentChange = (val: number) => {
-	console.log('change:', val);
 	state.tableData.param.pageNo = val;
 	initList();
 };
 //翻页
 const pageSideChange = (current: number, size: number) => {
-	console.log('changePageSize:', size);
 	state.tableData.param.pageSize = size;
 	initList();
 };

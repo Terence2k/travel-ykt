@@ -134,6 +134,7 @@ const goToPath = (row: any) => {
 		query: {
 			id: row.oid,
 			itineraryNo: row.itineraryNo,
+      tab: 4
 		},
 	});
 };

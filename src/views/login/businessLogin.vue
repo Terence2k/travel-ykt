@@ -30,7 +30,7 @@ const form = reactive({
 	provinceId: '',
 	cityId: '',
 	areaId: '',
-	businessLicenseUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+	businessLicenseUrl: '',
 	account: '',
 	region: [],
 });
@@ -65,6 +65,7 @@ const handleFinish = async (values: any) => {
 .form_box {
 	background-color: #fff;
 	border-radius: 4px;
+
 	.btn {
 		width: 375px;
 		height: 48px;
@@ -72,6 +73,7 @@ const handleFinish = async (values: any) => {
 		opacity: 1;
 		border-radius: 4px;
 		margin-left: 22px;
+
 		&:hover {
 			opacity: 0.85;
 			border: none;
@@ -88,6 +90,7 @@ const handleFinish = async (values: any) => {
 		color: #999999;
 		letter-spacing: 1.1px;
 		margin-bottom: 20px;
+
 		.span {
 			width: 80px;
 			height: 25px;

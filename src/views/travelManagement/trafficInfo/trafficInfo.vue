@@ -42,6 +42,7 @@
 							<a-form-item v-if="editableData[record.key ? record.key : record.oid]" :name="[record.key ? record.key : record.oid, column.key]">
 								<a-range-picker
 									:disabled-date="travelStore.setDisabled"
+									:disabled-time="travelStore.setDisabledTime"
 									v-model:value="editableData[record.key ? record.key : record.oid][column.key]"
 									show-time
 									format="YYYY-MM-DD HH:mm:ss"

@@ -1,6 +1,6 @@
 <template>
 	<div class="img-container">
-		<a-upload-dragger
+		<a-upload-dragger v-if="isDragger"
 			:maxCount="maxCount"
 			v-model:file-list="fileList"
 			list-type="picture-card"
@@ -16,6 +16,22 @@
         <div v-if="!slotDefault">上传图片</div>
       </div>
 		</a-upload-dragger>
+		<a-upload v-else
+			:maxCount="maxCount"
+			v-model:file-list="fileList"
+			list-type="picture-card"
+			:beforeUpload="beforeUpload"
+      :customRequest="uploadFile"
+			accept=".jpg,.png"
+			@preview="handlePreview"
+      @remove="removeImg"
+      :disabled="disabled"
+		>
+			<div v-if="fileList!.length < maxCount">
+        <slot></slot>
+        <div>上传图片</div>
+      </div>
+		</a-upload>
 
 		<a-modal :visible="previewVisible" title="预览图片" :footer="null" @cancel="handleCancel">
 			<img alt="example" style="width: 100%" :src="previewImage" />
@@ -39,6 +55,10 @@ const props = defineProps({
     default: 99
   },
   disabled: {
+    type: Boolean,
+    default: false
+  },
+  isDragger: {
     type: Boolean,
     default: false
   }

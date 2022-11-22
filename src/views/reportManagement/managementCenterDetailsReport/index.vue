@@ -20,7 +20,7 @@
 			</a-select>
 		</search-item>
 		<search-item label="结算时间" style="width: 280px">
-			<a-range-picker v-model:value="state.times" @change="timeChange" />
+			<a-range-picker v-model:value="state.tableData.settlementStartTimeList" @change="timeChange" />
 		</search-item>
 		<template #button>
 			<a-button @click="initList">查询</a-button>
@@ -60,8 +60,10 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import api from '@/api';
 import { settlementOptions } from '@/stores/modules/settlement';
-import { StateType, DataType, fixedColumn } from '.';
+import { StateType, DataType, fixedColumn } from '../managementCenterGeneralReport/index';
 const options = settlementOptions();
+const comprehensiveGuideVoListIds = ref([]);
+const comprehensiveVoListIds = ref([]);
 const columns = computed(() => {
 	const column = ref<TableColumnsType>([]);
 	column.value = fixedColumn;
@@ -191,7 +193,7 @@ const columns = computed(() => {
 			}
 		}
 	}
-	// 将结算规则配置到表头
+	// // 将结算规则配置到表头
 	for (const key in ruleMap) {
 		// ruleMap[key]['column'] 表头 ruleMap[key]['data'] 配置规则数据
 		for (const subKey in ruleMap[key]['data']) {
@@ -218,11 +220,8 @@ const columns = computed(() => {
 			}
 		}
 	}
-
 	return column.value;
 });
-const comprehensiveGuideVoListIds = ref([]);
-const comprehensiveVoListIds = ref([]);
 const state = reactive<StateType>({
 	tableData: {
 		param: {
@@ -244,7 +243,8 @@ const state = reactive<StateType>({
 // 查询
 const initList = async () => {
 	state.tableData.loading = true;
-	let res = await api.statementList(state.tableData.param);
+	// 调用接口
+	let res = await api.statementByItinerary(state.tableData.param);
 	const { total, content } = res;
 	state.tableData.total = total;
 	state.tableData.data = content;
@@ -388,7 +388,7 @@ const initList = async () => {
 	// 			{
 	// 				comprehensiveFeeProductId: 1, //综费产品id
 	// 				comprehensiveFeeProductName: '综费产品-除导服费外', //综费产品名称
-	// 				belongCompany: '1', //费用归属  取字典父级code_value=BUSINESS_TYPE的所有子级
+	// 				belongCompany: '旅行社', //费用归属  取字典父级code_value=BUSINESS_TYPE的所有子级
 	// 				actualPrice: '1888', //实收
 	// 				ruleList: [
 	// 					{
@@ -405,6 +405,7 @@ const initList = async () => {
 	// 	},
 	// ];
 };
+
 //搜索
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
@@ -418,11 +419,10 @@ const pageSideChange = (current: number, size: number) => {
 	initList();
 };
 onMounted(() => {
-	// options.getTeamTypeList();
-	// options.getGroupSocietyList();
-	// options.getEarthContactAgencyList();
+	options.getTeamTypeList();
+	options.getGroupSocietyList();
+	options.getEarthContactAgencyList();
 	initList();
-	// getViewList();
 });
 const timeChange = (arr: any) => {
 	if (arr && arr.length > 0) {

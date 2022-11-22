@@ -48,6 +48,12 @@ export const auditListParams = {
 		pageNo: 1,
 		pageSize: 10,
 		status: 0,
+		startDate: '',
+		endDate: '',
+		time: [],
+		keyWord: '',
+		keyWordType: 1,
+		groupType: '',
 	},
 };
 export const useTravelStore = defineStore({
@@ -108,9 +114,14 @@ export const useTravelStore = defineStore({
 			groupType: '',
 			status: '',
 		},
+		setStarEndHMS: {
+			start: {},
+			end: {}
+		},
 		setDisabled: (current: Dayjs) => {
 			return (current && current < dayjs().subtract(1, 'day')) || current > dayjs().startOf('day');
 		},
+		setDisabledTime: () => {},
 		teamTime: [],
 		guideList: [],
 		touristList: [],
@@ -118,19 +129,22 @@ export const useTravelStore = defineStore({
 		traveInfo: {},
 		attachmentList: [
 			{
-				attachmentName: '旅行合同上传：',
+				attachmentName: '',
+				attachmentTypeName: '旅行合同上传：',
 				attachmentType: 1,
 				attachmentUrl: '',
 				oid: null
 			},
 			{
-				attachmentName: '委托接待协议上传：',
+				attachmentName: '',
+				attachmentTypeName: '委托接待协议上传：',
 				attachmentType: 2,
 				attachmentUrl: '',
 				oid: null
 			},
 			{
-				attachmentName: '包车合同上传：',
+				attachmentName: '',
+				attachmentTypeName: '包车合同上传：',
 				attachmentType: 3,
 				attachmentUrl: '',
 				oid: null
@@ -279,6 +293,14 @@ export const useTravelStore = defineStore({
 			});
 			return res;
 		},
+		async getChangeItineraryList(params: object) {
+			let res = await api.travelManagement.getChangeItineraryList(params);
+			res.content = res.content.map((it: TraveDataItem) => {
+				it.time = it.startDate + '-' + it.endDate;
+				return it;
+			});
+			return res;
+		},
 		setTouristList(list: any) {
 			this.touristList = list;
 		},
@@ -373,7 +395,7 @@ export const useTravelStore = defineStore({
 			this.itineraryStatusList = res;
 		},
 		async getManagementExpenses(id:any) {
-			const res = await api.getManagementExpenses(2);
+			const res = await api.getManagementExpenses(id);
 			this.gouvyList=res
 		}
 	},

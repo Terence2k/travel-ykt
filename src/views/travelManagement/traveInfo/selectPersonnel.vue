@@ -8,7 +8,7 @@
 				<p>全部游客{{ state.tableData.data.total }}名，已减免{{ state.tableData.data.reduceNum }}人，本次勾选 {{ state.tableData.num }}人</p>
 			</div>
 			<CommonTable
-				:row-selection="{ onSelect, getCheckboxProps }"
+				:row-selection="{ onSelect, getCheckboxProps}"
 				:columns="columns"
 				:dataSource="state.tableData.data.touristList"
 				rowKey="oid"
@@ -35,7 +35,7 @@
 							@change="(val: any, option: any) => ruleChange(val, option, record.key ? record.key : record.oid)"
 							v-model:value="record.discountRuleId"
 							allowClear
-							:disabled="state.disabledValue"
+							:disabled="record.disabledValue"
 							v-else
 						>
 							<a-select-option v-for="item in state.tableData.list" :item="item" :key="item.oid" :value="item.oid">
@@ -44,21 +44,24 @@
 						</a-select>
 					</template>
 					<template v-if="column.key === 'specialCertificateImg'">
-						<img :src="record.specialCertificateImg" />
+						<Upload v-model="record.specialCertificateImg" :maxCount="1" v-if="record.purchased == 2" />
+						<Upload v-model="record.specialCertificateImg" :maxCount="1" v-else-if="record.specialCertificateType == 1 && record.purchased != 2" />
 					</template>
 				</template>
 			</CommonTable>
 			<template v-slot:footer>
-				<a-button type="primary" @click="submit" v-if="state.isReductionPassed =='2' " disabled>提交减免申请</a-button>
+				<a-button type="primary" @click="submit" v-if="state.isReductionPassed == '2'" disabled>提交减免申请</a-button>
 				<a-button type="primary" @click="submit" v-else>提交减免申请</a-button>
-				<a-button type="primary" @click="ticketing">去出票</a-button>
+				<a-button type="primary" @click="ticketingvalue = true">去出票</a-button>
 				<a-button @click="dialogVisible = false">取消</a-button>
 			</template>
 		</BaseModal>
 		<BaseModal title="出票提醒" v-model="ticketingvalue" :width="400">
-			<p v-if="state.isInitiateReduction=='0'">您的古维订单还未提交过减免申请，现在出票只能按照全员购买的价格扣款。是否继续出票？</p>
-			<p v-if="state.isReductionPassed=='2'">您的古维订单已提交过减免申请，正在等待管理员审核。现在出票可能会错失费用减免机会。是否继续出票？</p>
-			<p v-if="state.isReductionPassed!='2' && state.isInitiateReduction!='0'">您的古维订单还可以继续提交减免申请，现在出票可能会错失费用减免机会。是否继续出票？</p>
+			<p v-if="state.isInitiateReduction == '0'">您的古维订单还未提交过减免申请，现在出票只能按照全员购买的价格扣款。是否继续出票？</p>
+			<p v-if="state.isReductionPassed == '2'">您的古维订单已提交过减免申请，正在等待管理员审核。现在出票可能会错失费用减免机会。是否继续出票？</p>
+			<p v-if="state.isReductionPassed != '2' && state.isInitiateReduction != '0'">
+				您的古维订单还可以继续提交减免申请，现在出票可能会错失费用减免机会。是否继续出票？
+			</p>
 			<template v-slot:footer>
 				<a-button type="primary" @click="goTicketing">确认出票</a-button>
 				<a-button @click="ticketingvalue = false">取消出票</a-button>
@@ -76,11 +79,12 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 //获取本地存储数据
 import { message } from 'ant-design-vue';
 import api from '@/api';
+import Upload from '@/components/common/imageWrapper.vue';
 import { any, object, string } from 'vue-types';
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 const route = useRouter();
 const dialogVisible = ref(false);
-const ticketingvalue= ref(false)
+const ticketingvalue = ref(false);
 const navigatorBar = useNavigatorBar();
 const formValidate: Ref<Record<string, any>> = ref({});
 // import { userList } from '@/api';
@@ -93,16 +97,16 @@ const props = defineProps({
 	},
 	routeId: {
 		type: String,
-		default: ''
+		default: '',
 	},
-	isReductionPassed:{
+	isReductionPassed: {
 		type: String,
-		default: ''
+		default: '',
 	},
-	isInitiateReduction:{
+	isInitiateReduction: {
 		type: String,
-		default: ''
-	}
+		default: '',
+	},
 });
 const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch', 'routeId']);
 const columns = [
@@ -159,7 +163,7 @@ const columns = [
 ];
 const state = reactive({
 	tableData: {
-		data: [],
+		data: [] as any,
 		total: 400,
 		loading: false,
 		param: {
@@ -174,34 +178,32 @@ const state = reactive({
 		num: 0,
 		submitList: [],
 	},
-	disabledValue:true,
+	show: false,
+	disabledValue: true,
 	title: '',
 	operationModal: {
 		isApplydate: false,
 		isExaminedate: false,
 	},
-	isReductionPassed:'',
-	isInitiateReduction:'',
+	isReductionPassed: '',
+	isInitiateReduction: '',
 });
 const auditRef = ref();
 const init = async () => {
-	state.isReductionPassed=props.isReductionPassed
-	state.isInitiateReduction=props.isInitiateReduction
+	state.isReductionPassed = props.isReductionPassed;
+	state.isInitiateReduction = props.isInitiateReduction;
 };
 const onSelect = (record: any, selected: boolean, selectedRows: any) => {
 	state.tableData.num = selectedRows.length;
 	state.tableData.submitList = selectedRows;
-	if(selected)
-	{
-		state.disabledValue=false
-	}else{
-		state.disabledValue=true
-	}
+	state.tableData.submitList.map((it:any)=>{
+		return it.disabledValue=false
+	})
 };
 const submit = () => {
 	//props.routeId后面传这个
 	let data = {
-		itineraryId: 2,
+		itineraryId: props.routeId,
 		reduceTouristList: state.tableData.submitList.map((item: any) => {
 			return {
 				touristId: item.touristId,
@@ -234,26 +236,29 @@ const submit = () => {
 	});
 };
 const ruleChange = (value: any, { item }: any, key: any) => {
-	console.log(item);
 	if (item.discountType == 1) {
 		let data = state.tableData.data.touristList.filter((it: any) => it.oid === key);
 		data.map((i: any) => {
-			(i.specialCertificateType = item.discountType), (i.specialCertificateTypeName = item.discountConditionName);
+			i.specialCertificateType = item.discountType;
+			i.specialCertificateTypeName = item.discountConditionName;
 			return i;
 		});
-	}
-	else{
+	} else {
 		let data = state.tableData.data.touristList.filter((it: any) => it.oid === key);
 		data.map((i: any) => {
-			(i.specialCertificateType = item.discountType), (i.specialCertificateTypeName ='');
+			i.specialCertificateType = item.discountType;
+			i.specialCertificateTypeName = '';
 			return i;
 		});
 	}
 };
 const onSearch = () => {
 	//props.routeId后面传这个
-	api.getItineraryTourist(2).then((res) => {
+	api.getItineraryTourist(props.routeId).then((res: any) => {
 		state.tableData.data = res;
+		state.tableData.data.touristList.map((it: any)=>{
+			return it.disabledValue=true
+		})
 	});
 };
 const getCheckboxProps = (record: any) => ({
@@ -261,32 +266,26 @@ const getCheckboxProps = (record: any) => ({
 	// defaultChecked:selectedRowKeys.includes(record.purchased==2)
 });
 const onSearchList = () => {
-	api.getBasiclist({ discountRuleStatus: 1 }).then((res) => {
+	api.getBasiclist({ discountRuleStatus: 1 }).then((res:any) => {
 		state.tableData.list = res;
 	});
 };
-const ticketing =()=>{
-	if (state.tableData.submitList.length ==0) {
-		message.error('请勾选减免游客');
-		return false;
-	}
-	let discountRuleId = state.tableData.submitList.some((item, index) => {
-		return item.discountRuleId == null;
-	});
-	if (discountRuleId) {
-		message.error('请选择减免规则');
-		return false;
-	}
-	ticketingvalue.value=true
-}
-const goTicketing =()=>{
-	api.issue(2).then((res) => {
-		message.success('出团成功')
-	});
-}
+const ticketing = () => {
+	ticketingvalue.value = true;
+};
+const goTicketing = () => {
+	api.issue(props.routeId).then((res :any) => {
+		ticketingvalue.value = false;
+		dialogVisible.value = false;
+		message.success('出票成功');
+	}).catch((err: any) => {
+			console.error(err);
+		});;
+	
+};
 //查询证件列表
 const dropDownQueryList = () => {
-	api.dropDownQueryList('SPECIAL_CERTIFICATE_TYPE').then((res) => {
+	api.dropDownQueryList('SPECIAL_CERTIFICATE_TYPE').then((res:any) => {
 		state.tableData.queryList = res;
 	});
 };

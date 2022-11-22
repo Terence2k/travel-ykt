@@ -38,7 +38,7 @@ import { traveListParams, useTravelStore } from '@/stores/modules/travelManageme
 import { AuditStaus, GroupType } from '@/enum';
 import { getUserInfo } from '@/utils/util';
 import { ROLE } from '@/constant';
-import { Field } from '@/type';
+import { AuditField } from '@/type';
 import { cloneDeep } from 'lodash';
 import api from '@/api';
 
@@ -78,11 +78,11 @@ const goToPath = (type: number) => {
 	});
 };
 
-const chart = computed(() => pages.filter((it: any) => it.value === activeKey.value)[0].chart as Field);
+const chart = computed(() => pages.filter((it: any) => it.value === activeKey.value)[0].chart as AuditField);
 
 //查询
 const onSearch = async () => {
-	let chartField: Field = chart.value;
+	let chartField: AuditField = chart.value;
 	let storeParams = travelStore.auditList[chartField].params;
 	travelStore.auditList[chartField].params.status = activeKey.value;
 	travelStore.auditList[chartField].params.startDate = storeParams.time[0];
@@ -95,7 +95,7 @@ const onSearch = async () => {
 };
 //重置
 const reset = () => {
-	let chartField: Field = chart.value;
+	let chartField: AuditField = chart.value;
 
 	travelStore.auditList[chartField].params = cloneDeep(traveListParams.params);
 	onSearch();
