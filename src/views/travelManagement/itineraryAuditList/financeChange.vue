@@ -25,7 +25,6 @@
 	</div>
 	<BaseModal title="行程单变更审核" v-model="changeAuditVisible" :width="1000">
 		<div class="table_box">
-			
 			<table class="info_table" cellpadding="16px" border="1">
 				<tr class="row">
 					<td class="key">变更项目</td>
@@ -35,16 +34,52 @@
 				<tr class="row">
 					<td class="key">行程信息</td>
 					<td class="value">
-						{{state.newHotelList[0].hotelName}}
+						<div style="margin-bottom:20px" v-if="state.oldHotelList.length>0">
+							<p style="text-align:left; margin-bottom: 0px;">酒店：</p>
+							<p v-for="(item, index) in state.oldHotelList" :key="index">							
+							<span>{{ state.oldHotelList[index].hotelName }}，</span> 
+							<span v-for="(item, i) in state.oldHotelList[index].roomTypeList" :key="index">{{ state.oldHotelList[index].roomTypeList[i].roomTypeName }}</span>
+							<span>{{ state.oldHotelList[index].roomCount }}间</span>
+							<span>{{ dayjs(state.oldHotelList[index].endDate).diff(state.oldHotelList[index].startDate, 'day') }}天，</span>
+							<span>费用总计 <span style="color: red">{{ state.oldHotelList[index].orderFee / 100 }}</span>元；</span></p>
+						</div>
+						<div v-if="state.oldTicketList.length>0">
+							<p style="text-align:left; margin-bottom: 0px;">景区：</p>
+							<p v-for="(item, index) in state.oldTicketList" :key="index">							
+							<span>{{ state.oldTicketList[index].scenicName }}，</span> 
+							<span>{{ state.oldTicketList[index].ticketName }}</span>
+							<span>{{ state.oldTicketList[index].reservePeopleCount }}张，</span>
+							<span>费用总计 <span style="color: red">{{ state.oldTicketList[index].reservePeopleCount * (state.oldTicketList[index].unitPrice/100) }}</span>元；</span></p>
+						</div>
 					</td>
 					<td class="value">
-						
+						<div style="margin-bottom:20px" v-if="state.newHotelList.length>0">
+							<p style="text-align:left; margin-bottom: 0px;">酒店：</p>
+							<p v-for="(item, index) in state.newHotelList" :key="index">							
+							<span>{{ state.newHotelList[index].hotelName }}，</span> 
+							<span v-for="(item, i) in state.newHotelList[index].roomTypeList" :key="index">{{ state.newHotelList[index].roomTypeList[i].roomTypeName }}</span>
+							<span>{{ state.newHotelList[index].roomCount }}间</span>
+							<span>{{ dayjs(state.newHotelList[index].endDate).diff(state.newHotelList[index].startDate, 'day') }}天，</span>
+							<span>费用总计 <span style="color: red">{{ state.newHotelList[index].orderFee / 100 }}</span>元；</span></p>
+						</div>
+						<div v-if="state.newTicketList.length>0">
+							<p style="text-align:left; margin-bottom: 0px;">景区：</p>			
+							<p v-for="(item, index) in state.newTicketList" :key="index">							
+							<span>{{ state.newTicketList[index].scenicName }}，</span> 
+							<span>{{ state.newTicketList[index].ticketName }}</span>
+							<span>{{ state.newTicketList[index].reservePeopleCount }}张，</span>
+							<span>费用总计 <span style="color: red">{{ state.newTicketList[index].reservePeopleCount * (state.newTicketList[index].unitPrice/100) }}</span>元；</span></p>
+						</div>
 					</td>
 				</tr>
 				<tr class="row">
 					<td class="key">行程预冻结费用</td>
-					<td class="value"> <span style="color: red;">{{state.oldOrderAmount/100}}</span> 元</td>
-					<td class="value"> <span style="color: red;">{{state.newOrderAmount/100}}</span> 元</td>
+					<td class="value">
+						<span style="color: red">{{ state.oldOrderAmount / 100 }}</span> 元
+					</td>
+					<td class="value">
+						<span style="color: red">{{ state.newOrderAmount / 100 }}</span> 元
+					</td>
 				</tr>
 			</table>
 		</div>
@@ -71,6 +106,7 @@ import { Modal } from 'ant-design-vue';
 import api from '@/api/index';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import { AuditStaus } from '@/enum';
+import dayjs, { Dayjs } from 'dayjs';
 const travelStore = useTravelStore();
 const state = reactive({
 	total: computed(() => travelStore.auditList.financeChange.total),
@@ -81,12 +117,12 @@ const state = reactive({
 	},
 	tableData: computed(() => travelStore.auditList.financeChange.list),
 	detail: {} as any,
-	oldHotelList:[] as any,
-	newHotelList:[] as any,
-	oldTicketList:[] as any,
-	newTicketList:[] as any,
-	newOrderAmount:'' as any,
-	oldOrderAmount:'' as any,
+	oldHotelList: [] as any,
+	newHotelList: [] as any,
+	oldTicketList: [] as any,
+	newTicketList: [] as any,
+	newOrderAmount: '' as any,
+	oldOrderAmount: '' as any,
 	columns: [
 		{
 			title: ' 序号 ',
@@ -226,13 +262,12 @@ const getDetail = async (id: any, row: any) => {
 	await api.travelManagement
 		.getItineraryChangeProductHistory(id)
 		.then((res: any) => {
-			state.newHotelList=res.newHotelList,
-			state.oldHotelList=res.oldHotelList,
-			state.newTicketList=res.newTicketList,
-			state.oldTicketList=res.oldTicketList,
-			state.newOrderAmount=res.newOrderAmount,
-			state.oldOrderAmount=res.oldOrderAmount
-			console.log(state.newHotelList,'21313')
+			state.newHotelList = res.newHotelList;
+			state.oldHotelList = res.oldHotelList;
+			state.newTicketList = res.newTicketList;
+			state.oldTicketList = res.oldTicketList;
+			state.newOrderAmount = res.newOrderAmount;
+			state.oldOrderAmount = res.oldOrderAmount;
 		})
 		.catch((err: any) => {
 			console.error(err);
