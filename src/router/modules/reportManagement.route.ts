@@ -361,11 +361,31 @@ export default [
 				],
 			},
 			{
+				path: 'managementCenterDetailsReport',
+				name: 'managementCenterDetailsReport',
+				redirect: '/reportManagement/managementCenterDetailsReport/list',
+				meta: {
+					title: '管理中心明细报表',
+					isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/reportManagement/managementCenterDetailsReport/index.vue'),
+						name: 'managementCenterDetailsReportList',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
+			{
 				path: 'earthingGeneralReport',
 				name: 'earthingGeneralReport',
 				redirect: '/reportManagement/earthingGeneralReport/list',
 				meta: {
-					title: '地接总账',
+					title: '地接总账报表',
 					isDetail: true, // 在左侧的导航栏不会展示
 				},
 				children: [
@@ -373,6 +393,26 @@ export default [
 						path: 'list',
 						component: () => import('@/views/reportManagement/earthingGeneralReport/index.vue'),
 						name: 'earthingGeneralReportList',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
+			{
+				path: 'earthingDetailsReport',
+				name: 'earthingDetailsReport',
+				redirect: '/reportManagement/earthingDetailsReport/list',
+				meta: {
+					title: '地接明细账报表',
+					isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/reportManagement/earthingDetailsReport/index.vue'),
+						name: 'earthingDetailsReportList',
 						meta: {
 							title: '首页',
 							isDetail: true, // 在左侧的导航栏不会展示
