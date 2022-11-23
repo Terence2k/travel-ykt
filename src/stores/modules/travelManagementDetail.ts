@@ -59,7 +59,29 @@ export const useTravelStore = defineStore({
 		trafficColor: [],
 		hotelList:[],
 		ticketsList:[],
-    attachmentList: [],
+	attachmentList: [
+		{
+			attachmentName: '',
+			attachmentTypeName: '旅行合同上传：',
+			attachmentType: 1,
+			attachmentUrl: '',
+			oid: null
+		},
+		{
+			attachmentName: '',
+			attachmentTypeName: '委托接待协议上传：',
+			attachmentType: 2,
+			attachmentUrl: '',
+			oid: null
+		},
+		{
+			attachmentName: '',
+			attachmentTypeName: '包车合同上传：',
+			attachmentType: 3,
+			attachmentUrl: '',
+			oid: null
+		}
+	],
 	}),
 	getters: {},
 	actions: {
@@ -124,6 +146,9 @@ export const useTravelStore = defineStore({
 				this.ticketsList = newData as any;
 				console.log(this.ticketsList, data, newData);
 			}
+		},
+		setFileInfo(data: any) {
+			this.attachmentList = data;
 		},
 	},
 });

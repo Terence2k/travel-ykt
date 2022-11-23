@@ -149,7 +149,7 @@ const state = reactive({
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
 	state.tableData.param.pageNo = val;
-	// onSearch();
+	onSearch();
 };
 //查看
 const toSee = (oid:any) => {
