@@ -293,12 +293,6 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			state[key] = true;
 			console.log(key);
 		},
-		see(data: any) {
-			state[data.ticketingValue] = true;
-			api.getItineraryTourist(data.itineraryId).then((res: any) => {
-				state.ticketingDate = res;
-			});
-		},
 		onSearch() {
 			api.getBasicInfo().then((res: any) => {
 				state.payablePrice = accDiv(res.price, 100);
@@ -398,8 +392,8 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 	};
 
 	const Audits = () => {
-		let tiecketparams = [].concat.call(state.ticketData, state.newticket);
-		let hotelparams = [].concat.call(state.hotelData, state.newhotel);
+		let tiecketparams:any = [].concat.call(state.ticketData, state.newticket);
+		let hotelparams:any = [].concat.call(state.hotelData, state.newhotel);
 		tiecketparams = tiecketparams.filter((item: any) => item.edit == true,tiecketparams)
 		for (let index = 0; index < tiecketparams.length; index++) {
 			if ((tiecketparams[index]?.oid || tiecketparams[index]?.key) && tiecketparams[index].edit) {
@@ -412,25 +406,31 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				delete hotelparams[index].edit;
 			}
 		}
-		let ajax = api.travelManagement.travelChangeOrderProduct;
-		return ajax({
+
+		const data = {
 			itineraryId: state.itineraryId,
-			startDate: state.timeformState.time[0],
-			endDate: state.timeformState.time[1],
+			startDate: '',
+			endDate: '',
 			reserveHotelParams: hotelparams,
 			addTicketParams: tiecketparams,
-		}).then((res: any) => {
-			res.message('提交审核成功')
+		}
+		if (state.timeformState.time) {
+			data.startDate = state.timeformState.time[0]
+			data.endDate = state.timeformState.time[1]
+		}
+		api.travelManagement.travelChangeOrderProduct(data).then((res: any) => {
+			message.success('提交审核成功')
 			router.push({
 				path: '/travel/travel_manage/travel_list',
 			});
 		}).catch((error:any)=>{
 
 		})
+
 	};
-
-	install();
-
+	onMounted(() => {
+		install();
+	});
 	return {
 		...toRefs(state),
 		...methods,
