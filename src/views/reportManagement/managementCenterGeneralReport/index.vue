@@ -38,7 +38,12 @@
 				<template #bodyCell="{ column, record }">
 					<!-- 结算规则 -->
 					<template v-if="column.key === 'ruleMap'"> {{ getRulePrice(record, column) }} </template>
+					<!-- 关于所有实收字段 -->
 					<template v-if="column.dataIndex.includes('tualPrice')"> {{ getActualPrice(record, column) }} </template>
+					<!-- 地接社未消费费用字段 -->
+					<template v-if="column.dataIndex === 'unSettlementPrice' && column.key === 'subTravelVo'">
+						{{ getSubTravelVoUnSettlementPrice(record, column) }}
+					</template>
 				</template>
 			</CommonTable>
 		</a-spin>
@@ -472,6 +477,10 @@ const getActualPrice = computed(() => (record: any, column: any) => {
 		}
 	}
 	return '';
+});
+//地接社未消费费用获取数据
+const getSubTravelVoUnSettlementPrice = computed(() => (record: any, column: any) => {
+	return record[column.key] ? record[column.key]['unSettlementPrice'] : '';
 });
 </script>
 <style scoped lang="less"></style>

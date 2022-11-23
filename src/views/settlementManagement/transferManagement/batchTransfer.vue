@@ -17,11 +17,22 @@
 </template>
 
 <script setup lang="ts">
+import api from '@/api';
 import Modal from '@/components/common/DelModal.vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 const state = reactive({
 	tableData: {
 		data: [],
+		total: 400,
+		loading: false,
+		param: {
+			teamTypeId: null, //团队类型id(对应ljykt_travel_agency数据库sys_team_type表oid)
+			productType: null, //产品类型 1-景区 2-酒店 3-餐饮 6开始为综费产品id
+			costName: '', //费用名称
+			ruleStatus: null, //规则状态 1-启用 0-禁用
+			pageNo: 1, //页号
+			pageSize: 10, //页大小
+		},
 	},
 	modalShow: false,
 	modalParams: { title: '审核通过', content: '是否确认对勾选的六条数据进行转账？' },
@@ -266,9 +277,23 @@ const tipSubmit = () => {
 		// 调用接口
 	}
 };
+const initList = async (query) => {
+	state.tableData.loading = true;
+	// let res = await api.currencySettlementRuleList(state.tableData.param);
+	// const { total, content } = res;
+	// state.tableData.total = total;
+	// const list: [any] = dealData(content);
+	// state.tableData.data = list;
+	state.tableData.loading = false;
+};
 const tipCancel = () => {
 	state.modalShow = false;
 };
+const router = useRouter();
+onMounted(() => {
+	const query = router.currentRoute.value.query;
+	initList(query);
+});
 </script>
 <style scoped lang="scss">
 .batchTransfer {

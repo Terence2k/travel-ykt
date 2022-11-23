@@ -38,7 +38,12 @@
 				<template #bodyCell="{ column, record }">
 					<!-- 结算规则 -->
 					<template v-if="column.key === 'ruleMap'"> {{ getRulePrice(record, column) }} </template>
+					<!-- 关于所有实收字段 -->
 					<template v-if="column.dataIndex.includes('tualPrice')"> {{ getActualPrice(record, column) }} </template>
+					<!-- 地接社未消费费用字段 -->
+					<template v-if="column.dataIndex === 'unSettlementPrice' && column.key === 'subTravelVo'">
+						{{ getSubTravelVoUnSettlementPrice(record, column) }}
+					</template>
 				</template>
 			</CommonTable>
 		</a-spin>
@@ -249,161 +254,161 @@ const initList = async () => {
 	state.tableData.total = total;
 	state.tableData.data = content;
 	state.tableData.loading = false;
-	// state.tableData.data = [
-	// 	{
-	// 		travelId: 1, //组团社id
-	// 		travelName: '组团社', //组团社名称
-	// 		subTravelId: 1, //地接社id
-	// 		subTravelName: '地接社', //地接社名称
-	// 		travelTypeId: 1, //团队类型id
-	// 		travelTypeName: '888', //团队类型名称
-	// 		peopleNum: 200, //人数
-	// 		frozenPrice: '888', //团款
-	// 		settlementPrice: '888', //核销总费用
-	// 		unSettlementPrice: '888', //未消费费用
-	// 		hmVo: {
-	// 			frozenPrice: '888', //冻结金额
-	// 			settlementPrice: '888', //已核销金额
-	// 			actualPrice: '654', //实收
-	// 			ruleList: [
-	// 				{
-	// 					ruleName: '结算规则-001', //规则名称
-	// 					rulePrice: '100', //结算费用
-	// 				},
-	// 				{
-	// 					ruleName: '结算规则-002', //规则名称
-	// 					rulePrice: '200', //结算费用
-	// 				},
-	// 				{
-	// 					ruleName: '结算规则-003', //规则名称
-	// 					rulePrice: '200', //结算费用
-	// 				},
-	// 			], //结算规则
-	// 		}, //古维费用
-	// 		ticketVo: {
-	// 			frozenPrice: '888', //冻结金额
-	// 			settlementPrice: '888', //已核销金额
-	// 			actualPrice: '345', //实收
-	// 			ruleList: [
-	// 				{
-	// 					ruleName: '结算规则', //规则名称
-	// 					rulePrice: '1', //结算费用
-	// 				},
-	// 			], //结算规则
-	// 		}, //景区
-	// 		hotelVo: {
-	// 			frozenPrice: '888', //冻结金额
-	// 			settlementPrice: '888', //已核销金额
-	// 			actualPrice: '123', //实收
-	// 			ruleList: [
-	// 				{
-	// 					ruleName: '结算规则', //规则名称
-	// 					rulePrice: '888', //结算费用
-	// 				},
-	// 			], //结算规则
-	// 		}, //酒店
-	// 		cateringVo: {
-	// 			actualPrice: '888', //实收
-	// 			ruleList: [
-	// 				{
-	// 					ruleName: '结算规则', //规则名称
-	// 					rulePrice: '19999', //结算费用
-	// 				},
-	// 			], //结算规则
-	// 		}, //餐饮
-	// 		superviseVo: {
-	// 			actualPrice: '444', //实收
-	// 			ruleList: [
-	// 				{
-	// 					ruleName: '结算规则', //规则名称
-	// 					rulePrice: '888', //结算费用
-	// 				},
-	// 			], //结算规则
-	// 		}, //监理
-	// 		associationVo: {
-	// 			actualPrice: '574', //实收
-	// 			ruleList: [
-	// 				{
-	// 					ruleName: '结算规则', //规则名称
-	// 					rulePrice: '888', //结算费用
-	// 				},
-	// 			], //结算规则
-	// 		}, //协会
-	// 		groupVo: {
-	// 			actualPrice: '2534', //实收
-	// 			ruleList: [
-	// 				{
-	// 					ruleName: '结算规则', //规则名称
-	// 					rulePrice: '888', //结算费用
-	// 				},
-	// 			], //结算规则
-	// 		}, //集团
-	// 		cultureBureauVo: {
-	// 			actualPrice: '24514', //实收
-	// 			ruleList: [
-	// 				{
-	// 					ruleName: '结算规则', //规则名称
-	// 					rulePrice: '888', //结算费用
-	// 				},
-	// 			], //结算规则
-	// 		}, //文旅局
-	// 		yktVo: {
-	// 			actualPrice: '345111', //实收
-	// 			ruleList: [
-	// 				{
-	// 					ruleName: '结算规则', //规则名称
-	// 					rulePrice: '888', //结算费用
-	// 				},
-	// 			], //结算规则
-	// 		}, //一卡通
-	// 		subTravelVo: {
-	// 			actualPrice: '634343', //实收
-	// 			unSettlementPrice: '1', //未消费费用
-	// 			ruleList: [
-	// 				{
-	// 					ruleName: '结算规则', //规则名称
-	// 					rulePrice: '888123', //结算费用
-	// 				},
-	// 			], //结算规则
-	// 		}, //地接社
-	// 		comprehensiveGuideVoList: [
-	// 			{
-	// 				comprehensiveFeeProductId: 1, //综费产品id
-	// 				comprehensiveFeeProductName: '综费产品-导服费', //综费产品名称
-	// 				travelActualPrice: '1888', //旅行社实收
-	// 				groupActualPrice: '1888', //集团实收
-	// 				ruleList: [
-	// 					{
-	// 						ruleName: '结算规则-0001', //规则名称
-	// 						rulePrice: '1222', //结算费用
-	// 					},
-	// 					{
-	// 						ruleName: '结算规则-0002', //规则名称
-	// 						rulePrice: '1322', //结算费用
-	// 					},
-	// 				], //结算规则
-	// 			},
-	// 		], //综费产品-导服费
-	// 		comprehensiveVoList: [
-	// 			{
-	// 				comprehensiveFeeProductId: 1, //综费产品id
-	// 				comprehensiveFeeProductName: '综费产品-除导服费外', //综费产品名称
-	// 				belongCompany: '旅行社', //费用归属  取字典父级code_value=BUSINESS_TYPE的所有子级
-	// 				actualPrice: '1888', //实收
-	// 				ruleList: [
-	// 					{
-	// 						ruleName: '结算规则-0001', //规则名称
-	// 						rulePrice: '13333', //结算费用
-	// 					},
-	// 					{
-	// 						ruleName: '结算规则-0002', //规则名称
-	// 						rulePrice: '13333', //结算费用
-	// 					},
-	// 				], //结算规则
-	// 			},
-	// 		], //综费产品-除导服费外
-	// 	},
-	// ];
+	state.tableData.data = [
+		{
+			travelId: 1, //组团社id
+			travelName: '组团社', //组团社名称
+			subTravelId: 1, //地接社id
+			subTravelName: '地接社', //地接社名称
+			travelTypeId: 1, //团队类型id
+			travelTypeName: '888', //团队类型名称
+			peopleNum: 200, //人数
+			frozenPrice: '888', //团款
+			settlementPrice: '888', //核销总费用
+			unSettlementPrice: '88008', //未消费费用
+			hmVo: {
+				frozenPrice: '888', //冻结金额
+				settlementPrice: '888', //已核销金额
+				actualPrice: '654', //实收
+				ruleList: [
+					{
+						ruleName: '结算规则-001', //规则名称
+						rulePrice: '100', //结算费用
+					},
+					{
+						ruleName: '结算规则-002', //规则名称
+						rulePrice: '200', //结算费用
+					},
+					{
+						ruleName: '结算规则-003', //规则名称
+						rulePrice: '200', //结算费用
+					},
+				], //结算规则
+			}, //古维费用
+			ticketVo: {
+				frozenPrice: '888', //冻结金额
+				settlementPrice: '888', //已核销金额
+				actualPrice: '345', //实收
+				ruleList: [
+					{
+						ruleName: '结算规则', //规则名称
+						rulePrice: '1', //结算费用
+					},
+				], //结算规则
+			}, //景区
+			hotelVo: {
+				frozenPrice: '888', //冻结金额
+				settlementPrice: '888', //已核销金额
+				actualPrice: '123', //实收
+				ruleList: [
+					{
+						ruleName: '结算规则', //规则名称
+						rulePrice: '888', //结算费用
+					},
+				], //结算规则
+			}, //酒店
+			cateringVo: {
+				actualPrice: '888', //实收
+				ruleList: [
+					{
+						ruleName: '结算规则', //规则名称
+						rulePrice: '19999', //结算费用
+					},
+				], //结算规则
+			}, //餐饮
+			superviseVo: {
+				actualPrice: '444', //实收
+				ruleList: [
+					{
+						ruleName: '结算规则', //规则名称
+						rulePrice: '888', //结算费用
+					},
+				], //结算规则
+			}, //监理
+			associationVo: {
+				actualPrice: '574', //实收
+				ruleList: [
+					{
+						ruleName: '结算规则', //规则名称
+						rulePrice: '888', //结算费用
+					},
+				], //结算规则
+			}, //协会
+			groupVo: {
+				actualPrice: '2534', //实收
+				ruleList: [
+					{
+						ruleName: '结算规则', //规则名称
+						rulePrice: '888', //结算费用
+					},
+				], //结算规则
+			}, //集团
+			cultureBureauVo: {
+				actualPrice: '24514', //实收
+				ruleList: [
+					{
+						ruleName: '结算规则', //规则名称
+						rulePrice: '888', //结算费用
+					},
+				], //结算规则
+			}, //文旅局
+			yktVo: {
+				actualPrice: '345111', //实收
+				ruleList: [
+					{
+						ruleName: '结算规则', //规则名称
+						rulePrice: '888', //结算费用
+					},
+				], //结算规则
+			}, //一卡通
+			subTravelVo: {
+				actualPrice: '634343', //实收
+				unSettlementPrice: '1', //未消费费用
+				ruleList: [
+					{
+						ruleName: '结算规则', //规则名称
+						rulePrice: '888123', //结算费用
+					},
+				], //结算规则
+			}, //地接社
+			comprehensiveGuideVoList: [
+				{
+					comprehensiveFeeProductId: 1, //综费产品id
+					comprehensiveFeeProductName: '综费产品-导服费', //综费产品名称
+					travelActualPrice: '1888', //旅行社实收
+					groupActualPrice: '1888', //集团实收
+					ruleList: [
+						{
+							ruleName: '结算规则-0001', //规则名称
+							rulePrice: '1222', //结算费用
+						},
+						{
+							ruleName: '结算规则-0002', //规则名称
+							rulePrice: '1322', //结算费用
+						},
+					], //结算规则
+				},
+			], //综费产品-导服费
+			comprehensiveVoList: [
+				{
+					comprehensiveFeeProductId: 1, //综费产品id
+					comprehensiveFeeProductName: '综费产品-除导服费外', //综费产品名称
+					belongCompany: '旅行社', //费用归属  取字典父级code_value=BUSINESS_TYPE的所有子级
+					actualPrice: '1888', //实收
+					ruleList: [
+						{
+							ruleName: '结算规则-0001', //规则名称
+							rulePrice: '13333', //结算费用
+						},
+						{
+							ruleName: '结算规则-0002', //规则名称
+							rulePrice: '13333', //结算费用
+						},
+					], //结算规则
+				},
+			], //综费产品-除导服费外
+		},
+	];
 };
 
 //搜索
@@ -472,6 +477,10 @@ const getActualPrice = computed(() => (record: any, column: any) => {
 		}
 	}
 	return '';
+});
+//地接社未消费费用获取数据
+const getSubTravelVoUnSettlementPrice = computed(() => (record: any, column: any) => {
+	return record[column.key] ? record[column.key]['unSettlementPrice'] : '';
 });
 </script>
 <style scoped lang="less"></style>
