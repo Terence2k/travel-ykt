@@ -33,7 +33,7 @@
 			</template>
 		</CommonSearch>
 
-		<a-tabs v-model:activeKey="state.tableData.param.orderState" @tabClick="changePageStatus">
+		<a-tabs v-model:activeKey="state.tableData.param.orderStatus" @tabClick="changePageStatus">
 			<a-tab-pane key="" tab="全部"> </a-tab-pane>
 			<a-tab-pane :key="0" tab="待预定"> </a-tab-pane>
 			<a-tab-pane :key="1" tab="已预定"> </a-tab-pane>
@@ -66,7 +66,7 @@
 						{{ writeOffStatusOptionsData[record.orderStatus] }}
 					</template>
 					<template v-if="column.key === 'action'">
-						<div class="action-btns" v-if="state.tableData.param.orderState !== 2">
+						<div class="action-btns" v-if="state.tableData.param.orderStatus !== 2">
 							<a href="javascript:;" @click="toDetail(record)">查看</a>
 							<a href="javascript:;" @click="toVerifivcation(record)">核销记录</a>
 						</div>
@@ -293,7 +293,7 @@ interface stateType {
 			schoolDate: string | null | number;
 			verificationTime: string | null | number;
 			sendTravelName: string | null | number;
-			orderState: string | null | number;
+			orderStatus: string | null | number;
 			itineraryNo: string | null | number;
 			pageNo: string | null | number;
 			pageSize: string | null | number;
@@ -310,7 +310,7 @@ const state = reactive<stateType>({
 			schoolDate: '',
 			verificationTime: '',
 			sendTravelName: '',
-			orderState: '',
+			orderStatus: '',
 			itineraryNo: null,
 			pageNo: 1,
 			pageSize: 10,
@@ -328,7 +328,7 @@ const applyTchange = () => {
 
 //改变状态
 const changePageStatus = (e: any) => {
-	state.tableData.param.orderState = e;
+	state.tableData.param.orderStatus = e;
 	search();
 };
 //重置

@@ -413,6 +413,8 @@ watch(dialogVisible, (newVal) => {
 			formState.departureDate = res.endDate
 			let price = hotelData.hotelStart.filter((it:any) => it.oid == res.hotelStarId)[0].price
 			handleChange(res.hotelStarId, {name: res.hotelStar, price: price})
+			console.log(formState.roomTypeList,'前');
+			
 			formState.roomTypeList = formState.roomTypeList.map((it:any) => {
 				it.reserveNumber = it.roomCount
 				it.roomTypeLimitPeople = it.limitPeople
@@ -423,6 +425,8 @@ watch(dialogVisible, (newVal) => {
 				// it.increaseAmount = it.increaseAmount / 100
 				return it;
 			})
+			console.log(formState.roomTypeList,'后');
+
 		})
 		formState.hotelId = props.productRow.productId;
 		formState.hotelName = props.productRow.hotelName;
