@@ -155,7 +155,7 @@ const disDate = (res: any) => {
 	const isCurrent = dayjs(res.basic.startDate).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD')
 	let dis = null;
 	console.log(start)
-	if (!start || !isCurrent) {
+	if (!start && !isCurrent) {
 		dis = (current: Dayjs) => {
 			return (current && current < dayjs().subtract(1, 'day')) || 
 					(dayjs(res.basic.endDate) && dayjs(res.basic.endDate) < current && current);
@@ -177,7 +177,7 @@ const disTime = (res: any) => {
 		min: dayjs(res.basic.startDate).minute(),
 		second: dayjs(res.basic.startDate).second()
 	}
-	start = startFlag || isCurrent ? start : {
+	start = (startFlag || isCurrent) ? start : {
 		hour: 0,
 		min: 0,
 		second: 0
@@ -249,7 +249,7 @@ const getTraveDetail = () => {
 			
 
 			travelStore.setStarEndHMS = disTime(res)
-
+			console.log(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end, '-----')
 			travelStore.setDisabledTime = disabledRangeTime(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end) as any;
 			route.query.tab && setTimeout(() => activeKey.value = Number(route.query.tab))
 		});
