@@ -52,11 +52,9 @@
 			</div>
 			<div class="title">申请减免人员</div>
 			<CommonTable :dataSource="state.tableData.data.applyReduceTouristList" :columns="columns" :scrollY="false">
-				<template #bodyCell="{ column, index }">
-					<template v-if="column.key === ''">
-						<div class="action-btns">
-							<a href="javascript:;" @click="download">下载证明</a>
-						</div>
+				<template #bodyCell="{ column, index,record}">
+					<template v-if="column.key === 'specialCertificateImg'">
+						<Upload v-model="record.specialCertificateImg"  :maxCount="1" disabled/>
 					</template>
 				</template>
 			</CommonTable>
@@ -83,6 +81,7 @@ import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { message } from 'ant-design-vue';
 import api from '@/api';
+import Upload from '@/components/common/imageWrapper.vue';
 const route = useRoute();
 const router = useRouter();
 const dialogVisible = ref(false);
@@ -91,7 +90,7 @@ const tstyle = { 'font-weight': '700' };
 const dataSource = [{}];
 const state = reactive({
 	tableData: {
-		data: [],
+		data: [] as any,
 		index: {},
 		type: '2',
 	},
@@ -219,6 +218,9 @@ onMounted(() => {
 	.top-div {
 		display: flex;
 		justify-content: space-between;
+	}
+	.img{
+		width: 60px;
 	}
 }
 </style>

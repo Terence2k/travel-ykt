@@ -52,7 +52,7 @@ export const useTravelStore = defineStore({
 		guideList:[],
 		trafficList:[],
 		touristList: [],
-		teamTime: [],
+		teamTime: [] as any,
 		IDCard: [],
 		specialId:[],
 		trafficType: [],
@@ -87,26 +87,22 @@ export const useTravelStore = defineStore({
 		setGuideList(list: any) {
 			this.guideList = list;
 		},
-		logs(){
-			console.log(123);
-			
-		},
 		setTrafficList(list: any) {
 			this.trafficList = list;
 		},
-		SeetHotelsList(list: any) {
-			console.log(list,'1231313213')
-			// this.hotelList = list;
-		},
-		SeetHotels(data: any, oid: any, hotelId: string) {
-
+		SetHotels(data: any, oid: any, hotelId: string) {
 			if (hotelId) {
-				data.oid = oid;
+				console.log(1);
+
+				// data.oid = oid;
 				return Object.assign(this.hotelList.filter((item: any) => hotelId == item.hotelId)[0], data);
 			}
 			if (data.oid) {
-				Object.assign(this.hotelList.filter((item: any) => data.oid == item.oid)[0], data);
+				console.log(2);
+				// Object.assign(this.hotelList.filter((item: any) => data.oid == item.oid)[0], data);
 			} else {
+				console.log(3);
+				
 				data.oid = oid;
 				let newData = [...this.hotelList, data];
 				this.hotelList = newData as any;
@@ -114,19 +110,18 @@ export const useTravelStore = defineStore({
 			}
 		},
 		setTicket(data: any, oid: string, productId: string) {
-			console.log(123131313)
-			// if (productId) {
-			// 	data.oid = oid;
-			// 	return Object.assign(this.ticketsList.filter((item: any) => productId == item.scenicId)[0], data);
-			// }
-			// if (data.oid) {
-			// 	Object.assign(this.ticketsList.filter((item: any) => data.oid == item.oid)[0], data);
-			// } else {
-			// 	data.oid = oid;
-			// 	let newData = [...this.ticketsList, data];
-			// 	this.ticketsList = newData as any;
-			// 	console.log(this.ticketsList, data, newData);
-			// }
+			if (productId) {
+				data.oid = oid;
+				return Object.assign(this.ticketsList.filter((item: any) => productId == item.scenicId)[0], data);
+			}
+			if (data.oid) {
+				Object.assign(this.ticketsList.filter((item: any) => data.oid == item.oid)[0], data);
+			} else {
+				data.oid = oid;
+				let newData = [...this.ticketsList, data];
+				this.ticketsList = newData as any;
+				console.log(this.ticketsList, data, newData);
+			}
 		},
 	},
 });

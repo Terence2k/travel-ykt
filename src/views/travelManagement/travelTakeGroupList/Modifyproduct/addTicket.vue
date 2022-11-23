@@ -94,6 +94,9 @@
 	import { useTravelStore } from '@/stores/modules/travelManagementDetail';
     import api from '@/api';
 	import { cloneDeep, debounce } from 'lodash';
+	import { Modal } from 'ant-design-vue';
+	import { createVNode } from 'vue';
+	import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
 	// const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any ) || {}
 	const route = useRoute()
@@ -147,7 +150,7 @@
 			newFormState.totalFee = newFormState.peopleCount * newFormState.unitPrice
 			// const res = await api.travelManagement.addTicket(formState)
 			// travelStore.setTicket(newFormState)
-			travelStore.SsetTicket(newFormState, formState.oid?formState.oid:null, props.productRow.productId)
+			travelStore.setTicket(newFormState, formState.oid?formState.oid:null, props.productRow.productId)
 			
 			callback()
 		} catch (errorInfo) {
@@ -172,7 +175,6 @@
 		dialogVisible.value = newVal
 	});
 	watch(dialogVisible, newVal => {
-		console.log(newVal, props.ticketId)
 		if (!newVal) {
 			formRef.value.resetFields();
 			for (let k in formState) {

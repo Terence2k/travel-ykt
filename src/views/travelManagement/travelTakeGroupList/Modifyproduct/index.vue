@@ -1,13 +1,14 @@
 <template>
 	<div class="warp">
 		<div class="header_top">
-			<div class="title">请根据实际需要，调整行程时间，或已预订的产品，重新提交变更。</div>
+			<div class="title" v-if="state.DeatilAudits == true">你的变更申请已于{{state.lastUpdateTime}} 被驳回 ( <span style="color:red">{{state.descriHtm}}</span> ) 您可以重新修改再提交。</div>
+			<div class="title" v-else>请根据实际需要，调整行程时间，或已预订的产品，重新提交变更。</div>
 			<a-button @click="openEdit" type="primary">进入修改</a-button>
 		</div>
 		<div class="warp_contant">
 			<div class="warp_head">
 				<span class="warp_title">行程时间</span>
-				<span>{{state.startDate}} — {{state.endDate}}</span>
+				<span>{{ state.startDate }} — {{ state.endDate }}</span>
 			</div>
 		</div>
 		<div v-for="item in getOptions(state.Data)">
@@ -49,8 +50,11 @@ const state = reactive({
 		pageSize: 10,
 	},
 	Data: {},
-	startDate:{},
-	endDate:{}
+	startDate: {},
+	endDate: {},
+	descriHtm: '',
+	DeatilAudits:false,
+	lastUpdateTime:''
 });
 
 const opendetail = (record: any) => {};
@@ -62,31 +66,62 @@ const openEdit = (data: any) => {
 };
 const install = () => {
 	api.travelManagement
-		.changDetail({
-			oid: route.query.oid,
-			pageNo: 1,
-			pageSize: 100000,
-		})
+		.getProductChangeAudit(route.query.oid)
 		.then((res: any) => {
-			state.Data = res;
-			state.startDate = res.basic.startDate
-			state.endDate = res.basic.endDate
-			travelStore.hotelList = res.hotelList;
-			travelStore.ticketsList = res.ticketList;
-			let dis = null;
-			if (res) {
-				dis = (current: Dayjs) => {
-					return (
-						(dayjs(res.basic.startDate) && dayjs(res.basic.startDate) > current && current) ||
-						(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).add(0, 'day') < current && current)
-					);
-				};
+			if (res.auditRemark) {
+				state.descriHtm = res.auditRemark
+				state.lastUpdateTime = dayjs(res.lastUpdateTime).format('YYYY-MM-DD HH:mm:ss')
+				api.travelManagement.getProductChangeAuditDetail(route.query.oid).then((res: any) => {					
+					state.Data = res;
+					state.startDate = res.startDate;
+					state.endDate = res.endDate;
+					travelStore.hotelList = res.newHotelList;
+					travelStore.ticketsList = res.newTicketList;
+					let dis = null;
+					if (res) {
+						dis = (current: Dayjs) => {
+							return (
+								(dayjs(res.startDate) && dayjs(res.startDate) > current && current) ||
+								(dayjs(res.endDate) && dayjs(res.endDate).add(0, 'day') < current && current)
+							);
+						};
+					}
+					travelStore.setDisabled = dis as any;
+					const time: any = [];
+					time.push(res.startDate, res.endDate);
+					travelStore.teamTime = time;
+					 state.DeatilAudits = true
+				});
+			} else {
+				api.travelManagement
+					.changDetail({
+						oid: route.query.oid,
+						pageNo: 1,
+						pageSize: 100000,
+					})
+					.then((res: any) => {
+						state.Data = res;
+						state.startDate = res.basic.startDate;
+						state.endDate = res.basic.endDate;
+						travelStore.hotelList = res.hotelList;
+						travelStore.ticketsList = res.ticketList;
+						let dis = null;
+						if (res) {
+							dis = (current: Dayjs) => {
+								return (
+									(dayjs(res.basic.startDate) && dayjs(res.basic.startDate) > current && current) ||
+									(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).add(0, 'day') < current && current)
+								);
+							};
+						}
+						travelStore.setDisabled = dis as any;
+						const time: any = [];
+						time.push(res.basic.startDate, res.basic.endDate);
+						travelStore.teamTime = time;
+					});
 			}
-				travelStore.setDisabled = dis as any;
-				const time:any = []
-			 	time.push(res.basic.startDate,res.basic.endDate)
-				travelStore.teamTime = time			
-		});
+		})
+		.catch((error: any) => {});
 };
 install();
 </script>

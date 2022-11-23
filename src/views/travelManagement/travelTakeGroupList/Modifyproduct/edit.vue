@@ -37,8 +37,8 @@
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a class="item" @click="add(record.oid ? 'addHotelPop' : 'productRow', 'addHotelPop', record.oid || record)">编辑</a>
-							<a class="item" @click="del(index)">删除</a>
+							<a class="item" @click="add(record.oid ? 'addHotelPop' : 'productRow', 'addHotelPop', record.oid ? record.oid :null ,record)">编辑</a>
+							<a class="item" @click="delhotel(index)">删除</a>
 						</div>
 					</template>
 				</template>
@@ -60,7 +60,7 @@
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a class="item" @click="add(record.oid ? 'addTicketPop' : 'productRow', 'addTicketPop', record.oid || record)">编辑</a>
-							<a class="item">删除</a>
+							<a class="item" @click="delticket(index)">删除</a>
 						</div>
 					</template>
 				</template>
@@ -146,6 +146,8 @@ const {
 	disabledDate,
 	tiemformshow,
 	timeformRef,
+	delhotel,
+	delticket,
 	changTiemshow
 } = useTraveInfo(props, emits);
 onMounted(() => {
