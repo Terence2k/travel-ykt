@@ -374,13 +374,14 @@ watch(dialogVisible, (newVal) => {
 			handleChange(data.hotelStarId, { name: data.hotelStar, price: price });
 		}
 		formState.roomTypeList = formState.roomTypeList.map((it: any) => {
-			// it.reserveNumber = it.roomOccupancyNum;
-			// it.roomTypeLimitPeople = it.limitPeople;
-			// it.roomTypeName = it.roomTypeName
-			// it.hotelRoomTypeId = it.hotelRoomTypeId;
-			// it.orderAmount = it.unitPrice;
+			it.reserveNumber = it.roomCount;
+			it.roomTypeLimitPeople = it.limitPeople;
+			it.roomTypeName = it.roomTypeName
+			it.hotelRoomTypeId = it.roomTypeId;
+			it.orderAmount = it.unitPrice;
 			return it;
 		});
+		console.log('formState.roomTypeList',formState.roomTypeList);
 		formState.hotelId = props.productRow.hotelId;
 		// formState.hotelRoomTypeId = props.productRow.hotelRoomTypeId;
 		formState.hotelName = props.productRow.hotelName;
