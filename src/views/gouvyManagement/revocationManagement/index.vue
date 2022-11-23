@@ -327,6 +327,7 @@ const pageSideChange = (current: number, size: number) => {
 
 const init = async () => {
 	state.tableData.loading = true;
+
 	let res = await api.getViewOrderList(state.tableData.param);
 	state.tableData.loading = false;
 	state.tableData.data = res.content;
