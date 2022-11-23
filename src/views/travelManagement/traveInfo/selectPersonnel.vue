@@ -179,7 +179,6 @@ const state = reactive({
 		submitList: [],
 	},
 	show: false,
-	disabledValue: true,
 	title: '',
 	operationModal: {
 		isApplydate: false,
