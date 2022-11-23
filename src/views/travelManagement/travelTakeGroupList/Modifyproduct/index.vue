@@ -20,6 +20,16 @@
 							{{ (state.params.pageNo - 1) * state.params.pageSize + (index + 1) }}
 						</div>
 					</template>
+					<template v-if="column.key === 'roomTypeList'">
+						<span  v-for="(item,index) in record.roomTypeList" key="index">
+							<span style="padding: 0 3px;">{{item.roomTypeName}} </span>
+						</span>
+					</template>
+					<!-- <template v-if="column.key === 'roomTypeList'">
+						<div v-for="(item,index) in record.roomTypeList" key="index">
+							{{item.roomTypeName}},
+						</div>
+					</template> -->
 					<!-- 时段 -->
 					<template v-if="column.key === 'time'">
 						<div>{{ record.startDate }} - {{ record.endDate }}</div>
