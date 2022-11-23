@@ -73,7 +73,7 @@ const navigatorBar = useNavigatorBar();
 const tstyle = { 'font-weight': '700' };
 const state = reactive({
 	tableData: {
-		data:[],
+		data:[] as any,
 		touristList:[]
 	},
 });

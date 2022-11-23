@@ -6,24 +6,15 @@
 </template>
 
 <script setup lang="ts">
-// const props = defineProps({
-// 	label: {
-// 		type: String || Number,
-// 		default: '',
-// 	},
-// 	value: {
-// 		type: String || Number,
-// 		default: '',
-// 	},
-// });
-
 const props = defineProps({
-	iValue: String,
-	title: String,
-	star: Boolean,
-});
-onMounted(() => {
-	console.log(props);
+	title: {
+		type: String || Number,
+		default: '',
+	},
+	iValue: {
+		type: String || Number,
+		default: '',
+	},
 });
 </script>
 

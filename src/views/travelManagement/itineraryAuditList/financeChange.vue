@@ -7,7 +7,11 @@
 						{{ (travelStore.auditList.financeChange.params.pageNo - 1) * travelStore.auditList.financeChange.params.pageSize + (index + 1) }}
 					</div>
 				</template>
-
+				<template v-if="column.key === 'newOrderAmount'">
+					<div>
+						{{record.newOrderAmount/100}}
+					</div>
+				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a @click="auditStatus(record)">去审核</a>
@@ -34,7 +38,7 @@
 				<tr class="row">
 					<td class="key">行程信息</td>
 					<td class="value">
-						<div style="margin-bottom:20px" >
+						<div style="margin-bottom:20px" v-if="state.oldHotelList!=null">
 							<p style="text-align:left; margin-bottom: 0px;">酒店：</p>
 							<p v-for="(item, index) in state.oldHotelList" :key="index">							
 							<span>{{ state.oldHotelList[index].hotelName }}，</span> 
@@ -43,7 +47,7 @@
 							<span>{{ dayjs(state.oldHotelList[index].endDate).diff(state.oldHotelList[index].startDate, 'day') }}天，</span>
 							<span>费用总计 <span style="color: red">{{ state.oldHotelList[index].orderFee / 100 }}</span>元；</span></p>
 						</div>
-						<div >
+						<div v-if="state.oldTicketList!=null">
 							<p style="text-align:left; margin-bottom: 0px;">景区：</p>
 							<p v-for="(item, index) in state.oldTicketList" :key="index">							
 							<span>{{ state.oldTicketList[index].scenicName }}，</span> 
@@ -52,7 +56,7 @@
 							<span>费用总计 <span style="color: red">{{ state.oldTicketList[index].reservePeopleCount * (state.oldTicketList[index].unitPrice/100) }}</span>元；</span></p>
 						</div>
 					</td>
-					<td class="value">
+					<td class="value" v-if="state.newHotelList!=null">
 						<div style="margin-bottom:20px" >
 							<p style="text-align:left; margin-bottom: 0px;">酒店：</p>
 							<p v-for="(item, index) in state.newHotelList" :key="index">							
@@ -62,7 +66,7 @@
 							<span>{{ dayjs(state.newHotelList[index].endDate).diff(state.newHotelList[index].startDate, 'day') }}天，</span>
 							<span>费用总计 <span style="color: red">{{ state.newHotelList[index].orderFee / 100 }}</span>元；</span></p>
 						</div>
-						<div >
+						<div v-if="state.newTicketList!=null">
 							<p style="text-align:left; margin-bottom: 0px;">景区：</p>			
 							<p v-for="(item, index) in state.newTicketList" :key="index">							
 							<span>{{ state.newTicketList[index].scenicName }}，</span> 
@@ -166,8 +170,8 @@ const state = reactive({
 		},
 		{
 			title: '预冻结金额',
-			dataIndex: 'totalFee',
-			key: 'totalFee',
+			dataIndex: 'newOrderAmount',
+			key: 'newOrderAmount',
 		},
 		{
 			title: '操作',
