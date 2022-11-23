@@ -16,11 +16,13 @@
 			<a-tab-pane :key="2" tab="已转账" force-render></a-tab-pane>
 			<a-tab-pane :key="3" tab="审核不通过"></a-tab-pane>
 		</a-tabs>
-		<div class="list-btn">
-			<a-button type="primary" class="success" @click="toBatchTransfer">处理</a-button>
-		</div>
 		<a-spin size="large" :spinning="state.tableData.loading">
 			<CommonTable :dataSource="state.tableData.data" :columns="columns" :row-selection="rowSelection" :scroll="{ x: '100%', y: '100%' }">
+				<template #button>
+					<div class="btn">
+						<a-button type="primary" class="success" @click="toBatchTransfer">处理</a-button>
+					</div>
+				</template>
 				<template #bodyCell="{ column, record }">
 					<template v-if="column.key === 'settlementCost'">
 						<span>{{ (record.settlementCost / 100).toFixed(2) }}元</span>
