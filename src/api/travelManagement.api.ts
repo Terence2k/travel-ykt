@@ -409,4 +409,13 @@ export const travelManagement = {
 			data,
 		});
 	},
+	//行程模板添加酒店
+	templateaddHotel(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/template/addHotel`,
+			data,
+			method: 'post',
+			showLoading: false,
+		});
+	},
 };

@@ -28,7 +28,7 @@
 			
 
 			<p class="title">酒店住宿</p>
-			<CommonTable :columns="hotelColumns" :dataSource="holteDate" :scrollY="false">
+			<CommonTable :columns="hotelColumns" :dataSource="hotelData" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
 					<template v-if="column.key === 'index'">
 						<div>
@@ -59,7 +59,7 @@
 
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a class="item" @click="add(record.oid ? 'addTicketPop' : 'productRow', 'addTicketPop', record.oid || record)">编辑</a>
+							<a class="item" @click="add(record.oid ? 'addTicketPop' : 'productRow', 'addTicketPop', record.oid ,record)">编辑</a>
 							<a class="item" @click="delticket(index)">删除</a>
 						</div>
 					</template>
@@ -113,7 +113,7 @@ const {
 	edit,
 	save,
 	add,
-	holteDate,
+	hotelData,
 	ticketData,
 	gouvyDate,
 	del,

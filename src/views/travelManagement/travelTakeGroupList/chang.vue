@@ -2,13 +2,13 @@
 	<div class="trave-contaner">
 		<a-tabs v-model:activeKey="activeKey" @change="changeTab">
 			<a-tab-pane v-for="(item, index) in pages" :key="index" :tab="item.label">
-				<component @onSuccess="save" :onCheck="check" :is="item.name"></component>
+				<component :onCheck="check" :is="item.name"></component>
 			</a-tab-pane>
 		</a-tabs>
 		<div class="footer d-flex justify-content-between">
 			<div class="footer-btn">
-        <a-button type="primary" @click="saveOrder">保存修改</a-button>
-				<a-button type="primary" @click="activeKey = activeKey + 1">下一步</a-button>
+				<a-button type="primary" @click="saveOrder">保存修改</a-button>
+				<a-button type="primary" @click="activeKey = activeKey + 1" v-if="activeKey<2">下一步</a-button>
 			</div>
 		</div>
 	</div>
@@ -26,14 +26,11 @@ import { message } from 'ant-design-vue';
 import { useTravelStore } from '@/stores/modules/travelManagementDetail';
 import dayjs, { Dayjs } from 'dayjs';
 import { getAmount } from '@/utils';
-// const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 const route = useRoute();
 const router = useRouter();
 const travelStore = useTravelStore();
 const activeKey = ref(0);
 const check = ref(false); //触发保存
-const sendTeam = ref(false); //发团判断
-const isSaveBtn = ref(false); //是否点击保存按钮
 const pages = [
 	// {
 	// 	name: baseInfo,
@@ -64,16 +61,6 @@ let rulesPass = reactive<{ [k: string]: any }>([]);
 let obj = reactive({
 	data: {},
 });
-const save = (e: any) => {
-	// console.log(e)
-	// rulesPass.push(e);
-	// for (let i = 0; i < rulesPass.length; i++) {
-	// 	obj.data = cloneDeep({
-	// 		...obj.data,
-	// 		...rulesPass[i],
-	// 	});
-	// }
-};
 
 const saveOrder = () => {
   let queryData = {
@@ -89,92 +76,6 @@ const saveOrder = () => {
       message.success('变更成功')
 		});
 }
-
-const sendGroup = async (id: string) => {
-	// const formData = new FormData();
-	// formData.append('itineraryId', id)
-	// try {
-	// 	await api.travelManagement.sendGroup(formData)
-	// 	router.push('/travel/travel_manage/travel_list')
-	// 	message.success('发团成功')
-	// 	sendTeam.value = false
-	// } catch (error) {
-	// 	sendTeam.value = false
-	// }
-};
-
-const saveItinerary = (val: any) => {
-	// if (!travelStore.teamStatus) return
-	// if (sendTeam.value) {
-	// 	if (!travelStore.guideList.length) return message.error('请选择带团导游');
-	// 	if (!travelStore.touristList.length) return message.error('请添加游客');
-	// 	if (!travelStore.trafficList.length) return message.error('请添加交通信息');
-	// }
-	// const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
-	// const itineraryId =  route.query.id || traveListData.oid
-	// let ajax = itineraryId ? api.travelManagement.editItinerary : api.travelManagement.saveItinerary;
-	// // 综费产品 > 1
-	// const productRes = travelStore.curentProduct.length
-	// if (!productRes) {
-	// 	return message.error('请选择一项综费产品')
-	// }
-	// return ajax({
-	// 	oid: itineraryId ? itineraryId.toString() : null,
-	// 	attachmentList: travelStore.attachmentList.length ? travelStore.attachmentList :
-	// 	[
-	// 		{
-	// 			oid: null, //oid
-	// 			attachmentName: "旅行合同", //附件名称
-	// 			attachmentType: 2, //附件类型：1-旅行合同，2-接待协议，3-租车合同，4-其它
-	// 			attachmentUrl: "http://test.jpg" //附件url
-	// 		},
-	// 		{
-	// 			oid: null, //oid
-	// 			attachmentName: "旅行合同", //附件名称
-	// 			attachmentType: 3, //附件类型：1-旅行合同，2-接待协议，3-租车合同，4-其它
-	// 			attachmentUrl: "http://test.jpg" //附件url
-	// 		},
-	// 		{
-	// 			oid: null, //oid
-	// 			attachmentName: "旅行合同", //附件名称
-	// 			attachmentType: 1, //附件类型：1-旅行合同，2-接待协议，3-租车合同，4-其它
-	// 			attachmentUrl: "http://test.jpg" //附件url
-	// 		}
-	// 	],
-	// 	basicParam: val.basicParam || {},
-	// 	guideList: travelStore.guideList.filter((it: any) => it.edit),
-	// 	itineraryInfoParam: {
-	// 		compositeProducts: travelStore.curentProduct,
-	// 	},
-	// 	touristList: travelStore.touristList.filter((it: any) => it.edit),
-	// 	transportList: travelStore.trafficList.filter((it: any) => it.edit),
-	// }, isSaveBtn.value).then((res: any) => {
-	// 	res && sessionStorage.setItem('traveList', JSON.stringify(res));
-	// 	getTraveDetail();
-	// 	if (sendTeam.value) {
-	// 		sendGroup(itineraryId)
-	// 	}
-	// 	if (isSaveBtn.value) {
-	// 		// router.push('/travel/travel_manage/travel_list')
-	// 		let msg = route.query.id ? '编辑成功' : '新增成功'
-	// 		message.success(msg);
-	// 	}
-	// });
-};
-
-// const debounceFun = debounce((val) => {
-// 	for (let k in val) {
-// 		if (val[k].valid === false) {
-// 			activeKey.value = val[k].index;
-// 			return message.error(val[k].message);
-// 		}
-// 	}
-// 	saveItinerary(val);
-// }, 500);
-// watch(obj, (newVal) => {
-// 	debounceFun(newVal.data);
-// });
-
 const getTraveDetail = () => {
 	api.travelManagement
 		.changDetail({
@@ -185,6 +86,7 @@ const getTraveDetail = () => {
 		.then((res: any) => {
 			travelStore.setBaseInfo(res.basic);
 			travelStore.setGuideList(res.guideList);
+			res.attachmentList.length && travelStore.setFileInfo(res.attachmentList);
 			res.transportList = res.transportList.map((it: any) => {
 				it.time = [it.startDate, it.endDate];
 				return it;

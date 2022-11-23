@@ -145,6 +145,7 @@ import { selectSpecialDateRange } from '@/utils';
 import { Modal } from 'ant-design-vue';
 import { createVNode } from 'vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { validateRules, validateFields, generateGuid } from '@/utils';
 
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 const route = useRoute();
@@ -192,6 +193,7 @@ let formState = reactive<{ [k: string]: any }>({
 	roomTypeList: [{ ...roomList }],
 	honestyGuidePrice: '',
 });
+let contrastdata = reactive({} as any);
 const honestyGuidePrice = computed(() => formState.honestyGuidePrice / 100);
 
 const addRoom = () => {
@@ -285,24 +287,32 @@ const submit = async () => {
 		formState.tripNumber = travelStore.touristList.length;
 		formState.itineraryId = route.query.oid || traveListData.oid;
 		formState.orderAmount = getOrderAmount(formState.roomTypeList, formState.arrivalDate, formState.departureDate);
-
-		// if (Number((formState.scheduledNumber / travelStore.touristList.length).toFixed) < 0.8) {
-		// 	return message.error('入住总人数不低于团客总数的80%')
-		// }
+		const key = generateGuid();
+		if (!formState.oid) {
+			formState.key = key;
+		}
+		if (
+			(formState.oid && contrastdata.hotelStarId != formState.hotelStarId) ||
+			contrastdata.hotelId != formState.hotelId ||
+			contrastdata.arrivalDate != formState.arrivalDate ||
+			contrastdata.departureDate != formState.departureDate ||
+			contrastdata.hotelRoomTypeId != formState.hotelRoomTypeId ||
+			contrastdata.reserveNumber != formState.reserveNumber ||
+			contrastdata.unitPrice != formState.unitPrice
+		) {
+			formState.edit = true;
+		}
 		const newFormState = cloneDeep(formState);
 		newFormState.startDate = newFormState.arrivalDate;
 		newFormState.endDate = newFormState.departureDate;
 		newFormState.hotelStar = newFormState.hotelStarCode;
 		newFormState.orderFee = newFormState.orderAmount;
+		newFormState.editstatus = true;
 		newFormState.reservePeopleCount = newFormState.roomTypeList
 			.map((it: any) => Number(it.checkInNumber))
 			.reduce((prev: number, next: number) => prev + next);
 		newFormState.roomCount = newFormState.roomTypeList.map((it: any) => Number(it.reserveNumber)).reduce((prev: number, next: number) => prev + next);
-		// const res = await api.travelManagement.addHotel(formState);
-		console.log(formState.oid);
-
-		// message.success('新增成功');
-		travelStore.SetHotels(newFormState, formState.oid ? formState.oid : null, props.productRow.hotelId);
+		travelStore.SetHotels(newFormState, formState.oid ? formState.oid : null, props.productRow.key);
 		// callback()
 	} catch (errorInfo) {
 		// callback(false);
@@ -321,19 +331,6 @@ const handleOk = async (callback: Function) => {
 		callback();
 		return;
 	}
-	Modal.confirm({
-		title: '添加确认？',
-		icon: createVNode(ExclamationCircleOutlined),
-		content: createVNode('div', { style: 'color: #333;' }, `存在与本次预定相同的酒店且入离时间存在交叉，如生成新订单则无法计入减免。`),
-		async onOk() {
-			await submit();
-			callback();
-		},
-		onCancel() {
-			callback(false);
-			console.log('Cancel');
-		},
-	});
 };
 
 const getRoomType = async (hotelId: number | string, leaveTime: string, enterTime: string) => {
@@ -353,7 +350,7 @@ watch(
 );
 watch(dialogVisible, (newVal) => {
 	if (!newVal) {
-		formRef.value.resetFields();
+		// formRef.value.resetFields();
 		for (let k in formState) {
 			if (k === 'roomTypeList') {
 				formState[k] = [{ ...roomList }];
@@ -361,37 +358,38 @@ watch(dialogVisible, (newVal) => {
 				formState[k] = '';
 			}
 		}
-		console.log(formState);
 	} else {
-			const data = props.productRow;
-			for (let k in data) {
-				formState[k] = data[k];
-			}
-			formState.arrivalDate = data.startDate;
-			formState.departureDate = data.endDate;
-			console.log(data.hotelStarId);
-			if (props.productRow.hotelId) {
-				let price = hotelData.hotelStart.filter((it: any) => it.oid == data.hotelStarId)[0].price;
-				handleChange(data.hotelStarId, { name: data.hotelStar, price: price });
-			}			
-				formState.roomTypeList = formState.roomTypeList.map((it: any) => {
-				// it.reserveNumber = it.roomOccupancyNum;
-				// it.roomTypeLimitPeople = it.limitPeople;
-				// it.roomTypeName = it.roomTypeName
-				// it.hotelRoomTypeId = it.hotelRoomTypeId;
-				// it.orderAmount = it.unitPrice;
-				return it;
-			});
-			formState.hotelId = props.productRow.hotelId;
-			// formState.hotelRoomTypeId = props.productRow.hotelRoomTypeId;
-			formState.hotelName = props.productRow.hotelName;
-			console.log(props.productRow.productId);
-			
-			// props.productRow.productId &&
-			// 	api.travelManagement.getGuidePriceStarCodeByHotelId(props.productRow.productId).then((res: any) => {
-			// 		formState.hotelStarId = res.oid;
-			// 		handleChange(res.oid, { price: res.price, name: res.starCode });
-			// 	});
+		const data = props.productRow;
+		for (let k in data) {
+			formState[k] = data[k];
+		}
+		if (props.productRow) {
+			contrastdata = props.productRow;
+		}
+		formState.arrivalDate = data.startDate;
+		formState.departureDate = data.endDate;
+		console.log(data.hotelStarId);
+		if (props.productRow.hotelId) {
+			let price = hotelData.hotelStart.filter((it: any) => it.oid == data.hotelStarId)[0].price;
+			handleChange(data.hotelStarId, { name: data.hotelStar, price: price });
+		}
+		formState.roomTypeList = formState.roomTypeList.map((it: any) => {
+			it.reserveNumber = it.roomCount;
+			it.roomTypeLimitPeople = it.limitPeople;
+			it.roomTypeName = it.roomTypeName
+			it.hotelRoomTypeId = it.roomTypeId;
+			it.orderAmount = it.unitPrice;
+			return it;
+		});
+		console.log('formState.roomTypeList',formState.roomTypeList);
+		formState.hotelId = props.productRow.hotelId;
+		// formState.hotelRoomTypeId = props.productRow.hotelRoomTypeId;
+		formState.hotelName = props.productRow.hotelName;
+		// props.productRow.productId &&
+		// 	api.travelManagement.getGuidePriceStarCodeByHotelId(props.productRow.productId).then((res: any) => {
+		// 		formState.hotelStarId = res.oid;
+		// 		handleChange(res.oid, { price: res.price, name: res.starCode });
+		// 	});
 	}
 
 	emits('update:modelValue', newVal);

@@ -34,7 +34,7 @@
 				<p>包括导游、交通信息、附件内容，散团前均可修改</p>
 			</div>
 			<div class="model-div">
-				<a-button type="primary" style="width:120px">修改预订产品</a-button>
+				<a-button type="primary" style="width:120px" @click="openModifyproduct()">修改预订产品</a-button>
 				<p>包括行程时间、景区、酒店、餐饮等，未核销时可修改</p>
 			</div>
 			<div class="model-div">
@@ -182,6 +182,16 @@
 				itineraryNo: row.itineraryNo
 			}
 		})
+	}
+	
+	const openModifyproduct = () => {
+		router.push({
+			path: '/travel/take_group/modify_o_product',
+			query: {
+				oid: state.id,
+			},
+		});
+		
 	}
 	const goToChange = (row: any) => {
 	(state.id = row.oid), (state.itineraryNo = row.itineraryNo);
