@@ -197,6 +197,15 @@ export default [
 						},
 					},
 					{
+						path: 'batchTransfer',
+						component: () => import('@/views/settlementManagement/transferManagement/batchTransfer.vue'),
+						name: 'batchTransfer',
+						meta: {
+							title: '批量转账',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
 						path: 'tripList',
 						component: () => import('@/views/settlementManagement/transferManagement/tripList.vue'),
 						name: 'transferManagementTripList',

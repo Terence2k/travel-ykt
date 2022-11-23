@@ -76,6 +76,7 @@
 							</div>
 							<Upload 
 								v-else
+								isDragger
 								v-model="fileUrl"
 								@remove="($event) => removeImg($event, record.key ? record.key : record.oid)"
 								@result="($event) => changeUpload($event, record.key ? record.key : record.oid)" :maxCount="2">

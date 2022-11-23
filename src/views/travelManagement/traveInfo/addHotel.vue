@@ -161,7 +161,7 @@ const formRef = ref();
 const disCheckInTime = computed(() => {
 	const isCurrent = dayjs(travelStore.baseInfo.startDate).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD')
 	const start = dayjs().isBefore(dayjs(travelStore.baseInfo.startDate))
-	const disTime = start || isCurrent ? travelStore.setStarEndHMS.start : {
+	const disTime = (start || isCurrent) ? travelStore.setStarEndHMS.start : {
 		hour: 0,
 		min: 0,
 		second: 0

@@ -17,7 +17,12 @@
 			<a-tab-pane :key="3" tab="审核不通过"></a-tab-pane>
 		</a-tabs>
 		<a-spin size="large" :spinning="state.tableData.loading">
-			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }">
+			<CommonTable :dataSource="state.tableData.data" :columns="columns" :row-selection="rowSelection" :scroll="{ x: '100%', y: '100%' }">
+				<template #button>
+					<div class="btn">
+						<a-button type="primary" class="success" @click="toBatchTransfer">处理</a-button>
+					</div>
+				</template>
 				<template #bodyCell="{ column, record }">
 					<template v-if="column.key === 'settlementCost'">
 						<span>{{ (record.settlementCost / 100).toFixed(2) }}元</span>
@@ -54,6 +59,7 @@ import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import Detail from './detail.vue';
 import api from '@/api';
+import { message } from 'ant-design-vue/es';
 const columns = [
 	{
 		title: '转账单号',
@@ -116,6 +122,7 @@ const state = reactive({
 const cacheData = ref({
 	showDetail: false,
 	detailParams: {},
+	selectedRowKeys: [],
 });
 // 查询
 const initList = async () => {
@@ -170,6 +177,16 @@ const lookTrip = (record: any) => {
 const tabsChange = (e: any) => {
 	initList();
 };
+const onSelectChange = (selectedRowKeys: any) => {
+	cacheData.value.selectedRowKeys = selectedRowKeys;
+};
+const rowSelection = computed(() => {
+	if (state.tableData.param.status === 1) {
+		return { selectedRowKeys: cacheData.value.selectedRowKeys, onChange: onSelectChange };
+	} else {
+		return false;
+	}
+});
 const timeChange = (arr: any) => {
 	if (arr && arr.length > 0) {
 		state.tableData.param.startTime = arr[0]['$d'];
@@ -181,6 +198,15 @@ const timeChange = (arr: any) => {
 };
 const detailSubmit = () => {
 	initList();
+};
+const toBatchTransfer = () => {
+	if (!cacheData.value.selectedRowKeys.length) {
+		message.error(`请选择数据后再进行操作`);
+		return;
+	}
+	route.push({
+		path: '/settlementManagement/transferManagement/batchTransfer',
+	});
 };
 onMounted(() => {
 	initList();

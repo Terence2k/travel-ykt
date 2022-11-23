@@ -37,7 +37,7 @@
 			</template>
 		</BaseModal>
 		<BaseModal title="古维出票记录" v-model="ticketingValue" :width="1000">
-			<p>当前古维费已经于  全部出票。全部游客{{ticketingDate.total}}名,已减免{{ticketingDate.reduceNum}}人,实缴{{ticketingDate.paidNum}}人。</p>
+			<p>当前古维费已经于 {{ticketingDate.issueTime}} 全部出票。全部游客{{ticketingDate.total}}名,已减免{{ticketingDate.reduceNum}}人,实缴{{ticketingDate.paidNum}}人。</p>
 			<CommonTable :columns="ticketingColumns" :dataSource="ticketingDate.touristList" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
 					<template v-if="column.key === 'actualPrice'">
