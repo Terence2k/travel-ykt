@@ -48,6 +48,7 @@
 								</a-button> -->
 								<a-select
 									style="width: 100%"
+									placeholder="请选择导游"
 									@change="(val: any, option: any) => guideChange(val, option, record.key ? record.key : record.oid)"
 									v-model:value="editableData[record.key ? record.key : record.oid]['guideOid']">
 									<a-select-option 

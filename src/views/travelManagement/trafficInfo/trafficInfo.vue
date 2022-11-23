@@ -14,7 +14,7 @@
 					<template v-if="selectKey.includes(column.key)">
 						<div>
 							<a-form-item v-if="editableData[record.key ? record.key : record.oid]" :name="[record.key ? record.key : record.oid, column.key]">
-								<a-select style="width: 100%" v-model:value="editableData[record.key ? record.key : record.oid][column.key]">
+								<a-select style="width: 100%" placeholder="请选择" v-model:value="editableData[record.key ? record.key : record.oid][column.key]">
 									<a-select-option v-for="val in column.data" :key="val.codeValue" :value="val.name">{{ val.name }}</a-select-option>
 								</a-select>
 							</a-form-item>

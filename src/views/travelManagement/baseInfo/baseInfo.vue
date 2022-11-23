@@ -70,7 +70,7 @@
 				</a-form-item>
 
 				<a-form-item label="地接计调" name="subTravelOperatorOid">
-					<a-select v-model:value="formState.subTravelOperatorOid" @change="handleChange" placeholder="请选择地接做团人">
+					<a-select v-model:value="formState.subTravelOperatorOid" @change="handleChange" placeholder="请选择地接计调">
 						<a-select-option 
 							:value="item.oid" 
 							v-for="item in list.travelOperatorList" 
@@ -197,7 +197,7 @@ if (route.query.id) {
 		travelOperatorName: userInfo.username,
 		groupType: teamGroupType.value,
 		travelOperatorPhone: userInfo.mobile,
-		subTravelOperatorOid: '',
+		subTravelOperatorOid: undefined,
 		travelOid: userInfo.sysCompany.oid,
 		travelOperatorOid: userInfo.oid,
 		touristNum: touristCount.value,
@@ -207,7 +207,7 @@ if (route.query.id) {
 		startDate: '',
 		teamId: '',
 		teamType: '',
-		subTravelOid: '',
+		subTravelOid: undefined,
 		routeType: 1,
 		travelName: userInfo.sysCompany.name,
 		subTravelName: ''
@@ -259,7 +259,7 @@ const getSubtravelList = async () => {
 	list.subTravelList = res.content;
 }
 const gettravelOperatorList = async (travelId: number, option: any) => {
-	formState.value.subTravelOperatorOid = '';
+	formState.value.subTravelOperatorOid = undefined;
 	formState.value.subTravelName = option.name
 	list.travelOperatorList = await api.travelManagement.gettravelOperatorList({travelId});
 }
