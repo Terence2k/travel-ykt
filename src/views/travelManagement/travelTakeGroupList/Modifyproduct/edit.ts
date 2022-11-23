@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash';
+import _, { cloneDeep } from 'lodash';
 import { createVNode, UnwrapRef } from 'vue';
 import api from '@/api';
 import { useTravelStore } from '@/stores/modules/travelManagementDetail';
@@ -21,6 +21,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 	const { onCheck } = toRefs(props);
 	const travelStore = useTravelStore();
 	const route = useRoute();
+	const router = useRouter();
 	const editId = reactive<{ [k: string]: any }>({
 		addTicketPop: '',
 		addHotelPop: '',
@@ -47,8 +48,9 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		showTicketPop: false,
 		showHotelPop: false,
 		ticketData: computed(() => travelStore.ticketsList),
-		holteDate: computed(() => travelStore.hotelList),
-		newticket:[],
+		hotelData: computed(() => travelStore.hotelList),
+		newticket: [],
+		newhotel: [],
 		ticketingDate: [],
 		itineraryId: '',
 		startTime: '',
@@ -262,17 +264,18 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			state[popup] = true;
 		},
 		delhotel(key: string) {
-			if(state.holteDate[key].oid){
-				state.holteDate[key] = { ...state.holteDate[key] , ...{deleted : true} }
+			if (state.hotelData[key].oid) {
+				state.newhotel.push({ ...state.hotelData[key], ...{ deleted: true, edit: true } });
 			}
-			state.holteDate.splice(key, 1);			
-		},
-		delticket(key: string) {			
-			if(state.ticketData[key].oid){
-				state.newticket.push({ ...state.ticketData[key] , ...{deleted : true} })
-			}
+			console.log(state.newhotel);
 			
-			state.ticketData.splice(key, 1);			
+			state.hotelData.splice(key, 1);
+		},
+		delticket(key: string) {
+			if (state.ticketData[key].oid) {
+				state.newticket.push({ ...state.ticketData[key], ...{ deleted: true, edit: true } });
+			}
+			state.ticketData.splice(key, 1);
 		},
 		show(key: string, oid?: any) {
 			showId[key] = '';
@@ -292,43 +295,13 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		},
 		see(data: any) {
 			state[data.ticketingValue] = true;
-			api.getItineraryTourist(data.itineraryId).then((res) => {
+			api.getItineraryTourist(data.itineraryId).then((res: any) => {
 				state.ticketingDate = res;
 			});
 		},
 		onSearch() {
-			api.getBasicInfo().then((res) => {
+			api.getBasicInfo().then((res: any) => {
 				state.payablePrice = accDiv(res.price, 100);
-			});
-		},
-		async reserveHotel(row: any) {
-			const res = await api.travelManagement.hotelDetail(row.oid);
-			let str = res.roomTypeList.map((it: any) => {
-				return `${it.roomTypeName}（${it.roomCount}间）`;
-			});
-			Modal.confirm({
-				title: '酒店房型预定确认？',
-				icon: createVNode(CheckOutlined),
-				content: createVNode(
-					'div',
-					{ style: 'color: #333;' },
-					`您即将提交${row.startDate}日入住 “${row.hotelName}” 的订单，
-				 		行程人数（${travelStore.hotelList.length}人），
-						${str.join('，')}，订单金额（${row.orderFee}元）。`
-				),
-				onOk() {
-					const formData = new FormData();
-					formData.append('oid', row.oid);
-
-					// api.travelManagement.reserveHotel(formData).then((res:any) => {
-					// 	travelStore.setHotelsStatus(row.oid)
-					// 	message.success('预定成功')
-					// })
-				},
-				onCancel() {
-					console.log('Cancel');
-				},
-				class: 'test',
 			});
 		},
 	};
@@ -393,10 +366,14 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 					title: '保存失败',
 					icon: createVNode(ExclamationCircleOutlined),
 					content: createVNode('div', { style: 'color: #333;' }, `您修改了行程时间。当前填写的酒店预订时间冲突！`),
-					async onOk() {return false},
-					onCancel() {return false},
+					async onOk() {
+						return false;
+					},
+					onCancel() {
+						return false;
+					},
 				});
-				return false
+				return false;
 			}
 		}
 
@@ -407,39 +384,49 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 					title: '保存失败',
 					icon: createVNode(ExclamationCircleOutlined),
 					content: createVNode('div', { style: 'color: #333;' }, `您修改了行程时间。当前填写的景区预订时间冲突！`),
-					async onOk() {return false},
-					onCancel() {return false},
+					async onOk() {
+						return false;
+					},
+					onCancel() {
+						return false;
+					},
 				});
-				return false
+				return false;
 			}
 		}
-
-		Audits()
-		// }
-		// if(state.startTime){
-
-		// 	});
+		Audits();
 	};
 
 	const Audits = () => {
-		// let ajax = api.travelManagement.travelChangeOrderProduct;
-		// return ajax({
-		// 	itineraryId: state.itineraryId,
-		// 	startDate: state.timeformState.time[0],
-		// 	endDate: state.timeformState.time[1],
-		// 	reserveHotelParams: travelStore.hotelList,
-		// 	addTicketParams: travelStore.ticketsList,
-		// }).then((res: any) => {});
-		console.log('state.ticketData:', state.ticketData);
-		console.log('state.newticket:', state.newticket);
-		// state.newticket.push(state.ticketData)
-		// console.log('state.newticket:', state.newticket);
+		let tiecketparams = [].concat.call(state.ticketData, state.newticket);
+		let hotelparams = [].concat.call(state.hotelData, state.newhotel);
+		tiecketparams = tiecketparams.filter((item: any) => item.edit == true,tiecketparams)
+		for (let index = 0; index < tiecketparams.length; index++) {
+			if ((tiecketparams[index]?.oid || tiecketparams[index]?.key) && tiecketparams[index].edit) {
+				delete tiecketparams[index].edit;
+			}
+		}
+		hotelparams = hotelparams.filter((item: any) => item.edit == true,hotelparams)
+		for (let index = 0; index < hotelparams.length; index++) {
+			if ((hotelparams[index]?.oid || hotelparams[index]?.key) && hotelparams[index].edit) {
+				delete hotelparams[index].edit;
+			}
+		}
+		let ajax = api.travelManagement.travelChangeOrderProduct;
+		return ajax({
+			itineraryId: state.itineraryId,
+			startDate: state.timeformState.time[0],
+			endDate: state.timeformState.time[1],
+			reserveHotelParams: hotelparams,
+			addTicketParams: tiecketparams,
+		}).then((res: any) => {
+			res.message('提交审核成功')
+			router.push({
+				path: '/travel/travel_manage/travel_list',
+			});
+		}).catch((error:any)=>{
 
-		// state.ticketData = [...state.newTicket]
-		// state.ticketData = 
-	console.log([...state.newTicket, ...state.ticketData]);
-	
-		
+		})
 	};
 
 	install();
