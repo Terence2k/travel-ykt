@@ -16,8 +16,11 @@
 			<a-tab-pane :key="2" tab="已转账" force-render></a-tab-pane>
 			<a-tab-pane :key="3" tab="审核不通过"></a-tab-pane>
 		</a-tabs>
+		<div class="list-btn">
+			<a-button type="primary" class="success" @click="toBatchTransfer">处理</a-button>
+		</div>
 		<a-spin size="large" :spinning="state.tableData.loading">
-			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }">
+			<CommonTable :dataSource="state.tableData.data" :columns="columns" :row-selection="rowSelection" :scroll="{ x: '100%', y: '100%' }">
 				<template #bodyCell="{ column, record }">
 					<template v-if="column.key === 'settlementCost'">
 						<span>{{ (record.settlementCost / 100).toFixed(2) }}元</span>
@@ -116,6 +119,7 @@ const state = reactive({
 const cacheData = ref({
 	showDetail: false,
 	detailParams: {},
+	selectedRowKeys: [],
 });
 // 查询
 const initList = async () => {
@@ -170,6 +174,16 @@ const lookTrip = (record: any) => {
 const tabsChange = (e: any) => {
 	initList();
 };
+const onSelectChange = (selectedRowKeys: any) => {
+	cacheData.value.selectedRowKeys = selectedRowKeys;
+};
+const rowSelection = computed(() => {
+	if (state.tableData.param.status === 1) {
+		return { selectedRowKeys: cacheData.value.selectedRowKeys, onChange: onSelectChange };
+	} else {
+		return false;
+	}
+});
 const timeChange = (arr: any) => {
 	if (arr && arr.length > 0) {
 		state.tableData.param.startTime = arr[0]['$d'];
@@ -181,6 +195,11 @@ const timeChange = (arr: any) => {
 };
 const detailSubmit = () => {
 	initList();
+};
+const toBatchTransfer = () => {
+	route.push({
+		path: '/settlementManagement/transferManagement/batchTransfer',
+	});
 };
 onMounted(() => {
 	initList();
