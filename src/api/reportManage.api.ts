@@ -44,3 +44,12 @@ export async function statementByItinerary(data: any) {
 		showLoading: true,
 	});
 }
+// 地接总账
+export async function statementByTravel(data: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/statement/subTravel/statement/ByTravel`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
