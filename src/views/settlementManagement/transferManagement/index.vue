@@ -59,6 +59,7 @@ import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import Detail from './detail.vue';
 import api from '@/api';
+import { message } from 'ant-design-vue/es';
 const columns = [
 	{
 		title: '转账单号',
@@ -199,6 +200,10 @@ const detailSubmit = () => {
 	initList();
 };
 const toBatchTransfer = () => {
+	if (!cacheData.value.selectedRowKeys.length) {
+		message.error(`请选择数据后再进行操作`);
+		return;
+	}
 	route.push({
 		path: '/settlementManagement/transferManagement/batchTransfer',
 	});
