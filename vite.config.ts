@@ -25,6 +25,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
 		},
 		server: {
 			host: '0.0.0.0',
+			// https: true,
 			fs: {
 				allow: [
 					// 搜索工作区的根目录

@@ -1,4 +1,18 @@
 import type { FormInstance } from 'ant-design-vue';
+import { Rule } from 'ant-design-vue/es/form';
+export const phoneReg = /^1[3456789]\d{9}$/;
+// 验证手机号
+export async  function validPhone (_rule: Rule, value: string) {
+	// const reg = /((\d{11})|^((\d{7,8})|(\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1})|(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1}))$)/
+	// const reg = /^1[3456789]\d{9}$/
+	if (value === '') {
+	  	return Promise.reject('请输入手机号');
+	} else if (!phoneReg.test(value)) {
+	  	return Promise.reject("请输入正确的手机号");
+	} else {
+	  	return Promise.resolve();
+	}
+};
 
 // 验证是否整数
 export function isIntegerNotMust(rule: any, value: any, callback: any) {

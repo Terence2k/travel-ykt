@@ -282,7 +282,7 @@ export const selectSpecialDateRange = (start: any, end: any, hotelId: number) =>
   return flag;
 }
 
-const range = (start: number, end: number) => {
+export const range = (start: number, end: number) => {
 	const result = [];
 
 	for (let i = start; i < end; i++) {
@@ -302,9 +302,9 @@ export const disabledRangeTime = (start: any, end: any) => {
 			};
 		}
 		return {
-			disabledHours: () => range(0, 24).splice(0, end.hour),
-			disabledMinutes: () => range(0, 60).splice(0, end.min),
-			disabledSeconds: () => range(0, 60).splice(0, end.second),
+			disabledHours: () => range(0, 24).splice(end.hour + 1, 24 - end.hour),
+			disabledMinutes: () => range(0, 60).splice(end.hour + 1, 24 - end.min),
+			disabledSeconds: () => range(0, 60).splice(end.hour + 1, 24 - end.second),
 		};
 	}
 };

@@ -11,7 +11,15 @@
 				<span>费用合计：288.88元</span>
 			</div>
 		</div>
-		<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }" bordered> </CommonTable>
+		<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }" bordered>
+			<template #bodyCell="{ column, record }">
+				<template v-if="column.key === 'ruleMap'"> {{ getRulePrice(record, column) }} </template>
+				<template v-if="column.dataIndex.includes('tualPrice')"> {{ getActualPrice(record, column) }} </template>
+				<template v-if="column.dataIndex === 'unSettlementPrice' && column.key === 'subTravelVo'">
+					{{ getSubTravelVoUnSettlementPrice(record, column) }}
+				</template>
+			</template>
+		</CommonTable>
 		<Modal :params="state.modalParams" v-model="state.modalShow" @submit="tipSubmit" @cancel="tipCancel" />
 	</div>
 </template>
@@ -277,7 +285,7 @@ const tipSubmit = () => {
 		// 调用接口
 	}
 };
-const initList = async (query) => {
+const initList = async (query: any) => {
 	state.tableData.loading = true;
 	// let res = await api.currencySettlementRuleList(state.tableData.param);
 	// const { total, content } = res;
@@ -293,6 +301,50 @@ const router = useRouter();
 onMounted(() => {
 	const query = router.currentRoute.value.query;
 	initList(query);
+});
+const getRulePrice = computed(() => (record: any, column: any) => {
+	const ruleColumnKey = column.parent.split('-')[0];
+	// 综费产品
+	if (ruleColumnKey.includes('List')) {
+		for (const key in record[ruleColumnKey]) {
+			if (column.columnParentName === record[ruleColumnKey][key]['comprehensiveFeeProductName']) {
+				for (const subKey in record[ruleColumnKey][key].ruleList) {
+					if (column.title === record[ruleColumnKey][key].ruleList[subKey].ruleName) {
+						return `${record[ruleColumnKey][key].ruleList[subKey].rulePrice}`;
+					}
+				}
+			}
+		}
+	}
+	// 除综费产品外
+	if (record[ruleColumnKey] && record[ruleColumnKey].ruleList && record[ruleColumnKey].ruleList.length) {
+		for (const key in record[ruleColumnKey].ruleList) {
+			if (column.title === record[ruleColumnKey].ruleList[key].ruleName) {
+				return `${record[ruleColumnKey].ruleList[key].rulePrice}`;
+			}
+		}
+	}
+	return `暂无数据`;
+});
+// 获取实收
+const getActualPrice = computed(() => (record: any, column: any) => {
+	// 先判断非综费产品
+	if (!column.key.includes('List')) {
+		return record[column.key] ? record[column.key]['actualPrice'] : '';
+	} else {
+		// 综费产品
+		if (record[column.key]) {
+			const idx = record[column.key].findIndex((r: any) => r.comprehensiveFeeProductName === column.parentTitle);
+			if (idx !== -1) {
+				return record[column.key][idx][column.dataIndex] || '';
+			}
+		}
+	}
+	return '';
+});
+//地接社未消费费用获取数据
+const getSubTravelVoUnSettlementPrice = computed(() => (record: any, column: any) => {
+	return record[column.key] ? record[column.key]['unSettlementPrice'] : '';
 });
 </script>
 <style scoped lang="scss">
