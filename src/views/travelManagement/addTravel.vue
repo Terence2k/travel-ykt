@@ -157,13 +157,13 @@ const disDate = (res: any) => {
 	console.log(start)
 	if (!start && !isCurrent) {
 		dis = (current: Dayjs) => {
-			return (current && current < dayjs().endOf('day')) || 
-					(dayjs(res.basic.endDate) && dayjs(res.basic.endDate) < current && current);
+			return (current && current < dayjs().startOf('day')) || 
+					(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).endOf('day') < current && current);
 		}
 	} else {
 		dis = (current: Dayjs): any => {
 				return (dayjs(res.basic.startDate) && dayjs(res.basic.startDate).startOf('day') > current && current) ||
-					(dayjs(res.basic.endDate) && dayjs(res.basic.endDate) < current && current)
+					(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).endOf('day') < current && current)
 			};
 	}
 	return dis;

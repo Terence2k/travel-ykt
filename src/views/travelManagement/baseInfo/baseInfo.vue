@@ -298,8 +298,8 @@ const handleChangeTime = (event: any) => {
 		console.log(start, end, '---------')
 		dis = (current: Dayjs) => {
 			
-			return (dayjs(event[0]) && dayjs(event[0]) > current && current) ||
-			(dayjs(event[1]) && dayjs(event[1]) < current && current)
+			return (dayjs(event[0]) && dayjs(event[0]).startOf('day') > current && current) ||
+			(dayjs(event[1]) && dayjs(event[1]).endOf('day') < current && current)
 		}
 
 		disTime = disabledRangeTime(start, end);

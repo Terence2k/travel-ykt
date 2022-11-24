@@ -178,7 +178,7 @@ const disLeaveTime = computed(() => {
 
 let disLeave = ref((current: Dayjs) => {
 	return current && current < dayjs().startOf('day') || 
-	current > dayjs().startOf('day');
+	current > dayjs('').startOf('day');
 })
 
 const props = defineProps({
@@ -227,8 +227,8 @@ const handleHotel = (e: any, option: any) => {
 }
 
 const handleChangCheckIn = () => {
-	disLeave.value = (current: Dayjs): any => current && current < dayjs(formState.arrivalDate).add(1, 'day') || 
-	(dayjs(travelStore.teamTime[1]).add(1, 'day') < current && current)
+	disLeave.value = (current: Dayjs): any => current && current < dayjs(formState.arrivalDate).endOf('day') || 
+	(dayjs(travelStore.teamTime[1]).endOf('day') < current && current)
 	const isAfter = dayjs(dayjs(formState.arrivalDate)).isAfter(dayjs(formState.departureDate).subtract(1, 'day'))
 	if (formState.departureDate && isAfter) {
 		formState.departureDate = '';
