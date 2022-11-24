@@ -16,7 +16,8 @@ export type Field = 'drafts' |
 export type AuditField = 'financeSendGroup' |
 								'financeChange' |
 								'administrativeSendGroup' |
-								'administrativeChange'
+								'administrativeChange'|
+								'withdrawalChange'
 
 export type TakeGroupField = 'drafts' | 
                 'waitingGroup' |

@@ -7,7 +7,9 @@
 						{{(travelStore.auditList.financeSendGroup.params.pageNo - 1) * (travelStore.auditList.financeSendGroup.params.pageSize) + (index + 1)}}
 				</div>
 		</template>
-
+		<template v-if="column.key === 'totalFee'">
+			{{accDiv(record.totalFee,100) }}
+		</template>
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
 				<a @click="auditStatus(record)">去审核</a>
@@ -48,31 +50,31 @@
 				</tr>
 				<tr class="row">
 					<td class="key">古维管理费</td>
-					<td class="value">{{ state.detail.maintainFee }}</td>
+					<td class="value">{{ accDiv(state.detail.maintainFee,100)  }}</td>
 				</tr>
 				<tr class="row">
 					<td class="key">综费产品</td>
-					<td class="value">{{ state.detail.productFee }}</td>
+					<td class="value">{{ accDiv(state.detail.productFee,100)}}</td>
 				</tr>
 				<tr class="row">
 					<td class="key">酒店</td>
-					<td class="value">{{ state.detail.hotelFee }}</td>
+					<td class="value">{{ accDiv(state.detail.hotelFee,100)}}</td>
 				</tr>
 				<tr class="row">
 					<td class="key">景区</td>
-					<td class="value">{{ state.detail.ticketFee }}</td>
+					<td class="value">{{ accDiv(state.detail.ticketFee,100)}}</td>
 				</tr>
 				<tr class="row">
 					<td class="key">餐饮</td>
-					<td class="value">{{ state.detail.cateringFee }}</td>
+					<td class="value">{{ accDiv(state.detail.cateringFee,100) }}</td>
 				</tr>
 				<tr class="row">
 					<td class="key">本次预冻结金额</td>
-					<td class="value">{{ state.detail.totalFee }}</td>
+					<td class="value">{{ accDiv(state.detail.totalFee,100) }}</td>
 				</tr>
 				<tr class="row">
 					<td class="key">公司账户可用余额</td>
-					<td class="value">{{ state.detail.travelBalance }}</td>
+					<td class="value">{{ accDiv(state.detail.travelBalance,100) }}</td>
 				</tr>
 			</table>
 		</div>
@@ -96,6 +98,7 @@
   import BaseModal from '@/components/common/BaseModal.vue';
   import { message } from 'ant-design-vue';
   import { Modal } from 'ant-design-vue';
+  import { accDiv,accMul} from '@/utils/compute';
 
 	import api from '@/api/index';
 

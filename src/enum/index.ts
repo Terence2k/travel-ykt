@@ -104,6 +104,7 @@ export enum AuditStaus {
   AdministrativeSendGroup = 3, // 待管理部门审核（发团）3
   AdministrativeChange, // 待管理部门审核（变更）4
   FinanceSendGroup, // 带财务审核（发团）5
+  withdrawalChange,//带财务审核（撤销重提）
 }
 
 // 接团状态类型
