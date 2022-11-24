@@ -173,7 +173,7 @@ const disLeaveTime = computed(() => {
 })
 
 let disLeave = ref((current: Dayjs) => {
-	return current && current < dayjs().subtract(1, 'day') || 
+	return current && current < dayjs().endOf('day') || 
 	current > dayjs().startOf('day');
 })
 

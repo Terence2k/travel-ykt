@@ -157,12 +157,12 @@ const disDate = (res: any) => {
 	console.log(start)
 	if (!start && !isCurrent) {
 		dis = (current: Dayjs) => {
-			return (current && current < dayjs().subtract(1, 'day')) || 
+			return (current && current < dayjs().endOf('day')) || 
 					(dayjs(res.basic.endDate) && dayjs(res.basic.endDate) < current && current);
 		}
 	} else {
 		dis = (current: Dayjs): any => {
-				return (dayjs(res.basic.startDate) && dayjs(res.basic.startDate) > current && current) ||
+				return (dayjs(res.basic.startDate) && dayjs(res.basic.startDate).startOf('day') > current && current) ||
 					(dayjs(res.basic.endDate) && dayjs(res.basic.endDate) < current && current)
 			};
 	}
