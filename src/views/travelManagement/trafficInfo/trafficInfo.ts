@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash';
 import dayjs from 'dayjs';
-import { validateRules, validateFields, generateGuid } from '@/utils';
+import { validateRules, validateFields, generateGuid, validPhone } from '@/utils';
 import { defineProps } from 'vue';
 import type { UnwrapRef } from 'vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
@@ -28,7 +28,7 @@ const rules = {
 	approvedLoad: [{ required: true, message: '请输入核载人数（人）' }],
 	time: [{ required: true, message: '请选择用车时间段' }],
 	driver: [{ required: true, message: '请输入驾驶员' }],
-	driverPhone: [{ required: true, message: '请输入驾驶员手机号' }]
+	driverPhone: [{ required: true, validator: validPhone }]
 }
 
 export function useTrafficInfo(props: any, emits: any): Record<string, any> {
