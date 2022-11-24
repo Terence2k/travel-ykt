@@ -229,6 +229,14 @@ const submit = () => {
 		message.error('请选择减免规则');
 		return false;
 	}
+	let specialCertificateType=state.tableData.submitList.some((item, index) => {
+		return item.discountRuleId == 1;
+	});
+	if(specialCertificateType)
+	{
+		message.error('请上传特殊照片');
+		return false;
+	}
 	api.applyReduction(data).then((res) => {
 		message.success('提交成功');
 		dialogVisible.value = false;
