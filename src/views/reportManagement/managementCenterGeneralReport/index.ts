@@ -297,3 +297,47 @@ export interface ruleListType {
 	ruleName: string; //规则名称
 	rulePrice: string; //结算费用
 }
+export const getRulePrice = computed(() => (record: any, column: any) => {
+	const ruleColumnKey = column.parent.split('-')[0];
+	// 综费产品
+	if (ruleColumnKey.includes('List')) {
+		for (const key in record[ruleColumnKey]) {
+			if (column.columnParentName === record[ruleColumnKey][key]['comprehensiveFeeProductName']) {
+				for (const subKey in record[ruleColumnKey][key].ruleList) {
+					if (column.title === record[ruleColumnKey][key].ruleList[subKey].ruleName) {
+						return `${record[ruleColumnKey][key].ruleList[subKey].rulePrice}`;
+					}
+				}
+			}
+		}
+	}
+	// 除综费产品外
+	if (record[ruleColumnKey] && record[ruleColumnKey].ruleList && record[ruleColumnKey].ruleList.length) {
+		for (const key in record[ruleColumnKey].ruleList) {
+			if (column.title === record[ruleColumnKey].ruleList[key].ruleName) {
+				return `${record[ruleColumnKey].ruleList[key].rulePrice}`;
+			}
+		}
+	}
+	return `暂无数据`;
+});
+// 获取实收
+export const getActualPrice = computed(() => (record: any, column: any) => {
+	// 先判断非综费产品
+	if (!column.key.includes('List')) {
+		return record[column.key] ? record[column.key]['actualPrice'] : '';
+	} else {
+		// 综费产品
+		if (record[column.key]) {
+			const idx = record[column.key].findIndex((r: any) => r.comprehensiveFeeProductName === column.parentTitle);
+			if (idx !== -1) {
+				return record[column.key][idx][column.dataIndex] || '';
+			}
+		}
+	}
+	return '';
+});
+//地接社未消费费用获取数据
+export const getSubTravelVoUnSettlementPrice = computed(() => (record: any, column: any) => {
+	return record[column.key] ? record[column.key]['unSettlementPrice'] : '';
+});

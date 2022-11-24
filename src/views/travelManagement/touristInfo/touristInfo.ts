@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import type { UnwrapRef } from 'vue';
 
 import { useTravelStore } from '@/stores/modules/travelManagement';
-import { validateRules, validateFields, generateGuid, getAge } from '@/utils';
+import { validateRules, validateFields, generateGuid, getAge, phoneReg } from '@/utils';
 import api from '@/api/index';
 import { CODEVALUE } from '@/constant'
 import { message } from 'ant-design-vue';
@@ -192,6 +192,23 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 				text
 			};
 		},
+		isPhone(key: string) {
+			let flag: boolean = false;
+			let text = '';
+			console.log(state.editableData[key].emergencyContactPhone)
+			if (state.editableData[key].emergencyContactPhone && 
+				!phoneReg.test(state.editableData[key].emergencyContactPhone)) {
+				text = `请填写游客${state.editableData[key].name}正确的紧急联系人电话`
+				flag = false;
+			} else {
+				text = ''
+				flag = true;
+			}
+			return {
+				flag,
+				text
+			}
+		},
 		// 老人判断
 		isOld(key: any): {flag: boolean, text: string} {
 			let flag: boolean = false;
@@ -244,9 +261,10 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			state.editableData[key].edit = true
 		},
 		async del(record: any, index: number) {
-			// let key = record.key ? record.key : record.oid;
+			let key = record.key ? record.key : record.oid;
 			record.oid && await api.travelManagement.deleteTourist([record.oid]);
 			state.tableData.splice(index, 1);
+			delete state.editableData[key];
 			message.success('删除成功');
 			// 
 		},
@@ -268,16 +286,20 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			if (key) {
 				const result = methods.isOld(key)
 				const isUpload = methods.isUpload(key)
+				const isPhone = methods.isPhone(key)
 				if (!result.flag) return message.error(result.text);
 				if (!isUpload.flag) return message.error(isUpload.text);
+				if (!isPhone.flag) return message.error(isPhone.text);
 				methods.copyData(key);
 				delete state.editableData[key];
 			} else {
 				for (let k in state.editableData) {
 					const result = methods.isOld(k);
 					const isUpload = methods.isUpload(k);
+					const isPhone = methods.isPhone(k);
 					if (!result.flag) return emits('onSuccess', {touristList: {valid: false, message: result.text, index: 2}});
 					if (!isUpload.flag) return emits('onSuccess', {touristList: {valid: false, message: isUpload.text, index: 2}});
+					if (!isPhone.flag) return emits('onSuccess', {touristList: {valid: false, message: isPhone.text, index: 2}});
 					methods.copyData(k);
 					delete state.editableData[k];
 				}

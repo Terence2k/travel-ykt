@@ -59,6 +59,7 @@ export const useTravelStore = defineStore({
 		trafficColor: [],
 		hotelList:[],
 		ticketsList:[],
+		auditticket:[] as any,
 	attachmentList: [
 		{
 			attachmentName: '',
@@ -105,6 +106,9 @@ export const useTravelStore = defineStore({
 		},
 		setBaseInfo(data: any) {
 			this.baseInfo = data;
+		},
+		setauditticket(data: any) {	
+			this.auditticket = data;
 		},
 		setGuideList(list: any) {
 			this.guideList = list;

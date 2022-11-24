@@ -20,7 +20,10 @@
 					<template v-if="selectKey.includes(column.key)">
 						<div>
 							<a-form-item v-if="editableData[record.key ? record.key : record.oid]" :name="[record.key ? record.key : record.oid, column.key]">
-								<a-select style="width: 100%" v-model:value="editableData[record.key ? record.key : record.oid][column.key]">
+								<a-select 
+										style="width: 100%" 
+										v-model:value="editableData[record.key ? record.key : record.oid][column.key]"
+										placeholder="请选择">
 									<a-select-option v-for="val in column.data" :key="val.codeValue" :value="val.codeValue">{{ val.name }}</a-select-option>
 								</a-select>
 							</a-form-item>
@@ -47,6 +50,7 @@
 							<a-cascader
 								v-if="editableData[record.key ? record.key : record.oid]"
 								:load-data="loadData"
+								class="cascader-container"
 								:placeholder="record.sourceAddressName"
 								v-model:value="editableData[record.key ? record.key : record.oid][column.key]"
 								:options="cityOptions"
@@ -192,7 +196,7 @@ const {
 	font-size: 16px !important;
 }
 
-::v-deep(.ant-select-selection-placeholder) {
+.cascader-container ::v-deep(.ant-select-selection-placeholder) {
 	color: #333;
 }
 ::v-deep(.ant-image) {

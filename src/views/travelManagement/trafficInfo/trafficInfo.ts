@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash';
 import dayjs from 'dayjs';
-import { validateRules, validateFields, generateGuid } from '@/utils';
+import { validateRules, validateFields, generateGuid, validPhone } from '@/utils';
 import { defineProps } from 'vue';
 import type { UnwrapRef } from 'vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
@@ -28,7 +28,7 @@ const rules = {
 	approvedLoad: [{ required: true, message: '请输入核载人数（人）' }],
 	time: [{ required: true, message: '请选择用车时间段' }],
 	driver: [{ required: true, message: '请输入驾驶员' }],
-	driverPhone: [{ required: true, message: '请输入驾驶员手机号' }]
+	driverPhone: [{ required: true, validator: validPhone }]
 }
 
 export function useTrafficInfo(props: any, emits: any): Record<string, any> {
@@ -131,9 +131,10 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 			state.editableData[key].edit = true
 		},
 		async del(record: any, index: number) {
-			// let key = record.key ? record.key : record.oid;
+			let key = record.key ? record.key : record.oid;
 			record.oid && await api.travelManagement.deleteTraffic([record.oid]);
 			state.tableData.splice(index, 1);
+			delete state.editableData[key];
 			message.success('删除成功');
 			// 
 		},
