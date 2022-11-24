@@ -5,7 +5,7 @@
 			<template #bodyCell="{ column, text, index, record }">
 				<template v-if="column.key === 'index'">
 					<div>
-						{{ (state.params.pageNo - 1) * state.params.pageSize + (index + 1) }}
+						{{ (travelStore.takeGroupList.waitingReserved.params.pageNo - 1) * travelStore.takeGroupList.waitingReserved.params.pageSize + (index + 1) }}
 					</div>
 				</template>
 
@@ -126,7 +126,10 @@ const onSearch = async () => {
 	const res = await travelStore.getTravelList(travelStore.takeGroupList.waitingReserved.params);
 	travelStore.setTakeGroupList(res, 'waitingReserved');
 };
-const onHandleCurrentChange = () => {};
+const onHandleCurrentChange = (e: any) => {
+		travelStore.takeGroupList.waitingReserved.params.pageNo = e
+		onSearch()
+};
 const pageSideChange = () => {};
 const goToPath = (row: any) => {
 	router.push({

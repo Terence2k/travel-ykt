@@ -12,7 +12,7 @@
         </template> -->
         <template v-if="column.key === 'index'">
 					<div>
-						{{(state.params.pageNo - 1) * (state.params.pageSize) + (index + 1)}}
+						{{(travelStore.takeGroupList.cancellation.params.pageNo - 1) * (travelStore.takeGroupList.cancellation.params.pageSize) + (index + 1)}}
 					</div>
 				</template>
 
