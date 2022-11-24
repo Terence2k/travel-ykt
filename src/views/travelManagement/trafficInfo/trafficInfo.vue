@@ -14,7 +14,7 @@
 					<template v-if="selectKey.includes(column.key)">
 						<div>
 							<a-form-item v-if="editableData[record.key ? record.key : record.oid]" :name="[record.key ? record.key : record.oid, column.key]">
-								<a-select style="width: 100%" v-model:value="editableData[record.key ? record.key : record.oid][column.key]">
+								<a-select style="width: 100%" placeholder="请选择" v-model:value="editableData[record.key ? record.key : record.oid][column.key]">
 									<a-select-option v-for="val in column.data" :key="val.codeValue" :value="val.name">{{ val.name }}</a-select-option>
 								</a-select>
 							</a-form-item>
@@ -44,7 +44,13 @@
 									:disabled-date="travelStore.setDisabled"
 									:disabled-time="travelStore.setDisabledTime"
 									v-model:value="editableData[record.key ? record.key : record.oid][column.key]"
-									show-time
+									:show-time="{
+												defaultValue: [
+												dayjs(`${travelStore.setStarEndHMS.start.hour} : ${travelStore.setStarEndHMS.start.min} : ${travelStore.setStarEndHMS.start.second}`, 
+												'HH:mm:ss'), 
+												dayjs(`${travelStore.setStarEndHMS.end.hour} : ${travelStore.setStarEndHMS.end.min} : ${travelStore.setStarEndHMS.end.second}`, 
+												'HH:mm:ss')]
+											}"
 									format="YYYY-MM-DD HH:mm:ss"
 									value-format="YYYY-MM-DD HH:mm:ss"
 									@change="(event) => handleTime(event, record.key ? record.key : record.oid)"
@@ -76,6 +82,8 @@
 import CommonTable from '@/components/common/CommonTable.vue';
 import Upload from '@/components/common/Upload.vue';
 import { useTrafficInfo } from './trafficInfo';
+import dayjs from 'dayjs';
+
 const props = defineProps({
 	onCheck: {
 		type: Boolean,

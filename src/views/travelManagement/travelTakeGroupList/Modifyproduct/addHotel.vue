@@ -79,10 +79,10 @@
 				</a-form-item>
 				<a-form-item
 					label="订房数量"
-					:name="['roomTypeList', index, 'reserveNumber']"
+					:name="['roomTypeList', index, 'roomCount']"
 					:rules="[{ required: true, validator: (_rule: Rule, value: string) => validateCheckNum(_rule, value, index) }]"
 				>
-					<a-input v-model:value="room.reserveNumber" />
+					<a-input v-model:value="room.roomCount" />
 				</a-form-item>
 				<!-- <a-form-item
 					label="入住总人数"
@@ -153,7 +153,7 @@ const roomList = {
 	checkInNumber: '', //入住人数
 	hotelRoomTypeId: '', //房型id
 	unitPrice: 0, //房型单价
-	reserveNumber: '', //订房数量
+	roomCount: '', //订房数量
 	roomTypeName: '', //房型名称
 };
 const travelStore = useTravelStore();
@@ -217,10 +217,13 @@ const handleChangCheckIn = () => {
 };
 
 const changeRoomType = (e: any, option: any, index: number) => {
+	console.log('option',option);
+	
 	formState.roomTypeList[index].roomOccupancyNum = option.num;
 	formState.roomTypeList[index].roomTypeLimitPeople = option.num;
 	formState.roomTypeList[index].stockNum = option.stockNum;
 	formState.roomTypeList[index].roomTypeName = option.name;
+	formState.roomTypeList[index].roomTypeId = option.key;
 };
 
 const getHotelStarList = async () => {
@@ -254,9 +257,9 @@ const validateCheckNum = async (_rule: Rule, value: string, index: number) => {
 const validateCheckIn = async (_rule: Rule, value: string, index: number) => {
 	if (value === '') {
 		return Promise.reject('请输入入住总人数');
-	} else if (Number(value) < formState.roomTypeList[index].reserveNumber) {
+	} else if (Number(value) < formState.roomTypeList[index].roomCount) {
 		return Promise.reject('入住人数不能低于房间数量');
-	} else if (Number(value) > formState.roomTypeList[index].reserveNumber * formState.roomTypeList[index].roomOccupancyNum) {
+	} else if (Number(value) > formState.roomTypeList[index].roomCount * formState.roomTypeList[index].roomOccupancyNum) {
 		return Promise.reject('入住人数不能大于预定房间可住人数');
 	} else {
 		return Promise.resolve();
@@ -273,7 +276,7 @@ const getOrderAmount = (data: Array<{ [k: string]: any }>, startDate: string, en
 	const day = dayjs(endDate).diff(startDate, 'day');
 	const amount = [];
 	for (let k = 0; k < data.length; k++) {
-		amount[k] = data[k].orderAmount * data[k].reserveNumber * day;
+		amount[k] = data[k].orderAmount * data[k].roomCount * day;
 	}
 	return amount.reduce((prev, next) => prev + next);
 };
@@ -281,9 +284,10 @@ const getOrderAmount = (data: Array<{ [k: string]: any }>, startDate: string, en
 const submit = async () => {
 	try {
 		let traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
-
+		console.log('formState.roomTypeList:',formState.roomTypeList);
+		
 		formState.scheduledNumber = formState.roomTypeList.map((it: any) => Number(it.checkInNumber)).reduce((prev: any, current: any) => prev + current);
-		formState.scheduledRooms = formState.roomTypeList.map((it: any) => Number(it.reserveNumber)).reduce((prev: any, current: any) => prev + current);
+		formState.scheduledRooms = formState.roomTypeList.map((it: any) => Number(it.roomCount)).reduce((prev: any, current: any) => prev + current);
 		formState.tripNumber = travelStore.touristList.length;
 		formState.itineraryId = route.query.oid || traveListData.oid;
 		formState.orderAmount = getOrderAmount(formState.roomTypeList, formState.arrivalDate, formState.departureDate);
@@ -297,7 +301,7 @@ const submit = async () => {
 			contrastdata.arrivalDate != formState.arrivalDate ||
 			contrastdata.departureDate != formState.departureDate ||
 			contrastdata.hotelRoomTypeId != formState.hotelRoomTypeId ||
-			contrastdata.reserveNumber != formState.reserveNumber ||
+			contrastdata.roomCount != formState.roomCount ||
 			contrastdata.unitPrice != formState.unitPrice
 		) {
 			formState.edit = true;
@@ -311,8 +315,10 @@ const submit = async () => {
 		newFormState.reservePeopleCount = newFormState.roomTypeList
 			.map((it: any) => Number(it.checkInNumber))
 			.reduce((prev: number, next: number) => prev + next);
-		newFormState.roomCount = newFormState.roomTypeList.map((it: any) => Number(it.reserveNumber)).reduce((prev: number, next: number) => prev + next);
-		travelStore.SetHotels(newFormState, formState.oid ? formState.oid : null, props.productRow.key);
+		newFormState.roomCount = newFormState.roomTypeList.map((it: any) => Number(it.roomCount)).reduce((prev: number, next: number) => prev + next);
+		console.log('newFormState.roomTypeList:',newFormState.roomTypeList);
+		
+		travelStore.SetHotels(newFormState, formState.oid, props.productRow.key);
 		// callback()
 	} catch (errorInfo) {
 		// callback(false);
@@ -349,16 +355,7 @@ watch(
 	}
 );
 watch(dialogVisible, (newVal) => {
-	if (!newVal) {
-		// formRef.value.resetFields();
-		for (let k in formState) {
-			if (k === 'roomTypeList') {
-				formState[k] = [{ ...roomList }];
-			} else {
-				formState[k] = '';
-			}
-		}
-	} else {
+	if (newVal) {
 		const data = props.productRow;
 		for (let k in data) {
 			formState[k] = data[k];
@@ -366,6 +363,8 @@ watch(dialogVisible, (newVal) => {
 		if (props.productRow) {
 			contrastdata = props.productRow;
 		}
+		console.log('data:',data);
+		
 		formState.arrivalDate = data.startDate;
 		formState.departureDate = data.endDate;
 		console.log(data.hotelStarId);
@@ -374,13 +373,16 @@ watch(dialogVisible, (newVal) => {
 			handleChange(data.hotelStarId, { name: data.hotelStar, price: price });
 		}
 		formState.roomTypeList = formState.roomTypeList.map((it: any) => {
-			it.reserveNumber = it.roomCount;
+			console.log('it',it);
+			
+			it.roomCount = it.roomCount;
 			it.roomTypeLimitPeople = it.limitPeople;
 			it.roomTypeName = it.roomTypeName
 			it.hotelRoomTypeId = it.roomTypeId;
 			it.orderAmount = it.unitPrice;
 			return it;
 		});
+		formState.roomCount = data.roomCount
 		console.log('formState.roomTypeList',formState.roomTypeList);
 		formState.hotelId = props.productRow.hotelId;
 		// formState.hotelRoomTypeId = props.productRow.hotelRoomTypeId;
@@ -390,8 +392,19 @@ watch(dialogVisible, (newVal) => {
 		// 		formState.hotelStarId = res.oid;
 		// 		handleChange(res.oid, { price: res.price, name: res.starCode });
 		// 	});
+		
+	}else{
+		
+		// formRef.value.resetFields();
+		for (let k in formState) {
+			if (k === 'roomTypeList') {
+				formState[k] = [{ ...roomList }];
+			} else {
+				formState[k] = '';
+			}
+		}
+		console.log(123123132);
 	}
-
 	emits('update:modelValue', newVal);
 });
 

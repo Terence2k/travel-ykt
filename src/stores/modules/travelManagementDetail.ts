@@ -59,6 +59,7 @@ export const useTravelStore = defineStore({
 		trafficColor: [],
 		hotelList:[],
 		ticketsList:[],
+		auditticket:[] as any,
 	attachmentList: [
 		{
 			attachmentName: '',
@@ -106,6 +107,9 @@ export const useTravelStore = defineStore({
 		setBaseInfo(data: any) {
 			this.baseInfo = data;
 		},
+		setauditticket(data: any) {	
+			this.auditticket = data;
+		},
 		setGuideList(list: any) {
 			this.guideList = list;
 		},
@@ -114,18 +118,15 @@ export const useTravelStore = defineStore({
 		},
 		SetHotels(data: any, oid: any, key: string) {
 			if (key) {
-				console.log(1);
-
 				data.oid = oid;
 				return Object.assign(this.hotelList.filter((item: any) => key == item.key)[0], data);
 			}
 			if (data.oid) {
-				console.log(2);
-				Object.assign(this.hotelList.filter((item: any) => data.oid == item.oid)[0], data);
+				return Object.assign(this.hotelList.filter((item: any) => data.oid == item.oid)[0], data);
 			} else {
-				console.log(3);
 				data.oid = oid;
 				let newData = [...this.hotelList, data];
+				console.log('newData',newData);
 				this.hotelList = newData as any;
 			}
 		},

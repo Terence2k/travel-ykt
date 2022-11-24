@@ -38,7 +38,9 @@
 				<a-date-picker style="width: 100%"
 					:disabled-date="travelStore.setDisabled"
 					@change="handleChangCheckIn"
-					:show-time="{ format: 'HH:mm:ss' }" 
+					:show-time="{
+							defaultValue: dayjs(`${travelStore.setStarEndHMS.start.hour} : ${travelStore.setStarEndHMS.start.min} : ${travelStore.setStarEndHMS.start.second}`, 'HH:mm:ss')
+						}"
 					dropdownClassName="hidden-date-picker"
 					:disabled-time="disCheckInTime"
 					format="YYYY-MM-DD HH:mm:ss" 
@@ -55,7 +57,9 @@
 					dropdownClassName="hidden-date-picker"
 					:disabled-time="disLeaveTime"
 					placeholder="请先选择离店时间"
-					:show-time="{ format: 'HH:mm:ss' }"  
+					:show-time="{
+							defaultValue: dayjs(`${travelStore.setStarEndHMS.end.hour} : ${travelStore.setStarEndHMS.end.min} : ${travelStore.setStarEndHMS.end.second}`, 'HH:mm:ss')
+						}"
 					format="YYYY-MM-DD HH:mm:ss" 
 					value-format="YYYY-MM-DD HH:mm:ss" 
 					v-model:value="formState.departureDate" />
@@ -138,7 +142,7 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 import { message } from 'ant-design-vue/es';
 import { Rule } from 'ant-design-vue/es/form';
 import dayjs, { Dayjs } from 'dayjs';
-import { disabledRangeTime, selectSpecialDateRange } from '@/utils';
+import { disabledRangeTime, range, selectSpecialDateRange } from '@/utils';
 import { Modal } from 'ant-design-vue';
 import { createVNode } from 'vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
@@ -161,20 +165,26 @@ const formRef = ref();
 const disCheckInTime = computed(() => {
 	const isCurrent = dayjs(travelStore.baseInfo.startDate).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD')
 	const start = dayjs().isBefore(dayjs(travelStore.baseInfo.startDate))
-	const disTime = (start || isCurrent) ? travelStore.setStarEndHMS.start : {
+	const disTime: any = (start || isCurrent) ? travelStore.setStarEndHMS.start : {
 		hour: 0,
 		min: 0,
 		second: 0
 	}
-	return disabledRangeTime(disTime, disTime);
+	return () => {
+		return {
+			disabledHours: () => range(0, 24).splice(0, disTime.hour),
+			disabledMinutes: () => range(0, 60).splice(0, disTime.min),
+			disabledSeconds: () => range(0, 60).splice(0, disTime.second)
+		}
+	};
 })
 const disLeaveTime = computed(() => {
 	return disabledRangeTime(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end);
 })
 
 let disLeave = ref((current: Dayjs) => {
-	return current && current < dayjs().subtract(1, 'day') || 
-	current > dayjs().startOf('day');
+	return current && current < dayjs().startOf('day') || 
+	current > dayjs('').startOf('day');
 })
 
 const props = defineProps({
@@ -223,8 +233,8 @@ const handleHotel = (e: any, option: any) => {
 }
 
 const handleChangCheckIn = () => {
-	disLeave.value = (current: Dayjs): any => current && current < dayjs(formState.arrivalDate).add(1, 'day') || 
-	(dayjs(travelStore.teamTime[1]).add(1, 'day') < current && current)
+	disLeave.value = (current: Dayjs): any => current && current < dayjs(formState.arrivalDate).endOf('day') || 
+	(dayjs(travelStore.teamTime[1]).endOf('day') < current && current)
 	const isAfter = dayjs(dayjs(formState.arrivalDate)).isAfter(dayjs(formState.departureDate).subtract(1, 'day'))
 	if (formState.departureDate && isAfter) {
 		formState.departureDate = '';

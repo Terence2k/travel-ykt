@@ -24,7 +24,13 @@
 										:disabled-date="travelStore.setDisabled"
 										:disabled-time="travelStore.setDisabledTime"
 										v-model:value="editableData[record.key ? record.key : record.oid][column.key]"
-										show-time
+										:show-time="{
+												defaultValue: [
+												dayjs(`${travelStore.setStarEndHMS.start.hour} : ${travelStore.setStarEndHMS.start.min} : ${travelStore.setStarEndHMS.start.second}`, 
+												'HH:mm:ss'), 
+												dayjs(`${travelStore.setStarEndHMS.end.hour} : ${travelStore.setStarEndHMS.end.min} : ${travelStore.setStarEndHMS.end.second}`, 
+												'HH:mm:ss')]
+											}"
 										format="YYYY-MM-DD HH:mm:ss"
 										value-format="YYYY-MM-DD HH:mm:ss"
 									/>
@@ -48,6 +54,7 @@
 								</a-button> -->
 								<a-select
 									style="width: 100%"
+									placeholder="请选择导游"
 									@change="(val: any, option: any) => guideChange(val, option, record.key ? record.key : record.oid)"
 									v-model:value="editableData[record.key ? record.key : record.oid]['guideOid']">
 									<a-select-option 
@@ -85,6 +92,7 @@
 import { CaretDownOutlined } from '@ant-design/icons-vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import { useGuideInfo } from './guideInfo';
+import dayjs from 'dayjs';
 
 const props = defineProps({
 	onCheck: {

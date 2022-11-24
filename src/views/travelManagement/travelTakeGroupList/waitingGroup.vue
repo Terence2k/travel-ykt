@@ -6,7 +6,7 @@
 		<template #bodyCell="{ column, text, index, record }">
 			<template v-if="column.key === 'index'">
 				<div>
-						{{(state.params.pageNo - 1) * (state.params.pageSize) + (index + 1)}}
+						{{(travelStore.takeGroupList.waitingGroup.params.pageNo - 1) * (travelStore.takeGroupList.waitingGroup.params.pageSize) + (index + 1)}}
 				</div>
 		</template>
 
@@ -115,9 +115,10 @@
       message.success('已拒绝接团');
     })
   }
-	const onHandleCurrentChange = () => {
-
-	}
+	const onHandleCurrentChange = (e: any) => {
+		travelStore.takeGroupList.waitingGroup.params.pageNo = e
+		onSearch()
+  };
 	const pageSideChange = () => {
 
 	}
