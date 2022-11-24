@@ -244,9 +244,10 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			state.editableData[key].edit = true
 		},
 		async del(record: any, index: number) {
-			// let key = record.key ? record.key : record.oid;
+			let key = record.key ? record.key : record.oid;
 			record.oid && await api.travelManagement.deleteTourist([record.oid]);
 			state.tableData.splice(index, 1);
+			delete state.editableData[key];
 			message.success('删除成功');
 			// 
 		},

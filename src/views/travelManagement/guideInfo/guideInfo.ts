@@ -91,7 +91,6 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 
 	const methods = {
 		copyData(key:any) {
-			console.log(key)
 			Object.assign(
 				state.tableData.filter((item:any) => key == (item.key ? item.key : item.oid))[0], 
 				state.editableData[key]
@@ -116,13 +115,11 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 			state.editableData[key] = cur;
 		},
 		async del(record: any, index: number) {
-			console.log(index)
 			let key = record.key ? record.key : record.oid;
 			record.oid && await api.travelManagement.deleteGuide([record.oid]);
 			// delete state.rulesRef[key];
 			state.tableData.splice(index, 1);
-			delete state.editableData[record.key]
-			console.log(state.editableData)
+			delete state.editableData[key]
 			message.success('删除成功');
 			// state.tableData = state.tableData.filter((item: any) => key !== (item.key ? item.key : item.oid));
 		},
@@ -142,6 +139,7 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 				methods.copyData(key)
 				delete state.editableData[key];
 			} else {
+
 				for (let k in state.editableData) {
 					state.editableData[k].startDate = state.editableData[k].time[0]
 					state.editableData[k].endDate = state.editableData[k].time[1]
@@ -157,7 +155,6 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 			let key = generateGuid();
 			state.tableData.push({key, edit: true, oid: null});
 			methods.edit(key);
-			console.log(state.tableData)
 		},
 
 		async getGuideList() {
