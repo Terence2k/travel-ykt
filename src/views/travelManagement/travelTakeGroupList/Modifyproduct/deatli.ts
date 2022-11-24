@@ -23,8 +23,8 @@ export const getOptions = (props: any) => {
             },
             {
                 title: '入住天数',
-                dataIndex: 'groupTypeStr',
-                key: 'groupTypeStr',
+                dataIndex: 'time',
+                key: 'time',
             },
             {
                 title: '入住时间',
@@ -92,13 +92,13 @@ export const getOptions = (props: any) => {
             },
             {
                 title: '团队游客人数',
-                dataIndex: '',
-                key: '',
+                dataIndex: 'peopleCount',
+                key: 'peopleCount',
             },
             {
                 title: '购票人数',
-                dataIndex: 'peopleCount',
-                key: 'peopleCount',
+                dataIndex: 'reservePeopleCount',
+                key: 'reservePeopleCount',
             },
             {
                 title: '费用（元）',
@@ -118,12 +118,12 @@ export const getOptions = (props: any) => {
         ],
         title: '景区费用',
         descriptions: `已预订<span style="color: red;">${props.ticketList ? props.ticketList?.length : props.newTicketList?.length}</span>个景区，
-          游玩人数：<span style="color: red;">${props.ticketList ? props.ticketList?.reduce((prev: any, curr: any) => prev + curr.peopleCount, 0) :
-            props.newTicketList?.reduce((prev: any, curr: any) => prev + curr.peopleCount, 0)}</span>；
-          门票数量：<span style="color: red;">${props.ticketList ? props.ticketList.reduce((prev: any, curr: any) => prev + curr.peopleCount, 0) :
-            props.newTicketList?.reduce((prev: any, curr: any) => prev + curr.peopleCount, 0)}</span>；
-          费用总计：<span style="color: red;">${props.ticketList ? props.ticketList.reduce((prev: any, curr: any) => prev + curr.totalFee, 0) || 0 :
-            props.newTicketList?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0) || 0}</span>元`,
+          游玩人数：<span style="color: red;">${props.ticketList ? props.ticketList?.reduce((prev: any, curr: any) => prev + curr.reservePeopleCount, 0) :
+            props.newTicketList?.reduce((prev: any, curr: any) => prev + curr.reservePeopleCount, 0)}</span>；
+          门票数量：<span style="color: red;">${props.ticketList ? props.ticketList.reduce((prev: any, curr: any) => prev + curr.reservePeopleCount, 0) :
+            props.newTicketList?.reduce((prev: any, curr: any) => prev + curr.reservePeopleCount, 0)}</span>；
+          费用总计：<span style="color: red;">${props.ticketList ? props.ticketList.reduce((prev: any, curr: any) => prev + curr.unitPrice * curr.reservePeopleCount, 0) || 0 :
+            props.newTicketList?.reduce((prev: any, curr: any) => prev + curr.unitPrice * curr.reservePeopleCount, 0) || 0}</span>元`,
         dataSource: props.ticketList ? props?.ticketList : props.newTicketList,
     })
     return{
