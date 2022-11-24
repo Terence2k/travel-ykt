@@ -32,6 +32,18 @@
 			<a-form-item label="已在他处购买">
 				<span>{{ state.tableData.data.anotherPurchaseNum }}人</span>
 			</a-form-item>
+			<div class="title">申请减免人员</div>
+			<CommonTable :dataSource="state.tableData.data.applyReduceTouristList" :columns="columns" :scrollY="false">
+				<template #bodyCell="{ column, index,record}">
+					<template v-if="column.key === 'specialCertificateImg'">
+						<Upload v-model="record.specialCertificateImg"  :maxCount="1" disabled/>
+					</template>
+				</template>
+			</CommonTable>
+			<div class="center" v-if="state.tableData.data.auditStatus == '0'">
+				<a-button type="primary" class="success" @click="adopt">审核通过</a-button>
+				<a-button type="primary" class="btn" @click="dialogVisible = true">审核不通过</a-button>
+			</div>
 			<div class="center">
 				<p class="p" v-if="state.tableData.data.auditStatus == '-1'">
 					审核结果：<span class="span"
@@ -46,18 +58,7 @@
 					>
 				</p>
 			</div>
-			<div class="center" v-if="state.tableData.data.auditStatus == '0'">
-				<a-button type="primary" class="success" @click="adopt">审核通过</a-button>
-				<a-button type="primary" class="btn" @click="dialogVisible = true">审核不通过</a-button>
-			</div>
-			<div class="title">申请减免人员</div>
-			<CommonTable :dataSource="state.tableData.data.applyReduceTouristList" :columns="columns" :scrollY="false">
-				<template #bodyCell="{ column, index,record}">
-					<template v-if="column.key === 'specialCertificateImg'">
-						<Upload v-model="record.specialCertificateImg"  :maxCount="1" disabled/>
-					</template>
-				</template>
-			</CommonTable>
+			
 			<BaseModal title="审核不通过说明" v-model="dialogVisible">
 				<a-form>
 					<a-form-item label="">
@@ -214,6 +215,7 @@ onMounted(() => {
 	}
 	.center {
 		text-align: center;
+		margin-top: 20px;
 	}
 	.top-div {
 		display: flex;
