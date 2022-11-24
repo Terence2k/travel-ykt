@@ -117,10 +117,10 @@
 							v-model:value="formState.endDate" />
 					</a-form-item>
 				</div> -->
+				<!-- :disabled-date="disabledDate" -->
 				<a-range-picker
 					style="width: 100%"
 					@change="handleChangeTime"
-					:disabled-date="disabledDate"
 					v-model:value="formState.time"
 					show-time
 					format="YYYY-MM-DD HH:mm:ss"
