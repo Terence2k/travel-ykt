@@ -223,7 +223,6 @@ const columns = computed(() => {
 			}
 		}
 	}
-
 	return column.value;
 });
 const comprehensiveGuideVoListIds = ref([]);

@@ -1,21 +1,28 @@
 <template>
-	<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%' }" style="margin-top: 10px">
-		<template #bodyCell="{ column, record }">
-			<template v-if="column.key === 'action'">
-				<div class="action-btns">
-					<a href="javascript:;" @click="lookTrip(record)">查看</a>
-				</div>
-			</template>
-		</template></CommonTable
-	>
+	<div class="tripList">
+		<div class="batchTransfer-header">
+			<div class="header-total">
+				<a-button type="primary" class="success">处理</a-button>
+			</div>
+		</div>
+		<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%' }" style="margin-top: 10px">
+			<template #bodyCell="{ column, record }">
+				<template v-if="column.key === 'action'">
+					<div class="action-btns">
+						<a href="javascript:;" @click="lookTrip(record)">查看</a>
+					</div>
+				</template>
+			</template></CommonTable
+		>
 
-	<CommonPagination
-		:current="state.tableData.param.pageNo"
-		:page-size="state.tableData.param.pageSize"
-		:total="state.tableData.total"
-		@change="onHandleCurrentChange"
-		@showSizeChange="pageSideChange"
-	/>
+		<CommonPagination
+			:current="state.tableData.param.pageNo"
+			:page-size="state.tableData.param.pageSize"
+			:total="state.tableData.total"
+			@change="onHandleCurrentChange"
+			@showSizeChange="pageSideChange"
+		/>
+	</div>
 </template>
 
 <script setup lang="ts">
@@ -441,4 +448,17 @@ const pageSideChange = (current: number, size: number) => {
 	initList();
 };
 </script>
-<style scoped lang="less"></style>
+<style scoped lang="scss">
+.tripList {
+	margin: 20px 0;
+
+	.header-total {
+		margin: 10px 0;
+		margin-left: 30px;
+		span {
+			font-size: 16px;
+			font-weight: 700;
+		}
+	}
+}
+</style>
