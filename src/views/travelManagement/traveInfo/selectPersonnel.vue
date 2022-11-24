@@ -232,6 +232,7 @@ const submit = () => {
 	api.applyReduction(data).then((res) => {
 		message.success('提交成功');
 		dialogVisible.value = false;
+		travelStore.getManagementExpenses(props.routeId)
 	});
 };
 const ruleChange = (value: any, { item }: any, key: any) => {
@@ -277,6 +278,7 @@ const goTicketing = () => {
 		ticketingvalue.value = false;
 		dialogVisible.value = false;
 		message.success('出票成功');
+		travelStore.getManagementExpenses(props.routeId)
 	}).catch((err: any) => {
 			console.error(err);
 		});;
