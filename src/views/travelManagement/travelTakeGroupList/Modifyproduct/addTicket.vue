@@ -127,7 +127,7 @@ const handleOk = async (callback: Function) => {
 		await formRef.value.validateFields();
 		formState.unitPrice = ticketPrice.value;
 		formState.itineraryId = route.query.oid;
-		formState.peopleCount = travelStore.touristList.length;
+		formState.reservePeopleCount = travelStore.touristList.length;
 		const key = generateGuid();
 		if (!formState.oid) {
 			formState.key = key;
@@ -140,8 +140,8 @@ const handleOk = async (callback: Function) => {
 			formState.edit = true;
 		}
 		const newFormState = cloneDeep(formState);
-		newFormState.reservePeopleCount = formState.peopleCount;
-		newFormState.totalFee = newFormState.peopleCount * newFormState.unitPrice;
+		newFormState.reservePeopleCount = formState.reservePeopleCount;
+		newFormState.totalFee = newFormState.reservePeopleCount * newFormState.unitPrice;
 
 		travelStore.setTicket(newFormState, formState.oid ? formState.oid : null, props.productRow.key);
 		callback();

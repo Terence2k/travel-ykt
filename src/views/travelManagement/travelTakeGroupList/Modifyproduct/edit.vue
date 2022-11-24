@@ -56,7 +56,11 @@
 							{{ index + 1 }}
 						</div>
 					</template>
-
+					<template v-if="column.key === 'totalFee'">
+						<div>
+							{{ record.reservePeopleCount * record.unitPrice }}
+						</div>
+					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a class="item" @click="add(record.oid ? 'addTicketPop' : 'productRow', 'addTicketPop', record.oid ,record)">编辑</a>
@@ -194,6 +198,7 @@ onMounted(() => {
 	font-weight: bold;
 	padding-left: 20px;
 	margin-top: 20px;
+	color: black;
 }
 .time_btn{
 	margin-left: 40px;
