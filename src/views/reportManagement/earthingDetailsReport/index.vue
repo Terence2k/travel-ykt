@@ -137,12 +137,12 @@ interface subTravelVoType {
 	ruleList: Array<ruleListType>;
 }
 interface unSettlementPriceVoType {
-	hotelPrice: string, //酒店
-	ticketPrice: string, //景点
-	cateringPrice: string, //餐饮
-	hmPrice: string, //古维
-	rulePrice: string, //手续费
-	allPrice: string, //小计
+	hotelPrice: string; //酒店
+	ticketPrice: string; //景点
+	cateringPrice: string; //餐饮
+	hmPrice: string; //古维
+	rulePrice: string; //手续费
+	allPrice: string; //小计
 }
 // 综费产品-除导服费外
 interface comprehensiveVoListType {
@@ -166,7 +166,7 @@ const columns = computed(() => {
 			key: 'test',
 			width: 100,
 		},
-        {
+		{
 			title: '自编团号',
 			dataIndex: 'test',
 			key: 'test',
