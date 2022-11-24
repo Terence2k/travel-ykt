@@ -59,7 +59,7 @@
 				</a-radio-group>
 			</a-form-item>
 			<a-form-item label="优先级" name="level">
-				<a-input-number v-model:value="formState.level" placeholder="请输入规则优先级" style="width: 100%"> </a-input-number>
+				<a-input-number v-model:value="formState.level" placeholder="请输入规则优先级" style="width: 100%" :min="0"> </a-input-number>
 			</a-form-item>
 			<div class="title">收费规则</div>
 			<a-form-item label="收费模式" name="chargeModel">
@@ -68,21 +68,21 @@
 				</a-radio-group>
 			</a-form-item>
 			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 1" :rules="rulesRef.percentage">
-				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入收费数量（单位：%）" style="width: 100%">
+				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入收费数量（单位：%）" style="width: 100%" :min="1">
 					<template #addonAfter>
 						<span>%</span>
 					</template>
 				</a-input-number>
 			</a-form-item>
-			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 3" :rules="rulesRef.integer">
-				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入收费数量（单位：元）" style="width: 100%">
+			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 3" :rules="rulesRef.money">
+				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入收费数量（单位：元）" style="width: 100%" :min="1">
 					<template #addonAfter>
 						<span>元</span>
 					</template>
 				</a-input-number>
 			</a-form-item>
 			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 2 && formState.productType === 2" :rules="rulesRef.integer">
-				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入酒店房间数收费（单位：个）" style="width: 100%">
+				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入酒店房间数收费（单位：个）" style="width: 100%" :min="1">
 					<template #addonAfter>
 						<span>个</span>
 					</template>
@@ -236,8 +236,10 @@ const rulesRef = {
 	deductionModel: [{ required: true, message: '请选择扣费模式' }],
 	// 百分比
 	percentage: [{ required: true, validator: isBtnZeroToHundred, trigger: 'blur' }],
-	// 人数和金额
+	// 人数
 	integer: [{ required: true, validator: isIntegerNotMust, trigger: 'blur' }],
+	// 金额
+	money: [{ required: true, message: '请输入金额' }],
 };
 // 缓存删除编辑数据
 const cacheData = ref({
