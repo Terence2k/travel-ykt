@@ -9,7 +9,7 @@
 				</template>
 				<template v-if="column.key === 'newOrderAmount'">
 					<div>
-						{{record.newOrderAmount}}
+						{{accDiv(record.newOrderAmount,100)}}
 					</div>
 				</template>
 				<template v-if="column.key === 'action'">
