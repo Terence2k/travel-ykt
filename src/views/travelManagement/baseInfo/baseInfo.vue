@@ -237,7 +237,7 @@ const formState = ref<{[k:string]: any}>(route.query.id ? computed(() => travelS
 
 
 const disabledDate = (current: Dayjs) => {
-	return current && current < dayjs().endOf('day');
+	return current && current < dayjs().startOf('day');
 }
 
 const onSubmit = async () => {

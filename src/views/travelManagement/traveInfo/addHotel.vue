@@ -38,7 +38,9 @@
 				<a-date-picker style="width: 100%"
 					:disabled-date="travelStore.setDisabled"
 					@change="handleChangCheckIn"
-					:show-time="{ format: 'HH:mm:ss' }" 
+					:show-time="{
+							defaultValue: dayjs(`${travelStore.setStarEndHMS.start.hour} : ${travelStore.setStarEndHMS.start.min} : ${travelStore.setStarEndHMS.start.second}`, 'HH:mm:ss')
+						}"
 					dropdownClassName="hidden-date-picker"
 					:disabled-time="disCheckInTime"
 					format="YYYY-MM-DD HH:mm:ss" 
@@ -55,7 +57,9 @@
 					dropdownClassName="hidden-date-picker"
 					:disabled-time="disLeaveTime"
 					placeholder="请先选择离店时间"
-					:show-time="{ format: 'HH:mm:ss' }"  
+					:show-time="{
+							defaultValue: dayjs(`${travelStore.setStarEndHMS.end.hour} : ${travelStore.setStarEndHMS.end.min} : ${travelStore.setStarEndHMS.end.second}`, 'HH:mm:ss')
+						}"
 					format="YYYY-MM-DD HH:mm:ss" 
 					value-format="YYYY-MM-DD HH:mm:ss" 
 					v-model:value="formState.departureDate" />
@@ -173,7 +177,7 @@ const disLeaveTime = computed(() => {
 })
 
 let disLeave = ref((current: Dayjs) => {
-	return current && current < dayjs().endOf('day') || 
+	return current && current < dayjs().startOf('day') || 
 	current > dayjs().startOf('day');
 })
 
