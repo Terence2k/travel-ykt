@@ -1,9 +1,8 @@
 <template>
   <search v-model:value="tableData.param" @query="onQuery" v-show="activeKey === '1'"></search>
   <search v-model:value="tableData1.param" @query="onQuery" v-show="activeKey === '2'"></search>
-
   <div class="tabs_box">
-    <a-badge :count="tableData1.total" class="rebadge" />
+    <a-badge :count="tableData1.total" class="rebadge" v-show="rolesLevel === 1" />
     <a-tabs v-model:activeKey="activeKey" @change="tabsChange">
       <a-tab-pane key="1" tab="已审核">
         <CommonTable :dataSource="tableData.data" :columns="columns">
@@ -11,14 +10,47 @@
             <template v-if="column.key === 'index'">
               {{ index + 1 }}
             </template>
-            <template v-if="column.key === 'storeName'">
-              <span v-if="record.operatorRole === '中心操作员'">/</span>
-              <span v-else>{{ record.storeName }}</span>
+            <template v-if="column.key === 'price'">
+              <div v-if="record.individualLinePriceVos?.length > 0">
+                <span v-for="(item, index) in record.individualLinePriceVos">{{
+                    `${item.priceTypeName}价${item.priceAmount}元${(record.individualLinePriceVos.length - 1) === index ? ''
+                      : '、'}`
+                }}</span>
+              </div>
+              <div v-else>无</div>
+            </template>
+            <template v-if="column.key === 'ticketCompany'">
+              <div v-if="record.individualLineTicketVos?.length > 0">
+                <span v-for="(item, index) in record.individualLineTicketVos">{{
+                    `${item.ticketCompanyName}${(record.individualLineTicketVos.length - 1) === index ? ''
+                      : '、'}`
+                }}</span>
+              </div>
+              <div v-else>无</div>
+            </template>
+            <template v-if="column.key === 'hotelCompany'">
+              <div v-if="record.individualLineHotelVos?.length > 0">
+                <span v-for="(item, index) in record.individualLineHotelVos">{{
+                    `${item.hotelCompanyName}${(record.individualLineHotelVos.length - 1) === index ? ''
+                      : '、'}`
+                }}</span>
+              </div>
+              <div v-else>无</div>
+            </template>
+            <template v-if="column.key === 'cateringCompany'">
+              <div v-if="record.individualLineCateringVos?.length > 0">
+                <span v-for="(item, index) in record.individualLineCateringVos">{{
+                    `${item.cateringCompanyName}${(record.individualLineCateringVos.length - 1) === index ? ''
+                      : '、'}`
+                }}</span>
+              </div>
+              <div v-else>无</div>
             </template>
             <template v-if="column.key === 'action'">
               <div class="action-btns">
                 <a @click="checkDetails(record)">查看</a>
-                <a @click="addOrUpdate({ row: record, handle: 'update' })">修改</a>
+                <a @click="addOrUpdate({ row: record, handle: 'update' })"
+                  v-show="modifyVisible(record.creatorId)">修改</a>
                 <!-- <a-popconfirm title="是否要禁用该操作员？禁用后该操作员不可再登录一卡通平台。" ok-text="确认" cancel-text="取消"
                   @confirm="disable(0, record.userId)">
                   <a v-show="record.enableSatus">禁用</a>
@@ -32,7 +64,7 @@
           </template>
         </CommonTable>
         <div class="buttom_box">
-          <div>共 <span style="color:#de0025;">{{ tableData.total }}</span> 条线路</div>
+          <div>共 <span style="color:#de0025;">{{ tableData.total }}</span>条线路</div>
           <CommonPagination v-model:current="tableData.param.pageNo" v-model:page-size="tableData.param.pageSize"
             :total="tableData.total" @change="onHandleCurrentChange" @showSizeChange="pageSideChange" />
         </div>
@@ -43,13 +75,45 @@
             <template v-if="column.key === 'index'">
               {{ index + 1 }}
             </template>
-            <template v-if="column.key === 'storeName'">
-              <span v-if="record.operatorRole === '中心操作员'">/</span>
-              <span v-else>{{ record.storeName }}</span>
+            <template v-if="column.key === 'price'">
+              <div v-if="record.individualLinePriceVos?.length > 0">
+                <span v-for="(item, index) in record.individualLinePriceVos">{{
+                    `${item.priceTypeName}价${item.priceAmount}元${(record.individualLinePriceVos.length - 1) === index ? ''
+                      : '、'}`
+                }}</span>
+              </div>
+              <div v-else>无</div>
+            </template>
+            <template v-if="column.key === 'ticketCompany'">
+              <div v-if="record.individualLineTicketVos?.length > 0">
+                <span v-for="(item, index) in record.individualLineTicketVos">{{
+                    `${item.ticketCompanyName}${(record.individualLineTicketVos.length - 1) === index ? ''
+                      : '、'}`
+                }}</span>
+              </div>
+              <div v-else>无</div>
+            </template>
+            <template v-if="column.key === 'hotelCompany'">
+              <div v-if="record.individualLineHotelVos?.length > 0">
+                <span v-for="(item, index) in record.individualLineHotelVos">{{
+                    `${item.hotelCompanyName}${(record.individualLineHotelVos.length - 1) === index ? ''
+                      : '、'}`
+                }}</span>
+              </div>
+              <div v-else>无</div>
+            </template>
+            <template v-if="column.key === 'cateringCompany'">
+              <div v-if="record.individualLineCateringVos?.length > 0">
+                <span v-for="(item, index) in record.individualLineCateringVos">{{
+                    `${item.cateringCompanyName}${(record.individualLineCateringVos.length - 1) === index ? ''
+                      : '、'}`
+                }}</span>
+              </div>
+              <div v-else>无</div>
             </template>
             <template v-if="column.key === 'action'">
               <div class="action-btns">
-                <template v-if="isSuper">
+                <template v-if="record?.isAudit">
                   <a @click="auditStore(record)">去审核</a>
                 </template>
                 <a @click="checkDetails(record)">查看</a>
@@ -65,14 +129,13 @@
       </a-tab-pane>
       <template #rightExtra>
         <a-button type="primary" @click="addOrUpdate({ handle: 'add' })">创建新路线</a-button>
-        <a-button type="primary" @click="changeVisible = true">test</a-button>
       </template>
     </a-tabs>
   </div>
 
   <CommonModal :title="state.title" v-model:visible="modalVisible" @cancel="cancel" @close="cancel"
-    :conform-text="'提交审核'" width="40%">
-    <a-form ref="teamRef" :model="form" :rules="formRules" name="addStore" autocomplete="off" :label-col="labelCol"
+    :conform-text="'提交审核'" width="40%" @conform="submitLine">
+    <a-form ref="lineRef" :model="form" :rules="formRules" name="addStore" autocomplete="off" :label-col="labelCol"
       :wrapper-col="{ span: 24 }">
       <a-form-item name="lineName" label="线路名称">
         <a-input v-model:value="form.lineName" placeholder="请输入线路名称，30字以内" show-count :maxlength="30">
@@ -81,55 +144,63 @@
       <a-form-item name="lineDescribe" label="线路描述">
         <a-textarea v-model:value="form.lineDescribe" placeholder="请输入线路描述，300字以内" show-count :maxlength="300" />
       </a-form-item>
-      <a-form-item label="适用范围">
+      <a-form-item label="适用范围" v-if="rolesLevel !== 3 && state.isAdd">
         <a-form-item name="suitableRange" v-if="rolesLevel === 1">
-          <a-radio-group v-model:value="form.suitableRange">
+          <a-radio-group v-model:value="form.suitableRange" @change="radioChange">
             <a-radio :style="radioStyle" :value="1">全部旅行社全部门店可用</a-radio>
             <a-radio :style="radioStyle" :value="2">指定旅行社</a-radio>
             <a-radio :style="radioStyle" :value="3">指定门店</a-radio>
           </a-radio-group>
         </a-form-item>
         <a-form-item name="suitableRange" v-if="rolesLevel === 2">
-          <a-radio-group v-model:value="form.suitableRange">
+          <a-radio-group v-model:value="form.suitableRange" @change="radioChange">
             <a-radio :style="radioStyle" :value="2">本旅行社</a-radio>
             <a-radio :style="radioStyle" :value="3">指定门店</a-radio>
           </a-radio-group>
-          <!-- 选择门店 -->
         </a-form-item>
-        <a-form-item name="suitableRange" v-if="rolesLevel === 3">
-          <a-radio-group v-model:value="form.suitableRange">
+        <!-- 角色为门店操作员不用选 -->
+        <!-- <a-form-item name="suitableRange" v-if="rolesLevel === 3">
+          <a-radio-group v-model:value="form.suitableRange" @change="radioChange">
             <a-radio :style="radioStyle" :value="3">本门店</a-radio>
           </a-radio-group>
-        </a-form-item>
-        <a-form-item v-show="travelVisible">
-          <a-select placeholder="选择旅行社" v-model:value="form.value" allowClear @change="">
-            <a-select-option v-for="item in businessTypeOption" :value="item.codeValue">{{
+        </a-form-item> -->
+        <a-form-item name="suitableRangeTravelId" v-show="travelVisible">
+          <a-select placeholder="选择旅行社" v-model:value="form.suitableRangeTravelId" allowClear @change="getStoreList">
+            <a-select-option v-for="item in TRAVELOptions" :value="item.oid">{{
                 item.name
             }}
             </a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item v-show="storeVisible">
-          <a-select placeholder="选择门店" v-model:value="form.business" allowClear @change="() => { }">
-            <a-select-option v-for="item in businessTypeOption" :value="item.codeValue" :disabled="item.disabled">{{
+        <a-form-item name="suitableRangeStoreId" v-show="storeVisible">
+          <a-select placeholder="选择门店" v-model:value="form.suitableRangeStoreId" allowClear>
+            <a-select-option v-for="item in storeOptions" :value="item.oid">{{
                 item.name
             }}
             </a-select-option>
           </a-select>
         </a-form-item>
       </a-form-item>
-      <!-- <a-form-item name="mobile" label="包含景区">
-        <a-select placeholder="请选择一个景区" mode="multiple" v-model:value="form.scene" allowClear>
-          <a-select-option v-for="item in sceneOption" :value="item.codeValue">{{ item.name }}
-          </a-select-option>
-        </a-select>
+      <a-form-item label="选择线路内商家">
+        <a-form-item name="TICKETSelected" label="景区">
+          <a-select placeholder="请选择景区" mode="multiple" v-model:value="form.TICKETSelected" allowClear>
+            <a-select-option v-for="item in TICKETOptions" :value="item.oid">{{ item.name }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item name="HOTELSelected" label="酒店">
+          <a-select placeholder="请选择酒店" mode="multiple" v-model:value="form.HOTELSelected" allowClear>
+            <a-select-option v-for="item in HOTELOptions" :value="item.oid">{{ item.name }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item name="CATERINGSelected" label="餐厅">
+          <a-select placeholder="请选择餐厅" mode="multiple" v-model:value="form.CATERINGSelected" allowClear>
+            <a-select-option v-for="item in CATERINGOptions" :value="item.oid">{{ item.name }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
       </a-form-item>
-      <a-form-item name="mobile" label="包含酒店">
-        <a-select placeholder="请选择一个酒店" mode="multiple" v-model:value="form.scene" allowClear>
-          <a-select-option v-for="item in sceneOption" :value="item.codeValue">{{ item.name }}
-          </a-select-option>
-        </a-select>
-      </a-form-item> -->
       <!-- <a-form-item v-for="(domain, index) in form.domains" :key="domain.key" :label="index === 0 ? '包含景区' : ' '"
         :colon="index === 0 ? true : false" :name="['domains', index, 'value']">
         <div style="display: flex">
@@ -170,7 +241,7 @@
       </a-form-item> -->
 
 
-      <div v-for="(domain, index) in form.domains" :key="domain.key" style="display: flex;">
+      <!-- <div v-for="(domain, index) in form.domains" :key="domain.key" style="display: flex;">
         <a-form-item :label="index === 0 ? '选择线路内商家' : ' '" :colon="index === 0 ? true : false"
           :name="['domains', index, 'value']" :wrapper-col="{ offset: 0, span: 24 }" style="flex: 1">
           <a-select placeholder="请选择业态" v-model:value="domain.value" allowClear @change="">
@@ -199,9 +270,9 @@
           <PlusOutlined />
           添加
         </a-button>
-      </a-form-item>
+      </a-form-item> -->
 
-      <div v-for="(sight, index) in form.sights" :key="sight.key" style="display: flex;">
+      <!-- <div v-for="(sight, index) in form.sights" :key="sight.key" style="display: flex;">
         <a-form-item :name="['sights', index, 'value']" :label="index === 0 ? '一口价' : ' '"
           :colon="index === 0 ? true : false" :wrapper-col="{ offset: 0, span: 24 }" style="flex: 1">
           <a-select v-model:value="sight.id" @change="sightsChange" allowClear>
@@ -223,10 +294,15 @@
           <PlusOutlined />
           添加
         </a-button>
+      </a-form-item> -->
+      <a-form-item label="一口价">
+        <a-form-item v-for="item in state.YKJList" :name="item.codeValue" :label="item.name">
+          <a-input v-model:value.number="form[item.codeValue]" placeholder="输入价格">
+          </a-input>
+        </a-form-item>
       </a-form-item>
-
-      <a-form-item name="isReduced" label="启用状态">
-        <a-radio-group v-model:value="form.isReduced">
+      <a-form-item name="enableSatus" label="启用状态" v-show="!state.isAdd">
+        <a-radio-group v-model:value="form.enableSatus">
           <a-radio :value="1">启用</a-radio>
           <a-radio :value="0">禁用</a-radio>
         </a-radio-group>
@@ -237,19 +313,21 @@
     @cancel="detailsClose" :is-cancel="false">
     <div class="table_box">
       <table class="info_table" cellpadding="16px" border="1">
-        <tr class="row" v-for="(value, key) in detailsKeys">
+        <tr class="row" v-for="(value, key) in cmpDetailsKeys">
           <td class="key">{{ value }}</td>
-          <td class="value">{{ detailsForm[key] }}</td>
+          <td class="value">
+            {{ detailsForm[key] }}
+          </td>
         </tr>
       </table>
     </div>
   </CommonModal>
   <CommonModal title="审核线路" v-model:visible="auditVisible" @cancel="auditCancel" @close="failVisible = true"
     :conform-text="'通过'" :cancel-text="'驳回'" @conform="registerAuditVisible = true">
-    提交审核时间：
+    提交审核时间：{{ detailsForm.createTime }}
     <div class="table_box">
       <table class="info_table" cellpadding="16px" border="1">
-        <tr class="row" v-for="(value, key) in detailsKeys">
+        <tr class="row" v-for="(value, key) in auditKeys">
           <td class="key">{{ value }}</td>
           <td class="value">{{ detailsForm[key] }}</td>
         </tr>
@@ -259,6 +337,7 @@
   <CommonModal title="线路修改审核" v-model:visible="changeVisible" @cancel="changeCancel" @close="failVisible = true"
     :conform-text="'通过'" :cancel-text="'驳回'" @conform="registerAuditVisible = true" width="50%">
     <div class="table_box">
+      提交审核时间：{{ detailsForm.updateTime }}
       <table class="change_table" cellpadding="16px" border="1">
         <tr class="row">
           <th class="key_hd">信息项</th>
@@ -274,19 +353,19 @@
     </div>
   </CommonModal>
   <CommonModal :title="registerAuditTitle" v-model:visible="registerAuditVisible" @close="registerAuditVisible = false"
-    @conform="registerAuditConform" :conform-text="'确定'" :key="registerAuditTitle">
+    @conform="registerAuditConform" :conform-text="'确定'" :key="registerAuditTitle + isRegiste">
     <span v-if="isRegiste">
-      您即将批准 昆明康辉旅行社 创建的散客线路玉龙雪山1日游当日往返线路，审核通过，可用于发起散客电子合同、散客拼团。请仔细确认
+      您即将批准{{ detailsForm['creatorName'] }}创建的散客线路{{ detailsForm['lineName'] }}，审核通过，可用于发起散客电子合同、散客拼团。请仔细确认
     </span>
     <span v-else>
-      您即将批准 昆明康辉旅行社 修改的散客线路玉龙雪山1日游当日往返线路，审核通过，可用于发起散客电子合同、散客拼团。请仔细确认
+      您即将批准{{ detailsForm['creatorName'] }}修改的散客线路{{ detailsForm['lineName'] }}，审核通过，可用于发起散客电子合同、散客拼团。请仔细确认
     </span>
   </CommonModal>
   <CommonModal :title="failTitle" v-model:visible="failVisible" @close="failClose" @cancel="failClose"
-    @conform="failConform" :conform-text="'确定'" :key="failTitle">
+    @conform="failConform" :conform-text="'确定'" :key="failTitle + isRegiste">
     <a-form layout="vertical" ref="failFormRef" :model="failForm" :rules="failFormRules" name="fail-form"
       autocomplete="off" labelAlign="left">
-      <a-form-item name="auditRemark" :label="`驳回 昆明康辉旅行社 的线路${isRegiste ? '创建' : '修改'}，填写驳回理由：`">
+      <a-form-item name="auditRemark" :label="`驳回${detailsForm['creatorName']}的线路${isRegiste ? '创建' : '修改'}，填写驳回理由：`">
         <a-textarea v-model:value="failForm.auditRemark" placeholder="请输入驳回原因" :rows="2">
         </a-textarea>
       </a-form-item>
@@ -303,6 +382,7 @@ import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons-vue';
 import api from '@/api';
 import { useRouter, useRoute } from 'vue-router';
 import type { Rule } from 'ant-design-vue/es/form';
+import { message } from 'ant-design-vue/es';
 const router = useRouter();
 const route = useRoute();
 interface Domain {
@@ -327,6 +407,7 @@ const state = reactive({
       suitableRange: undefined,
       lineName: undefined,
       auditStatus: 1, // 已审核
+      permissionCode: -1, // //查询code（1:旅行社超管、中心操作员,2:门店操作员）——管理角色不传
     },
   },
   tableData1: {
@@ -339,6 +420,7 @@ const state = reactive({
       suitableRange: undefined,
       lineName: undefined,
       auditStatus: 2, // 待审核
+      permissionCode: -1, // //查询code（1:旅行社超管、中心操作员,2:门店操作员）——管理角色不传
     },
   },
   rolesLevel: 3, // 1:文旅局超管、一卡通超管,2:旅行社超管、中心操作员,3:门店操作员
@@ -349,6 +431,14 @@ const state = reactive({
   registerAuditVisible: false,
   changeVisible: false,
   isRegiste: true,
+  isAdd: true,
+  YKJList: [],
+  TICKETOptions: [],
+  CATERINGOptions: [],
+  HOTELOptions: [],
+  TRAVELOptions: [],
+  storeOptions: [],
+  userID: undefined
 });
 const {
   tableData,
@@ -361,6 +451,11 @@ const {
   registerAuditVisible,
   changeVisible,
   isRegiste,
+  TICKETOptions,
+  CATERINGOptions,
+  HOTELOptions,
+  TRAVELOptions,
+  storeOptions
 } = toRefs(state)
 const radioStyle = reactive({
   display: 'flex',
@@ -369,36 +464,64 @@ const radioStyle = reactive({
 });
 const activeKey = ref('1')
 type detailsKeysType = {
+  createTime?: string,
+  updateTime?: string,
+  auditType?: string,
   lineName?: string,
   lineDescribe?: string,
   creatorName?: string,
   suitableRangeName?: string,
-  hotelCompanyName?: string,
-  ticketCompanyName?: string,
-  priceTypeName?: string,
+  hotelCompanysName?: string,
+  cateringCompanysName?: string,
+  ticketCompanysName?: string,
+  priceTypesName?: string,
   enableSatusName?: string,
   auditStatusName?: string,
+  auditStatus?: number,
+  informationAuditStatus?: number
 }
 const detailsForm = ref<detailsKeysType>({})
-const detailsKeys = {
+const commonKeys = {
   lineName: '线路名称',
   lineDescribe: '线路描述',
   creatorName: '创建人',
   suitableRangeName: '适用范围',
-  hotelCompanyName: '包含酒店',
-  ticketCompanyName: '包含景区',
-  priceTypeName: '一口价',
+  hotelCompanysName: '包含酒店',
+  ticketCompanysName: '包含景区',
+  cateringCompanysName: '包含餐厅',
+  priceTypesName: '一口价',
   enableSatusName: '启用状态',
+}
+const detailsKeys = {
+  ...commonKeys,
   auditStatusName: '审核状态',
 }
+const auditKeys = {
+  auditType: '审核类型',
+  ...commonKeys
+}
 const compareKeys = {
-  operatorName: '操作员姓名',
-  operatorPhone: '操作员电话',
-  certificateNo: '证件号',
+  lineName: '线路名称',
+  lineDescribe: '线路描述',
+  hotelCompanysName: '包含酒店',
+  ticketCompanysName: '包含景区',
+  cateringCompanysName: '包含餐厅',
+  priceTypesName: '一口价',
   enableSatusName: '启用状态',
 }
 const form = reactive({
-  domains: [{
+  oid: undefined,
+  companyId: undefined,
+  suitableRange: undefined, // 适用范围（1.所有  2.本旅行社  3.本门店）
+  suitableRangeTravelId: undefined, // 适用范围旅行社企业id
+  suitableRangeStoreId: undefined, // 适用范围门店id
+  lineName: '',
+  lineDescribe: '',
+  TICKETSelected: [],
+  CATERINGSelected: [],
+  HOTELSelected: [],
+  enableSatus: 1,
+  /* domains: [{
     value: undefined,
     business: undefined,
     key: Date.now(),
@@ -411,10 +534,10 @@ const form = reactive({
     id: undefined,
     price: undefined,
     key: Date.now(),
-  }]
+  }] */
 })
 const failForm = reactive({
-  auditTypeCode: 18, // 18: 创建散客门店.,19:修改散客门店信息
+  auditTypeCode: 21, // 21:创建线路,22:修改线路信息
   auditRemark: '',
   uuid: '',
   roleId: '',
@@ -428,14 +551,14 @@ const failForm = reactive({
 const failFormRules: Record<string, Rule[]> = {
   auditRemark: [{ required: true, trigger: 'blur', message: '请输入驳回原因' }],
 }
-const teamRef = ref()
+const lineRef = ref()
 const failFormRef = ref()
 const formRules = {}
 const newArrList = ref<any>({})
 const oldArrList = ref<any>({})
 const changeKeys = ref<string[]>([])
 const labelCol = { style: { width: '110px' } }
-const enableOption = [
+/* const enableOption = [
   { codeValue: 0, name: '本社全部部门可用' },
   { codeValue: 1, name: '仅创建门店可用' },
 ]
@@ -504,7 +627,7 @@ const businessOption = computed(() => (val: number | undefined) => {
   } else {
     return []
   }
-})
+}) */
 const registerAuditTitle = computed(() => {
   return isRegiste.value ? '二次确认' : '二次确认'
 })
@@ -513,7 +636,7 @@ const failTitle = computed(() => {
 })
 const travelVisible = computed(() => {
   if (rolesLevel.value === 1) {
-    if (form.suitableRange === 3) {
+    if (form.suitableRange === 3 || form.suitableRange === 2) {
       return true
     }
   } else {
@@ -521,7 +644,7 @@ const travelVisible = computed(() => {
   }
 })
 const storeVisible = computed(() => {
-  if (rolesLevel.value === 1) {
+  if (rolesLevel.value === 1 || rolesLevel.value === 2) {
     if (form.suitableRange === 3) {
       return true
     }
@@ -529,9 +652,40 @@ const storeVisible = computed(() => {
     return false
   }
 })
+const modifyVisible = computed(() => (id: number) => {
+  if (state.rolesLevel === 1) {
+    return true
+  } else {
+    if (state.userID === id) {
+      return true
+    } else {
+      return false
+    }
+  }
+})
+const cmpDetailsKeys = computed(() => {
+  if (detailsForm.value.auditStatus === 2) {
+    return { ...detailsKeys, rejectReason: '驳回原因' }
+  } if (detailsForm.value.informationAuditStatus === 3) {
+    const obj = { ...detailsKeys, rejectReason: '驳回原因' }
+    Reflect.deleteProperty(obj, 'auditStatusName')
+    return obj
+  } else {
+    return detailsKeys
+  }
+})
 const tabsChange = () => { };
+const getDetails = async (oid: string | number) => {
+  const res = await api.findIndividualLineById(oid)
+  if (res) {
+    setValue(res)
+  }
+  return res ? res : {}
+}
 const checkDetails = async (record: any) => {
-};
+  detailsForm.value = await getDetails(record.oid)
+  detailsVisible.value = true
+}
 const detailsClose = () => {
   state.detailsVisible = false
   detailsForm.value = {}
@@ -540,10 +694,24 @@ const auditCancel = () => {
   state.auditVisible = false
   detailsForm.value = {}
 }
-const registerAuditConform = () => { }
+const registerAuditConform = async () => {
+  // 审核通过
+  failForm.auditStatus = 2
+  let res = await api.auditCompany(toRaw(failForm))
+  if (res) {
+    message.success('审核成功！')
+    auditVisible.value = false
+    registerAuditVisible.value = false
+    changeVisible.value = false
+    onSearch()
+    onAuditSearch()
+  } else {
+    message.error('审核失败！')
+  }
+}
 const failConform = async () => {
   // 审核不通过
-  /* failFormRef.value.validateFields().then(async () => {
+  failFormRef.value.validateFields().then(async () => {
     // 审核不通过
     failForm.auditStatus = 3
     let res = await api.auditCompany(toRaw(failForm))
@@ -557,10 +725,10 @@ const failConform = async () => {
     } else {
       message.error('驳回失败！')
     }
-  }) */
+  })
 }
 const failClose = () => {
-  // failFormRef.value.resetFields()
+  failFormRef.value.resetFields()
   failVisible.value = false
 }
 const changeCancel = () => {
@@ -568,10 +736,508 @@ const changeCancel = () => {
   oldArrList.value = {}
   changeKeys.value = []
 }
-
-
-
-const setOption = () => {
+const columns = [
+  {
+    title: '序号',
+    dataIndex: 'index',
+    key: 'index',
+  },
+  {
+    title: '线路名称',
+    dataIndex: 'lineName',
+    key: 'lineName',
+  },
+  {
+    title: '一口价',
+    dataIndex: 'price',
+    key: 'price',
+  },
+  {
+    title: '包含景区',
+    dataIndex: 'ticketCompany',
+    key: 'ticketCompany',
+  },
+  {
+    title: '包含酒店',
+    dataIndex: 'hotelCompany',
+    key: 'hotelCompany',
+  },
+  {
+    title: '包含餐厅',
+    dataIndex: 'cateringCompany',
+    key: 'cateringCompany',
+  },
+  {
+    title: '创建人',
+    dataIndex: 'creatorName',
+    key: 'creatorName',
+  },
+  {
+    title: '适用范围',
+    dataIndex: 'suitableRangeName',
+    key: 'suitableRangeName',
+  },
+  {
+    title: '启用状态',
+    dataIndex: 'enableSatusName',
+    key: 'enableSatusName',
+  },
+  {
+    title: '审核结果',
+    dataIndex: 'auditStatusName',
+    key: 'auditStatusName',
+  },
+  {
+    title: '操作',
+    key: 'action',
+    fixed: 'right',
+    width: 208
+  },
+]
+const columns1 = [
+  {
+    title: '序号',
+    dataIndex: 'index',
+    key: 'index',
+  },
+  {
+    title: '线路名称',
+    dataIndex: 'lineName',
+    key: 'lineName',
+  },
+  {
+    title: '一口价',
+    dataIndex: 'price',
+    key: 'price',
+  },
+  {
+    title: '包含景区',
+    dataIndex: 'ticketCompany',
+    key: 'ticketCompany',
+  },
+  {
+    title: '包含酒店',
+    dataIndex: 'hotelCompany',
+    key: 'hotelCompany',
+  },
+  {
+    title: '包含餐厅',
+    dataIndex: 'cateringCompany',
+    key: 'cateringCompany',
+  },
+  {
+    title: '创建人',
+    dataIndex: 'creatorName',
+    key: 'creatorName',
+  },
+  {
+    title: '适用范围',
+    dataIndex: 'suitableRangeName',
+    key: 'suitableRangeName',
+  },
+  {
+    title: '提交时间',
+    dataIndex: 'createTime',
+    key: 'createTime',
+  },
+  {
+    title: '审核类型',
+    dataIndex: 'auditType',
+    key: 'auditType',
+  },
+  {
+    title: '操作',
+    key: 'action',
+    fixed: 'right',
+    width: 208
+  },
+]
+const onHandleCurrentChange = (val: number) => {
+  state.tableData.param.pageNo = val;
+  onSearch();
+}
+const pageSideChange = (current: number, size: number) => {
+  state.tableData.param.pageSize = size;
+  onSearch();
+}
+const onHandleCurrentChange1 = (val: number) => {
+  state.tableData1.param.pageNo = val;
+  onAuditSearch();
+}
+const pageSideChange1 = (current: number, size: number) => {
+  state.tableData1.param.pageSize = size;
+  onAuditSearch();
+}
+const onSearch = async () => {
+  const { content, total } = await api.selectIndividualLineList(state.tableData.param)
+  state.tableData.data = content
+  state.tableData.total = total
+}
+const onAuditSearch = async () => {
+  const res = await api.selectIndividualLineList(state.tableData1.param)
+  const uuids: (string | number)[] = []
+  res.content.forEach((item: any) => {
+    if (item.auditUuid) {
+      uuids.push(item.auditUuid)
+    }
+  })
+  if (uuids.length > 0) {
+    let res1 = await api.getAuditButton({ uuIds: uuids })
+    if (res1?.length > 0) {
+      res.content.forEach((item: any) => {
+        res1.forEach((citem: any) => {
+          if (item.auditUuid === citem.uuid) {
+            item.uuid = citem.uuid
+            item.roleId = citem.roleId
+            item.auditBusinessType = citem.auditBusinessType
+            item.isAudit = true
+          }
+        })
+      })
+    }
+  }
+  state.tableData1.data = res.content
+  state.tableData1.total = res.total
+}
+const onQuery = () => {
+  if (activeKey.value === '1') {
+    state.tableData.param.pageNo = 1;
+    onSearch()
+  } else if (activeKey.value === '2') {
+    state.tableData1.param.pageNo = 1;
+    onAuditSearch()
+  }
+}
+const radioChange = () => {
+  form.suitableRangeTravelId = undefined
+  form.suitableRangeStoreId = undefined
+  if (rolesLevel.value === 2) {
+    if (form.suitableRange === 2) {
+      form.suitableRangeTravelId = form.companyId
+    } else if (form.suitableRange === 3) {
+      form.suitableRangeTravelId = form.companyId
+      getStoreList()
+    }
+  }
+}
+const getParams = () => {
+  const {
+    oid,
+    companyId,
+    suitableRange,
+    suitableRangeTravelId,
+    suitableRangeStoreId,
+    lineName,
+    lineDescribe,
+    TICKETSelected,
+    CATERINGSelected,
+    HOTELSelected,
+    enableSatus
+  } = form
+  let individualLineTicketBos: { ticketCompanyId: number | string, ticketCompanyName: string }[] = []
+  let individualLineHotelBos: { hotelCompanyId: number | string, hotelCompanyName: string }[] = []
+  let individualLineCateringBos: { cateringCompanyId: number | string, cateringCompanyName: string }[] = []
+  let individualLinePriceBos: { priceTypeCode: string, priceAmount: number | string }[] = []
+  if (TICKETSelected.length > 0) {
+    TICKETOptions.value.forEach((item: any) => {
+      if (TICKETSelected.includes(item.oid)) {
+        individualLineTicketBos.push(
+          {
+            ticketCompanyId: item.oid,
+            ticketCompanyName: item.name
+          })
+      }
+    });
+  }
+  if (HOTELSelected.length > 0) {
+    HOTELOptions.value.forEach((item: any) => {
+      if (HOTELSelected.includes(item.oid)) {
+        individualLineHotelBos.push({
+          hotelCompanyId: item.oid,
+          hotelCompanyName: item.name
+        })
+      }
+    })
+  }
+  if (CATERINGSelected.length > 0) {
+    CATERINGOptions.value.forEach((item: any) => {
+      if (CATERINGSelected.includes(item.oid)) {
+        individualLineCateringBos.push({
+          cateringCompanyId: item.oid,
+          cateringCompanyName: item.name
+        })
+      }
+    })
+  }
+  if (state.YKJList.length > 0) {
+    individualLinePriceBos = state.YKJList.map((item: any) => {
+      return { priceTypeCode: item.codeValue, priceAmount: form[item.codeValue], priceTypeName: item.name }
+    })
+  }
+  let params = {
+    oid,
+    companyId,
+    suitableRange,
+    suitableRangeTravelId,
+    suitableRangeStoreId,
+    lineName,
+    lineDescribe,
+    individualLineTicketBos,
+    individualLineHotelBos,
+    individualLineCateringBos,
+    individualLinePriceBos,
+    enableSatus
+  }
+  return params
+}
+const submitLine = () => {
+  const params = getParams()
+  if (state.isAdd) { // 新增
+    if (state.rolesLevel === 1) { // 无需审核
+      api.createIndividualLineAdmin(params).then((res: any) => {
+        message.success('创建线路成功！')
+        cancel()
+        onSearch()
+      }).catch((err: Error) => {
+        message.error('出错了！')
+      })
+    } else if ([2, 3].includes(state.rolesLevel)) { // 需审核 
+      api.createIndividualLine(params).then((res: any) => {
+        message.success('创建线路成功！请耐心等待审核结果')
+        cancel()
+        onAuditSearch()
+      }).catch((err: Error) => {
+        message.error('出错了！')
+      })
+    }
+  } else { // 编辑
+    if (state.rolesLevel === 1) { // 无需审核
+      api.editIndividualLineAdmin(params).then((res: any) => {
+        message.success('编辑线路成功！')
+        cancel()
+        onSearch()
+      }).catch((err: Error) => {
+        message.error('出错了！')
+      })
+    } else if ([2, 3].includes(state.rolesLevel)) { // 需审核 
+      api.editIndividualLine(params).then((res: any) => {
+        message.success('修改线路成功！请耐心等待审核结果')
+        cancel()
+        onSearch()
+        onAuditSearch()
+      }).catch((err: Error) => {
+        message.error('出错了！')
+      })
+    }
+  }
+}
+const cancel = () => {
+  lineRef.value.resetFields()
+  form.suitableRangeTravelId = undefined
+  form.suitableRangeStoreId = undefined
+  form.suitableRange = undefined
+  state.modalVisible = false
+}
+interface addInterface {
+  row?: any
+  handle: 'update' | 'add'
+}
+const addOrUpdate = ({ row, handle }: addInterface) => {
+  modalVisible.value = true
+  if (handle === 'add') {
+    state.title = '创建散客拼团线路'
+    state.isAdd = true
+  } else if (handle === 'update') {
+    state.title = '编辑散客拼团线路'
+    state.isAdd = false
+    getEditDetails(row.oid)
+  }
+}
+const getEditDetails = async (oid: number) => {
+  const res = await api.findIndividualLineById(oid)
+  if (res) {
+    const {
+      oid,
+      lineName,
+      lineDescribe,
+      suitableRange,
+      suitableRangeTravelId,
+      suitableRangeStoreId,
+      individualLineCateringBos,
+      individualLineHotelBos,
+      individualLineTicketBos,
+      individualLinePriceBos
+    } = res
+    form.CATERINGSelected = individualLineCateringBos?.map((item: any) => {
+      return item.cateringCompanyId
+    })
+    form.HOTELSelected = individualLineHotelBos?.map((item: any) => {
+      return item.hotelCompanyId
+    })
+    form.TICKETSelected = individualLineTicketBos?.map((item: any) => {
+      return item.ticketCompanyId
+    })
+    individualLinePriceBos?.forEach((item: any) => {
+      form[item.priceTypeCode] = item.priceAmount
+    })
+    form.oid = oid
+    form.lineName = lineName
+    form.lineDescribe = lineDescribe
+    form.suitableRange = suitableRange
+    form.suitableRangeTravelId = suitableRangeTravelId
+    form.suitableRangeStoreId = suitableRangeStoreId
+  }
+}
+const auditStore = async (record: any) => {
+  failForm.uuid = record.uuid
+  failForm.roleId = record.roleId
+  failForm.businessType = record.auditBusinessType
+  if (record.auditStatus === 0) {
+    failForm.auditTypeCode = 21 // 21:创建线路,22:修改线路信息
+    isRegiste.value = true
+    state.auditVisible = true
+    detailsForm.value = await getDetails(record.oid)
+  } else if (record.auditStatus === 1 && record.informationAuditStatus === 1) {
+    failForm.auditTypeCode = 22 // 21:创建线路,22:修改线路信息
+    isRegiste.value = false
+    state.changeVisible = true
+    detailsForm.value.updateTime = record.updateTime
+    detailsForm.value.creatorName = record.creatorName
+    getChangeInfo(record.oid)
+  }
+}
+const setValue = (res: any) => {
+  if (res.individualLineCateringBos) {
+    let strArr = ''
+    res.individualLineCateringBos.forEach((item: any, index: number) => {
+      strArr += `${item.cateringCompanyName}${(res.individualLineCateringBos.length - 1) === index ? '' : '、'}`
+    })
+    res.cateringCompanysName = strArr
+  } else {
+    res.cateringCompanysName = '无'
+  }
+  if (res.individualLineHotelBos) {
+    let strArr = ''
+    res.individualLineHotelBos.forEach((item: any, index: number) => {
+      strArr += `${item.hotelCompanyName}${(res.individualLineHotelBos.length - 1) === index ? '' : '、'}`
+    })
+    res.hotelCompanysName = strArr
+  } else {
+    res.hotelCompanysName = '无'
+  }
+  if (res.individualLineTicketBos) {
+    let strArr = ''
+    res.individualLineTicketBos.forEach((item: any, index: number) => {
+      strArr += `${item.ticketCompanyName}${(res.individualLineTicketBos.length - 1) === index ? '' : '、'}`
+    })
+    res.ticketCompanysName = strArr
+  } else {
+    res.ticketCompanysName = '无'
+  }
+  if (res.individualLinePriceBos) {
+    let strArr = ''
+    res.individualLinePriceBos.forEach((item: any, index: number) => {
+      strArr += `${item.priceTypeName}价：${item.priceAmount}元${(res.individualLinePriceBos.length - 1) === index ? '' : '、'}`
+    })
+    res.priceTypesName = strArr
+  } else {
+    res.priceTypesName = '无'
+  }
+}
+const getChangeInfo = async (oid: string | number) => {
+  const res = await api.auditIndividualLineInformationContrast(oid)
+  const newList = res?.new
+  const oldList = res?.old
+  const keyList = [
+    'lineName',
+    'lineDescribe',
+    'enableSatusName',
+    'cateringCompanysName',
+    'hotelCompanysName',
+    'priceTypesName',
+    'ticketCompanysName'
+  ]
+  setValue(newList)
+  setValue(oldList)
+  keyList.forEach((key: string) => {
+    if (newList[key] != oldList[key]) {
+      newArrList.value[key] = newList[key]
+      oldArrList.value[key] = oldList[key]
+      changeKeys.value.push(key)
+    }
+  })
+}
+const addDomain = (domainsList: Domain[]) => {
+  domainsList.push({
+    value: undefined,
+    business: undefined,
+    key: Date.now(),
+  });
+};
+const addSight = (sightsList: Sights[]) => {
+  sightsList.push({
+    price: undefined,
+    id: undefined,
+    key: Date.now(),
+  });
+};
+const getUserInfo = () => {
+  let userInfo: any = window.localStorage.getItem('userInfo');
+  userInfo = JSON.parse(userInfo);
+  const { oid, sysCompany, sysRoles } = userInfo
+  state.userID = oid
+  form.companyId = sysCompany.oid
+  const roleCode = sysRoles.map((item: any) => {
+    // 文旅局超管、一卡通超管、旅行社超管、中心操作员、门店操作员
+    if (['CULTURE_BUREAU_SUPER_ADMIN', 'PLATFORM_SUPER_ADMIN', 'TRAVEL_SUPER_ADMIN', 'CENTER_OPERATOR', 'OUTLET_OPERATOR'].includes(item.roleCode)) {
+      return item.roleCode
+    }
+  })
+  if (roleCode.includes('CULTURE_BUREAU_SUPER_ADMIN') || roleCode.includes('PLATFORM_SUPER_ADMIN')) {
+    // 文旅局超管、一卡通超管
+    state.rolesLevel = 1
+  } else if (roleCode.includes('TRAVEL_SUPER_ADMIN') || roleCode.includes('CENTER_OPERATOR')) {
+    // 旅行社超管、中心操作员
+    state.rolesLevel = 2
+    state.tableData.param.permissionCode = 1
+    state.tableData1.param.permissionCode = 1
+  } else if (roleCode.includes('OUTLET_OPERATOR')) {
+    // 门店操作员
+    state.rolesLevel = 3
+    state.tableData.param.permissionCode = 2
+    state.tableData1.param.permissionCode = 2
+  }
+}
+const getYKJ = async () => {
+  let res = await api.dropDownQueryListChildByCodeValue('INDIVIDUAL_LINE_PRICE_CODE')
+  if (res) {
+    state.YKJList = res
+  }
+}
+const getOptions = async () => {
+  const resTRAVEL = await api.getCompanyByBusinessType('TRAVEL')
+  const resTICKET = await api.getCompanyByBusinessType('TICKET')
+  const resCATERING = await api.getCompanyByBusinessType('CATERING')
+  const resHOTEL = await api.getCompanyByBusinessType('HOTEL')
+  state.TICKETOptions = resTICKET
+  state.CATERINGOptions = resCATERING
+  state.HOTELOptions = resHOTEL
+  state.TRAVELOptions = resTRAVEL
+}
+const getStoreList = async () => {
+  if (form.suitableRangeTravelId && form.suitableRange === 3) {
+    const res = await api.individualStoreListByCompanyId(form.suitableRangeTravelId)
+    state.storeOptions = res?.map((item: { oid: string | number, storeName: string }) => {
+      return {
+        oid: item.oid,
+        name: item.storeName
+      }
+    })
+  } else {
+    state.storeOptions = []
+  }
+}
+/* const setOption = () => {
   sceneOption1.value.forEach(element => {
     element.disabled = false
   });
@@ -632,165 +1298,7 @@ const sceneDeselect = (val: number | string | undefined, options: any[]) => {
       break
     }
   }
-}
-
-const columns = [
-  {
-    title: '序号',
-    dataIndex: 'index',
-    key: 'index',
-  },
-  {
-    title: '线路名称',
-    dataIndex: 'lineName',
-    key: 'lineName',
-  },
-  {
-    title: '一口价',
-    dataIndex: 'priceTypeName',
-    key: 'priceTypeName',
-  },
-  {
-    title: '包含景区',
-    dataIndex: 'ticketCompanyName',
-    key: 'ticketCompanyName',
-  },
-  {
-    title: '包含酒店',
-    dataIndex: 'hotelCompanyName',
-    key: 'hotelCompanyName',
-  },
-  {
-    title: '创建人',
-    dataIndex: 'creatorName',
-    key: 'creatorName',
-  },
-  {
-    title: '适用范围',
-    dataIndex: 'suitableRangeName',
-    key: 'suitableRangeName',
-  },
-  {
-    title: '启用状态',
-    dataIndex: 'enableSatusName',
-    key: 'enableSatusName',
-  },
-  {
-    title: '审核结果',
-    dataIndex: 'auditStatusName',
-    key: 'auditStatusName',
-  },
-  {
-    title: '操作',
-    key: 'action',
-    fixed: 'right',
-    width: 208
-  },
-]
-const columns1 = [
-  {
-    title: '序号',
-    dataIndex: 'index',
-    key: 'index',
-  },
-  {
-    title: '线路名称',
-    dataIndex: 'lineName',
-    key: 'lineName',
-  },
-  {
-    title: '一口价',
-    dataIndex: 'priceTypeName',
-    key: 'priceTypeName',
-  },
-  {
-    title: '包含景区',
-    dataIndex: 'ticketCompanyName',
-    key: 'ticketCompanyName',
-  },
-  {
-    title: '包含酒店',
-    dataIndex: 'hotelCompanyName',
-    key: 'hotelCompanyName',
-  },
-  {
-    title: '创建人',
-    dataIndex: 'creatorName',
-    key: 'creatorName',
-  },
-  {
-    title: '适用范围',
-    dataIndex: 'suitableRangeName',
-    key: 'suitableRangeName',
-  },
-  {
-    title: '提交时间',
-    dataIndex: 'submitTime',
-    key: 'submitTime',
-  },
-  {
-    title: '审核类型',
-    dataIndex: 'auditType',
-    key: 'auditType',
-  },
-  {
-    title: '操作',
-    key: 'action',
-    fixed: 'right',
-    width: 208
-  },
-]
-const onHandleCurrentChange = (val: number) => {
-  state.tableData.param.pageNo = val;
-  onSearch();
-}
-const pageSideChange = (current: number, size: number) => {
-  state.tableData.param.pageSize = size;
-  onSearch();
-}
-const onHandleCurrentChange1 = (val: number) => {
-  state.tableData1.param.pageNo = val;
-  onAuditSearch();
-}
-const pageSideChange1 = (current: number, size: number) => {
-  state.tableData1.param.pageSize = size;
-  onAuditSearch();
-}
-const onSearch = () => { }
-const onAuditSearch = () => { }
-const onQuery = () => {
-  state.tableData.param.pageNo = 1;
-  onSearch()
-}
-const cancel = () => {
-  state.modalVisible = false
-}
-interface addInterface {
-  row?: any
-  handle: 'update' | 'add'
-}
-const addOrUpdate = ({ row, handle }: addInterface) => {
-  modalVisible.value = true
-  if (handle === 'add') {
-    state.title = '创建散客拼团线路'
-  } else if (handle === 'update') {
-    state.title = '编辑散客拼团线路'
-  }
-}
-const addDomain = (domainsList: Domain[]) => {
-  domainsList.push({
-    value: undefined,
-    business: undefined,
-    key: Date.now(),
-  });
-};
-const addSight = (sightsList: Sights[]) => {
-  sightsList.push({
-    price: undefined,
-    id: undefined,
-    key: Date.now(),
-  });
-};
+} 
 const removeDomain = (item: Domain, domainsList: Domain[], options: any[]) => {
   let index = domainsList.indexOf(item);
   if (index !== -1) {
@@ -805,34 +1313,21 @@ const removeSights = (item: Sights, domainsList: Sights[], options: any[]) => {
     domainsList.splice(index, 1);
   }
   sightsChange()
-};
-const getUserInfo = () => {
-  let userInfo: any = window.localStorage.getItem('userInfo');
-  userInfo = JSON.parse(userInfo);
-  const { sysCompany: { oid }, sysRoles } = userInfo
-  const roleCode = sysRoles.map((item: any) => {
-    // 文旅局超管、一卡通超管、旅行社超管、中心操作员、门店操作员
-    if (['CULTURE_BUREAU_SUPER_ADMIN', 'PLATFORM_SUPER_ADMIN', 'TRAVEL_SUPER_ADMIN', 'CENTER_OPERATOR', 'OUTLET_OPERATOR'].includes(item.roleCode)) {
-      return item.roleCode
-    }
-  })
-  if (roleCode.includes('CULTURE_BUREAU_SUPER_ADMIN') || roleCode.includes('PLATFORM_SUPER_ADMIN')) {
-    // 文旅局超管、一卡通超管
-    state.rolesLevel = 1
-  } else if (roleCode.includes('TRAVEL_SUPER_ADMIN') || roleCode.includes('CENTER_OPERATOR')) {
-    // 旅行社超管、中心操作员
-    state.rolesLevel = 2
-  } else if (roleCode.includes('OUTLET_OPERATOR')) {
-    // 门店操作员
-    state.rolesLevel = 3
-  }
-}
-onMounted(() => {
+};*/
+onMounted(async () => {
   getUserInfo()
+  await onSearch()
+  await onAuditSearch()
+  await getYKJ()
+  await getOptions()
 })
 </script>
 
 <style scoped lang="scss">
+:deep(.ant-tabs-tab + .ant-tabs-tab) {
+  margin: 0 0 0 60px;
+}
+
 .tabs_box {
   position: relative;
   padding: 20px;
