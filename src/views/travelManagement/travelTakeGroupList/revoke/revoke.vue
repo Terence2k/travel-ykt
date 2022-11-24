@@ -4,7 +4,7 @@
 		<a-button type="primary" @click="reRecokeAuditVisible = true">确认撤销</a-button>
 	</div>
 	<div class="table_box">
-		<p class="top-p">行程单ID:<span></span></p>
+		<p class="top-p">行程单ID:{{}}<span></span></p>
 		<table class="info_table" cellpadding="16px" border="1">
 			<tr class="row">
 				<td class="key">线路名称</td>
@@ -80,7 +80,7 @@
 		<p>是否确认撤销该行程？系统将先自动作废当前 行程单，之后您需要重新填报一条新行程单。 系统会自动记录新行程单与当前行程单的关联</p>
 		<template v-slot:footer>
 			<a-button @click="reRecokeAuditVisible = false">取消</a-button>
-			<a-button type="primary">继续</a-button>
+			<a-button @click="checkCurrentPower" type="primary">继续</a-button>
 		</template>
 	</BaseModal>
 </template>
@@ -92,6 +92,8 @@ import { message } from 'ant-design-vue';
 import { Modal } from 'ant-design-vue';
 import api from '@/api/index';
 import { AuditStaus } from '@/enum';
+
+const route = useRouter();
 const state = reactive({
 	total: 0,
 	params: {
@@ -427,6 +429,30 @@ const enclosure = [
 	},
 ];
 const reRecokeAuditVisible = ref(false);
+
+const checkCurrentPower = () => {};
+
+const checkPower = async () => {
+	let pW = new FormData();
+
+	pW.append('itineraryId', route.currentRoute.value?.query?.id);
+
+	await api.travelManagement.repealNreapplyPage(pW);
+
+	return true;
+};
+
+const initPage = async () => {
+	let valid = await checkPower();
+
+	if (valid) {
+		console.log('THROUGHT');
+	}
+};
+
+onMounted(() => {
+	initPage();
+});
 </script>
 <style scoped lang="less">
 .table_box {
