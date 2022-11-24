@@ -142,7 +142,7 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 import { message } from 'ant-design-vue/es';
 import { Rule } from 'ant-design-vue/es/form';
 import dayjs, { Dayjs } from 'dayjs';
-import { disabledRangeTime, selectSpecialDateRange } from '@/utils';
+import { disabledRangeTime, range, selectSpecialDateRange } from '@/utils';
 import { Modal } from 'ant-design-vue';
 import { createVNode } from 'vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
@@ -165,12 +165,18 @@ const formRef = ref();
 const disCheckInTime = computed(() => {
 	const isCurrent = dayjs(travelStore.baseInfo.startDate).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD')
 	const start = dayjs().isBefore(dayjs(travelStore.baseInfo.startDate))
-	const disTime = (start || isCurrent) ? travelStore.setStarEndHMS.start : {
+	const disTime: any = (start || isCurrent) ? travelStore.setStarEndHMS.start : {
 		hour: 0,
 		min: 0,
 		second: 0
 	}
-	return disabledRangeTime(disTime, disTime);
+	return () => {
+		return {
+			disabledHours: () => range(0, 24).splice(0, disTime.hour),
+			disabledMinutes: () => range(0, 60).splice(0, disTime.min),
+			disabledSeconds: () => range(0, 60).splice(0, disTime.second)
+		}
+	};
 })
 const disLeaveTime = computed(() => {
 	return disabledRangeTime(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end);
