@@ -373,6 +373,7 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
+	//查询是否有变更驳回的行程详情（行程单id）
 	getProductChangeAuditDetail(itineraryId: any) {
 		return request({
 			url: `${commonPath}/travel-agency-service/public/api/itinerary/change/getNoPassItineraryProductChange/${itineraryId}`,
@@ -389,13 +390,10 @@ export const travelManagement = {
 			data,
 		});
 	},
-	// 审核变更详情
+	// 预定产品审核变更详情
 	getItineraryChangeProductHistory(id: any) {
 		return request({
 			url: `${commonPath}/travel-agency-service/public/api/itinerary/change/getItineraryChangeProductHistory/${id}`,
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded',
-			},
 			method: 'get',
 			showLoading: false,
 		});

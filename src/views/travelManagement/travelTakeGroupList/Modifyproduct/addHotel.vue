@@ -143,6 +143,8 @@ import { Rule } from 'ant-design-vue/es/form';
 import dayjs, { Dayjs } from 'dayjs';
 import { selectSpecialDateRange } from '@/utils';
 import { Modal } from 'ant-design-vue';
+import { accDiv,accMul} from '@/utils/compute';
+
 import { createVNode } from 'vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { validateRules, validateFields, generateGuid } from '@/utils';
@@ -155,6 +157,7 @@ const roomList = {
 	unitPrice: 0, //房型单价
 	roomCount: '', //订房数量
 	roomTypeName: '', //房型名称
+	orderAmount:0
 };
 const travelStore = useTravelStore();
 const formRef = ref();
@@ -194,10 +197,12 @@ let formState = reactive<{ [k: string]: any }>({
 	honestyGuidePrice: '',
 });
 let contrastdata = reactive({} as any);
-const honestyGuidePrice = computed(() => formState.honestyGuidePrice / 100);
+const honestyGuidePrice = computed(() => accDiv(formState.honestyGuidePrice,100));
 
 const addRoom = () => {
-	formState.roomTypeList.push({ ...roomList });
+	const room = cloneDeep(roomList)
+	room.orderAmount = honestyGuidePrice.value;
+	formState.roomTypeList.push({ ...room });
 };
 const delRoom = (index: number) => {
 	formState.roomTypeList.splice(index, 1);
@@ -285,7 +290,11 @@ const submit = async () => {
 	try {
 		let traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 		console.log('formState.roomTypeList:',formState.roomTypeList);
-		
+		formState.roomTypeList = formState.roomTypeList.map((it: any) => {
+			it.unitPrice = it.unitPrice * 100;
+			it.orderAmount = it.orderAmount * 100
+			return it
+		})
 		formState.scheduledNumber = formState.roomTypeList.map((it: any) => Number(it.checkInNumber)).reduce((prev: any, current: any) => prev + current);
 		formState.scheduledRooms = formState.roomTypeList.map((it: any) => Number(it.roomCount)).reduce((prev: any, current: any) => prev + current);
 		formState.tripNumber = travelStore.touristList.length;
@@ -356,15 +365,13 @@ watch(
 );
 watch(dialogVisible, (newVal) => {
 	if (newVal) {
-		const data = props.productRow;
+		const data = cloneDeep(props.productRow);
 		for (let k in data) {
 			formState[k] = data[k];
 		}
 		if (props.productRow) {
 			contrastdata = props.productRow;
 		}
-		console.log('data:',data);
-		
 		formState.arrivalDate = data.startDate;
 		formState.departureDate = data.endDate;
 		console.log(data.hotelStarId);
@@ -372,18 +379,16 @@ watch(dialogVisible, (newVal) => {
 			let price = hotelData.hotelStart.filter((it: any) => it.oid == data.hotelStarId)[0].price;
 			handleChange(data.hotelStarId, { name: data.hotelStar, price: price });
 		}
-		formState.roomTypeList = formState.roomTypeList.map((it: any) => {
-			console.log('it',it);
-			
+			formState.roomTypeList = formState?.roomTypeList.map((it: any) => {
 			it.roomCount = it.roomCount;
 			it.roomTypeLimitPeople = it.limitPeople;
 			it.roomTypeName = it.roomTypeName
 			it.hotelRoomTypeId = it.roomTypeId;
-			it.orderAmount = it.unitPrice;
+			it.unitPrice = it.unitPrice/100;
 			return it;
 		});
+		formState.orderFee = accDiv(data.orderFee,100) || '无需填写，提交审核后自动计算'
 		formState.roomCount = data.roomCount
-		console.log('formState.roomTypeList',formState.roomTypeList);
 		formState.hotelId = props.productRow.hotelId;
 		// formState.hotelRoomTypeId = props.productRow.hotelRoomTypeId;
 		formState.hotelName = props.productRow.hotelName;
@@ -394,16 +399,14 @@ watch(dialogVisible, (newVal) => {
 		// 	});
 		
 	}else{
-		
-		// formRef.value.resetFields();
-		for (let k in formState) {
+ 		for (let k in formState) {
 			if (k === 'roomTypeList') {
 				formState[k] = [{ ...roomList }];
 			} else {
 				formState[k] = '';
 			}
 		}
-		console.log(123123132);
+		// formState.orderFee = accMul(formState.orderFee,100) || '无需填写，提交审核后自动计算'
 	}
 	emits('update:modelValue', newVal);
 });

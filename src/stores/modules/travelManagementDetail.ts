@@ -49,40 +49,40 @@ export const useTravelStore = defineStore({
 			return (current && current < dayjs().subtract(1, 'day')) || current > dayjs().startOf('day');
 		},
 		baseInfo: [] as any,
-		guideList:[],
-		trafficList:[],
+		guideList: [],
+		trafficList: [],
 		touristList: [],
 		teamTime: [] as any,
 		IDCard: [],
-		specialId:[],
+		specialId: [],
 		trafficType: [],
 		trafficColor: [],
-		hotelList:[],
-		ticketsList:[],
-		auditticket:[] as any,
-	attachmentList: [
-		{
-			attachmentName: '',
-			attachmentTypeName: '旅行合同上传：',
-			attachmentType: 1,
-			attachmentUrl: '',
-			oid: null
-		},
-		{
-			attachmentName: '',
-			attachmentTypeName: '委托接待协议上传：',
-			attachmentType: 2,
-			attachmentUrl: '',
-			oid: null
-		},
-		{
-			attachmentName: '',
-			attachmentTypeName: '包车合同上传：',
-			attachmentType: 3,
-			attachmentUrl: '',
-			oid: null
-		}
-	],
+		hotelList: [],
+		ticketsList: [],
+		auditticket: [] as any,
+		attachmentList: [
+			{
+				attachmentName: '',
+				attachmentTypeName: '旅行合同上传：',
+				attachmentType: 1,
+				attachmentUrl: '',
+				oid: null,
+			},
+			{
+				attachmentName: '',
+				attachmentTypeName: '委托接待协议上传：',
+				attachmentType: 2,
+				attachmentUrl: '',
+				oid: null,
+			},
+			{
+				attachmentName: '',
+				attachmentTypeName: '包车合同上传：',
+				attachmentType: 3,
+				attachmentUrl: '',
+				oid: null,
+			},
+		],
 	}),
 	getters: {},
 	actions: {
@@ -107,7 +107,7 @@ export const useTravelStore = defineStore({
 		setBaseInfo(data: any) {
 			this.baseInfo = data;
 		},
-		setauditticket(data: any) {	
+		setauditticket(data: any) {
 			this.auditticket = data;
 		},
 		setGuideList(list: any) {
@@ -123,25 +123,26 @@ export const useTravelStore = defineStore({
 			}
 			if (data.oid) {
 				return Object.assign(this.hotelList.filter((item: any) => data.oid == item.oid)[0], data);
+			}
+			if (data.changeId) {
+				return Object.assign(this.hotelList.filter((item: any) => data.changeId == item.changeId)[0], data);
 			} else {
 				data.oid = oid;
 				let newData = [...this.hotelList, data];
-				console.log('newData',newData);
+				console.log('newData', newData);
 				this.hotelList = newData as any;
 			}
 		},
 		setTicket(data: any, oid: string, key: string) {
 			if (key) {
-
-				return Object.assign(this.ticketsList.filter((item: any) => key == item.key)[0], data);				 
+				return Object.assign(this.ticketsList.filter((item: any) => key == item.key)[0], data);
 			}
 			if (data.oid) {
-				console.log(this.ticketsList);
-				
 				Object.assign(this.ticketsList.filter((item: any) => data.oid == item.oid)[0], data);
+			}
+			if (data.changeId) {
+				return Object.assign(this.ticketsList.filter((item: any) => data.changeId == item.changeId)[0], data);
 			} else {
-				console.log(3);
-				
 				data.oid = oid;
 				let newData = [...this.ticketsList, data];
 				this.ticketsList = newData as any;
