@@ -5,7 +5,7 @@ export async function getBasicInfo(data: any) {
 		url: `${commonPath}/heritage-maintenance-service/public/api/hm-basic-info/get`,
 		method: 'get',
 		data,
-		showLoading: false
+		showLoading: false,
 	});
 }
 //查询基本信息编辑
@@ -163,7 +163,7 @@ export async function exportGouvyOrder(data: any) {
 		url: `${commonPath}/heritage-maintenance-service/public/api/hm-order/export`,
 		method: 'post',
 		data,
-    	responseType: 'blob',
+		responseType: 'blob',
 		showLoading: false,
 	});
 }
@@ -187,5 +187,15 @@ export async function issue(id: number) {
 		},
 		method: 'get',
 		showLoading: false,
+	});
+}
+
+//古维订单出票
+export async function gouvyRepealNreapplyPageList(data: any) {
+	return request({
+		url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/getItineraryRevokeAuditList`,
+		method: 'post',
+		showLoading: false,
+		data,
 	});
 }

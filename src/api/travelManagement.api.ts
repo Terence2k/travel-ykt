@@ -416,4 +416,29 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
+
+	//撤销重提
+	repealNreapplyPage(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/checkRevokeCondition`,
+			data,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			method: 'put',
+			showLoading: false,
+		});
+	},
+	//撤销重提
+	repealNreapplyPagePower(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/checkTouristChangeRate`,
+			data,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			method: 'put',
+			showLoading: false,
+		});
+	},
 };

@@ -1,23 +1,23 @@
 <template>
-	<BaseModal :modelValue="modelValue" title="行程单重提审核" @cancel="cancel" width="1000px">
+	<BaseModal :modelValue="modelValue" title="行程单整团撤销审核" @cancel="cancel" width="1000px">
 		<FormWrap>
+			<FormItem title="团队类型" :iValue="state.detail.teamTypeName" />
 			<FormItem title="线路名称" :iValue="state.detail.teamTypeName" />
 			<FormItem title="行程单编号" :iValue="state.detail.itineraryNo" />
-			<FormItem title="线路名称" :iValue="state.detail.routeName" />
 			<FormItem title="地接社" :iValue="state.detail.travelName" />
-			<FormItem title="地接社计调" :iValue="'' + state.detail.travelOperatorName + state.detail.travelOperatorPhone" />
 			<FormItem title="出散团时间" :iValue="state.detail.travelName" />
 			<FormItem title="团客人数" :iValue="state.detail.travelName" />
-			<FormItem title="古维减免人数" :iValue="state.detail.travelName" />
-			<FormItem title="重提后变更人数" :iValue="state.detail.travelName" />
-			<FormItem title="重提后变更人数" :iValue="state.detail.travelName" />
+			<FormItem title="古维管理费" :iValue="state.detail.travelName" />
+			<FormItem title="综费产品" :iValue="state.detail.travelName" />
+			<FormItem title="酒店预订" :iValue="state.detail.travelName" />
+			<FormItem title="景区预定" :iValue="state.detail.travelName" />
 			<FormItem title="撤销原因" :iValue="state.detail.travelName" />
 			<FormItem title="附件" :iValue="state.detail.travelName" />
 		</FormWrap>
-
 		<template v-slot:footer>
 			<div class="footer-wrap">
-				<a-button @click="cancel">关闭</a-button>
+				<a-button @click="sendAudit(3)">驳回</a-button>
+				<a-button type="primary" @click="sendAudit(2)">同意撤销</a-button>
 			</div>
 		</template>
 	</BaseModal>

@@ -303,8 +303,8 @@ export const disabledRangeTime = (start: any, end: any) => {
 		}
 		return {
 			disabledHours: () => range(0, 24).splice(end.hour + 1, 24 - end.hour),
-			disabledMinutes: () => range(0, 60).splice(end.hour + 1, 24 - end.min),
-			disabledSeconds: () => range(0, 60).splice(end.hour + 1, 24 - end.second),
+			disabledMinutes: () => range(0, 60).splice(end.min + 1, 60 - end.min),
+			disabledSeconds: () => range(0, 60).splice(end.second + 1, 60 - end.second),
 		};
 	}
 };

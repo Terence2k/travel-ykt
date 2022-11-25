@@ -4,9 +4,14 @@
 		<template #button>
 		</template>
 		<template #bodyCell="{ column, text, index, record }">
+      <template v-if="column.key === 'itineraryNo'">
+        <div>
+          <a @click="goToDetail(record)">{{text}}</a>
+        </div>
+      </template>
 			<template v-if="column.key === 'index'">
 				<div>
-						{{(state.params.pageNo - 1) * (state.params.pageSize) + (index + 1)}}
+						{{(travelStore.takeGroupList.waitingGroup.params.pageNo - 1) * (travelStore.takeGroupList.waitingGroup.params.pageSize) + (index + 1)}}
 				</div>
 		</template>
 
@@ -42,6 +47,7 @@
 
 
 	const travelStore = useTravelStore();
+	const router = useRouter()
 	const state = reactive({
 		total: computed(() => travelStore.takeGroupList.waitingGroup.total),
 		params: {
@@ -115,11 +121,18 @@
       message.success('已拒绝接团');
     })
   }
-	const onHandleCurrentChange = () => {
-
-	}
+	const onHandleCurrentChange = (e: any) => {
+		travelStore.takeGroupList.waitingGroup.params.pageNo = e
+		onSearch()
+  };
 	const pageSideChange = () => {
 
+	}
+	const goToDetail = (row: any) => {
+		router.push({
+      path: '/travel/travel_manage/travel_detail',
+      query: { oid: encodeURIComponent(row.oid) }
+    });
 	}
   const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
     console.log(record, selected, selectedRows);

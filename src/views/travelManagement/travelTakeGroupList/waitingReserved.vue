@@ -3,9 +3,14 @@
 		<CommonTable :row-selection="{ onSelect }" :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
 			<template #button> </template>
 			<template #bodyCell="{ column, text, index, record }">
+        <template v-if="column.key === 'itineraryNo'">
+          <div>
+            <a @click="goToDetail(record)">{{text}}</a>
+          </div>
+        </template>
 				<template v-if="column.key === 'index'">
 					<div>
-						{{ (state.params.pageNo - 1) * state.params.pageSize + (index + 1) }}
+						{{ (travelStore.takeGroupList.waitingReserved.params.pageNo - 1) * travelStore.takeGroupList.waitingReserved.params.pageSize + (index + 1) }}
 					</div>
 				</template>
 
@@ -126,7 +131,10 @@ const onSearch = async () => {
 	const res = await travelStore.getTravelList(travelStore.takeGroupList.waitingReserved.params);
 	travelStore.setTakeGroupList(res, 'waitingReserved');
 };
-const onHandleCurrentChange = () => {};
+const onHandleCurrentChange = (e: any) => {
+		travelStore.takeGroupList.waitingReserved.params.pageNo = e
+		onSearch()
+};
 const pageSideChange = () => {};
 const goToPath = (row: any) => {
 	router.push({
@@ -165,6 +173,12 @@ const changeMission = () => {
 		},
 	});
 };
+const goToDetail = (row: any) => {
+  router.push({
+    path: '/travel/travel_manage/travel_detail',
+    query: { oid: encodeURIComponent(row.oid) }
+  });
+}
 const goToChange = (row: any) => {
 	(state.id = row.oid), (state.itineraryNo = row.itineraryNo);
 	api.travelManagement.checkVerifyByItineraryId(row.itineraryNo).then((res) => {

@@ -229,9 +229,18 @@ const submit = () => {
 		message.error('请选择减免规则');
 		return false;
 	}
+	let specialCertificateType=state.tableData.submitList.some((item, index) => {
+		return item.discountRuleId == 1;
+	});
+	if(specialCertificateType)
+	{
+		message.error('请上传特殊照片');
+		return false;
+	}
 	api.applyReduction(data).then((res) => {
 		message.success('提交成功');
 		dialogVisible.value = false;
+		travelStore.getManagementExpenses(props.routeId)
 	});
 };
 const ruleChange = (value: any, { item }: any, key: any) => {
@@ -277,6 +286,7 @@ const goTicketing = () => {
 		ticketingvalue.value = false;
 		dialogVisible.value = false;
 		message.success('出票成功');
+		travelStore.getManagementExpenses(props.routeId)
 	}).catch((err: any) => {
 			console.error(err);
 		});;

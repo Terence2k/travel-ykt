@@ -8,7 +8,7 @@
 				</div>
 			</div>
 			<div class="header-total">
-				<span>费用合计：288.88元</span>
+				<span>费用合计：</span>
 			</div>
 		</div>
 		<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }" bordered>
@@ -28,7 +28,33 @@
 import api from '@/api';
 import Modal from '@/components/common/DelModal.vue';
 import CommonTable from '@/components/common/CommonTable.vue';
-const state = reactive({
+interface StateType {
+	tableData: TableDataType;
+	modalShow: boolean;
+	modalParams: ModalParamsType;
+}
+interface TableDataType {
+	data: Array<DataType>;
+	total: number;
+	loading: boolean;
+	param: ParamType;
+}
+interface DataType {
+	name: string;
+}
+interface ParamType {
+	teamTypeId?: null | number; //团队类型id(对应ljykt_travel_agency数据库sys_team_type表oid)
+	productType?: null | number; //产品类型 1-景区 2-酒店 3-餐饮 6开始为综费产品id
+	costName?: string; //费用名称
+	ruleStatus?: null | number; //规则状态 1-启用 0-禁用
+	pageNo?: number; //页号
+	pageSize?: number; //页大小
+}
+interface ModalParamsType {
+	title: string;
+	content: string;
+}
+const state = reactive<StateType>({
 	tableData: {
 		data: [],
 		total: 400,
