@@ -79,153 +79,13 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import { settlementOptions } from '@/stores/modules/settlement';
 import type { TableColumnsType } from 'ant-design-vue';
 import api from '@/api';
-import { log } from 'console';
-interface StateType {
-	tableData: TableDataType;
-	viewList: Array<any>;
-}
-interface TableDataType {
-	param: ParamType;
-	data: Array<DataType>;
-	total: number;
-	loading: boolean;
-	settlementStartTimeList: Array<any>;
-}
-interface ParamType {
-	itineraryNo?: number | string; //行程单号
-	travelTypeId?: number | string | null; //团队类型id
-	travelId?: number | string | null; //组团社id
-	subTravelId?: number | string | null; //地接社id
-	settlementStartTime: number | string | null; //结算开始时间
-	settlementEndTime: number | string | null; //结算结束时间
-	pageSize?: number; //页大小
-	pageNo?: number; //页号
-}
-interface DataType {
-	travelId?: number; //组团社id
-	travelName?: string; //组团社名称
-	subTravelId?: number; //地接社id
-	subTravelName?: string; //地接社名称
-	travelTypeId?: number; //团队类型id
-	travelTypeName?: string; //团队类型名称
-	peopleNum?: number; //人数
-	frozenPrice?: string; //团款
-	settlementPrice?: string; //核销总费用
-	unSettlementPrice?: string; //未消费费用
-	hmFrozenPrice?: string; //古维冻结
-	hotelFrozenPrice?: string; //酒店冻结
-	ticketFrozenPrice?: string; //景区冻结
-	cateringFrozenPrice?: string; //餐饮冻结
-	subTravelVo?: subTravelVoType; //地接社
-	unSettlementPriceVo?: unSettlementPriceVoType; //未消费款项
-	comprehensiveGuideVoList?: Array<comprehensiveGuideVoListType>; //综费产品-导服费
-	comprehensiveVoList?: Array<comprehensiveVoListType>; //综费产品-除导服费外
-}
-// 综费产品-导服费
-interface comprehensiveGuideVoListType {
-	comprehensiveFeeProductId: number; //综费产品id
-	comprehensiveFeeProductName: string; //综费产品名称
-	travelActualPrice: string; //旅行社实收
-	groupActualPrice: string; //集团实收
-	frozenPrice: string; // 冻结金额
-	ruleList: Array<ruleListType>;
-}
-interface subTravelVoType {
-	actualPrice: string; //实收
-	ruleList: Array<ruleListType>;
-	unSettlementPrice: string;
-}
-interface unSettlementPriceVoType {
-	hotelPrice: string; //酒店
-	ticketPrice: string; //景点
-	cateringPrice: string; //餐饮
-	hmPrice: string; //古维
-	rulePrice: string; //手续费
-	allPrice: string; //小计
-}
-// 综费产品-除导服费外
-interface comprehensiveVoListType {
-	comprehensiveFeeProductId: number; //综费产品id
-	comprehensiveFeeProductName: string; //综费产品名称
-	belongCompany: string; //费用归属  取字典父级code_value=BUSINESS_TYPE的所有子级
-	actualPrice: string; //实收
-	frozenPrice: string; // 冻结金额
-	ruleList: Array<ruleListType>;
-}
-interface ruleListType {
-	ruleName: string; //规则名称
-	rulePrice: string; //结算费用
-}
+import { StateType, DataType, notConsumed, subTravel, fixedColumn, getRulePrice, getActualPrice, getSubTravelVoUnSettlementPrice, getSettlementRule, getSettlementRuleGuide } from './index';
+
 const options = settlementOptions();
 const columns = computed(() => {
-	const column = ref<TableColumnsType>([
-		{
-			title: '组团社',
-			dataIndex: 'travelName',
-			key: 'travelName',
-			width: 100,
-		},
-		{
-			title: '地接社',
-			dataIndex: 'subTravelName',
-			key: 'subTravelName',
-			width: 100,
-		},
-		{
-			title: '团队类型',
-			dataIndex: 'travelTypeName',
-			key: 'travelTypeName',
-			width: 100,
-		},
-		{
-			title: '人数',
-			dataIndex: 'peopleNum',
-			key: 'peopleNum',
-			width: 80,
-		},
-		{
-			title: '团款',
-			dataIndex: 'frozenPrice',
-			key: 'frozenPrice',
-			width: 100,
-		},
-		{
-			title: '核销总费用',
-			dataIndex: 'settlementPrice',
-			key: 'settlementPrice',
-			width: 100,
-		},
-		{
-			title: '未核销总费用',
-			dataIndex: 'unSettlementPrice',
-			key: 'unSettlementPrice',
-			width: 100,
-		},
-		{
-			title: '古维费冻结',
-			dataIndex: 'hmFrozenPrice',
-			key: 'hmFrozenPrice',
-			width: 100,
-		},
-		{
-			title: '酒店冻结',
-			dataIndex: 'hotelFrozenPrice',
-			key: 'hotelFrozenPrice',
-			width: 100,
-		},
-		{
-			title: '景点冻结',
-			dataIndex: 'ticketFrozenPrice',
-			key: 'ticketFrozenPrice',
-			width: 100,
-		},
-		{
-			title: '餐费冻结',
-			dataIndex: 'cateringFrozenPrice',
-			key: 'cateringFrozenPrice',
-			width: 100,
-		},
-	]);
+	const column = ref<TableColumnsType>([]);
+	column.value = fixedColumn;
+	const data: Array<DataType> = state.tableData.data;
 	// 拼接遍历综费冻结费用
 	let nameList: Array<string> = [];
 	if (state.tableData.data && state.tableData.data.length) {
@@ -274,7 +134,6 @@ const columns = computed(() => {
 			column.value.push(settlementRules);
 		}
 	}
-	const data = state.tableData.data;
 	/**
 	 * 先获取数据源，根据数据源的综费产品列表渲染到表头上
 	 * 再把数据进行整理 把数据源所有数据和表头一一对应存到 ruleMap
@@ -383,67 +242,9 @@ const columns = computed(() => {
 			}
 		}
 	}
-	const notConsumed = {
-		title: '未消费款项',
-		key: 'unSettlementPriceVo',
-		children: [
-			{
-				title: '小计',
-				dataIndex: 'allPrice',
-				key: 'unSettlementPriceVo',
-				width: 100,
-			},
-			{
-				title: '酒店',
-				dataIndex: 'hotelPrice',
-				key: 'unSettlementPriceVo',
-				width: 100,
-			},
-			{
-				title: '景点',
-				dataIndex: 'ticketPrice',
-				key: 'unSettlementPriceVo',
-				width: 100,
-			},
-			{
-				title: '餐费',
-				dataIndex: 'cateringPrice',
-				key: 'unSettlementPriceVo',
-				width: 100,
-			},
-			{
-				title: '古维',
-				dataIndex: 'hmPrice',
-				key: 'unSettlementPriceVo',
-				width: 100,
-			},
-			{
-				title: '手续费',
-				dataIndex: 'rulePrice',
-				key: 'unSettlementPriceVo',
-				width: 100,
-			},
-		],
-	};
+	// 插入未核销费用数据
 	column.value.push(notConsumed);
-	const subTravel = {
-		title: '地接社',
-		key: 'subTravelVo',
-		children: [
-			{
-				title: '未核销费用',
-				dataIndex: 'unSettlementPrice',
-				key: 'subTravelVo',
-				width: 100,
-			},
-			{
-				title: '实收',
-				dataIndex: 'actualPrice',
-				key: 'subTravelVo',
-				width: 100,
-			},
-		],
-	};
+	// 插入地接社数据
 	column.value.push(subTravel);
 	// 把所有带有结算规则的数据进行数据整理
 	for (let index = 0; index < data.length; index++) {
@@ -548,70 +349,7 @@ const timeChange = (arr: any) => {
 		state.tableData.param.settlementEndTime = null;
 	}
 };
-const getRulePrice = computed(() => (record: any, column: any) => {
-	const ruleColumnKey = column.parent.split('-')[0];
-	// 综费产品
-	if (ruleColumnKey.includes('List')) {
-		for (const key in record[ruleColumnKey]) {
-			if (column.columnParentName === record[ruleColumnKey][key]['comprehensiveFeeProductName']) {
-				for (const subKey in record[ruleColumnKey][key].ruleList) {
-					if (column.title === record[ruleColumnKey][key].ruleList[subKey].ruleName) {
-						return `${record[ruleColumnKey][key].ruleList[subKey].rulePrice}`;
-					}
-				}
-			}
-		}
-	}
-	// 除综费产品外
-	if (record[ruleColumnKey] && record[ruleColumnKey].ruleList && record[ruleColumnKey].ruleList.length) {
-		for (const key in record[ruleColumnKey].ruleList) {
-			if (column.title === record[ruleColumnKey].ruleList[key].ruleName) {
-				return `${record[ruleColumnKey].ruleList[key].rulePrice}`;
-			}
-		}
-	}
-	return `暂无数据`;
-});
-// 获取实收
-const getActualPrice = computed(() => (record: any, column: any) => {
-	// 先判断非综费产品
-	if (!column.key.includes('List')) {
-		return record[column.key] ? record[column.key]['actualPrice'] : '';
-	} else {
-		// 综费产品
-		if (record[column.key]) {
-			const idx = record[column.key].findIndex((r: any) => r.comprehensiveFeeProductName === column.parentTitle);
-			if (idx !== -1) {
-				return record[column.key][idx][column.dataIndex] || '';
-			}
-		}
-	}
-	return '';
-});
-//地接社未消费费用获取数据
-const getSubTravelVoUnSettlementPrice = computed(() => (record: any, column: any) => {
-	return record[column.key] ? record[column.key][column.dataIndex] : '';
-});
-// 综费名称--导服费外
-const getSettlementRule = computed(() => (column, record) => {
-	const data = column.comprehensiveVoList;
-	for (const key in data) {
-		if (record.title == `${data[key].comprehensiveFeeProductName}冻结`) {
-			return data[key].frozenPrice;
-		}
-	}
-	return '';
-});
-// 综费名称--导服费
-const getSettlementRuleGuide = computed(() => (column, record) => {
-	const data = column.comprehensiveGuideVoList;
-	for (const key in data) {
-		if (record.title == `${data[key].comprehensiveFeeProductName}冻结`) {
-			return data[key].frozenPrice;
-		}
-	}
-	return '';
-});
+
 </script>
 <style scoped lang="less">
 ::v-deep(.ant-table-thead > tr > th, .ant-table-tbody > tr > td, .ant-table tfoot > tr > th, .ant-table tfoot > tr > td) {

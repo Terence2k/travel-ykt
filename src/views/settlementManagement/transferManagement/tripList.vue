@@ -7,6 +7,10 @@
 		</div>
 		<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%' }" style="margin-top: 10px">
 			<template #bodyCell="{ column, record }">
+				<template v-if="column.dataIndex === 'ykt'"> {{ getYKT(record, column) }} </template>
+				<template v-if="column.dataIndex === 'bank'"> {{ getBank(record, column) }} </template>
+				<template v-if="column.key === 'ruleMap'"> {{ getRulePrice(record, column) }} </template>
+				<template v-if="column.dataIndex.includes('tualPrice')"> {{ getActualPrice(record, column) }} </template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a href="javascript:;" @click="lookTrip(record)">查看</a>
@@ -29,11 +33,11 @@
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 const columns = computed(() => {
-	const column = ref([
+	const column = [
 		{
-			title: '组团社',
-			dataIndex: 'travelName',
-			key: 'travelName',
+			title: '行程单号',
+			dataIndex: 'itineraryNo',
+			key: 'itineraryNo',
 			width: 100,
 		},
 		{
@@ -43,139 +47,19 @@ const columns = computed(() => {
 			width: 100,
 		},
 		{
-			title: '团队类型',
-			dataIndex: 'travelTypeName',
-			key: 'travelTypeName',
-			width: 100,
-		},
-		{
-			title: '人数',
-			dataIndex: 'peopleNum',
-			key: 'peopleNum',
-			width: 80,
-		},
-		{
-			title: '团款',
-			dataIndex: 'frozenPrice',
-			key: 'frozenPrice',
-			width: 100,
-		},
-		{
-			title: '核销总费用',
-			dataIndex: 'settlementPrice',
-			key: 'settlementPrice',
-			width: 100,
-		},
-		{
-			title: '未消费费用',
-			dataIndex: 'unSettlementPrice',
-			key: 'unSettlementPrice',
-			width: 100,
-		},
-		{
-			title: '古维费用',
-			key: 'hmVo',
-			children: [
-				{
-					title: '冻结金额',
-					dataIndex: 'frozenPrice',
-					key: 'hmVo',
-					width: 100,
-				},
-				{
-					title: '已核销金额',
-					dataIndex: 'settlementPrice',
-					key: 'hmVo',
-					width: 100,
-				},
-				{
-					title: '实收',
-					dataIndex: 'actualPrice',
-					key: 'hmVo',
-					width: 100,
-				},
-			],
-		},
-		{
-			title: '景区',
-			key: 'ticketVo',
-			children: [
-				{
-					title: '冻结金额',
-					dataIndex: 'frozenPrice',
-					key: 'ticketVo',
-					width: 100,
-				},
-				{
-					title: '已核销金额',
-					dataIndex: 'settlementPrice',
-					key: 'ticketVo',
-					width: 100,
-				},
-				{
-					title: '实收',
-					dataIndex: 'actualPrice',
-					key: 'ticketVo',
-					width: 100,
-				},
-			],
-		},
-		{
-			title: '酒店',
-			key: 'hotelVo',
-			children: [
-				{
-					title: '冻结金额',
-					dataIndex: 'frozenPrice',
-					key: 'hotelVo',
-					width: 100,
-				},
-				{
-					title: '已核销金额',
-					dataIndex: 'settlementPrice',
-					key: 'hotelVo',
-					width: 100,
-				},
-				{
-					title: '实收',
-					dataIndex: 'actualPrice',
-					key: 'hotelVo',
-					width: 100,
-				},
-			],
-		},
-		{
-			title: '餐饮',
-			key: 'cateringVo',
-			children: [
-				{
-					title: '冻结金额',
-					dataIndex: 'frozenPrice',
-					key: 'cateringVo',
-					width: 100,
-				},
-				{
-					title: '已核销金额',
-					dataIndex: 'settlementPrice',
-					key: 'cateringVo',
-					width: 100,
-				},
-				{
-					title: '实收',
-					dataIndex: 'actualPrice',
-					key: 'cateringVo',
-					width: 100,
-				},
-			],
-		},
-		{
-			title: '监理',
+			title: '监理公司',
 			key: 'superviseVo',
 			children: [
 				{
-					title: '实收',
-					dataIndex: 'actualPrice',
-					key: 'superviseVo',
+					title: '一卡通',
+					dataIndex: 'ytk',
+					key: 'ytk',
+					width: 100,
+				},
+				{
+					title: '银行',
+					dataIndex: 'bank',
+					key: 'bank',
 					width: 100,
 				},
 			],
@@ -185,224 +69,70 @@ const columns = computed(() => {
 			key: 'associationVo',
 			children: [
 				{
-					title: '实收',
-					dataIndex: 'actualPrice',
-					key: 'associationVo',
+					title: '一卡通',
+					dataIndex: 'ytk',
+					key: 'ytk',
+					width: 100,
+				},
+				{
+					title: '银行',
+					dataIndex: 'bank',
+					key: 'bank',
 					width: 100,
 				},
 			],
 		},
 		{
-			title: '集团',
-			key: 'groupVo',
+			title: '启明旅行社',
+			key: 'qmTravelAgencyVo',
 			children: [
 				{
-					title: '实收',
-					dataIndex: 'actualPrice',
-					key: 'groupVo',
+					title: '一卡通',
+					dataIndex: 'ytk',
+					key: 'ytk',
+					width: 100,
+				},
+				{
+					title: '银行',
+					dataIndex: 'bank',
+					key: 'bank',
 					width: 100,
 				},
 			],
 		},
 		{
-			title: '文旅局',
-			key: 'cultureBureauVo',
+			title: '丽江旅行社',
+			key: 'ljTravelAgencyVo',
 			children: [
 				{
-					title: '实收',
-					dataIndex: 'actualPrice',
-					key: 'cultureBureauVo',
+					title: '一卡通',
+					dataIndex: 'ytk',
+					key: 'ytk',
+					width: 100,
+				},
+				{
+					title: '银行',
+					dataIndex: 'bank',
+					key: 'bank',
 					width: 100,
 				},
 			],
 		},
 		{
-			title: '一卡通',
-			key: 'yktVo',
-			children: [
-				{
-					title: '实收',
-					dataIndex: 'actualPrice',
-					key: 'yktVo',
-					width: 100,
-				},
-			],
+			title: '状态',
+			dataIndex: 'state',
+			key: 'state',
+			width: 100,
 		},
 		{
-			title: '地接社',
-			key: 'subTravelVo',
-			children: [
-				{
-					title: '实收',
-					dataIndex: 'actualPrice',
-					key: 'subTravelVo',
-					width: 100,
-				},
-				{
-					title: '未消费费用',
-					dataIndex: 'unSettlementPrice',
-					key: 'subTravelVo',
-					width: 100,
-				},
-			],
+			title: '行程费用',
+			dataIndex: 'totalFee',
+			key: 'totalFee',
+			width: 100,
 		},
-	]);
-	/**
-	 * 先获取数据源，根据数据源的综费产品列表渲染到表头上
-	 * 再把数据进行整理 把数据源所有数据和表头一一对应存到 ruleMap
-	 * 再根据 ruleMap 进行遍历判断
-	 */
-	const ruleMap: any = [];
-	// 把综费产品两个数组整合到表头上
-	for (let index = 0; index < data.length; index++) {
-		// 综费产品 - 导服费
-		for (const key in data[index].comprehensiveGuideVoList) {
-			const vo = data[index].comprehensiveGuideVoList[key];
-			// 判断是否已经存在
-			const idx = comprehensiveGuideVoListIds.value.findIndex((item) => item === vo.comprehensiveFeeProductId);
-			if (idx === -1) {
-				comprehensiveGuideVoListIds.value.push(vo.comprehensiveFeeProductId);
-				const comprehensiveGuideVo = {
-					title: `${vo.comprehensiveFeeProductName}`,
-					dataIndex: `comprehensiveGuideVoList`,
-					id: `${vo.comprehensiveFeeProductId}`,
-					key: 'comprehensiveGuideVoList',
-					children: [
-						{
-							title: '旅行社实收',
-							dataIndex: 'travelActualPrice',
-							id: `${vo.comprehensiveFeeProductId}`,
-							key: 'comprehensiveGuideVoList',
-							width: 100,
-							parentTitle: `${vo.comprehensiveFeeProductName}`,
-						},
-						{
-							title: '集团实收',
-							dataIndex: 'groupActualPrice',
-							id: `${vo.comprehensiveFeeProductId}`,
-							key: 'comprehensiveGuideVoList',
-							width: 100,
-							parentTitle: `${vo.comprehensiveFeeProductName}`,
-						},
-					],
-				};
-				column.value.push(comprehensiveGuideVo);
-				// 把数据源和表头整理到ruleMap
-				const title = `comprehensiveGuideVoList-${vo.comprehensiveFeeProductId}`;
-				if (!ruleMap[title]) {
-					ruleMap[title] = { column: {}, data: [] };
-				}
-				ruleMap[title]['column'] = column.value[column.value.length - 1].children;
-				ruleMap[title]['data'].push(vo['ruleList']);
-				ruleMap[title]['columnParent'] = column.value[column.value.length - 1];
-			} else {
-				// 把数据源和表头整理到ruleMap
-				const title = `comprehensiveGuideVoList-${vo.comprehensiveFeeProductId}`;
-				if (!ruleMap[title]) {
-					ruleMap[title] = { column: {}, data: [] };
-				}
-				const idx = column.value.findIndex((item) => {
-					return item.title === vo.comprehensiveFeeProductName;
-				});
-				ruleMap[title]['column'] = column.value[idx].children;
-				ruleMap[title]['data'].push(vo['ruleList']);
-				ruleMap[title]['columnParent'] = column.value[idx];
-			}
-		}
-		// 	//综费产品-除导服费外
-		for (const key in data[index].comprehensiveVoList) {
-			const vo = data[index].comprehensiveVoList[key];
-			// 判断是否已经存在
-			const idx = comprehensiveVoListIds.value.findIndex((item) => item === vo.comprehensiveFeeProductId);
-			if (idx === -1) {
-				comprehensiveVoListIds.value.push(vo.comprehensiveFeeProductId);
-				const comprehensiveGuideVo = {
-					title: `${vo.comprehensiveFeeProductName}`,
-					dataIndex: `${vo.comprehensiveFeeProductId}`,
-					key: 'comprehensiveVoList',
-					children: [
-						{
-							title: `${vo.belongCompany}实收`,
-							dataIndex: 'actualPrice',
-							id: `${vo.comprehensiveFeeProductId}`,
-							key: 'comprehensiveVoList',
-							width: 100,
-							parentTitle: `${vo.comprehensiveFeeProductName}`,
-						},
-					],
-				};
-				column.value.push(comprehensiveGuideVo);
-				// 把数据源和表头整理到ruleMap
-				const title = `comprehensiveVoList-${vo.comprehensiveFeeProductId}`;
-				if (!ruleMap[title]) {
-					ruleMap[title] = { column: {}, data: [] };
-				}
-				ruleMap[title]['column'] = column.value[column.value.length - 1].children;
-				ruleMap[title]['data'].push(vo['ruleList']);
-				ruleMap[title]['columnParent'] = column.value[column.value.length - 1];
-			} else {
-				// 把数据源和表头整理到ruleMap
-				const title = `comprehensiveVoList-${vo.comprehensiveFeeProductId}`;
-				if (!ruleMap[title]) {
-					ruleMap[title] = { column: {}, data: [] };
-				}
-				const idx = column.value.findIndex((item) => {
-					return item.title === vo.comprehensiveFeeProductName;
-				});
-				ruleMap[title]['column'] = column.value[idx].children;
-				ruleMap[title]['data'].push(vo['ruleList']);
-				ruleMap[title]['columnParent'] = column.value[idx];
-			}
-		}
-	}
-	// 把所有带有结算规则的数据进行数据整理
-	for (let index = 0; index < data.length; index++) {
-		for (const key in data[index]) {
-			if (key.includes('Vo')) {
-				for (let j = 0; j < column.value.length; j++) {
-					// 对于除综费产品外的数据进行处理
-					if (!key.includes('List') && column.value[j].key === key) {
-						if (!ruleMap[key]) {
-							ruleMap[key] = { column: {}, data: [] };
-						}
-						ruleMap[key]['column'] = column.value[j].children;
-						ruleMap[key]['data'].push(data[index][key]['ruleList']);
-					}
-				}
-			}
-		}
-	}
-	// 将结算规则配置到表头
-	for (const key in ruleMap) {
-		// ruleMap[key]['column'] 表头 ruleMap[key]['data'] 配置规则数据
-		for (const subKey in ruleMap[key]['data']) {
-			const ruleList = ruleMap[key]['data'][subKey];
-			for (const t in ruleList) {
-				const isHasRule = ruleMap[key]['column'].some((item: any) => {
-					return item.title === ruleList[t].ruleName;
-				});
-				// 判断标有是否已经存在数据
-				if (!isHasRule) {
-					const rule: any = {
-						title: `${ruleList[t].ruleName}`,
-						dataIndex: 'ruleMap',
-						key: 'ruleMap',
-						ruleName: `${ruleList[t].ruleName}`,
-						width: 180,
-						parent: key,
-					};
-					if (key.includes('List')) {
-						rule['columnParentName'] = ruleMap[key]['columnParent']['title'];
-					}
-					ruleMap[key]['column'].push(rule);
-				}
-			}
-		}
-	}
-
-	return column.value;
+	];
+	return column;
 });
-
 const state = reactive({
 	tableData: {
 		param: {
@@ -432,6 +162,74 @@ const initList = async () => {
 	// const list: [any] = dealData(content);
 	// state.tableData.data = list;
 	// state.tableData.loading = false;
+	state.tableData.data = [
+		{
+			itineraryNo: '001',
+			subTravelName: '001',
+			superviseVo: {
+				ytk: '一卡通',
+				bank: '建设银行',
+			},
+			associationVo: {
+				ytk: '一卡通',
+				bank: '建设银行',
+			},
+			qmTravelAgencyVo: {
+				ytk: '一卡通',
+				bank: '建设银行',
+			},
+			ljTravelAgencyVo: {
+				ytk: '一卡通',
+				bank: '建设银行',
+			},
+			state: '开启',
+			totalFee: '888元',
+		},
+		{
+			itineraryNo: '002',
+			subTravelName: '002',
+			superviseVo: {
+				ytk: '一卡通1',
+				bank: '建设银行2',
+			},
+			associationVo: {
+				ytk: '一卡通1',
+				bank: '建设银行2',
+			},
+			qmTravelAgencyVo: {
+				ytk: '一卡通1',
+				bank: '建设银行2',
+			},
+			ljTravelAgencyVo: {
+				ytk: '一卡通2',
+				bank: '建设银行1',
+			},
+			state: '关闭',
+			totalFee: '888元',
+		},
+		{
+			itineraryNo: '002',
+			subTravelName: '002',
+			superviseVo: {
+				ytk: '一卡通1',
+				bank: '建设银行2',
+			},
+			associationVo: {
+				ytk: '一卡通1',
+				bank: '建设银行2',
+			},
+			qmTravelAgencyVo: {
+				ytk: '一卡通1',
+				bank: '建设银行2',
+			},
+			ljTravelAgencyVo: {
+				ytk: '一卡通2',
+				bank: '建设银行1',
+			},
+			state: '关闭',
+			totalFee: '888元',
+		},
+	];
 };
 //搜索
 const onHandleCurrentChange = (val: number) => {
@@ -447,6 +245,43 @@ const pageSideChange = (current: number, size: number) => {
 	// onSearch();
 	initList();
 };
+const getYKT = computed(() => (record, column) => {
+	if (record[column.key] && record[column.key]['ykt']) {
+		return record[column.key]['ykt'];
+	}
+	return '';
+});
+const getBank = computed(() => (record, column) => {
+	if (record[column.key] && record[column.key]['bank']) {
+		return record[column.key]['bank'];
+	}
+	return '';
+});
+const getActualPrice = computed(() => (record: any, column: any) => {
+	if (!column.key.includes('List')) {
+		return record[column.key] ? record[column.key]['actualPrice'] : '';
+	} else {
+		if (record[column.key]) {
+			const idx = record[column.key].findIndex((r: any) => r.comprehensiveFeeProductName === column.parentTitle);
+			if (idx !== -1) {
+				return record[column.key][idx][column.dataIndex] || '';
+			}
+		}
+	}
+	return '';
+});
+const getRulePrice = computed(() => (record: any, column: any) => {
+	const ruleColumnKey = column.parent.split('-')[0];
+	for (const key in record[ruleColumnKey]) {
+		if (column.columnParentName === record[ruleColumnKey][key]['comprehensiveFeeProductName']) {
+			for (const subKey in record[ruleColumnKey][key].ruleList) {
+				if (column.title === record[ruleColumnKey][key].ruleList[subKey].ruleName) {
+					return `${record[ruleColumnKey][key].ruleList[subKey].rulePrice}`;
+				}
+			}
+		}
+	}
+});
 </script>
 <style scoped lang="scss">
 .tripList {

@@ -1,6 +1,9 @@
 <template>
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns">
+      <template #describe>
+        共<span class="color-red">{{state.total}}</span>条撤销后重提的行程单。其中待审核 <span class="color-red">{{state.total}}</span> 条。
+      </template>
 			<template #bodyCell="{ column, text, index, record }">
 				<template v-if="column.key === 'index'">
 					<div>

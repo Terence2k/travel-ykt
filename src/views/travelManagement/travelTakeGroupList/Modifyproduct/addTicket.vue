@@ -37,7 +37,7 @@
 			</a-form-item>
 
 			<a-form-item label="门票价格" name="travelName">
-				<span>{{ ticketPrice }}元</span>
+				<span>{{ accDiv(ticketPrice,100) || '' }}元</span>
 			</a-form-item>
 
 			<!-- <a-form-item label="入园时段" name="startDate" :rules="[{ required: true, message: '请选择入园时段' }]">
@@ -77,6 +77,7 @@ import { useTravelStore } from '@/stores/modules/travelManagementDetail';
 import api from '@/api';
 import { cloneDeep, debounce } from 'lodash';
 import { validateRules, validateFields, generateGuid } from '@/utils';
+import { accDiv,accMul} from '@/utils/compute';
 
 import { Modal } from 'ant-design-vue';
 import { createVNode } from 'vue';
@@ -125,7 +126,7 @@ const handleOk = async (callback: Function) => {
 	try {
 		let traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 		await formRef.value.validateFields();
-		formState.unitPrice = ticketPrice.value;
+		formState.unitPrice = accMul(ticketPrice.value,100);
 		formState.itineraryId = route.query.oid;
 		formState.reservePeopleCount = travelStore.touristList.length;
 		const key = generateGuid();
@@ -185,7 +186,7 @@ watch(dialogVisible, (newVal) => {
 		if (props.productRow.scenicId) {
 			handleChange(data.scenicId, { name: data.scenicName });
 			formState.ticketId = data.ticketId;
-
+			formState.price = accDiv(data.unitPrice,100);
 			formState.scenicId = props.productRow.scenicId;
 			props.productRow.productId && handleChange(props.productRow.productId, { name: props.productRow.scenicName });
 		}

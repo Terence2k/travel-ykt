@@ -1,21 +1,24 @@
 <template>
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns">
+    <template #describe>
+      共<span class="color-red">{{state.total}}</span>条行程单。其中待审核 <span class="color-red">{{state.total}}</span> 条。
+    </template>
 		<template #bodyCell="{ column, text, index, record }">
 			<template v-if="column.key === 'index'">
 				<div>
 						{{(travelStore.auditList.financeSendGroup.params.pageNo - 1) * (travelStore.auditList.financeSendGroup.params.pageSize) + (index + 1)}}
 				</div>
-		</template>
-		<template v-if="column.key === 'totalFee'">
-			{{accDiv(record.totalFee,100) }}
-		</template>
-		<template v-if="column.key === 'action'">
-			<div class="action-btns">
-				<a @click="auditStatus(record)">去审核</a>
-			</div>
-		</template>
-				</template>
+      </template>
+      <template v-if="column.key === 'totalFee'">
+        {{accDiv(record.totalFee,100) }}
+      </template>
+      <template v-if="column.key === 'action'">
+        <div class="action-btns">
+          <a @click="auditStatus(record)">去审核</a>
+        </div>
+      </template>
+    </template>
 		</CommonTable>
 		<CommonPagination
 			:current="travelStore.auditList.financeSendGroup.params.pageNo"

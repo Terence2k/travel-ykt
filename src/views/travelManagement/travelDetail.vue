@@ -5,7 +5,7 @@
     </div>
     <div class="status-btns">
       <div class="status">
-        当前状态：{{state.data.statusName}}
+        当前状态：{{state.basicData.statusName}}
       </div>
       <div class="btns">
         <a-button type="primary">打印行程单</a-button>
@@ -13,22 +13,22 @@
     </div>
     <a-row>
       <a-col :span="17">
-        <a-descriptions :title="`行程单ID：${state.data.itineraryNo}`" bordered>
-          <a-descriptions-item label="线路名称" :span="3">{{state.data.routeName}}</a-descriptions-item>
-          <a-descriptions-item label="组团模式" :span="2">{{state.data.groupTypeName}}</a-descriptions-item>
-          <a-descriptions-item label="团队类型">{{state.data.teamTypeName}}</a-descriptions-item>
-          <a-descriptions-item label="组团社" :span="2">{{state.data.travelName}}</a-descriptions-item>
-          <a-descriptions-item label="组团社计调" >{{state.data.travelOperatorName}} {{state.data.travelOperatorPhone}}</a-descriptions-item>
-          <a-descriptions-item label="地接社" :span="2">{{state.data.subTravelName}}</a-descriptions-item>
-          <a-descriptions-item label="地接社计调">{{state.data.subTravelOperatorName}} {{state.data.subTravelOperatorPhone}}</a-descriptions-item>
-          <a-descriptions-item label="游客人数" :span="2">{{state.data.touristCount}}</a-descriptions-item>
-          <a-descriptions-item label="古维费应缴人数">{{state.data.guWeiCount}}</a-descriptions-item>
-          <a-descriptions-item label="行程开始时间" :span="2">{{state.data.startDate}}</a-descriptions-item>
-          <a-descriptions-item label="行程结束时间">{{state.data.endDate}}</a-descriptions-item>
-          <a-descriptions-item label="已添加景区" :span="2">{{state.data.ticketCount}}</a-descriptions-item>
-          <a-descriptions-item label="已添加餐饮">{{state.data.cateringCount}}</a-descriptions-item>
-          <a-descriptions-item label="已添加酒店" :span="2">{{state.data.hotelCount}}</a-descriptions-item>
-          <a-descriptions-item label="预估应缴费（元）">{{state.data.totalFee}}</a-descriptions-item>
+        <a-descriptions :title="`行程单ID：${state.basicData.itineraryNo}`" bordered>
+          <a-descriptions-item label="线路名称" :span="3">{{state.basicData.routeName}}</a-descriptions-item>
+          <a-descriptions-item label="组团模式" :span="2">{{state.basicData.groupTypeName}}</a-descriptions-item>
+          <a-descriptions-item label="团队类型">{{state.basicData.teamTypeName}}</a-descriptions-item>
+          <a-descriptions-item label="组团社" :span="2">{{state.basicData.travelName}}</a-descriptions-item>
+          <a-descriptions-item label="组团社计调" >{{state.basicData.travelOperatorName}} {{state.basicData.travelOperatorPhone}}</a-descriptions-item>
+          <a-descriptions-item label="地接社" :span="2">{{state.basicData.subTravelName}}</a-descriptions-item>
+          <a-descriptions-item label="地接社计调">{{state.basicData.subTravelOperatorName}} {{state.basicData.subTravelOperatorPhone}}</a-descriptions-item>
+          <a-descriptions-item label="游客人数" :span="2">{{state.basicData.touristCount}}</a-descriptions-item>
+          <a-descriptions-item label="古维费应缴人数">{{state.basicData.guWeiCount}}</a-descriptions-item>
+          <a-descriptions-item label="行程开始时间" :span="2">{{state.basicData.startDate}}</a-descriptions-item>
+          <a-descriptions-item label="行程结束时间">{{state.basicData.endDate}}</a-descriptions-item>
+          <a-descriptions-item label="已添加景区" :span="2">{{state.basicData.ticketCount}}</a-descriptions-item>
+          <a-descriptions-item label="已添加餐饮">{{state.basicData.cateringCount}}</a-descriptions-item>
+          <a-descriptions-item label="已添加酒店" :span="2">{{state.basicData.hotelCount}}</a-descriptions-item>
+          <a-descriptions-item label="预估应缴费（元）">{{state.basicData.totalFee}}</a-descriptions-item>
         </a-descriptions>
       </a-col>
       <a-col :span="7">
@@ -61,6 +61,9 @@
                 <a>查看订单</a>
               </div>
             </template>
+            <template v-if="column.key === 'attachmentUrl'">
+              <a-image width="100%" :src="record.attachmentUrl" />
+            </template>
         </template>
       </CommonTable>
       <CommonPagination
@@ -70,15 +73,6 @@
         v-if="item.pagination"
       />
     </div>
-
-    <div class="page-title">
-      变更历史记录
-    </div>
-    <!-- <a-steps direction="vertical" size="small" :current="3">
-      <a-step title="Finished" description="This is a description." />
-      <a-step title="In Progress" description="This is a description." />
-      <a-step title="Waiting" description="This is a description." />
-    </a-steps> -->
   </div>
 </template>
 <script lang="ts" setup>
@@ -88,7 +82,7 @@
   import CommonPagination from '@/components/common/CommonPagination.vue';
   import { getOptions } from './travelDetail/travelDetail';
   const state = reactive({
-		data: {
+		basicData: {
       travelOperator: {},
       subTravelOperator: {}
     } as any,
@@ -123,17 +117,14 @@
       ...state.param
     }
 	  api.travelManagement.getItineraryDetail(queryData).then((res: any) => {
-      state.data = res.basic;
+      state.basicData = res.basic;
       state.itineraryDetail = res;
 		})
 		.catch((err: any) => {
 			console.log(err);
 		});
   }
-
-  onBeforeMount(() => {
     getItineraryDetail(route.currentRoute.value.query.oid);
-  })
 </script>
 <style lang="less" scoped>
 .container {

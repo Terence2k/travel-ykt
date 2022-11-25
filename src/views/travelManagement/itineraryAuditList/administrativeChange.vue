@@ -1,20 +1,23 @@
 <template>
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns">
-		<template #bodyCell="{ column, text, index, record }">
-			<template v-if="column.key === 'index'">
-				<div>
-						{{(travelStore.auditList.administrativeChange.params.pageNo - 1) * (travelStore.auditList.administrativeChange.params.pageSize) + (index + 1)}}
-				</div>
-		</template>
-		<template v-if="column.key === 'totalFee'">
-			{{accDiv(record.totalFee,100) }}
-		</template>
-		<template v-if="column.key === 'action'">
-			<div class="action-btns">
-				<a @click="auditStatus(record)" v-if="record.auditInfo?.length">去审核</a>
-			</div>
-		</template>
+      <template #describe>
+        共<span class="color-red">{{state.total}}</span>条变更的行程单。
+      </template>
+      <template #bodyCell="{ column, text, index, record }">
+        <template v-if="column.key === 'index'">
+          <div>
+              {{(travelStore.auditList.administrativeChange.params.pageNo - 1) * (travelStore.auditList.administrativeChange.params.pageSize) + (index + 1)}}
+          </div>
+          </template>
+          <template v-if="column.key === 'totalFee'">
+            {{accDiv(record.totalFee,100) }}
+          </template>
+          <template v-if="column.key === 'action'">
+            <div class="action-btns">
+              <a @click="auditStatus(record)" v-if="record.auditInfo?.length">去审核</a>
+            </div>
+          </template>
 				</template>
 		</CommonTable>
 		<CommonPagination
