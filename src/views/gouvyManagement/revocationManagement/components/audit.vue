@@ -14,7 +14,7 @@
 			<FormItem title="撤销原因" :iValue="state.detail.travelName" />
 			<FormItem title="附件" :iValue="state.detail.travelName" />
 		</FormWrap>
-
+		<a-button @click="toCompare">去查看</a-button>
 		<h3 class="tips">以下是撤销前、重提后的行程内容对比：</h3>
 
 		<div class="table_box">
@@ -106,6 +106,7 @@
 			</div>
 		</template>
 	</BaseModal>
+	<Compare ref="compareRef" />
 </template>
 
 <script lang="ts" setup>
@@ -114,6 +115,7 @@ import api from '@/api';
 import { message } from 'ant-design-vue';
 import FormWrap from '@/components/common/formWrap.vue';
 import FormItem from '@/components/common/formItem.vue';
+import Compare from './compare.vue';
 
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -175,6 +177,16 @@ const props = defineProps({
 	// 	default: false,
 	// },
 });
+
+const compareRef = ref();
+
+const toCompare = () => {
+	compareRef.value.open();
+};
+
+const closeCompare = () => {
+	compareRef.value.cancle();
+};
 
 const addTimeList = () => {
 	formValidate.data.dateList.push({ time: [] });
