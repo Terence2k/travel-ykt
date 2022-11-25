@@ -96,9 +96,9 @@
   </div>
 
   <CommonModal :title="submitTitle" v-model:visible="modalVisible" @cancel="modalCancel" @close="modalCancel"
-    :conform-text="'提交'" @conform="submitStore">
+    :conform-text="'提交'" @conform="submitStore" width="50%">
     <a-form ref="addStoreRef" :model="form" :rules="formRules" name="addStore" autocomplete="off"
-      :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
+      :label-col="{ span: 7 }" :wrapper-col="{ span: 17 }">
       <a-form-item name="companyId" label="所属旅行社">
         <a-select placeholder="请选择所属旅行社" v-model:value="form.companyId" allowClear :disabled="!isSuper">
           <a-select-option v-for="item in companyOptions" :value="item.oid">{{
@@ -149,15 +149,22 @@
           <a-radio :value="0">禁用</a-radio>
         </a-radio-group>
       </a-form-item>
+      <a-form-item name="basisUrl" label="创建依据（可上传5张图片）">
+        <Upload v-model="form.basisUrl" :maxCount="5" />
+      </a-form-item>
     </a-form>
   </CommonModal>
   <CommonModal title="门店详情" v-model:visible="detailsVisible" :conform-text="'确认'" @conform="detailsClose"
-    @cancel="detailsClose" :is-cancel="false">
+    @cancel="detailsClose" :is-cancel="false" width="50%">
     <div class="table_box">
       <table class="info_table" cellpadding="16px" border="1">
         <tr class="row" v-for="(value, key) in detailsKeys">
           <td class="key">{{ value }}</td>
-          <td class="value">{{ detailsForm[key] }}</td>
+          <td class="value" v-if="key === 'basisUrl'">
+            <a-image v-for="(item) in cmpBasisUrl(detailsForm[key])" style="width:90px;margin:0 5px 5px 0"
+              :src="item" />
+          </td>
+          <td class="value" v-else>{{ detailsForm[key] }}</td>
         </tr>
       </table>
     </div>
@@ -174,13 +181,17 @@
     </div>
   </CommonModal>
   <CommonModal title="散客门店新开通审核" v-model:visible="auditVisible" @cancel="auditCancel" @close="failVisible = true"
-    :conform-text="'同意开通'" :cancel-text="'驳回'" @conform="registerAuditVisible = true">
+    :conform-text="'同意开通'" :cancel-text="'驳回'" @conform="registerAuditVisible = true" width="50%">
     当前有新创建的散客门店待您审核，审核同意后该门店可以正常发起散客电子合同：
     <div class="table_box">
       <table class="info_table" cellpadding="16px" border="1">
         <tr class="row" v-for="(value, key) in detailsKeys">
           <td class="key">{{ value }}</td>
-          <td class="value">{{ detailsForm[key] }}</td>
+          <td class="value" v-if="key === 'basisUrl'">
+            <a-image v-for="(item) in cmpBasisUrl(detailsForm[key])" style="width:90px;margin:0 5px 5px 0"
+              :src="item" />
+          </td>
+          <td class="value" v-else>{{ detailsForm[key] }}</td>
         </tr>
       </table>
     </div>
@@ -194,10 +205,16 @@
           <th class="key_hd">修改前</th>
           <th class="key_hd">修改后</th>
         </tr>
-        <tr class="row" v-for="(item, index) in changeKeys" :key="index">
-          <td class="key">{{ detailsKeys[item] }}</td>
-          <td class="value">{{ oldArrList[item] }}</td>
-          <td class="value">{{ newArrList[item] }}</td>
+        <tr class="row" v-for="(key, index) in Object.keys(changeList)" :key="index">
+          <td class="key">{{ detailsKeys[key] }}</td>
+          <td class="value" v-if="key === 'basisUrl'" v-for="(citem, inex) in changeList[key]">
+            <a-image v-for="(item) in cmpBasisUrl(citem)" style="width:90px;margin:0 5px 5px 0" :src="item" />
+          </td>
+          <td v-else class="value" v-for="(citem, inex) in changeList[key]"
+            :colspan="['companyName', 'updateTime'].includes(key) ? 2 : 0"
+            :class="{ tac: ['companyName', 'updateTime'].includes(key) }">{{ citem }}</td>
+          <!-- <td class="value">{{ oldArrList[item] }}</td>
+          <td class="value">{{ newArrList[item] }}</td> -->
         </tr>
       </table>
     </div>
@@ -236,6 +253,7 @@ import CommonSearch from '@/components/common/CommonSearch.vue'
 import SearchItem from '@/components/common/CommonSearchItem.vue'
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import { useBusinessManageOption } from '@/stores/modules/businessManage';
+import Upload from '@/components/common/imageWrapper.vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import { useRouter, useRoute } from 'vue-router';
@@ -290,10 +308,12 @@ const form = ref({
   contractPurview: undefined,
   filingNo: '',
   authorizationCode: '',
-  enableSatus: 0
+  enableSatus: 0,
+  basisUrl: ''
 })
 const newArrList = ref<any>({})
 const oldArrList = ref<any>({})
+const changeList = ref<any>({})
 const changeKeys = ref<string[]>([])
 const detailsForm = ref({})
 const auditForm = ref()
@@ -357,6 +377,13 @@ const submitTitle = computed(() => {
     return '创建散客门店'
   } else {
     return '修改门店信息'
+  }
+})
+const cmpBasisUrl = computed(() => (url: string) => {
+  if (url) {
+    return url.split(',');
+  } else {
+    return []
   }
 })
 const columns = [
@@ -472,6 +499,7 @@ const columns1 = [
 ]
 const detailsKeys = {
   companyName: '所属旅行社',
+  updateTime: '修改提交时间',
   storeName: '门店名称',
   storeAddress: '门店地址',
   storePhone: '门店电话',
@@ -484,7 +512,8 @@ const detailsKeys = {
   auditType: '审核类型',
   /* auditStatusName: '门店审核状态',
   informationAuditStatusName: '信息审核状态', */
-  createTime: '门店创建时间'
+  createTime: '创建提交时间',
+  basisUrl: '创建依据'
 }
 const contractOptions = [
   { oid: 1, name: '线上合同+线下合同' },
@@ -724,14 +753,21 @@ const getChangeInfo = async (oid: string | number) => {
   const res = await api.auditIndividualStoreInformationContrast(oid)
   const newList = res?.new
   const oldList = res?.old
+  const companyName = res?.companyName
+  const updateTime = res?.updateTime
+  changeList.value.companyName = [companyName]
+  changeList.value.updateTime = [updateTime]
   const keyList = Object.keys(detailsKeys)
   keyList.forEach((key: string) => {
     if (newList[key] != oldList[key]) {
-      newArrList.value[key] = newList[key]
-      oldArrList.value[key] = oldList[key]
+      changeList.value[key] = [oldList[key], newList[key]]
+      // newArrList.value[key] = newList[key]
+      // oldArrList.value[key] = oldList[key]
       changeKeys.value.push(key)
     }
   })
+  console.log(changeList.value, '$$$$$$$$$$$');
+
 }
 const checkDetails = async (oid: string | number) => {
   detailsForm.value = await getDetails(oid)
@@ -750,6 +786,10 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
+.tac {
+  text-align: center;
+}
+
 .buttom_box {
   width: 100%;
   display: flex;
