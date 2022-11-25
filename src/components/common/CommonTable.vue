@@ -3,7 +3,7 @@
 		<div class="list-btn" v-if="slotButton">
 			<slot name="button"></slot>
 		</div>
-    <div class="describe">
+    <div class="describe" v-if="slotDescribe">
       <slot name="describe"></slot>
     </div>
 		<a-table v-bind="$attrs" :scroll="scroll" :pagination="false" class="common-table">
@@ -40,6 +40,7 @@ const props = defineProps({
 });
 const attrs = useAttrs() as any;
 const slotButton = !!useSlots().button;
+const slotDescribe = !!useSlots().describe;
 
 const computeTableHeight = () => {
 	if (props.scrollY) {
