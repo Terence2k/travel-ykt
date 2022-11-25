@@ -243,9 +243,13 @@ const columns = computed(() => {
 		}
 	}
 	// 插入未核销费用数据
-	column.value.push(notConsumed);
-	// 插入地接社数据
-	column.value.push(subTravel);
+	if(column.value.indexOf(notConsumed) == -1){
+		column.value.push(notConsumed);
+	}
+	// // 插入地接社数据
+	if(column.value.indexOf(subTravel) == -1){
+		column.value.push(subTravel);
+	}
 	// 把所有带有结算规则的数据进行数据整理
 	for (let index = 0; index < data.length; index++) {
 		for (const key in data[index]) {
