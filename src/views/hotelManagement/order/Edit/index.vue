@@ -17,12 +17,18 @@
 
 							<div class="title">订房信息</div>
 							<CommonTable :columns="columns" :dataSource="state.data.hotelTypeList" :scrollY="false">
-								<template #bodyCell="{ column, index }">
+								<template #bodyCell="{ column, index,record}">
 									<template v-if="column.key === 'index'">
 										<div>
 											{{ index + 1 }}
 										</div>
-									</template></template
+									</template>
+									<template v-if="column.key === 'orderAmount'">
+										<div>
+											{{accDiv( record.orderAmount,100)}}
+										</div>
+									</template>
+									</template
 								>
 							</CommonTable>
 						</a-form>
@@ -55,7 +61,6 @@
 </template>
 <script lang="ts" setup>
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
-const navigatorBar = useNavigatorBar();
 import { onMounted, reactive, toRaw, UnwrapRef, watch, ref } from 'vue';
 import BaseModal from '@/components/common/BaseModal.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
@@ -63,7 +68,10 @@ import api from '@/api';
 import type { Rule } from 'ant-design-vue/es/form';
 import { message } from 'ant-design-vue';
 import CommonTable from '@/components/common/CommonTable.vue';
+import { accDiv,accMul} from '@/utils/compute';
+
 const router = useRouter();
+const navigatorBar = useNavigatorBar();
 
 const route = useRoute();
 const visible = ref(false);
