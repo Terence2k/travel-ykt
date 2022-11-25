@@ -5,11 +5,11 @@
       <template #button>
       </template>
       <template #bodyCell="{ column, text, index,record }">
-        <!-- <template v-if="column.key === 'itineraryNo'">
+        <template v-if="column.key === 'itineraryNo'">
           <div>
             <a @click="goToDetail(record)">{{text}}</a>
           </div>
-        </template> -->
+        </template>
         <template v-if="column.key === 'index'">
 					<div>
 						{{(travelStore.takeGroupList.overtime.params.pageNo - 1) * (travelStore.takeGroupList.overtime.params.pageSize) + (index + 1)}}
@@ -129,6 +129,12 @@
 				itineraryNo: row.itineraryNo
 			}
 		})
+	}
+	const goToDetail = (row: any) => {
+		router.push({
+      path: '/travel/travel_manage/travel_detail',
+      query: { oid: encodeURIComponent(row.oid) }
+    });
 	}
   const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
     console.log(record, selected, selectedRows);
