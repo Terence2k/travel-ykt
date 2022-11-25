@@ -13,6 +13,12 @@
 		</div>
 		<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }" bordered>
 			<template #bodyCell="{ column, record }">
+				<template v-if="column.key === 'status'">
+					<span v-if="record.status === 1" style="color: red">待审核</span>
+					<span v-if="record.status === 2" style="color: green">全部完成</span>
+					<span v-if="record.status === 3" style="color: red">审核不通过</span>
+					<span v-if="record.status === 4" style="color: red">部分完成</span>
+				</template>
 				<template v-if="column.dataIndex === 'ykt'"> {{ getYKT(record, column) }} </template>
 				<template v-if="column.dataIndex === 'bank'"> {{ getBank(record, column) }} </template>
 			</template>
