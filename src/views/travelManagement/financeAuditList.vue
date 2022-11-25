@@ -38,7 +38,7 @@ import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import financeSendGroup from './itineraryAuditList/financeSendGroup.vue';
 import financeChange from './itineraryAuditList/financeChange.vue';
-
+import withdrawalChange from './itineraryAuditList/withdrawalChange.vue';
 import { traveListParams, useTravelStore } from '@/stores/modules/travelManagement';
 import { AuditStaus, GroupType } from '@/enum';
 import { getUserInfo } from '@/utils/util';
@@ -72,6 +72,12 @@ const pages = [
 		value: AuditStaus.FinanceChange,
 		chart: 'financeChange',
 	},
+	{
+		name: withdrawalChange,
+		label: travelStore.auditStatus[AuditStaus.withdrawalChange],
+		value: AuditStaus.withdrawalChange,
+		chart: 'withdrawalChange',
+	},
 ];
 
 const goToPath = (type: number) => {
@@ -97,7 +103,6 @@ const onSearch = async () => {
 	if (params.status == 0) {
 		const res = await travelStore.getChangeItineraryList(params);
 		travelStore.setAuditList(res, chartField);
-		console.log(res,'res')
 	} else {
 		const res = await travelStore.getAuditList(params);
 		travelStore.setAuditList(res, chartField);

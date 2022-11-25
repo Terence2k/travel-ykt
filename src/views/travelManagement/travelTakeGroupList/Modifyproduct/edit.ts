@@ -55,9 +55,11 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		itineraryId: '',
 		startTime: '',
 		endTime: '',
+		audtiStatus: true,
 		timeformState: reactive({}),
 		timeformRef: ref(''),
 		tiemformshow: false,
+		tiecketparams: [],
 		tableData: [
 			{
 				key: '1',
@@ -77,58 +79,6 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			pageSize: 999,
 		},
 
-		ticketingColumns: [
-			{
-				title: '购买状态',
-				dataIndex: 'purchasedName',
-				key: 'purchasedName',
-			},
-			{
-				title: '游客姓名',
-				dataIndex: 'touristName',
-				key: 'touristName',
-			},
-			{
-				title: '身份证件类型',
-				dataIndex: 'certificateTypeName',
-				key: 'certificateTypeName',
-			},
-			{
-				title: '身份证号码',
-				dataIndex: 'certificateNo',
-				key: 'certificateNo',
-			},
-			{
-				title: '性别',
-				dataIndex: 'genderName',
-				key: 'genderName',
-			},
-			{
-				title: '年龄',
-				dataIndex: 'age',
-				key: 'age',
-			},
-			{
-				title: '联系方式',
-				dataIndex: 'purchased',
-				key: 'purchased',
-			},
-			{
-				title: '客源地',
-				dataIndex: 'sourceAddressName',
-				key: 'sourceAddressName',
-			},
-			{
-				title: '减免规则',
-				dataIndex: 'discountRuleName',
-				key: 'discountRuleName',
-			},
-			{
-				title: '实际缴费金额',
-				dataIndex: 'actualPrice',
-				key: 'actualPrice',
-			},
-		],
 		ticketColumns: [
 			{
 				title: ' 序号 ',
@@ -170,11 +120,11 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				dataIndex: 'totalFee',
 				key: 'totalFee',
 			},
-			// {
-			// 	title: '支付状态',
-			// 	dataIndex: 'reserveStatusName',
-			// 	key: 'reserveStatusName',
-			// },
+			{
+				title: '支付状态',
+				dataIndex: 'orderStatusName',
+				key: 'orderStatusName',
+			},
 			{
 				title: '操作',
 				key: 'action',
@@ -268,7 +218,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				state.newhotel.push({ ...state.hotelData[key], ...{ deleted: true, edit: true } });
 			}
 			console.log(state.newhotel);
-			
+
 			state.hotelData.splice(key, 1);
 		},
 		delticket(key: string) {
@@ -388,45 +338,54 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				return false;
 			}
 		}
+		state.tiecketparams = [].concat.call(state.ticketData, state.newticket);
+		state.hotelparams = [].concat.call(state.hotelData, state.newhotel);
+		console.log('tiecketparams',state.tiecketparam);
+		
+		state.tiecketparams = state.tiecketparams.filter((item: any) => item.edit == true, state.tiecketparams);
+		for (let index = 0; index < state.tiecketparams.length; index++) {
+			if ((state.tiecketparams[index]?.oid || state.tiecketparams[index]?.key) && state.tiecketparams[index].edit) {
+				delete state.tiecketparams[index].edit;
+			}
+		}
+		state.hotelparams = state.hotelparams.filter((item: any) => item.edit == true, state.hotelparams);
+		for (let index = 0; index < state.hotelparams.length; index++) {
+			if ((state.hotelparams[index]?.oid || state.hotelparams[index]?.key) && state.hotelparams[index].edit) {
+				delete state.hotelparams[index].edit;
+			}
+		}
 		Audits();
 	};
-
 	const Audits = () => {
-		let tiecketparams:any = [].concat.call(state.ticketData, state.newticket);
-		let hotelparams:any = [].concat.call(state.hotelData, state.newhotel);
-		tiecketparams = tiecketparams.filter((item: any) => item.edit == true,tiecketparams)
-		for (let index = 0; index < tiecketparams.length; index++) {
-			if ((tiecketparams[index]?.oid || tiecketparams[index]?.key) && tiecketparams[index].edit) {
-				delete tiecketparams[index].edit;
-			}
-		}
-		hotelparams = hotelparams.filter((item: any) => item.edit == true,hotelparams)
-		for (let index = 0; index < hotelparams.length; index++) {
-			if ((hotelparams[index]?.oid || hotelparams[index]?.key) && hotelparams[index].edit) {
-				delete hotelparams[index].edit;
-			}
-		}
-
 		const data = {
 			itineraryId: state.itineraryId,
 			startDate: '',
 			endDate: '',
-			reserveHotelParams: hotelparams,
-			addTicketParams: tiecketparams,
-		}
+			reserveHotelParams: state.hotelparams,
+			addTicketParams: state.tiecketparams,
+		};
 		if (state.timeformState.time) {
-			data.startDate = state.timeformState.time[0]
-			data.endDate = state.timeformState.time[1]
+			data.startDate = state.timeformState.time[0];
+			data.endDate = state.timeformState.time[1];
 		}
-		api.travelManagement.travelChangeOrderProduct(data).then((res: any) => {
-			message.success('提交审核成功')
-			router.push({
-				path: '/travel/travel_manage/travel_list',
+		api.travelManagement
+			.travelChangeOrderProduct(data)
+			.then((res: any) => {
+				message.success('提交审核成功');
+				router.push({
+					path: '/travel/travel_manage/travel_list',
+				});
+			})
+			.catch((error: any) => {
+				state.tiecketparams = state.tiecketparams.map((item: any) => {
+					item.edit = true;
+					return item;
+				});
+				state.hotelparams = state.hotelparams.map((item: any) => {
+					item.edit = true;
+					return item;
+				});
 			});
-		}).catch((error:any)=>{
-
-		})
-
 	};
 	onMounted(() => {
 		install();
