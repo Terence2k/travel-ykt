@@ -13,11 +13,8 @@
 		</div>
 		<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }" bordered>
 			<template #bodyCell="{ column, record }">
-				<template v-if="column.key === 'ruleMap'"> {{ getRulePrice(record, column) }} </template>
-				<template v-if="column.dataIndex.includes('tualPrice')"> {{ getActualPrice(record, column) }} </template>
-				<template v-if="column.dataIndex === 'unSettlementPrice' && column.key === 'subTravelVo'">
-					{{ getSubTravelVoUnSettlementPrice(record, column) }}
-				</template>
+				<template v-if="column.dataIndex === 'ykt'"> {{ getYKT(record, column) }} </template>
+				<template v-if="column.dataIndex === 'bank'"> {{ getBank(record, column) }} </template>
 			</template>
 		</CommonTable>
 		<Modal :params="state.modalParams" v-model="state.modalShow" @submit="tipSubmit" @cancel="tipCancel" />
@@ -91,14 +88,14 @@ const columns = computed(() => {
 			children: [
 				{
 					title: '一卡通',
-					dataIndex: 'ytk',
-					key: 'ytk',
+					dataIndex: 'ykt',
+					key: 'superviseVo',
 					width: 100,
 				},
 				{
 					title: '银行',
 					dataIndex: 'bank',
-					key: 'bank',
+					key: 'superviseVo',
 					width: 100,
 				},
 			],
@@ -109,14 +106,14 @@ const columns = computed(() => {
 			children: [
 				{
 					title: '一卡通',
-					dataIndex: 'ytk',
-					key: 'ytk',
+					dataIndex: 'ykt',
+					key: 'associationVo',
 					width: 100,
 				},
 				{
 					title: '银行',
 					dataIndex: 'bank',
-					key: 'bank',
+					key: 'associationVo',
 					width: 100,
 				},
 			],
@@ -127,14 +124,14 @@ const columns = computed(() => {
 			children: [
 				{
 					title: '一卡通',
-					dataIndex: 'ytk',
-					key: 'ytk',
+					dataIndex: 'ykt',
+					key: 'qmTravelAgencyVo',
 					width: 100,
 				},
 				{
 					title: '银行',
 					dataIndex: 'bank',
-					key: 'bank',
+					key: 'qmTravelAgencyVo',
 					width: 100,
 				},
 			],
@@ -145,14 +142,14 @@ const columns = computed(() => {
 			children: [
 				{
 					title: '一卡通',
-					dataIndex: 'ytk',
-					key: 'ytk',
+					dataIndex: 'ykt',
+					key: 'ljTravelAgencyVo',
 					width: 100,
 				},
 				{
 					title: '银行',
 					dataIndex: 'bank',
-					key: 'bank',
+					key: 'ljTravelAgencyVo',
 					width: 100,
 				},
 			],
@@ -199,6 +196,96 @@ const initList = async (query: any) => {
 	// const list: [any] = dealData(content);
 	// state.tableData.data = list;
 	state.tableData.loading = false;
+	state.tableData.data = [
+		{
+			itineraryNo: '001',
+			subTravelName: '001',
+			superviseVo: {
+				ykt: '一卡通',
+				bank: '建设银行',
+			},
+			associationVo: {
+				ykt: '一卡通',
+				bank: '建设银行',
+			},
+			qmTravelAgencyVo: {
+				ykt: '一卡通',
+				bank: '建设银行',
+			},
+			ljTravelAgencyVo: {
+				ykt: '一卡通',
+				bank: '建设银行',
+			},
+			state: '开启',
+			totalFee: '888元',
+		},
+		{
+			itineraryNo: '001',
+			subTravelName: '001',
+			superviseVo: {
+				ykt: '一卡通',
+				bank: '建设银行',
+			},
+			associationVo: {
+				ykt: '一卡通',
+				bank: '建设银行',
+			},
+			qmTravelAgencyVo: {
+				ykt: '一卡通',
+				bank: '建设银行',
+			},
+			ljTravelAgencyVo: {
+				ykt: '一卡通',
+				bank: '建设银行',
+			},
+			state: '开启',
+			totalFee: '888元',
+		},
+		{
+			itineraryNo: '001',
+			subTravelName: '001',
+			superviseVo: {
+				ykt: '一卡通',
+				bank: '建设银行',
+			},
+			associationVo: {
+				ykt: '一卡通',
+				bank: '建设银行',
+			},
+			qmTravelAgencyVo: {
+				ykt: '一卡通',
+				bank: '建设银行',
+			},
+			ljTravelAgencyVo: {
+				ykt: '一卡通',
+				bank: '建设银行',
+			},
+			state: '开启',
+			totalFee: '888元',
+		},
+		{
+			itineraryNo: '001',
+			subTravelName: '001',
+			superviseVo: {
+				ykt: '一卡通',
+				bank: '建设银行',
+			},
+			associationVo: {
+				ykt: '一卡通',
+				bank: '建设银行',
+			},
+			qmTravelAgencyVo: {
+				ykt: '一卡通',
+				bank: '建设银行',
+			},
+			ljTravelAgencyVo: {
+				ykt: '一卡通',
+				bank: '建设银行',
+			},
+			state: '开启',
+			totalFee: '888元',
+		},
+	];
 };
 const tipCancel = () => {
 	state.modalShow = false;
@@ -208,49 +295,17 @@ onMounted(() => {
 	const query = router.currentRoute.value.query;
 	initList(query);
 });
-const getRulePrice = computed(() => (record: any, column: any) => {
-	const ruleColumnKey = column.parent.split('-')[0];
-	// 综费产品
-	if (ruleColumnKey.includes('List')) {
-		for (const key in record[ruleColumnKey]) {
-			if (column.columnParentName === record[ruleColumnKey][key]['comprehensiveFeeProductName']) {
-				for (const subKey in record[ruleColumnKey][key].ruleList) {
-					if (column.title === record[ruleColumnKey][key].ruleList[subKey].ruleName) {
-						return `${record[ruleColumnKey][key].ruleList[subKey].rulePrice}`;
-					}
-				}
-			}
-		}
-	}
-	// 除综费产品外
-	if (record[ruleColumnKey] && record[ruleColumnKey].ruleList && record[ruleColumnKey].ruleList.length) {
-		for (const key in record[ruleColumnKey].ruleList) {
-			if (column.title === record[ruleColumnKey].ruleList[key].ruleName) {
-				return `${record[ruleColumnKey].ruleList[key].rulePrice}`;
-			}
-		}
-	}
-	return `暂无数据`;
-});
-// 获取实收
-const getActualPrice = computed(() => (record: any, column: any) => {
-	// 先判断非综费产品
-	if (!column.key.includes('List')) {
-		return record[column.key] ? record[column.key]['actualPrice'] : '';
-	} else {
-		// 综费产品
-		if (record[column.key]) {
-			const idx = record[column.key].findIndex((r: any) => r.comprehensiveFeeProductName === column.parentTitle);
-			if (idx !== -1) {
-				return record[column.key][idx][column.dataIndex] || '';
-			}
-		}
+const getYKT = computed(() => (record, column) => {
+	if (record[column.key] && record[column.key]['ykt']) {
+		return record[column.key]['ykt'];
 	}
 	return '';
 });
-//地接社未消费费用获取数据
-const getSubTravelVoUnSettlementPrice = computed(() => (record: any, column: any) => {
-	return record[column.key] ? record[column.key]['unSettlementPrice'] : '';
+const getBank = computed(() => (record, column) => {
+	if (record[column.key] && record[column.key]['bank']) {
+		return record[column.key]['bank'];
+	}
+	return '';
 });
 </script>
 <style scoped lang="scss">

@@ -158,6 +158,30 @@ const initList = async () => {
 	// const list: [any] = dealData(content);
 	// state.tableData.data = list;
 	// state.tableData.loading = false;
+	state.tableData.data = [
+		{
+			itineraryNo: '001',
+			subTravelName: '001',
+			superviseVo: {
+				ytk: '一卡通',
+				bank: '建设银行',
+			},
+			associationVo: {
+				ytk: '一卡通',
+				bank: '建设银行',
+			},
+			qmTravelAgencyVo: {
+				ytk: '一卡通',
+				bank: '建设银行',
+			},
+			ljTravelAgencyVo: {
+				ytk: '一卡通',
+				bank: '建设银行',
+			},
+			state: '开启',
+			totalFee: '888元',
+		},
+	];
 };
 //搜索
 const onHandleCurrentChange = (val: number) => {
