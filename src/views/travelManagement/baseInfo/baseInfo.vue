@@ -303,6 +303,10 @@ const handleChangeTime = (event: any) => {
 		}
 
 		disTime = disabledRangeTime(start, end);
+		travelStore.setStarEndHMS = {
+			start,
+			end
+		}
 		console.log(dis, '---------')
 	} else {
 		formState.value.startDate = '';

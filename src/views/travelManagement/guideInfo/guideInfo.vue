@@ -26,9 +26,9 @@
 										v-model:value="editableData[record.key ? record.key : record.oid][column.key]"
 										:show-time="{
 												defaultValue: [
-												dayjs(`${travelStore.setStarEndHMS.start.hour} : ${travelStore.setStarEndHMS.start.min} : ${travelStore.setStarEndHMS.start.second}`, 
+												dayjs(`${travelStore.setStarEndHMS.start.hour}:${travelStore.setStarEndHMS.start.min}:${travelStore.setStarEndHMS.start.second}`, 
 												'HH:mm:ss'), 
-												dayjs(`${travelStore.setStarEndHMS.end.hour} : ${travelStore.setStarEndHMS.end.min} : ${travelStore.setStarEndHMS.end.second}`, 
+												dayjs(`${travelStore.setStarEndHMS.end.hour}:${travelStore.setStarEndHMS.end.min}:${travelStore.setStarEndHMS.end.second}`, 
 												'HH:mm:ss')]
 											}"
 										format="YYYY-MM-DD HH:mm:ss"
