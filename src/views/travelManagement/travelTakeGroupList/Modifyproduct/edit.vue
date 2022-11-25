@@ -6,7 +6,7 @@
 		<div class="item-container">
 			<div class="title" v-if="tiemformshow == false">
 				行程时间
-				<span style="margin-left: 40px">{{ startTime }} —— {{ endTime }}</span>
+				<span style="margin-left: 40px" >{{ startTime  }} —— {{ endTime }}</span>
 				<span class="time_btn" @click="changTiemshow">修改时间</span>
 			</div>
 			<div v-else style="margin-top:20px">
@@ -35,6 +35,11 @@
 							{{ index + 1 }}
 						</div>
 					</template>
+					<template v-if="column.key === 'orderFee'">
+						<div>
+							{{ accDiv(record.orderFee,100) }}
+						</div>
+					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a class="item" @click="add(record.oid ? 'addHotelPop' : 'productRow', 'addHotelPop', record.oid ? record.oid :null ,record)">编辑</a>
@@ -58,7 +63,12 @@
 					</template>
 					<template v-if="column.key === 'totalFee'">
 						<div>
-							{{ record.reservePeopleCount * record.unitPrice }}
+							{{ accDiv(record.reservePeopleCount * record.unitPrice , 100) }}
+						</div>
+					</template>
+					<template v-if="column.key === 'unitPrice'">
+						<div>
+							{{ accDiv(record.unitPrice , 100) }}
 						</div>
 					</template>
 					<template v-if="column.key === 'action'">
@@ -77,20 +87,13 @@
 	</div>
 	<addHotel :productRow="editId.productRow" :hotelId="editId.addHotelPop" v-model="addHotelPop" />
 	<addTicket :productRow="editId.productRow" :ticketId="editId.addTicketPop" v-model="addTicketPop" />
-	<!-- <Personnel v-model="selectPersonnelPop" :routeId="gouvyId.id" :isReductionPassed="gouvyId.isReductionPassed"/>
-	<reserveTicket :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop" />
-	<reserveTicket :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop"  />
-	<showTicket :ticketId="showId.showTicketPop" v-model="showTicketPop"/>
-	<showHotel :hotelId="showId.showHotelPop" v-model="showHotelPop" /> -->
+
 </template>
 <script lang="ts" setup>
 import CommonTable from '@/components/common/CommonTable.vue';
 import addHotel from './addHotel.vue';
 import addTicket from './addTicket.vue';
-// import Personnel from './selectPersonnel.vue';
-// import reserveTicket from './reserveTicket.vue';
-// import showTicket from './showTicket.vue';
-// import showHotel from './showHotel.vue';
+
 import { useTraveInfo } from './edit';
 import { accDiv, accMul } from '@/utils/compute';
 import { GroupStatus } from '@/enum';

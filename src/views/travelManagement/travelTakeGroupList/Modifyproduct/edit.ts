@@ -203,6 +203,11 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		add(key: string, popup: string, oid: string, record?: any) {
 			console.log(record);
 			if (record) {
+				// record.roomTypeList = record.roomTypeList.map((it:any)=>{
+				// 	it.unitPrice = accDiv(it.unitPrice,100)
+				// 	it.orderAmount = accDiv(it.orderAmount,100)
+				// 	return it
+				// })
 				editId.productRow = record;
 			} else {
 				editId.productRow = {};
@@ -267,33 +272,60 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		}
 	};
 	const install = () => {
-		api.travelManagement
-			.changDetail({
-				oid: route.query.oid,
-				pageNo: 1,
-				pageSize: 100000,
-			})
-			.then((res: any) => {
-				state.startTime = res.basic.startDate;
-				state.endTime = res.basic.endDate;
-				travelStore.hotelList = res.hotelList;
-				travelStore.ticketsList = res.ticketList;
-				travelStore.touristList = res.touristList.content;
-				state.itineraryId = res.basic.oid;
+		console.log('getNopassChangeProductDeatil', route.query.remark);
+		if (route.query.remark == '0') {
+			api.travelManagement
+				.changDetail({
+					oid: route.query.oid,
+					pageNo: 1,
+					pageSize: 100000,
+				})
+				.then((res: any) => {
+					state.startTime = res.basic?.startDate;
+					state.endTime = res.basic?.endDate;
+					travelStore.hotelList = res.hotelList;
+					travelStore.ticketsList = res.ticketList;
+					travelStore.touristList = res.touristList.content;
+					state.itineraryId = res.basic.oid;
+					let dis = null;
+					if (res) {
+						dis = (current: Dayjs) => {
+							return (
+								(dayjs(res.basic.startDate) && dayjs(res.basic.startDate).subtract(1, 'day') >= current && current) ||
+								(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).add(0, 'day') <= current && current)
+							);
+						};
+					}
+					travelStore.setDisabled = dis as any;
+					const time: any = [];
+					time.push(res.basic.startDate, res.basic.endDate);
+					travelStore.teamTime = time;
+				});
+		} else {
+			api.travelManagement.getProductChangeAuditDetail(route.query.oid).then((res: any) => {
+				res.startDate = dayjs(res.startDate).format('YYYY-MM-DD HH:mm:ss')
+				res.endDate = dayjs(res.endDate).format('YYYY-MM-DD HH:mm:ss')
+				state.startTime = res.startDate;
+				state.endTime = res.endDate;
+				travelStore.hotelList = res.newHotelList;
+				travelStore.ticketsList = res.newTicketList;
+				travelStore.touristList = res.newTicketList
+				state.itineraryId = res.oid;
 				let dis = null;
 				if (res) {
 					dis = (current: Dayjs) => {
 						return (
-							(dayjs(res.basic.startDate) && dayjs(res.basic.startDate).subtract(1, 'day') >= current && current) ||
-							(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).add(0, 'day') <= current && current)
+							(dayjs(res.startDate) && dayjs(res.startDate).subtract(1, 'day') >= current && current) ||
+							(dayjs(res.endDate) && dayjs(res.endDate).add(0, 'day') <= current && current)
 						);
 					};
 				}
 				travelStore.setDisabled = dis as any;
 				const time: any = [];
-				time.push(res.basic.startDate, res.basic.endDate);
+				time.push(res.startDate, res.endDate);
 				travelStore.teamTime = time;
 			});
+		}
 	};
 	const submitReview = async (callback: Function) => {
 		const start = ref();
@@ -340,8 +372,8 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		}
 		state.tiecketparams = [].concat.call(state.ticketData, state.newticket);
 		state.hotelparams = [].concat.call(state.hotelData, state.newhotel);
-		console.log('tiecketparams',state.tiecketparam);
-		
+		console.log('tiecketparams', state.tiecketparam);
+
 		state.tiecketparams = state.tiecketparams.filter((item: any) => item.edit == true, state.tiecketparams);
 		for (let index = 0; index < state.tiecketparams.length; index++) {
 			if ((state.tiecketparams[index]?.oid || state.tiecketparams[index]?.key) && state.tiecketparams[index].edit) {
