@@ -25,14 +25,24 @@
 							<span style="padding: 0 3px;">{{item.roomTypeName}} </span>
 						</span>
 					</template>
-					<!-- <template v-if="column.key === 'roomTypeList'">
-						<div v-for="(item,index) in record.roomTypeList" key="index">
-							{{item.roomTypeName}},
-						</div>
-					</template> -->
+					<template v-if="column.key === 'totalFee'">
+						<span >
+							{{accDiv(record.unitPrice * record.reservePeopleCount,100)}}
+						</span>
+					</template>
+					<template v-if="column.key === 'unitPrice'">
+						<span >
+							{{accDiv(record.unitPrice,100)}}
+						</span>
+					</template>
+					<template v-if="column.key === 'orderFee'">
+						<span >
+							{{accDiv(record.orderFee,100)}}
+						</span>
+					</template>
 					<!-- 时段 -->
 					<template v-if="column.key === 'time'">
-						<div>{{ record.startDate }} - {{ record.endDate }}</div>
+						<div>{{ dayjs(dayjs(record.endDate).format('YYYY-MM-DD')).diff(dayjs(record.startDate).format('YYYY-MM-DD'), 'day') }} </div>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
@@ -50,6 +60,7 @@ import api from '@/api';
 import { useTravelStore } from '@/stores/modules/travelManagementDetail';
 import { getOptions } from './deatli';
 import dayjs, { Dayjs } from 'dayjs';
+import { accDiv,accMul} from '@/utils/compute';
 
 const travelStore = useTravelStore();
 const route = useRoute();
@@ -64,14 +75,15 @@ const state = reactive({
 	endDate: {},
 	descriHtm: '',
 	DeatilAudits:false,
-	lastUpdateTime:''
+	lastUpdateTime:'',
+	remark:'0'
 });
 
 const opendetail = (record: any) => {};
 const openEdit = (data: any) => {
 	router.push({
 		path: '/travel/take_group/modify_product_edit',
-		query: { oid: route.query.oid },
+		query: { oid: route.query.oid , remark:state.remark },
 	});
 };
 const install = () => {
@@ -81,29 +93,10 @@ const install = () => {
 			if (res.auditRemark) {
 				state.descriHtm = res.auditRemark
 				state.lastUpdateTime = dayjs(res.lastUpdateTime).format('YYYY-MM-DD HH:mm:ss')
-				api.travelManagement.getProductChangeAuditDetail(route.query.oid).then((res: any) => {					
-					state.Data = res;
-					state.startDate = res.startDate;
-					state.endDate = res.endDate;
-					travelStore.hotelList = res.newHotelList;
-					travelStore.ticketsList = res.newTicketList;
-					let dis = null;
-					if (res) {
-						dis = (current: Dayjs) => {
-							return (
-								(dayjs(res.startDate) && dayjs(res.startDate) > current && current) ||
-								(dayjs(res.endDate) && dayjs(res.endDate).add(0, 'day') < current && current)
-							);
-						};
-					}
-					travelStore.setDisabled = dis as any;
-					const time: any = [];
-					time.push(res.startDate, res.endDate);
-					travelStore.teamTime = time;
-					 state.DeatilAudits = true
-				});
-			} else {
-				api.travelManagement
+				state.DeatilAudits = true
+				state.remark = '1'
+			}
+			api.travelManagement
 					.changDetail({
 						oid: route.query.oid,
 						pageNo: 1,
@@ -128,8 +121,8 @@ const install = () => {
 						const time: any = [];
 						time.push(res.basic.startDate, res.basic.endDate);
 						travelStore.teamTime = time;
-					});
-			}
+					});	
+			
 		})
 		.catch((error: any) => {});
 };

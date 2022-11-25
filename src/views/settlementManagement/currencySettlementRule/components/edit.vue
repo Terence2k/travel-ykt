@@ -25,7 +25,7 @@
 					v-model:value="formState.productType"
 					placeholder="请选择结算产品"
 					allowClear
-					:options="generaRulesOptions.currencyProductTypeList.map((item) => ({ value: item.value, label: item.name }))"
+					:options="getProductTypeList.map((item) => ({ value: item.value, label: item.name }))"
 				>
 				</a-select>
 			</a-form-item>
@@ -399,6 +399,14 @@ const getChargeModelList = computed(() => {
 		return arr;
 	}
 	return [];
+});
+const getProductTypeList = computed(() => {
+	const productTypeList = lodash.cloneDeep(generaRulesOptions.currencyProductTypeList);
+	const idx = productTypeList.findIndex((item: any) => item.value === 4);
+	if (idx !== -1) {
+		productTypeList.splice(idx, 1);
+	}
+	return productTypeList;
 });
 </script>
 

@@ -424,7 +424,6 @@ watch(dialogVisible, (newVal) => {
 			let price = hotelData.hotelStart.filter((it:any) => it.oid == res.hotelStarId)[0].price
 			handleChange(res.hotelStarId, {name: res.hotelStar, price: price})
 			console.log(formState.roomTypeList,'前');
-			
 			formState.roomTypeList = formState.roomTypeList.map((it:any) => {
 				it.reserveNumber = it.roomCount
 				it.roomTypeLimitPeople = it.limitPeople
