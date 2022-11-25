@@ -185,6 +185,50 @@ const initList = async () => {
 			state: '开启',
 			totalFee: '888元',
 		},
+		{
+			itineraryNo: '002',
+			subTravelName: '002',
+			superviseVo: {
+				ytk: '一卡通1',
+				bank: '建设银行2',
+			},
+			associationVo: {
+				ytk: '一卡通1',
+				bank: '建设银行2',
+			},
+			qmTravelAgencyVo: {
+				ytk: '一卡通1',
+				bank: '建设银行2',
+			},
+			ljTravelAgencyVo: {
+				ytk: '一卡通2',
+				bank: '建设银行1',
+			},
+			state: '关闭',
+			totalFee: '888元',
+		},
+		{
+			itineraryNo: '002',
+			subTravelName: '002',
+			superviseVo: {
+				ytk: '一卡通1',
+				bank: '建设银行2',
+			},
+			associationVo: {
+				ytk: '一卡通1',
+				bank: '建设银行2',
+			},
+			qmTravelAgencyVo: {
+				ytk: '一卡通1',
+				bank: '建设银行2',
+			},
+			ljTravelAgencyVo: {
+				ytk: '一卡通2',
+				bank: '建设银行1',
+			},
+			state: '关闭',
+			totalFee: '888元',
+		},
 	];
 };
 //搜索
