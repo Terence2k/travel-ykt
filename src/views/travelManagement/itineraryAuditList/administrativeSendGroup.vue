@@ -2,7 +2,7 @@
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns">
       <template #describe>
-        共<span class="color-red">{{state.total}}</span>条行程单。
+        共<span class="color-red">{{state.total}}</span>条行程单。其中待审核 <span class="color-red">{{auditInfoNum}}</span> 条。
       </template>
       <template #bodyCell="{ column, text, index, record }">
         <template v-if="column.key === 'index'">
@@ -180,11 +180,16 @@
   const changeAuditVisible = ref(false);
   const rejectAuditVisible = ref(false);
   const rejectReason = ref('');
+  const auditInfoNum = ref(0);
 	const onSearch = async () => {
+    auditInfoNum.value = 0;
 		travelStore.auditList.administrativeSendGroup.params.status = AuditStaus.AdministrativeSendGroup;
 		const res = await travelStore.getAuditList(travelStore.auditList.administrativeSendGroup.params);
     res.content.forEach( async (item: any) => {
       item.auditInfo = await getAuditButton(item.auditUuid);
+      if (item.auditInfo) {
+        auditInfoNum.value += 1;
+      }
     })
 		travelStore.setAuditList(res, 'administrativeSendGroup');
 	}

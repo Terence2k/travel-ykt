@@ -19,7 +19,7 @@
 		<a-spin size="large" :spinning="state.tableData.loading">
 			<CommonTable :dataSource="state.tableData.data" :columns="columns" :row-selection="rowSelection" :scroll="{ x: '100%', y: '100%' }">
 				<template #button>
-					<div class="btn">
+					<div class="btn" v-if="state.tableData.param.status === 1">
 						<a-button type="primary" class="success" @click="toBatchTransfer">处理</a-button>
 					</div>
 				</template>

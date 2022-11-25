@@ -170,7 +170,7 @@ const toPass = () => {
 	modalData.value.params = { title: '审核通过', content: '是否确定所选数据审核通过？' };
 	modalData.value.data = {
 		status: 15,
-		itineraryNoList: route.currentRoute.value?.query.itineraryNo,
+		itineraryNoList: [route.currentRoute.value?.query.itineraryNo],
 	};
 	modalData.value.show = true;
 };
