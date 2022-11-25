@@ -105,7 +105,7 @@ export async function getRoomDetailInfo(data: any, id: number) {
 		url: `${commonPath}/hotel-service/public/api/hotel-room-type/getRoomType/${id}`,
 		method: 'get',
 		data,
-		showLoading: true,
+		showLoading: false,
 	});
 }
 

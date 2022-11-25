@@ -416,7 +416,54 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
-
+	//行程模板酒店详情
+	templateHotelDetail(oid: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/template/hotelDetail/${oid}`,
+			method: 'get',
+			showLoading: false,
+		});
+	},
+	//行程模板添加门票
+	templateaddTicket(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/template/addTicket`,
+			data,
+			method: 'post',
+			showLoading: false,
+		});
+	},
+	templateTicketDetail(oid: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/template/ticketDetail/${oid}`,
+			method: 'get',
+			showLoading: false,
+		});
+	},
+	//行程模板删除
+	templateAllDelete(oid: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/template/delete/${oid}`,
+			method: 'DELETE',
+			showLoading: false,
+		});
+	},
+	//行程模板酒店删除
+	templateHotelDelete(oid: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/template/deleteHotel/${oid}`,
+			method: 'DELETE',
+			showLoading: false,
+		});
+	},
+	//行程模板门票删除
+	templateTicketDelete(oid: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/template/deleteTicket/${oid}`,
+			method: 'DELETE',
+			showLoading: false,
+		});
+	},
 	//撤销重提
 	repealNreapplyPage(data: any) {
 		return request({
