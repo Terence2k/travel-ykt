@@ -53,3 +53,12 @@ export async function statementByTravel(data: any) {
 		showLoading: true,
 	});
 }
+// 地接明细账
+export async function statementBySubTravelDetail(data: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/statement/subTravel/statement/byItinerary`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
