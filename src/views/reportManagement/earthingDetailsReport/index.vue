@@ -536,12 +536,107 @@ const state = reactive<StateType>({
 });
 // 查询
 const initList = async () => {
-	state.tableData.loading = true;
-	let res = await api.statementBySubTravelDetail(state.tableData.param);
-	const { total, content } = res;
-	state.tableData.total = total;
-	state.tableData.data = content;
-	state.tableData.loading = false;
+	// state.tableData.loading = true;
+	// let res = await api.statementBySubTravelDetail(state.tableData.param);
+	// const { total, content } = res;
+	// state.tableData.total = total;
+	// state.tableData.data = content;
+	// state.tableData.loading = false;
+	state.tableData.data = [
+		{
+			itineraryNo: '1', //团单编号
+			settlementTime: '2022.03.01 09:00', //结算时间
+			test: 'test',
+			travelId: 1, //组团社id
+			travelName: '组团社名称', //组团社名称
+			subTravelId: 1, //地接社id
+			subTravelName: '地接社名称', //地接社名称
+			travelTypeId: 1, //团队类型id
+			travelTypeName: '图单对类型名称', //团队类型名称
+			peopleNum: 1, //人数
+			frozenPrice: '团款1', //团款
+			settlementPrice: '核销1', //核销总费用
+			unSettlementPrice: '总未核销', //未核销费用
+			hmFrozenPrice: '古维1', //古维冻结
+			hotelFrozenPrice: '酒店1', //酒店冻结
+			ticketFrozenPrice: '景区1', //景区冻结
+			cateringFrozenPrice: '餐饮1', //餐饮冻结
+			subTravelVo: {
+				actualPrice: '实收2', //实收
+				unSettlementPrice: '地接未核销', //未核销费用
+				ruleList: [
+					{
+						ruleName: '结算规则1', //结算规则
+						rulePrice: '结算费用1', //结算费用
+					},
+				], //结算规则
+			}, //地接社
+			unSettlementPriceVo: {
+				hotelPrice: '酒店1', //酒店
+				ticketPrice: '景点1', //景点
+				cateringPrice: '餐饮1', //餐饮
+				hmPrice: '古维1', //古维
+				rulePrice: '手续费1', //手续费
+				allPrice: '小计1', //小计
+			}, //未消费款项
+			comprehensiveGuideVoList: [
+				{
+					comprehensiveFeeProductId: 1, //综费产品id
+					comprehensiveFeeProductName: '导服费', //综费产品名称
+					travelActualPrice: '1', //旅行社实收
+					groupActualPrice: '1', //集团实收
+					frozenPrice: '导服冻结1', //冻结金额
+					ruleList: [
+						{
+							ruleName: '结算规则1', //结算规则
+							rulePrice: '结算1', //结算费用
+						},
+					], //结算规则
+				},
+				{
+					comprehensiveFeeProductId: 2, //综费产品id
+					comprehensiveFeeProductName: '导服费2', //综费产品名称
+					travelActualPrice: '2', //旅行社实收
+					groupActualPrice: '2', //集团实收
+					frozenPrice: '导服冻结2', //冻结金额
+					ruleList: [
+						{
+							ruleName: '结算规则2', //结算规则
+							rulePrice: '结算2', //结算费用
+						},
+					], //结算规则
+				},
+			], //导服费
+			comprehensiveVoList: [
+				{
+					comprehensiveFeeProductId: 1, //综费产品id
+					comprehensiveFeeProductName: '其他导服费1', //综费产品名称
+					belongCompany: '1', //结算单位
+					actualPrice: '其他导服费1', //实收
+					frozenPrice: '其他冻结1', //冻结金额
+					ruleList: [
+						{
+							ruleName: '结算规则1', //结算规则
+							rulePrice: '1', //结算费用
+						},
+					], //结算规则
+				},
+				{
+					comprehensiveFeeProductId: 2, //综费产品id
+					comprehensiveFeeProductName: '其他导服费2', //综费产品名称
+					belongCompany: '2', //结算单位
+					actualPrice: '其他导服费2', //实收
+					frozenPrice: '其他冻结2', //冻结金额
+					ruleList: [
+						{
+							ruleName: '结算规则2', //结算规则
+							rulePrice: '2', //结算费用
+						},
+					], //结算规则
+				},
+			], //其它综费产品
+		},
+	];
 };
 //搜索
 const onHandleCurrentChange = (val: number) => {
