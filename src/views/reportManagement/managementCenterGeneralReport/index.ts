@@ -296,6 +296,7 @@ export interface comprehensiveVoListType {
 export interface ruleListType {
 	ruleName: string; //规则名称
 	rulePrice: string; //结算费用
+	type: number | string;
 }
 export const getRulePrice = computed(() => (record: any, column: any) => {
 	const ruleColumnKey = column.parent.split('-')[0];
@@ -304,7 +305,10 @@ export const getRulePrice = computed(() => (record: any, column: any) => {
 		for (const key in record[ruleColumnKey]) {
 			if (column.columnParentName === record[ruleColumnKey][key]['comprehensiveFeeProductName']) {
 				for (const subKey in record[ruleColumnKey][key].ruleList) {
-					if (column.title === record[ruleColumnKey][key].ruleList[subKey].ruleName) {
+					if (
+						column.title === record[ruleColumnKey][key].ruleList[subKey].ruleName &&
+						Number(column.type) === Number(record[ruleColumnKey][key].ruleList[subKey].type)
+					) {
 						return `${record[ruleColumnKey][key].ruleList[subKey].rulePrice}`;
 					}
 				}
@@ -314,7 +318,7 @@ export const getRulePrice = computed(() => (record: any, column: any) => {
 	// 除综费产品外
 	if (record[ruleColumnKey] && record[ruleColumnKey].ruleList && record[ruleColumnKey].ruleList.length) {
 		for (const key in record[ruleColumnKey].ruleList) {
-			if (column.title === record[ruleColumnKey].ruleList[key].ruleName) {
+			if (column.title === record[ruleColumnKey].ruleList[key].ruleName && Number(column.type) === Number(record[ruleColumnKey].ruleList[key].type)) {
 				return `${record[ruleColumnKey].ruleList[key].rulePrice}`;
 			}
 		}
