@@ -107,6 +107,7 @@ const save = () => {
 					parentId: formValidate.value.parentId,
 					sort: formValidate.value.sort,
 					url: formValidate.value.url,
+					interfaceUrl: formValidate.value.interfaceUrl,
 					// buttonId: formValidate.value.buttonId,
 				};
 				addOrUpdateAPI('editMenu');
