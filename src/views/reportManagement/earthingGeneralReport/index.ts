@@ -32,13 +32,13 @@ export const fixedColumn: Array<any> = [
 		width: 100,
 	},
 	{
-		title: '核销总费用(元)',
+		title: '核销总费用',
 		dataIndex: 'settlementPrice',
 		key: 'settlementPrice',
 		width: 100,
 	},
 	{
-		title: '未核销总费用(元)',
+		title: '未核销总费用',
 		dataIndex: 'unSettlementPrice',
 		key: 'unSettlementPrice',
 		width: 100,
@@ -118,13 +118,13 @@ export const detailFixedColumn: Array<any> = [
 		width: 100,
 	},
 	{
-		title: '核销总费用(元)',
+		title: '核销总费用',
 		dataIndex: 'settlementPrice',
 		key: 'settlementPrice',
 		width: 100,
 	},
 	{
-		title: '未核销总费用(元)',
+		title: '未核销总费用',
 		dataIndex: 'unSettlementPrice',
 		key: 'unSettlementPrice',
 		width: 100,
@@ -201,13 +201,13 @@ export const subTravel = {
 	key: 'subTravelVo',
 	children: [
 		{
-			title: '未核销费用(元)',
+			title: '未核销费用',
 			dataIndex: 'unSettlementPrice',
 			key: 'subTravelVo',
 			width: 100,
 		},
 		{
-			title: '实收(元)',
+			title: '实收',
 			dataIndex: 'actualPrice',
 			key: 'subTravelVo',
 			width: 100,
@@ -321,13 +321,13 @@ export const getRulePrice = computed(() => (record: any, column: any) => {
 export const getActualPrice = computed(() => (record: any, column: any) => {
 	// 先判断非综费产品
 	if (!column.key.includes('List')) {
-		return record[column.key] ? amountHandleFun(record[column.key]['actualPrice']) : '';
+		return record[column.key] ? amountYuanHandleFun(record[column.key]['actualPrice']) : '';
 	} else {
 		// 综费产品
 		if (record[column.key]) {
 			const idx = record[column.key].findIndex((r: any) => r.comprehensiveFeeProductName === column.parentTitle);
 			if (idx !== -1) {
-				return amountHandleFun(record[column.key][idx][column.dataIndex]) || '';
+				return amountYuanHandleFun(record[column.key][idx][column.dataIndex]) || '';
 			}
 		}
 	}
