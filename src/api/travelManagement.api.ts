@@ -488,4 +488,13 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
+	//撤销重提
+	submitAllRevoke(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/submitAllRevoke`,
+			data,
+			method: 'post',
+			showLoading: false,
+		});
+	},
 };
