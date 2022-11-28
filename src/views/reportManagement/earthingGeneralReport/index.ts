@@ -32,13 +32,13 @@ export const fixedColumn: Array<any> = [
 		width: 100,
 	},
 	{
-		title: '核销总费用',
+		title: '核销总费用(元)',
 		dataIndex: 'settlementPrice',
 		key: 'settlementPrice',
 		width: 100,
 	},
 	{
-		title: '未核销总费用',
+		title: '未核销总费用(元)',
 		dataIndex: 'unSettlementPrice',
 		key: 'unSettlementPrice',
 		width: 100,
@@ -97,7 +97,7 @@ export const detailFixedColumn: Array<any> = [
 		title: '结算时间',
 		dataIndex: 'settlementTime',
 		key: 'settlementTime',
-		width: 100,
+		width: 130,
 	},
 	{
 		title: '团队类型',
@@ -118,13 +118,13 @@ export const detailFixedColumn: Array<any> = [
 		width: 100,
 	},
 	{
-		title: '核销总费用',
+		title: '核销总费用(元)',
 		dataIndex: 'settlementPrice',
 		key: 'settlementPrice',
 		width: 100,
 	},
 	{
-		title: '未核销总费用',
+		title: '未核销总费用(元)',
 		dataIndex: 'unSettlementPrice',
 		key: 'unSettlementPrice',
 		width: 100,
@@ -201,13 +201,13 @@ export const subTravel = {
 	key: 'subTravelVo',
 	children: [
 		{
-			title: '未核销费用',
+			title: '未核销费用(元)',
 			dataIndex: 'unSettlementPrice',
 			key: 'subTravelVo',
 			width: 100,
 		},
 		{
-			title: '实收',
+			title: '实收(元)',
 			dataIndex: 'actualPrice',
 			key: 'subTravelVo',
 			width: 100,
@@ -321,13 +321,13 @@ export const getRulePrice = computed(() => (record: any, column: any) => {
 export const getActualPrice = computed(() => (record: any, column: any) => {
 	// 先判断非综费产品
 	if (!column.key.includes('List')) {
-		return record[column.key] ? record[column.key]['actualPrice'] : '';
+		return record[column.key] ? amountHandleFun(record[column.key]['actualPrice']) : '';
 	} else {
 		// 综费产品
 		if (record[column.key]) {
 			const idx = record[column.key].findIndex((r: any) => r.comprehensiveFeeProductName === column.parentTitle);
 			if (idx !== -1) {
-				return record[column.key][idx][column.dataIndex] || '';
+				return amountHandleFun(record[column.key][idx][column.dataIndex]) || '';
 			}
 		}
 	}
@@ -342,7 +342,7 @@ export const getSettlementRule = computed(() => (column, record) => {
 	const data = column.comprehensiveVoList;
 	for (const key in data) {
 		if (record.title == `${data[key].comprehensiveFeeProductName}冻结`) {
-			return data[key].frozenPrice;
+			return amountYuanHandleFun(data[key].frozenPrice);
 		}
 	}
 	return '';
@@ -352,8 +352,52 @@ export const getSettlementRuleGuide = computed(() => (column, record) => {
 	const data = column.comprehensiveGuideVoList;
 	for (const key in data) {
 		if (record.title == `${data[key].comprehensiveFeeProductName}冻结`) {
-			return data[key].frozenPrice;
+			return amountYuanHandleFun(data[key].frozenPrice);
 		}
 	}
 	return '';
+});
+// 金额单位处理 分--元
+export const amountHandle = computed(() => (num: any) => {
+	let str = num / 100 > 0 ? (num / 100).toFixed(2) : 0;
+	return str.toString();
+});
+const amountHandleFun = (num: any) => {
+	let str = num / 100 > 0 ? (num / 100).toFixed(2) : 0;
+	return str.toString();
+};
+// 金额单位处理 分--元
+export const amountYuanHandle = computed(() => (num: any) => {
+	let str = num / 100 > 0 ? (num / 100).toFixed(2) : 0;
+	return str.toString() + '元';
+});
+const amountYuanHandleFun = (num: any) => {
+	let str = num / 100 > 0 ? (num / 100).toFixed(2) : 0;
+	return str.toString() + '元';
+};
+// 数字千位分隔符处理
+const fillNumberWithComma = (num: any) => {
+	let str = String(num);
+	return str.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};
+// 金额格式化（元、万元、亿元）
+export const numberFormat = computed(() => (value: any) => {
+	var param = {
+		value: '', // 数值
+		unit: '', // 单位
+	};
+	var k = 10000,
+		sizes = ['', '万元', '亿'],
+		i;
+	// 直接赋予元的单位
+	if (value < k) {
+		param.value = Number(value).toFixed(2);
+		param.unit = '元';
+	} else {
+		i = Math.floor(Math.log(value) / Math.log(k));
+		param.value = (value / Math.pow(k, i)).toFixed(2);
+		param.unit = sizes[i];
+	}
+	let num = fillNumberWithComma(param.value);
+	return num + param.unit;
 });
