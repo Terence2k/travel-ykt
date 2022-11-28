@@ -118,19 +118,30 @@ export const useTravelStore = defineStore({
 		},
 		SetHotels(data: any, oid: any, key: string) {
 			if (key) {
+				console.log(1);
+
 				data.oid = oid;
 				return Object.assign(this.hotelList.filter((item: any) => key == item.key)[0], data);
 			}
 			if (data.oid) {
+				console.log(2);
+
 				return Object.assign(this.hotelList.filter((item: any) => data.oid == item.oid)[0], data);
 			}
 			if (data.changeId) {
+				console.log(3);
+
 				return Object.assign(this.hotelList.filter((item: any) => data.changeId == item.changeId)[0], data);
 			} else {
+				console.log(4);
 				data.oid = oid;
-				let newData = [...this.hotelList, data];
-				console.log('newData', newData);
-				this.hotelList = newData as any;
+				if (!this.hotelList) {
+					let newData = [data];
+					this.hotelList = newData as any;
+				} else {
+					let newData = [...this.hotelList, data];
+					this.hotelList = newData as any;
+				}
 			}
 		},
 		setTicket(data: any, oid: string, key: string) {
@@ -144,9 +155,13 @@ export const useTravelStore = defineStore({
 				return Object.assign(this.ticketsList.filter((item: any) => data.changeId == item.changeId)[0], data);
 			} else {
 				data.oid = oid;
-				let newData = [...this.ticketsList, data];
-				this.ticketsList = newData as any;
-				console.log(this.ticketsList, data, newData);
+				if (!this.ticketsList) {
+					let newData = [data];
+					this.ticketsList = newData as any;
+				} else {
+					let newData = [...this.ticketsList, data];
+					this.ticketsList = newData as any;
+				}
 			}
 		},
 		setFileInfo(data: any) {

@@ -335,7 +335,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			start.value = dayjs(dayjs(state.timeformState.time[0]).format('YYYY-MM-DD')).valueOf();
 		}
 
-		for (let index = 0; index < travelStore.hotelList.length; index++) {
+		for (let index = 0; index < travelStore.hotelList?.length; index++) {
 			const hoteltime = dayjs(travelStore.hotelList[index].startDate).valueOf();
 			if (hoteltime > end.value || hoteltime < start.value) {
 				Modal.confirm({
@@ -353,7 +353,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			}
 		}
 
-		for (let index = 0; index < travelStore.ticketsList.length; index++) {
+		for (let index = 0; index < travelStore.ticketsList?.length; index++) {
 			const tickettime = dayjs(travelStore.ticketsList[index].startDate).valueOf();
 			if (tickettime > end.value || tickettime < start.value) {
 				Modal.confirm({
@@ -373,13 +373,13 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		state.tiecketparams = [].concat.call(state.ticketData, state.newticket);
 		state.hotelparams = [].concat.call(state.hotelData, state.newhotel);
 		state.tiecketparams = state.tiecketparams.filter((item: any) => item.edit == true, state.tiecketparams);
-		for (let index = 0; index < state.tiecketparams.length; index++) {
+		for (let index = 0; index < state.tiecketparams?.length; index++) {
 			if ((state.tiecketparams[index]?.oid || state.tiecketparams[index]?.key) && state.tiecketparams[index].edit) {
 				delete state.tiecketparams[index].edit;
 			}
 		}
 		state.hotelparams = state.hotelparams.filter((item: any) => item.edit == true, state.hotelparams);
-		for (let index = 0; index < state.hotelparams.length; index++) {
+		for (let index = 0; index < state.hotelparams?.length; index++) {
 			if ((state.hotelparams[index]?.oid || state.hotelparams[index]?.key) && state.hotelparams[index].edit) {
 				delete state.hotelparams[index].edit;
 			}

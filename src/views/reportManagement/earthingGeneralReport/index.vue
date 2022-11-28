@@ -39,17 +39,35 @@
 			<!--  -->
 			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }">
 				<template #bodyCell="{ column, record }">
+					<!-- 金额处理 begin -->
+
+					<!-- 团款 -->
+					<template v-if="column.key === 'frozenPrice'"> {{ amountYuanHandle(record.frozenPrice) }} </template>
+					<!-- 核销总费用 -->
+					<template v-if="column.key === 'settlementPrice'"> {{ amountHandle(record.settlementPrice) }} </template>
+					<!-- 未核销总费用 -->
+					<template v-if="column.key === 'unSettlementPrice'"> {{ amountHandle(record.unSettlementPrice) }} </template>
+					<!-- 古维费冻结 -->
+					<template v-if="column.key === 'hmFrozenPrice'"> {{ amountYuanHandle(record.hmFrozenPrice) }} </template>
+					<!-- 酒店冻结 -->
+					<template v-if="column.key === 'hotelFrozenPrice'"> {{ amountYuanHandle(record.hotelFrozenPrice) }} </template>
+					<!-- 景点冻结 -->
+					<template v-if="column.key === 'ticketFrozenPrice'"> {{ amountYuanHandle(record.ticketFrozenPrice) }} </template>
+					<!-- 餐费冻结 -->
+					<template v-if="column.key === 'cateringFrozenPrice'"> {{ amountYuanHandle(record.cateringFrozenPrice) }} </template>
+
+					<!-- 金额处理 end -->
 					<!-- 结算规则 -->
 					<template v-if="column.key === 'ruleMap'"> {{ getRulePrice(record, column) }} </template>
 					<!-- 关于所有实收字段 -->
 					<template v-if="column.dataIndex.includes('tualPrice')"> {{ getActualPrice(record, column) }} </template>
 					<!-- 地接社未消费费用字段 -->
 					<template v-if="column.dataIndex === 'unSettlementPrice' && column.key === 'subTravelVo'">
-						{{ getSubTravelVoUnSettlementPrice(record, column) }}
+						{{ amountHandle(getSubTravelVoUnSettlementPrice(record, column)) }}
 					</template>
 					<!-- 未消费费用字段 -->
 					<template v-if="column.key === 'unSettlementPriceVo'">
-						{{ getSubTravelVoUnSettlementPrice(record, column) }}
+						{{ amountYuanHandle(getSubTravelVoUnSettlementPrice(record, column)) }}
 					</template>
 					<!-- 综费冻结 -->
 					<template v-if="column.key === 'settlementRuleNameGuide'">
@@ -90,8 +108,9 @@ import {
 	getSubTravelVoUnSettlementPrice,
 	getSettlementRule,
 	getSettlementRuleGuide,
+	amountHandle,
+	amountYuanHandle,
 } from './index';
-import { log } from 'console';
 
 const options = settlementOptions();
 const columns = computed(() => {
