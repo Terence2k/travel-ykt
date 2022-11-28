@@ -203,12 +203,20 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		add(key: string, popup: string, oid: string, record?: any) {
 			console.log(record);
 			if (record) {
-				// record.roomTypeList = record.roomTypeList.map((it:any)=>{
-				// 	it.unitPrice = accDiv(it.unitPrice,100)
-				// 	it.orderAmount = accDiv(it.orderAmount,100)
-				// 	return it
-				// })
+				if (record.roomTypeList == null) {
+					record.roomTypeList = [
+						{
+							checkInNumber: '', //入住人数
+							hotelRoomTypeId: '', //房型id
+							unitPrice: 0, //房型单价
+							roomCount: '', //订房数量
+							roomTypeName: '', //房型名称
+							orderAmount: 0,
+						},
+					];
+				}
 				editId.productRow = record;
+				console.log(editId.productRow);
 			} else {
 				editId.productRow = {};
 				editId[key] = '';
@@ -303,13 +311,13 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				});
 		} else {
 			api.travelManagement.getProductChangeAuditDetail(route.query.oid).then((res: any) => {
-				res.startDate = dayjs(res.startDate).format('YYYY-MM-DD HH:mm:ss')
-				res.endDate = dayjs(res.endDate).format('YYYY-MM-DD HH:mm:ss')
+				res.startDate = dayjs(res.startDate).format('YYYY-MM-DD HH:mm:ss');
+				res.endDate = dayjs(res.endDate).format('YYYY-MM-DD HH:mm:ss');
 				state.startTime = res.startDate;
 				state.endTime = res.endDate;
 				travelStore.hotelList = res.newHotelList;
 				travelStore.ticketsList = res.newTicketList;
-				travelStore.touristList = res.newTicketList
+				travelStore.touristList = res.newTicketList;
 				state.itineraryId = res.itineraryId;
 				let dis = null;
 				if (res) {
@@ -370,18 +378,22 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				return false;
 			}
 		}
-		state.tiecketparams = [].concat.call(state.ticketData, state.newticket);
-		state.hotelparams = [].concat.call(state.hotelData, state.newhotel);
-		state.tiecketparams = state.tiecketparams.filter((item: any) => item.edit == true, state.tiecketparams);
-		for (let index = 0; index < state.tiecketparams?.length; index++) {
-			if ((state.tiecketparams[index]?.oid || state.tiecketparams[index]?.key) && state.tiecketparams[index].edit) {
-				delete state.tiecketparams[index].edit;
+		if (state.hotelData) {
+			state.hotelparams = [].concat.call(state.hotelData, state.newhotel);
+			state.hotelparams = state.hotelparams.filter((item: any) => item.edit == true, state.hotelparams);
+			for (let index = 0; index < state.hotelparams?.length; index++) {
+				if ((state.hotelparams[index]?.oid || state.hotelparams[index]?.key) && state.hotelparams[index].edit) {
+					delete state.hotelparams[index].edit;
+				}
 			}
 		}
-		state.hotelparams = state.hotelparams.filter((item: any) => item.edit == true, state.hotelparams);
-		for (let index = 0; index < state.hotelparams?.length; index++) {
-			if ((state.hotelparams[index]?.oid || state.hotelparams[index]?.key) && state.hotelparams[index].edit) {
-				delete state.hotelparams[index].edit;
+		if (state.ticketData) {
+			state.tiecketparams = [].concat.call(state.ticketData, state.newticket);
+			state.tiecketparams = state.tiecketparams.filter((item: any) => item.edit == true, state.tiecketparams);
+			for (let index = 0; index < state.tiecketparams?.length; index++) {
+				if ((state.tiecketparams[index]?.oid || state.tiecketparams[index]?.key) && state.tiecketparams[index].edit) {
+					delete state.tiecketparams[index].edit;
+				}
 			}
 		}
 		Audits();
