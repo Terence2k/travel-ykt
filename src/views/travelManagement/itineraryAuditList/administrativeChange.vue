@@ -1,18 +1,23 @@
 <template>
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns">
-		<template #bodyCell="{ column, text, index, record }">
-			<template v-if="column.key === 'index'">
-				<div>
-						{{(travelStore.auditList.administrativeChange.params.pageNo - 1) * (travelStore.auditList.administrativeChange.params.pageSize) + (index + 1)}}
-				</div>
-		</template>
-
-		<template v-if="column.key === 'action'">
-			<div class="action-btns">
-				<a @click="auditStatus(record)" v-if="record.auditInfo?.length">去审核</a>
-			</div>
-		</template>
+      <template #describe>
+        共<span class="color-red">{{state.total}}</span>条变更的行程单。
+      </template>
+      <template #bodyCell="{ column, text, index, record }">
+        <template v-if="column.key === 'index'">
+          <div>
+              {{(travelStore.auditList.administrativeChange.params.pageNo - 1) * (travelStore.auditList.administrativeChange.params.pageSize) + (index + 1)}}
+          </div>
+          </template>
+          <template v-if="column.key === 'totalFee'">
+            {{accDiv(record.totalFee,100) }}
+          </template>
+          <template v-if="column.key === 'action'">
+            <div class="action-btns">
+              <a @click="auditStatus(record)" v-if="record.auditInfo?.length">去审核</a>
+            </div>
+          </template>
 				</template>
 		</CommonTable>
 		<CommonPagination
@@ -60,23 +65,23 @@
 				</tr>
 				<tr class="row">
 					<td class="key">古维管理费</td>
-					<td class="value">{{ state.detail.maintainFee }}</td>
+					<td class="value">{{accDiv(state.detail.maintainFee,100) }}</td>
 				</tr>
 				<tr class="row">
 					<td class="key">综费产品</td>
-					<td class="value">{{ state.detail.productFee }}</td>
+					<td class="value">{{accDiv(state.detail.productFee,100) }}</td>
 				</tr>
 				<tr class="row">
 					<td class="key">酒店</td>
-					<td class="value">{{ state.detail.hotelFee }}</td>
+					<td class="value">{{accDiv(state.detail.hotelFee,100)  }}</td>
 				</tr>
 				<tr class="row">
 					<td class="key">景区</td>
-					<td class="value">{{ state.detail.ticketFee }}</td>
+					<td class="value">{{accDiv(state.detail.ticketFee,100)  }}</td>
 				</tr>
 				<tr class="row">
 					<td class="key">餐饮</td>
-					<td class="value">{{ state.detail.cateringFee }}</td>
+					<td class="value">{{accDiv(state.detail.cateringFee,100)}}</td>
 				</tr>
 			</table>
 		</div>
@@ -101,6 +106,7 @@
   import { getUserInfo } from '@/utils/util';
   import { message } from 'ant-design-vue';
   import { Modal } from 'ant-design-vue';
+  import { accDiv,accMul} from '@/utils/compute';
 
 	import api from '@/api/index';
 

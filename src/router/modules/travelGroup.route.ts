@@ -424,6 +424,38 @@ export default [
 					},
 				],
 			},
+			{
+				path: 'revocationManagement',
+				name: 'traval-revocationManagement',
+				redirect: '/travel/revocationManagement/list',
+				meta: {
+					title: '撤销重提管理',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					isDetail: false, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/gouvyManagement/revocationManagement/index.vue'),
+						name: 'travel-revocation-management-list',
+						meta: {
+							title: '列表页',
+							activeMeun: 'revocationManagement',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					// {
+					// 	path: 'exemption-management_edit',
+					// 	component: () => import('@/views/gouvyManagement/exemptionManagement/details.vue'),
+					// 	name: 'exemption-management_edit',
+					// 	meta: {
+					// 		title: '查看',
+					// 		isDetail: true, // 在左侧的导航栏不会展示
+					// 	},
+					// },
+				],
+			},
 		],
 	},
 ];

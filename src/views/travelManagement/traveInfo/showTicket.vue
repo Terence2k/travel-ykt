@@ -28,7 +28,7 @@
 			</a-form-item>
 
             <a-form-item label="门票价格" name="travelName">
-				{{formState.unitPrice}}
+				{{formState.unitPrice / 100}}
 			</a-form-item>
 
             <a-form-item label="订单编号">

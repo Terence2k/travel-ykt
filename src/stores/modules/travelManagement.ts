@@ -182,6 +182,7 @@ export const useTravelStore = defineStore({
 		auditList: {
 			financeSendGroup: cloneDeep(auditListParams),
 			financeChange: cloneDeep(auditListParams),
+			withdrawalChange: cloneDeep(auditListParams),
 			administrativeSendGroup: cloneDeep(auditListParams),
 			administrativeChange: cloneDeep(auditListParams),
 		},
@@ -233,6 +234,7 @@ export const useTravelStore = defineStore({
 			[AuditStaus.AdministrativeChange]: '变更审核',
 			[AuditStaus.FinanceSendGroup]: '发团审核',
 			[AuditStaus.FinanceChange]: '变更审核',
+			[AuditStaus.withdrawalChange]: '撤销重提审核',
 		},
 		takeGroupStatus: {
 			[TakeGroupStatus.Drafts]: '草稿',
@@ -301,6 +303,14 @@ export const useTravelStore = defineStore({
 			});
 			return res;
 		},
+		// async getItineraryRevokeAuditList(params: object) {
+		// 	let res = await api.travelManagement.getItineraryRevokeAuditList(params);
+		// 	res.content = res.content.map((it: TraveDataItem) => {
+		// 		it.time = it.startDate + '-' + it.endDate;
+		// 		return it;
+		// 	});
+		// 	return res;
+		// },
 		setTouristList(list: any) {
 			this.touristList = list;
 		},

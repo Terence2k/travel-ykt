@@ -11,7 +11,7 @@ export const settlementOptions = defineStore('settlement', {
 		earthContactAgencyList: [], // 地接社
 		businessTypeOptionList: [], //企业类型
 		itineraryStatus: [], //行程单枚举状态
-		testStatus: 10
+		testStatus: 10,
 	}),
 	getters: {},
 	actions: {
@@ -47,16 +47,15 @@ export const settlementOptions = defineStore('settlement', {
 		getBusinessTypeOptionList() {
 			if (!this.businessTypeOptionList.length) {
 				api.businessTypeDropDown('BUSINESS_TYPE').then((res: any) => {
-					const options = res.map((i: any) => {
-						return { name: i.name, oid: i.oid, codeValue: i.codeValue };
-					});
-					this.businessTypeOptionList = options;
-					return options;
+					this.businessTypeOptionList = res.filter((item: any) => {
+						// 筛除 酒店、餐饮、景区 选项
+						return item.oid !== 116 && item.oid !== 117 && item.oid !== 118;
+					});;
 				});
 			}
 		},
 		// 获取行程单枚举状态
-		getItineraryStatus(code: any) {
+		getItineraryStatus() {
 			if (!this.itineraryStatus.length) {
 				api.getItineraryStatus().then((res: any) => {
 					this.itineraryStatus = res;

@@ -3,9 +3,14 @@
 		<CommonTable :row-selection="{ onSelect }" :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
 			<template #button> </template>
 			<template #bodyCell="{ column, text, index, record }">
+        <template v-if="column.key === 'itineraryNo'">
+          <div>
+            <a @click="goToDetail(record)">{{text}}</a>
+          </div>
+        </template>
 				<template v-if="column.key === 'index'">
 					<div>
-						{{ (state.params.pageNo - 1) * state.params.pageSize + (index + 1) }}
+						{{ (travelStore.takeGroupList.waitingReserved.params.pageNo - 1) * travelStore.takeGroupList.waitingReserved.params.pageSize + (index + 1) }}
 					</div>
 				</template>
 
@@ -27,7 +32,7 @@
 				<p>包括导游、交通信息、附件内容，散团前均可修改</p>
 			</div>
 			<div class="model-div">
-				<a-button type="primary" style="width:120px">修改预订产品</a-button>
+				<a-button type="primary" style="width:120px" @click="openModifyproduct()">修改预订产品</a-button>
 				<p>包括行程时间、景区、酒店、餐饮等，未核销时可修改</p>
 			</div>
 			<div class="model-div">
@@ -126,7 +131,10 @@ const onSearch = async () => {
 	const res = await travelStore.getTravelList(travelStore.takeGroupList.waitingReserved.params);
 	travelStore.setTakeGroupList(res, 'waitingReserved');
 };
-const onHandleCurrentChange = () => {};
+const onHandleCurrentChange = (e: any) => {
+		travelStore.takeGroupList.waitingReserved.params.pageNo = e
+		onSearch()
+};
 const pageSideChange = () => {};
 const goToPath = (row: any) => {
 	router.push({
@@ -165,6 +173,12 @@ const changeMission = () => {
 		},
 	});
 };
+const goToDetail = (row: any) => {
+  router.push({
+    path: '/travel/travel_manage/travel_detail',
+    query: { oid: encodeURIComponent(row.oid) }
+  });
+}
 const goToChange = (row: any) => {
 	(state.id = row.oid), (state.itineraryNo = row.itineraryNo);
 	api.travelManagement.checkVerifyByItineraryId(row.itineraryNo).then((res) => {
@@ -175,6 +189,15 @@ const goToChange = (row: any) => {
 		}
 	});
 };
+const openModifyproduct = () => {
+		router.push({
+			path: '/travel/take_group/modify_o_product',
+			query: {
+				oid: state.id,
+			},
+		});
+		
+	}
 const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
 	console.log(record, selected, selectedRows);
 };

@@ -1,10 +1,13 @@
 <template>
 	<div class="top">
 		<p>当前行程单还未发生核销，可以撤销作废，并重新填报、提交发团。</p>
-		<a-button type="primary" @click="reRecokeAuditVisible = true">确认撤销</a-button>
+		<section>
+			<a-button class="btn" type="primary" @click="check('All')">整团撤销</a-button>
+			<a-button type="primary" @click="check('REVOKE')">撤销重提</a-button>
+		</section>
 	</div>
 	<div class="table_box">
-		<p class="top-p">行程单ID:<span></span></p>
+		<p class="top-p">行程单ID:{{}}<span></span></p>
 		<table class="info_table" cellpadding="16px" border="1">
 			<tr class="row">
 				<td class="key">线路名称</td>
@@ -76,11 +79,44 @@
 		<p class="top-p">已上传的附件</p>
 		<CommonTable :columns="enclosure" rowKey="oid" :scrollY="false"> </CommonTable>
 	</div>
+
+	<BaseModal title="第三方门票退订提醒" v-model="reRecokeAuditCheckVisible">
+		<p>您的原始行程单中已预订了 ,需要先完成退订，才能整团撤销。</p>
+		<template v-slot:footer>
+			<a-button @click="reRecokeAuditCheckVisible = false">取消</a-button>
+			<a-button @click="applyApiTRevoke" type="primary">去退订</a-button>
+		</template>
+	</BaseModal>
+
+	<BaseModal title="第三方门票退订成功" v-model="reRecokeAuditTipsVisible">
+		<p>原始行程单中 玉龙雪山索道、印象丽江演出票 已 成功退订。现在可以继续申请原始行程单的撤销。</p>
+		<template v-slot:footer>
+			<a-button @click="openTips" type="primary">继续撤销</a-button>
+		</template>
+	</BaseModal>
+
+	<BaseModal title="整团撤销提醒" v-model="reRecokeAuditAllsVisible">
+		<p>是否直接整团撤销？整团撤销需要组团社计调 、古维管理员审核。审核通过后系统会自动为 您撤销该行程，已冻结金额将返回给组团社。</p>
+		<template v-slot:footer>
+			<a-button @click="reRecokeAuditAllsVisible = false">取消</a-button>
+			<a-button @click="openTips" type="primary">继续撤销</a-button>
+		</template>
+	</BaseModal>
+
 	<BaseModal title="撤销、重提提醒" v-model="reRecokeAuditVisible">
 		<p>是否确认撤销该行程？系统将先自动作废当前 行程单，之后您需要重新填报一条新行程单。 系统会自动记录新行程单与当前行程单的关联</p>
 		<template v-slot:footer>
 			<a-button @click="reRecokeAuditVisible = false">取消</a-button>
-			<a-button type="primary">继续</a-button>
+			<a-button @click="openReapply" type="primary">继续</a-button>
+		</template>
+	</BaseModal>
+
+	<reapply ref="reapplyRef" @finish="successAudit = true" />
+
+	<BaseModal title="撤销申请成功" v-model="successAudit">
+		<p>行程单YNLJ202210020000002已提交撤销， 请等待组团社计调、古维管理员依次审核。</p>
+		<template v-slot:footer>
+			<a-button @click="successAudit = false" type="primary">确定</a-button>
 		</template>
 	</BaseModal>
 </template>
@@ -92,6 +128,9 @@ import { message } from 'ant-design-vue';
 import { Modal } from 'ant-design-vue';
 import api from '@/api/index';
 import { AuditStaus } from '@/enum';
+import reapply from './components/reapply.vue';
+
+const route = useRouter();
 const state = reactive({
 	total: 0,
 	params: {
@@ -427,6 +466,62 @@ const enclosure = [
 	},
 ];
 const reRecokeAuditVisible = ref(false);
+
+const reRecokeAuditTipsVisible = ref(false);
+
+const reRecokeAuditCheckVisible = ref(false);
+
+const reRecokeAuditAllsVisible = ref(false);
+
+const successAudit = ref(false);
+
+const openTips = () => {
+	reRecokeAuditTipsVisible.value = false;
+	reRecokeAuditAllsVisible.value = false;
+	reRecokeAuditVisible.value = true;
+};
+
+const applyApiTRevoke = () => {
+	reRecokeAuditCheckVisible.value = false;
+	btnStatus.value === 'REVOKE' ? (reRecokeAuditVisible.value = true) : (reRecokeAuditAllsVisible.value = true);
+};
+
+//打开弹窗
+const reapplyRef = ref();
+
+const openReapply = () => {
+	reRecokeAuditVisible.value = false;
+	reapplyRef.value.open(btnStatus.value);
+};
+
+const checkCurrentPower = () => {};
+
+const checkPower = async () => {
+	let pW = new FormData();
+
+	pW.append('itineraryId', route.currentRoute.value?.query?.id);
+
+	await api.travelManagement.repealNreapplyPage(pW);
+
+	return true;
+};
+
+const btnStatus = ref('');
+
+const check = async (status: string) => {
+	let valid = await checkPower();
+	btnStatus.value = status;
+	if (!valid) {
+		console.log('THROUGHT', status);
+		btnStatus.value === 'REVOKE' ? (reRecokeAuditVisible.value = true) : (reRecokeAuditAllsVisible.value = true);
+	} else {
+		reRecokeAuditCheckVisible.value = true;
+	}
+};
+
+onMounted(() => {
+	// initPage();
+});
 </script>
 <style scoped lang="less">
 .table_box {
@@ -488,5 +583,8 @@ const reRecokeAuditVisible = ref(false);
 	border-bottom: 3px solid rgb(121, 121, 121);
 	padding: 10px 0px;
 	margin-bottom: 10px;
+	.btn {
+		margin-right: 20px;
+	}
 }
 </style>

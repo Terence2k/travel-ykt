@@ -164,18 +164,6 @@ export default [
 					title: '系统房型管理',
 				},
 			},
-			{
-				path: 'hotelManagement-enterpriseInfoManagement',
-				name: 'hotelManagement-enterpriseInfoManagement',
-				component: () => import('@/views/baseInfoManage/enterpriseInfo/index.vue'),
-				// redirect: '/hotelManagement/hotelManagement-enterpriseInfoManagement/travelEnterpriseInfo',
-				meta: {
-					title: '企业信息管理',
-					// icon: 'liulanqi',
-					// auth: ["admin"],
-					// isDetail: true, // 在左侧的导航栏不会展示
-				},
-			},
 		],
 	},
 ];

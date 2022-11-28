@@ -1,3 +1,4 @@
+import { accDiv,accMul} from '@/utils/compute';
 export const getOptions = (props: any) => {
     let hotelcolumns = reactive({
         columns: [
@@ -57,10 +58,10 @@ export const getOptions = (props: any) => {
           `已预订<span style="color: red;">${props.hotelList?props.hotelList?.length:props.newHotelList?.length}</span>个酒店，
           最大可入住人数：<span style="color: red;">${props.hotelList ? props.hotelList?.reduce((prev: any, curr: any) => prev + curr.roomCount, 0):
             props.newHotelList?.reduce((prev: any, curr: any) => prev + curr.roomCount, 0)}</span>；
-          房间数量：<span style="color: red;">${props.hotelList?props.hotelList.reduce((prev: any, curr: any) => prev + curr.roomCount, 0):
+          房间数量：<span style="color: red;">${props.hotelList ? props.hotelList.reduce((prev: any, curr: any) => prev + curr.roomCount, 0):
             props.newHotelList?.reduce((prev: any, curr: any) => prev + curr.roomCount, 0)}</span>；
-          费用总计：<span style="color: red;">${props.hotelList?props.hotelList?.reduce((prev: any, curr: any) => prev + curr.orderFee, 0) || 0:
-            props.newHotelList?.reduce((prev: any, curr: any) => prev + curr.orderFee, 0) || 0}</span>元`,
+          费用总计：<span style="color: red;">${props.hotelList ? accDiv(props.hotelList?.reduce((prev: any, curr: any) => prev + curr.orderFee, 0),100) || 0:
+            accDiv(props.newHotelList?.reduce((prev: any, curr: any) => prev + curr.orderFee, 0),100)|| 0}</span>元`,
         dataSource: props.hotelList?props?.hotelList:props?.newHotelList,
     })
     let ticketcolumns = reactive({
@@ -122,8 +123,8 @@ export const getOptions = (props: any) => {
             props.newTicketList?.reduce((prev: any, curr: any) => prev + curr.reservePeopleCount, 0)}</span>；
           门票数量：<span style="color: red;">${props.ticketList ? props.ticketList.reduce((prev: any, curr: any) => prev + curr.reservePeopleCount, 0) :
             props.newTicketList?.reduce((prev: any, curr: any) => prev + curr.reservePeopleCount, 0)}</span>；
-          费用总计：<span style="color: red;">${props.ticketList ? props.ticketList.reduce((prev: any, curr: any) => prev + curr.unitPrice * curr.reservePeopleCount, 0) || 0 :
-            props.newTicketList?.reduce((prev: any, curr: any) => prev + curr.unitPrice * curr.reservePeopleCount, 0) || 0}</span>元`,
+          费用总计：<span style="color: red;">${props.ticketList ? accDiv(props.ticketList.reduce((prev: any, curr: any) => prev + curr.unitPrice * curr.reservePeopleCount, 0),100) || 0 :
+            accDiv(props.newTicketList?.reduce((prev: any, curr: any) => prev + curr.unitPrice * curr.reservePeopleCount, 0),100) || 0}</span>元`,
         dataSource: props.ticketList ? props?.ticketList : props.newTicketList,
     })
     return{
