@@ -203,7 +203,7 @@ const columns = computed(() => {
 			const ruleList = ruleMap[key]['data'][subKey];
 			for (const t in ruleList) {
 				const isHasRule = ruleMap[key]['column'].some((item: any) => {
-					return item.title === ruleList[t].ruleName;
+					return item.title === ruleList[t].ruleName && item.type == ruleList[t].type;
 				});
 				// 判断标有是否已经存在数据
 				if (!isHasRule) {
@@ -214,6 +214,7 @@ const columns = computed(() => {
 						ruleName: `${ruleList[t].ruleName}`,
 						width: 180,
 						parent: key,
+						type: ruleList[t].type,
 					};
 					if (key.includes('List')) {
 						rule['columnParentName'] = ruleMap[key]['columnParent']['title'];
@@ -273,14 +274,22 @@ const initList = async () => {
 	// 				{
 	// 					ruleName: '结算规则-001', //规则名称
 	// 					rulePrice: '100', //结算费用
+	// 					type: 1,
 	// 				},
 	// 				{
-	// 					ruleName: '结算规则-002', //规则名称
-	// 					rulePrice: '200', //结算费用
+	// 					ruleName: '综费结算测试', //规则名称
+	// 					rulePrice: '20001', //结算费用
+	// 					type: 1,
+	// 				},
+	// 				{
+	// 					ruleName: '综费结算测试', //规则名称
+	// 					rulePrice: '111111', //结算费用
+	// 					type: 2,
 	// 				},
 	// 				{
 	// 					ruleName: '结算规则-003', //规则名称
 	// 					rulePrice: '200', //结算费用
+	// 					type: 1,
 	// 				},
 	// 			], //结算规则
 	// 		}, //古维费用
@@ -292,6 +301,7 @@ const initList = async () => {
 	// 				{
 	// 					ruleName: '结算规则', //规则名称
 	// 					rulePrice: '1', //结算费用
+	// 					type: 1,
 	// 				},
 	// 			], //结算规则
 	// 		}, //景区
@@ -303,6 +313,7 @@ const initList = async () => {
 	// 				{
 	// 					ruleName: '结算规则', //规则名称
 	// 					rulePrice: '888', //结算费用
+	// 					type: 1,
 	// 				},
 	// 			], //结算规则
 	// 		}, //酒店
@@ -312,6 +323,7 @@ const initList = async () => {
 	// 				{
 	// 					ruleName: '结算规则', //规则名称
 	// 					rulePrice: '19999', //结算费用
+	// 					type: 1,
 	// 				},
 	// 			], //结算规则
 	// 		}, //餐饮
@@ -321,6 +333,7 @@ const initList = async () => {
 	// 				{
 	// 					ruleName: '结算规则', //规则名称
 	// 					rulePrice: '888', //结算费用
+	// 					type: 1,
 	// 				},
 	// 			], //结算规则
 	// 		}, //监理
@@ -330,6 +343,7 @@ const initList = async () => {
 	// 				{
 	// 					ruleName: '结算规则', //规则名称
 	// 					rulePrice: '888', //结算费用
+	// 					type: 1,
 	// 				},
 	// 			], //结算规则
 	// 		}, //协会
@@ -339,6 +353,7 @@ const initList = async () => {
 	// 				{
 	// 					ruleName: '结算规则', //规则名称
 	// 					rulePrice: '888', //结算费用
+	// 					type: 1,
 	// 				},
 	// 			], //结算规则
 	// 		}, //集团
@@ -348,6 +363,7 @@ const initList = async () => {
 	// 				{
 	// 					ruleName: '结算规则', //规则名称
 	// 					rulePrice: '888', //结算费用
+	// 					type: 1,
 	// 				},
 	// 			], //结算规则
 	// 		}, //文旅局
@@ -357,6 +373,7 @@ const initList = async () => {
 	// 				{
 	// 					ruleName: '结算规则', //规则名称
 	// 					rulePrice: '888', //结算费用
+	// 					type: 1,
 	// 				},
 	// 			], //结算规则
 	// 		}, //一卡通
@@ -367,6 +384,7 @@ const initList = async () => {
 	// 				{
 	// 					ruleName: '结算规则', //规则名称
 	// 					rulePrice: '888123', //结算费用
+	// 					type: 1,
 	// 				},
 	// 			], //结算规则
 	// 		}, //地接社
@@ -380,10 +398,12 @@ const initList = async () => {
 	// 					{
 	// 						ruleName: '结算规则-0001', //规则名称
 	// 						rulePrice: '1222', //结算费用
+	// 						type: 1,
 	// 					},
 	// 					{
 	// 						ruleName: '结算规则-0002', //规则名称
 	// 						rulePrice: '1322', //结算费用
+	// 						type: 1,
 	// 					},
 	// 				], //结算规则
 	// 			},
@@ -398,10 +418,12 @@ const initList = async () => {
 	// 					{
 	// 						ruleName: '结算规则-0001', //规则名称
 	// 						rulePrice: '13333', //结算费用
+	// 						type: 1,
 	// 					},
 	// 					{
 	// 						ruleName: '结算规则-0002', //规则名称
 	// 						rulePrice: '13333', //结算费用
+	// 						type: 1,
 	// 					},
 	// 				], //结算规则
 	// 			},

@@ -43,7 +43,7 @@
 			</div>
 
 			<a-form-item label="订单金额">
-				{{formState.orderFee}}
+				{{formState.orderFee / 100}}
 			</a-form-item>
                 
 			<a-form-item label="订单编号">
