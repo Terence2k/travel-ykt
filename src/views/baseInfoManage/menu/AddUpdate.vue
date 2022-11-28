@@ -27,11 +27,11 @@
 			<a-form-item label="跳转路径" name="url">
 				<a-input v-model:value="formValidate.url" placeholder="请输入跳转路径" />
 			</a-form-item>
-			<a-form-item label="操作按钮" name="buttonId" v-if="formValidate.menuType === 3">
+			<!-- <a-form-item label="操作按钮" name="buttonId" v-if="formValidate.menuType === 3 || formValidate.oid">
 				<a-select ref="select" v-model:value="formValidate.buttonId" placeholder="请选择操作按钮">
 					<a-select-option v-for="item in btnGroupData" :value="item.oid">{{ item.name }}</a-select-option>
 				</a-select>
-			</a-form-item> 
+			</a-form-item>  -->
 			<a-form-item label="菜单编码" name="menuCode">
 				<a-input v-model:value="formValidate.menuCode" placeholder="无需填写，保存自动生成" disabled />
 			</a-form-item>
@@ -107,6 +107,7 @@ const save = () => {
 					parentId: formValidate.value.parentId,
 					sort: formValidate.value.sort,
 					url: formValidate.value.url,
+					interfaceUrl: formValidate.value.interfaceUrl,
 					// buttonId: formValidate.value.buttonId,
 				};
 				addOrUpdateAPI('editMenu');

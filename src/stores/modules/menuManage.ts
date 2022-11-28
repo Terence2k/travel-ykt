@@ -6,7 +6,8 @@ export const useMenuManage = defineStore('menuManage', {
 		menuType: {
       0: '菜单夹',
       1: '功能模块',
-      2: 'tab页'
+      2: 'tab页',
+      3: '按钮'
     },
     menuStatus: {
       0: '关闭',
