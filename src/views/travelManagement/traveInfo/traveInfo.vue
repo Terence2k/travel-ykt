@@ -62,6 +62,14 @@
 					<template v-if="column.key === 'feeModel'">
 						{{ column.data[text] }}
 					</template>
+
+					<template v-if="column.key === 'feeNumber'">
+						{{ text / 100 || 0 }}
+					</template>
+
+					<template v-if="column.key === 'totalMoney'">
+						{{ text / 100 || 0 }}
+					</template>
 				</template>
 			</CommonTable>
 			<CommonTable v-else :columns="columns" :dataSource="allFeesProducts" :scrollY="false">
@@ -73,6 +81,14 @@
 					</template>
 					<template v-if="column.key === 'feeModel'">
 						{{ column.data[text] }}
+					</template>
+					
+					<template v-if="column.key === 'feeNumber'">
+						{{ text / 100 || 0 }}
+					</template>
+
+					<template v-if="column.key === 'totalMoney'">
+						{{ text / 100 || 0 }}
 					</template>
 				</template>
 			</CommonTable>

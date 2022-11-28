@@ -222,8 +222,6 @@ const handleChangCheckIn = () => {
 };
 
 const changeRoomType = (e: any, option: any, index: number) => {
-	console.log('option',option);
-	
 	formState.roomTypeList[index].roomOccupancyNum = option.num;
 	formState.roomTypeList[index].roomTypeLimitPeople = option.num;
 	formState.roomTypeList[index].stockNum = option.stockNum;
@@ -327,7 +325,7 @@ const submit = async () => {
 		newFormState.roomCount = newFormState.roomTypeList.map((it: any) => Number(it.roomCount)).reduce((prev: number, next: number) => prev + next);
 		console.log('newFormState.roomTypeList:',newFormState.roomTypeList);
 		
-		travelStore.SetHotels(newFormState, formState.oid, props.productRow.key);
+		travelStore.SetHotels(newFormState, formState.oid || null, props.productRow.key);
 		// callback()
 	} catch (errorInfo) {
 		// callback(false);
@@ -365,6 +363,8 @@ watch(
 );
 watch(dialogVisible, (newVal) => {
 	if (newVal) {
+		console.log(props.productRow);
+		
 		const data = cloneDeep(props.productRow);
 		for (let k in data) {
 			formState[k] = data[k];
@@ -387,6 +387,7 @@ watch(dialogVisible, (newVal) => {
 			it.unitPrice = it.unitPrice/100;
 			return it;
 		});
+		getRoomType(props.productRow.hotelId, formState.endData, formState.startData)
 		formState.orderFee = accDiv(data.orderFee,100) || '无需填写，提交审核后自动计算'
 		formState.roomCount = data.roomCount
 		formState.hotelId = props.productRow.hotelId;
