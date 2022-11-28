@@ -14,7 +14,7 @@
 			<FormItem title="撤销原因" :iValue="state.detail.travelName" />
 			<FormItem title="附件" :iValue="state.detail.travelName" />
 		</FormWrap>
-		<a-button @click="toCompare">去查看</a-button>
+		<!-- <a-button @click="toCompare">去查看</a-button> -->
 		<h3 class="tips">以下是撤销前、重提后的行程内容对比：</h3>
 
 		<div class="table_box">
