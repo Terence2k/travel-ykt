@@ -44,9 +44,9 @@
 					<!-- 团款 -->
 					<template v-if="column.key === 'frozenPrice'"> {{ amountYuanHandle(record.frozenPrice) }} </template>
 					<!-- 核销总费用 -->
-					<template v-if="column.key === 'settlementPrice'"> {{ amountHandle(record.settlementPrice) }} </template>
+					<template v-if="column.key === 'settlementPrice'"> {{ amountYuanHandle(record.settlementPrice) }} </template>
 					<!-- 未核销总费用 -->
-					<template v-if="column.key === 'unSettlementPrice'"> {{ amountHandle(record.unSettlementPrice) }} </template>
+					<template v-if="column.key === 'unSettlementPrice'"> {{ amountYuanHandle(record.unSettlementPrice) }} </template>
 					<!-- 古维费冻结 -->
 					<template v-if="column.key === 'hmFrozenPrice'"> {{ amountYuanHandle(record.hmFrozenPrice) }} </template>
 					<!-- 酒店冻结 -->
@@ -63,7 +63,7 @@
 					<template v-if="column.dataIndex.includes('tualPrice')"> {{ getActualPrice(record, column) }} </template>
 					<!-- 地接社未消费费用字段 -->
 					<template v-if="column.dataIndex === 'unSettlementPrice' && column.key === 'subTravelVo'">
-						{{ amountHandle(getSubTravelVoUnSettlementPrice(record, column)) }}
+						{{ amountYuanHandle(getSubTravelVoUnSettlementPrice(record, column)) }}
 					</template>
 					<!-- 未消费费用字段 -->
 					<template v-if="column.key === 'unSettlementPriceVo'">
@@ -108,7 +108,6 @@ import {
 	getSubTravelVoUnSettlementPrice,
 	getSettlementRule,
 	getSettlementRuleGuide,
-	amountHandle,
 	amountYuanHandle,
 } from './index';
 
