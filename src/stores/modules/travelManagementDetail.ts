@@ -138,7 +138,7 @@ export const useTravelStore = defineStore({
 				return Object.assign(this.ticketsList.filter((item: any) => key == item.key)[0], data);
 			}
 			if (data.oid) {
-				Object.assign(this.ticketsList.filter((item: any) => data.oid == item.oid)[0], data);
+				return Object.assign(this.ticketsList.filter((item: any) => data.oid == item.oid)[0], data);
 			}
 			if (data.changeId) {
 				return Object.assign(this.ticketsList.filter((item: any) => data.changeId == item.changeId)[0], data);

@@ -310,7 +310,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				travelStore.hotelList = res.newHotelList;
 				travelStore.ticketsList = res.newTicketList;
 				travelStore.touristList = res.newTicketList
-				state.itineraryId = res.oid;
+				state.itineraryId = res.itineraryId;
 				let dis = null;
 				if (res) {
 					dis = (current: Dayjs) => {
@@ -372,8 +372,6 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		}
 		state.tiecketparams = [].concat.call(state.ticketData, state.newticket);
 		state.hotelparams = [].concat.call(state.hotelData, state.newhotel);
-		console.log('tiecketparams', state.tiecketparam);
-
 		state.tiecketparams = state.tiecketparams.filter((item: any) => item.edit == true, state.tiecketparams);
 		for (let index = 0; index < state.tiecketparams.length; index++) {
 			if ((state.tiecketparams[index]?.oid || state.tiecketparams[index]?.key) && state.tiecketparams[index].edit) {
