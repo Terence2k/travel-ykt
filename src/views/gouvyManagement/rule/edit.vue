@@ -1,6 +1,6 @@
 <template>
 	<div class="table-area">
-		<BaseModal :title="state.title" v-model="dialogVisible" :width="600">
+		<BaseModal :title="state.title" v-model="dialogVisible" :width="600" @close="handleOk">
 			<a-form ref="formRef" :model="formValidate" :rules="rules" :label-col="{ span: 5 }" :wrapper-col="{ span: 16, offset: 1 }" labelAlign="left">
 				<a-form-item label="规则名称" name="ruleName">
 					<a-input v-model:value="formValidate.ruleName" placeholder="请输入规则名称" />
