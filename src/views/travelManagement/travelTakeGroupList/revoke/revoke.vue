@@ -81,25 +81,25 @@
 	</div>
 
 	<BaseModal title="第三方门票退订提醒" v-model="reRecokeAuditCheckVisible">
-		<p>您的原始行程单中已预订了 ,需要先完成退订，才能整团撤销。</p>
+		<p>{{ reRecokeAuditCheckText }}</p>
+		<p>请等待退订完成</p>
 		<template v-slot:footer>
-			<a-button @click="reRecokeAuditCheckVisible = false">取消</a-button>
-			<a-button @click="applyApiTRevoke" type="primary">去退订</a-button>
+			<a-button @click="reRecokeAuditCheckVisible = false">确定</a-button>
 		</template>
 	</BaseModal>
 
-	<BaseModal title="第三方门票退订成功" v-model="reRecokeAuditTipsVisible">
+	<!-- <BaseModal title="第三方门票退订成功" v-model="reRecokeAuditTipsVisible">
 		<p>原始行程单中 玉龙雪山索道、印象丽江演出票 已 成功退订。现在可以继续申请原始行程单的撤销。</p>
 		<template v-slot:footer>
 			<a-button @click="openTips" type="primary">继续撤销</a-button>
 		</template>
-	</BaseModal>
+	</BaseModal> -->
 
 	<BaseModal title="整团撤销提醒" v-model="reRecokeAuditAllsVisible">
 		<p>是否直接整团撤销？整团撤销需要组团社计调 、古维管理员审核。审核通过后系统会自动为 您撤销该行程，已冻结金额将返回给组团社。</p>
 		<template v-slot:footer>
 			<a-button @click="reRecokeAuditAllsVisible = false">取消</a-button>
-			<a-button @click="openTips" type="primary">继续撤销</a-button>
+			<a-button @click="openAllReapply" type="primary">继续撤销</a-button>
 		</template>
 	</BaseModal>
 
@@ -112,6 +112,7 @@
 	</BaseModal>
 
 	<reapply ref="reapplyRef" @finish="successAudit = true" />
+	<AllRevoke ref="allRevokeRef" />
 
 	<BaseModal title="撤销申请成功" v-model="successAudit">
 		<p>行程单YNLJ202210020000002已提交撤销， 请等待组团社计调、古维管理员依次审核。</p>
@@ -129,6 +130,7 @@ import { Modal } from 'ant-design-vue';
 import api from '@/api/index';
 import { AuditStaus } from '@/enum';
 import reapply from './components/reapply.vue';
+import AllRevoke from './components/allRevoke.vue';
 
 const route = useRouter();
 const state = reactive({
@@ -471,6 +473,8 @@ const reRecokeAuditTipsVisible = ref(false);
 
 const reRecokeAuditCheckVisible = ref(false);
 
+const reRecokeAuditCheckText = ref('');
+
 const reRecokeAuditAllsVisible = ref(false);
 
 const successAudit = ref(false);
@@ -481,11 +485,15 @@ const openTips = () => {
 	reRecokeAuditVisible.value = true;
 };
 
-const applyApiTRevoke = () => {
-	reRecokeAuditCheckVisible.value = false;
-	btnStatus.value === 'REVOKE' ? (reRecokeAuditVisible.value = true) : (reRecokeAuditAllsVisible.value = true);
-};
+//打开弹窗
+const allRevokeRef = ref();
 
+const openAllReapply = () => {
+	reRecokeAuditAllsVisible.value = false;
+
+	reRecokeAuditVisible.value = false;
+	allRevokeRef.value.open();
+};
 //打开弹窗
 const reapplyRef = ref();
 
@@ -509,12 +517,20 @@ const checkPower = async () => {
 const btnStatus = ref('');
 
 const check = async (status: string) => {
-	let valid = await checkPower();
+	let valid;
 	btnStatus.value = status;
-	if (!valid) {
-		console.log('THROUGHT', status);
-		btnStatus.value === 'REVOKE' ? (reRecokeAuditVisible.value = true) : (reRecokeAuditAllsVisible.value = true);
-	} else {
+
+	try {
+		valid = await checkPower();
+		if (valid) {
+			console.log('THROUGHT', status);
+			btnStatus.value === 'REVOKE' ? (reRecokeAuditVisible.value = true) : (reRecokeAuditAllsVisible.value = true);
+		}
+	} catch (error: any) {
+		// reRecokeAuditCheckText.value = error
+		console.log(error, 'error');
+
+		reRecokeAuditCheckText.value = error?.msg;
 		reRecokeAuditCheckVisible.value = true;
 	}
 };

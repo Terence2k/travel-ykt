@@ -304,7 +304,7 @@ const columns = computed(() => {
 			const ruleList = ruleMap[key]['data'][subKey];
 			for (const t in ruleList) {
 				const isHasRule = ruleMap[key]['column'].some((item: any) => {
-					return item.title === ruleList[t].ruleName;
+					return item.title === ruleList[t].ruleName && item.type == ruleList[t].type;
 				});
 				// 判断标有是否已经存在数据
 				if (!isHasRule) {
@@ -315,6 +315,7 @@ const columns = computed(() => {
 						ruleName: `${ruleList[t].ruleName}`,
 						width: 150,
 						parent: key,
+						type: ruleList[t].type,
 					};
 					if (key.includes('List')) {
 						rule['columnParentName'] = ruleMap[key]['columnParent']['title'];

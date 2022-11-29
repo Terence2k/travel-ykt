@@ -1,8 +1,14 @@
 <template>
-	<BaseModal :modelValue="modelValue" title="填写撤销重提原因" width="600px" @cancel="cancel">
+	<BaseModal :modelValue="modelValue" title="整团撤销选择" width="600px" @cancel="cancel">
 		<a-form layout="vertical" :model="formValidate" :label-col="{ span: 14 }" :wrapper-col="{ span: 28, offset: 0 }" labelAlign="left">
-			<a-form-item label="撤销重提原因（200字）" class="fz14" v-bind="validateInfos[`data.verificationType`]">
-				<a-textarea v-model:value="formValidate.data.verificationType" placeholder="请输入其他说明" :rows="4" max="200" />
+			<a-form-item layout="vertical" label="是否新增行程" class="fz14" v-bind="validateInfos[`data.haveNew`]">
+				<a-radio-group v-model:value="formValidate.data.haveNew" :options="options" />
+			</a-form-item>
+			<a-form-item v-if="formValidate.data.haveNew" label="填写一个关联行程单" class="fz14" v-bind="validateInfos[`data.relatedItineraryNo`]">
+				<a-input v-model:value="formValidate.data.relatedItineraryNo" placeholder="输入关联行程单" />
+			</a-form-item>
+			<a-form-item label="撤销重提原因（200字）" class="fz14" v-bind="validateInfos[`data.revokeReason`]">
+				<a-textarea v-model:value="formValidate.data.revokeReason" placeholder="请输入其他说明" :rows="4" max="200" />
 			</a-form-item>
 			{{ formValidate.data.pic }}
 			<a-form-item label="上传附件（5张）" class="fz14" v-bind="validateInfos[`data.pic`]">
@@ -19,6 +25,8 @@
 <script lang="ts" setup>
 import BaseModal from '@/components/common/BaseModal.vue';
 import Upload from '@/components/common/imageWrapper.vue';
+import api from '@/api/index';
+
 import { Form } from 'ant-design-vue';
 const route = useRouter();
 const modelValue = ref(false);
@@ -26,20 +34,26 @@ const useForm = Form.useForm;
 
 const formValidate = reactive({
 	data: {
-		verificationType: '',
+		revokeReason: '',
+		relatedItineraryNo: '',
 		pic: '',
+		haveNew: false,
 	},
 });
+const options = [
+	{ label: '否', value: false },
+	{ label: '是', value: true },
+];
 const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
 	formValidate,
 	reactive({
-		'data.verificationType': [{ required: true, message: '请选择' }],
+		'data.revokeReason': [{ required: true, message: '请选择' }],
 		'data.pic': [{ required: true, message: '请选择' }],
+		'data.haveNew': [{ required: true, message: '请选择' }],
+		'data.relatedItineraryNo': [{ required: formValidate.data.haveNew ? true : false, message: '请选择' }],
 	})
 );
-const rules = {
-	'data.verificationType': [{ required: true, message: '请选择单票类型' }],
-};
+
 const props = defineProps({
 	// modelValue: {
 	// 	type: Boolean,
@@ -50,12 +64,18 @@ const props = defineProps({
 });
 const emit = defineEmits(['finish']);
 
-const apply = () => {
+const apply = async () => {
 	validate()
-		.then((res) => {
-			statusRec.value === 'REVOKE' ? '' : emit('finish');
+		.then(async (res) => {
+			// statusRec.value === 'REVOKE' ? '' : emit('finish');
+			let parms = formValidate.data;
+			parms.attachmentList = parms.pic.split(',');
+			console.log(parms, 'parms');
+			let resP = await api.travelManagement.submitAllRevoke(parms);
+			console.log(resP, 'resP');
+
 			cancel();
-			// route.push({ path: '/scenic-spot/singleVote/edit', query: { t: formValidate.data.verificationType, s: 'new' } });
+			// route.push({ path: '/scenic-spot/singleVote/edit', query: { t: formValidate.data.revokeReason, s: 'new' } });
 		})
 		.catch((err) => {
 			console.log('error', err);
@@ -72,7 +92,6 @@ const open = (status: string) => {
 // 关闭弹窗
 const cancel = () => {
 	modelValue.value = false;
-	console.log(modelValue.value, 'modelValue');
 };
 
 defineExpose({
