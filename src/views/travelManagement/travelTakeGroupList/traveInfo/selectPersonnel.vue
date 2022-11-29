@@ -1,6 +1,6 @@
 <template>
 	<div class="table-area">
-		<BaseModal title="选择古维费可减免人员" v-model="modelValue" :width="1200">
+		<BaseModal title="选择古维费可减免人员" v-model="dialogVisible" :width="1200">
 			<div class="top">
 				<p>请勾选可减免的游客，提交减免申请：</p>
 			</div>

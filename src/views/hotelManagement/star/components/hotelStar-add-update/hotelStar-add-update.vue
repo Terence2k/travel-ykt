@@ -1,6 +1,6 @@
 <template>
 	<div class="hotelStar-modal-wrapper">
-		<BaseModal :title="options.title" v-model="modelValue" @close="handleOk">
+		<BaseModal :title="options.title" v-model="dialogVisible" @close="handleOk">
 			<a-form ref="formRef" :model="formValidate" :rules="rules" :label-col="{ span: 5 }" :wrapper-col="{ span: 16, offset: 1 }" labelAlign="left">
 				<a-form-item label="酒店星级" name="starCode">
 					<a-input v-model:value="formValidate.starCode" />

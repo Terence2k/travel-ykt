@@ -1,5 +1,5 @@
 <template>
-	<BaseModal :title="options.title" v-model="modelValue" :width="1000">
+	<BaseModal :title="options.title" v-model="dialogVisible" :width="1000">
 		<CommonTable :dataSource="formData.list" :columns="columns" :scrollY="false">
 
 		</CommonTable>
