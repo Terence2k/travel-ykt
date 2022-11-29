@@ -1,6 +1,6 @@
 <template>
 	<div class="table-area">
-		<BaseModal title="选择古维费可减免人员" v-model="modelValue" :width="1200">
+		<BaseModal title="选择古维费可减免人员" v-model="dialogVisible" :width="1200">
 			<div class="top">
 				<p>请勾选可减免的游客，提交减免申请：</p>
 			</div>
@@ -234,9 +234,16 @@ const submit = () => {
 	});
 	if(specialCertificateType)
 	{
-		message.error('请上传特殊照片');
-		return false;
+		let specialCertificateImg=data.reduceTouristList.some((item,index)=>{
+			return item.specialCertificateImg ==null;
+		})
+		if(specialCertificateImg)
+		{
+			message.error('请上传特殊证件');
+			return false;
+		}
 	}
+	
 	api.applyReduction(data).then((res) => {
 		message.success('提交成功');
 		dialogVisible.value = false;

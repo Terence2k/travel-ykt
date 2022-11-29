@@ -44,6 +44,11 @@
 					<template v-if="column.dataIndex === 'unSettlementPrice' && column.key === 'subTravelVo'">
 						{{ getSubTravelVoUnSettlementPrice(record, column) }}
 					</template>
+					<template v-if="formatColumn(column)">
+						{{ formatData(record, column) }}
+						<!-- frozenPrice: '888', //冻结金额
+					settlementPrice: '888', //已核销金额 -->
+					</template>
 				</template>
 			</CommonTable>
 		</a-spin>
@@ -65,7 +70,7 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import api from '@/api';
 import { settlementOptions } from '@/stores/modules/settlement';
-import { StateType, DataType, fixedColumn, getRulePrice, getActualPrice, getSubTravelVoUnSettlementPrice } from '.';
+import { StateType, DataType, fixedColumn, getRulePrice, getActualPrice, getSubTravelVoUnSettlementPrice, formatColumn, formatData } from '.';
 const options = settlementOptions();
 const columns = computed(() => {
 	const column = ref<TableColumnsType>([]);
@@ -379,7 +384,7 @@ const initList = async () => {
 	// 		}, //一卡通
 	// 		subTravelVo: {
 	// 			actualPrice: '634343', //实收
-	// 			unSettlementPrice: '1', //未消费费用
+	// 			unSettlementPrice: '11111', //未消费费用
 	// 			ruleList: [
 	// 				{
 	// 					ruleName: '结算规则', //规则名称

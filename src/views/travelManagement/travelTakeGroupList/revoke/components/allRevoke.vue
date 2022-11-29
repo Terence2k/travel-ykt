@@ -7,8 +7,8 @@
 			<a-form-item v-if="formValidate.data.haveNew" label="填写一个关联行程单" class="fz14" v-bind="validateInfos[`data.relatedItineraryNo`]">
 				<a-input v-model:value="formValidate.data.relatedItineraryNo" placeholder="输入关联行程单" />
 			</a-form-item>
-			<a-form-item label="撤销重提原因（200字）" class="fz14" v-bind="validateInfos[`data.revokeReason`]">
-				<a-textarea v-model:value="formValidate.data.revokeReason" placeholder="请输入其他说明" :rows="4" max="200" />
+			<a-form-item label="撤销原因（200字）" class="fz14" v-bind="validateInfos[`data.revokeReason`]">
+				<a-textarea :maxlength="200" v-model:value="formValidate.data.revokeReason" placeholder="请输入其他说明" :rows="4" max="200" />
 			</a-form-item>
 			{{ formValidate.data.pic }}
 			<a-form-item label="上传附件（5张）" class="fz14" v-bind="validateInfos[`data.pic`]">
@@ -67,9 +67,9 @@ const emit = defineEmits(['finish']);
 const apply = async () => {
 	validate()
 		.then(async (res) => {
-			// statusRec.value === 'REVOKE' ? '' : emit('finish');
 			let parms = formValidate.data;
 			parms.attachmentList = parms.pic.split(',');
+			parms.itineraryId = route.currentRoute.value?.query?.id;
 			console.log(parms, 'parms');
 			let resP = await api.travelManagement.submitAllRevoke(parms);
 			console.log(resP, 'resP');

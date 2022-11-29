@@ -1,5 +1,5 @@
 <template>
-	<BaseModal title="下架票审核" v-model="modelValue" @close="handleOk" :width="800">
+	<BaseModal title="下架票审核" v-model="dialogVisible" :width="800">
 		<a-row>
 			<a-col :span="3">门票</a-col>
 			<a-col :span="5">

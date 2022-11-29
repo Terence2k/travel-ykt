@@ -44,6 +44,9 @@
 					<template v-if="column.dataIndex === 'unSettlementPrice' && column.key === 'subTravelVo'">
 						{{ getSubTravelVoUnSettlementPrice(record, column) }}
 					</template>
+					<template v-if="formatColumn(column)">
+						{{ formatData(record, column) }}
+					</template>
 				</template>
 			</CommonTable>
 		</a-spin>
@@ -72,6 +75,8 @@ import {
 	getRulePrice,
 	getActualPrice,
 	getSubTravelVoUnSettlementPrice,
+	formatColumn,
+	formatData,
 } from '../managementCenterGeneralReport/index';
 const options = settlementOptions();
 const comprehensiveGuideVoListIds = ref([]);

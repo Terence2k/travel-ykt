@@ -1,5 +1,5 @@
 <template>
-	<BaseModal :title="options.title" v-model="modelValue" :onOk="handleOk">
+	<BaseModal :title="options.title" v-model="dialogVisible" :onOk="handleOk">
 		<a-form
       :model="formValidate"
       :label-col="{ span: 5 }"
