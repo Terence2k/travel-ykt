@@ -50,6 +50,7 @@ import { reactive, onMounted } from 'vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import DelModal from '@/components/common/DelModal.vue';
+import { StateType } from '../index';
 
 const props = defineProps({
 	params: Object,
@@ -138,7 +139,7 @@ const tipCancel = () => {
 	modalData.value.type = '';
 	modalData.value.show = false;
 };
-const state = reactive({
+const state = reactive<StateType>({
 	tableData: {
 		data: [],
 		total: 0,
