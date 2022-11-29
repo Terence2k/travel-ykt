@@ -34,6 +34,8 @@ import { reactive, onMounted } from 'vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import { Modal } from 'ant-design-vue';
+import { StateType } from '../index';
+
 const props = defineProps({
 	params: Object,
 	status: Number
@@ -98,7 +100,7 @@ const columns = [
 	},
 ];
 
-const state = reactive({
+const state = reactive<StateType>({
 	tableData: {
 		data: [],
 		total: 0,
@@ -115,6 +117,7 @@ const state = reactive({
 			status: null, 
 		},
 	},
+	selectedRowKeys: [], //当前选择的标识
 });
 
 const onHandleCurrentChange = (val: number) => {

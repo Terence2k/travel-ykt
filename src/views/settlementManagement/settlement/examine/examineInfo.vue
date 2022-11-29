@@ -76,6 +76,33 @@ import AdjustModal from '@/views/settlementManagement/settlement/examine/adjustM
 import DetailModal from '@/views/settlementManagement/settlement/examine/detailModal.vue';
 import { settlementOptions } from '@/stores/modules/settlement';
 // import lodash from 'lodash';
+export interface StateType {
+	data: TableDataType;
+	settlementInformationVOList: Array<any>;
+	showExamineBtn: boolean;
+}
+export interface TableDataType {
+	data: Array<DataType>;
+}
+export interface DataType {
+	oid?: number | string | null; //oid
+	settlementInformationId?: number | string | null; //结算信息id
+	productType?: number | string | null; //产品类型 1-景区 2-酒店 3-餐饮
+	productSonType?: number | string | null; //产品子分类，用于区分景区票的分类：UNITE-联票 ONE-单票 SHOW-演出票 SELF-没有子产品，即产品本身
+	productId?: number | string | null; //产品id
+	productName?: number | string | null; //产品名称
+	costName?: number | string | null; //费用名称
+	settlementCost?: number | string | null; //结算费用
+	costType?: number | string | null; //结算类型 0-减 1-加
+	companyName?: number | string | null; //结算方名称
+	companyType?: number | string | null; //结算方类别
+	companyId?: number | string | null; //结算方id
+	itineraryId?: number | string | null; //行程单id
+	itineraryNo?: number | string | null; //行程单号
+	orderNo?: number | string | null; //业态订单号
+	ruleId?: number | string | null; //结算规则快照id
+	ruleType?: number | string | null; //结算规则类型 1-通用 2-产品
+}
 const route = useRouter();
 const useOptions = settlementOptions();
 const initOption = async () => {
@@ -135,8 +162,10 @@ const columns = [
 		width: 208,
 	},
 ];
-const formData: any = reactive({
-	data: {},
+const formData: any = reactive<StateType>({
+	data: {
+		data: [],
+	},
 	settlementInformationVOList: [],
 	showExamineBtn: false,
 });

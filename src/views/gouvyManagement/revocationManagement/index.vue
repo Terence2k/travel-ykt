@@ -58,7 +58,8 @@
 					</template>
 
 					<template v-if="column.key === 'action'">
-						<a href="javascript:;" @click="toDetail(record)">去审核</a>
+						<a href="javascript:;" v-if="record.revokeType" @click="toDetail(record)">去审核</a>
+						<a href="javascript:;" @click="check(record)">查看</a>
 					</template>
 				</template>
 			</CommonTable>
@@ -78,8 +79,9 @@
 			</div>
 		</div>
 
-		<ApplyChange ref="applyTchangeRef" />
+		<Audit ref="auditRef" />
 		<Revoke ref="revokeRef" />
+		<Detail ref="detailRef" />
 	</a-spin>
 </template>
 
@@ -91,8 +93,9 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import api from '@/api';
 import viewTable from './components/table.vue';
-import ApplyChange from './components/audit.vue';
+import Audit from './components/audit.vue';
 import Revoke from './components/revoke.vue';
+import Detail from './components/detaiil.vue';
 import { shijianc, shijiancTOYMD } from '@/utils/formatTimes';
 import { useScenicSpotOption } from '@/stores/modules/scenicSpot';
 
@@ -216,14 +219,14 @@ const state = reactive<stateType>({
 });
 
 //去审核
-const applyTchangeRef = ref();
+const auditRef = ref();
 const revokeRef = ref();
 
-const applyTchange = () => {
-	applyTchangeRef.value.open();
+const allRevoke = (id: number) => {
+	auditRef.value.open(id);
 };
-const revokeRefOpen = () => {
-	revokeRef.value.open();
+const revokeRefOpen = (id: number) => {
+	revokeRef.value.open(id);
 };
 
 //改变状态
@@ -255,14 +258,23 @@ const checkPower = async (value: any) => {
 	return true;
 };
 
+const detailRef = ref();
+
+const check = async (record: any) => {
+	// let valid = await checkPower(record);
+	detailRef.value.open(record.oid);
+
+	// route.push({ path: '/scenic-spot/order-manage/edit', query: { oid: record.orderNo } });
+};
 const toDetail = async (record: any) => {
 	// let valid = await checkPower(record);
+	console.log(record.revokeType, 'record.revokeType');
 	if (record.revokeType === 1) {
-		applyTchange();
+		allRevoke(record.oid);
 		console.log('整团撤销', record.revokeType);
 	} else if (record.revokeType === 2) {
 		console.log('撤销重提', record.revokeType);
-		revokeRefOpen();
+		revokeRefOpen(record.oid);
 	}
 
 	// route.push({ path: '/scenic-spot/order-manage/edit', query: { oid: record.orderNo } });

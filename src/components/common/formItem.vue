@@ -8,12 +8,12 @@
 <script setup lang="ts">
 const props = defineProps({
 	title: {
-		type: String || Number,
+		type: [String, Number],
 		default: '',
 	},
 	iValue: {
-		type: String || Number,
-		default: '',
+		type: [String, Number],
+		default: null,
 	},
 });
 </script>

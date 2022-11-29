@@ -1,103 +1,64 @@
 <template>
-	<BaseModal :modelValue="modelValue" title="行程单重提审核" @cancel="cancel" width="1000px">
+	<BaseModal :modelValue="modelValue" title="行程单整团撤销审核" @cancel="cancel" width="1000px">
 		<FormWrap>
-			<FormItem title="线路名称" :iValue="state.detail.teamTypeName" />
-			<FormItem title="行程单编号" :iValue="state.detail.itineraryNo" />
+			<FormItem title="团队类型" :iValue="state.detail.teamTypeName" />
 			<FormItem title="线路名称" :iValue="state.detail.routeName" />
-			<FormItem title="地接社" :iValue="state.detail.travelName" />
-			<FormItem title="地接社计调" :iValue="'' + state.detail.travelOperatorName + state.detail.travelOperatorPhone" />
-			<FormItem title="出散团时间" :iValue="state.detail.travelName" />
-			<FormItem title="团客人数" :iValue="state.detail.travelName" />
-			<FormItem title="古维减免人数" :iValue="state.detail.travelName" />
-			<FormItem title="重提后变更人数" :iValue="state.detail.travelName" />
-			<FormItem title="重提后变更人数" :iValue="state.detail.travelName" />
-			<FormItem title="撤销原因" :iValue="state.detail.travelName" />
-			<FormItem title="附件" :iValue="state.detail.travelName" />
-		</FormWrap>
-		<!-- <a-button @click="toCompare">去查看</a-button> -->
-		<h3 class="tips">以下是撤销前、重提后的行程内容对比：</h3>
+			<FormItem title="行程单编号" :iValue="state.detail.itineraryNo" />
+			<FormItem title="地接社" :iValue="state.detail.subTravelName" />
+			<FormItem title="出散团时间" :iValue="'' + state.detail.startDate + '-' + state.detail.endDate" />
+			<FormItem title="团客人数" :iValue="state.detail.originTouristCount + '人'" />
+			<FormItem title="古维管理费" :iValue="'' + state.detail.maintainFee / 100 + '元'" />
+			<FormItem title="综费产品" :iValue="state.detail.productList" />
 
-		<div class="table_box">
-			<table class="info_table" cellpadding="16px" border="1">
-				<tr class="row">
-					<td class="key title">变更项目</td>
-					<td class="key title">变更前内容</td>
-					<td class="key title">变更后内容</td>
-				</tr>
-				<tr class="row">
-					<td class="key">行程信息</td>
-					<td class="value">
-						<div style="margin-bottom: 20px">
-							<p style="text-align: left; margin-bottom: 0px">酒店：</p>
-							<!-- <p v-for="(item, index) in state.oldHotelList" :key="index">
-								<span>{{ state.oldHotelList[index].hotelName }}，</span>
-								<span v-for="(item, i) in state.oldHotelList[index].roomTypeList" :key="index">{{
-									state.oldHotelList[index].roomTypeList[i].roomTypeName
-								}}</span>
-								<span>{{ state.oldHotelList[index].roomCount }}间</span>
-								<span>{{ dayjs(state.oldHotelList[index].endDate).diff(state.oldHotelList[index].startDate, 'day') }}天，</span>
-								<span
-									>费用总计 <span style="color: red">{{ state.oldHotelList[index].orderFee / 100 }}</span
-									>元；</span
-								>
-							</p> -->
-						</div>
-						<div>
-							<p style="text-align: left; margin-bottom: 0px">景区：</p>
-							<!-- <p v-for="(item, index) in state.oldTicketList" :key="index">
-								<span>{{ state.oldTicketList[index].scenicName }}，</span>
-								<span>{{ state.oldTicketList[index].ticketName }}</span>
-								<span>{{ state.oldTicketList[index].reservePeopleCount }}张，</span>
-								<span
-									>费用总计
-									<span style="color: red">{{ state.oldTicketList[index].reservePeopleCount * (state.oldTicketList[index].unitPrice / 100) }}</span
-									>元；</span
-								>
-							</p> -->
-						</div>
-					</td>
-					<td class="value">
-						<div style="margin-bottom: 20px">
-							<p style="text-align: left; margin-bottom: 0px">酒店：</p>
-							<!-- <p v-for="(item, index) in state.newHotelList" :key="index">
-								<span>{{ state.newHotelList[index].hotelName }}，</span>
-								<span v-for="(item, i) in state.newHotelList[index].roomTypeList" :key="index">{{
-									state.newHotelList[index].roomTypeList[i].roomTypeName
-								}}</span>
-								<span>{{ state.newHotelList[index].roomCount }}间</span>
-								<span>{{ dayjs(state.newHotelList[index].endDate).diff(state.newHotelList[index].startDate, 'day') }}天，</span>
-								<span
-									>费用总计 <span style="color: red">{{ state.newHotelList[index].orderFee / 100 }}</span
-									>元；</span
-								>
-							</p> -->
-						</div>
-						<div>
-							<p style="text-align: left; margin-bottom: 0px">景区：</p>
-							<!-- <p v-for="(item, index) in state.newTicketList" :key="index">
-								<span>{{ state.newTicketList[index].scenicName }}，</span>
-								<span>{{ state.newTicketList[index].ticketName }}</span>
-								<span>{{ state.newTicketList[index].reservePeopleCount }}张，</span>
-								<span
-									>费用总计
-									<span style="color: red">{{ state.newTicketList[index].reservePeopleCount * (state.newTicketList[index].unitPrice / 100) }}</span
-									>元；</span
-								>
-							</p> -->
-						</div>
-					</td>
-				</tr>
-				<tr class="row">
-					<td class="key">行程预冻结费用</td>
-					<!-- <td class="value">
-						<span style="color: red">{{ state.oldOrderAmount / 100 }}</span> 元
-					</td>
-					<td class="value">
-						<span style="color: red">{{ state.newOrderAmount / 100 }}</span> 元
-					</td> -->
-				</tr>
-			</table>
-		</div>
+			<tr class="row">
+				<td class="key">景区预定</td>
+				<td class="value">
+					<p v-for="(item, index) in state.detail.ticketList" :key="index">
+						<span>{{ state.detail.ticketList[index].scenicName }}，</span>
+						<span>{{ state.detail.ticketList[index].ticketName }}</span>
+						<span>{{ state.detail.ticketList[index].reservePeopleCount }}张，</span>
+						<span
+							>费用总计
+							<span style="color: red">{{
+								state.detail.ticketList[index].reservePeopleCount * (state.detail.ticketList[index].unitPrice / 100)
+							}}</span
+							>元；</span
+						>
+					</p>
+				</td>
+			</tr>
+			<tr class="row">
+				<td class="key">酒店预定：</td>
+				<td class="value">
+					<div style="margin-bottom: 20px">
+						<p v-for="(item, index) in state.detail.hotelList" :key="index">
+							<span>{{ state.detail.hotelList[index].hotelName }}，</span>
+							<span v-for="(item, i) in state.detail.hotelList[index].roomTypeList" :key="i">{{
+								state.detail.hotelList[index].roomTypeList[i].roomTypeName
+							}}</span>
+							<span>{{ state.detail.hotelList[index].roomCount }}间</span>
+							<span>{{ dayjs(state.detail.hotelList[index].endDate).diff(state.detail.hotelList[index].startDate, 'day') }}天，</span>
+							<span
+								>费用总计 <span style="color: red">{{ state.detail.hotelList[index].orderFee / 100 }}</span
+								>元；</span
+							>
+						</p>
+					</div>
+				</td>
+			</tr>
+
+			<FormItem title="撤销原因" :iValue="state.detail.revokeReason" />
+			<tr class="row">
+				<td class="key">附件</td>
+				<td class="value">
+					<div style="margin-bottom: 20px">
+						<p v-for="(item, index) in picList" :key="index">
+							<a-image width="20%" :src="item" />
+						</p>
+					</div>
+				</td>
+			</tr>
+		</FormWrap>
 
 		<template v-slot:footer>
 			<div class="footer-wrap">
@@ -106,7 +67,6 @@
 			</div>
 		</template>
 	</BaseModal>
-	<Compare ref="compareRef" />
 </template>
 
 <script lang="ts" setup>
@@ -115,7 +75,6 @@ import api from '@/api';
 import { message } from 'ant-design-vue';
 import FormWrap from '@/components/common/formWrap.vue';
 import FormItem from '@/components/common/formItem.vue';
-import Compare from './compare.vue';
 
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -141,6 +100,11 @@ const formValidate = reactive<formType>({
 		dateList: [{ startDateTime: '', endDateTime: '', time: [] }],
 	},
 });
+
+const picList = computed(() => {
+	return state.detail?.revokeAttachment?.split(',') || [];
+});
+
 const state = reactive({
 	detail: {
 		teamTypeName: '',
@@ -177,16 +141,6 @@ const props = defineProps({
 	// 	default: false,
 	// },
 });
-
-const compareRef = ref();
-
-const toCompare = () => {
-	compareRef.value.open();
-};
-
-const closeCompare = () => {
-	compareRef.value.cancle();
-};
 
 const addTimeList = () => {
 	formValidate.data.dateList.push({ time: [] });
@@ -228,6 +182,13 @@ const toHistoryPage = () => {
 const open = (id: number | null) => {
 	modelValue.value = true;
 	formValidate.data.ticketId = id;
+	initInfo(id);
+};
+
+const initInfo = async (id: number | null) => {
+	let res = await api.travelManagement.getAuditDetail(id);
+	state.detail = res;
+	console.log(res);
 };
 // 关闭弹窗
 const cancel = () => {

@@ -1,5 +1,5 @@
 <template>
-	<BaseModal :title="state.title" v-model="modelValue" width="70%" @cancel="dialogVisible = false">
+	<BaseModal :title="state.title" v-model="dialogVisible" width="70%" @cancel="dialogVisible = false">
 		<h3 style="margin: 0px 0 20px 30px">合计 {{ state.settlementCost / 100 }} 元</h3>
 		<CommonTable
 			:dataSource="state.tableData.data"

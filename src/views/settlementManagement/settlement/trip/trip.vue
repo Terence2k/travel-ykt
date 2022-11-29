@@ -1,6 +1,12 @@
 <template>
 	<div>
-		<CommonTable :dataSource="state.tableData.data" :scroll="{ x: '100%',y: '100%' }" rowKey="itineraryNo" :columns="columns" :row-selection="rowSelection">
+		<CommonTable
+			:dataSource="state.tableData.data"
+			:scroll="{ x: '100%', y: '100%' }"
+			rowKey="itineraryNo"
+			:columns="columns"
+			:row-selection="rowSelection"
+		>
 			<template #button>
 				<div class="btn">
 					<a-button type="primary" @click="settlement('all', null)">下团结算</a-button>
@@ -9,7 +15,7 @@
 			<template #bodyCell="{ column, record }">
 				<!-- 行程费用 单位转成元-->
 				<template v-if="column.key === 'totalFee'">
-					{{ (record.totalFee / 100) > 0 ? (record.totalFee / 100).toFixed(2) : 0}}
+					{{ record.totalFee / 100 > 0 ? (record.totalFee / 100).toFixed(2) : 0 }}
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
@@ -36,11 +42,11 @@ import { reactive, onMounted } from 'vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import DelModal from '@/components/common/DelModal.vue';
-
+import { StateType } from '../index';
 const props = defineProps({
 	params: Object,
-	status: Number
-})
+	status: Number,
+});
 const router = useRouter();
 const columns = [
 	{
@@ -104,14 +110,14 @@ const tipSubmit = async () => {
 	api.settlementUpdate(modalData.value.data).then((res: any) => {
 		message.success('操作成功');
 		onSearch();
-	})
+	});
 	tipCancel();
 };
 const tipCancel = () => {
 	modalData.value.data = {};
 	modalData.value.show = false;
 };
-const state = reactive({
+const state = reactive<StateType>({
 	tableData: {
 		data: [],
 		total: 0,
@@ -135,10 +141,10 @@ const state = reactive({
 const rowSelection = computed(() => {
 	return {
 		onChange: (selectedRowKeys: [], selectedRows: any) => {
-		state.selectedRowKeys = selectedRowKeys;
-	},
-	}
-})
+			state.selectedRowKeys = selectedRowKeys;
+		},
+	};
+});
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
 	state.tableData.param.pageNo = val;
@@ -154,21 +160,21 @@ const pageSideChange = (current: number, size: number) => {
 // 数据处理
 const dealData = (params: [any]) => {
 	params.map((i: any) => {
-		i.timeText = i.startDate + ' - ' + i.endDate
+		i.timeText = i.startDate + ' - ' + i.endDate;
 		return i;
 	});
 	return params;
 };
 
-const onSearch = async() => {
+const onSearch = async () => {
 	// 处理父组件传递筛选条件
-	state.tableData.param.status = props?.status
-	state.tableData.param.teamTypeId = props.params?.teamTypeId
-	state.tableData.param.itineraryNo = props.params?.itineraryNo
-	state.tableData.param.travelId = props.params?.travelId
-	state.tableData.param.subTravelId = props.params?.subTravelId
-	state.tableData.param.startDate = props.params?.time ? props.params?.time[0] :  null
-	state.tableData.param.endDate = props.params?.time ? props.params?.time[1] : null
+	state.tableData.param.status = props?.status;
+	state.tableData.param.teamTypeId = props.params?.teamTypeId;
+	state.tableData.param.itineraryNo = props.params?.itineraryNo;
+	state.tableData.param.travelId = props.params?.travelId;
+	state.tableData.param.subTravelId = props.params?.subTravelId;
+	state.tableData.param.startDate = props.params?.time ? props.params?.time[0] : null;
+	state.tableData.param.endDate = props.params?.time ? props.params?.time[1] : null;
 	state.tableData.loading = true;
 	let res = await api.getItinerarySettlement(state.tableData.param);
 	const { total, content } = res;
@@ -195,12 +201,12 @@ const settlement = (type: string, record: any) => {
 		}
 		oid = state.selectedRowKeys;
 	}
-	modalData.value.params = { title: '下团结算', content: '你即将对行程单手动执行下团并结算操作，下团结算后，无法进行补刷、改刷操作。是否确定执行？' }
+	modalData.value.params = { title: '下团结算', content: '你即将对行程单手动执行下团并结算操作，下团结算后，无法进行补刷、改刷操作。是否确定执行？' };
 	modalData.value.data = {
-		'status': 14,
-		'itineraryNoList' : oid
-	}
-	modalData.value.show = true
+		status: 14,
+		itineraryNoList: oid,
+	};
+	modalData.value.show = true;
 };
 
 onMounted(() => {
