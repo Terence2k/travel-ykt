@@ -46,6 +46,7 @@ import { message } from 'ant-design-vue';
 import DelModal from '@/components/common/DelModal.vue';
 import TransferModal from '@/views/settlementManagement/settlement/settlement/transferModal.vue';
 import { downloadFile } from '@/utils/util';
+import { StateType } from '../index';
 
 const props = defineProps({
 	params: Object,
@@ -151,7 +152,7 @@ const tipCancel = () => {
 const transferConfirm = () => {
 	onSearch();
 }
-const state = reactive({
+const state = reactive<StateType>({
 	tableData: {
 		data: [],
 		total: 0,
