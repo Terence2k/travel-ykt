@@ -232,16 +232,23 @@ const submit = () => {
 	let specialCertificateType=state.tableData.submitList.some((item, index) => {
 		return item.discountRuleId == 1;
 	});
-	if(data.reduceTouristList.specialCertificateImg)
+	if(specialCertificateType)
 	{
-		console.log(specialCertificateType,'1231')
-		return false;
+		let specialCertificateImg=data.reduceTouristList.some((item,index)=>{
+			return item.specialCertificateImg ==null;
+		})
+		if(specialCertificateImg)
+		{
+			message.error('请上传特殊证件');
+			return false;
+		}
 	}
-	// api.applyReduction(data).then((res) => {
-	// 	message.success('提交成功');
-	// 	dialogVisible.value = false;
-	// 	travelStore.getManagementExpenses(props.routeId)
-	// });
+	
+	api.applyReduction(data).then((res) => {
+		message.success('提交成功');
+		dialogVisible.value = false;
+		travelStore.getManagementExpenses(props.routeId)
+	});
 };
 const ruleChange = (value: any, { item }: any, key: any) => {
 	if (item.discountType == 1) {
