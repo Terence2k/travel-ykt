@@ -291,6 +291,7 @@ const submit = async () => {
 		formState.roomTypeList = formState.roomTypeList.map((it: any) => {
 			it.unitPrice = it.unitPrice * 100;
 			it.orderAmount = it.orderAmount * 100;
+			it.reserveNumber = it.roomCount
 			return it;
 		});
 		formState.scheduledNumber = formState.roomTypeList.map((it: any) => Number(it.checkInNumber)).reduce((prev: any, current: any) => prev + current);
