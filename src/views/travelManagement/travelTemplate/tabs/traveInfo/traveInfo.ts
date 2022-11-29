@@ -116,7 +116,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				key: 'totalMoney',
 			},
 		],
-	
+
 		ticketColumns: [
 			{
 				title: ' 序号 ',
@@ -164,7 +164,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				title: '单价（元）',
 				dataIndex: 'unitPrice',
 				key: 'unitPrice',
-			}
+			},
 		],
 		hotelColumns: [
 			{
@@ -184,8 +184,8 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			},
 			{
 				title: '房型',
-				dataIndex: 'roomCount',
-				key: 'roomCount',
+				dataIndex: 'roomTypeList',
+				key: 'roomTypeList',
 			},
 			{
 				title: '操作',
@@ -211,9 +211,9 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			},
 			{
 				title: '房型',
-				dataIndex: 'roomCount',
-				key: 'roomCount',
-			}
+				dataIndex: 'roomTypeList',
+				key: 'roomTypeList',
+			},
 		],
 	});
 
@@ -221,9 +221,8 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		edit: (key: string) => {
 			// const cur = cloneDeep(state.tableData.filter((item: any) => key === item.key)[0]);
 			// cur.name = dayjs(cur.name, 'YYYY-MM-DD HH:mm');
-			state.addTicketPop = true
+			state.addTicketPop = true;
 			editId.productRow = cloneDeep(state.ticketData);
-			
 		},
 		save: (key: string) => {
 			const cur = state.editableData[key];
@@ -239,6 +238,22 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				editId[key] = oid;
 			}
 			state[popup] = true;
+		},
+		async delTicket(record: any, index: number) {
+			record.oid &&
+				(await api.travelManagement.templateTicketDelete(record.oid).then((res: any) => {
+					state.ticketData.splice(index, 1);
+					message.success('删除成功');
+				}));
+		},
+		async delHotel(record: any, index: number) {
+			// let data = { deletde:true }
+			// record = Object.assign(record,data)
+			// console.log('record',record);
+			await api.travelManagement.templateHotelDelete(record.oid).then((res: any) => {
+				state.holteDate.splice(index, 1);
+				message.success('删除成功');
+			});
 		},
 		show(key: string, oid?: any) {
 			showId[key] = '';
