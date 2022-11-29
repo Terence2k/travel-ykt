@@ -1,5 +1,5 @@
 <template>
-	<BaseModal :title="options.title" v-model="modelValue" @close="handleOk">
+	<BaseModal :title="options.title" v-model="dialogVisible" @close="handleOk">
 		<a-form ref="formRef" :model="formValidate" :rules="rules" :label-col="{ span: 5 }" :wrapper-col="{ span: 16, offset: 1 }" labelAlign="left">
 			<a-form-item label="菜单名称" name="menuName">
 				<a-input v-model:value="formValidate.menuName" placeholder="请输入菜单名称" />

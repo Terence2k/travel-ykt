@@ -18,7 +18,7 @@
 								@click="add(record.oid ? 'addTicketPop' : 'productRow', 'addTicketPop', record.oid || record)"
 								>编辑</a
 							>
-							<a v-if="travelStore.teamStatus" class="item">删除</a>
+							<a v-if="travelStore.teamStatus" class="item"  @click="delTicket(record, index)">删除</a>
 						</div>
 					</template>
 				</template>
@@ -36,6 +36,11 @@
 							{{ index + 1 }}
 						</div>
 					</template>
+					<template v-if="column.key === 'roomTypeList'">
+						<span v-for="item in record.roomTypeList">
+							<span>{{item.roomTypeName}},</span>
+						</span>
+					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a v-if="travelStore.reserveStatus && record.orderStatus == 0" class="item" @click="reserveHotel(record)">预定</a>
@@ -45,7 +50,7 @@
 								@click="add(record.oid ? 'addHotelPop' : 'productRow', 'addHotelPop', record.oid || record)"
 								>编辑</a
 							>
-							<a v-if="travelStore.teamStatus" class="item" @click="del(index)">删除</a>
+							<a v-if="travelStore.teamStatus" class="item" @click="delHotel(record,index)">删除</a>
 							<!-- <a class="item" @click="show('showHotelPop', record.oid)">查看</a> -->
 						</div>
 					</template>
@@ -96,7 +101,8 @@ const {
 	holteDate,
 	ticketData,
 	gouvyDate,
-	del,
+	delTicket,
+	delHotel,
 	choice,
 	editId,
 	reserveHotel,

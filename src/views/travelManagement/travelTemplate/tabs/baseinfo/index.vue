@@ -120,7 +120,7 @@ let userInfo: any = {};
 userInfo = getUserInfo();
 
 let addParams: any = {
-	oid: '',
+	oid: route.query.oid?route.query.oid:null,
 	routeName: '',
 	travelName: userInfo.sysCompany.name,
 	travelOperatorName: userInfo.username,

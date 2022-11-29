@@ -464,6 +464,14 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
+	//行程模板导游删除
+	templateGuideDelete(oid: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/template/deleteGuide/${oid}`,
+			method: 'DELETE',
+			showLoading: false,
+		});
+	},
 	//撤销重提
 	repealNreapplyPage(data: any) {
 		return request({
@@ -485,6 +493,15 @@ export const travelManagement = {
 				'Content-Type': 'application/x-www-form-urlencoded',
 			},
 			method: 'put',
+			showLoading: false,
+		});
+	},
+	//撤销重提
+	submitAllRevoke(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/submitAllRevoke`,
+			data,
+			method: 'post',
 			showLoading: false,
 		});
 	},
