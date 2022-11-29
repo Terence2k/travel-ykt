@@ -113,9 +113,12 @@
 
 	<reapply ref="reapplyRef" @finish="successAudit = true" />
 	<AllRevoke ref="allRevokeRef" />
-
 	<BaseModal title="撤销申请成功" v-model="successAudit">
-		<p>行程单YNLJ202210020000002已提交撤销， 请等待组团社计调、古维管理员依次审核。</p>
+		<p>
+			行程单
+			{{ route.currentRoute.value.query.itineraryNo }}
+			已提交撤销， 请等待组团社计调、古维管理员依次审核。
+		</p>
 		<template v-slot:footer>
 			<a-button @click="successAudit = false" type="primary">确定</a-button>
 		</template>

@@ -343,7 +343,7 @@ export const getActualPrice = computed(() => (record: any, column: any) => {
 });
 //地接社未消费费用获取数据
 export const getSubTravelVoUnSettlementPrice = computed(() => (record: any, column: any) => {
-	return record[column.key] ? record[column.key]['unSettlementPrice'] : '';
+	return record[column.key] ? twoDecimalPlaces(record[column.key]['unSettlementPrice']) : '';
 });
 export const columns = computed(() => {
 	const column = ref<TableColumnsType>([]);
@@ -504,7 +504,13 @@ export const columns = computed(() => {
 	return column.value;
 });
 
-export const twoDecimalPlaces = (number: number): any => {
+export const twoDecimalPlaces = (number: any): any => {
+	if (typeof number === 'string') {
+		if (number.includes('-')) {
+			number = number.slice(1);
+			return `-${Number(number / 100).toFixed(2)}`;
+		}
+	}
 	return Number(number / 100).toFixed(2);
 };
 // 需要/100的字段
@@ -528,10 +534,11 @@ export const formatData = computed(() => (record: any, column: any) => {
 		if (column.key === 'unSettlementPrice') {
 			// 父级的数据
 			return record[column.key] ? twoDecimalPlaces(record[column.key]) : '';
-		} else {
-			// 子级的数据
-			return record[column.key]['unSettlementPrice'] ? twoDecimalPlaces(record[column.key]['unSettlementPrice']) : '';
 		}
+		// else {
+		// 	// 子级的数据
+		// 	return record[column.key]['unSettlementPrice'] ? twoDecimalPlaces(record[column.key]['unSettlementPrice']) : '';
+		// }
 	}
 	// 冻结金额
 	if (column.dataIndex === 'frozenPrice') {
