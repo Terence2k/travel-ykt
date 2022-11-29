@@ -62,7 +62,8 @@
 
 		<template v-slot:footer>
 			<div class="footer-wrap">
-				<a-button @click="cancel">关闭</a-button>
+				<a-button @click="sendAudit(3)">驳回</a-button>
+				<a-button type="primary" @click="sendAudit(2)">同意撤销</a-button>
 			</div>
 		</template>
 	</BaseModal>
