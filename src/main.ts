@@ -10,6 +10,7 @@ import './styles/index.less';
 import router from './router';
 import 'ant-design-vue/dist/antd.less';
 import './router/permission';
+import { useDirectives } from './permission';
 
 const app = createApp(App);
 
@@ -25,5 +26,6 @@ app.use(Antd);
 //     };
 //   },
 // });
+app.use(useDirectives);
 app.use(router);
 app.mount('#app');
