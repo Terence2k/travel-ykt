@@ -18,7 +18,7 @@
 				<span>{{ state.tableData.data.itineraryStartDate }}~{{ state.tableData.data.itineraryEndDate }}</span>
 			</a-form-item>
 			<a-form-item label="地接社计调">
-				<span>{{ state.tableData.data.subTravelOperatorName }} {{state.tableData.data.subTravelOperatorPhone}}</span>
+				<span>{{ state.tableData.data.subTravelOperatorName }} {{ state.tableData.data.subTravelOperatorPhone }}</span>
 			</a-form-item>
 			<a-form-item label="行程人数">
 				<span>{{ state.tableData.data.touristNum }}</span>
@@ -34,9 +34,9 @@
 			</a-form-item>
 			<div class="title">申请减免人员</div>
 			<CommonTable :dataSource="state.tableData.data.applyReduceTouristList" :columns="columns" :scrollY="false">
-				<template #bodyCell="{ column, index,record}">
+				<template #bodyCell="{ column, index, record }">
 					<template v-if="column.key === 'specialCertificateImg'">
-						<Upload v-model="record.specialCertificateImg"  :maxCount="1" disabled/>
+						<Upload v-model="record.specialCertificateImg" :maxCount="1" disabled />
 					</template>
 				</template>
 			</CommonTable>
@@ -58,10 +58,10 @@
 					>
 				</p>
 			</div>
-			
+
 			<BaseModal title="审核不通过说明" v-model="dialogVisible">
-				<a-form>
-					<a-form-item label="">
+				<a-form ref="formRef" :rules="rules" :model="state">
+					<a-form-item label="原因" name="refuesedReason">
 						<a-textarea placeholder="审核不通过原因" v-model:value="state.refuesedReason" :rows="4" />
 					</a-form-item>
 				</a-form>
@@ -83,10 +83,12 @@ import { useRouter } from 'vue-router';
 import { message } from 'ant-design-vue';
 import api from '@/api';
 import Upload from '@/components/common/imageWrapper.vue';
+import type { FormInstance } from 'ant-design-vue';
 const route = useRoute();
 const router = useRouter();
 const dialogVisible = ref(false);
 const navigatorBar = useNavigatorBar();
+const formRef = ref();
 const tstyle = { 'font-weight': '700' };
 const dataSource = [{}];
 const state = reactive({
@@ -147,16 +149,26 @@ const Fail = () => {
 		oid: state.tableData.data.oid,
 		refuesedReason: state.refuesedReason,
 	};
-	api.noAuditFailed({oid: state.tableData.data.oid,refuesedReason: state.refuesedReason}).then((res) => {
-		message.error('审核未通过');
-		dialogVisible.value = false;
-		go()
-	});
+	formRef.value
+    .validateFields()
+    .then((values: any) => {
+      api.noAuditFailed({ oid: state.tableData.data.oid, refuesedReason: state.refuesedReason }).then((res) => {
+			message.error('审核未通过');
+			dialogVisible.value = false;
+			go();
+		});
+    })
+    .catch((info: any) => {
+      console.log('Validate Failed:', info);
+    });
+};
+const rules: any = {
+	refuesedReason: [{ required: true, trigger: 'blur', message: '请输入审核不通过原因' }],
 };
 const adopt = () => {
 	api.AuditFailed(state.tableData.data.oid).then((res) => {
 		message.success('审核已通过');
-		go()
+		go();
 	});
 };
 const download = () => {
@@ -221,7 +233,7 @@ onMounted(() => {
 		display: flex;
 		justify-content: space-between;
 	}
-	.img{
+	.img {
 		width: 60px;
 	}
 }

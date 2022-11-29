@@ -1,13 +1,5 @@
 <template>
-	<BaseModal :modelValue="modelValue" title="行程单撤销重提审核" @cancel="cancel" width="1000px">
-		<p>
-			{{ state.detail.itinerarySubmitRevokeBasicVo.startDate }}
-			&nbsp;
-			{{ state.detail.itinerarySubmitRevokeBasicVo.subTravelName }}
-			&nbsp;
-			{{ state.detail.itinerarySubmitRevokeBasicVo.subTravelOperatorName }}
-			&nbsp; 撤销原始行程单，并重提了新行程单，待你审核
-		</p>
+	<BaseModal :modelValue="modelValue" title="行程单撤销重提审核详情" @cancel="cancel" width="1000px">
 		<FormWrap>
 			<FormItem title="线路名称" :iValue="state.detail.itinerarySubmitRevokeBasicVo.routeName" />
 			<FormItem title="行程单编号" :iValue="state.detail.itinerarySubmitRevokeBasicVo.oldItineraryNo" />
@@ -58,20 +50,22 @@
 					<td class="key">酒店</td>
 					<td class="value">
 						<div style="margin-bottom: 20px">
-							<p v-for="(item, index) in state.detail.submitRevokeNewItineraryInfoVo.hotelList" :key="index">
-								{{ item }}
-								<span>{{ item[index].hotelName }}，</span>
-								<span v-for="(roomIten, i) in item[index].roomTypeList" :key="i"
-									>{{ roomIten.roomTypeName }}
-									<span>{{ roomIten.roomCount }}间</span>
-								</span>
+							<span v-if="state.detail.submitRevokeNewItineraryInfoVo.hotelList?.length">
+								<p v-for="(item, index) in state.detail.submitRevokeNewItineraryInfoVo.hotelList || []" :key="index">
+									<span>{{ index + 1 }}.</span>
+									<span>{{ item.hotelName }}，</span>
+									<span v-for="(roomIten, i) in item.roomTypeList" :key="i"
+										>{{ roomIten.roomTypeName }}
+										<span>{{ roomIten.roomCount }}间</span>
+									</span>
 
-								<span>{{ dayjs(item[index].endDate).diff(item[index].startDate, 'day') }}天，</span>
-								<span
-									>费用总计 <span style="color: red">{{ item[index].orderFee / 100 }}</span
-									>元；</span
-								>
-							</p>
+									<span>{{ dayjs(item[index].endDate).diff(item[index].startDate, 'day') }}天，</span>
+									<span
+										>费用总计 <span style="color: red">{{ item[index].orderFee / 100 }}</span
+										>元；</span
+									>
+								</p>
+							</span>
 						</div>
 					</td>
 					<td class="value">
@@ -100,15 +94,18 @@
 					<td class="key">景区</td>
 					<td class="value">
 						<div>
-							<p v-for="(itekcItem, index) in state.detail.submitRevokeNewItineraryInfoVo.ticketList" :key="index">
-								<span>{{ itekcItem.scenicName }}，</span>
-								<span>{{ itekcItem.ticketName }}</span>
-								<span>{{ itekcItem.reservePeopleCount }}张，</span>
-								<span
-									>费用总计 <span style="color: red">{{ itekcItem.reservePeopleCount * (itekcItem.unitPrice / 100) }}</span
-									>元；</span
-								>
-							</p>
+							<span v-if="state.detail.submitRevokeNewItineraryInfoVo.ticketList?.length">
+								<p v-for="(itekcItem, index) in state.detail.submitRevokeNewItineraryInfoVo.ticketList || []" :key="index">
+									<span>{{ index + 1 }}.</span>
+									<span>{{ itekcItem.scenicName }}，</span>
+									<span>{{ itekcItem.ticketName }}</span>
+									<span>{{ itekcItem.reservePeopleCount }}张，</span>
+									<span
+										>费用总计 <span style="color: red">{{ itekcItem.reservePeopleCount * (itekcItem.unitPrice / 100) }}</span
+										>元；</span
+									>
+								</p>
+							</span>
 						</div>
 					</td>
 					<td class="value">
@@ -133,8 +130,7 @@
 
 		<template v-slot:footer>
 			<div class="footer-wrap">
-				<a-button @click="sendAudit(3)">驳回</a-button>
-				<a-button type="primary" @click="sendAudit(2)">同意撤销</a-button>
+				<a-button @click="cancel">关闭</a-button>
 			</div>
 		</template>
 	</BaseModal>
