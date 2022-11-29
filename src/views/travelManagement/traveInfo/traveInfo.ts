@@ -369,7 +369,6 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		seeReject(key: string)
 		{
 			state[key] = true;
-			console.log(key)
 		},
 		see(data :any)
 		{

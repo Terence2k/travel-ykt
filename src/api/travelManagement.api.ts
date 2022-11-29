@@ -464,7 +464,15 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
-	//撤销重提列表
+	//行程模板导游删除
+	templateGuideDelete(oid: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/template/deleteGuide/${oid}`,
+			method: 'DELETE',
+			showLoading: false,
+		});
+	},
+	//撤销重提
 	repealNreapplyPage(data: any) {
 		return request({
 			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/checkRevokeCondition`,
