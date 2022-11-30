@@ -530,4 +530,12 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
+	//查询撤销审核详情
+	getRevokeItineraryTouristList(id: number) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryTourist/getRevokeItineraryTouristList/${id}`,
+			method: 'get',
+			showLoading: false,
+		});
+	},
 };
