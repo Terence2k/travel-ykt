@@ -10,7 +10,6 @@
 			<a-form-item label="撤销原因（200字）" class="fz14" v-bind="validateInfos[`data.revokeReason`]">
 				<a-textarea :maxlength="200" v-model:value="formValidate.data.revokeReason" placeholder="请输入其他说明" :rows="4" max="200" />
 			</a-form-item>
-			{{ formValidate.data.pic }}
 			<a-form-item label="上传附件（5张）" class="fz14" v-bind="validateInfos[`data.pic`]">
 				<Upload v-model="formValidate.data.pic" :maxCount="5" />
 			</a-form-item>
@@ -28,9 +27,9 @@ import Upload from '@/components/common/imageWrapper.vue';
 import api from '@/api/index';
 
 import { Form } from 'ant-design-vue';
+const useForm = Form.useForm;
 const route = useRouter();
 const modelValue = ref(false);
-const useForm = Form.useForm;
 
 const formValidate = reactive({
 	data: {

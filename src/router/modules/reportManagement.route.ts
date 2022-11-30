@@ -420,6 +420,86 @@ export default [
 					},
 				],
 			},
+			{
+				path: 'individualSettlementSummaryReport',
+				name: 'individualSettlementSummaryReport',
+				redirect: '/reportManagement/individualSettlementSummaryReport/list',
+				meta: {
+					title: '散客结算汇总报表',
+					isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/reportManagement/individualSettlementSummaryReport/index.vue'),
+						name: 'individualSettlementSummaryReportList',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
+			{
+				path: 'travelAgencyAndScenicSpotReport',
+				name: 'travelAgencyAndScenicSpotReport',
+				redirect: '/reportManagement/travelAgencyAndScenicSpotReport/list',
+				meta: {
+					title: '旅行社与景区对账报表',
+					isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/reportManagement/travelAgencyAndScenicSpotReport/index.vue'),
+						name: 'travelAgencyAndScenicSpotReportList',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
+			{
+				path: 'individualSettlementDetailReport',
+				name: 'individualSettlementDetailReport',
+				redirect: '/reportManagement/individualSettlementDetailReport/list',
+				meta: {
+					title: '散客结算明细报表',
+					isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/reportManagement/individualSettlementDetailReport/index.vue'),
+						name: 'individualSettlementDetailReportList',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
+			{
+				path: 'travelAgencyAndHotelReport',
+				name: 'travelAgencyAndHotelReport',
+				redirect: '/reportManagement/travelAgencyAndHotelReport/list',
+				meta: {
+					title: '旅行社与酒店对账报表',
+					isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/reportManagement/travelAgencyAndHotelReport/index.vue'),
+						name: 'travelAgencyAndHotelReportList',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
 		],
 	},
 ];
