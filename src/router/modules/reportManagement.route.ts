@@ -460,6 +460,46 @@ export default [
 					},
 				],
 			},
+			{
+				path: 'individualSettlementDetailReport',
+				name: 'individualSettlementDetailReport',
+				redirect: '/reportManagement/individualSettlementDetailReport/list',
+				meta: {
+					title: '散客结算明细报表',
+					isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/reportManagement/individualSettlementDetailReport/index.vue'),
+						name: 'individualSettlementDetailReportList',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
+			{
+				path: 'travelAgencyAndHotelReport',
+				name: 'travelAgencyAndHotelReport',
+				redirect: '/reportManagement/travelAgencyAndHotelReport/list',
+				meta: {
+					title: '旅行社与酒店对账报表',
+					isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'list',
+						component: () => import('@/views/reportManagement/travelAgencyAndHotelReport/index.vue'),
+						name: 'travelAgencyAndHotelReportList',
+						meta: {
+							title: '首页',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
+			},
 		],
 	},
 ];
