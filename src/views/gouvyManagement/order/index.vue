@@ -7,7 +7,7 @@
 			</a-select>
 		</SearchItem>
 		<SearchItem label="接团旅行社">
-			<a-input placeholder="请输入行程单号" style="width: 200px" v-model:value="state.tableData.param.subTravelName" />
+			<a-input placeholder="请输入接团旅行社" style="width: 200px" v-model:value="state.tableData.param.subTravelName" />
 		</SearchItem>
 		<SearchItem label="行程时间">
 			<a-date-picker
