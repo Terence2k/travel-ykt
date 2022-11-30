@@ -8,6 +8,7 @@
 			</a-tabs>
 			<div class="footer" v-if="route.query.Cedit">
 				<div class="footer-btn">
+					<a-button type="primary" v-if="route?.query?.oid && activeKey == 2" @click="activeKey = activeKey - 1">上一步</a-button>
 					<a-button
 						type="primary"
 						v-if="route?.query?.oid?activeKey == 2:activeKey == 1"
