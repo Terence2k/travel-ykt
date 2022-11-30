@@ -70,8 +70,8 @@
 					</template>
 
 					<template v-if="column.key === 'action'">
-						<a-button type="link" v-if="record.revokeType" @click="toDetail(record)">去审核</a-button>
-						<a-button type="link" v-if="!record.revokeType" @click="check(record)">查看</a-button>
+						<a-button type="link" v-if="!state.tableData.param.status" @click="toDetail(record)">去审核</a-button>
+						<a-button type="link" v-if="state.tableData.param.status" @click="check(record)">查看</a-button>
 					</template>
 				</template>
 			</CommonTable>
@@ -285,8 +285,8 @@ const detailRef = ref();
 
 const check = async (record: any) => {
 	// let valid = await checkPower(record);
-	// detailRef.value.open(record.oid);
-	revokeRefOpen(record.oid);
+	detailRef.value.open(record.oid);
+	// revokeRefOpen(record.oid);
 
 	// route.push({ path: '/scenic-spot/order-manage/edit', query: { oid: record.orderNo } });
 };
