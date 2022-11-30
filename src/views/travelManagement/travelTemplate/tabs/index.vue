@@ -70,9 +70,8 @@ const save = (e: any) => {
 };
 // 保存接口
 const saveItinerary = (val: any) => {
-	// if(isSaveBtn.value){
-	// 	if (!travelStore.guideList.length) return message.error('请选择带团导游');
-	// }
+	if (!val.basicParam) return message.error('请填写基本信息')
+	if (!travelStore.guideList.length) return message.error('请选择带团导游')
 	let ajax = api.travelManagement.saveChangeTravel;
 	return ajax(
 		{
@@ -86,7 +85,8 @@ const saveItinerary = (val: any) => {
 			let msg = route.query.oid ? '编辑成功' : '新增成功';
 			message.success(msg);
 		}
-	});
+	}).catch((error:any)=>{
+	})
 	// message.success('保存成功');
 	// router.push('/travel/travelTtemplate/list');
 };
