@@ -20,7 +20,7 @@
 					<div style="margin-bottom: 20px">
 						{{ state.detail.itinerarySubmitRevokeBasicVo.newTouristCount }}
 
-						<a-button @click="toCompare"> 查看对比</a-button>
+						<a-button type="link" @click="toCompare"> 查看对比</a-button>
 					</div>
 				</td>
 			</tr>

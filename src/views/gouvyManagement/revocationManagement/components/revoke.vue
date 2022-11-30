@@ -120,6 +120,7 @@
 						<div>
 							<span v-if="state.detail.submitRevokeOldItineraryInfoVo.ticketList?.length">
 								<p v-for="(itekcItem, index) in state.detail.submitRevokeOldItineraryInfoVo.ticketList" :key="index">
+									<span>{{ index + 1 }}.</span>
 									<span>{{ itekcItem.scenicName }}，</span>
 									<span>{{ itekcItem.ticketName }}</span>
 									<span>{{ itekcItem.reservePeopleCount }}张，</span>

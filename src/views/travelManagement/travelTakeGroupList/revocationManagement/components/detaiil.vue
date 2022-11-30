@@ -20,7 +20,7 @@
 					<div style="margin-bottom: 20px">
 						{{ state.detail.itinerarySubmitRevokeBasicVo.newTouristCount }}
 
-						<a-button @click="toCompare"> 查看对比</a-button>
+						<a-button type="link" @click="toCompare"> 查看对比</a-button>
 					</div>
 				</td>
 			</tr>
@@ -112,6 +112,7 @@
 						<div>
 							<span v-if="state.detail.submitRevokeOldItineraryInfoVo.ticketList?.length">
 								<p v-for="(itekcItem, index) in state.detail.submitRevokeOldItineraryInfoVo.ticketList" :key="index">
+									<span>{{ index + 1 }}.</span>
 									<span>{{ itekcItem.scenicName }}，</span>
 									<span>{{ itekcItem.ticketName }}</span>
 									<span>{{ itekcItem.reservePeopleCount }}张，</span>

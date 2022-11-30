@@ -8,7 +8,7 @@
 			<FormItem title="出散团时间" :iValue="'' + state.detail.startDate + '-' + state.detail.endDate" />
 			<FormItem title="团客人数" :iValue="state.detail.originTouristCount + '人'" />
 			<FormItem title="古维管理费" :iValue="'' + state.detail.maintainFee / 100 + '元'" />
-			<FormItem title="综费产品" :iValue="state.detail.productList" />
+			<FormItem title="综费产品" :iValue="state.detail.productFee" />
 
 			<tr class="row">
 				<td class="key">景区预定</td>
