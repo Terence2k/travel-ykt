@@ -1,9 +1,15 @@
 const treeForeach = (tree: any, value: any) => {
   return tree.some((item: any) => {
-    if (item.buttonName && item.buttonName.split('、').indexOf(value) != -1) {
-      return window.location.href.split('/#')[1] == item.url;
-    }
+    // if (item.menuTypeName == '按钮') {
+      if (item.buttonName && item.buttonName.split('、').indexOf(value) != -1) {
+        return window.location.href.split('/#')[1] == item.url;
+      }
+    // }
+    // if (item.menuTypeName == 'tab页') {
+        // return window.location.href.split('/#')[1] == item.url;
+    // }
     if (item.childMenuList?.length) return treeForeach(item.childMenuList, value);
+    return false;
   })
 }
 
