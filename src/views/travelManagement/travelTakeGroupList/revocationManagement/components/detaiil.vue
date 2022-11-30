@@ -1,13 +1,5 @@
 <template>
-	<BaseModal :modelValue="modelValue" title="行程单撤销重提审核" @cancel="cancel" width="1000px">
-		<p>
-			{{ state.detail.itinerarySubmitRevokeBasicVo.startDate }}
-			&nbsp;
-			{{ state.detail.itinerarySubmitRevokeBasicVo.subTravelName }}
-			&nbsp;
-			{{ state.detail.itinerarySubmitRevokeBasicVo.subTravelOperatorName }}
-			&nbsp; 撤销原始行程单，并重提了新行程单，待你审核
-		</p>
+	<BaseModal :modelValue="modelValue" title="行程单撤销重提审核详情" @cancel="cancel" width="1000px">
 		<FormWrap>
 			<FormItem title="线路名称" :iValue="state.detail.itinerarySubmitRevokeBasicVo.routeName" />
 			<FormItem title="行程单编号" :iValue="state.detail.itinerarySubmitRevokeBasicVo.oldItineraryNo" />
@@ -28,7 +20,7 @@
 					<div style="margin-bottom: 20px">
 						{{ state.detail.itinerarySubmitRevokeBasicVo.newTouristCount }}
 
-						<a-button @click="toCompare"> 查看对比</a-button>
+						<a-button type="link" @click="toCompare"> 查看对比</a-button>
 					</div>
 				</td>
 			</tr>
@@ -139,8 +131,7 @@
 
 		<template v-slot:footer>
 			<div class="footer-wrap">
-				<a-button @click="sendAudit(3)">驳回</a-button>
-				<a-button type="primary" @click="sendAudit(2)">同意撤销</a-button>
+				<a-button @click="cancel">关闭</a-button>
 			</div>
 		</template>
 	</BaseModal>
