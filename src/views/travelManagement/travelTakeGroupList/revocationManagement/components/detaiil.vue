@@ -201,8 +201,10 @@ const props = defineProps({
 
 const compareRef = ref();
 
+const idRec = ref<number | string | null>('');
+
 const toCompare = () => {
-	compareRef.value.open();
+	compareRef.value.open(idRec.value);
 };
 
 const closeCompare = () => {
@@ -249,6 +251,7 @@ const toHistoryPage = () => {
 const open = (id: number | null) => {
 	modelValue.value = true;
 	formValidate.data.ticketId = id;
+	idRec.value = id;
 	initInfo(id);
 };
 
