@@ -4,7 +4,7 @@
 			<template #button>
 				<div class="btn">
 					<a-button type="primary" @click="transfer('all', null)">申请转账</a-button>
-					<a-button style="margin-left: 8px" type="primary" @click="combination">组合转账</a-button>
+					<a-button style="margin-left: 8px" type="primary" @click="combination">组合对账</a-button>
 				</div>
 			</template>
 			<template #bodyCell="{ column, record }">
