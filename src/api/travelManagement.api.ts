@@ -530,4 +530,30 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
+	//查询撤销审核详情
+	getRevokeItineraryTouristList(id: number) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryTourist/getRevokeItineraryTouristList/${id}`,
+			method: 'get',
+			showLoading: false,
+		});
+	},
+	//旅行社审核 整团撤销
+	revokeAudit(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/revokeAudit`,
+			method: 'post',
+			data,
+			showLoading: false,
+		});
+	},
+	//旅行社审核  撤销重提
+	submitRevokeAudit(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/submitRevokeAudit`,
+			method: 'post',
+			data,
+			showLoading: false,
+		});
+	},
 };

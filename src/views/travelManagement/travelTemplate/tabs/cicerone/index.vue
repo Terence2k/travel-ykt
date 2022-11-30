@@ -8,7 +8,7 @@
 			autocomplete="off"
 			labelAlign="left"
 		>
-			<CommonTable :columns="columns" :dataSource="tableData" :scrollY="false">
+			<CommonTable :columns="route.query.Cedit ? columns : columnstwo" :dataSource="tableData" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
 					<template v-if="column.key === 'index'">
 						<div>
@@ -55,7 +55,7 @@
 				</template>
 			</CommonTable>
 		</a-form>
-		<div class="footer-btn" v-if="travelStore.teamStatus">
+		<div class="footer-btn" v-if="!route.query.Cinfo">
 			<a-button type="primary" @click="add">添加</a-button>
 		</div>
 	</div> 
@@ -65,6 +65,7 @@ import { CaretDownOutlined } from '@ant-design/icons-vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import { useGuideInfo } from './ciceroneinfo';
 import dayjs from 'dayjs';
+const route = useRoute();
 
 const props = defineProps({
 	onCheck: {
@@ -74,6 +75,7 @@ const props = defineProps({
 const emits = defineEmits(['onSuccess'])
 const { 
 	columns, 
+	columnstwo,
 	tableData, 
 	editableData, 
 	edit, 
