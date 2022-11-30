@@ -67,6 +67,34 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 				fixed: 'right'
 			}
 		],
+		columnstwo: [
+			{
+				title: ' 序号 ',
+				key: 'index',
+				width: '80px'
+			},
+			{
+				title: '已选导游',
+				dataIndex: 'guideName',
+				key: 'guideName',
+			},
+			{
+				title: '导游电话',
+				dataIndex: 'guidePhone',
+				key: 'guidePhone',
+			},
+			{
+				title: '导游编号',
+				dataIndex: 'guideCertificateNo',
+				key: 'guideCertificateNo',
+			},
+			{
+				title: '导游类型',
+				dataIndex: 'guideType',
+				key: 'guideType',
+				data: travelStore.guideType
+			}
+		],
 		rulesRef: {
 			1: {
 				guideName: [{ required: true, message: '请选择行程类型' }]
