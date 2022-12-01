@@ -20,7 +20,6 @@
 			<FormItem title="线路名称" :i-value="state.detail.itinerarySubmitRevokeBasicVo.routeName" />
 			<FormItem title="行程单编号" :i-value="state.detail.itinerarySubmitRevokeBasicVo.itineraryNo" />
 			<FormItem title="地接社" :i-value="state.detail.itinerarySubmitRevokeBasicVo.subTravelName" />
-			<FormItem title="地接社计调" />
 			<FormItem
 				title="出散团时间"
 				:iValue="'' + state.detail.itinerarySubmitRevokeBasicVo.itineraryStartDate + '-' + state.detail.itinerarySubmitRevokeBasicVo.itineraryEndDate"
@@ -55,9 +54,9 @@
 				<td class="key">重提后变更人数</td>
 				<td class="value">
 					<div style="margin-bottom: 20px">
-						{{ state.detail.itinerarySubmitRevokeBasicVo.peopleChangeCount }}
+						{{ state.detail.itinerarySubmitRevokeBasicVo.peopleChangeCount }}人
 
-						<a-button @click="toCompare"> 查看对比</a-button>
+						<a-button @click="toCompare" style="margin-left:30px"> 查看对比</a-button>
 					</div>
 				</td>
 			</tr>
@@ -87,7 +86,7 @@
 					state.detail.itinerarySubmitRevokeBasicVo.itineraryRevokeAuditStatus == 2||
 					state.detail.itinerarySubmitRevokeBasicVo.itineraryRevokeAuditStatus == 5
 				"
-				:i-value="'' + '[驳回]：驳回原因' + state.detail.itinerarySubmitRevokeBasicVo.auditRemark"
+				:i-value="'' + '[驳回]：驳回原因：' + state.detail.itinerarySubmitRevokeBasicVo.auditRemark"
 			/>
 		</FormWrap>
 		<template v-slot:footer>
@@ -123,11 +122,14 @@
 	<BaseModal  v-model="comparison" width="800px">
 		<div class="div">
 			<a-button type="primary" @click="comparison=false">返回</a-button>
-			<p>全部游客30名,撤销后变更4人</p>
+			<p>全部游客{{state.data.length}}名,撤销后变更{{state.num}}人</p>
 		</div>
 		<CommonTable :dataSource="state.data" :columns="columns" :scrollY="false" style="padding: 0 0;">
 			<template #bodyCell="{ column, index, record }">
-				
+				<template v-if="column.key === 'isChange'">
+					<a-span v-if="(record.isChange==true)">是</a-span>
+					<a-span v-else>否</a-span>
+				</template>
 			</template>
 		</CommonTable>
 	</BaseModal>
@@ -166,48 +168,49 @@ const state = reactive({
 	},
 	title: '',
 	refuesedReason: '',
-	data:[]
+	data:[],
+	num:''
 });
 const columns = [
 	{
 		title: '游客姓名',
-		dataIndex: 'itineraryNo',
-		key: 'itineraryNo',
+		dataIndex: 'name',
+		key: 'name',
 	},
 	{
 		title: '身份证号码',
-		dataIndex: 'routeName',
-		key: 'routeName',
+		dataIndex: 'certificateNo',
+		key: 'certificateNo',
 	},
 	{
 		title: '性别',
-		dataIndex: 'travelName',
-		key: 'travelName',
+		dataIndex: 'genderName',
+		key: 'genderName',
 	},
 	{
 		title: '年龄',
-		dataIndex: 'subTravelName',
-		key: 'subTravelName',
+		dataIndex: 'age',
+		key: 'age',
 	},
 	{
 		title: '联系方式',
-		dataIndex: 'itineraryStartDate',
-		key: 'itineraryStartDate',
+		dataIndex: 'emergencyContactPhone',
+		key: 'emergencyContactPhone',
 	},
 	{
 		title: '客源地',
-		dataIndex: 'touristNum',
-		key: 'touristNum',
+		dataIndex: 'sourceAddressName',
+		key: 'sourceAddressName',
 	},
 	{
 		title: '费用减免类型',
-		dataIndex: 'originalReduceNum',
-		key: 'originalReduceNum',
+		dataIndex: 'specialCertificateTypeName',
+		key: 'specialCertificateTypeName',
 	},
     {
 		title: '是否为变更后新增',
-		dataIndex: 'issueStatusName',
-		key: 'issueStatusName',
+		dataIndex: 'isChange',
+		key: 'isChange',
 	}
 ];
 const formRef = ref();
@@ -223,8 +226,17 @@ const compareRef = ref();
 
 const toCompare = () => {
 	comparison.value=true
+	queryRevokeTouristCompare()
 };
-
+const queryRevokeTouristCompare=()=>{
+	api.queryRevokeTouristCompare(state.detail.itinerarySubmitRevokeBasicVo.revokeRecordId).then((res: any)=>{
+		state.data=res.newTouristList
+		let num=res.newTouristList.map((i)=>{
+			return i.isChange==true
+		})
+		state.num=num.length
+	})
+}
 const closeCompare = () => {
 	compareRef.value.cancle();
 };
@@ -250,14 +262,6 @@ const auditFailed = () => {
 const cancel = () => {
 	FailedDialogVisible.value = false;
 	state.refuesedReason = '';
-};
-const apply = () => {
-	formRef.value
-		.validateFields()
-		.then(async (res: any) => {})
-		.catch((err: any) => {
-			console.log(err);
-		});
 };
 const toHistoryPage = () => {
 	route.push('/scenic-spot/sold-out-history');
