@@ -36,7 +36,7 @@
 			<CommonTable :dataSource="state.tableData.data.applyReduceTouristList" :columns="columns" :scrollY="false">
 				<template #bodyCell="{ column, index, record }">
 					<template v-if="column.key === 'specialCertificateImg'">
-						<Upload v-model="record.specialCertificateImg" :maxCount="1" disabled />
+						<Upload v-model="record.specialCertificateImg" :maxCount="5" v-if="record.specialCertificateType!=null"  disabled />
 					</template>
 				</template>
 			</CommonTable>

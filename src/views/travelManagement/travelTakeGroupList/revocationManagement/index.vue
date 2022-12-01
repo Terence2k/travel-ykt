@@ -325,17 +325,17 @@ const pageSideChange = (current: number, size: number) => {
 
 const init = async () => {
 	state.tableData.loading = true;
-
-	let res = await api.gouvyRepealNreapplyPageList(state.tableData.param);
+	let res = await api.travelManagement.travelRepealNreapplyPageList(state.tableData.param);
 	state.tableData.loading = false;
 	state.tableData.data = res.content;
 	state.tableData.total = res.total;
 	console.log(res);
 };
+
 const waitingBar = ref(0);
 
 const initWaitingBar = async () => {
-	let res = await api.gouvyRepealNreapplyPageList({ status: 0, pageNo: 1, pageSize: 10 });
+	let res = await api.travelManagement.travelRepealNreapplyPageList({ status: 0, pageNo: 1, pageSize: 10 });
 	waitingBar.value = res.total;
 };
 

@@ -7,77 +7,139 @@
 		</section>
 	</div>
 	<div class="table_box">
-		<p class="top-p">行程单ID:{{}}<span></span></p>
+		<p class="top-p">行程单ID:{{ state.basicData.itineraryNo }}<span></span></p>
 		<table class="info_table" cellpadding="16px" border="1">
 			<tr class="row">
 				<td class="key">线路名称</td>
-				<td class="value" colspan="3">{{}}</td>
+				<td class="value" colspan="3">{{ state.basicData.routeName }}</td>
 			</tr>
 			<tr class="row">
 				<td class="key">填报模式</td>
-				<td class="value">{{}}</td>
+				<td class="value">{{ state.basicData.groupTypeName }}</td>
 				<td class="key">团队类型</td>
-				<td class="value">{{}}</td>
+				<td class="value">{{ state.basicData.teamTypeName }}</td>
 			</tr>
 			<tr class="row">
 				<td class="key">组团社</td>
-				<td class="value">{{}}</td>
+				<td class="value">{{ state.basicData.travelName }}</td>
 				<td class="key">组团社计调</td>
-				<td class="value">{{}}</td>
+				<td class="value">{{ state.basicData.travelOperatorName + ' ' + state.basicData.travelOperatorPhone }}</td>
 			</tr>
 			<tr class="row">
 				<td class="key">地接社</td>
-				<td class="value">{{}}</td>
+				<td class="value">{{ state.basicData.subTravelName }}</td>
 				<td class="key">地接社计调</td>
-				<td class="value">{{}}</td>
+				<td class="value">{{ state.basicData.subTravelOperatorName + ' ' + state.basicData.subTravelOperatorPhone }}</td>
 			</tr>
 			<tr class="row">
 				<td class="key">游客人数</td>
-				<td class="value">{{}}</td>
+				<td class="value">{{ state.basicData.touristCount }}</td>
 				<td class="key">古维费应缴人数</td>
-				<td class="value">{{}}</td>
+				<td class="value">{{ state.basicData.guWeiCount }}</td>
 			</tr>
 			<tr class="row">
 				<td class="key">行程时间</td>
-				<td class="value">{{}}</td>
+				<td class="value">{{ state.basicData.startDate + '-' + state.basicData.endDate }}</td>
 				<td class="key">综费应缴人数</td>
 				<td class="value">{{}}</td>
 			</tr>
 			<tr class="row">
 				<td class="key">已添加景区</td>
-				<td class="value">{{}}</td>
+				<td class="value">{{ state.basicData.ticketCount }}</td>
+
 				<td class="key">已添加酒店</td>
-				<td class="value">{{}}</td>
+				<!-- <td class="value">{{ state.hotelList.length }}</td> -->
+				<td class="value">{{ state.basicData.hotelCount }}</td>
 			</tr>
 			<tr class="row">
 				<td class="key">已添加餐厅</td>
-				<td class="value">{{}}</td>
+				<td class="value">{{ state.basicData.cateringCount }}</td>
 				<td class="key">行程冻结金额(元)</td>
-				<td class="value">{{}}</td>
+				<td class="value">{{ state.basicData.totalFee / 100 }}</td>
 			</tr>
 			<tr class="row">
 				<td class="key">关联行程单</td>
-				<td class="value">{{}}</td>
+				<td class="value">{{ state.basicData.itineraryNo }}</td>
 				<td class="key">保险购买方</td>
 				<td class="value">{{}}</td>
 			</tr>
 		</table>
 		<p class="top-p">导游信息<span></span></p>
-		<CommonTable :columns="guide" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px"> </CommonTable>
+		<CommonTable :columns="guide" :dataSource="state.guideList" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
+			<template #bodyCell="{ column, record, index }">
+				<template v-if="column.key === 'index'"> {{ index + 1 }} </template>
+				<template v-if="column.key === 'endDate'"> {{ record.startDate }} - {{ record.endDate }} </template>
+			</template>
+		</CommonTable>
 		<p class="top-p">游客信息<span></span></p>
-		<CommonTable :columns="tourist" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px"> </CommonTable>
+		<CommonTable :columns="tourist" :dataSource="state.touristList" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
+			<template #bodyCell="{ column, record, index }">
+				<template v-if="column.key === 'endDate'"> {{ record.startDate }} - {{ record.endDate }} </template>
+			</template>
+		</CommonTable>
 		<p class="top-p">交通信息<span></span></p>
-		<CommonTable :columns="trafficInfo" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px"> </CommonTable>
-		<p class="top-p">古维管理费 <span>(共30人,古维待缴人数:25,应缴费用:￥1250.00 订单状态：待出票)</span></p>
-		<CommonTable :columns="gouvy" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px"> </CommonTable>
-		<p class="top-p">综费产品<span>(费用总计:800.00元，订单状态：待预订)</span></p>
-		<CommonTable :columns="comprehensive" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px"> </CommonTable>
-		<p class="top-p">酒店费用<span>(已预订1个酒店,最大可入住人数:30人;房间数量:17;费用总计:12050.00元)</span></p>
-		<CommonTable :columns="hotel" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px"> </CommonTable>
-		<p class="top-p">景区费用<span>(已预订2个景区,游玩人数:30人;门票数量:30;费用总计:1050.00元)</span></p>
-		<CommonTable :columns="scenic" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px"> </CommonTable>
+		<CommonTable :columns="trafficInfo" :dataSource="state.transportList" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
+			<template #bodyCell="{ column, record, index }">
+				<template v-if="column.key === 'endDate'"> {{ record.startDate }} - {{ record.endDate }} </template>
+			</template>
+		</CommonTable>
+		<p class="top-p">
+			古维管理费
+			<!-- <span>(共30人,古维待缴人数:25,应缴费用:￥1250.00 订单状态：待出票)</span> -->
+		</p>
+		<CommonTable :columns="gouvy" :dataSource="state.productList" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
+		</CommonTable>
+		<p class="top-p">
+			综费产品
+			<!-- <span>(费用总计:800.guWeiDetail)</span> -->
+		</p>
+		<CommonTable :columns="comprehensive" :dataSource="state.productList" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
+		</CommonTable>
+		<p class="top-p">
+			酒店费用<span>
+				<!-- (已预订1个酒店,最大可入住人数:30人;房间数量:17;费用总计:12050.00元) -->
+			</span>
+		</p>
+		<CommonTable :columns="hotel" :dataSource="state.hotelList" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
+			<template #bodyCell="{ column, record, index }">
+				<template v-if="column.key === 'limitPeople'">
+					{{ record.roomTypeList[0].limitPeople }}
+				</template>
+				<template v-if="column.key === 'roomTypeName'">
+					{{ record.roomTypeList[0].roomTypeName }}
+				</template>
+				<template v-if="column.key === 'roomCount'">
+					{{ record.roomTypeList[0].roomCount }}
+				</template>
+				<template v-if="column.key === 'orderFee'">
+					{{ record.orderFee / 100 }}
+				</template>
+			</template>
+		</CommonTable>
+		<p class="top-p">
+			景区费用<span>
+				<!-- (已预订2个景区,游玩人数:30人;门票数量:30;费用总计:1050.00元) -->
+			</span>
+		</p>
+		<CommonTable :columns="scenic" :dataSource="state.ticketList" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
+		</CommonTable>
 		<p class="top-p">已上传的附件</p>
-		<CommonTable :columns="enclosure" rowKey="oid" :scrollY="false"> </CommonTable>
+		<CommonTable :columns="enclosure" :dataSource="state.attachmentList" rowKey="oid" :scrollY="false">
+			<template #bodyCell="{ column, record, index }">
+				<template v-if="column.key === '1'">
+					<a-image :src="img.attachmentUrl" :key="img.attachmentUrl" v-for="img in record[1]"></a-image>
+				</template>
+				<template v-if="column.key === '2'">
+					<a-image :src="img.attachmentUrl" :key="img.attachmentUrl" v-for="img in record[2]"></a-image>
+				</template>
+				<template v-if="column.key === '3'">
+					<a-image :src="img.attachmentUrl" :key="img.attachmentUrl" v-for="img in record[3]"></a-image>
+				</template>
+				<template v-if="column.key === '4'">
+					<a-image :src="img.attachmentUrl" :key="img.attachmentUrl" v-for="img in record[4]"></a-image>
+				</template>
+			</template>
+		</CommonTable>
 	</div>
 
 	<BaseModal title="第三方门票退订提醒" v-model="reRecokeAuditCheckVisible">
@@ -143,12 +205,26 @@ const state = reactive({
 		pageSize: 10,
 	},
 	tableData: [],
+	basicData: {},
+	hotelList: [],
+	guideList: [],
+	ticketList: [],
+	touristList: [],
+	transportList: [],
+	attachmentList: [],
+	productList: [],
+	guWeiDetail: [],
 });
 const guide = [
 	{
+		title: '编号',
+		dataIndex: 'index',
+		key: 'index',
+	},
+	{
 		title: '导游姓名',
-		dataIndex: 'touristName',
-		key: 'touristName',
+		dataIndex: 'guideName',
+		key: 'guideName',
 	},
 	{
 		title: '导游星级',
@@ -157,8 +233,8 @@ const guide = [
 	},
 	{
 		title: '导游证编号',
-		dataIndex: 'certificateNo',
-		key: 'certificateNo',
+		dataIndex: 'guideCertificateNo',
+		key: 'guideCertificateNo',
 	},
 	{
 		title: '性别',
@@ -167,25 +243,25 @@ const guide = [
 	},
 	{
 		title: '导游电话',
-		dataIndex: 'sourceAddressName',
-		key: 'sourceAddressName',
+		dataIndex: 'guidePhone',
+		key: 'guidePhone',
 	},
 	{
 		title: '已选带团时间',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
+		dataIndex: 'endDate',
+		key: 'endDate',
 	},
 ];
 const tourist = [
 	{
 		title: '游客姓名',
-		dataIndex: 'touristName',
-		key: 'touristName',
+		dataIndex: 'name',
+		key: 'name',
 	},
 	{
 		title: '证件类型',
-		dataIndex: 'certificateTypeName',
-		key: 'certificateTypeName',
+		dataIndex: 'certificateType',
+		key: 'certificateType',
 	},
 	{
 		title: '证件号码',
@@ -199,18 +275,18 @@ const tourist = [
 	},
 	{
 		title: '联系方式',
+		dataIndex: 'phone',
+		key: 'phone',
+	},
+	{
+		title: '客源地',
 		dataIndex: 'sourceAddressName',
 		key: 'sourceAddressName',
 	},
 	{
-		title: '客源地',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
-	},
-	{
 		title: '健康码',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
+		dataIndex: 'healthCodeName',
+		key: 'healthCodeName',
 	},
 	{
 		title: '中高风险',
@@ -226,38 +302,38 @@ const tourist = [
 const trafficInfo = [
 	{
 		title: '交通类型',
-		dataIndex: 'touristName',
-		key: 'touristName',
+		dataIndex: 'transportationType',
+		key: 'transportationType',
 	},
 	{
 		title: '车牌号',
-		dataIndex: 'certificateTypeName',
-		key: 'certificateTypeName',
+		dataIndex: 'licencePlateNumber',
+		key: 'licencePlateNumber',
 	},
 	{
 		title: '车牌颜色',
-		dataIndex: 'certificateNo',
-		key: 'certificateNo',
+		dataIndex: 'licencePlateColor',
+		key: 'licencePlateColor',
 	},
 	{
 		title: '车企名称',
-		dataIndex: 'genderName',
-		key: 'genderName',
+		dataIndex: 'companyName',
+		key: 'companyName',
 	},
 	{
 		title: '核载人数',
-		dataIndex: 'sourceAddressName',
-		key: 'sourceAddressName',
+		dataIndex: 'approvedLoad',
+		key: 'approvedLoad',
 	},
 	{
 		title: '用车时段',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
+		dataIndex: 'endDate',
+		key: 'endDate',
 	},
 	{
 		title: '驾驶员',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
+		dataIndex: 'driver',
+		key: 'driver',
 	},
 ];
 const gouvy = [
@@ -352,23 +428,23 @@ const comprehensive = [
 const hotel = [
 	{
 		title: '酒店名称',
-		dataIndex: 'touristName',
-		key: 'touristName',
+		dataIndex: 'hotelName',
+		key: 'hotelName',
 	},
 	{
 		title: '可入住人数',
-		dataIndex: 'certificateTypeName',
-		key: 'certificateTypeName',
+		dataIndex: 'limitPeople',
+		key: 'limitPeople',
 	},
 	{
 		title: '房型',
-		dataIndex: 'certificateNo',
-		key: 'certificateNo',
+		dataIndex: 'roomTypeName',
+		key: 'roomTypeName',
 	},
 	{
 		title: '房间数量',
-		dataIndex: 'genderName',
-		key: 'genderName',
+		dataIndex: 'roomCount',
+		key: 'roomCount',
 	},
 	{
 		title: '入住天数',
@@ -377,28 +453,23 @@ const hotel = [
 	},
 	{
 		title: '入住时间',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
+		dataIndex: 'createTime',
+		key: 'createTime',
 	},
 	{
 		title: '离店时间',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
+		dataIndex: 'endDate',
+		key: 'endDate',
 	},
 	{
 		title: '费用总计（元）',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
+		dataIndex: 'orderFee',
+		key: 'orderFee',
 	},
 	{
 		title: '订单状态',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
-	},
-	{
-		title: '操作',
-		dataIndex: 'action',
-		key: 'action',
+		dataIndex: 'orderStatusName',
+		key: 'orderStatusName',
 	},
 ];
 const scenic = [
@@ -451,23 +522,23 @@ const scenic = [
 const enclosure = [
 	{
 		title: '旅行合同',
-		dataIndex: 'touristName',
-		key: 'touristName',
+		dataIndex: '1',
+		key: '1',
 	},
 	{
 		title: '委托接待协议',
-		dataIndex: 'certificateTypeName',
-		key: 'certificateTypeName',
+		dataIndex: '2',
+		key: '2',
 	},
 	{
 		title: '包车合同',
-		dataIndex: 'certificateNo',
-		key: 'certificateNo',
+		dataIndex: '3',
+		key: '3',
 	},
 	{
 		title: '保险单',
-		dataIndex: 'genderName',
-		key: 'genderName',
+		dataIndex: '4',
+		key: '4',
 	},
 ];
 const reRecokeAuditVisible = ref(false);
@@ -538,8 +609,40 @@ const check = async (status: string) => {
 	}
 };
 
+const initInfo = () => {
+	let queryData = {
+		oid: route.currentRoute.value?.query?.id,
+		pageNo: 1,
+		pageSize: 100000,
+	};
+	api.travelManagement
+		.getItineraryDetail(queryData)
+		.then((res: any) => {
+			state.basicData = res.basic;
+			state.hotelList = res.hotelList;
+			state.guideList = res.guideList;
+			state.ticketList = res.ticketList;
+			state.touristList = res.touristList.content;
+			state.transportList = res.transportList;
+			state.productList = res.productList;
+			state.guWeiDetail = res.guWeiDetail;
+
+			let arr = [{ 1: [], 2: [], 3: [], 4: [] }];
+
+			res.attachmentList.map((item) => {
+				arr[0][item.attachmentType].push(item);
+			});
+
+			state.attachmentList = arr;
+			// state.itineraryDetail = res;
+		})
+		.catch((err: any) => {
+			console.log(err);
+		});
+};
+
 onMounted(() => {
-	// initPage();
+	initInfo();
 });
 </script>
 <style scoped lang="less">
