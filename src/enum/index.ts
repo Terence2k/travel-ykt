@@ -122,4 +122,5 @@ export enum TakeGroupStatus {
   Cancellation,    // 已散团 5
   WaitingChange,  // 待变更 6
   Overtime,        // 已过期 7
+  WaitingOutGroup,        // 待出团 8
 }
