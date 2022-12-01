@@ -556,4 +556,13 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
+	//分页查询 撤销/撤销重提 订单
+	travelRepealNreapplyPageList(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/getItineraryRevokeAuditList`,
+			method: 'post',
+			showLoading: false,
+			data,
+		});
+	},
 };
