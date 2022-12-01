@@ -7,7 +7,7 @@
 		</section>
 	</div>
 	<div class="table_box">
-		<p class="top-p">行程单ID:{{}}<span></span></p>
+		<p class="top-p">行程单ID:{{ state.basicData.itineraryNo }}<span></span></p>
 		<table class="info_table" cellpadding="16px" border="1">
 			<tr class="row">
 				<td class="key">线路名称</td>
@@ -83,13 +83,23 @@
 				<template v-if="column.key === 'endDate'"> {{ record.startDate }} - {{ record.endDate }} </template>
 			</template>
 		</CommonTable>
-		<p class="top-p">古维管理费 <span>(共30人,古维待缴人数:25,应缴费用:￥1250.00 订单状态：待出票)</span></p>
+		<p class="top-p">
+			古维管理费
+			<!-- <span>(共30人,古维待缴人数:25,应缴费用:￥1250.00 订单状态：待出票)</span> -->
+		</p>
 		<CommonTable :columns="gouvy" :dataSource="state.productList" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
 		</CommonTable>
-		<p class="top-p">综费产品<span>(费用总计:800.guWeiDetail)</span></p>
+		<p class="top-p">
+			综费产品
+			<!-- <span>(费用总计:800.guWeiDetail)</span> -->
+		</p>
 		<CommonTable :columns="comprehensive" :dataSource="state.productList" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
 		</CommonTable>
-		<p class="top-p">酒店费用<span>(已预订1个酒店,最大可入住人数:30人;房间数量:17;费用总计:12050.00元)</span></p>
+		<p class="top-p">
+			酒店费用<span>
+				<!-- (已预订1个酒店,最大可入住人数:30人;房间数量:17;费用总计:12050.00元) -->
+			</span>
+		</p>
 		<CommonTable :columns="hotel" :dataSource="state.hotelList" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
 			<template #bodyCell="{ column, record, index }">
 				<template v-if="column.key === 'limitPeople'">
@@ -106,7 +116,11 @@
 				</template>
 			</template>
 		</CommonTable>
-		<p class="top-p">景区费用<span>(已预订2个景区,游玩人数:30人;门票数量:30;费用总计:1050.00元)</span></p>
+		<p class="top-p">
+			景区费用<span>
+				<!-- (已预订2个景区,游玩人数:30人;门票数量:30;费用总计:1050.00元) -->
+			</span>
+		</p>
 		<CommonTable :columns="scenic" :dataSource="state.ticketList" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
 		</CommonTable>
 		<p class="top-p">已上传的附件</p>
