@@ -335,6 +335,15 @@ export const travelManagement = {
 			data,
 		});
 	},
+	//校验是否有外部票需要退订
+	travelChangeCheckTicketRefund(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/change/checkTicketRefund`,
+			method: 'post',
+			showLoading: false,
+			data,
+		});
+	},
 	// 变更导游、交通、附件
 	changeItineraryBasic(data: any) {
 		return request({

@@ -133,7 +133,6 @@ export const useTravelStore = defineStore({
 
 				return Object.assign(this.hotelList.filter((item: any) => data.changeId == item.changeId)[0], data);
 			} else {
-				console.log(4);
 				data.oid = oid;
 				if (!this.hotelList) {
 					let newData = [data];
