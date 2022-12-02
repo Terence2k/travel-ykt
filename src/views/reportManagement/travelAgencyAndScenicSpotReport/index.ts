@@ -2,226 +2,70 @@ import type { TableColumnsType } from 'ant-design-vue';
 // 固定表头
 export const fixedColumn: Array<any> = [
 	{
-		title: '发团旅行社',
+		title: '团单编号',
 		dataIndex: 'travelName',
 		key: 'travelName',
 		width: 100,
 	},
 	{
-		title: '总人数',
+		title: '自编团号',
 		dataIndex: 'peopleNum',
 		key: 'peopleNum',
 		width: 100,
 	},
 	{
-		title: '总团款(元)',
+		title: '景区名称',
 		dataIndex: 'frozenPrice',
 		key: 'frozenPrice',
 		width: 100,
 	},
 	{
-		title: '合同费用',
+		title: '票名称',
 		dataIndex: 'settlementPrice',
 		key: 'settlementPrice',
 		width: 100,
 	},
 	{
-		title: '户名',
+		title: '旅行社',
 		dataIndex: 'unSettlementPrice',
 		key: 'unSettlementPrice',
 		width: 100,
 	},
 	{
-		title: '旅行社开户行',
+		title: '核销时间',
 		dataIndex: 'unSettlementPrice',
 		key: 'unSettlementPrice',
 		width: 100,
 	},
 	{
-		title: '旅行社账号',
+		title: '门票单价（元）',
 		dataIndex: 'unSettlementPrice',
 		key: 'unSettlementPrice',
 		width: 100,
 	},
 	{
-		title: '旅行社实收',
+		title: '分账单价',
 		dataIndex: 'unSettlementPrice',
 		key: 'unSettlementPrice',
 		width: 100,
 	},
 	{
-		title: '古维费用',
-		key: 'hmVo',
-		children: [
-			{
-				title: '冻结金额',
-				dataIndex: 'frozenPrice',
-				key: 'hmVo',
-				width: 100,
-			},
-			{
-				title: '已核销金额',
-				dataIndex: 'settlementPrice',
-				key: 'hmVo',
-				width: 100,
-			},
-			{
-				title: '实收',
-				dataIndex: 'actualPrice',
-				key: 'hmVo',
-				width: 100,
-			},
-		],
+		title: '预定数',
+		dataIndex: 'unSettlementPrice',
+		key: 'unSettlementPrice',
+		width: 100,
 	},
 	{
-		title: '景区',
-		key: 'ticketVo',
-		children: [
-			{
-				title: '冻结金额',
-				dataIndex: 'frozenPrice',
-				key: 'ticketVo',
-				width: 100,
-			},
-			{
-				title: '已核销金额',
-				dataIndex: 'settlementPrice',
-				key: 'ticketVo',
-				width: 100,
-			},
-			{
-				title: '实收',
-				dataIndex: 'actualPrice',
-				key: 'ticketVo',
-				width: 100,
-			},
-		],
+		title: '实刷数',
+		dataIndex: 'unSettlementPrice',
+		key: 'unSettlementPrice',
+		width: 100,
 	},
 	{
-		title: '酒店',
-		key: 'hotelVo',
-		children: [
-			{
-				title: '冻结金额',
-				dataIndex: 'frozenPrice',
-				key: 'hotelVo',
-				width: 100,
-			},
-			{
-				title: '已核销金额',
-				dataIndex: 'settlementPrice',
-				key: 'hotelVo',
-				width: 100,
-			},
-			{
-				title: '实收',
-				dataIndex: 'actualPrice',
-				key: 'hotelVo',
-				width: 100,
-			},
-		],
-	},
-	{
-		title: '餐饮',
-		key: 'cateringVo',
-		children: [
-			{
-				title: '冻结金额',
-				dataIndex: 'frozenPrice',
-				key: 'cateringVo',
-				width: 100,
-			},
-			{
-				title: '已核销金额',
-				dataIndex: 'settlementPrice',
-				key: 'cateringVo',
-				width: 100,
-			},
-			{
-				title: '实收',
-				dataIndex: 'actualPrice',
-				key: 'cateringVo',
-				width: 100,
-			},
-		],
-	},
-	{
-		title: '监理',
-		key: 'superviseVo',
-		children: [
-			{
-				title: '实收',
-				dataIndex: 'actualPrice',
-				key: 'superviseVo',
-				width: 100,
-			},
-		],
-	},
-	{
-		title: '协会',
-		key: 'associationVo',
-		children: [
-			{
-				title: '实收',
-				dataIndex: 'actualPrice',
-				key: 'associationVo',
-				width: 100,
-			},
-		],
-	},
-	{
-		title: '集团',
-		key: 'groupVo',
-		children: [
-			{
-				title: '实收',
-				dataIndex: 'actualPrice',
-				key: 'groupVo',
-				width: 100,
-			},
-		],
-	},
-	{
-		title: '文旅局',
-		key: 'cultureBureauVo',
-		children: [
-			{
-				title: '实收',
-				dataIndex: 'actualPrice',
-				key: 'cultureBureauVo',
-				width: 100,
-			},
-		],
-	},
-	{
-		title: '一卡通',
-		key: 'yktVo',
-		children: [
-			{
-				title: '实收',
-				dataIndex: 'actualPrice',
-				key: 'yktVo',
-				width: 100,
-			},
-		],
-	},
-	{
-		title: '地接社',
-		key: 'subTravelVo',
-		children: [
-			{
-				title: '实收',
-				dataIndex: 'actualPrice',
-				key: 'subTravelVo',
-				width: 100,
-			},
-			{
-				title: '未消费费用',
-				dataIndex: 'unSettlementPrice',
-				key: 'subTravelVo',
-				width: 100,
-			},
-		],
+		title: '预定金额（元）',
+		dataIndex: 'unSettlementPrice',
+		key: 'unSettlementPrice',
+		width: 100,
 	},
 ];
 export interface StateType {
