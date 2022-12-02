@@ -123,6 +123,11 @@
 			</span>
 		</p>
 		<CommonTable :columns="scenic" :dataSource="state.ticketList" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
+			<template #bodyCell="{ column, record, index }">
+				<template v-if="column.key === 'unitPrice'">
+					{{ record.unitPrice / 100 }}
+				</template>
+			</template>
 		</CommonTable>
 		<p class="top-p">已上传的附件</p>
 		<CommonTable :columns="enclosure" :dataSource="state.attachmentList" rowKey="oid" :scrollY="false">
@@ -480,48 +485,38 @@ const hotel = [
 const scenic = [
 	{
 		title: '景区名称',
-		dataIndex: 'touristName',
-		key: 'touristName',
+		dataIndex: 'scenicName',
+		key: 'scenicName',
 	},
 	{
 		title: '游玩日期',
-		dataIndex: 'certificateTypeName',
-		key: 'certificateTypeName',
+		dataIndex: 'startDate',
+		key: 'startDate',
 	},
 	{
 		title: '门票名称',
-		dataIndex: 'certificateNo',
-		key: 'certificateNo',
+		dataIndex: 'ticketName',
+		key: 'ticketName',
 	},
 	{
 		title: '单价（元）',
-		dataIndex: 'genderName',
-		key: 'genderName',
+		dataIndex: 'unitPrice',
+		key: 'unitPrice',
 	},
 	{
 		title: '团队游客人数',
-		dataIndex: 'sourceAddressName',
-		key: 'sourceAddressName',
-	},
-	{
-		title: '购票人数',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
+		dataIndex: 'reservePeopleCount',
+		key: 'reservePeopleCount',
 	},
 	{
 		title: '费用（元）',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
+		dataIndex: 'unitPrice',
+		key: 'unitPrice',
 	},
 	{
 		title: '订单状态',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
-	},
-	{
-		title: '操作',
-		dataIndex: 'action',
-		key: 'action',
+		dataIndex: 'orderStatusName',
+		key: 'orderStatusName',
 	},
 ];
 const enclosure = [
