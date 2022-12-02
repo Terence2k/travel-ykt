@@ -167,13 +167,38 @@ export default [
 			{
 				path: 'touristsElectronicContract',
 				name: 'touristsElectronicContract',
-				component: () => import('@/views/touristsElectronicContract/index.vue'),
+				redirect: '/travel/touristsElectronicContract/electronicContratList',
+				// component: () => import('@/views/touristsElectronicContract/index.vue'),
 				meta: {
 					title: '散客电子合同',
 					// icon: 'liulanqi',
 					// auth: ["admin"],
 					// isDetail: true, // 在左侧的导航栏不会展示
 				},
+				children: [
+					{
+						path: 'electronicContratList',
+						name: 'electronicContratList',
+						component: () => import('@/views/touristsElectronicContract/index.vue'),
+						meta: {
+							title: '',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'addElectronicContrat',
+						name: 'addElectronicContrat',
+						component: () => import('@/views/touristsElectronicContract/add.vue'),
+						meta: {
+							title: '新增',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				]
 			},
 			// lineManagement
 			{

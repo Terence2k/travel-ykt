@@ -99,7 +99,7 @@
         </a-form-item>
 
         <a-form-item name="legalPersonUrl" label="法人身份证附件" v-show="formRules?.legalPersonUrl">
-          <Upload v-model="form.legalPersonUrl" :maxCount="1" />
+          <Upload v-model="form.legalPersonUrl" :maxCount="2" />
         </a-form-item>
         <a-form-item name="businessLicenseUrl" label="营业执照" v-show="formRules?.businessLicenseUrl">
           <Upload v-model="form.businessLicenseUrl" :maxCount="1" />

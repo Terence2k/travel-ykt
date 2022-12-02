@@ -1,6 +1,6 @@
 import { request, commonPath } from '@/utils/index';
 const commonPart = `${commonPath}/travel-agency-service/public/api/line/`
-// 根据父级code_value查询子级字典
+// 根据父级code_value查询子级字典 
 export function dropDownQueryListChildByCodeValue(codeValue: string) {
   return request({
     url: `${commonPath}/customer-service/public/api/dictionary/dropDownQueryListChildByCodeValue?codeValue=${codeValue}`,
@@ -65,6 +65,14 @@ export function findIndividualLineById(oid: string | number) {
 export function auditIndividualLineInformationContrast(oid: string | number) {
   return request({
     url: `${commonPart}auditIndividualLineInformationContrast?oid=${oid}`,
+    method: 'post',
+    showLoading: true
+  });
+}
+// 下拉获取线路
+export function selectIndividualLineDropdown() {
+  return request({
+    url: `${commonPart}selectIndividualLineDropdown`,
     method: 'post',
     showLoading: true
   });
