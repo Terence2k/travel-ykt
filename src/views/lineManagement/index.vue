@@ -407,7 +407,7 @@ const state = reactive({
       suitableRange: undefined,
       lineName: undefined,
       auditStatus: 1, // 已审核
-      permissionCode: -1, // //查询code（1:旅行社超管、中心操作员,2:门店操作员）——管理角色不传
+      permissionCode: null, // //查询code（1:旅行社超管、中心操作员,2:门店操作员）——管理角色不传
     },
   },
   tableData1: {
@@ -420,7 +420,7 @@ const state = reactive({
       suitableRange: undefined,
       lineName: undefined,
       auditStatus: 2, // 待审核
-      permissionCode: -1, // //查询code（1:旅行社超管、中心操作员,2:门店操作员）——管理角色不传
+      permissionCode: null, // //查询code（1:旅行社超管、中心操作员,2:门店操作员）——管理角色不传
     },
   },
   rolesLevel: 3, // 1:文旅局超管、一卡通超管,2:旅行社超管、中心操作员,3:门店操作员
@@ -921,7 +921,7 @@ const radioChange = () => {
   }
 }
 const getParams = () => {
-  const {
+  let {
     oid,
     companyId,
     suitableRange,
@@ -973,6 +973,9 @@ const getParams = () => {
     individualLinePriceBos = state.YKJList.map((item: any) => {
       return { priceTypeCode: item.codeValue, priceAmount: form[item.codeValue], priceTypeName: item.name }
     })
+  }
+  if (state.rolesLevel === 3) {
+    suitableRange = 3
   }
   let params = {
     oid,
