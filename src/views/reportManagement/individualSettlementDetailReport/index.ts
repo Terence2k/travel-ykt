@@ -63,8 +63,8 @@ export const fixedColumn: Array<any> = [
 	},
 	{
 		title: '旅行社实收',
-		dataIndex: 'unSettlementPrice',
-		key: 'unSettlementPrice',
+		dataIndex: 'test',
+		key: 'test',
 		width: 100,
 	},
 ];
@@ -124,18 +124,18 @@ export const cateringVo = {
 };
 export const subTravelVo = {
 	title: '导服费',
-	key: 'subTravelVo',
+	key: 'test',
 	children: [
 		{
 			title: '旅行社导服费',
 			dataIndex: 'actualPrice',
-			key: 'subTravelVo',
+			key: 'test',
 			width: 110,
 		},
 		{
 			title: '集团导服费',
 			dataIndex: 'unSettlementPrice',
-			key: 'subTravelVo',
+			key: 'test',
 			width: 110,
 		},
 	],
@@ -288,183 +288,10 @@ export const getRulePrice = computed(() => (record: any, column: any) => {
 	}
 	return `暂无数据`;
 });
-// 获取实收
-export const getActualPrice = computed(() => (record: any, column: any) => {
-	// 先判断非综费产品
-	if (!column.key.includes('List')) {
-		return record[column.key] && record[column.key]['actualPrice'] ? twoDecimalPlaces(record[column.key]['actualPrice']) : '';
-	} else {
-		// 综费产品
-		if (record[column.key]) {
-			const idx = record[column.key].findIndex((r: any) => r.comprehensiveFeeProductName === column.parentTitle);
-			if (idx !== -1) {
-				return twoDecimalPlaces(record[column.key][idx][column.dataIndex]) || '';
-			}
-		}
-	}
-	return '';
-});
-//地接社未消费费用获取数据
-export const getSubTravelVoUnSettlementPrice = computed(() => (record: any, column: any) => {
-	return record[column.key] ? twoDecimalPlaces(record[column.key]['unSettlementPrice']) : '';
-});
-export const columns = computed(() => {
-	const column = ref<TableColumnsType>([]);
-	column.value = fixedColumn;
-	const data: Array<DataType> = state.tableData.data;
-	/**
-	 * 先获取数据源，根据数据源的综费产品列表渲染到表头上
-	 * 再把数据进行整理 把数据源所有数据和表头一一对应存到 ruleMap
-	 * 再根据 ruleMap 进行遍历判断
-	 */
-	const ruleMap: any = [];
-	// 把综费产品两个数组整合到表头上
-	for (let index = 0; index < data.length; index++) {
-		// 综费产品 - 导服费
-		for (const key in data[index].comprehensiveGuideVoList) {
-			const vo = data[index].comprehensiveGuideVoList[key];
-			// 判断是否已经存在
-			const idx = comprehensiveGuideVoListIds.value.findIndex((item) => item === vo.comprehensiveFeeProductId);
-			if (idx === -1) {
-				comprehensiveGuideVoListIds.value.push(vo.comprehensiveFeeProductId);
-				const comprehensiveGuideVo = {
-					title: `${vo.comprehensiveFeeProductName}`,
-					dataIndex: `comprehensiveGuideVoList`,
-					id: `${vo.comprehensiveFeeProductId}`,
-					key: 'comprehensiveGuideVoList',
-					children: [
-						{
-							title: '旅行社实收',
-							dataIndex: 'travelActualPrice',
-							id: `${vo.comprehensiveFeeProductId}`,
-							key: 'comprehensiveGuideVoList',
-							width: 100,
-							parentTitle: `${vo.comprehensiveFeeProductName}`,
-						},
-						{
-							title: '集团实收',
-							dataIndex: 'groupActualPrice',
-							id: `${vo.comprehensiveFeeProductId}`,
-							key: 'comprehensiveGuideVoList',
-							width: 100,
-							parentTitle: `${vo.comprehensiveFeeProductName}`,
-						},
-					],
-				};
-				column.value.push(comprehensiveGuideVo);
-				// 把数据源和表头整理到ruleMap
-				const title = `comprehensiveGuideVoList-${vo.comprehensiveFeeProductId}`;
-				if (!ruleMap[title]) {
-					ruleMap[title] = { column: {}, data: [] };
-				}
-				ruleMap[title]['column'] = column.value[column.value.length - 1].children;
-				ruleMap[title]['data'].push(vo['ruleList']);
-				ruleMap[title]['columnParent'] = column.value[column.value.length - 1];
-			} else {
-				// 把数据源和表头整理到ruleMap
-				const title = `comprehensiveGuideVoList-${vo.comprehensiveFeeProductId}`;
-				if (!ruleMap[title]) {
-					ruleMap[title] = { column: {}, data: [] };
-				}
-				const idx = column.value.findIndex((item) => {
-					return item.title === vo.comprehensiveFeeProductName;
-				});
-				ruleMap[title]['column'] = column.value[idx].children;
-				ruleMap[title]['data'].push(vo['ruleList']);
-				ruleMap[title]['columnParent'] = column.value[idx];
-			}
-		}
-		// 	//综费产品-除导服费外
-		for (const key in data[index].comprehensiveVoList) {
-			const vo = data[index].comprehensiveVoList[key];
-			// 判断是否已经存在
-			const idx = comprehensiveVoListIds.value.findIndex((item) => item === vo.comprehensiveFeeProductId);
-			if (idx === -1) {
-				comprehensiveVoListIds.value.push(vo.comprehensiveFeeProductId);
-				const comprehensiveGuideVo = {
-					title: `${vo.comprehensiveFeeProductName}`,
-					dataIndex: `${vo.comprehensiveFeeProductId}`,
-					key: 'comprehensiveVoList',
-					children: [
-						{
-							title: `${vo.belongCompany}实收`,
-							dataIndex: 'actualPrice',
-							id: `${vo.comprehensiveFeeProductId}`,
-							key: 'comprehensiveVoList',
-							width: 100,
-							parentTitle: `${vo.comprehensiveFeeProductName}`,
-						},
-					],
-				};
-				column.value.push(comprehensiveGuideVo);
-				// 把数据源和表头整理到ruleMap
-				const title = `comprehensiveVoList-${vo.comprehensiveFeeProductId}`;
-				if (!ruleMap[title]) {
-					ruleMap[title] = { column: {}, data: [] };
-				}
-				ruleMap[title]['column'] = column.value[column.value.length - 1].children;
-				ruleMap[title]['data'].push(vo['ruleList']);
-				ruleMap[title]['columnParent'] = column.value[column.value.length - 1];
-			} else {
-				// 把数据源和表头整理到ruleMap
-				const title = `comprehensiveVoList-${vo.comprehensiveFeeProductId}`;
-				if (!ruleMap[title]) {
-					ruleMap[title] = { column: {}, data: [] };
-				}
-				const idx = column.value.findIndex((item) => {
-					return item.title === vo.comprehensiveFeeProductName;
-				});
-				ruleMap[title]['column'] = column.value[idx].children;
-				ruleMap[title]['data'].push(vo['ruleList']);
-				ruleMap[title]['columnParent'] = column.value[idx];
-			}
-		}
-	}
-	// 把所有带有结算规则的数据进行数据整理
-	for (let index = 0; index < data.length; index++) {
-		for (const key in data[index]) {
-			if (key.includes('Vo')) {
-				for (let j = 0; j < column.value.length; j++) {
-					// 对于除综费产品外的数据进行处理
-					if (!key.includes('List') && column.value[j].key === key) {
-						if (!ruleMap[key]) {
-							ruleMap[key] = { column: {}, data: [] };
-						}
-						ruleMap[key]['column'] = column.value[j].children;
-						ruleMap[key]['data'].push(data[index][key]['ruleList']);
-					}
-				}
-			}
-		}
-	}
-	// 将结算规则配置到表头
-	for (const key in ruleMap) {
-		// ruleMap[key]['column'] 表头 ruleMap[key]['data'] 配置规则数据
-		for (const subKey in ruleMap[key]['data']) {
-			const ruleList = ruleMap[key]['data'][subKey];
-			for (const t in ruleList) {
-				const isHasRule = ruleMap[key]['column'].some((item: any) => {
-					return item.title === ruleList[t].ruleName;
-				});
-				// 判断标有是否已经存在数据
-				if (!isHasRule) {
-					const rule: any = {
-						title: `${ruleList[t].ruleName}`,
-						dataIndex: 'ruleMap',
-						key: 'ruleMap',
-						ruleName: `${ruleList[t].ruleName}`,
-						width: 180,
-						parent: key,
-					};
-					if (key.includes('List')) {
-						rule['columnParentName'] = ruleMap[key]['columnParent']['title'];
-					}
-					ruleMap[key]['column'].push(rule);
-				}
-			}
-		}
-	}
-	return column.value;
+
+//获取所有父子级嵌套数据值
+export const getChildPrice = computed(() => (record: any, column: any) => {
+	return record[column.key] ? twoDecimalPlaces(record[column.key][column.dataIndex]) : '';
 });
 
 export const twoDecimalPlaces = (number: any): any => {
@@ -478,40 +305,24 @@ export const twoDecimalPlaces = (number: any): any => {
 };
 // 需要/100的字段
 export const formatColumn = computed(() => (column: any) => {
-	// frozenPrice 冻结金额(团款) settlementPrice 已核销金额 unSettlementPrice 未消费费用
-	return column.dataIndex === 'frozenPrice' || column.dataIndex === 'settlementPrice' || column.dataIndex === 'unSettlementPrice';
+	// 古维 景区 酒店 餐饮 未消费款项 导服费 团款 旅行社实收
+	return (
+		column.key === 'hmVo' ||
+		column.key === 'ticketVo' ||
+		column.key === 'hotelVo' ||
+		column.key === 'cateringVo' ||
+		column.key === 'frozenPrice' ||
+		column.key === 'unSettlementPrice' ||
+		column.key === 'test' ||
+		column.key === 'unSettlementPrice'
+	);
 });
 export const formatData = computed(() => (record: any, column: any) => {
-	// 已核销金额
-	if (column.dataIndex === 'settlementPrice') {
-		if (column.key === 'settlementPrice') {
-			// 父级的数据
-			return record[column.key] ? twoDecimalPlaces(record[column.key]) : '';
-		} else {
-			// 子级的数据
-			return record[column.key]['settlementPrice'] ? twoDecimalPlaces(record[column.key]['settlementPrice']) : '';
-		}
+	if (column.dataIndex == column.key) {
+		// 父级的数据
+		return record[column.key] ? twoDecimalPlaces(record[column.key]) : '';
+	} else {
+		// 子级的数据
+		return record[column.key][column.dataIndex] ? twoDecimalPlaces(record[column.key][column.dataIndex]) : '';
 	}
-	// unSettlementPrice 未消费费用
-	if (column.dataIndex === 'unSettlementPrice') {
-		if (column.key === 'unSettlementPrice') {
-			// 父级的数据
-			return record[column.key] ? twoDecimalPlaces(record[column.key]) : '';
-		}
-		// else {
-		// 	// 子级的数据
-		// 	return record[column.key]['unSettlementPrice'] ? twoDecimalPlaces(record[column.key]['unSettlementPrice']) : '';
-		// }
-	}
-	// 冻结金额
-	if (column.dataIndex === 'frozenPrice') {
-		// 团款
-		if (column.key === 'frozenPrice') {
-			return record[column.key] ? twoDecimalPlaces(record[column.key]) : '';
-		} else {
-			// 冻结金额
-			return record[column.key]['frozenPrice'] ? twoDecimalPlaces(record[column.key]['frozenPrice']) : '';
-		}
-	}
-	return '';
 });
