@@ -294,17 +294,43 @@ export const range = (start: number, end: number) => {
 
 export const disabledRangeTime = (start: any, end: any) => {
 	return (_: Dayjs, type: 'start' | 'end') => {
+    const current = dayjs(dayjs(_).format('YYYY-MM-DD')).unix()
+    const startUnix = dayjs(dayjs(travelStore.baseInfo.startDate).format('YYYY-MM-DD')).unix();
+    const endUnix = dayjs(dayjs(travelStore.baseInfo.endDate).format('YYYY-MM-DD')).unix();
+    
+    // 判断日期选择是开始时间
 		if (type === 'start') {
+      // console.log('start');
+      // 如果是开始日期 === 所选日期就限制
+      if (startUnix === current) {
+        // console.log('开始日期等于所选日期')
+        return {
+          disabledHours: () => range(0, 24).splice(0, start.hour),
+          disabledMinutes: () => range(0, 60).splice(0, start.min),
+          disabledSeconds: () => range(0, 60).splice(0, start.second),
+        };
+      }
+      // console.log('开始日期大于所选日期')
 			return {
-				disabledHours: () => range(0, 24).splice(0, start.hour),
-				disabledMinutes: () => range(0, 60).splice(0, start.min),
-				disabledSeconds: () => range(0, 60).splice(0, start.second),
-			};
+        disabledHours: () => [],
+        disabledMinutes: () => [],
+        disabledSeconds: () => [],
+      };
 		}
-		return {
-			disabledHours: () => range(0, 24).splice(end.hour + 1, 24 - end.hour),
-			disabledMinutes: () => range(0, 60).splice(end.min + 1, 60 - end.min),
-			disabledSeconds: () => range(0, 60).splice(end.second + 1, 60 - end.second),
-		};
+    // 如果结束日期 === 所选日期就限制
+		if (endUnix === current) {
+      console.log('结束日期等于所选日期')
+      return {
+        disabledHours: () => range(0, 24).splice(end.hour + 1, 24 - end.hour),
+        disabledMinutes: () => range(0, 60).splice(end.min + 1, 60 - end.min),
+        disabledSeconds: () => range(0, 60).splice(end.second + 1, 60 - end.second),
+      };
+    }
+    console.log('结束日期小于所选日期')
+    return {
+      disabledHours: () => [],
+      disabledMinutes: () => [],
+      disabledSeconds: () => [],
+    };
 	}
 };

@@ -396,9 +396,9 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				}
 			}
 		}
-		Audits();
+		refund();
 	};
-	const Audits = () => {
+	const refund = () => {
 		const data = {
 			itineraryId: state.itineraryId,
 			startDate: '',
@@ -410,6 +410,28 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			data.startDate = state.timeformState.time[0];
 			data.endDate = state.timeformState.time[1];
 		}
+		api.travelManagement.travelChangeCheckTicketRefund(data).then((res: any) => {
+			if (res.checkStatus == true) {
+				Modal.confirm({
+					title: '温馨提示',
+					icon: createVNode(ExclamationCircleOutlined),
+					content: createVNode('div', { style: 'color: #333;' }, `${res.checkMessage}`),
+					async onOk() {
+						Auditfun(data);
+						return false;
+					},
+					onCancel() {
+						return false;
+					},
+				});
+				return false;
+			} else {
+				Auditfun(data);
+			}
+		});
+		return;
+	};
+	const Auditfun = (data: any) => {
 		api.travelManagement
 			.travelChangeOrderProduct(data)
 			.then((res: any) => {

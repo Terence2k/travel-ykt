@@ -92,8 +92,8 @@
 			</div>
 		</div>
 
-		<Audit ref="auditRef" />
-		<Revoke ref="revokeRef" />
+		<Audit ref="auditRef" @finish="init" />
+		<Revoke ref="revokeRef" @finish="init" />
 		<Detail ref="detailRef" />
 	</a-spin>
 </template>
