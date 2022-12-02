@@ -113,6 +113,7 @@ export const useTravelStore = defineStore({
 			endDate: '',
 			groupType: '',
 			status: '',
+			itineraryNo: ''
 		},
 		setStarEndHMS: {
 			start: {},

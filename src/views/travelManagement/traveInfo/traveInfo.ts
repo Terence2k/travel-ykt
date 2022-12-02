@@ -343,6 +343,13 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			state[popup] = true;
 			
 		},
+		reserveTicketPeple(record: any) {
+			editId.productRow = {}
+			editId.reserveTicketPop = record.oid
+			editId.orderNo = record.ticketOrderNo
+			state.reserveTicketPop = true;
+		},
+		
 		show(key: string, oid?: any) {
 			showId[key] = ''
 			if (oid) {

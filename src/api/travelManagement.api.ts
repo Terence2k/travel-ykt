@@ -591,4 +591,13 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
+	getScenicTourist(data: any) {
+		return request({
+			url: `${commonPath}/ticket-service/public/api/scenic-order/scenicTourist`,
+			data,
+			method: 'get',
+			showLoading: true,
+		});
+	},
+	
 };
