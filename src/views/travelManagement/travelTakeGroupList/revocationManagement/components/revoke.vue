@@ -58,10 +58,9 @@
 										>{{ roomIten.roomTypeName }}
 										<span>{{ roomIten.roomCount }}间</span>
 									</span>
-
-									<span>{{ dayjs(item[index].endDate).diff(item[index].startDate, 'day') }}天，</span>
+									<span>{{ dayjs(item.endDate || '').diff(item.startDate, 'day') }}天，</span>
 									<span
-										>费用总计 <span style="color: red">{{ item[index].orderFee / 100 }}</span
+										>费用总计 <span style="color: red">{{ item.orderFee / 100 }}</span
 										>元；</span
 									>
 								</p>
