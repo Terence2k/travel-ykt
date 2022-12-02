@@ -1,7 +1,7 @@
 <template>
     <BaseModal v-model="dialogVisible" title="选择订票人员" :width="1000" :onOk="reserveTicket">
         <div v-if="dialogVisible">
-            <CommonTable row-key="oid" :row-selection="{selectedRowKeys: selectedRowKeys, onChange}" :columns="columns" :dataSource="touristList" :scrollY="false">
+            <CommonTable row-key="oid" :row-selection="{selectedRowKeys, onChange, getCheckboxProps}" :columns="columns" :dataSource="touristList" :scrollY="false">
                 <template #bodyCell="{ column, text, index, record }">
                     <template v-if="column.key === 'index'">
                         <div>
@@ -162,6 +162,10 @@ import { CODEVALUE } from '@/constant';
         }
 		emits('update:modelValue', newVal)
 	})
+
+    const getCheckboxProps = (record: any) => ({
+        disabled: record.isReserved
+    })
 
     const onChange = (keys: any, rows: any) => {
         selectedRowKeys.value = keys
