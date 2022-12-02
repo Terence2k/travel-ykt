@@ -130,10 +130,10 @@ import { CODEVALUE } from '@/constant';
     const getScenicTourist = () => {
         api.travelManagement.getScenicTourist({
             orderNo: props.orderNo
-        }).then((res: any) => {
+        }).then(async (res: any) => {
             selectedRowKeys.value = res.filter((item: any) => item.isReserved).map((it: any) => it.oid)
             console.log(selectedRowKeys.value)
-            touristList.value = res
+            touristList.value = await travelStore.getHealthCode(res) as any;
         })
     }
 

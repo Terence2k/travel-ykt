@@ -324,7 +324,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			state.editableData[key].sourceAddress = val[val.length - 1];
 			state.editableData[key].sourceAddressName = option.map((it:any) => it.label).join('/')
 		},
-		changeIDCard(key: string, columns: string) {
+		async changeIDCard(key: string, columns: string) {
 
 			if (columns === 'certificateNo' &&
 					state.editableData[key].certificateType === CODEVALUE.TRAVE_CODE.IDENTITY_CARD) {
@@ -336,6 +336,14 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 
 				const age: string = getAge(state.editableData[key].certificateNo) as any
 				state.editableData[key].age = age;
+				
+			}
+			if (columns === 'certificateNo' || columns === 'name') {
+				if (state.editableData[key].certificateNo && state.editableData[key].name) {
+					const res = await travelStore.getHealthCode([state.editableData[key]]);
+					state.editableData[key].healthCode = res[0].healthCode;
+					methods.copyData(key)
+				}
 			}
 		},
 		changeUpload(url: any, key: any) {

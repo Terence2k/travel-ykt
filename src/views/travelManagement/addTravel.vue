@@ -194,21 +194,8 @@ const disTime = (res: any) => {
 	}
 }
 
-const getHealthCode = () => {
-	const tourist = travelStore.touristList.map((item: any) => {
-		return {
-			name: item.name,
-			certificateId: item.certificateNo
-		}
-	});
-	api.travelManagement.getHealthCode(tourist)
-			.then((res: any) => {
-				console.log(res)
-				travelStore.touristList.map((item: any, index: number) => {
-					item.healthCode = res[index].healthCodeStatus
-					return item
-				})
-			})
+const getHealthCode = async () => {
+	travelStore.touristList = await travelStore.getHealthCode(travelStore.touristList) as any
 }
 
 const getTraveDetail = () => {
