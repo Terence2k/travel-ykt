@@ -35,19 +35,7 @@
 		<a-spin size="large" :spinning="state.tableData.loading">
 			<!--  -->
 			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }" bordered>
-				<template #bodyCell="{ column, record }">
-					<!-- 结算规则 -->
-					<template v-if="column.key === 'ruleMap'"> {{ getRulePrice(record, column) }} </template>
-					<!-- 关于所有实收字段 -->
-					<template v-if="column.dataIndex.includes('tualPrice')"> {{ getActualPrice(record, column) }} </template>
-					<!-- 地接社未消费费用字段 -->
-					<template v-if="column.dataIndex === 'unSettlementPrice' && column.key === 'subTravelVo'">
-						{{ getSubTravelVoUnSettlementPrice(record, column) }}
-					</template>
-					<template v-if="formatColumn(column)">
-						{{ formatData(record, column) }}
-					</template>
-				</template>
+				<template #bodyCell="{ column, record }"> </template>
 			</CommonTable>
 		</a-spin>
 		<CommonPagination
