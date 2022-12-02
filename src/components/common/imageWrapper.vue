@@ -40,11 +40,12 @@
 </template>
 <script lang="ts" setup>
 import { PlusOutlined } from '@ant-design/icons-vue';
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, Ref } from 'vue';
 import type { UploadProps } from 'ant-design-vue';
 import { message } from 'ant-design-vue';
 import awsUploadFile from '@/utils/awsUpload';
 import { getUserInfo } from '@/utils/util';
+import api from '@/api';
 
 const props = defineProps({
 	modelValue: {
@@ -66,6 +67,8 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'result', 'remove']);
 const userInfo = getUserInfo();
 const slotDefault = !!useSlots().default;
+const unHandleImage: Ref<string[]> = ref([]);
+const tempData: Ref<string[]> = ref([]);
 
 const getBase64 = (file: File) => {
 	return new Promise((resolve, reject) => {
@@ -102,18 +105,13 @@ const uploadFile = async (options: any) => {
         { name: files[0], url: files[0] },
         files
       );
-      let tempData = fileList.value?.map((item: any) => {
-        if (item.url) {
-          return item.url;
-        } else {
-          return item.response.data.filePath;
-        }
-      })
+      tempData.value = unHandleImage.value.concat(files);
       emit('result', { success: true, msg: '上传成功', data: { filePath: files[0] } },
         { name: files[0], url: files[0] },
         files)
-    return emit('update:modelValue', tempData?.join(','));
+    return emit('update:modelValue', tempData.value?.join(','));
     } catch (e) {
+      console.error(e);
       options.onError();
       options.status = 'error';
       console.log('fileList:', fileList.value);
@@ -137,15 +135,21 @@ const handlePreview = async (file: UploadProps['fileList'][number]) => {
 	previewVisible.value = true;
 };
 const removeImg = (file: any) => {
-  emit('remove', {url: file.url, index: file.index})
+  emit('remove', {url: file.url, index: file.index});
+  tempData.value.splice(file.index, 1);
+  unHandleImage.value.splice(file.index, 1);
   setTimeout(() => {
-    emit('update:modelValue', fileList.value?.map((item: any) => item.url).join(','));
+    emit('update:modelValue', tempData.value?.join(','));
   }, 0);
   
 }
 
-const handleImage = (val: any) => {
+const handleImage = async (val: any) => {
+  const config = await api.commonApi.cosUploadUrl();
   fileList.value = val.split(',').map((item: any, index: any) => {
+    if (item.indexOf('http:') === -1) {
+      item = `http://${config.hostName}/${config.bucket}${config.prefix}/${item}`
+    }
     return {
       uid: index.toString(),
       name: item,
@@ -161,6 +165,8 @@ watch(
 	async (nVal) => {
     console.log('modelValue:', nVal);
     if (nVal) {
+      unHandleImage.value = nVal?.split(',');
+      tempData.value = nVal?.split(',');
       handleImage(nVal);
     }
 	}

@@ -39,6 +39,7 @@ import SearchItem from '@/components/common/CommonSearchItem.vue';
 import drafts from './travelTakeGroupList/drafts.vue';
 import waitingGroup from './travelTakeGroupList/waitingGroup.vue';
 import waitingReserved from './travelTakeGroupList/waitingReserved.vue';
+import waitingOutGroup from './travelTakeGroupList/waitingOutGroup.vue';
 import dispatched from './travelTakeGroupList/dispatched.vue';
 import cancellation from './travelTakeGroupList/cancellation.vue';
 import waitingChange from './travelTakeGroupList/waitingChange.vue';
@@ -83,6 +84,12 @@ const pages = [
 		label: travelStore.takeGroupStatus[TakeGroupStatus.WaitingReserved],
 		value: TakeGroupStatus.WaitingReserved,
 		chart: 'waitingReserved',
+	},
+	{
+		name: waitingOutGroup,
+		label: travelStore.takeGroupStatus[TakeGroupStatus.WaitingOutGroup],
+		value: TakeGroupStatus.WaitingOutGroup,
+		chart: 'waitingOutGroup',
 	},
 	{
 		name: dispatched,

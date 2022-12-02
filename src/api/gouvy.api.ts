@@ -190,12 +190,54 @@ export async function issue(id: number) {
 	});
 }
 
-//古维订单出票
+//分页查询 撤销/撤销重提 订单
 export async function gouvyRepealNreapplyPageList(data: any) {
 	return request({
-		url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/getItineraryRevokeAuditList`,
+		url: `${commonPath}/heritage-maintenance-service/public/api/hm-order/itineraryRevoke/page`,
 		method: 'post',
 		showLoading: false,
 		data,
+	});
+}
+//获取 撤销/撤销重提 订单详情
+export async function itineraryRevoke(id: number) {
+	return request({
+		url: `${commonPath}/heritage-maintenance-service/public/api/hm-order/itineraryRevoke/get/${id}`,
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		method: 'get',
+		showLoading: false,
+	});
+}
+//行程撤销/撤销重提 审核通过
+export async function itineraryRevokeAuditAdopt(id: number) {
+	return request({
+		url: `${commonPath}/heritage-maintenance-service/public/api/hm-order/itineraryRevoke/auditAdopt/${id}`,
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		method: 'get',
+		showLoading: false,
+	});
+}
+//行程撤销/撤销重提 审核不通过
+export async function itineraryRevokeAuditFailed(data: any) {
+	return request({
+		url: `${commonPath}/heritage-maintenance-service/public/api/hm-order/itineraryRevoke/auditFailed`,
+		method: 'post',
+		showLoading: false,
+		data,
+	});
+}
+//查看游客对比
+export async function queryRevokeTouristCompare(id: number) {
+	return request({
+		url: `${commonPath}/travel-agency-service/public/api/itineraryTourist/queryRevokeTouristCompare/${id}`,
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		method: 'get',
+		showLoading: false,
 	});
 }

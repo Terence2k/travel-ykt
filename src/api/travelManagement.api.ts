@@ -464,6 +464,14 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
+	//行程模板导游删除
+	templateGuideDelete(oid: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/template/deleteGuide/${oid}`,
+			method: 'DELETE',
+			showLoading: false,
+		});
+	},
 	//撤销重提
 	repealNreapplyPage(data: any) {
 		return request({
@@ -476,7 +484,7 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
-	//撤销重提
+	//撤销重提权限
 	repealNreapplyPagePower(data: any) {
 		return request({
 			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/checkTouristChangeRate`,
@@ -486,6 +494,75 @@ export const travelManagement = {
 			},
 			method: 'put',
 			showLoading: false,
+		});
+	},
+	//整团撤销
+	submitAllRevoke(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/submitAllRevoke`,
+			data,
+			method: 'post',
+			showLoading: true,
+		});
+	},
+	//撤销重提
+	submitRevokeAndRecommit(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/submitRevokeAndRecommit`,
+			data,
+			method: 'post',
+			showLoading: true,
+		});
+	},
+	//查询撤销审核详情
+	getAuditDetail(id: number) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/getAuditDetail/${id}`,
+			method: 'get',
+			showLoading: false,
+		});
+	},
+	//查询撤销审核详情
+	getSubmitRevokeDetail(id: number) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/getSubmitRevokeDetail/${id}`,
+			method: 'get',
+			showLoading: false,
+		});
+	},
+	//查询撤销审核详情
+	getRevokeItineraryTouristList(id: number) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryTourist/getRevokeItineraryTouristList/${id}`,
+			method: 'get',
+			showLoading: false,
+		});
+	},
+	//旅行社审核 整团撤销
+	revokeAudit(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/revokeAudit`,
+			method: 'post',
+			data,
+			showLoading: false,
+		});
+	},
+	//旅行社审核  撤销重提
+	submitRevokeAudit(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/submitRevokeAudit`,
+			method: 'post',
+			data,
+			showLoading: false,
+		});
+	},
+	//分页查询 撤销/撤销重提 订单
+	travelRepealNreapplyPageList(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/getItineraryRevokeAuditList`,
+			method: 'post',
+			showLoading: false,
+			data,
 		});
 	},
 	// 获取行程单tab
@@ -505,7 +582,4 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
-
-	
-	
 };

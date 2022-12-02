@@ -32,13 +32,13 @@ export const fixedColumn: Array<any> = [
 		width: 100,
 	},
 	{
-		title: '核销总费用(元)',
+		title: '核销总费用',
 		dataIndex: 'settlementPrice',
 		key: 'settlementPrice',
 		width: 100,
 	},
 	{
-		title: '未核销总费用(元)',
+		title: '未核销总费用',
 		dataIndex: 'unSettlementPrice',
 		key: 'unSettlementPrice',
 		width: 100,
@@ -118,13 +118,13 @@ export const detailFixedColumn: Array<any> = [
 		width: 100,
 	},
 	{
-		title: '核销总费用(元)',
+		title: '核销总费用',
 		dataIndex: 'settlementPrice',
 		key: 'settlementPrice',
 		width: 100,
 	},
 	{
-		title: '未核销总费用(元)',
+		title: '未核销总费用',
 		dataIndex: 'unSettlementPrice',
 		key: 'unSettlementPrice',
 		width: 100,
@@ -201,13 +201,13 @@ export const subTravel = {
 	key: 'subTravelVo',
 	children: [
 		{
-			title: '未核销费用(元)',
+			title: '未核销费用',
 			dataIndex: 'unSettlementPrice',
 			key: 'subTravelVo',
 			width: 100,
 		},
 		{
-			title: '实收(元)',
+			title: '实收',
 			dataIndex: 'actualPrice',
 			key: 'subTravelVo',
 			width: 100,
@@ -292,6 +292,7 @@ export interface comprehensiveVoListType {
 export interface ruleListType {
 	ruleName: string; //规则名称
 	rulePrice: string; //结算费用
+	type: number | string;
 }
 export const getRulePrice = computed(() => (record: any, column: any) => {
 	const ruleColumnKey = column.parent.split('-')[0];
@@ -300,7 +301,10 @@ export const getRulePrice = computed(() => (record: any, column: any) => {
 		for (const key in record[ruleColumnKey]) {
 			if (column.columnParentName === record[ruleColumnKey][key]['comprehensiveFeeProductName']) {
 				for (const subKey in record[ruleColumnKey][key].ruleList) {
-					if (column.title === record[ruleColumnKey][key].ruleList[subKey].ruleName) {
+					if (
+						column.title === record[ruleColumnKey][key].ruleList[subKey].ruleName &&
+						Number(column.type) === Number(record[ruleColumnKey][key].ruleList[subKey].type)
+					) {
 						return `${record[ruleColumnKey][key].ruleList[subKey].rulePrice}`;
 					}
 				}
@@ -310,7 +314,7 @@ export const getRulePrice = computed(() => (record: any, column: any) => {
 	// 除综费产品外
 	if (record[ruleColumnKey] && record[ruleColumnKey].ruleList && record[ruleColumnKey].ruleList.length) {
 		for (const key in record[ruleColumnKey].ruleList) {
-			if (column.title === record[ruleColumnKey].ruleList[key].ruleName) {
+			if (column.title === record[ruleColumnKey].ruleList[key].ruleName && Number(column.type) === Number(record[ruleColumnKey].ruleList[key].type)) {
 				return `${record[ruleColumnKey].ruleList[key].rulePrice}`;
 			}
 		}
@@ -321,13 +325,13 @@ export const getRulePrice = computed(() => (record: any, column: any) => {
 export const getActualPrice = computed(() => (record: any, column: any) => {
 	// 先判断非综费产品
 	if (!column.key.includes('List')) {
-		return record[column.key] ? amountHandleFun(record[column.key]['actualPrice']) : '';
+		return record[column.key] ? amountYuanHandleFun(record[column.key]['actualPrice']) : '';
 	} else {
 		// 综费产品
 		if (record[column.key]) {
 			const idx = record[column.key].findIndex((r: any) => r.comprehensiveFeeProductName === column.parentTitle);
 			if (idx !== -1) {
-				return amountHandleFun(record[column.key][idx][column.dataIndex]) || '';
+				return amountYuanHandleFun(record[column.key][idx][column.dataIndex]) || '';
 			}
 		}
 	}

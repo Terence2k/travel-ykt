@@ -1,5 +1,5 @@
 <template>
-	<BaseModal :title="options.title" v-model="modelValue">
+	<BaseModal :title="options.title" v-model="dialogVisible">
 		<a-form
       :model="formValidate"
       :label-col="{ span: 5 }"
@@ -106,9 +106,15 @@
 
   const getDetailMenuIds = (data: any) => {
     data.forEach((item: any) => {
-      menuIdsInfo.value.push(item.oid);
+      const firstMenu = menuTreeDate.value.find((it: any) => it.value == item.oid);
+      // 如果父级菜单没有全选则不选中
+      if (firstMenu && firstMenu.children?.length == item.childMenuList?.length) {
+          menuIdsInfo.value.push(item.oid);
+      }
       if (item.childMenuList?.length) {
         getDetailMenuIds(item.childMenuList);
+      } else if (!item.childMenuList) {
+        menuIdsInfo.value.push(item.oid);
       }
     })
   }

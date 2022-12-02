@@ -55,6 +55,12 @@ export enum GouvyStatus{
   success = 1,//审核通过2
   refuse = -1, //审核不通过-1
 }
+// 撤销重提状态
+export enum revocationStatus{
+  waits = 0,   //待审核
+  success = 1,//审核通过1
+  refuse = 2, //审核不通过2
+}
 
 // 线路类型
 export enum RouteType {
@@ -116,6 +122,7 @@ export enum TakeGroupStatus {
   Cancellation,    // 已散团 5
   WaitingChange,  // 待变更 6
   Overtime,        // 已过期 7
+  WaitingOutGroup,        // 待出团 8
 }
 
 export enum HealthCode {

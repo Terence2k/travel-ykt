@@ -55,7 +55,7 @@ export const settlementOptions = defineStore('settlement', {
 			}
 		},
 		// 获取行程单枚举状态
-		getItineraryStatus(code: any) {
+		getItineraryStatus() {
 			if (!this.itineraryStatus.length) {
 				api.getItineraryStatus().then((res: any) => {
 					this.itineraryStatus = res;

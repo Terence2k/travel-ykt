@@ -120,7 +120,7 @@ let userInfo: any = {};
 userInfo = getUserInfo();
 
 let addParams: any = {
-	oid: '',
+	oid: route.query.oid ? route.query.oid : null,
 	routeName: '',
 	travelName: userInfo.sysCompany.name,
 	travelOperatorName: userInfo.username,
@@ -159,7 +159,7 @@ const onSubmit = async () => {
 		const values = await formRef.value.validateFields();
 		emits('onSuccess', { basicParam: formState.value });
 	} catch (errorInfo) {
-		emits('onSuccess', { basicParam: { valid: false, message: '请先填写基础信息', index: 0 } });
+		emits('onSuccess');
 	}
 };
 
@@ -189,10 +189,12 @@ const handleChange = (event: any, option: any) => {
 	formState.value.subTravelOperatorName = option.name;
 };
 onMounted(() => {
-	if (route.query?.id) {
-		navigatorBar.setNavigator(['行程模板管理', '新增']);
-	} else {
+	if (route.query?.oid && route.query?.Cedit) {
+		navigatorBar.setNavigator(['行程模板管理', '编辑']);
+	} else if (route.query?.oid && route.query?.Cinfo) {
 		navigatorBar.setNavigator(['行程模板管理', '查看']);
+	} else {
+		navigatorBar.setNavigator(['行程模板管理', '新增']);
 	}
 	initPage();
 	getSubtravelList();
@@ -206,7 +208,7 @@ watch(
 		formState.value = newVal;
 		console.log(newVal);
 		if (route.query.oid) {
-			formState.value.oid = route.query.oid
+			formState.value.oid = route.query.oid;
 			list.travelOperatorList = [
 				{
 					oid: newVal.subTravelOperatorOid,

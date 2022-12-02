@@ -197,6 +197,7 @@ export const useTravelStore = defineStore({
 			cancellation: cloneDeep(takeGroupListParams),
 			waitingChange: cloneDeep(takeGroupListParams),
 			overtime: cloneDeep(takeGroupListParams),
+			waitingOutGroup: cloneDeep(takeGroupListParams),
 		},
 		enterpriseState: [
 			{
@@ -247,6 +248,7 @@ export const useTravelStore = defineStore({
 			[TakeGroupStatus.Cancellation]: '已散团',
 			[TakeGroupStatus.WaitingChange]: '待变更',
 			[TakeGroupStatus.Overtime]: '已过期',
+			[TakeGroupStatus.WaitingOutGroup]: '待出团',
 		},
 	}),
 	getters: {

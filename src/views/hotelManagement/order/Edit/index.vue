@@ -6,10 +6,10 @@
 					<div class="form_pad">
 						<header>行程信息</header>
 						<a-form name="basic" labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
-							<a-form-item label="行程类型"> {{ state.data.tripType }} </a-form-item>
+							<a-form-item label="行程类型"> {{ state.data.teamType }} </a-form-item>
 							<a-form-item label="行程单号"> {{ state.data.itineraryNo }} </a-form-item>
-							<a-form-item label="发团旅行社"> {{ state.data.fatuanTravelAgency }} </a-form-item>
-							<a-form-item label="接团旅行社"> {{ state.data.jietuanTravelAgency }} </a-form-item>
+							<a-form-item label="发团旅行社"> {{ state.data.travelName }} </a-form-item>
+							<a-form-item label="接团旅行社"> {{ state.data.subTravelName }} </a-form-item>
 							<a-form-item label="行程时间"> {{ state.data.arrivalDate }} - {{ state.data.departureDate }} </a-form-item>
 							<a-form-item label="行程人数"> {{ state.data.tripNumber }} </a-form-item>
 							<a-form-item label="预定人数"> {{ state.data.scheduledNumber }} </a-form-item>
@@ -26,6 +26,11 @@
 									<template v-if="column.key === 'orderAmount'">
 										<div>
 											{{accDiv( record.orderAmount,100)}}
+										</div>
+									</template>
+									<template v-if="column.key === 'Subtotal'">
+										<div>
+											{{accDiv(accMul( record.orderAmount,record.reserveNumber),100)}}
 										</div>
 									</template>
 									</template
@@ -101,15 +106,15 @@ const columns = [
 	},
 	{
 		title: '小计(元)',
-		dataIndex: 'e',
-		key: 'e',
+		dataIndex: 'Subtotal',
+		key: 'Subtotal',
 	},
 ];
 
 const state = reactive({
-	data: [],
+	data: [] as any,
 	formdata: {
-		flag: '',
+		flag: '' as any,
 		rejectReason: '',
 	},
 });

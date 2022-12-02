@@ -23,7 +23,7 @@
 			</a-select>
 		</search-item>
 		<search-item label="行程时间">
-			<a-range-picker v-model:value="state.tableData.param.time" show-time format="YYYY-MM-DD HH:mm" value-format="YYYY-MM-DD HH:mm:ss" />
+			<a-range-picker @change="timeChange" value-format="YYYY-MM-DD HH:mm:ss"/>
 		</search-item>
 		<template #button>
 			<a-button @click="initList">查询</a-button>
@@ -49,6 +49,7 @@ import examine from './examine/examine.vue';
 import settlement from './settlement/settlement.vue';
 import transferred from './transferred/transferred.vue';
 import { settlementOptions } from '@/stores/modules/settlement';
+import { log } from 'console';
 const options = settlementOptions();
 
 // 计算属性 匹配费用归属企业类型
@@ -131,6 +132,15 @@ onMounted(() => {
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
 });
+const timeChange = (arr: any) => {
+	console.log(arr)
+	if (arr && arr.length > 0) {
+		const timeList: any = [arr[0],arr[1]]
+		state.tableData.param.time = timeList
+	} else {
+		state.tableData.param.time = ''
+	}
+};
 </script>
 
 <style lang="less" scoped>

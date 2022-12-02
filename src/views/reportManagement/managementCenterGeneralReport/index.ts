@@ -296,6 +296,7 @@ export interface comprehensiveVoListType {
 export interface ruleListType {
 	ruleName: string; //规则名称
 	rulePrice: string; //结算费用
+	type: number | string;
 }
 export const getRulePrice = computed(() => (record: any, column: any) => {
 	const ruleColumnKey = column.parent.split('-')[0];
@@ -304,8 +305,11 @@ export const getRulePrice = computed(() => (record: any, column: any) => {
 		for (const key in record[ruleColumnKey]) {
 			if (column.columnParentName === record[ruleColumnKey][key]['comprehensiveFeeProductName']) {
 				for (const subKey in record[ruleColumnKey][key].ruleList) {
-					if (column.title === record[ruleColumnKey][key].ruleList[subKey].ruleName) {
-						return `${record[ruleColumnKey][key].ruleList[subKey].rulePrice}`;
+					if (
+						column.title === record[ruleColumnKey][key].ruleList[subKey].ruleName &&
+						Number(column.type) === Number(record[ruleColumnKey][key].ruleList[subKey].type)
+					) {
+						return `${twoDecimalPlaces(record[ruleColumnKey][key].ruleList[subKey].rulePrice)}`;
 					}
 				}
 			}
@@ -314,8 +318,8 @@ export const getRulePrice = computed(() => (record: any, column: any) => {
 	// 除综费产品外
 	if (record[ruleColumnKey] && record[ruleColumnKey].ruleList && record[ruleColumnKey].ruleList.length) {
 		for (const key in record[ruleColumnKey].ruleList) {
-			if (column.title === record[ruleColumnKey].ruleList[key].ruleName) {
-				return `${record[ruleColumnKey].ruleList[key].rulePrice}`;
+			if (column.title === record[ruleColumnKey].ruleList[key].ruleName && Number(column.type) === Number(record[ruleColumnKey].ruleList[key].type)) {
+				return `${twoDecimalPlaces(record[ruleColumnKey].ruleList[key].rulePrice)}`;
 			}
 		}
 	}
@@ -325,13 +329,13 @@ export const getRulePrice = computed(() => (record: any, column: any) => {
 export const getActualPrice = computed(() => (record: any, column: any) => {
 	// 先判断非综费产品
 	if (!column.key.includes('List')) {
-		return record[column.key] ? record[column.key]['actualPrice'] : '';
+		return record[column.key] && record[column.key]['actualPrice'] ? twoDecimalPlaces(record[column.key]['actualPrice']) : '';
 	} else {
 		// 综费产品
 		if (record[column.key]) {
 			const idx = record[column.key].findIndex((r: any) => r.comprehensiveFeeProductName === column.parentTitle);
 			if (idx !== -1) {
-				return record[column.key][idx][column.dataIndex] || '';
+				return twoDecimalPlaces(record[column.key][idx][column.dataIndex]) || '';
 			}
 		}
 	}
@@ -339,7 +343,7 @@ export const getActualPrice = computed(() => (record: any, column: any) => {
 });
 //地接社未消费费用获取数据
 export const getSubTravelVoUnSettlementPrice = computed(() => (record: any, column: any) => {
-	return record[column.key] ? record[column.key]['unSettlementPrice'] : '';
+	return record[column.key] ? twoDecimalPlaces(record[column.key]['unSettlementPrice']) : '';
 });
 export const columns = computed(() => {
 	const column = ref<TableColumnsType>([]);
@@ -498,4 +502,53 @@ export const columns = computed(() => {
 		}
 	}
 	return column.value;
+});
+
+export const twoDecimalPlaces = (number: any): any => {
+	if (typeof number === 'string') {
+		if (number.includes('-')) {
+			number = number.slice(1);
+			return `-${Number(number / 100).toFixed(2)}`;
+		}
+	}
+	return Number(number / 100).toFixed(2);
+};
+// 需要/100的字段
+export const formatColumn = computed(() => (column: any) => {
+	// frozenPrice 冻结金额(团款) settlementPrice 已核销金额 unSettlementPrice 未消费费用
+	return column.dataIndex === 'frozenPrice' || column.dataIndex === 'settlementPrice' || column.dataIndex === 'unSettlementPrice';
+});
+export const formatData = computed(() => (record: any, column: any) => {
+	// 已核销金额
+	if (column.dataIndex === 'settlementPrice') {
+		if (column.key === 'settlementPrice') {
+			// 父级的数据
+			return record[column.key] ? twoDecimalPlaces(record[column.key]) : '';
+		} else {
+			// 子级的数据
+			return record[column.key]['settlementPrice'] ? twoDecimalPlaces(record[column.key]['settlementPrice']) : '';
+		}
+	}
+	// unSettlementPrice 未消费费用
+	if (column.dataIndex === 'unSettlementPrice') {
+		if (column.key === 'unSettlementPrice') {
+			// 父级的数据
+			return record[column.key] ? twoDecimalPlaces(record[column.key]) : '';
+		}
+		// else {
+		// 	// 子级的数据
+		// 	return record[column.key]['unSettlementPrice'] ? twoDecimalPlaces(record[column.key]['unSettlementPrice']) : '';
+		// }
+	}
+	// 冻结金额
+	if (column.dataIndex === 'frozenPrice') {
+		// 团款
+		if (column.key === 'frozenPrice') {
+			return record[column.key] ? twoDecimalPlaces(record[column.key]) : '';
+		} else {
+			// 冻结金额
+			return record[column.key]['frozenPrice'] ? twoDecimalPlaces(record[column.key]['frozenPrice']) : '';
+		}
+	}
+	return '';
 });

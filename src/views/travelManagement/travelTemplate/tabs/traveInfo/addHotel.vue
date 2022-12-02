@@ -29,27 +29,16 @@
 			<div v-for="(room, index) in formState.roomTypeList" :key="index">
 				<h3>房型{{ index + 1 }}</h3>
 				<a-form-item label="预定房型" :name="['roomTypeList', index, 'roomTypeId']" :rules="[{ required: true, message: '请选择预定房型' }]">
-					<a-select
-						@change="(e: any, option: any) => changeRoomType(e, option, index)"
-						v-model:value="room.roomTypeId"
-						placeholder="请选择预定房型"
-					>
-						<a-select-option
-							:value="item.oid"
-							v-for="item in hotelData.roomType"
-							:name="item.roomTypeName"
-							:key="item.oid"
-							:stockNum="item.stockNum"
-							:num="item.roomOccupancyNum"
-							>{{ item.roomTypeName }}</a-select-option
-						>
+					<a-select @change="(e: any, option: any) => changeRoomType(e, option, index)" v-model:value="room.roomTypeId" placeholder="请选择预定房型">
+						<a-select-option :value="item.oid" v-for="item in hotelData.roomType" :name="item.roomTypeName" :key="item.oid" :price="item.price">{{
+							item.roomTypeName
+						}}</a-select-option>
 					</a-select>
 				</a-form-item>
 				<a-form-item
 					label=""
 					:name="['roomTypeList', index]"
 					:wrapper-col="{ span: 16 }"
-					:rules="[{ required: true, message: '请输入您与酒店线下协商好的价格' }]"
 				>
 					<div class="d-flex align-item-center">
 						<div class="d-flex" style="margin-left: 32px">
@@ -86,7 +75,8 @@ const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || 
 const route = useRoute();
 const roomList = {
 	roomTypeName: '', //房型名称
-	roomTypeId:'',
+	roomTypeId: '',
+	unitPrice: 0,
 };
 const travelStore = useTravelStore();
 const formRef = ref();
@@ -119,9 +109,10 @@ const hotelData = reactive<{ [k: string]: any }>({
 let formState = reactive<{ [k: string]: any }>({
 	honestyGuidePrice: '',
 	hotelId: '',
-	hotelName:'',
-	hotelStarId:'',
-	itineraryId:'',
+	hotelName: '',
+	hotelStarId: '',
+	itineraryId: '',
+	orderFee:0,
 	roomTypeList: [{ ...roomList }],
 });
 const honestyGuidePrice = computed(() => formState.honestyGuidePrice / 100);
@@ -138,11 +129,13 @@ const handleHotel = async (e: any, option: any) => {
 
 	formState.hotelName = option.name;
 	hotelData.roomType = await api.getRoomDetailInfo({}, formState.hotelId);
+	console.log('hotelData.roomType', hotelData.roomType);
 };
 
 const changeRoomType = (e: any, option: any, index: number) => {
-	// formState.roomTypeList[index].roomTypeId = option.key;	
+	// formState.roomTypeList[index].roomTypeId = option.key;
 	formState.roomTypeList[index].roomTypeName = option.name;
+	formState.roomTypeList[index].unitPrice = option.price;
 };
 
 const getHotelStarList = async () => {
@@ -166,23 +159,12 @@ const handleChange = async (id: number, option: any) => {
 
 const submit = async () => {
 	try {
-		// formState.scheduledRooms = formState.roomTypeList.map((it: any) => Number(it.reserveNumber)).reduce((prev: any, current: any) => prev + current);
 		formState.itineraryId = route.query.oid || traveListData.oid;
-
 		const newFormState = cloneDeep(formState);
-		console.log(newFormState);
-		
-		// newFormState.hotelStar = newFormState.hotelStarCode;
-		// newFormState.reservePeopleCount = newFormState.roomTypeList
-		// 	.map((it: any) => Number(it.checkInNumber))
-		// 	.reduce((prev: number, next: number) => prev + next);
-		// newFormState.roomCount = newFormState.roomTypeList.map((it: any) => Number(it.reserveNumber)).reduce((prev: number, next: number) => prev + next);
-		console.log(formState);
-		
-		const res = await api.travelManagement.templateaddHotel(formState);
-
-		// message.success('新增成功');
-
+		for (var index = 0; index < newFormState.roomTypeList.length; index++) {
+			newFormState.orderFee = newFormState.roomTypeList[index].unitPrice + newFormState.orderFee
+		}		
+		const res = await api.travelManagement.templateaddHotel(newFormState);
 		travelStore.setHotels(newFormState, res, props.productRow.productId);
 		// callback()
 	} catch (errorInfo) {
@@ -196,12 +178,12 @@ const handleOk = async (callback: Function) => {
 	} catch (error) {
 		return callback(false);
 	}
-	const res = selectSpecialDateRange(formState.arrivalDate, formState.departureDate, formState.hotelId);
-	if (!res) {
-		await submit();
-		callback();
-		return;
-	}
+	await submit();
+	api.travelManagement.saveChangeTraveldetail(route.query.oid).then((res: any) => {
+		travelStore.hotels = res.hotelList;
+	})
+	callback();
+	return;
 };
 
 const getRoomType = async (hotelId: number) => {
@@ -229,44 +211,38 @@ watch(dialogVisible, (newVal) => {
 	} else {
 		!props.productRow.productId &&
 			props.hotelId &&
-			api.travelManagement.hotelDetail(props.hotelId).then((res: any) => {
+			api.travelManagement.templateHotelDetail(props.hotelId).then((res: any) => {
 				for (let k in res) {
 					formState[k] = res[k];
 				}
-				formState.arrivalDate = res.startDate;
-				formState.departureDate = res.endDate;
+
 				let price = hotelData.hotelStart.filter((it: any) => it.oid == res.hotelStarId)[0].price;
 				handleChange(res.hotelStarId, { name: res.hotelStar, price: price });
-				formState.roomTypeList = formState.roomTypeList.map((it: any) => {
-					it.reserveNumber = it.roomCount;
-					it.roomTypeLimitPeople = it.limitPeople;
-					// it.checkInNumber = it.roomCount
-					it.oid = it.roomTypeId;
-					return it;
-				});
+				formState.roomTypeList = formState.roomTypeList
+				formState.hotelStarId = res.hotelStarId
 			});
-		formState.hotelId = props.productRow.productId;
-		formState.hotelName = props.productRow.hotelName;
+			formState.hotelId = props.productRow.productId;
+			formState.hotelName = props.productRow.hotelName;
 
-		props.productRow.productId &&
-			api.travelManagement.getGuidePriceStarCodeByHotelId(props.productRow.productId).then((res: any) => {
-				formState.hotelStarId = res.oid;
-				handleChange(res.oid, { price: res.price, name: res.starCode });
-			});
+		// props.productRow.productId &&
+		// 	api.travelManagement.getGuidePriceStarCodeByHotelId(props.productRow.productId).then((res: any) => {
+		// 		formState.hotelStarId = res.oid;
+		// 		handleChange(res.oid, { price: res.price, name: res.starCode });
+		// 	});
 	}
 
 	emits('update:modelValue', newVal);
 });
 
-const debounceFun = debounce((hotelId: number | string, leaveTime: string, enterTime: string) => {
-	getRoomType(hotelId, leaveTime, enterTime);
+const debounceFun = debounce((hotelId: any) => {
+	getRoomType(hotelId);
 }, 500);
 
 watch(
-	() => [formState.hotelId, formState.arrivalDate, formState.departureDate],
-	([newHotelId, newArrivalDate, newDepartureDate]) => {
-		if (newHotelId && newDepartureDate && newArrivalDate) {
-			debounceFun(newHotelId, newDepartureDate, newArrivalDate);
+	() => [formState.hotelId],
+	([newHotelId]) => {
+		if (newHotelId) {
+			debounceFun(newHotelId);
 		}
 	}
 );

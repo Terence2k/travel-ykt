@@ -1,6 +1,6 @@
 <template>
 	<div class="verificationManage-modal-wrapper">
-		<BaseModal :title="options.title" v-model="modelValue" @close="handleOk">
+		<BaseModal :title="options.title" v-model="dialogVisible" @close="handleOk">
 			<a-form :model="formValidate" :rules="rules" :label-col="{ span: 5 }" :wrapper-col="{ span: 16, offset: 1 }" labelAlign="left">
 				<a-form-item label="归属景区" name="scenicId">
 					<a-select

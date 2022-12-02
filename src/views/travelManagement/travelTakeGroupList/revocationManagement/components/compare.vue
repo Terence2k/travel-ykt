@@ -2,24 +2,21 @@
 	<BaseModal :modelValue="modelValue" title="行程单重提审核" @cancel="cancel" width="1000px">
 		<a-table :columns="columns" :data-source="data" :pagination="false" bordered>
 			<template #bodyCell="{ column, record, index }">
-				<template v-if="column.key === 'change'">
-					{{ record.change ? '是' : '否' }}
+				<template v-if="column.key === 'index'">
+					{{ index + 1 }}
 				</template>
-				<template v-if="column.key === 'no'">
-					<del v-if="arr.includes(index)">{{ record.no }}</del>
-					<span v-else> {{ record.no }}</span>
+				<template v-if="column.key === 'gender'">
+					{{ record.gender === 1 ? '女' : '男' }}
 				</template>
-				<template v-if="column.key === 'name'">
-					<del v-if="arr.includes(index)">{{ record.name }}</del>
-					<span v-else> {{ record.name }}</span>
+				<template v-if="column.key === 'isChange'">
+					{{ record.isChange ? '是' : '否' }}
 				</template>
 			</template>
 		</a-table>
 
 		<template v-slot:footer>
 			<div class="footer-wrap">
-				<a-button @click="sendAudit(3)">驳回</a-button>
-				<a-button type="primary" @click="sendAudit(2)">返回继续审核</a-button>
+				<a-button type="primary" @click="cancel">返回</a-button>
 			</div>
 		</template>
 	</BaseModal>
@@ -38,17 +35,23 @@ const modelValue = ref(false);
 const route = useRouter();
 
 const columns = ref<TableColumnsType>([
+	// {
+	// 	title: '序号',
+	// 	dataIndex: 'index',
+	// 	customCell: (record: any, index: number) => {
+	// 		if (arr.includes(index)) {
+	// 			return { rowSpan: 0, colSpan: 0 };
+	// 		}
+	// 		if (record.change) {
+	// 			return { rowSpan: 2, colSpan: 1 };
+	// 		}
+	// 	},
+	// },
 	{
 		title: '序号',
 		dataIndex: 'index',
-		customCell: (record: any, index: number) => {
-			if (arr.includes(index)) {
-				return { rowSpan: 0, colSpan: 0 };
-			}
-			if (record.change) {
-				return { rowSpan: 2, colSpan: 1 };
-			}
-		},
+		key: 'index',
+		width: 80,
 	},
 	{
 		title: '游客姓名',
@@ -57,59 +60,63 @@ const columns = ref<TableColumnsType>([
 	},
 	{
 		title: '身份证号码',
-		dataIndex: 'no',
-		key: 'no',
+		dataIndex: 'certificateNo',
+		key: 'certificateNo',
 	},
 	{
-		title: '是否发生过变更',
-		dataIndex: 'change',
-		key: 'change',
-		customCell: (record: any, index: number) => {
-			if (arr.includes(index)) {
-				return { rowSpan: 0, colSpan: 0 };
-			}
-			if (record.change) {
-				return { rowSpan: 2, colSpan: 1 };
-			}
-		},
+		title: '性别',
+		dataIndex: 'gender',
+		key: 'gender',
 	},
+	{
+		title: '年龄',
+		dataIndex: 'age',
+		key: 'age',
+	},
+	{
+		title: '联系方式',
+		dataIndex: 'phone',
+		key: 'phone',
+	},
+	{
+		title: '客源地',
+		dataIndex: 'sourceAddressName',
+		key: 'sourceAddressName',
+	},
+
+	{
+		title: '旧行程单是否有此游客',
+		dataIndex: 'isChange',
+		key: 'isChange',
+	},
+	// {
+	// 	title: '是否发生过变更',
+	// 	dataIndex: 'change',
+	// 	key: 'change',
+	// 	customCell: (record: any, index: number) => {
+	// 		if (arr.includes(index)) {
+	// 			return { rowSpan: 0, colSpan: 0 };
+	// 		}
+	// 		if (record.change) {
+	// 			return { rowSpan: 2, colSpan: 1 };
+	// 		}
+	// 	},
+	// },
 ]);
 let arr = [1];
 
-const data = ref([
-	{
-		index: 1,
-		name: 'John Brown',
-		no: 10,
-		change: true,
-	},
-	{
-		index: 1,
-		name: '2',
-		no: 10,
-		change: false,
-		newvalue: true,
-	},
-	{
-		index: 2,
-		name: '2',
-		no: 10,
-		change: false,
-	},
-	{
-		index: 3,
-		name: '2',
-		no: 10,
-		change: false,
-	},
-]);
+const data = ref([]);
 const sendAudit = (state: number) => {
 	console.log(state, '驳会状态');
 };
 
 // 打开弹窗
-const open = (id: number | null) => {
+const open = async (id: number | null) => {
 	modelValue.value = true;
+	// let res = await api.travelManagement.getRevokeItineraryTouristList(id);
+	let res = await api.queryRevokeTouristCompare(id);
+	data.value = [...res.newTouristList, ...res.oldTouristList];
+	console.log(res, 'compare');
 };
 // 关闭弹窗
 const cancel = () => {
