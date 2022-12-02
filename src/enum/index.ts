@@ -117,3 +117,9 @@ export enum TakeGroupStatus {
   WaitingChange,  // 待变更 6
   Overtime,        // 已过期 7
 }
+
+export enum HealthCode {
+  Green = '00',
+  Yellow = '01',
+  Red = '10'
+}

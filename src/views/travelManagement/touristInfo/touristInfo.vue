@@ -63,8 +63,14 @@
 						</template>
 					</template>
 					<template v-if="column.key === 'healthCode'">
-						<span class="green-code">
-							{{ text }}
+						<span class="green-code" v-if="text === '00'">
+							{{CODEVALUE.HEALTHCODE[text]}}
+						</span>
+						<span class="yellow-code" v-if="text === '01'">
+							{{CODEVALUE.HEALTHCODE[text]}}
+						</span>
+						<span class="red-code" v-if="text === '10'">
+							{{CODEVALUE.HEALTHCODE[text]}}
 						</span>
 					</template>
 					<template v-if="column.key === 'specialCertificatePicture'">
@@ -126,6 +132,7 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import Upload from '@/components/common/imageWrapper.vue';
 import { useTouristInfo } from './touristInfo';
 import { PlusOutlined } from '@ant-design/icons-vue';
+import { CODEVALUE } from '@/constant';
 
 const props = defineProps({
 	onCheck: {

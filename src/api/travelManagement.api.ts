@@ -488,4 +488,24 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
+	// 获取行程单tab
+	getItineraryListTab(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/getItineraryListTab`,
+			data,
+			method: 'get',
+			showLoading: true,
+		});
+	},
+	getHealthCode(data: any) {
+		return request({
+			url: `${commonPath}/customer-service/public/api/common/health/code`,
+			data,
+			method: 'post',
+			showLoading: false,
+		});
+	},
+
+	
+	
 };

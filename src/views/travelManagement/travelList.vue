@@ -178,6 +178,7 @@ const showAddBtn = computed(() => {
 });
 
 travelStore.getItineraryStatus();
+// travelStore.getItineraryListTab();
 sessionStorage.removeItem('traveList');
 </script>
 <style lang="less" scoped>

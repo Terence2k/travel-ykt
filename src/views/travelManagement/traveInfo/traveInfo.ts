@@ -35,6 +35,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		isReductionPassed: '',
 		isInitiateReduction:''
 	})
+	const tableRef = ref();
 	const state = reactive<{ editableData: UnwrapRef<Record<string, DataItem>>; [k: string]: any }>({
 		editableData: {},
 		addHotelPop: false,
@@ -411,22 +412,18 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				class: 'test',
 			});
 		},
-	};
-	const rowRadioSelection = {
+		onSelectChange: (selectedRowKeys: any, selectedRows: any) => {
 
-		type: 'radio',
-		
-		columnTitle:"选择",
-		
-		onChange: (selectedRowKeys: any, selectedRows: any) => {
-			
-			console.log(selectedRowKeys, selectedRows)
-			travelStore.curentProduct = [selectedRows] as any
+			state.selectedRowKeys = selectedRowKeys;
+			travelStore.curentProduct = selectedRows as any
 		},
-		
-		selectedRowKeys: [travelStore.curentProduct[0]?.oid]
-	
-	}
+	};
+	state.selectedRowKeys = [travelStore.curentProduct[0]?.oid];
+	onMounted(() => {
+		setTimeout(() => {
+			// rowRadioSelection.onChange([52], [travelStore.curentProduct[0]])
+		}, 1000)
+	})
 	if(travelStore.reserveStatus)
 	{
 		travelStore.getManagementExpenses(route.query.id)
@@ -438,6 +435,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		showId,
 		gouvyId,
 		travelStore,
-		rowRadioSelection
+		// rowRadioSelection,
+		tableRef
 	};
 }
