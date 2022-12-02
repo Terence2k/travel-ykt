@@ -13,7 +13,6 @@
 						{{ (travelStore.takeGroupList.waitingReserved.params.pageNo - 1) * travelStore.takeGroupList.waitingReserved.params.pageSize + (index + 1) }}
 					</div>
 				</template>
-
 				<template v-if="column.key === 'groupTypeStr'">
 					{{ text }}
 				</template>
@@ -26,27 +25,7 @@
 				</template>
 			</template>
 		</CommonTable>
-		<BaseModal title="选择可变更项目" v-model="modelValue" :width="500">
-			<div class="model-div">
-				<a-button type="primary" style="width:120px" @click="changeMission">修改出团信息</a-button>
-				<p>包括导游、交通信息、附件内容，散团前均可修改</p>
-			</div>
-			<div class="model-div">
-				<a-button type="primary" style="width:120px" @click="openModifyproduct()">修改预订产品</a-button>
-				<p>包括行程时间、景区、酒店、餐饮等，未核销时可修改</p>
-			</div>
-			<div class="model-div">
-				<a-button type="primary" style="width:120px" @click="addTourist">添加游客</a-button>
-				<p>如有新增游客，可发起一条新行程单的填报</p>
-			</div>
-			<div class="model-div">
-				<a-button type="primary" style="width:120px" @click="revoke">撤销并重提</a-button>
-				<p>如需删除、修改游客，未核销时可撤销原行程单，重新填报</p>
-			</div>
-			<template v-slot:footer>
-				<a-button @click="modelValue=false">取消</a-button>
-			</template>
-		</BaseModal>
+		<ChangeItems v-model="modelValue" :changeParams="state.changeParams"></ChangeItems>
 		<CommonPagination
 			:current="travelStore.takeGroupList.waitingReserved.params.pageNo"
 			:page-size="travelStore.takeGroupList.waitingReserved.params.pageSize"
@@ -58,6 +37,7 @@
 </template>
 <script lang="ts" setup>
 import CommonTable from '@/components/common/CommonTable.vue';
+import ChangeItems from '@/components/common/changeItems.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import BaseModal from '@/components/common/BaseModal.vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
@@ -75,8 +55,7 @@ const state = reactive({
 		pageSize: 10,
 		status: 1,
 	},
-	id: '',
-	itineraryNo: '',
+	changeParams:{} as any,
 	tableData: computed(() => travelStore.takeGroupList.waitingReserved.list),
 	columns: [
 		{
@@ -146,33 +125,6 @@ const goToPath = (row: any) => {
 		},
 	});
 };
-const addTourist = () => {
-		router.push({
-			path: '/travel/take_group/addTourist',
-			query: {
-				id: state.id,
-				itineraryNo: state.itineraryNo,
-			},
-		});
-	};
-	const revoke = () => {
-		router.push({
-			path: '/travel/take_group/revoke',
-			query: {
-				id: state.id,
-				itineraryNo: state.itineraryNo,
-			},
-		});
-	};
-const changeMission = () => {
-	router.push({
-		path: '/travel/take_group/changetravel',
-		query: {
-			id: state.id,
-			itineraryNo: state.itineraryNo,
-		},
-	});
-};
 const goToDetail = (row: any) => {
   router.push({
     path: '/travel/travel_manage/travel_detail',
@@ -180,7 +132,8 @@ const goToDetail = (row: any) => {
   });
 }
 const goToChange = (row: any) => {
-	(state.id = row.oid), (state.itineraryNo = row.itineraryNo);
+	state.changeParams.id = row.oid;
+	state.changeParams.itineraryNo = row.itineraryNo;
 	api.travelManagement.checkVerifyByItineraryId(row.itineraryNo).then((res) => {
 		if (res) {
 			modelValue.value = true;
@@ -189,15 +142,6 @@ const goToChange = (row: any) => {
 		}
 	});
 };
-const openModifyproduct = () => {
-		router.push({
-			path: '/travel/take_group/modify_o_product',
-			query: {
-				oid: state.id,
-			},
-		});
-		
-	}
 const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
 	console.log(record, selected, selectedRows);
 };

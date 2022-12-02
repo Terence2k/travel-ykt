@@ -5,6 +5,12 @@
 				<template v-if="column.key === 'index'">
 					{{ index + 1 }}
 				</template>
+				<template v-if="column.key === 'gender'">
+					{{ record.gender === 1 ? '女' : '男' }}
+				</template>
+				<template v-if="column.key === 'isChange'">
+					{{ record.isChange ? '是' : '否' }}
+				</template>
 			</template>
 		</a-table>
 
@@ -59,8 +65,8 @@ const columns = ref<TableColumnsType>([
 	},
 	{
 		title: '性别',
-		dataIndex: 'genderName',
-		key: 'genderName',
+		dataIndex: 'gender',
+		key: 'gender',
 	},
 	{
 		title: '年龄',
@@ -80,8 +86,8 @@ const columns = ref<TableColumnsType>([
 
 	{
 		title: '旧行程单是否有此游客',
-		dataIndex: 'no',
-		key: 'no',
+		dataIndex: 'isChange',
+		key: 'isChange',
 	},
 	// {
 	// 	title: '是否发生过变更',
@@ -108,8 +114,8 @@ const sendAudit = (state: number) => {
 const open = async (id: number | null) => {
 	modelValue.value = true;
 	// let res = await api.travelManagement.getRevokeItineraryTouristList(id);
-	let res = await api.travelManagement.getRevokeItineraryTouristList(438);
-	data.value = res.touristList;
+	let res = await api.queryRevokeTouristCompare(id);
+	data.value = [...res.newTouristList, ...res.oldTouristList];
 	console.log(res, 'compare');
 };
 // 关闭弹窗

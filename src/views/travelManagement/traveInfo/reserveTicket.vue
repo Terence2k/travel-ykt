@@ -33,6 +33,17 @@
                             />
                         </div>
                     </template>
+                    <template v-if="column.key === 'healthCode'">
+						<span class="green-code" v-if="text === '00'">
+							{{CODEVALUE.HEALTHCODE[text]}}
+						</span>
+						<span class="yellow-code" v-if="text === '01'">
+							{{CODEVALUE.HEALTHCODE[text]}}
+						</span>
+						<span class="red-code" v-if="text === '10'">
+							{{CODEVALUE.HEALTHCODE[text]}}
+						</span>
+					</template>
                 </template>
             </CommonTable>
         </div>

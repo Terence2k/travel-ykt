@@ -183,7 +183,7 @@
       findDeepMenu(menuTreeDate.value, item.oid, item.childMenuList?.length);
       if (item.childMenuList?.length) {
         getDetailMenuIds(item.childMenuList);
-      } else if (!item.childMenuList) {
+      } else {
         menuIdsInfo.value.push(item.oid);
       }
       // menuIdsInfo.value = [159]

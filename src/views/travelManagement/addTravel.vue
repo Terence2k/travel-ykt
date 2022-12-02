@@ -106,10 +106,10 @@ const saveItinerary = (val: any) => {
 	const itineraryId =  route.query.id || traveListData.oid
 	let ajax = itineraryId ? api.travelManagement.editItinerary : api.travelManagement.saveItinerary;
 	// 综费产品 > 1
-	const productRes = travelStore.compositeProducts.length > 1
-	if (productRes) {
-		return message.error('请选择一项综费产品')
-	}
+	// const productRes = travelStore.compositeProducts.length > 1
+	// if (productRes) {
+	// 	return message.error('请选择一项综费产品')
+	// }
 	return ajax({
 		oid: itineraryId ? itineraryId.toString() : null,
 		attachmentList: travelStore.attachmentList,
@@ -194,6 +194,23 @@ const disTime = (res: any) => {
 	}
 }
 
+const getHealthCode = () => {
+	const tourist = travelStore.touristList.map((item: any) => {
+		return {
+			name: item.name,
+			certificateId: item.certificateNo
+		}
+	});
+	api.travelManagement.getHealthCode(tourist)
+			.then((res: any) => {
+				console.log(res)
+				travelStore.touristList.map((item: any, index: number) => {
+					item.healthCode = res[index].healthCodeStatus
+					return item
+				})
+			})
+}
+
 const getTraveDetail = () => {
 	const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 	if (!route.query.id && !traveListData.oid) {
@@ -220,6 +237,7 @@ const getTraveDetail = () => {
 				it.specialCertificatePicture = it.specialCertificatePicture?.split(',');
 				return it;
 			}));
+			
 			res.transportList = res.transportList.map((it:any) => {
 				it.time = [it.startDate, it.endDate]
 				return it;
@@ -240,7 +258,7 @@ const getTraveDetail = () => {
 				return it;
 			})]
 			travelStore.hotels = hotel as any;
-			// travelStore.curentProduct = res.productList;
+			travelStore.productList = res.productList;
 			travelStore.scenicTickets = [...res.waitBuyItem.waitBuyTicket, ...res.ticketList] as any;
 			travelStore.teamTime = [res.basic.startDate, res.basic.endDate]  as any
 			travelStore.setDisabled = disDate(res);
@@ -252,6 +270,8 @@ const getTraveDetail = () => {
 			console.log(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end, '-----')
 			travelStore.setDisabledTime = disabledRangeTime(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end) as any;
 			route.query.tab && setTimeout(() => activeKey.value = Number(route.query.tab))
+			getHealthCode()
+			
 		});
 };
 

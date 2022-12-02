@@ -127,6 +127,8 @@ export const useTravelStore = defineStore({
 		touristList: [],
 		trafficList: [],
 		traveInfo: {},
+		sendTabList: [], //发团tab
+		takeTabList: [], //接团tab
 		attachmentList: [
 			{
 				attachmentName: '',
@@ -153,6 +155,7 @@ export const useTravelStore = defineStore({
 		compositeProducts: [],
 		curentProduct: [] as any,
 		hotels: [],
+		productList: [{productId: null}], //综费
 		scenicTickets: [],
 		gouvyList:[{
 				feeName: '古维管理费',
@@ -409,6 +412,12 @@ export const useTravelStore = defineStore({
 		async getManagementExpenses(id:any) {
 			const res = await api.getManagementExpenses(id);
 			this.gouvyList=res
+		},
+		async getItineraryListTab() {
+			if (this.sendTabList.length) return;
+			const { takeTabList, sendTabList } = await api.travelManagement.getItineraryListTab();
+			this.sendTabList = sendTabList;
+			this.takeTabList = takeTabList;
 		}
 	},
 });

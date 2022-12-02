@@ -23,8 +23,19 @@
 			name="teamType"
 			>
 			<!-- <a-input v-model:value="formState.username" /> -->
-			
-			<a-radio-group 
+			<a-select 
+				v-model:value="formState.teamType" 
+				placeholder="请选择行程类型" 
+				@change="(val, option) => changeRadio(val, option)">
+				<a-select-option 
+					:value="item.oid" 
+					:name="item.name"
+					v-for="item in list.teamType" 
+					:key="item.oid">
+					{{item.name}}
+				</a-select-option>
+			</a-select>
+			<!-- <a-radio-group 
 				v-model:value="formState.teamType" 
 				name="radioGroup" 
 				@change="changeRadio" 
@@ -34,7 +45,7 @@
 						<a-radio :value="item.oid">{{item.name}}</a-radio>
 					</a-col>
 				</a-row>
-			</a-radio-group>
+			</a-radio-group> -->
 				
 			</a-form-item>
 
@@ -325,8 +336,11 @@ const handleChangeTime = (event: any) => {
 
 
 
-const changeRadio = (event:any) =>  {
-	travelStore.setTeamType(event.target.value);
+const changeRadio = (event:any, option:any) =>  {
+	console.log(event,option)
+	formState.value.teamTypeName = option.name;
+	// .target.value
+	travelStore.setTeamType(event);
 
 }
 
@@ -373,9 +387,12 @@ const findByIdTeamType = async () => {
 			}
 				
 		}
-		if (allFeesProducts.length === 1) {
-			travelStore.curentProduct = cloneDeep(allFeesProducts);
-		} else if (allFeesProducts.length === 0) {
+		if (travelStore.productList[0]?.productId) {
+			travelStore.curentProduct = allFeesProducts.filter((it: any) => it.oid === travelStore.productList[0].productId);
+		}else if (allFeesProducts.length >= 1) {
+			console.log(allFeesProducts)
+			travelStore.curentProduct = cloneDeep([allFeesProducts[0]]);
+		} else {
 			travelStore.curentProduct = [];
 		}
 		
@@ -389,14 +406,12 @@ watch(() => props.onCheck, (newVal) => {
 watch(() => travelStore.baseInfo, newVal => {
 	formState.value = newVal;
 	console.log(newVal)
-	if (route.query.id) {
-		list.travelOperatorList = [{
-			oid: newVal.subTravelOperatorOid,
-			username: newVal.subTravelOperatorName,
-			mobile: newVal.subTravelOperatorPhone
-		}];
-		travelStore.setTeamType(travelStore.baseInfo.teamType);
-	}
+	list.travelOperatorList = [{
+		oid: newVal.subTravelOperatorOid,
+		username: newVal.subTravelOperatorName,
+		mobile: newVal.subTravelOperatorPhone
+	}];
+	travelStore.setTeamType(travelStore.baseInfo.teamType);
 })
 watch(
 	() => travelStore.teamType,
