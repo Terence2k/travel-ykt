@@ -13,7 +13,6 @@
 						{{ (travelStore.takeGroupList.waitingReserved.params.pageNo - 1) * travelStore.takeGroupList.waitingReserved.params.pageSize + (index + 1) }}
 					</div>
 				</template>
-
 				<template v-if="column.key === 'groupTypeStr'">
 					{{ text }}
 				</template>

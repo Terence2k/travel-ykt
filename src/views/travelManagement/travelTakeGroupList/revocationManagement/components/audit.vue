@@ -90,15 +90,7 @@
 			申请整团撤回的 行程单！系统将自动将该结果通知申请发起人。
 		</p>
 		<template v-slot:footer>
-			<a-button
-				@click="
-					() => {
-						reRecokeAuditSuccessVisible = false;
-						modelValue = false;
-					}
-				"
-				>确定</a-button
-			>
+			<a-button @click="finish">确定</a-button>
 		</template>
 	</BaseModal>
 
@@ -257,6 +249,14 @@ const sureAudit = async () => {
 	reRecokeAuditSuccessVisible.value = true;
 	reRecokeAuditSureVisible.value = false;
 };
+const emits = defineEmits(['finish']);
+
+const finish = () => {
+	reRecokeAuditSuccessVisible.value = false;
+	modelValue.value = false;
+	emits('finish');
+};
+
 const toHistoryPage = () => {
 	route.push('/scenic-spot/sold-out-history');
 };

@@ -45,7 +45,7 @@
 				<span>{{accDiv(state.tableData.data.totalPrice,100)}} 元</span>
 			</a-form-item>
 			<div class="title">购买人员明细</div>
-			<p style="text-align: center; font-size: 18px;">当前古维费已经于 {{state.tableData.data.issueTime}} 全部出票。全部游客{{state.tableData.data.touristNum}}名,已减免{{state.tableData.data.reduceNum}}人,实缴{{state.tableData.data.purchaseNum}}人。</p>
+			<p style="text-align: center; font-size: 18px;" v-if="(state.tableData.data.issueStatus==1)">当前古维费已经于 {{state.tableData.data.issueTime}} 全部出票。全部游客{{state.tableData.data.touristNum}}名,已减免{{state.tableData.data.reduceNum}}人,实缴{{state.tableData.data.purchaseNum}}人。</p>
 			<CommonTable :dataSource="state.tableData.touristList" :columns="columns" :scrollY="false">
 				<template #bodyCell="{ column, index,record}">
 					<template v-if="column.key === 'actualPrice'">
