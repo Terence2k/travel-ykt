@@ -25,4 +25,5 @@ export type TakeGroupField = 'drafts' |
                 'dispatched' |
                 'cancellation' |
                 'waitingChange' |
-                'overtime'
+                'overtime' |
+                'waitingOutGroup'

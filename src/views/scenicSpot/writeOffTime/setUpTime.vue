@@ -1,5 +1,5 @@
 <template>
-	<BaseModal title="设置核销时间段" v-model="modelValue" @close="cancel" :width="800">
+	<BaseModal title="设置核销时间段" v-model="dialogVisible" @close="cancel" :width="800">
 		<a-form ref="formRef" :model="formValidate" rules="rules" :label-col="{ span: 5 }" :wrapper-col="{ span: 16, offset: 1 }" labelAlign="left">
 			<a-form-item label="门票名称" name="ticketName">
 				<a-input disabled v-model:value="state.tableData.ticketName" />

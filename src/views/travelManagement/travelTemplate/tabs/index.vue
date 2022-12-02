@@ -8,9 +8,10 @@
 			</a-tabs>
 			<div class="footer" v-if="route.query.Cedit">
 				<div class="footer-btn">
+					<a-button type="primary" v-if="route?.query?.oid && activeKey == 2" @click="activeKey = activeKey - 1">上一步</a-button>
 					<a-button
 						type="primary"
-						v-if="activeKey == 2"
+						v-if="route?.query?.oid?activeKey == 2:activeKey == 1"
 						@click="
 							() => {
 								check = !check;
@@ -20,7 +21,7 @@
 						"
 						>保存</a-button
 					>
-					<a-button type="primary" v-if="activeKey < 2" @click="activeKey = activeKey + 1">下一步</a-button>
+					<a-button type="primary" v-if="route?.query?.oid?activeKey < 2:activeKey < 1" @click="activeKey = activeKey + 1">下一步</a-button>
 				</div>
 			</div>
 		</div>
@@ -42,7 +43,7 @@ const activeKey = ref(0);
 const check = ref(false); //触发保存
 const sendTeam = ref(false); //发团判断
 const isSaveBtn = ref(false); //是否点击保存按钮
-const pages = [
+let pages = [
 	{
 		name: baseinfo,
 		label: '基本信息管理',
@@ -50,10 +51,6 @@ const pages = [
 	{
 		name: cicerone,
 		label: '导游信息',
-	},
-	{
-		name: travelled,
-		label: '行程信息',
 	},
 ];
 const typei = ref();
@@ -73,9 +70,8 @@ const save = (e: any) => {
 };
 // 保存接口
 const saveItinerary = (val: any) => {
-	// if(isSaveBtn.value){
-	// 	if (!travelStore.guideList.length) return message.error('请选择带团导游');
-	// }
+	if (!val.basicParam) return message.error('请填写基本信息')
+	if (!travelStore.guideList.length) return message.error('请选择带团导游')
 	let ajax = api.travelManagement.saveChangeTravel;
 	return ajax(
 		{
@@ -89,7 +85,8 @@ const saveItinerary = (val: any) => {
 			let msg = route.query.oid ? '编辑成功' : '新增成功';
 			message.success(msg);
 		}
-	});
+	}).catch((error:any)=>{
+	})
 	// message.success('保存成功');
 	// router.push('/travel/travelTtemplate/list');
 };
@@ -98,6 +95,11 @@ const getTraveDetail = () => {
 		travelStore.setBaseInfo({});
 		travelStore.setGuideList([]);
 		return;
+	} else {
+		pages.push({
+			name: travelled,
+			label: '行程信息',
+		});
 	}
 	api.travelManagement.saveChangeTraveldetail(route.query.oid).then((res: any) => {
 		res.basic.teamId = res.basic.itineraryNo;
@@ -105,8 +107,8 @@ const getTraveDetail = () => {
 		res.basic.touristNum = res.basic.touristCount || 0;
 		travelStore.setBaseInfo(res.basic);
 		travelStore.setGuideList(res.guideList);
-		travelStore.hotels = res.hotelList
-		travelStore.scenicTickets = res.ticketList
+		travelStore.hotels = res.hotelList;
+		travelStore.scenicTickets = res.ticketList;
 	});
 };
 getTraveDetail();

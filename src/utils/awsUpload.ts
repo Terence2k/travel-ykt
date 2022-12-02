@@ -80,7 +80,8 @@ const awsUploadFile = (options: any) => {
             console.log(data);
             if (data) {
               console.log(err);
-              const fileUrl = `http://${filePath}/${bucket}${prefix}/${businessType.toLowerCase()}Pic/${filename}`;
+              // const fileUrl = `http://${filePath}/${bucket}${prefix}/${businessType.toLowerCase()}Pic/${filename}`;
+              const fileUrl = `${businessType.toLowerCase()}Pic/${filename}`;
               downloadFiles.push(fileUrl);
               if (filesLength === index) {
                 if (!downloadFiles.length) {

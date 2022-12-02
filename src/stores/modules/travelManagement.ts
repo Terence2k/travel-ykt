@@ -113,6 +113,7 @@ export const useTravelStore = defineStore({
 			endDate: '',
 			groupType: '',
 			status: '',
+			itineraryNo: ''
 		},
 		setStarEndHMS: {
 			start: {},
@@ -127,6 +128,8 @@ export const useTravelStore = defineStore({
 		touristList: [],
 		trafficList: [],
 		traveInfo: {},
+		sendTabList: [], //发团tab
+		takeTabList: [], //接团tab
 		attachmentList: [
 			{
 				attachmentName: '',
@@ -153,6 +156,7 @@ export const useTravelStore = defineStore({
 		compositeProducts: [],
 		curentProduct: [] as any,
 		hotels: [],
+		productList: [{productId: null}], //综费
 		scenicTickets: [],
 		gouvyList:[{
 				feeName: '古维管理费',
@@ -194,6 +198,7 @@ export const useTravelStore = defineStore({
 			cancellation: cloneDeep(takeGroupListParams),
 			waitingChange: cloneDeep(takeGroupListParams),
 			overtime: cloneDeep(takeGroupListParams),
+			waitingOutGroup: cloneDeep(takeGroupListParams),
 		},
 		enterpriseState: [
 			{
@@ -244,6 +249,7 @@ export const useTravelStore = defineStore({
 			[TakeGroupStatus.Cancellation]: '已散团',
 			[TakeGroupStatus.WaitingChange]: '待变更',
 			[TakeGroupStatus.Overtime]: '已过期',
+			[TakeGroupStatus.WaitingOutGroup]: '待出团',
 		},
 	}),
 	getters: {
@@ -407,6 +413,12 @@ export const useTravelStore = defineStore({
 		async getManagementExpenses(id:any) {
 			const res = await api.getManagementExpenses(id);
 			this.gouvyList=res
+		},
+		async getItineraryListTab() {
+			if (this.sendTabList.length) return;
+			const { takeTabList, sendTabList } = await api.travelManagement.getItineraryListTab();
+			this.sendTabList = sendTabList;
+			this.takeTabList = takeTabList;
 		}
 	},
 });

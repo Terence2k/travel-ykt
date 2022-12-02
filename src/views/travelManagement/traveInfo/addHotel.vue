@@ -83,7 +83,7 @@
 					label="订房数量" 
 					:name="['roomTypeList', index, 'reserveNumber']" 
 					:rules="[{ required: true, validator: (_rule: Rule, value: string) => validateCheckNum(_rule, value, index) }]">
-					<a-input v-model:value="room.reserveNumber" />
+					<a-input v-model:value="room.reserveNumber" placeholder="请输入订房数量"/>
 				</a-form-item>
 				<!-- <a-form-item
 					label="入住总人数"
@@ -153,7 +153,7 @@ const route = useRoute()
 const roomList = {
 	orderAmount: 0,
 	checkInNumber: '', //入住人数
-	hotelRoomTypeId: '', //房型id
+	// hotelRoomTypeId: '', //房型id
 	unitPrice: 0, //房型单价
 	reserveNumber: '', //订房数量
 	roomTypeName: "" //房型名称
@@ -163,19 +163,33 @@ const formRef = ref();
 
 
 const disCheckInTime = computed(() => {
-	const isCurrent = dayjs(travelStore.baseInfo.startDate).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD')
-	const start = dayjs().isBefore(dayjs(travelStore.baseInfo.startDate))
-	const disTime: any = (start || isCurrent) ? travelStore.setStarEndHMS.start : {
-		hour: 0,
-		min: 0,
-		second: 0
-	}
-	return () => {
-		return {
-			disabledHours: () => range(0, 24).splice(0, disTime.hour),
-			disabledMinutes: () => range(0, 60).splice(0, disTime.min),
-			disabledSeconds: () => range(0, 60).splice(0, disTime.second)
+	// const isCurrent = dayjs(travelStore.baseInfo.startDate).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD')
+	// const start = dayjs().isBefore(dayjs(travelStore.baseInfo.startDate))
+	
+	// const disTime: any = (start || isCurrent) ? travelStore.setStarEndHMS.start : {
+	// 	hour: 0,
+	// 	min: 0,
+	// 	second: 0
+	// }
+	const disTime: any = travelStore.setStarEndHMS.start;
+	return (_: Dayjs) => {
+		const current = dayjs(dayjs(_).format('YYYY-MM-DD')).unix()
+		const startUnix = dayjs(dayjs(travelStore.baseInfo.startDate).format('YYYY-MM-DD')).unix();
+		// const endUnix = dayjs(dayjs(travelStore.baseInfo.endDate).format('YYYY-MM-DD')).unix();
+		if (startUnix === current) {
+			return {
+				disabledHours: () => range(0, 24).splice(0, disTime.hour),
+				disabledMinutes: () => range(0, 60).splice(0, disTime.min),
+				disabledSeconds: () => range(0, 60).splice(0, disTime.second)
+			}
 		}
+
+		return {
+			disabledHours: () => [],
+			disabledMinutes: () => [],
+			disabledSeconds: () => [],
+		}
+		
 	};
 })
 const disLeaveTime = computed(() => {
@@ -209,7 +223,6 @@ const hotelData = reactive<{[k:string]: any}>({
 });
 // 表单填写数据
 let formState = reactive<{[k: string]: any}>({
-	hotelStarId: '',
 	hotelId: '',
 	arrivalDate:'',
 	leaveTime: '',

@@ -1,7 +1,7 @@
 <template>
     <BaseModal v-model="dialogVisible" title="选择订票人员" :width="1000" :onOk="reserveTicket">
         <div v-if="dialogVisible">
-            <CommonTable row-key="oid" :row-selection="{onSelect, onSelectAll}" :columns="columns" :dataSource="travelStore.touristList" :scrollY="false">
+            <CommonTable row-key="oid" :row-selection="{selectedRowKeys: selectedRowKeys, onChange}" :columns="columns" :dataSource="touristList" :scrollY="false">
                 <template #bodyCell="{ column, text, index, record }">
                     <template v-if="column.key === 'index'">
                         <div>
@@ -15,7 +15,7 @@
                     </template>
                     <template v-if="column.key === 'gender'">
                         <div>
-                            {{ travelStore.genderList.filter((it: any) => it.codeValue === text)[0]?.name }}
+                            {{ text ? '男' : '女' }}
                         </div>
                     </template>
                     <template v-if="column.key === 'specialCertificateType'">
@@ -33,6 +33,17 @@
                             />
                         </div>
                     </template>
+                    <template v-if="column.key === 'healthCode'">
+						<span class="green-code" v-if="text === '00'">
+							{{CODEVALUE.HEALTHCODE[text]}}
+						</span>
+						<span class="yellow-code" v-if="text === '01'">
+							{{CODEVALUE.HEALTHCODE[text]}}
+						</span>
+						<span class="red-code" v-if="text === '10'">
+							{{CODEVALUE.HEALTHCODE[text]}}
+						</span>
+					</template>
                 </template>
             </CommonTable>
         </div>
@@ -56,9 +67,15 @@ import { CODEVALUE } from '@/constant';
 		ticketId: {
 			type: String,
 			default: ''
-		}
+		},
+        orderNo: {
+            type: String,
+			default: ''
+        }
 	})
     const travelStore = useTravelStore()
+    const touristList = ref([]);
+    const selectedRowKeys = ref([])// 已预定游客
     const emits = defineEmits(['update:modelValue'])
     const IDCard = computed(() => travelStore.IDCard)
     const specialId = computed(() => travelStore.specialId)
@@ -109,15 +126,26 @@ import { CODEVALUE } from '@/constant';
             key: 'specialCertificatePicture',
         }
     ]
+
+    const getScenicTourist = () => {
+        api.travelManagement.getScenicTourist({
+            orderNo: props.orderNo
+        }).then((res: any) => {
+            selectedRowKeys.value = res.filter((item: any) => item.isReserved).map((it: any) => it.oid)
+            console.log(selectedRowKeys.value)
+            touristList.value = res
+        })
+    }
+
     const reserveParams = reactive<{[k: string]: any}>({});
 
-    const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
-		reserveParams.reservePeopleList = cloneDeep(selectedRows)
-    }
-    const onSelectAll = (selected: any, selectedRows: any, changeRows: any) => {
-        // console.log(selected, selectedRows, changeRows)
-        reserveParams.reservePeopleList = cloneDeep(selectedRows)
-    }
+    // const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
+	// 	reserveParams.reservePeopleList = cloneDeep(selectedRows)
+    // }
+    // const onSelectAll = (selected: any, selectedRows: any, changeRows: any) => {
+    //     // console.log(selected, selectedRows, changeRows)
+    //     reserveParams.reservePeopleList = cloneDeep(selectedRows)
+    // }
     const dialogVisible = ref(false);
     
     const ticketInfo: any = ref({})
@@ -130,9 +158,19 @@ import { CODEVALUE } from '@/constant';
             props.ticketId && api.travelManagement.ticketDetail(props.ticketId).then((res:any) => {
                 ticketInfo.value = res
 			})
+            props.orderNo && getScenicTourist();
         }
 		emits('update:modelValue', newVal)
 	})
+
+    const onChange = (keys: any, rows: any) => {
+        selectedRowKeys.value = keys
+        reserveParams.reservePeopleList = rows.map((item: any) => {
+            item.gender = item.gender ? 1 : 0;
+            return item;
+        });
+    }
+
     const reserveTicket = (callback: Function) => {
 		reserveParams.oid = props.ticketId
         if (!reserveParams.reservePeopleList || !reserveParams.reservePeopleList.length) {
@@ -153,8 +191,8 @@ import { CODEVALUE } from '@/constant';
             onOk() {
                 
                 api.travelManagement.reserveTicket(reserveParams).then((res:any) => {
-                    travelStore.setTicketStatus(props.ticketId)
-                    message.success('预定成功')
+                    travelStore.setTicketStatus(props.ticketId);
+                    message.success('预定成功');
                     callback()
                 }).catch((err:any) => {
                     callback(false)

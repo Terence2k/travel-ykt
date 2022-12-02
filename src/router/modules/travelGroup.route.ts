@@ -462,7 +462,7 @@ export default [
 				children: [
 					{
 						path: 'list',
-						component: () => import('@/views/gouvyManagement/revocationManagement/index.vue'),
+						component: () => import('@/views/travelManagement/travelTakeGroupList/revocationManagement/index.vue'),
 						name: 'travel-revocation-management-list',
 						meta: {
 							title: '列表页',

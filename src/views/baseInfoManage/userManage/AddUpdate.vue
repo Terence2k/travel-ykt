@@ -1,5 +1,5 @@
 <template>
-	<BaseModal :title="options.title" v-model="modelValue" @close="handleOk">
+	<BaseModal :title="options.title" v-model="dialogVisible">
 		<a-form
       ref="formRef"
       :model="formValidate"
@@ -114,7 +114,7 @@
       },
       params: Object
   })
-  const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
+  const emit = defineEmits(['update:modelValue', 'onSearch']);
   const dialogVisible = ref(false);
   const formRef = ref<FormInstance>();
   const formValidate: Ref<Record<string, any>> = ref({});
@@ -145,10 +145,6 @@
   const businessTypeOption = computed(() => businessManageOptions.businessTypeOption);
   const companyOptions = computed(() => businessManageOptions.companyOptions);
 
-	const handleOk = () => {
-    emit('cancel');
-  };
-  
   const save = () => {
     formRef.value
     .validateFields()
