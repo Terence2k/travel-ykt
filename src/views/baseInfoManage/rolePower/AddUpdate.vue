@@ -124,6 +124,7 @@
     menuIds: [{ required: true, trigger: 'change', message: '请选择角色权限' }],
     roleCode: [{ required: true, trigger: 'blur', message: '请输入角色编码' }],
   };
+  const targetMenuList: Ref<Array<any>> = ref([]); 
   
 
   const fieldNames: TreeProps['fieldNames'] = {
@@ -139,7 +140,6 @@
     formRef.value
     .validateFields()
     .then((values: any) => {
-      console.log('formValidate.value:', formValidate.value);
       if (formValidate.value.oid) {
         formValidate.value = {
           oid: formValidate.value.oid,
@@ -160,26 +160,46 @@
     });
   }
 
-  const getDetailMenuIds = (data: any) => {
-    data.forEach((item: any) => {
-      const firstMenu = menuTreeDate.value.find((it: any) => it.value == item.oid);
-      // 如果父级菜单没有全选则不选中
-      if (firstMenu && firstMenu.children?.length == item.childMenuList?.length) {
-          menuIdsInfo.value.push(item.oid);
+  //深度查找menuTreeDate 找出已有权限的父级菜单, 如果所属子菜单都有权限就推进menuIdsInfo去渲染权限树
+  const findDeepMenu = (menuList: any, oid: any, length?: any) => {
+    let res = menuList.find((it: any) => it.value == oid);
+    if(res) {
+      targetMenuList.value.push(res);
+      // 如果父级菜单全选则选中
+      if (res.children?.length == length) {
+        menuIdsInfo.value.push(oid);
       }
-      if (item.childMenuList?.length) {
-        getDetailMenuIds(item.childMenuList);
-      } else if (!item.childMenuList) {
-        menuIdsInfo.value.push(item.oid);
+    };
+    
+    menuList.forEach((item: any) => {
+      if (item.children?.length) {
+        findDeepMenu(item.children, oid);
       }
     })
   }
 
-  const getDetail = (id: number) => {
-    api.roleDetail(id).then((res: any) => {
-      formValidate.value = res;
-      getDetailMenuIds(res.roleMenu);
+  const getDetailMenuIds = (data: any) => {
+    data.forEach((item: any) => {
+      findDeepMenu(menuTreeDate.value, item.oid, item.childMenuList?.length);
+      if (item.childMenuList?.length) {
+        getDetailMenuIds(item.childMenuList);
+      } else {
+        menuIdsInfo.value.push(item.oid);
+      }
+      // menuIdsInfo.value = [159]
       console.log('menuIdsInfo:', menuIdsInfo.value);
+      
+    })
+    console.log('targetMenuList.value:', targetMenuList.value);
+    
+  }
+
+  const getDetail = async (id: number) => {
+    await api.roleDetail(id).then((res: any) => {
+      formValidate.value = res;
+      console.log('menuTreeDate.value:', menuTreeDate.value);
+      console.log('角色权限菜单：', res.roleMenu);
+      getDetailMenuIds(res.roleMenu);
       checkedKeys.value = menuIdsInfo.value;
     }).catch((err: any) => {
       console.error(err);
@@ -187,9 +207,7 @@
   }
 
   const addOrUpdateAPI = (apiName: string) => {
-    console.log('formValidate:', formValidate.value);
     api[apiName]({...formValidate.value}).then((res: any) => {
-      // console.log('res:', res);
       message.success('保存成功');
       formRef.value.resetFields();
       console.log('reset formValidate: ', toRaw(formValidate));
@@ -201,25 +219,26 @@
   }
 
   const getMenuList = async () => {
-    api.menuList().then((res: any) => {
-      ///转换树
-      menuTreeDate.value = convertTree(res, {
-        value: 'oid',
-        label: 'menuName',
-        children: 'children',
-      });
-    })
+    const res = await api.menuList();
+    ///转换树
+    menuTreeDate.value = convertTree(res, {
+      value: 'oid',
+      label: 'menuName',
+      children: 'children',
+    });
+    
+    if (props.params?.oid) {
+      await getDetail(props.params.oid);
+    }
   }
 
   const init = async () => {
     checkedKeys.value = [];
     menuIdsInfo.value = [];
-    console.log('params', props.params);
     formValidate.value = {
       roleStatus: 1
     };
     if (props.params?.oid) {
-      getDetail(props.params.oid);
       options.title = '编辑角色';
     } else {
       options.title = '新增角色';

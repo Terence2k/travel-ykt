@@ -1,6 +1,14 @@
 <template>
 	<a-spin size="large" :spinning="state.tableData.loading" style="min-height: 50vh">
 		<CommonSearch>
+			<SearchItem label="撤销类型">
+				<a-select v-model:value="state.tableData.param.revokeType" :allowClear="true" ref="select" style="width: 200px" placeholder="门票名称/关键词">
+					<a-select-option label="全部" :value="''">全部</a-select-option>
+					<a-select-option label="整团撤销" :value="1">整团撤销</a-select-option>
+					<a-select-option label="撤销重提" :value="2">撤销重提</a-select-option>
+					<a-select-option label="撤销重提关联新单子" :value="3">撤销重提关联新单子</a-select-option>
+				</a-select>
+			</SearchItem>
 			<SearchItem label="接团社">
 				<a-input v-model:value="state.tableData.param.subTravelName" placeholder="请输入接团社" style="width: 200px" />
 			</SearchItem>
@@ -18,6 +26,7 @@
 			<SearchItem label="行程单号">
 				<a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入行程单号" style="width: 200px" />
 			</SearchItem>
+
 			<SearchItem label="行程路线">
 				<a-input v-model:value="state.tableData.param.routeName" placeholder="请输入行程路线" style="width: 200px" />
 			</SearchItem>
@@ -53,16 +62,20 @@
 					<template v-if="column.key === 'issueStatus'">
 						{{ record.issueStatus ? '已出票' : '未出票' }}
 					</template>
+					<template v-if="column.key === 'revokeType'">
+						{{ revokeTypeList[record.revokeType] }}
+					</template>
 					<template v-if="column.key === 'revokeTime'">
 						{{ shijianc(record.revokeTime) }}
 					</template>
 
 					<template v-if="column.key === 'action'">
-						<a href="javascript:;" v-if="record.revokeType" @click="toDetail(record)">去审核</a>
-						<a href="javascript:;" @click="check(record)">查看</a>
+						<a-button type="link" v-if="!state.tableData.param.status" @click="toDetail(record)">去审核</a-button>
+						<a-button type="link" v-if="state.tableData.param.status" @click="check(record)">查看</a-button>
 					</template>
 				</template>
 			</CommonTable>
+
 			<CommonPagination
 				:current="state.tableData.param.pageNo"
 				:page-size="state.tableData.param.pageSize"
@@ -79,8 +92,8 @@
 			</div>
 		</div>
 
-		<Audit ref="auditRef" />
-		<Revoke ref="revokeRef" />
+		<Audit ref="auditRef" @finish="init" />
+		<Revoke ref="revokeRef" @finish="init" />
 		<Detail ref="detailRef" />
 	</a-spin>
 </template>
@@ -104,6 +117,8 @@ const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 
 const dataSource = ref([]);
+
+const revokeTypeList = [, '整团撤销', '撤销重提', '撤销重提关联新单子'];
 
 const columns = [
 	{
@@ -168,6 +183,12 @@ const columns = [
 		width: 140,
 	},
 	{
+		title: '撤销类型',
+		dataIndex: 'revokeType',
+		key: 'revokeType',
+		width: 140,
+	},
+	{
 		title: '重提后变更人数',
 		dataIndex: 'changeTouristCount',
 		key: 'changeTouristCount',
@@ -196,6 +217,7 @@ interface stateType {
 			subTravelName: string | null | number;
 			startDate: string | null | number;
 			endDate: string | null | number;
+			revokeType: string | null | number;
 		};
 	};
 }
@@ -214,6 +236,7 @@ const state = reactive<stateType>({
 			subTravelName: '', //地接社名称
 			startDate: '', //开始日期
 			endDate: '', //结束日期
+			revokeType: '',
 		},
 	},
 });
@@ -263,6 +286,7 @@ const detailRef = ref();
 const check = async (record: any) => {
 	// let valid = await checkPower(record);
 	detailRef.value.open(record.oid);
+	// revokeRefOpen(record.oid);
 
 	// route.push({ path: '/scenic-spot/order-manage/edit', query: { oid: record.orderNo } });
 };
@@ -301,17 +325,17 @@ const pageSideChange = (current: number, size: number) => {
 
 const init = async () => {
 	state.tableData.loading = true;
-
-	let res = await api.gouvyRepealNreapplyPageList(state.tableData.param);
+	let res = await api.travelManagement.travelRepealNreapplyPageList(state.tableData.param);
 	state.tableData.loading = false;
 	state.tableData.data = res.content;
 	state.tableData.total = res.total;
 	console.log(res);
 };
+
 const waitingBar = ref(0);
 
 const initWaitingBar = async () => {
-	let res = await api.gouvyRepealNreapplyPageList({ status: 0, pageNo: 1, pageSize: 10 });
+	let res = await api.travelManagement.travelRepealNreapplyPageList({ status: 0, pageNo: 1, pageSize: 10 });
 	waitingBar.value = res.total;
 };
 

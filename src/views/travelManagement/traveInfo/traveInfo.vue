@@ -52,7 +52,12 @@
 		</div>
 		<div class="item-container">
 			<p class="title">综费产品</p>
-			<CommonTable :rowKey="(record)=>record.oid" :row-selection="rowRadioSelection" v-if="allFeesProducts.length > 1" :columns="columns" :dataSource="allFeesProducts" :scrollY="false">
+			<CommonTable 
+				ref="tableRef"
+				rowKey="oid" 
+				:row-selection="{selectedRowKeys: selectedRowKeys,type: 'radio',onChange: onSelectChange}" 
+				v-if="allFeesProducts.length > 1" :columns="columns" 
+				:dataSource="allFeesProducts" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
 					<template v-if="column.key === 'index'">
 						<div>
@@ -210,7 +215,9 @@ const {
 	ticketingColumns,
 	ticketingDate,
 	isReductionPassed,
-	isInitiateReduction
+	isInitiateReduction,
+	selectedRowKeys,
+	onSelectChange
 } = useTraveInfo(props, emits);
 onMounted(() => {
 	onSearch();

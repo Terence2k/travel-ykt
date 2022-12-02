@@ -25,7 +25,15 @@
             <a @click="goToPath(record)">编辑</a>
             <a v-if="record.groupType == GroupMode.TeamGroup">邀请地接社编辑</a>
             <a @click="sendGroup(record.oid)">发团</a>
-			<a @click="deleteTrave(record.oid)">删除</a>
+			<a-popconfirm
+				title="确定删除改行程单？"
+				ok-text="是"
+				cancel-text="否"
+				@confirm="deleteTrave(record.oid)"
+			>
+				<a>删除</a>
+			</a-popconfirm>
+			
           </div>
         </template>
 			</template>

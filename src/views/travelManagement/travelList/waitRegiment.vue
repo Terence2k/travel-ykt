@@ -86,16 +86,16 @@
 					dataIndex: 'teamTypeName',
 					key: 'teamTypeName',
 			},
-			{
-					title: '审核来源',
-					dataIndex: 'teamTypeName1',
-					key: 'teamTypeName1',
-			},
-			{
-					title: '当前审核人员',
-					dataIndex: 'teamTypeName1',
-					key: 'teamTypeName1',
-			},
+			// {
+			// 		title: '审核来源',
+			// 		dataIndex: 'teamTypeName1',
+			// 		key: 'teamTypeName1',
+			// },
+			// {
+			// 		title: '当前审核人员',
+			// 		dataIndex: 'teamTypeName1',
+			// 		key: 'teamTypeName1',
+			// },
 			// {
 			// 		title: '带队导游',
 			// 		dataIndex: 'guides',
@@ -108,8 +108,8 @@
 			// },
 			{
 					title: '操作',
-					fixed: 'right',
 					key: 'action',
+					width: 200
 			}
 		]
 	})

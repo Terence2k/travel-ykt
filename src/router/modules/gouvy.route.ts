@@ -132,15 +132,15 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
-					// {
-					// 	path: 'exemption-management_edit',
-					// 	component: () => import('@/views/gouvyManagement/exemptionManagement/details.vue'),
-					// 	name: 'exemption-management_edit',
-					// 	meta: {
-					// 		title: '查看',
-					// 		isDetail: true, // 在左侧的导航栏不会展示
-					// 	},
-					// },
+					{
+						path: 'revocation-management_edit',
+						component: () => import('@/views/gouvyManagement/revocationManagement/details.vue'),
+						name: 'revocation-management_edit',
+						meta: {
+							title: '查看',
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
 				],
 			},
 		],

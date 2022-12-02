@@ -3,32 +3,37 @@
 		<CommonTable :row-selection="{ onSelect }" :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
 			<template #button> </template>
 			<template #bodyCell="{ column, text, index, record }">
-        <template v-if="column.key === 'itineraryNo'">
-          <div>
-            <a @click="goToDetail(record)">{{text}}</a>
-          </div>
-        </template>
-				<template v-if="column.key === 'index'">
+				<template v-if="column.key === 'itineraryNo'">
 					<div>
-						{{ (travelStore.takeGroupList.waitingReserved.params.pageNo - 1) * travelStore.takeGroupList.waitingReserved.params.pageSize + (index + 1) }}
+						<a @click="goToDetail(record)">{{ text }}</a>
 					</div>
 				</template>
+				<template v-if="column.key === 'index'">
+					<div>
+						{{
+							(travelStore.takeGroupList.waitingOutGroup.params.pageNo - 1) * travelStore.takeGroupList.waitingOutGroup.params.pageSize + (index + 1)
+						}}
+					</div>
+				</template>
+
 				<template v-if="column.key === 'groupTypeStr'">
 					{{ text }}
 				</template>
 
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a @click="goToPath(record)">进入预订</a>
+						<a v-if="dateTime > dayjs(record.startDate).unix()" @click="outGroup(record)">手动出团</a>
 						<a @click="goToChange(record)">行程变更</a>
+						<a>查看日志</a>
 					</div>
 				</template>
 			</template>
 		</CommonTable>
 		<ChangeItems v-model="modelValue" :changeParams="state.changeParams"></ChangeItems>
+
 		<CommonPagination
-			:current="travelStore.takeGroupList.waitingReserved.params.pageNo"
-			:page-size="travelStore.takeGroupList.waitingReserved.params.pageSize"
+			:current="travelStore.takeGroupList.waitingOutGroup.params.pageNo"
+			:page-size="travelStore.takeGroupList.waitingOutGroup.params.pageSize"
 			:total="state.total"
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
@@ -37,26 +42,27 @@
 </template>
 <script lang="ts" setup>
 import CommonTable from '@/components/common/CommonTable.vue';
-import ChangeItems from '@/components/common/changeItems.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
-import BaseModal from '@/components/common/BaseModal.vue';
+import ChangeItems from '@/components/common/changeItems.vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import { GroupMode, TakeGroupStatus } from '@/enum';
-import api from '@/api';
-import { AnyCnameRecord } from 'dns';
+import api from '@/api/index';
 import { message } from 'ant-design-vue';
+import BaseModal from '@/components/common/BaseModal.vue';
+import dayjs from 'dayjs';
 const travelStore = useTravelStore();
 const router = useRouter();
 const modelValue = ref(false);
+const dateTime = ref(dayjs().unix());
 const state = reactive({
-	total: computed(() => travelStore.takeGroupList.waitingReserved.total),
+	total: computed(() => travelStore.takeGroupList.waitingOutGroup.total),
 	params: {
 		pageNo: 1,
 		pageSize: 10,
 		status: 1,
 	},
-	changeParams:{} as any,
-	tableData: computed(() => travelStore.takeGroupList.waitingReserved.list),
+	changeParams: {} as any,
+	tableData: computed(() => travelStore.takeGroupList.waitingOutGroup.list),
 	columns: [
 		{
 			title: ' 序号 ',
@@ -106,55 +112,57 @@ const state = reactive({
 	],
 });
 const onSearch = async () => {
-	travelStore.takeGroupList.waitingReserved.params.status = TakeGroupStatus.WaitingReserved;
-	const res = await travelStore.getTravelList(travelStore.takeGroupList.waitingReserved.params);
-	travelStore.setTakeGroupList(res, 'waitingReserved');
+	travelStore.takeGroupList.waitingOutGroup.params.status = TakeGroupStatus.WaitingOutGroup;
+	const res = await travelStore.getTravelList(travelStore.takeGroupList.waitingOutGroup.params);
+	travelStore.setTakeGroupList(res, 'waitingOutGroup');
 };
 const onHandleCurrentChange = (e: any) => {
-		travelStore.takeGroupList.waitingReserved.params.pageNo = e
-		onSearch()
+	travelStore.takeGroupList.waitingOutGroup.params.pageNo = e;
+	onSearch();
 };
 const pageSideChange = () => {};
-const goToPath = (row: any) => {
-	router.push({
-		path: '/travel/travel_manage/add_travel',
-		query: {
-			id: row.oid,
-			itineraryNo: row.itineraryNo,
-      tab: 4
-		},
-	});
+const outGroup = (row: any) => {
+	console.log('手动出团：', row);
 };
-const goToDetail = (row: any) => {
-  router.push({
-    path: '/travel/travel_manage/travel_detail',
-    query: { oid: encodeURIComponent(row.oid) }
-  });
-}
 const goToChange = (row: any) => {
 	state.changeParams.id = row.oid;
 	state.changeParams.itineraryNo = row.itineraryNo;
 	api.travelManagement.checkVerifyByItineraryId(row.itineraryNo).then((res) => {
 		if (res) {
 			modelValue.value = true;
-		}else{
-			message.error('该行程单发生过核销不可变更')
+		} else {
+			message.error('该行程单发生过核销不可变更');
 		}
+	});
+};
+const goToDetail = (row: any) => {
+	router.push({
+		path: '/travel/travel_manage/travel_detail',
+		query: { oid: encodeURIComponent(row.oid) },
 	});
 };
 const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
 	console.log(record, selected, selectedRows);
 };
 onSearch();
+console.log('dateTime.value:', dateTime.value);
+
+watch(
+	() => dateTime.value,
+	async (nVal) => {
+		if (nVal) {
+			console.log('dateTime.value:', dateTime.value);
+		}
+	}
+);
 </script>
 <style lang="less" scoped>
-	.model-div
-	{
-		text-align: center;
-		margin-bottom: 30px;
-	}
-	.model-div>p{
-		color: rgb(225, 225, 225);
-		margin-top: 10px;
-	}
+.model-div {
+	text-align: center;
+	margin-bottom: 30px;
+}
+.model-div > p {
+	color: rgb(225, 225, 225);
+	margin-top: 10px;
+}
 </style>

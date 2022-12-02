@@ -547,4 +547,48 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
+	//旅行社审核 整团撤销
+	revokeAudit(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/revokeAudit`,
+			method: 'post',
+			data,
+			showLoading: false,
+		});
+	},
+	//旅行社审核  撤销重提
+	submitRevokeAudit(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/submitRevokeAudit`,
+			method: 'post',
+			data,
+			showLoading: false,
+		});
+	},
+	//分页查询 撤销/撤销重提 订单
+	travelRepealNreapplyPageList(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/getItineraryRevokeAuditList`,
+			method: 'post',
+			showLoading: false,
+			data,
+		});
+	},
+	// 获取行程单tab
+	getItineraryListTab(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/getItineraryListTab`,
+			data,
+			method: 'get',
+			showLoading: true,
+		});
+	},
+	getHealthCode(data: any) {
+		return request({
+			url: `${commonPath}/customer-service/public/api/common/health/code`,
+			data,
+			method: 'post',
+			showLoading: false,
+		});
+	},
 };

@@ -1,13 +1,32 @@
-const getMenuUrl = (menuList: any, value: any) => {
-    if (menuList.url == '/baseInfo') {
-        console.log('getMenuUrl', menuList.url);
-        console.log('getMenuUrlvalue', '/baseInfo');
-        return menuList.url;
-    } else if (menuList.childMenuList?.length) {
-        menuList.childMenuList.forEach((menuList: any) => {
-            getMenuUrl(menuList, window.location.href.split('/#')[1]);
-        })
+
+let targetMenu: any;
+
+const treeForeach = (tree: any, value: any, tabValue?: any) => {
+  const userInfo = JSON.parse(<string>localStorage.getItem('userInfo') || '{}');
+  return tree.some((item: any) => {
+    if (item.menuName === value) {
+      findFatherMenu(userInfo.sysMenuVos, item.parentId);
+      if (targetMenu && !tabValue) return window.location.href.split('/#')[1] === targetMenu.url;
+      if (targetMenu && tabValue) return window.location.href.split('/#')[1] === targetMenu.url
+      && 
+      targetMenu.childMenuList.some((item: any) => item.menuName === tabValue);
     }
+    if (item.childMenuList?.length) return treeForeach(item.childMenuList, value, tabValue);
+    return false;
+  })
+}
+
+const findFatherMenu = (menuList: any, pid: any) => {
+  const userInfo = JSON.parse(<string>localStorage.getItem('userInfo') || '{}');
+  const res = menuList.find((item: any) => {
+    if (item.childMenuList?.length && item.oid != pid) findFatherMenu(item.childMenuList, pid);
+    return item.oid === pid;
+  });
+  if (res?.menuType === 2) {
+    findFatherMenu(userInfo.sysMenuVos, res.parentId);
+  } else if (res) {
+    targetMenu = res;
+  }
 }
 
 const directives = [
@@ -16,31 +35,10 @@ const directives = [
     value: {
       mounted(el: HTMLElement, binding: any) {
         const userInfo = JSON.parse(<string>localStorage.getItem('userInfo') || '{}');
-        // console.log('el:', el);
-        // console.log('el:', el.innerText.replace(/\s+/g, ''));
-        // console.log(window.location.href);
-        // console.log(window.location.href.split('/#'));
-        const type = binding.value || ''
+        const type = binding.value || '';
         let status = false;
-        console.log('type:', type);
-        console.log('binding:', binding);
-        
-        // 获取当前角色codeList
-        // userInfo.sysMenuVos?.forEach((item: any) => {
-        // //   if (type == item.menuTypeName) {
-        // //     status = true
-        // //   }
-          
-        // //   getMenuUrl(item, window.location.href.split('/#')[1]);
-        // })
-
-        for (let index = 0; index < userInfo.sysMenuVos.length; index++) {
-            let result = getMenuUrl(userInfo.sysMenuVos[index], window.location.href.split('/#')[1]);
-            if (result) {
-              status = true
-              return
-            }
-        }
+        if (type.split('_').length)
+        status = treeForeach(userInfo.sysMenuVos, type.split('_')[type.split('_').length - 1], type.split('_')[type.split('_').length - 2]);
         // 没有匹配则隐藏按钮
         if (!status) {
           el.style.display = 'none'

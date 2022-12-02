@@ -67,6 +67,51 @@
 			</div>
 		</template>
 	</BaseModal>
+
+	<BaseModal title="驳回确定" v-model="reRecokeAuditVisible" @cancel="closeModel">
+		<p>驳回 {{ state.detail.subTravelName }} 的行程撤销，填写驳回理由：</p>
+		<a-form layout="vertical" :model="formValidate" :label-col="{ span: 14 }" :wrapper-col="{ span: 28, offset: 0 }" labelAlign="left">
+			<a-form-item label="" class="fz14" v-bind="validateInfos['data.revokeReason']">
+				<a-textarea :maxlength="200" v-model:value="formValidate.data.revokeReason" placeholder="请输入" :rows="4" max="200" />
+			</a-form-item>
+		</a-form>
+		<template v-slot:footer>
+			<a-button @click="apply">确定</a-button>
+			<a-button @click="closeModel">取消</a-button>
+		</template>
+	</BaseModal>
+
+	<BaseModal title="审核完成" v-model="reRecokeAuditSuccessVisible">
+		<p>
+			您已驳回
+			<span style="color: red">
+				{{ state.detail.subTravelName }}
+			</span>
+			申请整团撤回的 行程单！系统将自动将该结果通知申请发起人。
+		</p>
+		<template v-slot:footer>
+			<a-button @click="finish">确定</a-button>
+		</template>
+	</BaseModal>
+
+	<BaseModal title="二次确认" v-model="reRecokeAuditSureVisible">
+		<p>
+			您即将批准
+			<span style="color: red">
+				{{ state.detail.subTravelName }}
+			</span>
+			申请整团撤回的 行程单
+			<span style="color: red">
+				{{ state.detail.itineraryNo }}
+			</span>
+			，确认同意撤销？
+		</p>
+		<p>请等待退订完成</p>
+		<template v-slot:footer>
+			<a-button @click="sureAudit">确定</a-button>
+			<a-button @click="reRecokeAuditSureVisible = false">取消</a-button>
+		</template>
+	</BaseModal>
 </template>
 
 <script lang="ts" setup>
@@ -75,31 +120,12 @@ import api from '@/api';
 import { message } from 'ant-design-vue';
 import FormWrap from '@/components/common/formWrap.vue';
 import FormItem from '@/components/common/formItem.vue';
-
+import { Form } from 'ant-design-vue';
 import dayjs, { Dayjs } from 'dayjs';
 
+const useForm = Form.useForm;
 const modelValue = ref(false);
 const route = useRouter();
-
-interface formType {
-	data: {
-		ticketId: null | number;
-		ticketType: string;
-		downReason: string;
-		applyNum: null | number;
-		dateList: any[];
-	};
-}
-
-const formValidate = reactive<formType>({
-	data: {
-		ticketId: null,
-		ticketType: 'UNITE',
-		downReason: '',
-		applyNum: null,
-		dateList: [{ startDateTime: '', endDateTime: '', time: [] }],
-	},
-});
 
 const picList = computed(() => {
 	return state.detail?.revokeAttachment?.split(',') || [];
@@ -123,6 +149,30 @@ const state = reactive({
 		cateringFee: '',
 	},
 });
+//二次确定
+const reRecokeAuditSureVisible = ref(false);
+//驳回成功
+const reRecokeAuditSuccessVisible = ref(false);
+// 驳回
+const reRecokeAuditVisible = ref(false);
+
+const formValidate = reactive({
+	data: {
+		revokeReason: '',
+	},
+});
+
+const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
+	formValidate,
+	reactive({
+		'data.revokeReason': [{ required: true, message: '请选择' }],
+	})
+);
+
+const closeModel = () => {
+	resetFields();
+	reRecokeAuditVisible.value = false;
+};
 
 const formRef = ref();
 
@@ -152,36 +202,68 @@ const del = (index: number) => {
 
 const sendAudit = (state: number) => {
 	console.log(state, '驳会状态');
-};
+	switch (state) {
+		case 2:
+			reRecokeAuditSureVisible.value = true;
+			break;
+		case 3:
+			reRecokeAuditVisible.value = true;
+			break;
 
-const apply = () => {
-	formRef.value
-		.validateFields()
-		.then(async (res: any) => {
-			cancel();
-			message.success('改刷成功');
-			// let params = formValidate.data;
-			// params.dateList.map((i) => {
-			// 	i.startDateTime = i.time[0];
-			// 	i.endDateTime = i.time[1];
-			// 	delete i.time;
-			// 	return i;
-			// });
-			// console.log(res, params);
-			// // let apiRes = api.scenicTicketDown(params);
-			// console.log(apiRes, 'apiRes');
+		default:
+			break;
+	}
+};
+const idRec = ref<string | number | null>('');
+
+const apply = async () => {
+	validate()
+		.then(async (res) => {
+			let param = {
+				status: -1,
+				auditReason: formValidate.data.revokeReason,
+				revokeId: idRec.value,
+			};
+
+			await api.travelManagement.revokeAudit(param);
+
+			reRecokeAuditSuccessVisible.value = true;
+			reRecokeAuditVisible.value = false;
+
+			// route.push({ path: '/scenic-spot/singleVote/edit', query: { t: formValidate.data.revokeReason, s: 'new' } });
 		})
-		.catch((err: any) => {
-			console.log(err);
+		.catch((err) => {
+			console.log('error', err);
 		});
 };
+
+const sureAudit = async () => {
+	let param = {
+		status: 1,
+		auditReason: formValidate.data.revokeReason,
+		revokeId: idRec.value,
+	};
+
+	await api.travelManagement.revokeAudit(param);
+
+	reRecokeAuditSuccessVisible.value = true;
+	reRecokeAuditSureVisible.value = false;
+};
+const emits = defineEmits(['finish']);
+
+const finish = () => {
+	reRecokeAuditSuccessVisible.value = false;
+	modelValue.value = false;
+	emits('finish');
+};
+
 const toHistoryPage = () => {
 	route.push('/scenic-spot/sold-out-history');
 };
 // 打开弹窗
 const open = (id: number | null) => {
 	modelValue.value = true;
-	formValidate.data.ticketId = id;
+	idRec.value = id;
 	initInfo(id);
 };
 
@@ -192,6 +274,9 @@ const initInfo = async (id: number | null) => {
 };
 // 关闭弹窗
 const cancel = () => {
+	console.log('close');
+
+	resetFields();
 	modelValue.value = false;
 	// formRef.value.resetFields();
 	formValidate.data.dateList = [{ startDateTime: '', endDateTime: '', time: [] }];

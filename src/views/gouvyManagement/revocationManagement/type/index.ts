@@ -3,4 +3,5 @@ export interface UserProo {
 	name: string;
 }
 
-export type Field = 'waits' | 'success' | 'refuse';
+export type Fieold = 'waits' | 'success' | 'refuse';
+
