@@ -132,6 +132,8 @@
 				</template>
 			</template>
 		</CommonTable>
+		<template v-slot:footer>
+		</template>
 	</BaseModal>
 	<!-- <Compare ref="compareRef" /> -->
 </template>
