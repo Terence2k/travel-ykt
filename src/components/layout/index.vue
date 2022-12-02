@@ -110,10 +110,10 @@ const goBack = () => {
 const handleMenuTree = (menuList: any) => {
 	menuList = menuList.map((item: any) => {
 		return {
-			children: item.childMenuList,
+			children: item.menuTypeName == '菜单夹' ? item.childMenuList : [],
 			keys: item.url,
 			path: item.url,
-			title: item.menuName,
+			title: item.menuName
 		};
 	});
 	return menuList;
