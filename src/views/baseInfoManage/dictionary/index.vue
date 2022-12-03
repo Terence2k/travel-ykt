@@ -9,18 +9,18 @@
 								<a-input v-model:value.trim="state.queryParams" placeholder="请输入ID或者名称" @change="queryList" />
 							</a-form-item>
 						</a-form>
-						<a-button type="primary" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
+						<a-button type="primary" @click="addOrUpdate({ handle: 'add' })" v-permission="'新增'">新增</a-button>
 					</div>
 				</template>
 				<template #bodyCell="{ column, record }">
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a @click="addOrUpdate({ row: record, handle: 'update' })" v-if="record.isEdit">编辑</a>
+							<a @click="addOrUpdate({ row: record, handle: 'update' })" v-if="record.isEdit" v-permission="'编辑'">编辑</a>
 							<a-popconfirm title="确认删除这条数据吗？" ok-text="确认" cancel-text="取消" @confirm="confirmDelete(record)"
 								v-if="record.isEdit">
-								<a>删除</a>
+								<a v-permission="'删除'">删除</a>
 							</a-popconfirm>
-							<a @click="viewDetails(record)">详情</a>
+							<a @click="viewDetails(record)" v-permission="'详情'">详情</a>
 						</div>
 					</template>
 				</template>
@@ -32,17 +32,17 @@
 				<template #button>
 					<div class="query_box">
 						<span class="detail_text">字典详情</span>
-						<a-button type="primary" @click="detailsAddOrUpdate({ handle: 'add' })" :disabled="!isDetailsAdd">新增
+						<a-button type="primary" @click="detailsAddOrUpdate({ handle: 'add' })" :disabled="!isDetailsAdd" v-permission="'新增'">新增
 						</a-button>
 					</div>
 				</template>
 				<template #bodyCell="{ column, record }">
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a @click="detailsAddOrUpdate({ row: record, handle: 'update' })" v-if="record.isEdit">编辑</a>
+							<a @click="detailsAddOrUpdate({ row: record, handle: 'update' })" v-if="record.isEdit" v-permission="'编辑'">编辑</a>
 							<a-popconfirm title="确认删除这条数据吗？" ok-text="确认" cancel-text="取消" @confirm="deleteDetailsRow(record)"
 								v-if="record.isEdit">
-								<a>删除</a>
+								<a v-permission="'删除'">删除</a>
 							</a-popconfirm>
 						</div>
 					</template>
