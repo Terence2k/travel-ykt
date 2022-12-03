@@ -1,7 +1,7 @@
 <template>
   <CommonTable :dataSource="tableData.data" :columns="columns">
     <template #button>
-      <a-button type="primary" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
+      <a-button type="primary" @click="addOrUpdate({ handle: 'add' })" v-permission="'新增'">新增</a-button>
     </template>
     <template #bodyCell="{ column, record, index }">
       <template v-if="column.key === 'index'">
@@ -14,10 +14,10 @@
       </template>
       <template v-if="column.key === 'action'">
         <div class="action-btns">
-          <a @click="addOrUpdate({ row: record, handle: 'update' })">编辑</a>
-          <a @click="resetPassword(record.oid)">重制密码</a>
-          <a @click="disable(0, record.oid)" v-show="record.state === 1">禁用</a>
-          <a @click="disable(1, record.oid)" v-show="record.state === 0">启用</a>
+          <a @click="addOrUpdate({ row: record, handle: 'update' })" v-permission="'编辑'">编辑</a>
+          <a @click="resetPassword(record.oid)" v-permission="'重置密码'">重置密码</a>
+          <a @click="disable(0, record.oid)" v-show="record.state === 1" v-permission="'禁用'">禁用</a>
+          <a @click="disable(1, record.oid)" v-show="record.state === 0" v-permission="'启用'">启用</a>
         </div>
       </template>
     </template>

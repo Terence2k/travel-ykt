@@ -21,7 +21,7 @@
 			<a-input v-model:value.trim="tableData.param.name" placeholder="请输入企业名称" allowClear />
 		</search-item>
 		<template #button>
-			<a-button @click="onQuery">查询</a-button>
+			<a-button @click="onQuery" v-permission="'查询'">查询</a-button>
 		</template>
 	</CommonSearch>
 	<CommonSearch v-show="activeKey === '2'">
@@ -40,7 +40,7 @@
 			<a-input v-model:value.trim="auditTableData.param.name" placeholder="请输入企业名称" allowClear />
 		</search-item>
 		<template #button>
-			<a-button @click="onQuery">查询</a-button>
+			<a-button @click="onQuery" v-permission="'查询'">查询</a-button>
 		</template>
 	</CommonSearch>
 	<CommonSearch v-show="activeKey === '3'">
@@ -59,7 +59,7 @@
 			<a-input v-model:value.trim="failTableData.param.name" placeholder="请输入企业名称" allowClear />
 		</search-item>
 		<template #button>
-			<a-button @click="onQuery">查询</a-button>
+			<a-button @click="onQuery" v-permission="'查询'">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="tabs_box">
@@ -73,11 +73,11 @@
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a @click="disable(record)" v-if="record.onOff">禁用</a>
-								<a v-else @click="enable(record)">启用</a>
-								<a @click="goTo(record, 'details')">查看</a>
-								<a @click="resetPassword(record.oid)">重置密码</a>
-								<a @click="edit(record)" v-show="editVisible(record.businessType)">编辑</a>
+								<a @click="disable(record)" v-if="record.onOff" v-permission="'已审核_禁用'">禁用</a>
+								<a v-else @click="enable(record)" v-permission="'已审核_启用'">启用</a>
+								<a @click="goTo(record, 'details')" v-permission="'已审核_查看'">查看</a>
+								<a @click="resetPassword(record.oid)" v-permission="'已审核_重置密码'">重置密码</a>
+								<a @click="edit(record)" v-show="editVisible(record.businessType)" v-permission="'已审核_编辑'">编辑</a>
 							</div>
 						</template>
 					</template>
@@ -97,7 +97,7 @@
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
 								<template v-if="record?.isAudit">
-									<a @click="auditEnterprise(record)">去审核</a>
+									<a @click="auditEnterprise(record)" v-permission="'待审核_去审核'">去审核</a>
 								</template>
 							</div>
 						</template>
@@ -118,7 +118,7 @@
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a @click="goTo(record, 'details')">查看</a>
+								<a @click="goTo(record, 'details')" v-permission="'审核驳回_查看'">查看</a>
 							</div>
 						</template>
 					</template>
@@ -131,7 +131,7 @@
 				</div>
 			</a-tab-pane>
 			<template #rightExtra>
-				<a-button type="primary" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
+				<a-button type="primary" @click="addOrUpdate({ handle: 'add' })" v-permission="'新增'">新增</a-button>
 			</template>
 		</a-tabs>
 	</div>
