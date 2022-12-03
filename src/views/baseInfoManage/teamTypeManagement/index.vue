@@ -1,7 +1,7 @@
 <template>
   <CommonTable :dataSource="tableData.data" :columns="columns">
     <template #button>
-      <a-button type="primary" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
+      <a-button type="primary" @click="addOrUpdate({ handle: 'add' })" v-permission="'新增'">新增</a-button>
     </template>
     <template #bodyCell="{ column, record, index }">
       <template v-if="column.key === 'index'">
@@ -21,18 +21,18 @@
       </template>
       <template v-if="column.key === 'action'">
         <div class="action-btns">
-          <a @click="addOrUpdate({ row: record, handle: 'update' })">编辑</a>
+          <a @click="addOrUpdate({ row: record, handle: 'update' })" v-permission="'编辑'">编辑</a>
           <a-popconfirm title="是否删除该团队类型？删除后，旅行社将无法填写该类型的行程单，请谨慎操作！" ok-text="确认" cancel-text="取消"
             @confirm="deleteTeam(record.oid)">
-            <a>删除</a>
+            <a v-permission="'删除'">删除</a>
           </a-popconfirm>
           <a-popconfirm title="是否禁用当前团队类型？禁用后，创建行程单时无法再选中此类型。" ok-text="确认" cancel-text="取消"
             @confirm="disable(0, record.oid)">
-            <a v-show="record.state === 1">禁用</a>
+            <a v-show="record.state === 1" v-permission="'禁用'">禁用</a>
           </a-popconfirm>
           <a-popconfirm title="是否启用当前团队类型？启用后，创建行程单时可以选中此类型。" ok-text="确认" cancel-text="取消"
             @confirm="disable(1, record.oid)">
-            <a v-show="record.state === 0">启用</a>
+            <a v-show="record.state === 0" v-permission="'启用'">启用</a>
           </a-popconfirm>
         </div>
       </template>
