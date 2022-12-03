@@ -334,3 +334,25 @@ export const disabledRangeTime = (start: any, end: any) => {
     };
 	}
 };
+
+// tab页是否有权限
+export const getTabPermission = (tabName: any) => {
+  const { sysMenuVos } = getUserInfo();
+
+  // 获取当前路由，结果示例: paths: ['旅行社管理', '接团行程管理']
+  // start
+  let paths = [];
+  paths = router.currentRoute.value.matched.map((item: any) => item.meta.title);
+  // end
+
+  console.log('paths:', paths);
+  
+  let targetMenu: any = sysMenuVos;
+  paths.forEach((item: any) => {
+    let res = targetMenu.find((i: any) => i.menuName == item);
+    if (res?.childMenuList && res.menuName != tabName) {
+      targetMenu = targetMenu.find((i: any) => i.menuName == item).childMenuList;
+    }
+  })
+  return targetMenu.some((item: any) => item.menuName === tabName);
+}

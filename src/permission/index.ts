@@ -1,5 +1,3 @@
-console.log('登录');
-
 let targetMenu: any;
 // btnValue: 按钮名字,tabValue: tab页名
 const treeForeach = (tree: any, btnValue: any, tabValue?: any) => {
