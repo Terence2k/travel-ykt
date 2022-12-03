@@ -27,7 +27,7 @@
 		</CommonSearch>
 
 		<a-tabs v-model:activeKey="activeKey">
-			<a-tab-pane v-for="item in pages" :key="item.value" :tab="item.label">
+			<a-tab-pane v-for="item in filterPages" :key="item.value" :tab="item.label">
 				<!--  v-if="showAddBtn" -->
 				<div class="d-flex justify-content-end" v-if="showAddBtn">
 					<a-button @click="goToPath(GroupType.Cooperation)" type="primary" style="margin-right: 20px">+协作填报</a-button>
@@ -53,7 +53,7 @@ import cancellation from './travelList/cancellation.vue';
 
 import { traveListParams, useTravelStore } from '@/stores/modules/travelManagement';
 import { GroupStatus, GroupType } from '@/enum';
-import { getUserInfo } from '@/utils/util';
+import { getUserInfo, getTabPermission } from '@/utils/util';
 import { ROLE } from '@/constant';
 import api from '@/api';
 import { Field } from '@/type';
@@ -128,6 +128,8 @@ const pages = [
 		chart: 'overtime',
 	},
 ];
+const filterPages = pages.filter((item: any) => getTabPermission(item.label));
+activeKey.value = filterPages[0].value;
 
 const goToPath = (type: number) => {
 	router.push({

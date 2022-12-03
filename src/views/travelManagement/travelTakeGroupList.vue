@@ -27,7 +27,7 @@
 		</CommonSearch>
 
 		<a-tabs v-model:activeKey="activeKey">
-			<a-tab-pane v-for="item in pages" :key="item.value" :tab="item.label">
+			<a-tab-pane v-for="item in filterPages" :key="item.value" :tab="item.label">
 				<component :onCheck="check" :is="item.name"></component>
 			</a-tab-pane>
 		</a-tabs>
@@ -47,7 +47,7 @@ import overtime from './travelTakeGroupList/overtime.vue';
 
 import { traveListParams, useTravelStore } from '@/stores/modules/travelManagement';
 import { TakeGroupStatus, GroupType } from '@/enum';
-import { getUserInfo } from '@/utils/util';
+import { getUserInfo, getTabPermission } from '@/utils/util';
 import { ROLE } from '@/constant';
 import api from '@/api';
 import { TakeGroupField } from '@/type';
@@ -116,6 +116,8 @@ const pages = [
 		chart: 'overtime',
 	},
 ];
+const filterPages = pages.filter((item: any) => getTabPermission(item.label));
+activeKey.value = filterPages[0].value;
 
 const goToPath = (type: number) => {
 	router.push({
