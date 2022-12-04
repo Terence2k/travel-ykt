@@ -42,8 +42,10 @@
         name="menuIds"
       >
         <a-tree
+          v-if="dialogVisible"
           v-model:checkedKeys="checkedKeys"
           checkable
+          :selectable="false"
           :tree-data="menuTreeDate"
           :field-names="fieldNames"
         >
