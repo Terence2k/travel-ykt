@@ -16,13 +16,13 @@
       <a-input v-model:value="tableData.param.name" placeholder="请输入导游证号" />
     </search-item>
     <template #button>
-      <a-button @click="onSearch">查询</a-button>
+      <a-button @click="onSearch" v-permission="'查询'">查询</a-button>
     </template>
   </CommonSearch>
   <CommonTable :dataSource="tableData.data" :columns="columns">
     <template #button>
-      <a-button type="primary" style="margin-right:20px">导出</a-button>
-      <a-button type="primary" @click="addTourGuide">委派新导游</a-button>
+      <a-button type="primary" style="margin-right:20px" v-permission="'导出'">导出</a-button>
+      <a-button type="primary" @click="addTourGuide" v-permission="'委派新导游'">委派新导游</a-button>
     </template>
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'businessLicenseUrl'">
@@ -30,12 +30,12 @@
       </template>
       <template v-if="column.key === 'action'">
         <div class="action-btns">
-          <a @click="viewProfile">查看资料</a>
+          <a @click="viewProfile" v-permission="'查看资料'">查看资料</a>
           <a-popconfirm title="确认取消委派吗?" ok-text="确认" cancel-text="取消" @confirm="cancelDelegate(record.oid)">
-            <a>取消委派</a>
+            <a v-permission="'取消委派'">取消委派</a>
           </a-popconfirm>
           <a-popconfirm title="确认撤回邀请吗?" ok-text="确认" cancel-text="取消" @confirm="cancelInvitation(record.oid)">
-            <a>撤回邀请</a>
+            <a v-permission="'撤回邀请'">撤回邀请</a>
           </a-popconfirm>
         </div>
       </template>
