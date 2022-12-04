@@ -21,8 +21,8 @@
 			</search-item>
 
 			<template #button>
-				<a-button style="margin-right: 30px" @click="reset">重置</a-button>
-				<a-button @click="onSearch">查询</a-button>
+				<a-button style="margin-right: 30px" @click="reset" v-permission="'重置'">重置</a-button>
+				<a-button @click="onSearch" v-permission="'查询'">查询</a-button>
 			</template>
 		</CommonSearch>
 
@@ -30,8 +30,8 @@
 			<a-tab-pane v-for="item in filterPages" :key="item.value" :tab="item.label">
 				<!--  v-if="showAddBtn" -->
 				<div class="d-flex justify-content-end" v-if="showAddBtn">
-					<a-button @click="goToPath(GroupType.Cooperation)" type="primary" style="margin-right: 20px">+协作填报</a-button>
-					<a-button @click="goToPath(GroupType.NonCooperation)" type="primary" style="margin-right: 20px">+非协作填报</a-button>
+					<a-button @click="goToPath(GroupType.Cooperation)" type="primary" style="margin-right: 20px" v-permission="'协作填报'">+协作填报</a-button>
+					<a-button @click="goToPath(GroupType.NonCooperation)" type="primary" style="margin-right: 20px" v-permission="'非协作填报'">+非协作填报</a-button>
 				</div>
 				<component :onCheck="check" :is="item.name"></component>
 			</a-tab-pane>
@@ -129,7 +129,8 @@ const pages = [
 	},
 ];
 const filterPages = pages.filter((item: any) => getTabPermission(item.label));
-activeKey.value = filterPages[0].value;
+console.log('filterPages:', filterPages)
+activeKey.value = filterPages.length ? filterPages[0].value : pages[0].value;
 
 const goToPath = (type: number) => {
 	router.push({

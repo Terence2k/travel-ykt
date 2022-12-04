@@ -117,7 +117,8 @@ const pages = [
 	},
 ];
 const filterPages = pages.filter((item: any) => getTabPermission(item.label));
-activeKey.value = filterPages[0].value;
+console.log('filterPages:', filterPages)
+activeKey.value = filterPages.length ? filterPages[0].value : pages[0].value;
 
 const goToPath = (type: number) => {
 	router.push({
