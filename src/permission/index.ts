@@ -10,9 +10,11 @@ const treeForeach = (tree: any, btnValue: any, tabValue?: any) => {
       findFatherMenu(userInfo.sysMenuVos, item.parentId);
       // 通过当前路由地址匹配父级菜单是否一致
       if (targetMenu && !tabValue) return window.location.href.split('/#')[1].indexOf(targetMenu.url) !== -1;
-      if (targetMenu && tabValue) return window.location.href.split('/#')[1].indexOf(targetMenu.url) !== -1
-      && 
-      targetMenu.childMenuList.some((item: any) => item.menuName === tabValue);
+      if (targetMenu && tabValue) {
+        let tabMenu = targetMenu.childMenuList.find((item: any) => item.menuName === tabValue);
+        return window.location.href.split('/#')[1].indexOf(targetMenu.url) !== -1
+        && tabMenu && tabMenu.childMenuList.some((item: any) => item.menuName === btnValue);
+      }
     }
     // 如有子菜单
     if (item.childMenuList?.length) return treeForeach(item.childMenuList, btnValue, tabValue);
