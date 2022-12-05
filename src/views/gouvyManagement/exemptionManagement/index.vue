@@ -3,24 +3,26 @@
 		<CommonSearch>
 			<search-item label="出团时间">
 				<a-space direction="vertical">
-					<a-date-picker  v-model:value="gouvyStore.gouvyList[chart].params.itineraryStartDate"/>
+					<a-date-picker v-model:value="gouvyStore.gouvyList[chart].params.itineraryStartDate" />
 				</a-space>
 			</search-item>
 			<search-item label="行程单号">
-				<a-input  v-model:value="gouvyStore.gouvyList[chart].params.itineraryNo" placeholder="请输入行程单号" />
+				<a-input v-model:value="gouvyStore.gouvyList[chart].params.itineraryNo" placeholder="请输入行程单号" />
 			</search-item>
 			<search-item label="旅行社">
-				<a-input  v-model:value="gouvyStore.gouvyList[chart].params.subTravelName" placeholder="请输入旅行社" />
+				<a-input v-model:value="gouvyStore.gouvyList[chart].params.subTravelName" placeholder="请输入旅行社" />
 			</search-item>
 			<template #button>
-				<a-button @click="reset()" style="margin-right:30px">重置</a-button>
+				<a-button @click="reset()" style="margin-right: 30px">重置</a-button>
 				<a-button @click="onSearch()">查询</a-button>
 			</template>
 		</CommonSearch>
 		<div class="trave-contaner">
 			<a-tabs v-model:activeKey="activeKey">
-				<a-tab-pane v-for="item in pages" :key="item.value" :tab="item.label">
-					<component :onCheck="check" :is="item.name"></component>
+				<a-tab-pane v-for="item in filterPages" :key="item.value" :tab="item.label">
+					<!-- <a-tab-pane v-for="item in pages" :key="item.value" :tab="item.label">
+				</a-tab-pane> -->
+				<component :onCheck="check" :is="item.name"></component>
 				</a-tab-pane>
 			</a-tabs>
 		</div>
@@ -34,9 +36,10 @@ import { GouvyStatus } from '@/enum';
 import wait from './wait.vue';
 import success from './success.vue';
 import refuse from './refuse.vue';
-import { useGouvyStore,gouvyListParams } from '@/stores/modules/gouvy';
+import { useGouvyStore, gouvyListParams } from '@/stores/modules/gouvy';
 import { cloneDeep } from 'lodash';
 import { Field } from './type/index';
+import { getUserInfo, getTabPermission } from '@/utils/util';
 const gouvyStore = useGouvyStore();
 const activeKey = ref(GouvyStatus.waits);
 const check = ref(false);
@@ -66,6 +69,7 @@ const pages = [
 		chart: 'refuse',
 	},
 ];
+const filterPages = pages.filter((item: any) => getTabPermission(item.label));
 const chart = computed(() => pages.filter((it: any) => it.value === activeKey.value)[0].chart as Field);
 //查询
 const onSearch = async () => {
@@ -91,7 +95,6 @@ const reset = () => {
 	::v-deep(.ant-tabs-nav) {
 		padding: 16px 20px;
 	}
-
 }
 
 .footer {
