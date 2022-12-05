@@ -95,6 +95,7 @@
 		<Audit ref="auditRef" @finish="init" />
 		<Revoke ref="revokeRef" @finish="init" />
 		<Detail ref="detailRef" />
+		<CheckDetail ref="ckeckDetailRef" />
 	</a-spin>
 </template>
 
@@ -109,7 +110,7 @@ import viewTable from './components/table.vue';
 import Audit from './components/audit.vue';
 import Revoke from './components/revoke.vue';
 import Detail from './components/detaiil.vue';
-// import CheckDetail from './components/checkDetail.vue';
+import CheckDetail from './components/checkDetail.vue';
 import { shijianc, shijiancTOYMD } from '@/utils/formatTimes';
 import { useScenicSpotOption } from '@/stores/modules/scenicSpot';
 
@@ -283,10 +284,16 @@ const checkPower = async (value: any) => {
 };
 
 const detailRef = ref();
+const ckeckDetailRef = ref();
 
 const check = async (record: any) => {
 	// let valid = await checkPower(record);
-	detailRef.value.open(record.oid);
+
+	if (record.revokeType === 1) {
+		ckeckDetailRef.value.open(record.oid);
+	} else if (record.revokeType === 2) {
+		detailRef.value.open(record.oid);
+	}
 	// revokeRefOpen(record.oid);
 
 	// route.push({ path: '/scenic-spot/order-manage/edit', query: { oid: record.orderNo } });

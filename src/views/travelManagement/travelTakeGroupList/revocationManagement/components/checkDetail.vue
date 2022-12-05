@@ -1,21 +1,53 @@
 <template>
 	<BaseModal :modelValue="modelValue" title="行程单整团撤销审核" @cancel="cancel" width="1000px">
 		<FormWrap>
-			<FormItem title="团队类型" :iValue="state.detail.itinerarySubmitRevokeBasicVo.teamTypeName" />
-			<FormItem title="线路名称" :iValue="state.detail.itinerarySubmitRevokeBasicVo.routeName" />
-			<FormItem title="行程单编号" :iValue="state.detail.itinerarySubmitRevokeBasicVo.oldItineraryNo" />
-			<FormItem title="组团社" :iValue="state.detail.itinerarySubmitRevokeBasicVo.travelName" />
-			<FormItem title="地接社" :iValue="state.detail.itinerarySubmitRevokeBasicVo.subTravelName" />
-			<FormItem
-				title="出散团时间"
-				:iValue="'' + state.detail.itinerarySubmitRevokeBasicVo.startDate + '-' + state.detail.itinerarySubmitRevokeBasicVo.endDate"
-			/>
-			<FormItem title="团客人数" :iValue="state.detail.itinerarySubmitRevokeBasicVo.originTouristCount + '人'" />
-			<FormItem title="原始减免人数" :iValue="state.detail.itinerarySubmitRevokeBasicVo.originTouristCount + '人'" />
-			<FormItem title="古维管理费" :iValue="'' + state.detail.submitRevokeNewItineraryInfoVo.maintainFee / 100 + '元'" />
-			<FormItem title="撤销时间" :iValue="shijianc(state.detail.itinerarySubmitRevokeBasicVo.revokeTime)" />
-			<FormItem title="重提后变更人数" :iValue="state.detail.itinerarySubmitRevokeBasicVo.newTouristCount + '人'" />
-			<FormItem title="撤销原因" :iValue="state.detail.itinerarySubmitRevokeBasicVo.revokeReason" />
+			<FormItem title="团队类型" :iValue="state.detail.teamTypeName" />
+			<FormItem title="线路名称" :iValue="state.detail.routeName" />
+			<FormItem title="行程单编号" :iValue="state.detail.itineraryNo" />
+			<FormItem title="地接社" :iValue="state.detail.subTravelName" />
+			<FormItem title="出散团时间" :iValue="'' + state.detail.startDate + '-' + state.detail.endDate" />
+			<FormItem title="团客人数" :iValue="state.detail.originTouristCount + '人'" />
+			<FormItem title="古维管理费" :iValue="'' + state.detail.maintainFee / 100 + '元'" />
+			<FormItem title="综费产品" :iValue="state.detail.productFee" />
+
+			<tr class="row">
+				<td class="key">景区预定</td>
+				<td class="value">
+					<p v-for="(item, index) in state.detail.ticketList" :key="index">
+						<span>{{ state.detail.ticketList[index].scenicName }}，</span>
+						<span>{{ state.detail.ticketList[index].ticketName }}</span>
+						<span>{{ state.detail.ticketList[index].reservePeopleCount }}张，</span>
+						<span
+							>费用总计
+							<span style="color: red">{{
+								state.detail.ticketList[index].reservePeopleCount * (state.detail.ticketList[index].unitPrice / 100)
+							}}</span
+							>元；</span
+						>
+					</p>
+				</td>
+			</tr>
+			<tr class="row">
+				<td class="key">酒店预定：</td>
+				<td class="value">
+					<div style="margin-bottom: 20px">
+						<p v-for="(item, index) in state.detail.hotelList" :key="index">
+							<span>{{ state.detail.hotelList[index].hotelName }}，</span>
+							<span v-for="(item, i) in state.detail.hotelList[index].roomTypeList" :key="i">{{
+								state.detail.hotelList[index].roomTypeList[i].roomTypeName
+							}}</span>
+							<span>{{ state.detail.hotelList[index].roomCount }}间</span>
+							<span>{{ dayjs(state.detail.hotelList[index].endDate).diff(state.detail.hotelList[index].startDate, 'day') }}天，</span>
+							<span
+								>费用总计 <span style="color: red">{{ state.detail.hotelList[index].orderFee / 100 }}</span
+								>元；</span
+							>
+						</p>
+					</div>
+				</td>
+			</tr>
+
+			<FormItem title="撤销原因" :iValue="state.detail.revokeReason" />
 			<tr class="row">
 				<td class="key">附件</td>
 				<td class="value">
@@ -26,14 +58,11 @@
 					</div>
 				</td>
 			</tr>
-			<FormItem title="审核结果" :iValue="state.detail.itinerarySubmitRevokeBasicVo.revokeReason" />
 		</FormWrap>
 
 		<template v-slot:footer>
 			<div class="footer-wrap">
-				<!-- <a-button @click="sendAudit(3)">驳回</a-button> -->
-				<!-- <a-button type="primary" @click="sendAudit(2)">同意撤销</a-button> -->
-				<a-button @click="cancel">关闭</a-button>
+				<a-button @click="cancel">取消</a-button>
 			</div>
 		</template>
 	</BaseModal>
@@ -46,7 +75,6 @@ import { message } from 'ant-design-vue';
 import FormWrap from '@/components/common/formWrap.vue';
 import FormItem from '@/components/common/formItem.vue';
 import { Form } from 'ant-design-vue';
-import { shijianc, shijiancTOYMD } from '@/utils/formatTimes';
 import dayjs, { Dayjs } from 'dayjs';
 
 const useForm = Form.useForm;
@@ -54,29 +82,25 @@ const modelValue = ref(false);
 const route = useRouter();
 
 const picList = computed(() => {
-	return state.detail.itinerarySubmitRevokeBasicVo?.revokeAttachment?.split(',') || [];
+	return state.detail?.revokeAttachment?.split(',') || [];
 });
 
 const state = reactive({
 	detail: {
-		itinerarySubmitRevokeBasicVo: {
-			teamTypeName: '',
-			itineraryNo: '',
-			routeName: '',
-			travelName: '',
-			travelOperatorName: '',
-			travelOperatorPhone: '',
-			subTravelName: '',
-			endDate: '',
-			touristCount: '',
-			maintainFee: '',
-			productFee: '',
-			hotelFee: '',
-			ticketFee: '',
-			cateringFee: '',
-		},
-		submitRevokeOldItineraryInfoVo: {},
-		submitRevokeNewItineraryInfoVo: {},
+		teamTypeName: '',
+		itineraryNo: '',
+		routeName: '',
+		travelName: '',
+		travelOperatorName: '',
+		travelOperatorPhone: '',
+		subTravelName: '',
+		endDate: '',
+		touristCount: '',
+		maintainFee: '',
+		productFee: '',
+		hotelFee: '',
+		ticketFee: '',
+		cateringFee: '',
 	},
 });
 //二次确定
@@ -198,7 +222,7 @@ const open = (id: number | null) => {
 };
 
 const initInfo = async (id: number | null) => {
-	let res = await api.travelManagement.getRevokeAuditDetail(id);
+	let res = await api.travelManagement.getAuditDetail(id);
 	state.detail = res;
 	console.log(res);
 };
