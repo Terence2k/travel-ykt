@@ -10,7 +10,7 @@
       <a-input v-model:value="value.operatorName" placeholder="请输入操作员姓名" allowClear />
     </search-item>
     <template #button>
-      <a-button @click="onQuery">查询</a-button>
+      <a-button @click="onQuery" v-permission="'查询'">查询</a-button>
     </template>
   </CommonSearch>
 </template>

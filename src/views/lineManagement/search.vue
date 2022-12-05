@@ -10,7 +10,7 @@
       <a-input v-model:value="value.lineName" placeholder="请输入线路名称" allowClear />
     </search-item>
     <template #button>
-      <a-button @click="onQuery">查询</a-button>
+      <a-button @click="onQuery" v-permission="'查询'">查询</a-button>
     </template>
   </CommonSearch>
 </template>

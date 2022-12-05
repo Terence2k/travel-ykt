@@ -8,7 +8,7 @@
 						>条待审核的消息</span
 					>
 					<template v-else><span class="title">暂无权限查看此页面</span></template>
-					<a-button class="button-create-item">导出</a-button>
+					<a-button class="button-create-item" v-permission="'导出'">导出</a-button>
 				</div>
 				<div class="table-container">
 					<CommonTable :columns="columns" :rowSelection="rowSelection" :dataSource="dataSource">
@@ -20,7 +20,7 @@
 							</template>
 							<template v-if="column.dataIndex === 'actions'">
 								<div class="cell-actions">
-									<span @click="openNewPageByAction(record?.hotelId, record)" class="item"> 进入审核 </span>
+									<span @click="openNewPageByAction(record?.hotelId, record)" class="item" v-permission="'进入审核'">进入审核</span>
 								</div>
 							</template>
 						</template>

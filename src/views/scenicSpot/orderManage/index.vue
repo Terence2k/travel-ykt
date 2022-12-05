@@ -67,12 +67,12 @@
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns" v-if="state.tableData.param.orderStatus !== 2">
-							<a href="javascript:;" @click="toDetail(record)">查看</a>
-							<a href="javascript:;" @click="toVerifivcation(record)">核销记录</a>
+							<a href="javascript:;" v-permission="`${powerFont}` + '_查看'" @click="toDetail(record)">查看</a>
+							<a href="javascript:;" v-permission="`${powerFont}` + '_核销记录'" @click="toVerifivcation(record)">核销记录</a>
 						</div>
 						<div class="action-btns" v-else>
-							<a href="javascript:;" @click="applyTchange">申请改刷</a>
-							<a href="javascript:;" @click="toDetail(record)">查看</a>
+							<a href="javascript:;" v-permission="`${powerFont}` + '_申请改刷'" @click="applyTchange">申请改刷</a>
+							<a href="javascript:;" v-permission="`${powerFont}` + '_查看'" @click="toDetail(record)">查看</a>
 						</div>
 					</template>
 				</template>
@@ -120,6 +120,8 @@ interface writeOffStatusOptionsDataType {
 	3: string;
 	[-1]: string;
 }
+
+const powerFont = ref('全部');
 
 //核销状态
 let writeOffStatusOptionsData = reactive<writeOffStatusOptionsDataType>({
@@ -329,6 +331,30 @@ const applyTchange = () => {
 //改变状态
 const changePageStatus = (e: any) => {
 	state.tableData.param.orderStatus = e;
+	switch (e) {
+		case '':
+			powerFont.value = '全部';
+			break;
+		case 0:
+			powerFont.value = '待预定';
+			break;
+		case 1:
+			powerFont.value = '已预定';
+			break;
+		case 2:
+			powerFont.value = '已核销';
+			break;
+		case 3:
+			powerFont.value = '已结算';
+			break;
+		case -1:
+			powerFont.value = '已作废';
+			break;
+		default:
+			powerFont.value = '全部';
+			break;
+	}
+
 	search();
 };
 //重置

@@ -2,27 +2,30 @@
 	<div>
 		<CommonSearch>
 			<search-item label="接团社">
-				<a-input  v-model:value="gouvyStore.revocationManagementList[chart].params.subTravelName" placeholder="请输入接团社" />
+				<a-input v-model:value="gouvyStore.revocationManagementList[chart].params.subTravelName" placeholder="请输入接团社" />
 			</search-item>
 			<search-item label="出团时间">
 				<a-space direction="vertical">
-					<a-date-picker  v-model:value="gouvyStore.revocationManagementList[chart].params.itineraryStartDate"/>
+					<a-date-picker v-model:value="gouvyStore.revocationManagementList[chart].params.itineraryStartDate" />
 				</a-space>
 			</search-item>
 			<search-item label="行程单号">
-				<a-input  v-model:value="gouvyStore.revocationManagementList[chart].params.itineraryNo" placeholder="请输入行程单号" />
+				<a-input v-model:value="gouvyStore.revocationManagementList[chart].params.itineraryNo" placeholder="请输入行程单号" />
 			</search-item>
 			<search-item label="行程线路">
-				<a-input  v-model:value="gouvyStore.revocationManagementList[chart].params.routeName" placeholder="请输入行程线路" />
+				<a-input v-model:value="gouvyStore.revocationManagementList[chart].params.routeName" placeholder="请输入行程线路" />
 			</search-item>
 			<template #button>
-				<a-button @click="reset()" style="margin-right:30px">重置</a-button>
+				<a-button @click="reset()" style="margin-right: 30px">重置</a-button>
 				<a-button @click="onSearch()">查询</a-button>
 			</template>
 		</CommonSearch>
 		<div class="trave-contaner">
 			<a-tabs v-model:activeKey="activeKey">
-				<a-tab-pane v-for="item in pages" :key="item.value" :tab="item.label">
+				<!-- <a-tab-pane v-for="item in pages" :key="item.value" :tab="item.label">
+					<component :onCheck="check" :is="item.name"></component>
+				</a-tab-pane> -->
+				<a-tab-pane v-for="item in filterPages" :key="item.value" :tab="item.label">
 					<component :onCheck="check" :is="item.name"></component>
 				</a-tab-pane>
 			</a-tabs>
@@ -37,14 +40,15 @@ import { revocationStatus } from '@/enum';
 import wait from './wait.vue';
 import success from './success.vue';
 import refuse from './refuse.vue';
-import { useGouvyStore,revocationManagementParams } from '@/stores/modules/gouvy';
+import { useGouvyStore, revocationManagementParams } from '@/stores/modules/gouvy';
 import { cloneDeep } from 'lodash';
 import { Fieold } from './type/index';
+import { getUserInfo, getTabPermission } from '@/utils/util';
 const gouvyStore = useGouvyStore();
 const activeKey = ref(revocationStatus.waits);
 const check = ref(false);
 const params = reactive({
-	subTravelName:'',
+	subTravelName: '',
 	itineraryStartDate: '',
 	itineraryNo: '',
 	routeName: '',
@@ -70,6 +74,7 @@ const pages = [
 		chart: 'refuse',
 	},
 ];
+const filterPages = pages.filter((item: any) => getTabPermission(item.label));
 const chart = computed(() => pages.filter((it: any) => it.value === activeKey.value)[0].chart as Fieold);
 //查询
 const onSearch = async () => {
@@ -81,7 +86,7 @@ const onSearch = async () => {
 	gouvyStore.revocationManagementList[chartField].params.subTravelName = storeParams.subTravelName;
 	let params = cloneDeep(gouvyStore.revocationManagementList[chartField].params);
 	const res = await api.gouvyRepealNreapplyPageList(params);
-	console.log(res,'13231')
+	console.log(res, '13231');
 	gouvyStore.setRevocationManagementList(res, chartField);
 };
 const reset = () => {
@@ -96,7 +101,6 @@ const reset = () => {
 	::v-deep(.ant-tabs-nav) {
 		padding: 16px 20px;
 	}
-
 }
 
 .footer {

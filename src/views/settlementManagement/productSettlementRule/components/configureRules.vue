@@ -3,6 +3,7 @@
 		<div class="list-btn">
 			<a-button type="primary" class="success" @click="toAddPage()" style="margin-right: 10px">新增</a-button>
 			<a-button type="primary" class="success" @click="showTip('all', undefined)">删除</a-button>
+			<span> {{ getProductKeyName }} </span>
 		</div>
 		<a-spin size="large" :spinning="state.tableData.loading">
 			<CommonTable
@@ -43,8 +44,8 @@
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a href="javascript:;" @click="toCheck(record)">查看</a>
-							<a href="javascript:;" @click="toEditPage(record)">编辑</a>
+							<a href="javascript:;" v-permission="`${getProductKeyName}_配置规则`" @click="toCheck(record)">查看</a>
+							<a href="javascript:;" @click="toEditPage(record)" v-permission="`${getProductKeyName}_编辑`">编辑</a>
 							<a v-if="record.ruleStatus === 1" href="javascript:;" @click="showTip('state', 0, record)">禁用</a>
 							<a v-if="record.ruleStatus === 0" href="javascript:;" @click="showTip('state', 1, record)">启用</a>
 							<a href="javascript:;" @click="showTip('index', index, record)">删除</a>

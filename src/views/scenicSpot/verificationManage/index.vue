@@ -17,12 +17,12 @@
 					>
 					</a-select>
 				</div>
-				<a-button @click="searchByFilter" class="button-search item">查询</a-button>
+				<a-button @click="searchByFilter" class="button-search item" v-permission="'查询'">查询</a-button>
 			</div>
 
 			<div class="table-bar">
 				<div class="flex-container">
-					<a-button class="button-create-item" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
+					<a-button class="button-create-item" @click="addOrUpdate({ handle: 'add' })" v-permission="'新增'">新增</a-button>
 				</div>
 				<div class="table-container">
 					<CommonTable :dataSource="dataSource" :columns="columns">
@@ -44,8 +44,8 @@
 							</template> -->
 							<template v-if="column.dataIndex === 'actions'">
 								<div class="cell-actions">
-									<span class="item" @click="addOrUpdate({ row: record, handle: 'update' })">编辑</span>
-									<span class="item" @click="openDelModal(record?.oid)">删除</span>
+									<span class="item" @click="addOrUpdate({ row: record, handle: 'update' })" v-permission="'编辑'">编辑</span>
+									<span class="item" @click="openDelModal(record?.oid)" v-permission="'删除'">删除</span>
 								</div>
 							</template>
 						</template>
