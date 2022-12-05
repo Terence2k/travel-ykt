@@ -4,7 +4,7 @@
   <div class="tabs_box">
     <a-badge :count="tableData1.total" class="rebadge" />
     <a-tabs v-model:activeKey="activeKey" @change="tabsChange">
-      <a-tab-pane key="1" tab="已审核">
+      <a-tab-pane key="1" tab="已审核" v-if="getTabPermission('已审核')">
         <CommonTable :dataSource="tableData.data" :columns="columns">
           <template #bodyCell="{ column, record, index }">
             <template v-if="column.key === 'index'">
@@ -16,8 +16,8 @@
             </template>
             <template v-if="column.key === 'action'">
               <div class="action-btns">
-                <a @click="checkDetails(record)">查看</a>
-                <a @click="addOrUpdate({ row: record, handle: 'update' })">修改</a>
+                <a @click="checkDetails(record)" v-permission="'已审核_查看'">查看</a>
+                <a @click="addOrUpdate({ row: record, handle: 'update' })" v-permission="'已审核_修改'">修改</a>
                 <!-- <a-popconfirm title="是否要禁用该操作员？禁用后该操作员不可再登录一卡通平台。" ok-text="确认" cancel-text="取消"
                   @confirm="disable(0, record.userId)">
                   <a v-show="record.enableSatus">禁用</a>
@@ -36,7 +36,7 @@
             :total="tableData.total" @change="onHandleCurrentChange" @showSizeChange="pageSideChange" />
         </div>
       </a-tab-pane>
-      <a-tab-pane key="2" tab="待审核">
+      <a-tab-pane key="2" tab="待审核" v-if="getTabPermission('待审核')">
         <CommonTable :dataSource="tableData1.data" :columns="columns1">
           <template #bodyCell="{ column, record, index }">
             <template v-if="column.key === 'index'">
@@ -49,9 +49,9 @@
             <template v-if="column.key === 'action'">
               <div class="action-btns">
                 <template v-if="isSuper">
-                  <a @click="auditStore(record)">去审核</a>
+                  <a @click="auditStore(record)" v-permission="'待审核_去审核'">去审核</a>
                 </template>
-                <a @click="checkDetails(record)">查看</a>
+                <a @click="checkDetails(record)" v-permission="'待审核_查看'">查看</a>
               </div>
             </template>
           </template>
@@ -63,7 +63,7 @@
         </div>
       </a-tab-pane>
       <template #rightExtra>
-        <a-button type="primary" @click="addOrUpdate({ handle: 'add' })">新建账号</a-button>
+        <a-button type="primary" @click="addOrUpdate({ handle: 'add' })" v-permission="'新建账号'">新建账号</a-button>
       </template>
     </a-tabs>
   </div>
@@ -206,7 +206,7 @@ import { message } from 'ant-design-vue';
 import { useRouter, useRoute } from 'vue-router';
 import type { Rule } from 'ant-design-vue/es/form';
 import { cloneDeep } from "lodash";
-import { any } from 'vue-types';
+import { getTabPermission } from '@/utils/util';
 const router = useRouter();
 const route = useRoute()
 const state = reactive({

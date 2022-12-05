@@ -11,8 +11,8 @@
 			</a-select>
 		</SearchItem>
 		<template #button>
-			<a-button @click="reset()" class="btn">重置</a-button>
-			<a-button @click="onSearch()">查询</a-button>
+			<a-button @click="reset()" class="btn" v-permission="'重置'">重置</a-button>
+			<a-button @click="onSearch()" v-permission="'查询'">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
@@ -20,7 +20,7 @@
 			<template #bodyCell="{ column, index, record }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a @click="SetUp({ row: record })">设置核销时间段</a>
+						<a @click="SetUp({ row: record })" v-permission="'设置核销时间段'">设置核销时间段</a>
 					</div>
 				</template>
 				<template v-if="column.key === 'verificationType'">

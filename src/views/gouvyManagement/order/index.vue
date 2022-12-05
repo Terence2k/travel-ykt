@@ -21,22 +21,22 @@
 			<a-input placeholder="请输入行程单号" style="width: 200px" v-model:value="state.tableData.param.itineraryNo" />
 		</SearchItem>
 		<template #button>
-			<a-button @click="reset">重置</a-button>
-			<a-button class="btn" @click="onSearch">查询</a-button>
+			<a-button @click="reset" v-permission="'重置'">重置</a-button>
+			<a-button class="btn" @click="onSearch" v-permission="'查询'">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
 		<div class="list-btn">
-			<a-button type="primary" class="success" @click="download">导出</a-button>
+			<a-button type="primary" class="success" @click="download" v-permission="'导出'">导出</a-button>
 			<!-- <a-button type="primary" class="btn" @click="print">批量打印票据</a-button> -->
 		</div>
 		<CommonTable :dataSource="state.tableData.data" :columns="columns" :scrollY="false">
 			<template #bodyCell="{ column, index, record }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a href="javascript:;" @click="toSee(record.oid)">查看</a>
-						<a href="javascript:;" @click="change">去改刷</a>
-						<a href="javascript:;" @click="strong()">去强刷</a>
+						<a href="javascript:;" @click="toSee(record.oid)" v-permission="'查看'">查看</a>
+						<a href="javascript:;" @click="change" v-permission="'去改刷'">去改刷</a>
+						<a href="javascript:;" @click="strong()" v-permission="'去强刷'">去强刷</a>
 					</div>
 				</template>
 				<template v-if="column.key === 'itineraryStartDate'">

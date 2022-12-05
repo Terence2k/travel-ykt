@@ -26,13 +26,13 @@
 			<a-range-picker @change="timeChange" value-format="YYYY-MM-DD HH:mm:ss"/>
 		</search-item>
 		<template #button>
-			<a-button @click="initList">查询</a-button>
+			<a-button @click="initList" v-permission="'查询'">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
 		<!-- 等待行程单枚举获取完成 -->
 		<a-tabs v-model:activeKey="activeKey" v-if="options.itineraryStatus.length > 0">
-			<a-tab-pane v-for="(item, index) in pages" :key="index" :tab="item.label">
+			<a-tab-pane v-for="(item, index) in filterPages" :key="index" :tab="item.label">
 				<component ref="listRef" :is="item.name" v-if="index == activeKey" :params="state.tableData.param" :status="getItineraryStatus(item.codeName)"></component>
 			</a-tab-pane>
 		</a-tabs>
@@ -49,6 +49,7 @@ import examine from './examine/examine.vue';
 import settlement from './settlement/settlement.vue';
 import transferred from './transferred/transferred.vue';
 import { settlementOptions } from '@/stores/modules/settlement';
+import { getTabPermission } from '@/utils';
 import { log } from 'console';
 const options = settlementOptions();
 
@@ -91,6 +92,8 @@ const pages = [
 		codeName: 'HAD_APPLY_TRANSFER'
 	},
 ];
+const filterPages = pages.filter((item: any) => getTabPermission(item.label));
+// activeKey.value = filterPages.length ? filterPages[0].value : pages[0].value;
 
 const state = reactive({
 	tableData: {

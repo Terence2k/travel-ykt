@@ -23,15 +23,15 @@
 			</a-select>
 		</search-item>
 		<search-item label="结算时间">
-			<a-range-picker v-model:value="state.times" @change="timeChange" />
+			<a-range-picker v-model:value="state.times" @change="timeChange"/>
 		</search-item>
 		<template #button>
-			<a-button @click="initList">查询</a-button>
+			<a-button @click="initList" v-permission="'查询'">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
 		<div class="list-btn">
-			<a-button type="primary" class="success">导出</a-button>
+			<a-button type="primary" class="success" v-permission="'导出'">导出</a-button>
 		</div>
 	</div>
 	<div>
