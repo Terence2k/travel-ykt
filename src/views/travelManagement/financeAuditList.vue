@@ -103,7 +103,8 @@ const onSearch = async () => {
 	if (params.status == 0) {
 		const res = await travelStore.getChangeItineraryList(params);
 		travelStore.setAuditList(res, chartField);
-	} else {
+	} 
+	else {
 		const res = await travelStore.getAuditList(params);
 		travelStore.setAuditList(res, chartField);
 	}

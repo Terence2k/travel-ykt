@@ -1,9 +1,10 @@
 <template>
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns">
-      <template #describe>
-        共<span class="color-red">{{state.total}}</span>条变更的行程单。其中待审核 <span class="color-red">{{state.total}}</span> 条。
-      </template>
+			<template #describe>
+				共<span class="color-red">{{ state.total }}</span
+				>条变更的行程单。其中待审核 <span class="color-red">{{ state.total }}</span> 条。
+			</template>
 			<template #bodyCell="{ column, text, index, record }">
 				<template v-if="column.key === 'index'">
 					<div>
@@ -12,7 +13,7 @@
 				</template>
 				<template v-if="column.key === 'newOrderAmount'">
 					<div>
-						{{accDiv(record.newOrderAmount,100)}}
+						{{ accDiv(record.newOrderAmount, 100) }}
 					</div>
 				</template>
 				<template v-if="column.key === 'action'">
@@ -35,26 +36,29 @@
 			<table class="info_table" cellpadding="16px" border="1">
 				<tr class="row">
 					<td class="key">行程单编号</td>
-					<td class="value">{{state.itineraryNo}}</td>
+					<td class="value">{{ state.itineraryNo }}</td>
 				</tr>
 				<tr class="row">
 					<td class="key">线路名称</td>
-					<td class="value">{{state.routeName}}</td>
+					<td class="value">{{ state.routeName }}</td>
 				</tr>
 				<tr class="row">
 					<td class="key">发团计调</td>
-					<td class="value">{{state.travelOperatorName}}</td>
+					<td class="value">{{ state.travelOperatorName }}</td>
 				</tr>
 				<tr class="row">
 					<td class="key">出散团时间</td>
-					<td class="value">{{state.startDate}}-{{state.endDate}} <span style="margin-left:10px;">({{dayjs(state.endDate).diff(state.startDate, 'day')}}天)</span></td>
+					<td class="value">
+						{{ state.startDate }}-{{ state.endDate }}
+						<span style="margin-left: 10px">({{ dayjs(state.endDate).diff(state.startDate, 'day') }}天)</span>
+					</td>
 				</tr>
 				<tr class="row">
 					<td class="key">团客人数</td>
-					<td class="value">{{state.touristCount}}</td>
+					<td class="value">{{ state.touristCount }}</td>
 				</tr>
 			</table>
-			<p style="margin-top:15px">地接社由请了行程变更，计调已同意。请审核金额变化:</p>
+			<p style="margin-top: 15px">地接社由请了行程变更，计调已同意。请审核金额变化:</p>
 			<table class="info_table" cellpadding="16px" border="1">
 				<tr class="row">
 					<td class="key">变更项目</td>
@@ -65,22 +69,34 @@
 					<td class="key">酒店</td>
 					<td class="value">
 						<div>
-							<p v-for="(item, index) in state.oldHotelList" :key="index">							
-							<span>{{ state.oldHotelList[index].hotelName }}，</span> 
-							<span v-for="(item, i) in state.oldHotelList[index].roomTypeList" :key="index">{{ state.oldHotelList[index].roomTypeList[i].roomTypeName }}</span>
-							<span>{{ state.oldHotelList[index].roomCount }}间</span>
-							<span>{{ dayjs(state.oldHotelList[index].endDate).diff(state.oldHotelList[index].startDate, 'day') }}天，</span>
-							<span>费用总计 <span style="color: red">{{ accDiv(state.oldHotelList[index].orderFee,100) }}</span>元；</span></p>
+							<p v-for="(item, index) in state.oldHotelList" :key="index">
+								<span>{{ state.oldHotelList[index].hotelName }}，</span>
+								<span v-for="(item, i) in state.oldHotelList[index].roomTypeList" :key="index">{{
+									state.oldHotelList[index].roomTypeList[i].roomTypeName
+								}}</span>
+								<span>{{ state.oldHotelList[index].roomCount }}间</span>
+								<span>{{ dayjs(state.oldHotelList[index].endDate).diff(state.oldHotelList[index].startDate, 'day') }}天，</span>
+								<span
+									>费用总计 <span style="color: red">{{ accDiv(state.oldHotelList[index].orderFee, 100) }}</span
+									>元；</span
+								>
+							</p>
 						</div>
 					</td>
 					<td class="value">
 						<div>
-							<p v-for="(item, index) in state.newHotelList" :key="index">							
-							<span>{{ state.newHotelList[index].hotelName }}，</span> 
-							<span v-for="(item, i) in state.newHotelList[index].roomTypeList" :key="index">{{ state.newHotelList[index].roomTypeList[i].roomTypeName }}</span>
-							<span>{{ state.newHotelList[index].roomCount }}间</span>
-							<span>{{ dayjs(state.newHotelList[index].endDate).diff(state.newHotelList[index].startDate, 'day') }}天，</span>
-							<span>费用总计 <span style="color: red">{{ accDiv(state.newHotelList[index].orderFee,100) }}</span>元；</span></p>
+							<p v-for="(item, index) in state.newHotelList" :key="index">
+								<span>{{ state.newHotelList[index].hotelName }}，</span>
+								<span v-for="(item, i) in state.newHotelList[index].roomTypeList" :key="index">{{
+									state.newHotelList[index].roomTypeList[i].roomTypeName
+								}}</span>
+								<span>{{ state.newHotelList[index].roomCount }}间</span>
+								<span>{{ dayjs(state.newHotelList[index].endDate).diff(state.newHotelList[index].startDate, 'day') }}天，</span>
+								<span
+									>费用总计 <span style="color: red">{{ accDiv(state.newHotelList[index].orderFee, 100) }}</span
+									>元；</span
+								>
+							</p>
 						</div>
 					</td>
 				</tr>
@@ -88,30 +104,44 @@
 					<td class="key">景区</td>
 					<td class="value">
 						<div>
-							<p v-for="(item, index) in state.oldTicketList" :key="index">							
-							<span>{{ state.oldTicketList[index].scenicName }}，</span> 
-							<span>{{ state.oldTicketList[index].ticketName }}</span>
-							<span>{{ state.oldTicketList[index].reservePeopleCount }}张，</span>
-							<span>费用总计 <span style="color: red">{{ accMul(state.oldTicketList[index].reservePeopleCount,accDiv(state.oldTicketList[index].unitPrice,100)) }}</span>元；</span></p>
+							<p v-for="(item, index) in state.oldTicketList" :key="index">
+								<span>{{ state.oldTicketList[index].scenicName }}，</span>
+								<span>{{ state.oldTicketList[index].ticketName }}</span>
+								<span>{{ state.oldTicketList[index].reservePeopleCount }}张，</span>
+								<span
+									>费用总计
+									<span style="color: red">{{
+										accMul(state.oldTicketList[index].reservePeopleCount, accDiv(state.oldTicketList[index].unitPrice, 100))
+									}}</span
+									>元；</span
+								>
+							</p>
 						</div>
 					</td>
 					<td class="value">
 						<div>
-							<p v-for="(item, index) in state.newTicketList" :key="index">							
-							<span>{{ state.newTicketList[index].scenicName }}，</span> 
-							<span>{{ state.newTicketList[index].ticketName }}</span>
-							<span>{{ state.newTicketList[index].reservePeopleCount }}张，</span>
-							<span>费用总计 <span style="color: red">{{ accMul(state.newTicketList[index].reservePeopleCount,accDiv(state.newTicketList[index].unitPrice,100)) }}</span>元；</span></p>
+							<p v-for="(item, index) in state.newTicketList" :key="index">
+								<span>{{ state.newTicketList[index].scenicName }}，</span>
+								<span>{{ state.newTicketList[index].ticketName }}</span>
+								<span>{{ state.newTicketList[index].reservePeopleCount }}张，</span>
+								<span
+									>费用总计
+									<span style="color: red">{{
+										accMul(state.newTicketList[index].reservePeopleCount, accDiv(state.newTicketList[index].unitPrice, 100))
+									}}</span
+									>元；</span
+								>
+							</p>
 						</div>
 					</td>
 				</tr>
 				<tr class="row">
 					<td class="key">行程预冻结费用</td>
 					<td class="value">
-						<span style="color: red">{{ accDiv(state.oldOrderAmount,100) }}</span> 元
+						<span style="color: red">{{ accDiv(state.oldOrderAmount, 100) }}</span> 元
 					</td>
 					<td class="value">
-						<span style="color: red">{{ accDiv(state.newOrderAmount,100)}}</span> 元
+						<span style="color: red">{{ accDiv(state.newOrderAmount, 100) }}</span> 元
 					</td>
 				</tr>
 			</table>
@@ -123,7 +153,11 @@
 	</BaseModal>
 	<BaseModal title="驳回确认" v-model="rejectAuditVisible">
 		驳回 {{ state.rowDate.subTravelName }} 申请的行程变更申请，填写驳回理由：
-		<a-textarea v-model:value="auditRemark" placeholder="请填写驳回理由" :rows="4" />
+		<a-form ref="formRef" :rules="rules" :model="state">
+			<a-form-item name="auditRemark">
+				<a-textarea placeholder="驳回原因" v-model:value="state.auditRemark" :rows="4" />
+			</a-form-item>
+		</a-form>
 		<template v-slot:footer>
 			<a-button @click="rejectAuditVisible = false">取消</a-button>
 			<a-button type="primary" @click="rejectAudit">确定</a-button>
@@ -140,7 +174,7 @@ import api from '@/api/index';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import { AuditStaus } from '@/enum';
 import dayjs, { Dayjs } from 'dayjs';
-import { accDiv,accMul} from '@/utils/compute';
+import { accDiv, accMul } from '@/utils/compute';
 import { any } from 'vue-types';
 const travelStore = useTravelStore();
 const state = reactive({
@@ -155,15 +189,16 @@ const state = reactive({
 	newHotelList: [] as any,
 	oldTicketList: [] as any,
 	newTicketList: [] as any,
-	rowDate:[] as any,
+	rowDate: [] as any,
 	newOrderAmount: '' as any,
 	oldOrderAmount: '' as any,
-	itineraryNo:'',
-	routeName:'',
-	travelOperatorName:'',
-	startDate:'',
-	endDate:'',
-	touristCount:'',
+	itineraryNo: '',
+	routeName: '',
+	travelOperatorName: '',
+	startDate: '',
+	endDate: '',
+	touristCount: '',
+	auditRemark:'',
 	columns: [
 		{
 			title: ' 序号 ',
@@ -219,7 +254,6 @@ const state = reactive({
 });
 const changeAuditVisible = ref(false);
 const rejectAuditVisible = ref(false);
-const auditRemark = ref('');
 const onSearch = async () => {
 	travelStore.auditList.financeChange.params.status = AuditStaus.FinanceChange;
 	const res = await travelStore.getChangeItineraryList(travelStore.auditList.financeChange.params);
@@ -228,6 +262,11 @@ const onSearch = async () => {
 	// })
 	travelStore.setAuditList(res, 'financeChange');
 	console.log(res, '12312313');
+};
+const formRef = ref();
+
+const rules: any = {
+	auditRemark: [{ required: true, trigger: 'blur', message: '请输入驳回原因' }],
 };
 const cancel = (): any => {
 	changeAuditVisible.value = false;
@@ -252,12 +291,14 @@ const sendAudit = (status: any) => {
 			closable: true,
 			centered: true,
 			icon: false,
-			content: `您即将批准 ${state.rowDate.subTravelName} 申请的行程变更申请，变更后冻结金额将调整为 ${state.newOrderAmount/100} 元？是否同意？是否同意？`,
+			content: `您即将批准 ${state.rowDate.subTravelName} 申请的行程变更申请，变更后冻结金额将调整为 ${
+				state.newOrderAmount / 100
+			} 元？是否同意？是否同意？`,
 			onOk() {
 				const queryData = {
-					auditStatus:2,
-					auditRemark: auditRemark.value, //审核描述
-					changeId:state.rowDate.changeId, //changeId
+					auditStatus: 2,
+					auditRemark: state.auditRemark, //审核描述
+					changeId: state.rowDate.changeId, //changeId
 					isPass: true,
 				};
 				console.log('queryData:', queryData);
@@ -281,35 +322,41 @@ const sendAudit = (status: any) => {
 };
 const rejectAudit = () => {
 	const queryData = {
-		auditStatus:3,
-		auditRemark: auditRemark.value, //审核描述
-		changeId:state.rowDate.changeId , //uuid
+		auditStatus: 3,
+		auditRemark: state.auditRemark, //审核描述
+		changeId: state.rowDate.changeId, //uuid
 		isPass: false,
 	};
-	console.log('queryData:', queryData);
-	api.travelManagement
-		.changeItineraryAudit(queryData)
-		.then((res: any) => {
-			console.log('审核返回信息：', res);
-			message.success('保存成功');
-			cancel();
+	formRef.value
+		.validateFields()
+		.then((values: any) => {
+			api.travelManagement
+				.changeItineraryAudit(queryData)
+				.then((res: any) => {
+					message.success('已驳回');
+					cancel();
+				})
+				.catch((err: any) => {
+					console.error(err);
+				});
+
 		})
-		.catch((err: any) => {
-			console.error(err);
+		.catch((info: any) => {
+			console.log('Validate Failed:', info);
 		});
 };
 const getDetail = async (id: any, row: any) => {
-	state.rowDate=row;
+	state.rowDate = row;
 	const backup = row;
 	await api.travelManagement
 		.getItineraryChangeProductHistory(id)
 		.then((res: any) => {
-			state.itineraryNo=res.itineraryNo
-			state.routeName=res.routeName
-			state.travelOperatorName=res.travelOperatorName
-			state.startDate=res.startDate
-			state.endDate=res.endDate
-			state.touristCount=res.touristCount
+			state.itineraryNo = res.itineraryNo;
+			state.routeName = res.routeName;
+			state.travelOperatorName = res.travelOperatorName;
+			state.startDate = res.startDate;
+			state.endDate = res.endDate;
+			state.touristCount = res.touristCount;
 			state.newHotelList = res.newHotelList;
 			state.oldHotelList = res.oldHotelList;
 			state.newTicketList = res.newTicketList;

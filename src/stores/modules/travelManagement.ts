@@ -305,14 +305,6 @@ export const useTravelStore = defineStore({
 			});
 			return res;
 		},
-		// async getItineraryRevokeAuditList(params: object) {
-		// 	let res = await api.travelManagement.getItineraryRevokeAuditList(params);
-		// 	res.content = res.content.map((it: TraveDataItem) => {
-		// 		it.time = it.startDate + '-' + it.endDate;
-		// 		return it;
-		// 	});
-		// 	return res;
-		// },
 		setTouristList(list: any) {
 			this.touristList = list;
 		},
