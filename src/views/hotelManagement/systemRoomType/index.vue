@@ -4,12 +4,12 @@
 			<div class="search-bar">
 				<span class="field-select item">状态</span>
 				<a-select class="select-status item" :showArrow="true" :options="statusOptions" v-model:value="status" placeholder="请选择状态"> </a-select>
-				<a-button @click="searchByFilter" class="button-search item">查询</a-button>
+				<a-button @click="searchByFilter" class="button-search item" v-permission="'查询'">查询</a-button>
 			</div>
 
 			<div class="table-bar">
 				<div class="flex-container">
-					<a-button class="button-create-item" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
+					<a-button class="button-create-item" @click="addOrUpdate({ handle: 'add' })" v-permission="'新增'">新增</a-button>
 				</div>
 				<div class="table-container">
 					<CommonTable :dataSource="dataSource" :columns="columns">
@@ -21,8 +21,10 @@
 							</template>
 							<template v-if="column.dataIndex === 'actions'">
 								<div class="cell-actions">
-									<span class="item" @click="addOrUpdate({ row: record, handle: 'update' })">编辑</span>
-									<span class="item" @click="toggleSysRoomTypeStatus(record)">{{ record?.sysRoomTypeStatus === 0 ? '启用' : '禁用' }}</span>
+									<span class="item" @click="addOrUpdate({ row: record, handle: 'update' })" v-permission="'编辑'">编辑</span>
+									<span class="item" @click="toggleSysRoomTypeStatus(record)" v-permission="'启用'">{{
+										record?.sysRoomTypeStatus === 0 ? '启用' : '禁用'
+									}}</span>
 								</div>
 							</template>
 						</template>

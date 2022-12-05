@@ -31,7 +31,7 @@ const formValidate = reactive({
 		pic: '',
 	},
 });
-const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
+const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField, clearValidate } = useForm(
 	formValidate,
 	reactive({
 		'data.revokeReason': [{ required: true, message: '请选择' }],
@@ -78,6 +78,7 @@ const open = (status: string) => {
 // 关闭弹窗
 const cancel = () => {
 	modelValue.value = false;
+	resetFields();
 	console.log(modelValue.value, 'modelValue');
 };
 

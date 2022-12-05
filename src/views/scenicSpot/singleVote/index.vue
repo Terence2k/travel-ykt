@@ -25,12 +25,12 @@
 					<template #bodyCell="{ column, record }">
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a href="javascript:;" @click="toEdit(record)">编辑</a>
-								<a href="javascript:;" @click="del(record)">删除</a>
-								<a href="javascript:;" @click="Inventory(record)">库存与价格日历</a>
-								<a href="javascript:;" v-if="record.putaway === '上架'" @click="open(record)"> 下架</a>
-								<a href="javascript:;" v-if="record.putaway === '下架'" @click="register(record)"> 上架</a>
-								<a href="javascript:;" v-if="record.putaway === '下架'" @click="changeDownTicket(record)"> 下架修改</a>
+								<a href="javascript:;" v-permission="'编辑'" @click="toEdit(record)">编辑</a>
+								<a href="javascript:;" v-permission="'删除'" @click="del(record)">删除</a>
+								<a href="javascript:;" v-permission="'库存与价格日历'" @click="Inventory(record)">库存与价格日历</a>
+								<a href="javascript:;" v-permission="'下架修改'" v-if="record.putaway === '上架'" @click="open(record)"> 下架</a>
+								<a href="javascript:;" v-permission="'下架修改'" v-if="record.putaway === '下架'" @click="register(record)"> 上架</a>
+								<a href="javascript:;" v-permission="'下架修改'" v-if="record.putaway === '下架'" @click="changeDownTicket(record)"> 下架修改</a>
 							</div>
 						</template>
 					</template>

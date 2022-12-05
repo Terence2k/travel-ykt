@@ -23,12 +23,12 @@
 			<a-range-picker v-model:value="state.tableData.settlementStartTimeList" @change="timeChange" />
 		</search-item>
 		<template #button>
-			<a-button @click="initList">查询</a-button>
+			<a-button @click="initList" v-permission="`查询`">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
 		<div class="list-btn">
-			<a-button type="primary" class="success">导出</a-button>
+			<a-button type="primary" class="success" v-permission="`导出`">导出</a-button>
 		</div>
 	</div>
 	<div>
@@ -45,6 +45,7 @@
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
 		/>
+		<!-- <a-button @click="addMenu">我要夹死你们</a-button> -->
 	</div>
 </template>
 
@@ -125,5 +126,19 @@ const timeChange = (arr: any) => {
 		state.tableData.param.settlementTimeEnd = null;
 	}
 };
+// const addMenu = async () => {
+// 	const str = '配置规则、查询、新增、删除、保存、取消、查看、启用、禁用、编辑';
+// 	const atr = str.split('、');
+// 	for (let index = 0; index < atr.length; index++) {
+// 		const params = {
+// 			menuName: atr[index],
+// 			menuStatus: 1,
+// 			menuType: 3,
+// 			parentId: 258,
+// 		};
+// 		const h = await api.addMenu(params);
+// 		console.log(h);
+// 	}
+// };
 </script>
 <style scoped lang="less"></style>

@@ -31,13 +31,13 @@
 
 				<div class="item button-search-wrapper">
 					<a-button @click="clearFilter" class="button-clear item">重置</a-button>
-					<a-button @click="searchByFilter" class="button-search item">查询</a-button>
+					<a-button @click="searchByFilter" class="button-search item" v-permission="'查询'">查询</a-button>
 				</div>
 			</div>
 
 			<div class="table-bar">
 				<div class="flex-container">
-					<a-button class="button-create-item">导出</a-button>
+					<a-button class="button-create-item" v-permission="'导出'">导出</a-button>
 				</div>
 				<div class="table-container">
 					<CommonTable :columns="columns" :row-selection="rowSelection" :dataSource="dataSource">
@@ -57,7 +57,7 @@
 							</template>
 							<template v-if="column.dataIndex === 'actions'">
 								<div class="cell-actions">
-									<span class="item" @click="openDisplayPage(record)">查看</span>
+									<span class="item" @click="openDisplayPage(record)" v-permission="'查看'">查看</span>
 								</div>
 							</template>
 						</template>

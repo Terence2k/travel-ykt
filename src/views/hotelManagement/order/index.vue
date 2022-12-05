@@ -15,13 +15,13 @@
 				<a-input placeholder="请输入行程单号" v-model:value="hotelStore.HotelList[chart].params.itineraryNo" />
 			</search-item>
 			<template #button>
-				<a-button style="margin-right: 30px"  @click="reset">重置</a-button>
-				<a-button @click="onSearch">查询</a-button>
+				<a-button style="margin-right: 30px"  @click="reset" v-permission="'重置'">重置</a-button>
+				<a-button @click="onSearch" v-permission="'查询'">查询</a-button>
 			</template>
 		</CommonSearch>
 		<div class="trave-contaner">
 			<a-tabs v-model:activeKey="activeKey">
-				<a-tab-pane v-for="item in pages" :key="item.value" :tab="item.label">
+				<a-tab-pane v-for="item in filterPages" :key="item.value" :tab="item.label">
 					<component :onCheck="check" :is="item.name"></component>
 				</a-tab-pane>
 			</a-tabs>
@@ -41,6 +41,7 @@ import finish from './finish/index.vue';
 import cancal from './cancal/index.vue';
 import { cloneDeep } from 'lodash';
 import { Field } from './type/index';
+import { getUserInfo, getTabPermission } from '@/utils/util';
 
 const hotelStore = useHotelStore();
 const activeKey = ref(HotelStatus.waits);
@@ -84,6 +85,8 @@ const pages = [
 	// 	chart: 'finish',
 	// },
 ];
+
+const filterPages = pages.filter((item: any) => getTabPermission(item.label));
 
 const chart = computed(() => pages.filter((it: any) => it.value === activeKey.value)[0].chart as Field);
 
