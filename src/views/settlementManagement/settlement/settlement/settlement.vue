@@ -3,8 +3,8 @@
 		<CommonTable :dataSource="state.tableData.data" :scroll="{ x: '100%',y: '100%' }" rowKey="itineraryNo" :columns="columns" :row-selection="rowSelection">
 			<template #button>
 				<div class="btn">
-					<a-button type="primary" @click="transfer('all', null)">申请转账</a-button>
-					<a-button style="margin-left: 8px" type="primary" @click="combination">组合对账</a-button>
+					<a-button type="primary" @click="transfer('all', null)" v-permission="'已结算_申请转账'">申请转账</a-button>
+					<a-button style="margin-left: 8px" type="primary" @click="combination" v-permission="'已结算_组合对账'">组合对账</a-button>
 				</div>
 			</template>
 			<template #bodyCell="{ column, record }">
@@ -19,8 +19,8 @@
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<!-- 没有对账批号才能单项操作转账 -->
-						<a v-if="record.reconciliationNo == null" @click="transfer('one', record)">申请转账</a>
-						<a @click="toInfo(record)">查看</a>
+						<a v-if="record.reconciliationNo == null" @click="transfer('one', record)" v-permission="'已结算_申请转账'">申请转账</a>
+						<a @click="toInfo(record)" v-permission="'已结算_查看'">查看</a>
 					</div>
 				</template>
 			</template>

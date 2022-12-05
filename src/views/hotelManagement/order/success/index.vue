@@ -4,8 +4,8 @@
 			<template #bodyCell="{ column, record }">
 				<template v-if="column.dataIndex === 'actions'">
 					<div class="action-btns">
-						<a @click="openInfoPage(record.orderNo)">查看</a>
-						<a>打印票据</a>
+						<a @click="openInfoPage(record.orderNo)" v-permission="'审核通过_查看'">查看</a>
+						<a v-permission="'审核通过_打印票据'">打印票据</a>
 					</div>
 				</template>
 				<template v-if="column.key == 'fullRule'">

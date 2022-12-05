@@ -21,20 +21,22 @@
 			<a-input placeholder="请输入行程单号" style="width: 200px" v-model:value="state.tableData.param.itineraryNo" />
 		</SearchItem>
 		<template #button>
-			<a-button @click="reset">重置</a-button>
-			<a-button class="btn" @click="onSearch">查询</a-button>
+			<a-button @click="reset" v-permission="'重置'">重置</a-button>
+			<a-button class="btn" @click="onSearch" v-permission="'查询'">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
 		<div class="list-btn">
-			<a-button type="primary" class="success" @click="download">导出</a-button>
+			<a-button type="primary" class="success" @click="download" v-permission="'导出'">导出</a-button>
 			<!-- <a-button type="primary" class="btn" @click="print">批量打印票据</a-button> -->
 		</div>
 		<CommonTable :dataSource="state.tableData.data" :columns="columns" :scrollY="false">
 			<template #bodyCell="{ column, index, record }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a href="javascript:;" @click="toSee(record.oid)">查看</a>
+						<a href="javascript:;" @click="toSee(record.oid)" v-permission="'查看'">查看</a>
+						<a href="javascript:;" @click="change" v-permission="'去改刷'">去改刷</a>
+						<a href="javascript:;" @click="strong()" v-permission="'去强刷'">去强刷</a>
 					</div>
 				</template>
 				<template v-if="column.key === 'itineraryStartDate'">
@@ -53,6 +55,70 @@
 			@showSizeChange="pageSideChange"
 		/>
 	</div>
+	<BaseModal title="古维订单强制核销" v-model="strongBrushVisible" :width="1000">
+		<div class="table_box">
+			<table class="info_table" cellpadding="16px" border="1">
+				<tr class="row">
+					<td class="key">团队类型</td>
+					<td class="value">{{ }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">线路名称</td>
+					<td class="value">{{  }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">行程单编号</td>
+					<td class="value">{{}}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">组团社</td>
+					<td class="value">
+					</td>
+				</tr>
+				<tr class="row">
+					<td class="key">地接社</td>
+					<td class="value">{{ }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">出散团时间</td>
+					<td class="value">{{ }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">团客人数</td>
+					<td class="value">{{ }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">已减免人数</td>
+					<td class="value">{{ }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">古维管理费</td>
+					<td class="value">{{ }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">可强刷时间</td>
+					<td class="value">{{ }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">已出票金额</td>
+					<td class="value">{{ }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">最后一次改刷时间</td>
+					<td class="value">{{ }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">改刷剩余时间</td>
+					<td class="value">{{ }}</td>
+				</tr>
+			</table>
+		</div>
+		<template v-slot:footer>
+			<a-button @click="(strongBrushVisible=false)">取消</a-button>
+			<a-button type="primary" @click="changeSubmit">立即改刷</a-button>
+			<a-button type="primary" @click="strongSubmit">立即强刷</a-button>
+		</template>
+	</BaseModal>
 </template>
 
 <script setup lang="ts">
@@ -61,6 +127,7 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
+import BaseModal from '@/components/common/BaseModal.vue';
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { message } from 'ant-design-vue';
@@ -69,35 +136,41 @@ import api from '@/api';
 import { downloadFile } from '@/utils/util';
 const route = useRouter();
 const navigatorBar = useNavigatorBar();
+const strongBrushVisible=ref(false)
 // import { userList } from '@/api';
 const columns = [
 	{
-		title: '行程单号',
+		title: '订单编号',
 		dataIndex: 'itineraryNo',
 		key: 'itineraryNo',
 	},
 	{
-		title: '发团旅行社',
+		title: '关联行程单号',
+		dataIndex: 'itineraryNo',
+		key: 'itineraryNo',
+	},
+	{
+		title: '发团社',
 		dataIndex: 'travelName',
 		key: 'travelName',
 	},
 	{
-		title: '接团旅行社',
+		title: '接团社',
 		dataIndex: 'subTravelName',
 		key: 'subTravelName',
 	},
 	{
-		title: '行程时间',
+		title: '行程日期',
 		dataIndex: 'itineraryStartDate',
 		key: 'itineraryStartDate',
 	},
 	{
-		title: '行程总人数',
+		title: '行程人数',
 		dataIndex: 'touristNum',
 		key: 'touristNum',
 	},
 	{
-		title: '缴费人数',
+		title: '应购买人数',
 		dataIndex: 'purchaseNum',
 		key: 'purchaseNum',
 	},
@@ -112,12 +185,27 @@ const columns = [
 		key: 'isReductionExistName',
 	},
 	{
-		title: '费用总计（元）',
+		title: '出票状态',
 		dataIndex: 'totalPrice',
 		key: 'totalPrice',
 	},
 	{
-		title: '线下查验状态',
+		title: '过期状态',
+		dataIndex: 'checkStatusName',
+		key: 'checkStatusName',
+	},
+	{
+		title: '查验状态',
+		dataIndex: 'checkStatusName',
+		key: 'checkStatusName',
+	},
+	{
+		title: '强刷状态',
+		dataIndex: 'checkStatusName',
+		key: 'checkStatusName',
+	},
+	{
+		title: '改刷状态',
 		dataIndex: 'checkStatusName',
 		key: 'checkStatusName',
 	},
@@ -167,6 +255,18 @@ const onSearch = () => {
 
 	});
 };
+const strong=()=>{
+	strongBrushVisible.value=true
+}
+const change=()=>{
+	strongBrushVisible.value=true
+}
+const changeSubmit=()=>{
+
+}
+const strongSubmit=()=>{
+
+}
 const reset = () => {
 	state.tableData.param.isReductionExist = '';
 	state.tableData.param.itineraryNo = '';
@@ -228,5 +328,48 @@ onBeforeUnmount(() => {
 }
 .btn {
 	margin-left: 50px;
+}
+.table_box {
+	max-height: 80vh;
+	padding: 1px 0;
+	overflow: auto;
+
+	.row {
+		width: 100%;
+		font-size: 14px;
+		font-family: Microsoft YaHei UI;
+		font-weight: 400;
+		color: #1e2226;
+		border: 1px solid #e9e9e9;
+		td {
+			text-align: center;
+		}
+	}
+
+	.change_table {
+		width: 100%;
+
+		.key,
+		.key_hd {
+			width: 150px;
+		}
+
+		.key_hd {
+			background: rgba(245, 247, 250, 0.39);
+		}
+
+		.value {
+			min-width: 300px;
+		}
+	}
+
+	.info_table {
+		width: 100%;
+
+		.key {
+			width: 150px;
+			background: rgba(245, 247, 250, 0.39);
+		}
+	}
 }
 </style>
