@@ -9,7 +9,7 @@
 		>
 			<template #button>
 				<div class="btn">
-					<a-button type="primary" @click="examine('all', null)">审核通过</a-button>
+					<a-button type="primary" @click="examine('all', null)" v-permission="'预结算_审核通过'">审核通过</a-button>
 				</div>
 			</template>
 			<template #bodyCell="{ column, record }">
@@ -25,9 +25,9 @@
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a @click="examine('one', record)">审核</a>
-						<a @click="reclosing(record)">重新结算</a>
-						<a @click="toInfo(record)">查看</a>
+						<a @click="examine('one', record)" v-permission="'预结算_审核'">审核</a>
+						<a @click="reclosing(record)" v-permission="'预结算_重新结算'">重新结算</a>
+						<a @click="toInfo(record)" v-permission="'预结算_查看'">查看</a>
 					</div>
 				</template>
 			</template>

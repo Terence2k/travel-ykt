@@ -9,7 +9,7 @@
 		>
 			<template #button>
 				<div class="btn">
-					<a-button type="primary" @click="settlement('all', null)">下团结算</a-button>
+					<a-button type="primary" @click="settlement('all', null)" v-permission="'行程中_下团结算'">下团结算</a-button>
 				</div>
 			</template>
 			<template #bodyCell="{ column, record }">
@@ -19,7 +19,7 @@
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a @click="settlement('one', record)">下团结算</a>
+						<a @click="settlement('one', record)" v-permission="'行程中_下团结算'">下团结算</a>
 					</div>
 				</template>
 			</template>
