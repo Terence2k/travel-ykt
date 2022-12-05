@@ -91,6 +91,7 @@ const open = (status: string) => {
 // 关闭弹窗
 const cancel = () => {
 	modelValue.value = false;
+	resetFields();
 };
 
 defineExpose({
