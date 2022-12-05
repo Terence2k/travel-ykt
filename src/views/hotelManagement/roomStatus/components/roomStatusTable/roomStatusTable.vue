@@ -10,8 +10,8 @@
 				<template v-if="column.dataIndex === 'actions'">
 					<div class="cell-actions">
 						<template v-if="role === 'hotel'">
-							<span @click="openEditPage" class="item">编辑</span>
-							<span class="item">查看</span>
+							<span @click="openEditPage" class="item" v-permission="'编辑'">编辑</span>
+							<span class="item" v-permission="'查看'">查看</span>
 						</template>
 						<template v-else-if="role === 'admin' && tabName === 'alReport'">
 							<span class="item">标记异常</span>

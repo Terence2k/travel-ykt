@@ -221,7 +221,10 @@ const getTraveDetail = () => {
 			res.attachmentList.length && travelStore.setFileInfo(res.attachmentList);
 			travelStore.setGuideList(res.guideList);
 			travelStore.setTouristList(res.touristList.content.map((it: any) => {
-				it.specialCertificatePicture = it.specialCertificatePicture?.split(',');
+				if (it.specialCertificatePicture instanceof String) {
+					it.specialCertificatePicture = it.specialCertificatePicture?.split(',');
+				}
+				
 				return it;
 			}));
 			

@@ -83,14 +83,29 @@
 			</a-form>
 			<template v-slot:footer>
 				<div v-if="modalState.baseInfo.auditStatus === 1 && tableState.roleCode?.includes('HOTEL_SUPER_ADMIN')">
-					<a-button style="width: 86px; font-size: 14px; background-color: #36b374ff; color: #ffffffff" @click="saveModalInfo">提交审核</a-button>
+					<a-button
+						style="width: 86px; font-size: 14px; background-color: #36b374ff; color: #ffffffff"
+						@click="saveModalInfo"
+						v-permission="'提交审核'"
+						>提交审核</a-button
+					>
 					<a-button style="width: 86px; font-size: 14px; background-color: #ffffffff; color: #54565cff" @click="modalState.visible = false"
 						>取消</a-button
 					>
 				</div>
 				<div v-if="modalState.baseInfo.auditStatus === 0 && (tableState.roleId || tableState.roleId === null || tableState.roleId === 0)">
-					<a-button style="width: 100px; font-size: 14px; background-color: #36b374ff; color: #ffffffff" @click="passModalInfo">审核通过</a-button>
-					<a-button style="width: 100px; font-size: 14px; background-color: #ffffffff; color: #54565cff" @click="failModalInfo">审核不通过</a-button>
+					<a-button
+						style="width: 100px; font-size: 14px; background-color: #36b374ff; color: #ffffffff"
+						@click="passModalInfo"
+						v-permission="'审核通过'"
+						>审核通过</a-button
+					>
+					<a-button
+						style="width: 100px; font-size: 14px; background-color: #ffffffff; color: #54565cff"
+						@click="failModalInfo"
+						v-permission="'审核不通过'"
+						>审核不通过</a-button
+					>
 				</div>
 			</template>
 		</BaseModal>

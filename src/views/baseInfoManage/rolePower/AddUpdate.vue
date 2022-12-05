@@ -126,8 +126,6 @@
     menuIds: [{ required: true, trigger: 'change', message: '请选择角色权限' }],
     roleCode: [{ required: true, trigger: 'blur', message: '请输入角色编码' }],
   };
-  const targetMenuList: Ref<Array<any>> = ref([]); 
-  
 
   const fieldNames: TreeProps['fieldNames'] = {
     key: 'value',
@@ -163,37 +161,32 @@
   }
 
   //深度查找menuTreeDate 找出已有权限的父级菜单, 如果所属子菜单都有权限就推进menuIdsInfo去渲染权限树
-  const findDeepMenu = (menuList: any, oid: any, length?: any) => {
-    let res = menuList.find((it: any) => it.value == oid);
-    if(res) {
-      targetMenuList.value.push(res);
-      // 如果父级菜单全选则选中
-      if (res.children?.length == length) {
-        menuIdsInfo.value.push(oid);
-      }
-    } else {
-      menuList.forEach((item: any) => {
-        if (item.children?.length) {
-          findDeepMenu(item.children, oid);
-        }
-      })
-    }
-  }
+  // const findDeepMenu = (menuList: any, oid: any, length?: any) => {
+  //   let res = menuList.find((it: any) => it.value == oid);
+  //   if(res) {
+  //     // 如果父级菜单全选则选中
+  //     if (res.children?.length == length) {
+  //       checkedKeys.value.push(oid);
+  //     }
+  //   } else {
+  //     menuList.forEach((item: any) => {
+  //       if (item.children?.length) {
+  //         findDeepMenu(item.children, oid);
+  //       }
+  //     })
+  //   }
+  // }
 
   const getDetailMenuIds = (data: any) => {
     data.forEach((item: any) => {
-      findDeepMenu(menuTreeDate.value, item.oid, item.childMenuList?.length);
       if (item.childMenuList?.length) {
         getDetailMenuIds(item.childMenuList);
       } else {
         menuIdsInfo.value.push(item.oid);
       }
       // menuIdsInfo.value = [159]
-      console.log('menuIdsInfo:', menuIdsInfo.value);
       
     })
-    console.log('targetMenuList.value:', targetMenuList.value);
-    
   }
 
   const getDetail = async (id: number) => {

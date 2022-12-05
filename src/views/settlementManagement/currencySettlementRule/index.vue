@@ -21,7 +21,7 @@
 			</a-select>
 		</search-item>
 		<template #button>
-			<a-button @click="initList">查询</a-button>
+			<a-button @click="initList" v-permission="`查询`">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
@@ -46,11 +46,11 @@
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a href="javascript:;" @click="toCheck(record)">查看</a>
-							<a href="javascript:;" @click="toEditPage(record)">编辑</a>
-							<a v-if="record.ruleStatus === 1" href="javascript:;" @click="showTip('state', 0, record)">禁用</a>
-							<a v-if="record.ruleStatus === 0" href="javascript:;" @click="showTip('state', 1, record)">启用</a>
-							<a href="javascript:;" @click="showTip('index', index, record)">删除</a>
+							<a href="javascript:;" @click="toCheck(record)" v-permission="'查看'">查看</a>
+							<a href="javascript:;" @click="toEditPage(record)" v-permission="`编辑`">编辑</a>
+							<a v-if="record.ruleStatus === 1" href="javascript:;" @click="showTip('state', 0, record)" v-permission="`禁用`">禁用</a>
+							<a v-if="record.ruleStatus === 0" href="javascript:;" @click="showTip('state', 1, record)" v-permission="`启用`">启用</a>
+							<a href="javascript:;" @click="showTip('index', index, record)" v-permission="`删除`">删除</a>
 						</div>
 					</template>
 					<!-- 团队类型 -->

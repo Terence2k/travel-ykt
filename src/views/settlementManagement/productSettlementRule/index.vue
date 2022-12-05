@@ -36,22 +36,22 @@
 			</a-select>
 		</search-item>
 		<template #button>
-			<a-button @click="initList">查询</a-button>
+			<a-button @click="initList" v-permission="'景区_查询'">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
 		<a-tabs v-model:activeKey="state.tableData.param.productType" @change="tabsChange">
-			<a-tab-pane :key="1" tab="景区"></a-tab-pane>
-			<a-tab-pane :key="2" tab="酒店" force-render></a-tab-pane>
-			<a-tab-pane :key="3" tab="餐饮"></a-tab-pane>
-			<a-tab-pane :key="4" tab="综费产品"></a-tab-pane>
+			<a-tab-pane :key="1" tab="景区" v-if="getTabPermission('景区')"></a-tab-pane>
+			<a-tab-pane :key="2" tab="酒店" v-if="getTabPermission('酒店')" force-render></a-tab-pane>
+			<a-tab-pane :key="3" tab="餐饮" v-if="getTabPermission('餐饮')"></a-tab-pane>
+			<a-tab-pane :key="4" tab="综费产品" v-if="getTabPermission('综费产品')"></a-tab-pane>
 		</a-tabs>
 		<a-spin size="large" :spinning="state.tableData.loading">
 			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }">
 				<template #bodyCell="{ column, record }">
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a href="javascript:;" @click="toConfigure(record)">配置规则</a>
+							<a href="javascript:;" @click="toConfigure(record)" v-permission="`${getProductKeyName}_配置规则`">配置规则</a>
 						</div>
 					</template>
 					<template v-if="column.key === 'hasProductRule'">
@@ -83,6 +83,7 @@ import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import api from '@/api';
 import { useGeneraRules } from '@/stores/modules/generaRules';
+import { getTabPermission } from '@/utils/util';
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 const route = useRouter();
@@ -293,6 +294,12 @@ const tabsChange = () => {
 	state.tableData.param.scenicId = null;
 	initList();
 };
+const getProductKeyName = computed(() => {
+	const array: any = ['景区', '酒店', '餐饮', '综费产品'];
+	console.log(array[Number(state.tableData.param.productType) - 1], `array[Number(key) - 1]`);
+
+	return array[Number(state.tableData.param.productType) - 1] || 0;
+});
 </script>
 
 <style lang="less" scoped>
