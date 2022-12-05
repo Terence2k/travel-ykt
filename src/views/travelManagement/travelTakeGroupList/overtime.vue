@@ -22,7 +22,7 @@
 
         <template v-if="column.key === 'action'">
           <div class="action-btns">
-            <a @click="goToPath(record)">查看行程单</a>
+            <a @click="goToPath(record)" v-permission="'已过期_查看行程单'">查看行程单</a>
           </div>
         </template>
 			</template>

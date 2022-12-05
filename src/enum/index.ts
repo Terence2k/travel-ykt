@@ -110,7 +110,7 @@ export enum AuditStaus {
   AdministrativeSendGroup = 3, // 待管理部门审核（发团）3
   AdministrativeChange, // 待管理部门审核（变更）4
   FinanceSendGroup, // 带财务审核（发团）5
-  withdrawalChange,//带财务审核（撤销重提）
+  withdrawalChange=20,//带财务审核（撤销重提）
 }
 
 // 接团状态类型
@@ -122,4 +122,11 @@ export enum TakeGroupStatus {
   Cancellation,    // 已散团 5
   WaitingChange,  // 待变更 6
   Overtime,        // 已过期 7
+  WaitingOutGroup,        // 待出团 8
+}
+
+export enum HealthCode {
+  Green = '00',
+  Yellow = '01',
+  Red = '10'
 }

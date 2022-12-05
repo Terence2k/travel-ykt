@@ -16,8 +16,8 @@
 
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
-				<a>置为草稿</a>
-				<a>查看日志</a>
+				<a v-permission="'已过期_置为草稿'">置为草稿</a>
+				<a v-permission="'已过期_查看日志'">查看日志</a>
 			</div>
 		</template>
 				</template>

@@ -7,6 +7,7 @@ import { validateRules, validateFields, generateGuid } from '@/utils';
 import api from '@/api/index';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import { message } from 'ant-design-vue';
+type RangeValue = [Dayjs, Dayjs];
 interface DataItem {
 	time: string;
 	endDate: string,
@@ -90,6 +91,9 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 	});
 
 	const methods = {
+		onCalendarChange(val: RangeValue) {
+			console.log(val)
+		},
 		copyData(key:any) {
 			Object.assign(
 				state.tableData.filter((item:any) => key == (item.key ? item.key : item.oid))[0], 

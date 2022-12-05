@@ -230,3 +230,14 @@ export async function itineraryRevokeAuditFailed(data: any) {
 		data,
 	});
 }
+//查看游客对比
+export async function queryRevokeTouristCompare(id: number) {
+	return request({
+		url: `${commonPath}/travel-agency-service/public/api/itineraryTourist/queryRevokeTouristCompare/${id}`,
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		method: 'get',
+		showLoading: false,
+	});
+}

@@ -335,6 +335,15 @@ export const travelManagement = {
 			data,
 		});
 	},
+	//校验是否有外部票需要退订
+	travelChangeCheckTicketRefund(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/change/checkTicketRefund`,
+			method: 'post',
+			showLoading: false,
+			data,
+		});
+	},
 	// 变更导游、交通、附件
 	changeItineraryBasic(data: any) {
 		return request({
@@ -553,6 +562,47 @@ export const travelManagement = {
 			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/submitRevokeAudit`,
 			method: 'post',
 			data,
+			showLoading: false,
+		});
+	},
+	//分页查询 撤销/撤销重提 订单
+	travelRepealNreapplyPageList(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/getItineraryRevokeAuditList`,
+			method: 'post',
+			showLoading: false,
+			data,
+		});
+	},
+	// 获取行程单tab
+	getItineraryListTab(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/getItineraryListTab`,
+			data,
+			method: 'get',
+			showLoading: true,
+		});
+	},
+	getHealthCode(data: any) {
+		return request({
+			url: `${commonPath}/customer-service/public/api/common/health/code`,
+			data,
+			method: 'post',
+			showLoading: false,
+		});
+	},
+	getScenicTourist(data: any) {
+		return request({
+			url: `${commonPath}/ticket-service/public/api/scenic-order/scenicTourist`,
+			data,
+			method: 'get',
+			showLoading: true,
+		});
+	},
+	getRevokeAuditDetail(id: number) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/getRevokeAuditDetail/${id}`,
+			method: 'get',
 			showLoading: false,
 		});
 	},

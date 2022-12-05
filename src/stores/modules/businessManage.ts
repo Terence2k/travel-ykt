@@ -11,8 +11,8 @@ export const useBusinessManageOption = defineStore('businessManage', {
 	getters: {},
 	actions: {
 		//获取企业类型
-		getBusinessTypeOption() {
-			api.businessTypeDropDown('BUSINESS_TYPE').then((res: any) => {
+		getBusinessTypeOption(type = 'BUSINESS_TYPE') {
+			api.businessTypeDropDown(type).then((res: any) => {
 				const options = res.map((i: any) => {
 					return { name: i.name, oid: i.oid, codeValue: i.codeValue };
 				});

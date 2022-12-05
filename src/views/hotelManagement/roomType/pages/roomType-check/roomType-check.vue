@@ -50,8 +50,8 @@
 		</CommonTable>
 		<div class="footer">
 			<div class="button-container">
-				<a-button @click="auditPass" class="button">审核通过</a-button>
-				<a-button @click="auditFail" class="button">审核不通过</a-button>
+				<a-button @click="auditPass" class="button" v-permission="'审核通过'">审核通过</a-button>
+				<a-button @click="auditFail" class="button" v-permission="'审核不通过'">审核不通过</a-button>
 			</div>
 		</div>
 	</div>

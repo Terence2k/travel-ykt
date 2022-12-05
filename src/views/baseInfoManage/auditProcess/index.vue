@@ -9,7 +9,7 @@
       </template>
       <template v-if="column.key === 'action'">
         <div class="action-btns">
-          <a @click="addOrUpdate({ row:record, handle: 'update' })">编辑</a>
+          <a @click="addOrUpdate({ row:record, handle: 'update' })" v-permission="'编辑'">编辑</a>
         </div>
       </template>
     </template>

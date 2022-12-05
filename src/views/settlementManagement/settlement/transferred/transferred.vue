@@ -12,7 +12,7 @@
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a @click="toInfo(record)">查看</a>
+						<a @click="toInfo(record)" v-permission="'已申请转账_查看'">查看</a>
 					</div>
 				</template>
 			</template>

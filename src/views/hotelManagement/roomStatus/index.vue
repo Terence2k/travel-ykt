@@ -20,7 +20,7 @@
 				</div>
 
 				<div class="item button-search-wrapper">
-					<a-button @click="searchByFilter" class="button-search item">查询</a-button>
+					<a-button @click="searchByFilter" class="button-search item" v-permission="'查询'">查询</a-button>
 				</div>
 			</div>
 

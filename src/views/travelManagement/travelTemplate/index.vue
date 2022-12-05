@@ -10,21 +10,21 @@
 			</a-select>
 		</search-item>
 			<template #button>
-				<a-button @click="react" style="margin-right: 20px" >重置</a-button>
-				<a-button @click="getList">查询</a-button>
+				<a-button @click="react" style="margin-right: 20px" v-permission="'重置'">重置</a-button>
+				<a-button @click="getList" v-permission="'查询'">查询</a-button>
 			</template>
 		</CommonSearch>
 		<CommonTable :dataSource="state.tableData.data" rowKey="oid" :row-selection="rowSelection" :columns="columns">
 			<template #button>
-				<a-button type="primary" @click="AddPage" style="margin-right: 16px">新增</a-button>
-				<a-button type="primary">导出</a-button>
+				<a-button type="primary" @click="AddPage" style="margin-right: 16px" v-permission="'新增'">新增</a-button>
+				<a-button type="primary" v-permission="'导出'">导出</a-button>
 			</template>
 			<template #bodyCell="{ column, record }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a @click="openInfoPage(record)">查看</a>
-						<a @click="openeditPage(record)">编辑</a>
-						<a @click="openModel(record)">{{record.oid ? '启用' : '禁用'}}</a>
+						<a @click="openInfoPage(record)" v-permission="'查看'">查看</a>
+						<a @click="openeditPage(record)" v-permission="'编辑'">编辑</a>
+						<a @click="openModel(record)" v-permission="record.oid ? '启用' : '禁用'">{{record.oid ? '启用' : '禁用'}}</a>
 					</div>
 				</template>
 			</template>

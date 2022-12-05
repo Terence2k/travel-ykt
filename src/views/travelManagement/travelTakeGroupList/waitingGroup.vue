@@ -21,8 +21,8 @@
 
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
-				<a @click="takeGroup(record.oid)">同意接团</a>
-				<a @click="rejectGroup(record.oid)">拒绝接团</a>
+				<a @click="takeGroup(record.oid)" v-permission="'待接团_同意接团'">同意接团</a>
+				<a @click="rejectGroup(record.oid)" v-permission="'待接团_拒绝接团'">拒绝接团</a>
 			</div>
 		</template>
 				</template>

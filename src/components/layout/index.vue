@@ -110,7 +110,7 @@ const goBack = () => {
 const handleMenuTree = (menuList: any) => {
 	menuList = menuList.map((item: any) => {
 		return {
-			children: item.childMenuList,
+			children: item.menuTypeName == '菜单夹' ? item.childMenuList : [],
 			keys: item.url,
 			path: item.url,
 			title: item.menuName,
@@ -172,7 +172,7 @@ watch(
 					selectedKeys.value = [nv];
 				}
 			}
-			// console.log(matchPath, 'matchPath', nv, urlArr.splice(0, 3).join('/'));
+			console.log(matchPath, 'matchPath', nv, urlArr.splice(0, 3).join('/'));
 		}
 		let opens = nv.split('/');
 		let temp = `/${opens[1]}`;

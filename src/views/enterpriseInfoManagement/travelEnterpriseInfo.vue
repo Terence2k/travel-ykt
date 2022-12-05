@@ -10,7 +10,7 @@
       <div class="list_item">
         <div class="list_item_top">
           <div class="list_item_name">所属集团</div>
-          <div class="list_item_operate" @click="membership">{{ btnName }}</div>
+          <div class="list_item_operate" @click="membership" v-permission="btnName">{{ btnName }}</div>
         </div>
         <div class="list_item_bottom">{{ groupName }}</div>
       </div>

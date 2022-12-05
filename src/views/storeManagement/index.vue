@@ -19,7 +19,7 @@
       <a-input v-model:value="tableData.param.storeName" placeholder="请输入门店名称" allowClear />
     </search-item>
     <template #button>
-      <a-button @click="onQuery">查询</a-button>
+      <a-button @click="onQuery" v-permission="'查询'">查询</a-button>
     </template>
   </CommonSearch>
   <CommonSearch v-show="activeKey === '2'">
@@ -36,19 +36,19 @@
       <a-input v-model:value="tableData1.param.storeName" placeholder="请输入门店名称" allowClear />
     </search-item>
     <template #button>
-      <a-button @click="onQuery">查询</a-button>
+      <a-button @click="onQuery" v-permission="'查询'">查询</a-button>
     </template>
   </CommonSearch>
   <div class="tabs_box">
     <a-badge :count="tableData1.total" class="rebadge" />
     <a-tabs v-model:activeKey="activeKey" @change="tabsChange">
-      <a-tab-pane key="1" tab="已审核">
+      <a-tab-pane key="1" tab="已审核" v-if="getTabPermission('已审核')">
         <CommonTable :dataSource="tableData.data" :columns="columns">
           <template #bodyCell="{ column, record, index }">
             <template v-if="column.key === 'action'">
               <div class="action-btns">
-                <a @click="checkDetails(record.oid)">查看</a>
-                <a @click="addOrUpdate({ row: record, handle: 'update' })">修改</a>
+                <a @click="checkDetails(record.oid)" v-permission="'已审核_查看'">查看</a>
+                <a @click="addOrUpdate({ row: record, handle: 'update' })" v-permission="'已审核_修改'">修改</a>
                 <!-- <a-popconfirm title="是否要禁用该门店？禁用后该门店所有操作员不可以再登录发起散客合同。" ok-text="确认" cancel-text="取消"
                   @confirm="disable(0, record.oid)">
                   <a v-show="record.enableSatus">禁用</a>
@@ -67,7 +67,7 @@
             :total="tableData.total" @change="onHandleCurrentChange" @showSizeChange="pageSideChange" />
         </div>
       </a-tab-pane>
-      <a-tab-pane key="2" tab="待审核">
+      <a-tab-pane key="2" tab="待审核" v-if="getTabPermission('待审核')">
         <CommonTable :dataSource="tableData1.data" :columns="columns1">
           <template #bodyCell="{ column, record, index }">
             <template v-if="column.key === 'index'">
@@ -76,9 +76,9 @@
             <template v-if="column.key === 'action'">
               <div class="action-btns">
                 <template v-if="record?.isAudit">
-                  <a @click="auditStore(record)">去审核</a>
+                  <a @click="auditStore(record)" v-permission="'待审核_去审核'">去审核</a>
                 </template>
-                <a @click="checkDetails(record.oid)">查看</a>
+                <a @click="checkDetails(record.oid)" v-permission="'待审核_查看'">查看</a>
               </div>
             </template>
           </template>
@@ -90,7 +90,7 @@
         </div>
       </a-tab-pane>
       <template #rightExtra>
-        <a-button type="primary" @click="addOrUpdate({ handle: 'add' })">创建新门店</a-button>
+        <a-button type="primary" @click="addOrUpdate({ handle: 'add' })" v-permission="'创建新门店'">创建新门店</a-button>
       </template>
     </a-tabs>
   </div>
@@ -258,6 +258,7 @@ import api from '@/api';
 import { message } from 'ant-design-vue';
 import { useRouter, useRoute } from 'vue-router';
 import type { Rule } from 'ant-design-vue/es/form';
+import { getTabPermission } from '@/utils/util';
 const router = useRouter();
 const route = useRoute()
 const state = reactive({

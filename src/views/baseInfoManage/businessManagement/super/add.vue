@@ -99,7 +99,7 @@
         </a-form-item>
 
         <a-form-item name="legalPersonUrl" label="法人身份证附件" v-show="formRules?.legalPersonUrl">
-          <Upload v-model="form.legalPersonUrl" :maxCount="1" />
+          <Upload v-model="form.legalPersonUrl" :maxCount="2" />
         </a-form-item>
         <a-form-item name="businessLicenseUrl" label="营业执照" v-show="formRules?.businessLicenseUrl">
           <Upload v-model="form.businessLicenseUrl" :maxCount="1" />
@@ -210,7 +210,7 @@ const form = reactive<detailsType>({
   businessLicenseUrl: ''
 })
 const rest = () => {
-  formRef.value.resetFields()
+  formRef.value?.resetFields()
 }
 const isRefresh = ref('0')
 const back = () => {
@@ -258,7 +258,7 @@ onActivated(() => {
   formRef.value.clearValidate()
 })
 onDeactivated(() => {
-  formRef.value.resetFields()
+  formRef.value?.resetFields()
   formRules.value = formRules6
 })
 const businessTypeOption = [
@@ -328,7 +328,7 @@ const saveConform = () => {
 }
 const tipCancel = () => {
   tipVisible.value = false
-  formRef.value.resetFields()
+  formRef.value?.resetFields()
   form.businessLicenseUrl = undefined
 }
 /* const tipConform = () => {

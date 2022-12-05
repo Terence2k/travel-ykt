@@ -28,12 +28,12 @@
 			<a-range-picker v-model:value="state.verificationTimeList" @change="verificationTimeChange" />
 		</search-item>
 		<template #button>
-			<a-button @click="initList">查询</a-button>
+			<a-button @click="initList" v-permission="'查询'">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
 		<div class="list-btn">
-			<a-button type="primary" class="success">导出</a-button>
+			<a-button type="primary" class="success" v-permission="'导出'">导出</a-button>
 		</div>
 	</div>
 	<div>
@@ -180,17 +180,29 @@ const columns = computed(() => {
 			width: 100,
 		},
 		{
-			title: '团队类型',
-			dataIndex: 'teamType',
-			key: 'teamType',
+			title: '自编团号',
+			dataIndex: 'itineraryNo',
+			key: 'itineraryNo',
 			width: 100,
 		},
 		{
-			title: '地接社',
-			dataIndex: 'subTravelName',
-			key: 'subTravelName',
+			title: '旅行社',
+			dataIndex: 'itineraryNo',
+			key: 'itineraryNo',
 			width: 100,
 		},
+		// {
+		// 	title: '团队类型',
+		// 	dataIndex: 'teamType',
+		// 	key: 'teamType',
+		// 	width: 100,
+		// },
+		// {
+		// 	title: '地接社',
+		// 	dataIndex: 'subTravelName',
+		// 	key: 'subTravelName',
+		// 	width: 100,
+		// },
 		// {
 		// 	title: '作团人',
 		// 	dataIndex: 'feeText',
@@ -204,7 +216,7 @@ const columns = computed(() => {
 			width: 100,
 		},
 		{
-			title: '酒店',
+			title: '酒店名称',
 			dataIndex: 'hotelName',
 			key: 'hotelName',
 			width: 80,

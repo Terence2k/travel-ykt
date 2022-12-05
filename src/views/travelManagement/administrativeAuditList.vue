@@ -16,8 +16,8 @@
 			</search-item>
 
 			<template #button>
-        <a-button style="margin-right: 30px" @click="reset">重置</a-button>
-				<a-button type="primary" @click="onSearch">查询</a-button>
+        <a-button style="margin-right: 30px" @click="reset" v-permission="'重置'">重置</a-button>
+				<a-button type="primary" @click="onSearch" v-permission="'查询'">查询</a-button>
 			</template>
 		</CommonSearch>
 

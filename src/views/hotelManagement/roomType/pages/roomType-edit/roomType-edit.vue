@@ -18,7 +18,15 @@
 					</template>
 					<template v-if="['price'].includes(column.dataIndex)">
 						<div>
-							<a-input :disabled="true" type="number" v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]" />
+							<a-form-item
+								v-if="editableData[record.key]"
+								:name="[record.key, column.dataIndex]"
+								:rules="[
+									{ required: true, validator: isPositiveInteger, trigger: 'blur', message: '当前酒店诚信指导价为0,请先编辑酒店信息补充星级' },
+								]"
+							>
+								<a-input :disabled="true" type="number" v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]" />
+							</a-form-item>
 							<template v-else>
 								<a-input :disabled="true" :defaultValue="text" />
 							</template>
@@ -137,8 +145,8 @@
 					</template>
 					<template v-else-if="column.dataIndex === 'actions'">
 						<div class="cell-actions">
-							<span class="item" @click="edit(record.key)">{{ editableData[record.key] ? '取消' : '编辑' }}</span>
-							<span class="item" @click="remove(record.key)">删除</span>
+							<span class="item" @click="edit(record.key)" v-permission="'编辑'">{{ editableData[record.key] ? '取消' : '编辑' }}</span>
+							<span class="item" @click="remove(record.key)" v-permission="'删除'">删除</span>
 						</div>
 					</template>
 				</template>
@@ -151,7 +159,7 @@
 						<a-table-summary-cell></a-table-summary-cell>
 						<a-table-summary-cell></a-table-summary-cell>
 						<a-table-summary-cell class="cell-actions">
-							<a-button @click="add" class="button-add">添加</a-button>
+							<a-button @click="add" class="button-add" v-permission="'添加'">添加</a-button>
 						</a-table-summary-cell>
 					</a-table-summary-row>
 				</template>
@@ -165,6 +173,7 @@
 				:disabled="state.isAuditStatus"
 				class="button-submit button"
 				@click="saveRoomInfo"
+				v-permission="'提交审核'"
 				>提交审核</a-button
 			>
 		</div>
@@ -449,13 +458,13 @@ const add = () => {
 		key: `NEW_${Date.now().toString()}`,
 		auditOrderId: '',
 		auditStatus: 0,
-		hotelId: state.hotelId ? parseInt(state.hotelId) : undefined,
+		hotelId: state?.hotelId ? parseInt(state?.hotelId) : undefined,
 		roomTypeCode: systemRoomData?.value[0]?.value || 1,
 		roomNum: 1,
 		roomOccupancyNum: 0,
 		operationType: 0,
 		roomOperateNum: 0,
-		price: state.price,
+		price: state?.price || 0,
 	};
 	dataSource.value.push(newData);
 	if (editableData[newData.key]) {

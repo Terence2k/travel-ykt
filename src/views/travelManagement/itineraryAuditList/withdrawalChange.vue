@@ -17,7 +17,7 @@
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a @click="auditStatus(record)">去审核</a>
+						<a @click="auditStatus(record)" v-permission="'撤销重提审核_去审核'">去审核</a>
 					</div>
 				</template>
 			</template>
@@ -192,10 +192,9 @@ const changeAuditVisible = ref(false);
 const rejectAuditVisible = ref(false);
 const auditRemark = ref('');
 const onSearch = async () => {
-	// travelStore.auditList.withdrawalChange.params.status = AuditStaus.withdrawalChange;
-	// const res = await travelStore.getItineraryRevokeAuditList(travelStore.auditList.withdrawalChange.params);
-	// travelStore.setAuditList(res, 'withdrawalChange');
-	// console.log(res, '12312313');
+	travelStore.auditList.withdrawalChange.params.status = AuditStaus.withdrawalChange;
+	const res = await travelStore.getAuditList(travelStore.auditList.withdrawalChange.params);
+	travelStore.setAuditList(res, 'withdrawalChange');
 };
 const cancel = (): any => {
 	changeAuditVisible.value = false;
@@ -205,11 +204,6 @@ const cancel = (): any => {
 const auditStatus = async (row: any) => {
 	await getDetail(row.changeId, row);
 	changeAuditVisible.value = true;
-};
-const getAuditButton = async (uuid: string) => {
-	let res = await api.travelManagement.getAuditButton({ uuid: uuid });
-	console.log(res);
-	return res;
 };
 const sendAudit = (status: any) => {
 	// 审核通过

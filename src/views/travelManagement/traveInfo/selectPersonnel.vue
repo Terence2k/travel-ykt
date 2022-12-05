@@ -8,7 +8,7 @@
 				<p>全部游客{{ state.tableData.data.total }}名，已减免{{ state.tableData.data.reduceNum }}人，本次勾选 {{ state.tableData.num }}人</p>
 			</div>
 			<CommonTable
-				:row-selection="{ onSelect, getCheckboxProps}"
+				:row-selection="{ onSelect, getCheckboxProps,onSelectAll}"
 				:columns="columns"
 				:dataSource="state.tableData.data.touristList"
 				rowKey="oid"
@@ -44,8 +44,8 @@
 						</a-select>
 					</template>
 					<template v-if="column.key === 'specialCertificateImg'">
-						<Upload v-model="record.specialCertificateImg" :maxCount="1" v-if="record.purchased == 2" />
-						<Upload v-model="record.specialCertificateImg" :maxCount="1" v-else-if="record.specialCertificateType == 1 && record.purchased != 2" />
+						<Upload v-model="record.specialCertificateImg" :maxCount="5" v-if="(record.purchased == 2 && record.specialCertificateType !=null)" disabled/>
+						<Upload v-model="record.specialCertificateImg" :maxCount="5" v-else-if="record.specialCertificateType == 1 && record.purchased != 2" />
 					</template>
 				</template>
 			</CommonTable>
@@ -199,6 +199,13 @@ const onSelect = (record: any, selected: boolean, selectedRows: any) => {
 		return it.disabledValue=false
 	})
 };
+const onSelectAll = (record: any, selected: boolean, selectedRows: any) => {
+	state.tableData.num = selectedRows.length;
+	state.tableData.submitList = selectedRows;
+	state.tableData.submitList.map((it:any)=>{
+		return it.disabledValue=false
+	})
+};
 const submit = () => {
 	//props.routeId后面传这个
 	let data = {
@@ -235,7 +242,7 @@ const submit = () => {
 	if(specialCertificateType)
 	{
 		let specialCertificateImg=data.reduceTouristList.some((item,index)=>{
-			return item.specialCertificateImg ==null;
+			return item.specialCertificateImg ==null && item.discountRuleId == 1;
 		})
 		if(specialCertificateImg)
 		{
@@ -243,7 +250,20 @@ const submit = () => {
 			return false;
 		}
 	}
-	
+	let certificateType=state.tableData.submitList.some((item,index)=>{
+		return item.certificateType=='IDENTITY_CARD'
+	})
+	if(!certificateType)
+	{
+		let age=state.tableData.submitList.some((item,index)=>{
+			return item.age==null
+		})
+		if(age)
+		{
+			message.error('请填写年龄');
+			return false;
+		}
+	}
 	api.applyReduction(data).then((res) => {
 		message.success('提交成功');
 		dialogVisible.value = false;

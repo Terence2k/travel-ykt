@@ -14,7 +14,7 @@
 		</div>
 		<div class="footer">
 			<div class="button-container">
-				<a-button class="button" @click="closeDetailsPage">关闭</a-button>
+				<a-button class="button" @click="closeDetailsPage" v-permission="'关闭'">关闭</a-button>
 			</div>
 		</div>
 	</div>

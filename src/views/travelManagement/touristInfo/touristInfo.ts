@@ -7,6 +7,7 @@ import { validateRules, validateFields, generateGuid, getAge, phoneReg } from '@
 import api from '@/api/index';
 import { CODEVALUE } from '@/constant'
 import { message } from 'ant-design-vue';
+import { HealthCode } from '@/enum';
 interface DataItem {
 	certificateType: string;
 	healthCode: string;
@@ -45,6 +46,10 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 	const specialId = computed(() => travelStore.specialId)
 	const state = reactive<{editableData: UnwrapRef<Record<string, DataItem>>, [k:string]: any}>({
 		fileUrl: '',
+		isWarring: false,//健康码异常
+		checkCode: false, //健康码点击
+		highRish: false, //高风险
+		checkHighRish: false,
 		formRef: null,
 		editableData: {},
 		startRef: {},
@@ -143,7 +148,6 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			}
 		]
 	});
-
 	const methods = {
 		async getCityList(data:any, length: number) {
 			const res = await api.commonApi.getCityList(data);
@@ -324,7 +328,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			state.editableData[key].sourceAddress = val[val.length - 1];
 			state.editableData[key].sourceAddressName = option.map((it:any) => it.label).join('/')
 		},
-		changeIDCard(key: string, columns: string) {
+		async changeIDCard(key: string, columns: string) {
 
 			if (columns === 'certificateNo' &&
 					state.editableData[key].certificateType === CODEVALUE.TRAVE_CODE.IDENTITY_CARD) {
@@ -336,6 +340,14 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 
 				const age: string = getAge(state.editableData[key].certificateNo) as any
 				state.editableData[key].age = age;
+				
+			}
+			if (columns === 'certificateNo' || columns === 'name') {
+				if (state.editableData[key].certificateNo && state.editableData[key].name) {
+					const res = await travelStore.getHealthCode([state.editableData[key]]);
+					state.editableData[key].healthCode = res[0].healthCode;
+					methods.copyData(key)
+				}
 			}
 		},
 		changeUpload(url: any, key: any) {
@@ -347,6 +359,12 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			console.log(state.editableData[key])
 			state.editableData[key].specialCertificatePicture.splice(file.index, 1);
 			console.log(file, key)
+		},
+		async getHealthCode() {
+			state.checkCode = true;
+			const res = await travelStore.getHealthCode(state.tableData)
+			state.isWarring = res.some(item => item.healthCode === HealthCode.Red || item.healthCode === HealthCode.Yellow)
+			console.log(state.isWarring)
 		}
 	}
 	watch(onCheck, (newVal) => {

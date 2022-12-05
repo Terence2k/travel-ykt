@@ -48,38 +48,6 @@ export default [
 				],
 			},
 			{
-				path: 'orderChange',
-				name: 'orderChange',
-				redirect: '/gouvyManagement/orderChange/list',
-				meta: {
-					title: '古维订单变更管理',
-					// icon: 'liulanqi',
-					// auth: ["admin"],
-					isDetail: false, // 在左侧的导航栏不会展示
-				},
-				children: [
-					{
-						path: 'list',
-						component: () => import('@/views/gouvyManagement/orderChange/index.vue'),
-						name: 'order-change-list',
-						meta: {
-							title: '订单变更',
-							activeMeun: 'information',
-							isDetail: true, // 在左侧的导航栏不会展示
-						},
-					},
-					{
-						path: 'order-change_edit',
-						component: () => import('@/views/gouvyManagement/orderChange/changeDetails.vue'),
-						name: 'order-change_edit',
-						meta: {
-							title: '查看',
-							isDetail: true, // 在左侧的导航栏不会展示
-						},
-					},
-				],
-			},
-			{
 				path: 'exemptionManagement',
 				name: 'exemptionManagement',
 				redirect: '/gouvyManagement/exemptionManagement/list',

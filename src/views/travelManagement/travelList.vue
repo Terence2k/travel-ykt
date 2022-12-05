@@ -21,17 +21,17 @@
 			</search-item>
 
 			<template #button>
-				<a-button style="margin-right: 30px" @click="reset">重置</a-button>
-				<a-button @click="onSearch">查询</a-button>
+				<a-button style="margin-right: 30px" @click="reset" v-permission="'重置'">重置</a-button>
+				<a-button @click="onSearch" v-permission="'查询'">查询</a-button>
 			</template>
 		</CommonSearch>
 
 		<a-tabs v-model:activeKey="activeKey">
-			<a-tab-pane v-for="item in pages" :key="item.value" :tab="item.label">
+			<a-tab-pane v-for="item in filterPages" :key="item.value" :tab="item.label">
 				<!--  v-if="showAddBtn" -->
 				<div class="d-flex justify-content-end" v-if="showAddBtn">
-					<a-button @click="goToPath(GroupType.Cooperation)" type="primary" style="margin-right: 20px">+协作填报</a-button>
-					<a-button @click="goToPath(GroupType.NonCooperation)" type="primary" style="margin-right: 20px">+非协作填报</a-button>
+					<a-button @click="goToPath(GroupType.Cooperation)" type="primary" style="margin-right: 20px" v-permission="'协作填报'">+协作填报</a-button>
+					<a-button @click="goToPath(GroupType.NonCooperation)" type="primary" style="margin-right: 20px" v-permission="'非协作填报'">+非协作填报</a-button>
 				</div>
 				<component :onCheck="check" :is="item.name"></component>
 			</a-tab-pane>
@@ -53,7 +53,7 @@ import cancellation from './travelList/cancellation.vue';
 
 import { traveListParams, useTravelStore } from '@/stores/modules/travelManagement';
 import { GroupStatus, GroupType } from '@/enum';
-import { getUserInfo } from '@/utils/util';
+import { getUserInfo, getTabPermission } from '@/utils/util';
 import { ROLE } from '@/constant';
 import api from '@/api';
 import { Field } from '@/type';
@@ -128,6 +128,9 @@ const pages = [
 		chart: 'overtime',
 	},
 ];
+const filterPages = pages.filter((item: any) => getTabPermission(item.label));
+console.log('filterPages:', filterPages)
+activeKey.value = filterPages.length ? filterPages[0].value : pages[0].value;
 
 const goToPath = (type: number) => {
 	router.push({
@@ -178,6 +181,7 @@ const showAddBtn = computed(() => {
 });
 
 travelStore.getItineraryStatus();
+// travelStore.getItineraryListTab();
 sessionStorage.removeItem('traveList');
 </script>
 <style lang="less" scoped>

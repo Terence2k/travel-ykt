@@ -11,14 +11,14 @@
 			<a-row>
 				<a-col :span="12"></a-col>
 				<a-col :span="10"></a-col>
-				<a-col :span="2"> <a-button type="primary" @click="save">保存</a-button></a-col>
+				<a-col :span="2"> <a-button type="primary" @click="save"  v-permission="'保存'">保存</a-button></a-col>
 			</a-row>
 		</a-form>
 		<p class="top-p">减免规则</p>
 		<a-row>
 			<a-col :span="12"></a-col>
 			<a-col :span="10"></a-col>
-			<a-col :span="2"> <a-button type="primary" class="btn" @click="add({ handle: 'add' })">添加</a-button></a-col>
+			<a-col :span="2"> <a-button type="primary" class="btn" @click="add({ handle: 'add' })" v-permission="'添加'">添加</a-button></a-col>
 		</a-row>
 		<CommonTable :dataSource="state.tableData.Data" :columns="columns" :scrollY="false">
 			<template #bodyCell="{ column, index, record }">
@@ -26,8 +26,8 @@
 					<a-span>{{ accDiv(record.discount, 100) }}</a-span>
 				</template>
 				<template v-if="column.key === 'discountRuleStatus'">
-					<a-span v-if="record.discountRuleStatus == 1">启用</a-span>
-					<a-span v-else>禁用</a-span>
+					<a-span v-if="record.discountRuleStatus == 1" v-permission="'启用'">启用</a-span>
+					<a-span v-else v-permission="'禁用'">禁用</a-span>
 				</template>
 
 				<template v-if="column.key === 'action'">

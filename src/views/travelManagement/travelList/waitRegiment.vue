@@ -16,8 +16,8 @@
 
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
-				<a @click="revokeGroupToDraft(record.oid)">撤回任务</a>
-				<a>催办</a>
+				<a @click="revokeGroupToDraft(record.oid)" v-permission="'待审核_撤回任务'">撤回任务</a>
+				<a v-permission="'待审核_催办'">催办</a>
 			</div>
 		</template>
 				</template>
@@ -86,16 +86,16 @@
 					dataIndex: 'teamTypeName',
 					key: 'teamTypeName',
 			},
-			{
-					title: '审核来源',
-					dataIndex: 'teamTypeName1',
-					key: 'teamTypeName1',
-			},
-			{
-					title: '当前审核人员',
-					dataIndex: 'teamTypeName1',
-					key: 'teamTypeName1',
-			},
+			// {
+			// 		title: '审核来源',
+			// 		dataIndex: 'teamTypeName1',
+			// 		key: 'teamTypeName1',
+			// },
+			// {
+			// 		title: '当前审核人员',
+			// 		dataIndex: 'teamTypeName1',
+			// 		key: 'teamTypeName1',
+			// },
 			// {
 			// 		title: '带队导游',
 			// 		dataIndex: 'guides',
@@ -108,8 +108,8 @@
 			// },
 			{
 					title: '操作',
-					fixed: 'right',
 					key: 'action',
+					width: 200
 			}
 		]
 	})
