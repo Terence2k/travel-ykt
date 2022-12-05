@@ -342,7 +342,7 @@ const initWaitingBar = async () => {
 onMounted(() => {
 	init();
 	initWaitingBar();
-	navigatorBar.setNavigator(['古维管理', '撤销重提管理']);
+	navigatorBar.setNavigator(['旅行社管理', '撤销重提管理']);
 });
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
