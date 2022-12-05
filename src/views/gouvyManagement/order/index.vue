@@ -191,8 +191,8 @@ const columns = [
 	},
 	{
 		title: '过期状态',
-		dataIndex: 'checkStatusName',
-		key: 'checkStatusName',
+		dataIndex: 'cme',
+		key: 'cme',
 	},
 	{
 		title: '查验状态',
@@ -201,13 +201,13 @@ const columns = [
 	},
 	{
 		title: '强刷状态',
-		dataIndex: 'checkStatusName',
-		key: 'checkStatusName',
+		dataIndex: 'check',
+		key: 'check',
 	},
 	{
 		title: '改刷状态',
-		dataIndex: 'checkStatusName',
-		key: 'checkStatusName',
+		dataIndex: 'Name',
+		key: 'Name',
 	},
 	{
 		title: '操作',
