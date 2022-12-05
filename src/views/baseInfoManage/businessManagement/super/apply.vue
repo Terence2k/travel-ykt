@@ -420,7 +420,7 @@ const commonColumns = [
 		key: 'businessLicenseUrl',
 	},
 	{
-		title: '企业来源',
+		title: '审核类型',
 		dataIndex: 'source',
 		key: 'source',
 	},
