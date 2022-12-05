@@ -269,7 +269,7 @@ export async function getTransferAccountDetails(data: any) {
 // 单条数据申请转账
 export async function transferAccountsDetail(oid: any) {
 	return request({
-		url: `${commonPath}/settlement-service/public/api/transfer-account/transferAccount/:${oid}`,
+		url: `${commonPath}/settlement-service/public/api/transfer-account/transferAccount/${oid}`,
 		method: 'get',
 		showLoading: true,
 	});
@@ -330,7 +330,7 @@ export async function exportReconciliation(data: any) {
 		url: `${commonPath}/settlement-service/public/api/settlement-information/exportReconciliation`,
 		method: 'post',
 		data,
-    	responseType: 'blob',
+		responseType: 'blob',
 		showLoading: false,
 	});
 }
