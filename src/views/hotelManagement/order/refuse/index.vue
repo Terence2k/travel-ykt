@@ -4,7 +4,7 @@
 			<template #bodyCell="{ column, record }">
 				<template v-if="column.dataIndex === 'actions'">
 					<div class="action-btns">
-						<a @click="rejectReason(record.orderNo)">查看说明</a>
+						<a @click="rejectReason(record.orderNo)" v-permission="'审核不通过_查看说明'">查看说明</a>
 					</div>
 				</template>
 				<template v-if="column.key == 'reduceAfterAmount'">

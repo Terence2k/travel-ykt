@@ -54,7 +54,7 @@
 
 			<div class="footer">
 				<div class="tooter-btn">
-					<a-button type="primary" @click.prevent="onSubmit">保存</a-button>
+					<a-button type="primary" v-permission="'保存'" @click.prevent="onSubmit">保存</a-button>
 					<a-button type="primary" @click.prevent="route.back()">取消</a-button>
 					<!-- <a-button type="primary" @click="onSubmit">提交审核</a-button> -->
 				</div>

@@ -45,13 +45,13 @@
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a href="javascript:;" @click="toEditPage(record)">编辑</a>
-							<a href="javascript:;" v-if="record.putaway" @click="outDown(record)">
+							<a href="javascript:;" v-permission="'编辑'" @click="toEditPage(record)">编辑</a>
+							<a href="javascript:;" v-permission="'下架修改'" v-if="record.putaway" @click="outDown(record)">
 								{{ !record.putaway ? '上架' : '下架' }}
 							</a>
-							<a href="javascript:;" @click="invetory(record)"> 联票库存日历</a>
-							<a href="javascript:;" v-if="!record.putaway" @click="register(record)"> 上架</a>
-							<a href="javascript:;" v-if="!record.putaway" @click="changeDownTicket(record)"> 下架修改</a>
+							<a href="javascript:;" v-permission="'联票库存日历'" @click="invetory(record)"> 联票库存日历</a>
+							<a href="javascript:;" v-permission="'下架修改'" v-if="!record.putaway" @click="register(record)"> 上架</a>
+							<a href="javascript:;" v-permission="'下架修改'" v-if="!record.putaway" @click="changeDownTicket(record)"> 下架修改</a>
 						</div>
 					</template>
 				</template>
