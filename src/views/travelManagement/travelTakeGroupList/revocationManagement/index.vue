@@ -70,8 +70,8 @@
 					</template>
 
 					<template v-if="column.key === 'action'">
-						<a-button type="link" v-if="!state.tableData.param.status" @click="toDetail(record)">去审核</a-button>
-						<a-button type="link" v-if="state.tableData.param.status" @click="check(record)">查看</a-button>
+						<a-button type="link" v-permission="'去审核'" v-if="!state.tableData.param.status" @click="toDetail(record)">去审核</a-button>
+						<a-button type="link" v-permission="'查看'" v-if="state.tableData.param.status" @click="check(record)">查看</a-button>
 					</template>
 				</template>
 			</CommonTable>
@@ -109,6 +109,7 @@ import viewTable from './components/table.vue';
 import Audit from './components/audit.vue';
 import Revoke from './components/revoke.vue';
 import Detail from './components/detaiil.vue';
+// import CheckDetail from './components/checkDetail.vue';
 import { shijianc, shijiancTOYMD } from '@/utils/formatTimes';
 import { useScenicSpotOption } from '@/stores/modules/scenicSpot';
 

@@ -599,5 +599,11 @@ export const travelManagement = {
 			showLoading: true,
 		});
 	},
-	
+	getRevokeAuditDetail(id: number) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/getRevokeAuditDetail/${id}`,
+			method: 'get',
+			showLoading: false,
+		});
+	},
 };
