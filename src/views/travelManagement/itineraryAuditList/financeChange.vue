@@ -18,7 +18,7 @@
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a @click="auditStatus(record)">去审核</a>
+						<a @click="auditStatus(record)" v-permission="'变更审核_去审核'">去审核</a>
 					</div>
 				</template>
 			</template>

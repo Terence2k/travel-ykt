@@ -4,7 +4,7 @@
 			<a-button type="primary">模板下载</a-button>
 			<a-button type="primary" v-if="travelStore.teamStatus">批量导入</a-button>
 			<a-button type="primary">中高风险地区一键检查</a-button>
-			<a-button type="primary">健康码一键检查</a-button>
+			<a-button type="primary" @click="getHealthCode">健康码一键检查</a-button>
 		</div>
 		<a-form ref="formRef" :rules="rulesRef" :model="editableData" autocomplete="off" labelAlign="left">
 			<CommonTable :row-selection="{ onSelect }" :columns="columns" :dataSource="tableData" :scrollY="false">
@@ -63,8 +63,14 @@
 						</template>
 					</template>
 					<template v-if="column.key === 'healthCode'">
-						<span class="green-code">
-							{{ text }}
+						<span class="green-code" v-if="text === '00'">
+							{{CODEVALUE.HEALTHCODE[text]}}
+						</span>
+						<span class="yellow-code" v-if="text === '01'">
+							{{CODEVALUE.HEALTHCODE[text]}}
+						</span>
+						<span class="red-code" v-if="text === '10'">
+							{{CODEVALUE.HEALTHCODE[text]}}
 						</span>
 					</template>
 					<template v-if="column.key === 'specialCertificatePicture'">
@@ -107,15 +113,15 @@
 			<div>
 				<a-row type="flex" justify="center">
 					<!-- <a-col style="text-align: center" span="3"><a-button type="primary">中高风险地区一键检查</a-button></a-col> -->
-					<a-col style="text-align: center" span="3"><a-button class="btn" type="danger">有中高风险地区！</a-button></a-col>
-					<a-col style="text-align: center" span="3"><a-button class="btn" type="danger">有黄码或红码！</a-button></a-col>
+					<a-col v-if="(highRish && checkHighRish)" style="text-align: center" span="3"><a-button class="btn" type="danger">有中高风险地区！</a-button></a-col>
+					<a-col v-if="(isWarring && checkCode)" style="text-align: center" span="3"><a-button class="btn" type="danger">有黄码或红码！</a-button></a-col>
 				</a-row>
 			</div>
 			<div style="margin-top: 36px; margin-bottom: 36px">
 				<a-row type="flex" justify="center">
 					<!-- <a-col style="text-align: center" span="3"><a-button type="primary">健康码一键检查</a-button></a-col> -->
-					<a-col style="text-align: center" span="3"><a-button class="btn" type="primary">无中高风险地区！</a-button></a-col>
-					<a-col style="text-align: center" span="3"><a-button class="btn" type="primary">全员绿码！</a-button></a-col>
+					<a-col v-if="!highRish && checkHighRish" style="text-align: center" span="3"><a-button class="btn" type="primary">无中高风险地区！</a-button></a-col>
+					<a-col v-if="!isWarring && checkCode" style="text-align: center" span="3"><a-button class="btn" type="primary">全员绿码！</a-button></a-col>
 				</a-row>
 			</div>
 		</div>
@@ -126,6 +132,7 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import Upload from '@/components/common/imageWrapper.vue';
 import { useTouristInfo } from './touristInfo';
 import { PlusOutlined } from '@ant-design/icons-vue';
+import { CODEVALUE } from '@/constant';
 
 const props = defineProps({
 	onCheck: {
@@ -154,7 +161,12 @@ const {
 	changeIDCard,
 	changeUpload,
 	fileUrl,
-	removeImg
+	removeImg,
+	getHealthCode,
+	isWarring,
+	checkCode,
+	checkHighRish,
+	highRish
 } = useTouristInfo(props, emits);
 </script>
 <style lang="less" scoped>

@@ -27,20 +27,20 @@
       <a-input v-model:value="state.tableData.param.roleName" placeholder="请输入角色名称"/>
     </search-item>
     <template #button>
-      <a-button @click="onSearch">查询</a-button>
+      <a-button @click="onSearch" v-permission="'查询'">查询</a-button>
     </template>
   </CommonSearch>
   <CommonTable :dataSource="state.tableData.data" :columns="columns">
       <template #button>
-        <a-button type="primary" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
+        <a-button type="primary" @click="addOrUpdate({ handle: 'add' })" v-permission="'新增'">新增</a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
           <div class="action-btns">
-            <a @click="addOrUpdate({  row: record,  handle: 'update'})">编辑</a>
-            <a @click="editStatus(record.oid, 0)" v-if="record.roleStatus === 1">禁用</a>
-            <a @click="editStatus(record.oid, 1)" v-if="record.roleStatus === 0">启用</a>
-            <a @click="showDetails(record)">查看</a>
+            <a @click="addOrUpdate({  row: record,  handle: 'update'})" v-permission="'编辑'">编辑</a>
+            <a @click="editStatus(record.oid, 0)" v-if="record.roleStatus === 1" v-permission="'禁用'">禁用</a>
+            <a @click="editStatus(record.oid, 1)" v-if="record.roleStatus === 0" v-permission="'启用'">启用</a>
+            <a @click="showDetails(record)" v-permission="'查看'">查看</a>
           </div>
         </template>
     </template>

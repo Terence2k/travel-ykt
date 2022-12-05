@@ -22,7 +22,7 @@
 
         <template v-if="column.key === 'action'">
           <div class="action-btns">
-            <a @click="goToPath(record)">编辑填报</a>
+            <a @click="goToPath(record)" v-permission="'草稿_编辑填报'">编辑填报</a>
           </div>
         </template>
 			</template>

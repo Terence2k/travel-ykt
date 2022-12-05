@@ -8,66 +8,180 @@ export const fixedColumn: Array<any> = [
 		width: 100,
 	},
 	{
+		title: '发团旅行社',
+		dataIndex: 'travelName',
+		key: 'travelName',
+		width: 100,
+	},
+	{
+		title: '所属集团',
+		dataIndex: 'travelName',
+		key: 'travelName',
+		width: 100,
+	},
+	{
 		title: '自编团号',
+		dataIndex: 'travelName',
+		key: 'travelName',
+		width: 100,
+	},
+	{
+		title: '团单类型',
+		dataIndex: 'travelName',
+		key: 'travelName',
+		width: 100,
+	},
+	{
+		title: '出团时间',
+		dataIndex: 'travelName',
+		key: 'travelName',
+		width: 100,
+	},
+	{
+		title: '散团时间',
+		dataIndex: 'travelName',
+		key: 'travelName',
+		width: 100,
+	},
+	{
+		title: '结算时间',
+		dataIndex: 'travelName',
+		key: 'travelName',
+		width: 100,
+	},
+	{
+		title: '行程人数',
 		dataIndex: 'peopleNum',
 		key: 'peopleNum',
 		width: 100,
 	},
 	{
-		title: '景区名称',
+		title: '总团款(元)',
 		dataIndex: 'frozenPrice',
 		key: 'frozenPrice',
 		width: 100,
 	},
 	{
-		title: '票名称',
-		dataIndex: 'settlementPrice',
-		key: 'settlementPrice',
-		width: 100,
-	},
-	{
-		title: '旅行社',
-		dataIndex: 'unSettlementPrice',
-		key: 'unSettlementPrice',
-		width: 100,
-	},
-	{
-		title: '核销时间',
-		dataIndex: 'unSettlementPrice',
-		key: 'unSettlementPrice',
-		width: 100,
-	},
-	{
-		title: '门票单价（元）',
-		dataIndex: 'unSettlementPrice',
-		key: 'unSettlementPrice',
-		width: 100,
-	},
-	{
-		title: '分账单价',
-		dataIndex: 'unSettlementPrice',
-		key: 'unSettlementPrice',
-		width: 100,
-	},
-	{
-		title: '预定数',
-		dataIndex: 'unSettlementPrice',
-		key: 'unSettlementPrice',
-		width: 100,
-	},
-	{
-		title: '实刷数',
-		dataIndex: 'unSettlementPrice',
-		key: 'unSettlementPrice',
-		width: 100,
-	},
-	{
-		title: '预定金额（元）',
-		dataIndex: 'unSettlementPrice',
-		key: 'unSettlementPrice',
+		title: '旅行社实收',
+		dataIndex: 'test',
+		key: 'test',
 		width: 100,
 	},
 ];
+export const hmVo = {
+	title: '古维费用',
+	key: 'hmVo',
+	children: [
+		{
+			title: '冻结',
+			dataIndex: 'frozenPrice',
+			key: 'hmVo',
+			width: 100,
+		},
+		{
+			title: '实收',
+			dataIndex: 'actualPrice',
+			key: 'hmVo',
+			width: 100,
+		},
+	],
+};
+export const ticketVo = {
+	title: '景区费用',
+	key: 'ticketVo',
+	children: [
+		{
+			title: '实收',
+			dataIndex: 'actualPrice',
+			key: 'ticketVo',
+			width: 100,
+		},
+	],
+};
+export const hotelVo = {
+	title: '酒店费用',
+	key: 'hotelVo',
+	children: [
+		{
+			title: '实收',
+			dataIndex: 'actualPrice',
+			key: 'hotelVo',
+			width: 100,
+		},
+	],
+};
+export const cateringVo = {
+	title: '餐饮费用',
+	key: 'cateringVo',
+	children: [
+		{
+			title: '实收',
+			dataIndex: 'actualPrice',
+			key: 'cateringVo',
+			width: 100,
+		},
+	],
+};
+export const subTravelVo = {
+	title: '导服费',
+	key: 'test',
+	children: [
+		{
+			title: '旅行社导服费',
+			dataIndex: 'actualPrice',
+			key: 'test',
+			width: 110,
+		},
+		{
+			title: '集团导服费',
+			dataIndex: 'unSettlementPrice',
+			key: 'test',
+			width: 110,
+		},
+	],
+};
+export const notConsumed = {
+	title: '未消费款项',
+	key: 'unSettlementPriceVo',
+	children: [
+		{
+			title: '未消费小计',
+			dataIndex: 'allPrice',
+			key: 'unSettlementPriceVo',
+			width: 100,
+		},
+		{
+			title: '古维',
+			dataIndex: 'hmPrice',
+			key: 'unSettlementPriceVo',
+			width: 100,
+		},
+		{
+			title: '景点',
+			dataIndex: 'ticketPrice',
+			key: 'unSettlementPriceVo',
+			width: 100,
+		},
+		{
+			title: '餐费',
+			dataIndex: 'cateringPrice',
+			key: 'unSettlementPriceVo',
+			width: 100,
+		},
+		{
+			title: '酒店',
+			dataIndex: 'hotelPrice',
+			key: 'unSettlementPriceVo',
+			width: 100,
+		},
+		{
+			title: '手续费',
+			dataIndex: 'rulePrice',
+			key: 'unSettlementPriceVo',
+			width: 100,
+		},
+	],
+};
 export interface StateType {
 	tableData: TableDataType;
 	viewList: Array<any>;
@@ -80,11 +194,10 @@ export interface TableDataType {
 	settlementStartTimeList: Array<any>;
 }
 export interface ParamType {
+	itineraryNo: string | number | null; // 团单编号
 	travelId: string | number | null; //组团社id
-	subTravelId: string | number | null; //地接社id
 	settlementTimeStart: string | number | null; //结算开始时间
 	settlementTimeEnd: string | number | null; //结算结束时间
-	travelTypeId: string | number | null; //团队类型id
 	pageNo: number; //页号
 	pageSize: number; //页大小
 }
@@ -175,42 +288,41 @@ export const getRulePrice = computed(() => (record: any, column: any) => {
 	}
 	return `暂无数据`;
 });
+
+//获取所有父子级嵌套数据值
+export const getChildPrice = computed(() => (record: any, column: any) => {
+	return record[column.key] ? twoDecimalPlaces(record[column.key][column.dataIndex]) : '';
+});
+
+export const twoDecimalPlaces = (number: any): any => {
+	if (typeof number === 'string') {
+		if (number.includes('-')) {
+			number = number.slice(1);
+			return `-${Number(number / 100).toFixed(2)}`;
+		}
+	}
+	return Number(number / 100).toFixed(2);
+};
 // 需要/100的字段
 export const formatColumn = computed(() => (column: any) => {
-	// frozenPrice 冻结金额(团款) settlementPrice 已核销金额 unSettlementPrice 未消费费用
-	return column.dataIndex === 'frozenPrice' || column.dataIndex === 'settlementPrice' || column.dataIndex === 'unSettlementPrice';
+	// 古维 景区 酒店 餐饮 未消费款项 导服费 团款 旅行社实收
+	return (
+		column.key === 'hmVo' ||
+		column.key === 'ticketVo' ||
+		column.key === 'hotelVo' ||
+		column.key === 'cateringVo' ||
+		column.key === 'frozenPrice' ||
+		column.key === 'unSettlementPrice' ||
+		column.key === 'test' ||
+		column.key === 'unSettlementPrice'
+	);
 });
 export const formatData = computed(() => (record: any, column: any) => {
-	// 已核销金额
-	if (column.dataIndex === 'settlementPrice') {
-		if (column.key === 'settlementPrice') {
-			// 父级的数据
-			return record[column.key] ? twoDecimalPlaces(record[column.key]) : '';
-		} else {
-			// 子级的数据
-			return record[column.key]['settlementPrice'] ? twoDecimalPlaces(record[column.key]['settlementPrice']) : '';
-		}
+	if (column.dataIndex == column.key) {
+		// 父级的数据
+		return record[column.key] ? twoDecimalPlaces(record[column.key]) : '';
+	} else {
+		// 子级的数据
+		return record[column.key][column.dataIndex] ? twoDecimalPlaces(record[column.key][column.dataIndex]) : '';
 	}
-	// unSettlementPrice 未消费费用
-	if (column.dataIndex === 'unSettlementPrice') {
-		if (column.key === 'unSettlementPrice') {
-			// 父级的数据
-			return record[column.key] ? twoDecimalPlaces(record[column.key]) : '';
-		}
-		// else {
-		// 	// 子级的数据
-		// 	return record[column.key]['unSettlementPrice'] ? twoDecimalPlaces(record[column.key]['unSettlementPrice']) : '';
-		// }
-	}
-	// 冻结金额
-	if (column.dataIndex === 'frozenPrice') {
-		// 团款
-		if (column.key === 'frozenPrice') {
-			return record[column.key] ? twoDecimalPlaces(record[column.key]) : '';
-		} else {
-			// 冻结金额
-			return record[column.key]['frozenPrice'] ? twoDecimalPlaces(record[column.key]['frozenPrice']) : '';
-		}
-	}
-	return '';
 });

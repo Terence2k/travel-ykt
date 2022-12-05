@@ -42,8 +42,10 @@
         name="menuIds"
       >
         <a-tree
+          v-if="dialogVisible"
           v-model:checkedKeys="checkedKeys"
           checkable
+          :selectable="false"
           :tree-data="menuTreeDate"
           :field-names="fieldNames"
         >
@@ -169,13 +171,13 @@
       if (res.children?.length == length) {
         menuIdsInfo.value.push(oid);
       }
-    };
-    
-    menuList.forEach((item: any) => {
-      if (item.children?.length) {
-        findDeepMenu(item.children, oid);
-      }
-    })
+    } else {
+      menuList.forEach((item: any) => {
+        if (item.children?.length) {
+          findDeepMenu(item.children, oid);
+        }
+      })
+    }
   }
 
   const getDetailMenuIds = (data: any) => {

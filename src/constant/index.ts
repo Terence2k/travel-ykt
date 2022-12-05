@@ -1,3 +1,5 @@
+import { HealthCode } from "@/enum"
+
 export const ROLE = {
     TRAVE_CODE: 'TRAVEL_OPERATOR' //计调
 }
@@ -26,5 +28,10 @@ export const CODEVALUE= {
         HAD_SETTLED: 'HAD_SETTLED', //已结算
         HAD_APPLY_TRANSFER: 'HAD_APPLY_TRANSFER', //已申请转账
         SETTLE_COMPLETE: 'SETTLE_COMPLETE' //结算完成
-    } 
+    },
+    HEALTHCODE: {
+        [HealthCode.Green]: '绿码',
+        [HealthCode.Yellow]: '黄码',
+        [HealthCode.Red]: '红码'
+    }
 }

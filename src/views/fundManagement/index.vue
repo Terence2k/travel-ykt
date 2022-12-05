@@ -12,8 +12,8 @@
           <div>
             <div class="number">{{ fundInfo.availableBalance }}</div>
             <div v-if="fundInfo.yktAccountNumber">
-              <span class="list_item_operate" @click="goTo">去充值</span>
-              <span class="list_item_operate">申请退款</span>
+              <span class="list_item_operate" @click="goTo" v-permission="'去充值'">去充值</span>
+              <span class="list_item_operate" v-permission="'申请退款'">申请退款</span>
             </div>
             <div v-else>
               开通一卡通资金子账户后可充值
@@ -26,7 +26,7 @@
           <div>
             <div class="number">{{ fundInfo.accountFrozen }}</div>
             <div>
-              <span class="list_item_operate">查看详情</span>
+              <span class="list_item_operate" v-permission="'查看详情'">查看详情</span>
             </div>
           </div>
         </div>
@@ -79,7 +79,7 @@
   </div>
   <div class="info_details">
     <a-tabs v-model:activeKey="activeKey" @change="tabsChange">
-      <a-tab-pane key="1" tab="充值记录查询">
+      <a-tab-pane key="1" tab="充值记录查询" v-if="getTabPermission('充值记录查询')">
         <CommonSearch>
           <search-item label="充值时间">
             <a-date-picker v-model:value="tableData1.param.createTime" :format="dateFormat" :valueFormat="dateFormat"
@@ -95,7 +95,7 @@
             <span style="margin-left: 20px">元</span>
           </search-item>
           <template #button>
-            <a-button @click="onQuery">查询</a-button>
+            <a-button @click="onQuery" v-permission="'充值记录查询_查询'">查询</a-button>
           </template>
         </CommonSearch>
         <CommonTable :dataSource="tableData1.data" :columns="columns1">
@@ -106,7 +106,7 @@
             :total="tableData1.total" @change="onHandleCurrentChange" @showSizeChange="pageSideChange" />
         </div>
       </a-tab-pane>
-      <a-tab-pane key="2" tab="资金支出记录">
+      <a-tab-pane key="2" tab="资金支出记录" v-if="getTabPermission('资金支出记录')">
         <CommonSearch>
           <search-item label="支出时间">
             <a-date-picker v-model:value="tableData2.param.createTime" :format="dateFormat" :valueFormat="dateFormat"
@@ -122,7 +122,7 @@
             <span style="margin-left: 20px">元</span>
           </search-item>
           <template #button>
-            <a-button @click="onQuery">查询</a-button>
+            <a-button @click="onQuery" v-permission="'资金支出记录_查询'">查询</a-button>
           </template>
         </CommonSearch>
         <CommonTable :dataSource="tableData2.data" :columns="columns2">
@@ -133,7 +133,7 @@
             :total="tableData2.total" @change="onHandleCurrentChange" @showSizeChange="pageSideChange" />
         </div>
       </a-tab-pane>
-      <a-tab-pane key="3" tab="预冻结资金">
+      <a-tab-pane key="3" tab="预冻结资金" v-if="getTabPermission('预冻结资金')">
         <CommonSearch>
           <search-item label="预冻结时间">
             <a-date-picker v-model:value="tableData3.param.createTime" :format="dateFormat" :valueFormat="dateFormat"
@@ -149,7 +149,7 @@
             <span style="margin-left: 20px">元</span>
           </search-item>
           <template #button>
-            <a-button @click="onQuery">查询</a-button>
+            <a-button @click="onQuery" v-permission="'预冻结资金_查询'">查询</a-button>
           </template>
         </CommonSearch>
         <CommonTable :dataSource="tableData3.data" :columns="columns3">
@@ -172,6 +172,7 @@ import SearchItem from '@/components/common/CommonSearchItem.vue'
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router';
+import { getTabPermission } from '@/utils/util';
 const router = useRouter();
 const activeKey = ref('1');
 const dateFormat = 'YYYY-MM-DD';

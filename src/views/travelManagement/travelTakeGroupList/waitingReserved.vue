@@ -19,8 +19,8 @@
 
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a @click="goToPath(record)">进入预订</a>
-						<a @click="goToChange(record)">行程变更</a>
+						<a @click="goToPath(record)" v-permission="'待预订_进入预订'">进入预订</a>
+						<a @click="goToChange(record)" v-permission="'待预订_行程变更'">行程变更</a>
 					</div>
 				</template>
 			</template>

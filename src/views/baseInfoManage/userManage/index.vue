@@ -18,12 +18,12 @@
       <a-input v-model:value="state.tableData.param.keyWord" placeholder="请输入用户姓名/手机号"/>
     </search-item>
     <template #button>
-      <a-button @click="onSearch">查询</a-button>
+      <a-button @click="onSearch"  v-permission="'查询'">查询</a-button>
     </template>
   </CommonSearch>
   <CommonTable :dataSource="state.tableData.data" :columns="columns">
       <template #button>
-        <a-button type="primary" @click="addOrUpdate({ handle: 'add' })" v-if="!isGroupSuperAdmin">新增</a-button>
+        <a-button type="primary" @click="addOrUpdate({ handle: 'add' })" v-if="!isGroupSuperAdmin" v-permission="'新增'">新增</a-button>
       </template>
       <template #bodyCell="{ column, index, record }">
         <template v-if="column.key === 'index'">
@@ -38,12 +38,12 @@
         </template>
         <template v-if="column.key === 'action'">
           <div class="action-btns">
-            <a @click="addOrUpdate({  row: record,  handle: 'update'})">编辑</a>
+            <a @click="addOrUpdate({  row: record,  handle: 'update'})" v-permission="'编辑'">编辑</a>
             <!-- <a @click="resetPassword(record.oid)">重置密码</a> -->
-            <a @click="addOrUpdate({  row: record,  handle: 'update'})">重置密码</a>
+            <a @click="addOrUpdate({  row: record,  handle: 'update'})" v-permission="'重置密码'">重置密码</a>
             <template v-if="record.roleList.some((item: any) => item.roleCode != 'PLATFORM_SUPER_ADMIN')">
-              <a @click="editStatus(record.oid, 0)" v-if="record.userStatus === 1">禁用</a>
-              <a @click="editStatus(record.oid, 1)" v-if="record.userStatus === 0">启用</a>
+              <a @click="editStatus(record.oid, 0)" v-if="record.userStatus === 1" v-permission="'禁用'">禁用</a>
+              <a @click="editStatus(record.oid, 1)" v-if="record.userStatus === 0" v-permission="'启用'">启用</a>
             </template>
           </div>
         </template>

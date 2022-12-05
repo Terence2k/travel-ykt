@@ -344,7 +344,7 @@
               html-type="submit"
               style="margin-right:20px"
               :loading="loading"
-              v-if="form.informationAuditStatus != 1">
+              v-if="form.informationAuditStatus != 1" v-permission="['TRAVEL', 'HOTEL', 'TICKET', 'CATERING'].includes(userInfo.sysCompany.businessType) ? '提交审核' : '保存'">
               <!-- 除酒店、景点、旅行社外不提交审核 -->
               <template v-if="['TRAVEL', 'HOTEL', 'TICKET', 'CATERING'].includes(userInfo.sysCompany.businessType)">
                 提交审核
