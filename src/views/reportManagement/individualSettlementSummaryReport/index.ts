@@ -8,45 +8,45 @@ export const fixedColumn: Array<any> = [
 		width: 100,
 	},
 	{
-		title: '总人数',
+		title: '人数',
 		dataIndex: 'peopleNum',
 		key: 'peopleNum',
 		width: 100,
 	},
 	{
-		title: '总团款(元)',
+		title: '团款',
 		dataIndex: 'frozenPrice',
 		key: 'frozenPrice',
 		width: 100,
 	},
 	{
 		title: '合同费用',
-		dataIndex: 'settlementPrice',
-		key: 'settlementPrice',
+		dataIndex: 'contractPrice',
+		key: 'contractPrice',
 		width: 100,
 	},
 	{
 		title: '户名',
-		dataIndex: 'unSettlementPrice',
-		key: 'unSettlementPrice',
+		dataIndex: 'bankAccountName',
+		key: 'bankAccountName',
 		width: 100,
 	},
 	{
 		title: '旅行社开户行',
-		dataIndex: 'unSettlementPrice',
-		key: 'unSettlementPrice',
+		dataIndex: 'bank',
+		key: 'bank',
 		width: 100,
 	},
 	{
 		title: '旅行社账号',
-		dataIndex: 'unSettlementPrice',
-		key: 'unSettlementPrice',
+		dataIndex: 'bankAccount',
+		key: 'bankAccount',
 		width: 100,
 	},
 	{
 		title: '旅行社实收',
-		dataIndex: 'unSettlementPrice',
-		key: 'unSettlementPrice',
+		dataIndex: 'actualPrice',
+		key: 'actualPrice',
 		width: 100,
 	},
 	{
@@ -146,79 +146,43 @@ export const fixedColumn: Array<any> = [
 		],
 	},
 	{
-		title: '监理',
-		key: 'superviseVo',
+		title: '未结算费用',
+		key: 'unSettlementPriceVo',
 		children: [
 			{
-				title: '实收',
-				dataIndex: 'actualPrice',
-				key: 'superviseVo',
-				width: 100,
-			},
-		],
-	},
-	{
-		title: '协会',
-		key: 'associationVo',
-		children: [
-			{
-				title: '实收',
-				dataIndex: 'actualPrice',
-				key: 'associationVo',
-				width: 100,
-			},
-		],
-	},
-	{
-		title: '集团',
-		key: 'groupVo',
-		children: [
-			{
-				title: '实收',
-				dataIndex: 'actualPrice',
-				key: 'groupVo',
-				width: 100,
-			},
-		],
-	},
-	{
-		title: '文旅局',
-		key: 'cultureBureauVo',
-		children: [
-			{
-				title: '实收',
-				dataIndex: 'actualPrice',
-				key: 'cultureBureauVo',
-				width: 100,
-			},
-		],
-	},
-	{
-		title: '一卡通',
-		key: 'yktVo',
-		children: [
-			{
-				title: '实收',
-				dataIndex: 'actualPrice',
-				key: 'yktVo',
-				width: 100,
-			},
-		],
-	},
-	{
-		title: '地接社',
-		key: 'subTravelVo',
-		children: [
-			{
-				title: '实收',
-				dataIndex: 'actualPrice',
-				key: 'subTravelVo',
+				title: '酒店',
+				dataIndex: 'hotelPrice',
+				key: 'unSettlementPriceVo',
 				width: 100,
 			},
 			{
-				title: '未消费费用',
-				dataIndex: 'unSettlementPrice',
-				key: 'subTravelVo',
+				title: '景区',
+				dataIndex: 'ticketPrice',
+				key: 'unSettlementPriceVo',
+				width: 100,
+			},
+			{
+				title: '餐饮',
+				dataIndex: 'cateringPrice',
+				key: 'unSettlementPriceVo',
+				width: 100,
+			},
+			{
+				title: '古维',
+				dataIndex: 'hmPrice',
+				key: 'unSettlementPriceVo',
+				width: 100,
+			},
+			{
+				title: '手续费',
+				dataIndex: 'rulePrice',
+				key: 'unSettlementPriceVo',
+				width: 100,
+			},
+			{
+				title: '小计',
+				dataIndex: 'allPrice',
+				key: 'unSettlementPriceVo',
 				width: 100,
 			},
 		],
@@ -247,63 +211,64 @@ export interface ParamType {
 export interface DataType {
 	travelId?: number; //组团社id
 	travelName?: string; //组团社名称
-	subTravelId?: number; //地接社id
-	subTravelName?: string; //地接社名称
-	travelTypeId?: number; //团队类型id
-	travelTypeName?: string; //团队类型名称
 	peopleNum?: number; //人数
 	frozenPrice?: string; //团款
-	settlementPrice?: string; //核销总费用
-	unSettlementPrice?: string; //未消费费用
-	hmVo?: voType; //古维费用
-	ticketVo?: voType; //景区
-	hotelVo?: voType; //酒店
-	cateringVo?: superviseVoType; //餐饮
-	groupVo?: superviseVoType; //集团
-	cultureBureauVo?: superviseVoType; //文旅局
-	yktVo?: superviseVoType; //一卡通
-	subTravelVo?: subTravelVoType; //地接社
-	superviseVo?: superviseVoType; //监理
-	associationVo?: superviseVoType; //协会
-	comprehensiveGuideVoList?: Array<comprehensiveGuideVoListType>; //综费产品-导服费
-	comprehensiveVoList?: Array<comprehensiveVoListType>; //综费产品-除导服费外
+	contractPrice?: string; //合同费用
+	bankAccountName?: string; //户名
+	bank?: string; //旅行社开户行
+	bankAccount?: string; //旅行社账号
+	actualPrice?: string; //旅行社实收
+	comprehensiveFrozenPriceList: Array<ComprehensiveFrozenPriceType>;
+	hmVo: VoType;
+	ticketVo: VoType;
+	hotelVo: VoType;
+	cateringVo: VoType;
+	unSettlementPriceVo: UnSettlementPriceVoType;
+	comprehensiveGuideVoList: Array<ComprehensiveGuideVoListType>;
+	comprehensiveVoList: Array<ComprehensiveVoListType>;
 }
-// 古维费用 景区 酒店
-export interface voType {
+// 综费
+export interface ComprehensiveFrozenPriceType {
+	comprehensiveProductId: number; //综费产品id
+	comprehensiveProductName: string; //综费产品名称
+	frozenPrice: string; //未结算费用
+}
+export interface VoType {
 	frozenPrice: string; //冻结金额
 	settlementPrice: string; //已核销金额
 	actualPrice: string; //实收
-	ruleList: Array<ruleListType>;
+	ruleList: Array<RuleListType>;
 }
-// 餐饮 监理 协会 集团 文旅局 一卡通 地接社
-export interface superviseVoType {
-	actualPrice: string; //实收
-	ruleList: Array<ruleListType>;
+export interface RuleListType {
+	ruleName: string; //规则名称
+	rulePrice: string; //结算费用
+}
+export interface UnSettlementPriceVoType {
+	hotelPrice: string; //酒店
+	ticketPrice: string; //景区
+	cateringPrice: string; //餐饮
+	hmPrice: string; //古维
+	rulePrice: string; //手续费
+	allPrice: string; //小计
+	ruleList: Array<RuleListType>;
 }
 // 综费产品-导服费
-export interface comprehensiveGuideVoListType {
+export interface ComprehensiveGuideVoListType {
 	comprehensiveFeeProductId: number; //综费产品id
 	comprehensiveFeeProductName: string; //综费产品名称
 	travelActualPrice: string; //旅行社实收
 	groupActualPrice: string; //集团实收
-	ruleList: Array<ruleListType>;
-}
-export interface subTravelVoType extends superviseVoType {
-	unSettlementPrice: string;
+	ruleList: Array<RuleListType>;
 }
 // 综费产品-除导服费外
-export interface comprehensiveVoListType {
+export interface ComprehensiveVoListType {
 	comprehensiveFeeProductId: number; //综费产品id
 	comprehensiveFeeProductName: string; //综费产品名称
 	belongCompany: string; //费用归属  取字典父级code_value=BUSINESS_TYPE的所有子级
 	actualPrice: string; //实收
-	ruleList: Array<ruleListType>;
+	ruleList: Array<RuleListType>;
 }
-export interface ruleListType {
-	ruleName: string; //规则名称
-	rulePrice: string; //结算费用
-	type: number | string;
-}
+// 获取结算规则
 export const getRulePrice = computed(() => (record: any, column: any) => {
 	const ruleColumnKey = column.parent.split('-')[0];
 	// 综费产品
@@ -311,10 +276,7 @@ export const getRulePrice = computed(() => (record: any, column: any) => {
 		for (const key in record[ruleColumnKey]) {
 			if (column.columnParentName === record[ruleColumnKey][key]['comprehensiveFeeProductName']) {
 				for (const subKey in record[ruleColumnKey][key].ruleList) {
-					if (
-						column.title === record[ruleColumnKey][key].ruleList[subKey].ruleName &&
-						Number(column.type) === Number(record[ruleColumnKey][key].ruleList[subKey].type)
-					) {
+					if (column.title === record[ruleColumnKey][key].ruleList[subKey].ruleName) {
 						return `${twoDecimalPlaces(record[ruleColumnKey][key].ruleList[subKey].rulePrice)}`;
 					}
 				}
@@ -324,7 +286,7 @@ export const getRulePrice = computed(() => (record: any, column: any) => {
 	// 除综费产品外
 	if (record[ruleColumnKey] && record[ruleColumnKey].ruleList && record[ruleColumnKey].ruleList.length) {
 		for (const key in record[ruleColumnKey].ruleList) {
-			if (column.title === record[ruleColumnKey].ruleList[key].ruleName && Number(column.type) === Number(record[ruleColumnKey].ruleList[key].type)) {
+			if (column.title === record[ruleColumnKey].ruleList[key].ruleName) {
 				return `${twoDecimalPlaces(record[ruleColumnKey].ruleList[key].rulePrice)}`;
 			}
 		}
@@ -333,8 +295,12 @@ export const getRulePrice = computed(() => (record: any, column: any) => {
 });
 // 获取实收
 export const getActualPrice = computed(() => (record: any, column: any) => {
-	// 先判断非综费产品
+	// 先判断旅行社实收
+	if (column.key === 'actualPrice' && column.dataIndex === 'actualPrice') {
+		return twoDecimalPlaces(record[column.key]) || '';
+	}
 	if (!column.key.includes('List')) {
+		// 先判断非综费产品
 		return record[column.key] && record[column.key]['actualPrice'] ? twoDecimalPlaces(record[column.key]['actualPrice']) : '';
 	} else {
 		// 综费产品
@@ -346,10 +312,6 @@ export const getActualPrice = computed(() => (record: any, column: any) => {
 		}
 	}
 	return '';
-});
-//地接社未消费费用获取数据
-export const getSubTravelVoUnSettlementPrice = computed(() => (record: any, column: any) => {
-	return record[column.key] ? twoDecimalPlaces(record[column.key]['unSettlementPrice']) : '';
 });
 export const columns = computed(() => {
 	const column = ref<TableColumnsType>([]);
@@ -509,7 +471,12 @@ export const columns = computed(() => {
 	}
 	return column.value;
 });
-
+// 获取未结算费用字段
+export const getUnSettlementPriceVo = computed(() => (record: any, column: any) => {
+	if (column.key === 'unSettlementPriceVo') {
+		return twoDecimalPlaces(record[column.key][column.dataIndex]) || '';
+	}
+});
 export const twoDecimalPlaces = (number: any): any => {
 	if (typeof number === 'string') {
 		if (number.includes('-')) {
