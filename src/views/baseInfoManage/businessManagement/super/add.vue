@@ -44,10 +44,12 @@
           </a-textarea>
         </a-form-item>
         <a-form-item name="registeredCapital" label="注册资本" v-show="formRules?.registeredCapital">
-          <a-input v-model:value="form.registeredCapital" placeholder="请输入注册资本" suffix="万元" @change="() => {
+          <a-input v-model:value.number="form.registeredCapital" placeholder="请输入注册资本" suffix="万元">
+          </a-input>
+          <!-- <a-input v-model:value="form.registeredCapital" placeholder="请输入注册资本" suffix="万元" @change="() => {
             form.registeredCapital = form.registeredCapital?.replace(/[^0-9.]/g, '')
           }">
-          </a-input>
+          </a-input> -->
         </a-form-item>
         <a-form-item name="establishTime" label="成立日期" v-show="formRules?.establishTime">
           <a-date-picker v-model:value="form.establishTime" placeholder="请选择成立日期" style="width:100%"
@@ -330,6 +332,7 @@ const tipCancel = () => {
   tipVisible.value = false
   formRef.value?.resetFields()
   form.businessLicenseUrl = undefined
+  back()
 }
 /* const tipConform = () => {
   tipVisible.value = false
