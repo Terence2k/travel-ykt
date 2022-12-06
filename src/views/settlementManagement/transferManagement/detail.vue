@@ -14,7 +14,7 @@
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a href="javascript:;" @click="transferAccounts(record.id)">申请转账</a>
+						<a href="javascript:;" @click="transferAccounts(record.oid)">申请转账</a>
 					</div>
 				</template>
 			</template>

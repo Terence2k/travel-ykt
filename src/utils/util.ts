@@ -344,9 +344,6 @@ export const getTabPermission = (tabName: any) => {
   let paths = [];
   paths = router.currentRoute.value.matched.map((item: any) => item.meta.title);
   // end
-
-  console.log('paths:', paths);
-  
   let targetMenu: any = sysMenuVos;
   paths.forEach((item: any) => {
     let res = targetMenu.find((i: any) => i.menuName == item);
