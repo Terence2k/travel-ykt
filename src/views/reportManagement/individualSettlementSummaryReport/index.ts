@@ -201,10 +201,8 @@ export interface TableDataType {
 }
 export interface ParamType {
 	travelId: string | number | null; //组团社id
-	subTravelId: string | number | null; //地接社id
 	settlementTimeStart: string | number | null; //结算开始时间
 	settlementTimeEnd: string | number | null; //结算结束时间
-	travelTypeId: string | number | null; //团队类型id
 	pageNo: number; //页号
 	pageSize: number; //页大小
 }
