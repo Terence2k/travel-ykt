@@ -63,8 +63,8 @@ export const fixedColumn: Array<any> = [
 	},
 	{
 		title: '旅行社实收',
-		dataIndex: 'test',
-		key: 'test',
+		dataIndex: 'actualPrice',
+		key: 'actualPrice',
 		width: 100,
 	},
 ];
@@ -73,13 +73,13 @@ export const hmVo = {
 	key: 'hmVo',
 	children: [
 		{
-			title: '冻结',
+			title: '古维冻结',
 			dataIndex: 'frozenPrice',
 			key: 'hmVo',
 			width: 100,
 		},
 		{
-			title: '实收',
+			title: '古维实收',
 			dataIndex: 'actualPrice',
 			key: 'hmVo',
 			width: 100,
@@ -91,7 +91,7 @@ export const ticketVo = {
 	key: 'ticketVo',
 	children: [
 		{
-			title: '实收',
+			title: '景区实收',
 			dataIndex: 'actualPrice',
 			key: 'ticketVo',
 			width: 100,
@@ -103,7 +103,7 @@ export const hotelVo = {
 	key: 'hotelVo',
 	children: [
 		{
-			title: '实收',
+			title: '酒店实收',
 			dataIndex: 'actualPrice',
 			key: 'hotelVo',
 			width: 100,
@@ -115,28 +115,10 @@ export const cateringVo = {
 	key: 'cateringVo',
 	children: [
 		{
-			title: '实收',
+			title: '餐饮实收',
 			dataIndex: 'actualPrice',
 			key: 'cateringVo',
 			width: 100,
-		},
-	],
-};
-export const subTravelVo = {
-	title: '导服费',
-	key: 'test',
-	children: [
-		{
-			title: '旅行社导服费',
-			dataIndex: 'actualPrice',
-			key: 'test',
-			width: 110,
-		},
-		{
-			title: '集团导服费',
-			dataIndex: 'unSettlementPrice',
-			key: 'test',
-			width: 110,
 		},
 	],
 };
@@ -211,7 +193,6 @@ export interface DataType {
 	peopleNum?: number; //人数
 	frozenPrice?: string; //团款
 	settlementPrice?: string; //核销总费用
-	unSettlementPrice?: string; //未消费费用
 	hmVo?: voType; //古维费用
 	ticketVo?: voType; //景区
 	hotelVo?: voType; //酒店
@@ -222,8 +203,15 @@ export interface DataType {
 	subTravelVo?: subTravelVoType; //地接社
 	superviseVo?: superviseVoType; //监理
 	associationVo?: superviseVoType; //协会
-	comprehensiveGuideVoList?: Array<comprehensiveGuideVoListType>; //综费产品-导服费
+	comprehensiveGuideVoList: Array<comprehensiveGuideVoListType>; //综费产品-导服费
 	comprehensiveVoList?: Array<comprehensiveVoListType>; //综费产品-除导服费外
+	comprehensiveFrozenPriceList: Array<ComprehensiveFrozenPriceType>; // 全部综费
+}
+// 综费
+export interface ComprehensiveFrozenPriceType {
+	comprehensiveProductId: number; //综费产品id
+	comprehensiveProductName: string; //综费产品名称
+	frozenPrice: string; //未结算费用
 }
 // 古维费用 景区 酒店
 export interface voType {
@@ -239,15 +227,13 @@ export interface superviseVoType {
 }
 // 综费产品-导服费
 export interface comprehensiveGuideVoListType {
-	comprehensiveFeeProductId: number; //综费产品id
+	comprehensiveFeeProductId: number | null; //综费产品id
 	comprehensiveFeeProductName: string; //综费产品名称
 	travelActualPrice: string; //旅行社实收
 	groupActualPrice: string; //集团实收
 	ruleList: Array<ruleListType>;
 }
-export interface subTravelVoType extends superviseVoType {
-	unSettlementPrice: string;
-}
+export interface subTravelVoType extends superviseVoType {}
 // 综费产品-除导服费外
 export interface comprehensiveVoListType {
 	comprehensiveFeeProductId: number; //综费产品id
@@ -259,7 +245,6 @@ export interface comprehensiveVoListType {
 export interface ruleListType {
 	ruleName: string; //规则名称
 	rulePrice: string; //结算费用
-	type: number | string;
 }
 export const getRulePrice = computed(() => (record: any, column: any) => {
 	const ruleColumnKey = column.parent.split('-')[0];
@@ -268,10 +253,7 @@ export const getRulePrice = computed(() => (record: any, column: any) => {
 		for (const key in record[ruleColumnKey]) {
 			if (column.columnParentName === record[ruleColumnKey][key]['comprehensiveFeeProductName']) {
 				for (const subKey in record[ruleColumnKey][key].ruleList) {
-					if (
-						column.title === record[ruleColumnKey][key].ruleList[subKey].ruleName &&
-						Number(column.type) === Number(record[ruleColumnKey][key].ruleList[subKey].type)
-					) {
+					if (column.title === record[ruleColumnKey][key].ruleList[subKey].ruleName) {
 						return `${twoDecimalPlaces(record[ruleColumnKey][key].ruleList[subKey].rulePrice)}`;
 					}
 				}
@@ -281,7 +263,7 @@ export const getRulePrice = computed(() => (record: any, column: any) => {
 	// 除综费产品外
 	if (record[ruleColumnKey] && record[ruleColumnKey].ruleList && record[ruleColumnKey].ruleList.length) {
 		for (const key in record[ruleColumnKey].ruleList) {
-			if (column.title === record[ruleColumnKey].ruleList[key].ruleName && Number(column.type) === Number(record[ruleColumnKey].ruleList[key].type)) {
+			if (column.title === record[ruleColumnKey].ruleList[key].ruleName) {
 				return `${twoDecimalPlaces(record[ruleColumnKey].ruleList[key].rulePrice)}`;
 			}
 		}
@@ -312,9 +294,9 @@ export const formatColumn = computed(() => (column: any) => {
 		column.key === 'hotelVo' ||
 		column.key === 'cateringVo' ||
 		column.key === 'frozenPrice' ||
-		column.key === 'unSettlementPrice' ||
 		column.key === 'test' ||
-		column.key === 'unSettlementPrice'
+		column.key === 'unSettlementPriceVo' ||
+		column.key === 'actualPrice'
 	);
 });
 export const formatData = computed(() => (record: any, column: any) => {
