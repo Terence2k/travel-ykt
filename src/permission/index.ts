@@ -1,7 +1,14 @@
+
+import router from "@/router/index";
 // btnValue: 按钮名字,tabValue: tab页名
 const treeForeach = (btnValue: any, tabValue?: any) => {
-  const tabArr = JSON.parse(<string>localStorage.getItem('tabArr') || '{}');
-  const btnArr = JSON.parse(<string>localStorage.getItem('btnArr') || '{}');
+  const tabArr = JSON.parse(<string>localStorage.getItem('tabArr') || '[]');
+  const btnArr = JSON.parse(<string>localStorage.getItem('btnArr') || '[]');
+  if (!tabArr.length || !btnArr.length) {
+    window.localStorage.setItem("authorization", "");
+    window.localStorage.setItem("userInfo", "");
+    router.push("/login");
+  }
   if (tabValue) {
     let res = tabArr.find((item: any) => item.menuName === tabValue && window.location.href.split('/#')[1].indexOf(item.pUrl) !== -1 );
     return res.childMenuList.some((item: any) => item.menuName === btnValue && item.menuType === 3);
@@ -15,8 +22,6 @@ const directives = [
     name: 'permission',
     value: {
       mounted(el: HTMLElement, binding: any) {
-        // 获取用户有权限菜单
-        const userInfo = JSON.parse(<string>localStorage.getItem('userInfo') || '{}');
         const type = binding.value || '';
         let status = false;
         status = treeForeach(type.split('_')[type.split('_').length - 1], type.split('_')[type.split('_').length - 2]);
