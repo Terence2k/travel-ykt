@@ -267,7 +267,7 @@ export interface ComprehensiveVoListType {
 	ruleList: Array<RuleListType>;
 }
 // 获取结算规则
-export const getRulePrice = computed(() => (record: any, column: any) => {
+export const getRulePrice = computed(() => (record: any, column: any): string => {
 	const ruleColumnKey = column.parent.split('-')[0];
 	// 综费产品
 	if (ruleColumnKey.includes('List')) {
@@ -292,7 +292,7 @@ export const getRulePrice = computed(() => (record: any, column: any) => {
 	return `暂无数据`;
 });
 // 获取实收
-export const getActualPrice = computed(() => (record: any, column: any) => {
+export const getActualPrice = computed(() => (record: any, column: any): string => {
 	// 先判断旅行社实收
 	if (column.key === 'actualPrice' && column.dataIndex === 'actualPrice') {
 		return twoDecimalPlaces(record[column.key]) || '';
@@ -313,12 +313,13 @@ export const getActualPrice = computed(() => (record: any, column: any) => {
 });
 
 // 获取未结算费用字段
-export const getUnSettlementPriceVo = computed(() => (record: any, column: any) => {
+export const getUnSettlementPriceVo = computed(() => (record: any, column: any): string => {
 	if (column.key === 'unSettlementPriceVo' && record[column.key]) {
 		return twoDecimalPlaces(record[column.key][column.dataIndex]) || '';
 	}
+	return '';
 });
-export const twoDecimalPlaces = (number: any): any => {
+export const twoDecimalPlaces = (number: any): string => {
 	if (typeof number === 'string') {
 		if (number.includes('-')) {
 			number = number.slice(1);
@@ -328,11 +329,11 @@ export const twoDecimalPlaces = (number: any): any => {
 	return Number(number / 100).toFixed(2);
 };
 // 需要/100的字段
-export const formatColumn = computed(() => (column: any) => {
+export const formatColumn = computed(() => (column: any): boolean => {
 	// frozenPrice 冻结金额(团款) settlementPrice 已核销金额 unSettlementPrice 未消费费用
 	return column.dataIndex === 'frozenPrice' || column.dataIndex === 'settlementPrice' || column.dataIndex === 'unSettlementPrice';
 });
-export const formatData = computed(() => (record: any, column: any) => {
+export const formatData = computed(() => (record: any, column: any): string => {
 	// 已核销金额
 	if (column.dataIndex === 'settlementPrice') {
 		if (column.key === 'settlementPrice') {
@@ -366,7 +367,7 @@ export const formatData = computed(() => (record: any, column: any) => {
 	}
 	return '';
 });
-export const getComprehensiveProduct = computed(() => (record: any, column: any) => {
+export const getComprehensiveProduct = computed(() => (record: any, column: any): string => {
 	const title = column.title;
 	const idx = record.comprehensiveFrozenPriceList.findIndex((item: any) => item.comprehensiveProductName === title);
 	if (idx !== -1) {
