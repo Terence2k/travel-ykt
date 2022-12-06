@@ -244,165 +244,165 @@ const initList = async () => {
 	state.tableData.data = [];
 	state.tableData.loading = true;
 	// 调用接口
-	// let res = await api.statementByItinerary(state.tableData.param);
-	// const { total, content } = res;
-	// state.tableData.total = total;
-	// state.tableData.data = content;
+	let res = await api.individualSettlementDetailReportTravel(state.tableData.param);
+	const { total, content } = res;
+	state.tableData.total = total;
+	state.tableData.data = content;
 	state.tableData.loading = false;
-	state.tableData.data = [
-		{
-			itineraryNo: '1', //团单编号
-			groupName: '1', //所属集团名称
-			privateNo: '1', //自编团号
-			orderType: '1', //团单类型
-			startDate: '2022.01.01 01:00', //出团时间
-			endDate: '2022.01.01 01:00', //散团时间
-			settlementTime: '2022.01.01 01:00', //结算时间
-			travelId: 1, //组团社id
-			travelName: '1', //组团社名称
-			peopleNum: 1, //人数
-			frozenPrice: '1', //团款
-			actualPrice: '1',
-			comprehensiveFrozenPriceList: [
-				{
-					comprehensiveProductId: 1, //综费产品id
-					comprehensiveProductName: '散客结算手续费', //综费产品名称
-					frozenPrice: '1111', //未结算费用
-				},
-				{
-					comprehensiveProductId: 2, //综费产品id
-					comprehensiveProductName: '散客监理费', //综费产品名称
-					frozenPrice: '2222', //未结算费用
-				},
-				{
-					comprehensiveProductId: 3, //综费产品id
-					comprehensiveProductName: '散客导服费用', //综费产品名称
-					frozenPrice: '3333', //未结算费用
-				},
-				{
-					comprehensiveProductId: 4, //综费产品id
-					comprehensiveProductName: '散客统筹费用', //综费产品名称
-					frozenPrice: '4444', //未结算费用
-				},
-			], //综费
-			hmVo: {
-				frozenPrice: '100', //冻结金额
-				settlementPrice: '1', //已核销金额
-				actualPrice: '1000', //实收
-				ruleList: [
-					{
-						ruleName: '古维综费', //规则名称
-						rulePrice: '1000', //结算费用
-					},
-				], //结算规则
-			}, //古维
-			ticketVo: {
-				frozenPrice: '2000', //冻结金额
-				settlementPrice: '1', //已核销金额
-				actualPrice: '2200', //实收
-				ruleList: [
-					{
-						ruleName: '景区综费1', //规则名称
-						rulePrice: '10000', //结算费用
-					},
-					{
-						ruleName: '景区综费2', //规则名称
-						rulePrice: '2000', //结算费用
-					},
-				], //结算规则
-			}, //景区
-			hotelVo: {
-				frozenPrice: '1', //冻结金额
-				settlementPrice: '1', //已核销金额
-				actualPrice: '30000', //实收
-				ruleList: [
-					{
-						ruleName: '酒店综费1', //规则名称
-						rulePrice: '100000', //结算费用
-					},
-				], //结算规则
-			}, //酒店
-			cateringVo: {
-				actualPrice: '40000', //实收
-				ruleList: [
-					{
-						ruleName: '餐饮综费1', //规则名称
-						rulePrice: '410000', //结算费用
-					},
-					{
-						ruleName: '餐饮综费2', //规则名称
-						rulePrice: '420000', //结算费用
-					},
-				], //结算规则
-			}, //餐饮
-			unSettlementPriceVo: {
-				hotelPrice: '11111', //酒店
-				ticketPrice: '22222', //景区
-				cateringPrice: '33333', //餐饮
-				hmPrice: '44444', //古维
-				rulePrice: '55555', //手续费
-				allPrice: '66666', //小计
-				ruleList: [
-					{
-						ruleName: '未消费规则1', //规则名称
-						rulePrice: '1000001', //结算费用
-					},
-					{
-						ruleName: '未消费规则2', //规则名称
-						rulePrice: '2000002', //结算费用
-					},
-				], //结算规则
-			}, //未消费费用
-			comprehensiveGuideVoList: [
-				{
-					comprehensiveFeeProductId: 1, //综费产品id
-					comprehensiveFeeProductName: '导服费1', //综费产品名称
-					travelActualPrice: '1', //旅行社实收
-					groupActualPrice: '1', //集团实收
-					ruleList: [
-						{
-							ruleName: '旅行社导服费', //规则名称
-							rulePrice: '10010', //结算费用
-						},
-						{
-							ruleName: '集团导服费', //规则名称
-							rulePrice: '20020', //结算费用
-						},
-					], //结算规则
-				},
-				{
-					comprehensiveFeeProductId: 2, //综费产品id
-					comprehensiveFeeProductName: '导服费2', //综费产品名称
-					travelActualPrice: '1', //旅行社实收
-					groupActualPrice: '1', //集团实收
-					ruleList: [
-						{
-							ruleName: '旅行社导服费', //规则名称
-							rulePrice: '100101', //结算费用
-						},
-						{
-							ruleName: '集团导服费', //规则名称
-							rulePrice: '200202', //结算费用
-						},
-					], //结算规则
-				},
-			], //综费产品-导服费
-			comprehensiveVoList: [
-				{
-					comprehensiveFeeProductId: 1, //综费产品id
-					comprehensiveFeeProductName: '非导服费', //综费产品名称
-					belongCompany: '1', //费用归属
-					actualPrice: '1', //实收
-					ruleList: [
-						{
-							ruleName: '1', //规则名称
-							rulePrice: '1', //结算费用
-						},
-					], //结算规则
-				},
-			], //综费产品-除导服费外
-		},
-	];
+	// state.tableData.data = [
+	// 	{
+	// 		itineraryNo: '1', //团单编号
+	// 		groupName: '1', //所属集团名称
+	// 		privateNo: '1', //自编团号
+	// 		orderType: '1', //团单类型
+	// 		startDate: '2022.01.01 01:00', //出团时间
+	// 		endDate: '2022.01.01 01:00', //散团时间
+	// 		settlementTime: '2022.01.01 01:00', //结算时间
+	// 		travelId: 1, //组团社id
+	// 		travelName: '1', //组团社名称
+	// 		peopleNum: 1, //人数
+	// 		frozenPrice: '1', //团款
+	// 		actualPrice: '1',
+	// 		comprehensiveFrozenPriceList: [
+	// 			{
+	// 				comprehensiveProductId: 1, //综费产品id
+	// 				comprehensiveProductName: '散客结算手续费', //综费产品名称
+	// 				frozenPrice: '1111', //未结算费用
+	// 			},
+	// 			{
+	// 				comprehensiveProductId: 2, //综费产品id
+	// 				comprehensiveProductName: '散客监理费', //综费产品名称
+	// 				frozenPrice: '2222', //未结算费用
+	// 			},
+	// 			{
+	// 				comprehensiveProductId: 3, //综费产品id
+	// 				comprehensiveProductName: '散客导服费用', //综费产品名称
+	// 				frozenPrice: '3333', //未结算费用
+	// 			},
+	// 			{
+	// 				comprehensiveProductId: 4, //综费产品id
+	// 				comprehensiveProductName: '散客统筹费用', //综费产品名称
+	// 				frozenPrice: '4444', //未结算费用
+	// 			},
+	// 		], //综费
+	// 		hmVo: {
+	// 			frozenPrice: '100', //冻结金额
+	// 			settlementPrice: '1', //已核销金额
+	// 			actualPrice: '1000', //实收
+	// 			ruleList: [
+	// 				{
+	// 					ruleName: '古维综费', //规则名称
+	// 					rulePrice: '1000', //结算费用
+	// 				},
+	// 			], //结算规则
+	// 		}, //古维
+	// 		ticketVo: {
+	// 			frozenPrice: '2000', //冻结金额
+	// 			settlementPrice: '1', //已核销金额
+	// 			actualPrice: '2200', //实收
+	// 			ruleList: [
+	// 				{
+	// 					ruleName: '景区综费1', //规则名称
+	// 					rulePrice: '10000', //结算费用
+	// 				},
+	// 				{
+	// 					ruleName: '景区综费2', //规则名称
+	// 					rulePrice: '2000', //结算费用
+	// 				},
+	// 			], //结算规则
+	// 		}, //景区
+	// 		hotelVo: {
+	// 			frozenPrice: '1', //冻结金额
+	// 			settlementPrice: '1', //已核销金额
+	// 			actualPrice: '30000', //实收
+	// 			ruleList: [
+	// 				{
+	// 					ruleName: '酒店综费1', //规则名称
+	// 					rulePrice: '100000', //结算费用
+	// 				},
+	// 			], //结算规则
+	// 		}, //酒店
+	// 		cateringVo: {
+	// 			actualPrice: '40000', //实收
+	// 			ruleList: [
+	// 				{
+	// 					ruleName: '餐饮综费1', //规则名称
+	// 					rulePrice: '410000', //结算费用
+	// 				},
+	// 				{
+	// 					ruleName: '餐饮综费2', //规则名称
+	// 					rulePrice: '420000', //结算费用
+	// 				},
+	// 			], //结算规则
+	// 		}, //餐饮
+	// 		unSettlementPriceVo: {
+	// 			hotelPrice: '11111', //酒店
+	// 			ticketPrice: '22222', //景区
+	// 			cateringPrice: '33333', //餐饮
+	// 			hmPrice: '44444', //古维
+	// 			rulePrice: '55555', //手续费
+	// 			allPrice: '66666', //小计
+	// 			ruleList: [
+	// 				{
+	// 					ruleName: '未消费规则1', //规则名称
+	// 					rulePrice: '1000001', //结算费用
+	// 				},
+	// 				{
+	// 					ruleName: '未消费规则2', //规则名称
+	// 					rulePrice: '2000002', //结算费用
+	// 				},
+	// 			], //结算规则
+	// 		}, //未消费费用
+	// 		comprehensiveGuideVoList: [
+	// 			{
+	// 				comprehensiveFeeProductId: 1, //综费产品id
+	// 				comprehensiveFeeProductName: '导服费1', //综费产品名称
+	// 				travelActualPrice: '1', //旅行社实收
+	// 				groupActualPrice: '1', //集团实收
+	// 				ruleList: [
+	// 					{
+	// 						ruleName: '旅行社导服费', //规则名称
+	// 						rulePrice: '10010', //结算费用
+	// 					},
+	// 					{
+	// 						ruleName: '集团导服费', //规则名称
+	// 						rulePrice: '20020', //结算费用
+	// 					},
+	// 				], //结算规则
+	// 			},
+	// 			{
+	// 				comprehensiveFeeProductId: 2, //综费产品id
+	// 				comprehensiveFeeProductName: '导服费2', //综费产品名称
+	// 				travelActualPrice: '1', //旅行社实收
+	// 				groupActualPrice: '1', //集团实收
+	// 				ruleList: [
+	// 					{
+	// 						ruleName: '旅行社导服费', //规则名称
+	// 						rulePrice: '100101', //结算费用
+	// 					},
+	// 					{
+	// 						ruleName: '集团导服费', //规则名称
+	// 						rulePrice: '200202', //结算费用
+	// 					},
+	// 				], //结算规则
+	// 			},
+	// 		], //综费产品-导服费
+	// 		comprehensiveVoList: [
+	// 			{
+	// 				comprehensiveFeeProductId: 1, //综费产品id
+	// 				comprehensiveFeeProductName: '非导服费', //综费产品名称
+	// 				belongCompany: '1', //费用归属
+	// 				actualPrice: '1', //实收
+	// 				ruleList: [
+	// 					{
+	// 						ruleName: '1', //规则名称
+	// 						rulePrice: '1', //结算费用
+	// 					},
+	// 				], //结算规则
+	// 			},
+	// 		], //综费产品-除导服费外
+	// 	},
+	// ];
 };
 
 //搜索

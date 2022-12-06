@@ -73,13 +73,13 @@ export const hmVo = {
 	key: 'hmVo',
 	children: [
 		{
-			title: '古维冻结',
+			title: '冻结',
 			dataIndex: 'frozenPrice',
 			key: 'hmVo',
 			width: 100,
 		},
 		{
-			title: '古维实收',
+			title: '实收',
 			dataIndex: 'actualPrice',
 			key: 'hmVo',
 			width: 100,
@@ -91,7 +91,13 @@ export const ticketVo = {
 	key: 'ticketVo',
 	children: [
 		{
-			title: '景区实收',
+			title: '冻结',
+			dataIndex: 'frozenPrice',
+			key: 'ticketVo',
+			width: 100,
+		},
+		{
+			title: '实收',
 			dataIndex: 'actualPrice',
 			key: 'ticketVo',
 			width: 100,
@@ -103,7 +109,13 @@ export const hotelVo = {
 	key: 'hotelVo',
 	children: [
 		{
-			title: '酒店实收',
+			title: '冻结',
+			dataIndex: 'frozenPrice',
+			key: 'hotelVo',
+			width: 100,
+		},
+		{
+			title: '实收',
 			dataIndex: 'actualPrice',
 			key: 'hotelVo',
 			width: 100,
@@ -115,7 +127,13 @@ export const cateringVo = {
 	key: 'cateringVo',
 	children: [
 		{
-			title: '餐饮实收',
+			title: '冻结',
+			dataIndex: 'frozenPrice',
+			key: 'cateringVo',
+			width: 100,
+		},
+		{
+			title: '实收',
 			dataIndex: 'actualPrice',
 			key: 'cateringVo',
 			width: 100,
