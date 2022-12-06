@@ -32,6 +32,10 @@
 					<template v-if="formatColumn(column)">
 						{{ formatData(record, column) }}
 					</template>
+					<!-- 综费产品 -->
+					<template v-if="column.key === 'comprehensiveProduct'">
+						{{ getComprehensiveProduct(record, column) }}
+					</template>
 				</template>
 			</CommonTable>
 		</a-spin>
@@ -53,19 +57,7 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import api from '@/api';
 import { settlementOptions } from '@/stores/modules/settlement';
-import {
-	StateType,
-	DataType,
-	fixedColumn,
-	notConsumed,
-	ticketVo,
-	hotelVo,
-	cateringVo,
-	hmVo,
-	getRulePrice,
-	formatColumn,
-	formatData,
-} from '.';
+import { StateType, DataType, fixedColumn, notConsumed, ticketVo, hotelVo, getComprehensiveProduct, cateringVo, hmVo, getRulePrice, formatColumn, formatData } from '.';
 const options = settlementOptions();
 const comprehensiveGuideVoListIds = ref([]);
 const comprehensiveVoListIds = ref([]);
@@ -73,6 +65,38 @@ const columns = computed(() => {
 	const column = ref<TableColumnsType>([]);
 	column.value = fixedColumn;
 	const data: Array<DataType> = state.tableData.data;
+		// // 先添加综费项目
+	const comprehensiveFrozenPriceArray: any = [];
+	for (let index = 0; index < data.length; index++) {
+		if (data[index].comprehensiveFrozenPriceList && data[index].comprehensiveFrozenPriceList.length) {
+			const c = data[index].comprehensiveFrozenPriceList;
+			for (let i = 0; i < c.length; i++) {
+				const idx = comprehensiveFrozenPriceArray.findIndex((item: any) => item.title === c[i]['comprehensiveProductName']);
+				if (idx === -1) {
+					comprehensiveFrozenPriceArray.push({
+						title: c[i]['comprehensiveProductName'],
+						dataIndex: `comprehensiveFrozenPriceList-${i}`,
+						key: 'comprehensiveProduct',
+						width: 120,
+					});
+				}
+			}
+		}
+	}
+	const parent = {
+		title: '综费',
+		key: 'comprehensiveFrozenPriceList',
+		dataIndex: 'comprehensiveFrozenPriceList',
+		children: comprehensiveFrozenPriceArray,
+	};
+	// 避免重复插入
+	let idx = column.value
+		.filter((item: any) => {
+			return item.dataIndex == 'comprehensiveFrozenPriceList';
+		}).length
+	if (idx <= 1) {
+		column.value.splice(11, 0, parent);
+	}
 	/**
 	 * 先获取数据源，根据数据源的综费产品列表渲染到表头上
 	 * 再把数据进行整理 把数据源所有数据和表头一一对应存到 ruleMap
@@ -95,14 +119,16 @@ const columns = computed(() => {
 					key: 'comprehensiveGuideVoList',
 					children: [],
 				};
-
-				let index = column.value.filter((item: any) => {
-					return item.dataIndex == 'comprehensiveGuideVoList'
-				}).findIndex((item: any) => item.id == vo.comprehensiveFeeProductId)
-				if(index == -1) {
+				// 避免重复插入
+				let index = column.value
+					.filter((item: any) => {
+						return item.dataIndex == 'comprehensiveGuideVoList';
+					})
+					.findIndex((item: any) => item.id == vo.comprehensiveFeeProductId);
+				if (index == -1) {
 					column.value.push(comprehensiveGuideVo);
 				}
-				
+
 				// 把数据源和表头整理到ruleMap
 				const title = `comprehensiveGuideVoList-${vo.comprehensiveFeeProductId}`;
 				if (!ruleMap[title]) {
@@ -125,7 +151,6 @@ const columns = computed(() => {
 				ruleMap[title]['columnParent'] = column.value[idx];
 			}
 		}
-		
 	}
 	// 插入古维数据
 	if (column.value.indexOf(hmVo) == -1) {
@@ -184,7 +209,7 @@ const columns = computed(() => {
 						dataIndex: 'ruleMap',
 						key: 'ruleMap',
 						ruleName: `${ruleList[t].ruleName}`,
-						width: 180,
+						width: 120,
 						parent: key,
 					};
 					if (key.includes('List')) {
@@ -226,15 +251,18 @@ const initList = async () => {
 	state.tableData.loading = false;
 	state.tableData.data = [
 		{
+			itineraryNo: '1', //团单编号
+			groupName: '1', //所属集团名称
+			privateNo: '1', //自编团号
+			orderType: '1', //团单类型
+			startDate: '2022.01.01 01:00', //出团时间
+			endDate: '2022.01.01 01:00', //散团时间
+			settlementTime: '2022.01.01 01:00', //结算时间
 			travelId: 1, //组团社id
 			travelName: '1', //组团社名称
 			peopleNum: 1, //人数
 			frozenPrice: '1', //团款
-			contractPrice: '1', //合同费用
-			bankAccountName: '1', //户名
-			bank: '1', //旅行社开户行
-			bankAccount: '1', //旅行社账号
-			actualPrice: '1', //旅行社实收
+			actualPrice: '1',
 			comprehensiveFrozenPriceList: [
 				{
 					comprehensiveProductId: 1, //综费产品id
@@ -369,7 +397,6 @@ const initList = async () => {
 						{
 							ruleName: '1', //规则名称
 							rulePrice: '1', //结算费用
-
 						},
 					], //结算规则
 				},
