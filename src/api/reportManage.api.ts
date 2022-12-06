@@ -72,3 +72,12 @@ export async function individualSettlementSummaryReportTravel(data: any) {
 		showLoading: true,
 	});
 }
+// 散客结算明细表
+export async function individualSettlementDetailReportTravel(data: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/statement/individualTravel/statement/byItinerary`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}

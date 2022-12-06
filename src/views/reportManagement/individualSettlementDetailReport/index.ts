@@ -3,8 +3,8 @@ import type { TableColumnsType } from 'ant-design-vue';
 export const fixedColumn: Array<any> = [
 	{
 		title: '团单编号',
-		dataIndex: 'travelName',
-		key: 'travelName',
+		dataIndex: 'itineraryNo',
+		key: 'itineraryNo',
 		width: 100,
 	},
 	{
@@ -15,39 +15,39 @@ export const fixedColumn: Array<any> = [
 	},
 	{
 		title: '所属集团',
-		dataIndex: 'travelName',
-		key: 'travelName',
+		dataIndex: 'groupName',
+		key: 'groupName',
 		width: 100,
 	},
 	{
 		title: '自编团号',
-		dataIndex: 'travelName',
-		key: 'travelName',
+		dataIndex: 'privateNo',
+		key: 'privateNo',
 		width: 100,
 	},
 	{
 		title: '团单类型',
-		dataIndex: 'travelName',
-		key: 'travelName',
+		dataIndex: 'orderType',
+		key: 'orderType',
 		width: 100,
 	},
 	{
 		title: '出团时间',
-		dataIndex: 'travelName',
-		key: 'travelName',
-		width: 100,
+		dataIndex: 'startDate',
+		key: 'startDate',
+		width: 130,
 	},
 	{
 		title: '散团时间',
-		dataIndex: 'travelName',
-		key: 'travelName',
-		width: 100,
+		dataIndex: 'endDate',
+		key: 'endDate',
+		width: 130,
 	},
 	{
 		title: '结算时间',
-		dataIndex: 'travelName',
-		key: 'travelName',
-		width: 100,
+		dataIndex: 'settlementTime',
+		key: 'settlementTime',
+		width: 130,
 	},
 	{
 		title: '行程人数',
@@ -73,13 +73,13 @@ export const hmVo = {
 	key: 'hmVo',
 	children: [
 		{
-			title: '古维冻结',
+			title: '冻结',
 			dataIndex: 'frozenPrice',
 			key: 'hmVo',
 			width: 100,
 		},
 		{
-			title: '古维实收',
+			title: '实收',
 			dataIndex: 'actualPrice',
 			key: 'hmVo',
 			width: 100,
@@ -91,7 +91,13 @@ export const ticketVo = {
 	key: 'ticketVo',
 	children: [
 		{
-			title: '景区实收',
+			title: '冻结',
+			dataIndex: 'frozenPrice',
+			key: 'ticketVo',
+			width: 100,
+		},
+		{
+			title: '实收',
 			dataIndex: 'actualPrice',
 			key: 'ticketVo',
 			width: 100,
@@ -103,7 +109,13 @@ export const hotelVo = {
 	key: 'hotelVo',
 	children: [
 		{
-			title: '酒店实收',
+			title: '冻结',
+			dataIndex: 'frozenPrice',
+			key: 'hotelVo',
+			width: 100,
+		},
+		{
+			title: '实收',
 			dataIndex: 'actualPrice',
 			key: 'hotelVo',
 			width: 100,
@@ -115,7 +127,13 @@ export const cateringVo = {
 	key: 'cateringVo',
 	children: [
 		{
-			title: '餐饮实收',
+			title: '冻结',
+			dataIndex: 'frozenPrice',
+			key: 'cateringVo',
+			width: 100,
+		},
+		{
+			title: '实收',
 			dataIndex: 'actualPrice',
 			key: 'cateringVo',
 			width: 100,
@@ -193,6 +211,14 @@ export interface DataType {
 	peopleNum?: number; //人数
 	frozenPrice?: string; //团款
 	settlementPrice?: string; //核销总费用
+	itineraryNo?: string; //团单编号
+	orderType?: string; //团单类型
+	groupName?: string; //所属集团
+	privateNo?: string; //自编团号
+	startDate?: string; //核销总费用
+	endDate?: string; //出团时间
+	settlementTime?: string; //结算时间
+	actualPrice?: string | number | null; // 旅行社实收
 	hmVo?: voType; //古维费用
 	ticketVo?: voType; //景区
 	hotelVo?: voType; //酒店
@@ -206,6 +232,17 @@ export interface DataType {
 	comprehensiveGuideVoList: Array<comprehensiveGuideVoListType>; //综费产品-导服费
 	comprehensiveVoList?: Array<comprehensiveVoListType>; //综费产品-除导服费外
 	comprehensiveFrozenPriceList: Array<ComprehensiveFrozenPriceType>; // 全部综费
+	unSettlementPriceVo: unSettlementPriceVoType; // 未消费费用
+}
+// 未消费费用
+export interface unSettlementPriceVoType {
+	hotelPrice?: string | number | null; //酒店冻结
+	ticketPrice: string | number | null; //景区冻结
+	cateringPrice: string | number | null; //餐饮冻结
+	hmPrice: string | number | null; //古维冻结
+	rulePrice: string | number | null; //结算费用
+	allPrice: string | number | null; //小计
+	ruleList: Array<ruleListType>; //结算规则
 }
 // 综费
 export interface ComprehensiveFrozenPriceType {
@@ -306,5 +343,14 @@ export const formatData = computed(() => (record: any, column: any) => {
 	} else {
 		// 子级的数据
 		return record[column.key][column.dataIndex] ? twoDecimalPlaces(record[column.key][column.dataIndex]) : '';
+	}
+});
+export const getComprehensiveProduct = computed(() => (record: any, column: any) => {
+	const title = column.title;
+	const idx = record.comprehensiveFrozenPriceList.findIndex((item: any) => item.comprehensiveProductName === title);
+	if (idx !== -1) {
+		return record.comprehensiveFrozenPriceList[idx].frozenPrice ? twoDecimalPlaces(record.comprehensiveFrozenPriceList[idx].frozenPrice) : '';
+	} else {
+		return '';
 	}
 });
