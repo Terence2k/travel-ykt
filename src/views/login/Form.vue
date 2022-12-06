@@ -84,6 +84,27 @@ const formModel = reactive({
 	account: '',
 	password: '',
 });
+const tabArr: any = ref([]);
+const btnArr: any = ref([]);
+
+const getTabMenuList = (menuList: any, pUrl?: any) => {
+  menuList.forEach((item: any) => {
+    console.log('item:', item);
+    if (item.menuType == 2) {
+      item.pUrl = pUrl;
+      tabArr.value.push(item);
+    }
+    if (item.menuType == 3) {
+      item.pUrl = pUrl;
+      btnArr.value.push(item);
+    }
+    if (item.childMenuList?.length && item.menuType != 2) {
+      getTabMenuList(item.childMenuList, item.url);
+    }
+  })
+  window.localStorage.setItem("tabArr", JSON.stringify(tabArr.value));
+  window.localStorage.setItem("btnArr", JSON.stringify(btnArr.value));
+}
 
 const handleFinish = async (values: any) => {
 	// console.log(checked, values);
@@ -92,10 +113,11 @@ const handleFinish = async (values: any) => {
 
 	api
 		.login(formModel)
-		.then((res) => {
+		.then((res: any) => {
 			console.log(res);
 			window.localStorage.setItem('authorization', `${res.authorization}`);
 			window.localStorage.setItem('userInfo', JSON.stringify(res));
+      getTabMenuList(res.sysMenuVos);
 			if (res.sysMenuVos[0]) {
 				router.replace({
 					path: res.sysMenuVos[0].childMenuList[0].url || '/',
