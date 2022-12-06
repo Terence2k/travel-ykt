@@ -44,3 +44,11 @@ export function editFindIndividualContract(data: any) {
     showLoading: true
   });
 }
+// 查看散客合同详情
+export function findIndividualContractById(oid: number) {
+  return request({
+    url: `${commonPart}findIndividualContractById?oid=${oid}`,
+    method: 'post',
+    showLoading: true
+  });
+}

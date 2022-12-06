@@ -720,8 +720,8 @@ const auditEnterprise = async (record: any) => {
 		let keyList = Object.keys(keyNameList)
 		keyList.forEach((key: string) => {
 			if (newList[key] != oldList[key]) {
-				newArrList.value[key] = newList[key]
-				oldArrList.value[key] = oldList[key]
+				newArrList.value[key] = [null, undefined].includes(newList[key]) ? '无' : newList[key]
+				oldArrList.value[key] = [null, undefined].includes(oldList[key]) ? '无' : oldList[key]
 				changeKeys.value.push(key)
 			}
 		})
