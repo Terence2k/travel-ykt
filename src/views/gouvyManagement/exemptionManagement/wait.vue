@@ -7,7 +7,7 @@
 				</template>
 				<template v-if="column.dataIndex === 'actions'">
 					<div class="action-btns">
-						<a @click="toExamine(record.oid)" v-permission="'审核'">审核</a>
+						<a @click="toExamine(record.oid)" v-permission="'待审核_审核'">审核</a>
 					</div>
 				</template>
 			</template>

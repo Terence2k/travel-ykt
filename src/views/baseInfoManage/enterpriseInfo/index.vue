@@ -52,6 +52,86 @@
             </a-button>
           </div>
         </a-form-item>
+        <a-form-item name="companyUserEmail" label="企业对公邮箱">
+          <div class="flex">
+            <a-input v-model:value="form.companyUserEmail" placeholder="请输入企业对公邮箱" :disabled="getStatus('companyUserEmail')" />
+              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('companyUserEmail')" v-if="showChangeBtns('companyUserEmail')">
+                {{ getStatus('companyUserEmail') ? '修改' : '确定' }}
+              </a-button>
+          </div>
+        </a-form-item>
+        <a-form-item name="postalCode" label="企业所在地邮编">
+          <div class="flex">
+            <a-input v-model:value="form.postalCode" placeholder="请输入企业所在地邮编" :disabled="getStatus('postalCode')" />
+              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('postalCode')" v-if="showChangeBtns('postalCode')">
+                {{ getStatus('postalCode') ? '修改' : '确定' }}
+              </a-button>
+          </div>
+        </a-form-item>
+        <a-form-item name="businessLicenseNo" label="企业营业执照证件号码">
+          <div class="flex">
+            <a-input v-model:value="form.businessLicenseNo" placeholder="请输入企业营业执照证件号码" :disabled="getStatus('businessLicenseNo')" />
+              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('businessLicenseNo')" v-if="showChangeBtns('businessLicenseNo')">
+                {{ getStatus('businessLicenseNo') ? '修改' : '确定' }}
+              </a-button>
+          </div>
+        </a-form-item>
+        <a-form-item name="contactEmail" label="企业联系人邮箱">
+          <div class="flex">
+            <a-input v-model:value="form.contactEmail" placeholder="请输入企业联系人邮箱" :disabled="getStatus('contactEmail')" />
+              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('contactEmail')" v-if="showChangeBtns('contactEmail')">
+                {{ getStatus('contactEmail') ? '修改' : '确定' }}
+              </a-button>
+          </div>
+        </a-form-item>
+        <a-form-item name=" contactIdNumber" label="企业联系人身份证号码">
+          <div class="flex">
+            <a-input v-model:value="form. contactIdNumber" placeholder="请输入企业联系人身份证号码" :disabled="getStatus(' contactIdNumber')" />
+              <a-button type="primary" class="status-btn" @click="changeDisabledStatus(' contactIdNumber')" v-if="showChangeBtns(' contactIdNumber')">
+                {{ getStatus(' contactIdNumber') ? '修改' : '确定' }}
+              </a-button>
+          </div>
+        </a-form-item>
+        <a-form-item name="legalPersonPhone" label="企业法人/负责人手机号">
+          <div class="flex">
+            <a-input v-model:value="form.legalPersonPhone" placeholder="请输入企业法人/负责人手机号" :disabled="getStatus('legalPersonPhone')" />
+              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('legalPersonPhone')" v-if="showChangeBtns('legalPersonPhone')">
+                {{ getStatus('legalPersonPhone') ? '修改' : '确定' }}
+              </a-button>
+          </div>
+        </a-form-item>
+        <a-form-item name="legalPersonIdNumber" label="企业法人/负责人身份证号">
+          <div class="flex">
+            <a-input v-model:value="form.legalPersonIdNumber" placeholder="请输入企业法人/负责人身份证号" :disabled="getStatus('legalPersonIdNumber')" />
+              <a-button type="primary" class="status-btn" @click="changeDisabledStatus(' legalPersonIdNumber')" v-if="showChangeBtns('legalPersonIdNumber')">
+                {{ getStatus('legalPersonIdNumber') ? '修改' : '确定' }}
+              </a-button>
+          </div>
+        </a-form-item>
+        <a-form-item name="bankNo" label="企业开户行行号">
+          <div class="flex">
+            <a-input v-model:value="form.bankNo" placeholder="请输入企业开户行行号" :disabled="getStatus('bankNo')" />
+              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('bankNo')" v-if="showChangeBtns('bankNo')">
+                {{ getStatus('bankNo') ? '修改' : '确定' }}
+              </a-button>
+          </div>
+        </a-form-item>
+        <a-form-item name="bankReservePhone" label="企业开户行预留手机号">
+          <div class="flex">
+            <a-input v-model:value="form.bankReservePhone" placeholder="请输入企业开户行预留手机号" :disabled="getStatus('bankReservePhone')" />
+              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('bankReservePhone')" v-if="showChangeBtns('bankReservePhone')">
+                {{ getStatus('bankReservePhone') ? '修改' : '确定' }}
+              </a-button>
+          </div>
+        </a-form-item>
+        <a-form-item name="memberRegistrationPhone" label="企业会员注册手机号">
+          <div class="flex">
+            <a-input v-model:value="form.memberRegistrationPhone" placeholder="请输入企业会员注册手机号" :disabled="getStatus('memberRegistrationPhone')" />
+              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('memberRegistrationPhone')" v-if="showChangeBtns('memberRegistrationPhone')">
+                {{ getStatus('memberRegistrationPhone') ? '修改' : '确定' }}
+              </a-button>
+          </div>
+        </a-form-item>
         <!-- 旅行社、旅游集团、酒店、景区、餐饮 -->
         <template v-if="['TRAVEL', 'GROUP', 'HOTEL', 'TICKET', 'CATERING'].includes(userInfo.sysCompany.businessType)">
           <a-form-item name="legalPerson" label="法定代表人">

@@ -159,6 +159,7 @@
 		<p>请等待退订完成</p>
 		<template v-slot:footer>
 			<a-button @click="reRecokeAuditCheckVisible = false">确定</a-button>
+			<!-- <a-button @click="toSureRecoke">确定</a-button> -->
 		</template>
 	</BaseModal>
 
@@ -185,7 +186,7 @@
 		</template>
 	</BaseModal>
 
-	<reapply ref="reapplyRef" @finish="successAudit = true" />
+	<reapply ref="reapplyRef" @finish="successAudit = true" :params="state" />
 	<AllRevoke ref="allRevokeRef" />
 	<BaseModal title="撤销申请成功" v-model="successAudit">
 		<p>
@@ -582,8 +583,6 @@ const openReapply = () => {
 	reapplyRef.value.open(btnStatus.value);
 };
 
-const checkCurrentPower = () => {};
-
 const checkPower = async () => {
 	let pW = new FormData();
 
@@ -594,15 +593,35 @@ const checkPower = async () => {
 	return true;
 };
 
+const checkOutSideTicketIsRefund = async () => {
+	let pW = new FormData();
+
+	pW.append('itineraryId', route.currentRoute.value?.query?.id);
+
+	await api.travelManagement.checkOutSideTicketIsRefund(pW);
+
+	return true;
+};
+
 const btnStatus = ref('');
 
+const toSureRecoke = async () => {
+	let params = {
+		itineraryId: route.currentRoute.value?.query?.id,
+		touristList: state.touristList,
+	};
+	await api.travelManagement.confirmSubmit(params);
+	reRecokeAuditCheckVisible.value = false;
+};
+
 const check = async (status: string) => {
-	let valid;
+	let valid, validTikcer;
 	btnStatus.value = status;
 
 	try {
 		valid = await checkPower();
-		if (valid) {
+		validTikcer = await checkOutSideTicketIsRefund();
+		if (valid && validTikcer) {
 			console.log('THROUGHT', status);
 			btnStatus.value === 'REVOKE' ? (reRecokeAuditVisible.value = true) : (reRecokeAuditAllsVisible.value = true);
 		}
