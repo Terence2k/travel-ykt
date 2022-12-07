@@ -627,4 +627,12 @@ export const travelManagement = {
 			showLoading: true,
 		});
 	},
+	getChildTicket(data: any) {
+		return request({
+			url: `${commonPath}/ticket-service/public/api/scenic-travel-itinerary/get-all-sub-ticket`,
+			data,
+			method: 'get',
+			showLoading: false,
+		});
+	},
 };
