@@ -518,6 +518,25 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
+	//撤销重提确认
+	confirmSubmit(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/confirmSubmit`,
+			data,
+			method: 'post',
+			showLoading: true,
+		});
+	},
+
+	//撤销重提确认
+	submitRevokeAndRecommit(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/pc/submitRevokeAndRecommit`,
+			data,
+			method: 'post',
+			showLoading: true,
+		});
+	},
 	//整团撤销
 	submitAllRevoke(data: any) {
 		return request({

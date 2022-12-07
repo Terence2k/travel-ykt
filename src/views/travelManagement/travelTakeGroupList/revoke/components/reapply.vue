@@ -59,11 +59,8 @@ const apply = () => {
 		.then(async (res) => {
 			let parms = formValidate.data;
 			// let resP = await api.travelManagement.submitRevokeAndRecommit(parms);
-			travelStore.setRevokeParams(parms);
-			route.push({
-				path: '/travel/travel_manage/add_travel',
-				query: { id: route.currentRoute.value?.query?.id, itineraryNo: route.currentRoute.value?.query?.itineraryNo, isRevoke: 1 },
-			});
+			// travelStore.setRevokeParams(parms);
+			revoke();
 			// statusRec.value === 'REVOKE' ? '' : emit('finish');
 			cancel();
 			// route.push({ path: '/scenic-spot/singleVote/edit', query: { t: formValidate.data.revokeReason, s: 'new' } });
@@ -71,6 +68,47 @@ const apply = () => {
 		.catch((err) => {
 			console.log('error', err);
 		});
+};
+
+// const revokePower = async () => {
+// 	let params = {
+// 		itineraryId: route.currentRoute.value.query.id,
+// 		touristList: travelStore.touristList,
+// 	};
+
+// 	await api.travelManagement.confirmSubmit(params);
+// 	return true;
+// };
+
+const revoke = async () => {
+	// let res = await revokePower();
+
+	let oParams = await api.travelManagement.submitRevokeAndRecommit({
+		itineraryId: route.currentRoute.value.query.id,
+		revokeReason: formValidate.data.revokeReason,
+		attachmentList: formValidate.data.pic.split(','),
+	});
+
+	const { newItineratyId } = oParams;
+
+	route.push({
+		path: '/travel/travel_manage/add_travel',
+		query: { id: newItineratyId, itineraryNo: route.currentRoute.value?.query?.itineraryNo, isRevoke: 1 },
+	});
+
+	// if (res) {
+	// 	const { pic, revokeReason } = travelStore.revokeParams;
+	// 	let params = {
+	// 		itineraryId: router.currentRoute.value.query.id,
+	// 		revokeReason,
+	// 		attachmentList: pic.split(','),
+	// 		hotelList: [],
+	// 		ticketList: [],
+	// 		touristList: travelStore.touristList,
+	// 	};
+
+	// 	console.log(res, params);
+	// }
 };
 const statusRec = ref('');
 
