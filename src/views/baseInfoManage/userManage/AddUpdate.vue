@@ -120,6 +120,8 @@
   const formValidate: Ref<Record<string, any>> = ref({});
   const options = reactive({ title: '新增用户' });
   const validateAccount = async (_rule: Rule, value: string) => {
+    if (formValidate.value.oid && value === formValidate.value.account) return Promise.resolve();
+    
     const formData = new FormData();
     formData.append('account', value);
     await api.checkAccount(formData).then((res: any) => {
