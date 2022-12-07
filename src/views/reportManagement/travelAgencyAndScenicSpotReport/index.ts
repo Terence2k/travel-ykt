@@ -1,4 +1,3 @@
-import type { TableColumnsType } from 'ant-design-vue';
 // 固定表头
 export const fixedColumn: Array<any> = [
 	{
@@ -146,8 +145,26 @@ export interface ruleListType {
 	ruleName: string; //规则名称
 	rulePrice: string; //结算费用
 }
+export const getRuleMap = computed(() => (column: any, record: any) => {
+	if (record.settlementRuleList) {
+		const idx = record.settlementRuleList.findIndex((item: any) => item.ruleName === column.title);
+		if (idx !== -1) {
+			return record.settlementRuleList[idx].rulePrice ? twoDecimalPlaces(record.settlementRuleList[idx].rulePrice) : '';
+		}
+	}
+	return '';
+});
 // 需要/100的字段
 export const formatColumn = computed(() => (column: any) => {
 	// frozenPrice 冻结金额(团款) settlementPrice 已核销金额 unSettlementPrice 未消费费用
 	return column.dataIndex === 'frozenPrice' || column.dataIndex === 'settlementPrice' || column.dataIndex === 'unSettlementPrice';
 });
+export const twoDecimalPlaces = (number: any): string => {
+	if (typeof number === 'string') {
+		if (number.includes('-')) {
+			number = number.slice(1);
+			return `-${Number(number / 100).toFixed(2)}`;
+		}
+	}
+	return Number(number / 100).toFixed(2);
+};

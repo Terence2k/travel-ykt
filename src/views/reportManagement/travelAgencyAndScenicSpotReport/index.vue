@@ -35,7 +35,11 @@
 		<a-spin size="large" :spinning="state.tableData.loading">
 			<!--  -->
 			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }" bordered>
-				<template #bodyCell="{ column, record }"> </template>
+				<template #bodyCell="{ column, record }">
+					<template v-if="column.key === 'ruleMap'">
+						{{ getRuleMap(column, record) }}
+					</template>
+				</template>
 			</CommonTable>
 		</a-spin>
 		<CommonPagination
@@ -56,7 +60,7 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import api from '@/api';
 import { settlementOptions } from '@/stores/modules/settlement';
-import { StateType, DataType, fixedColumn, ruleListType } from '.';
+import { StateType, DataType, fixedColumn, ruleListType, getRuleMap } from '.';
 const options = settlementOptions();
 const columns = computed(() => {
 	const column = ref<TableColumnsType>([]);
@@ -139,11 +143,11 @@ const initList = async () => {
 			settlementRuleList: [
 				{
 					ruleName: '结算规则名称1', //结算规则名称
-					rulePrice: '1000', //结算费用
+					rulePrice: '2000', //结算费用
 				},
 				{
 					ruleName: '结算规则名称2', //结算规则名称
-					rulePrice: '1000', //结算费用
+					rulePrice: '9000', //结算费用
 				},
 			], //结算规则信息
 		},
