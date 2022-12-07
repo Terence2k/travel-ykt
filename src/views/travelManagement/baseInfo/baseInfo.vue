@@ -250,7 +250,8 @@ if (route.query.id) {
 const getTravelTemplateList = async () => {
 	const {content} = await api.travelManagement.getTravelTemplateList({
 		pageNo: 1,
-		pageSize: 999999
+		pageSize: 999999,
+		templateStatus: 1
 	});
 	list.templateList = content;
 }
