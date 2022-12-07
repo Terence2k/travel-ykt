@@ -198,6 +198,17 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
+					{
+						path: 'electronicContratDetails',
+						name: 'electronicContratDetails',
+						component: () => import('@/views/touristsElectronicContract/details.vue'),
+						meta: {
+							title: '合同详情',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
 				]
 			},
 			// lineManagement
