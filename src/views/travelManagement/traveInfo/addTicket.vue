@@ -136,7 +136,7 @@
 	import { cloneDeep, debounce } from 'lodash';
 	import { TicketType } from '@/enum';
 	import CommonTable from '@/components/common/CommonTable.vue';
-import { TICKETENUM } from '@/constant';
+import { GETTICKETENUM, TICKETENUM } from '@/constant';
 	const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any ) || {}
 	const route = useRoute()
     const travelStore = useTravelStore()
@@ -240,6 +240,8 @@ import { TICKETENUM } from '@/constant';
 			formState.ticketType = TICKETENUM[type]
 			if (formState.ticketType === TicketType.UNITE) {
 				formState.childTicketIds = ticketData.childTicket.map((it: any) => it.subTicketId)
+			} else {
+				formState.childTicketIds = []
 			}
 			const newFormState = cloneDeep(formState)
 			newFormState.reservePeopleCount = formState.peopleCount
@@ -297,6 +299,8 @@ import { TICKETENUM } from '@/constant';
 				for (let k in res) {
 					formState[k] = res[k]
 				}
+				let type: '2' | '1' = formState.ticketType
+				formState.ticketType = GETTICKETENUM[type]
 			})
 			formState.scenicId = props.productRow.productId;
 			props.productRow.productId && handleChange(props.productRow.productId, {name: props.productRow.scenicName})

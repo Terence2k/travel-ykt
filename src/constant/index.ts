@@ -46,3 +46,9 @@ export const TICKETENUM = {
     '1': 1,
     // 'SHOW': '演出票'
 }
+
+export const GETTICKETENUM = {
+    '2': 0,
+    '1': 1,
+    // 'SHOW': '演出票'
+}
