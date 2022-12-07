@@ -83,7 +83,7 @@ const apply = () => {
 const revoke = async () => {
 	// let res = await revokePower();
 
-	let oParams = await api.travelManagement.submitRevokeAndRecommit({
+	let oParams = await api.travelManagement.submitRevokeAndRecommits({
 		itineraryId: route.currentRoute.value.query.id,
 		revokeReason: formValidate.data.revokeReason,
 		attachmentList: formValidate.data.pic.split(','),

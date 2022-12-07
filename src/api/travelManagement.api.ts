@@ -541,7 +541,7 @@ export const travelManagement = {
 	},
 
 	//撤销重提确认
-	submitRevokeAndRecommit(data: any) {
+	submitRevokeAndRecommits(data: any) {
 		return request({
 			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/pc/submitRevokeAndRecommit`,
 			data,
