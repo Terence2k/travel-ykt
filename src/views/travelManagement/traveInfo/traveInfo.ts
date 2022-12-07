@@ -333,10 +333,18 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			Object.assign(state.tableData.filter((item: any) => key === item.key)[0], state.editableData[key]);
 			delete state.editableData[key];
 		},
-		add(key: string, popup: string, oid?: any) {
+		add(type: string, key: string, popup: string, index: number, oid?: any) {
 			console.log(key, oid)
+			if (index || index === 0) {
+				travelStore.columnsIndex = index;
+			} else {
+				travelStore.columnsIndex = type === 'TICKET' ? state.ticketData.length : state.holteDate.length;
+			}
+			
+			for (let k in editId) {
+				editId[k] = '';
+			}
 			editId.productRow = {}
-			editId[key] = ''
 			if (oid) {
 				editId[key] = oid
 			}
@@ -434,6 +442,9 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 	{
 		travelStore.getManagementExpenses(route.query.id)
 	}
+	// watch (travelStore.templateHotel, newVal => {
+	// 	travelStore.hotels = [...travelStore.hotels, ...newVal] as any
+	// },{immediate: true, deep: true})
 	return {
 		...toRefs(state),
 		...methods,

@@ -113,11 +113,11 @@ export const useTravelStore = defineStore({
 			endDate: '',
 			groupType: '',
 			status: '',
-			itineraryNo: ''
+			itineraryNo: '',
 		},
 		setStarEndHMS: {
 			start: {},
-			end: {}
+			end: {},
 		},
 		setDisabled: (current: Dayjs) => {
 			return (current && current < dayjs().subtract(1, 'day')) || current > dayjs().startOf('day');
@@ -136,42 +136,48 @@ export const useTravelStore = defineStore({
 				attachmentTypeName: '旅行合同上传：',
 				attachmentType: 1,
 				attachmentUrl: '',
-				oid: null
+				oid: null,
 			},
 			{
 				attachmentName: '',
 				attachmentTypeName: '委托接待协议上传：',
 				attachmentType: 2,
 				attachmentUrl: '',
-				oid: null
+				oid: null,
 			},
 			{
 				attachmentName: '',
 				attachmentTypeName: '包车合同上传：',
 				attachmentType: 3,
 				attachmentUrl: '',
-				oid: null
-			}
+				oid: null,
+			},
 		],
 		compositeProducts: [],
 		curentProduct: [] as any,
 		hotels: [],
-		productList: [{productId: null}], //综费
+		productList: [{ productId: null }], //综费
 		scenicTickets: [],
-		gouvyList:[{
+		gouvyList: [
+			{
 				feeName: '古维管理费',
-				touristNum:'',
+				touristNum: '',
 				payableNum: '',
 				payablePrice: '',
 				isInitiateReductionName: '待接团后由地接社申请',
 				isReductionPassedName: '',
 				issueStatusName: '',
-			}],
+			},
+		],
 		teamType: '',
 		feeModel: {
 			[FeeModel.Number]: '人数',
 			[FeeModel.Price]: '价格',
 		},
+		templateHotel: [],
+		templateTicket: [],
+		templateGuide: [],
+		columnsIndex: 0,
 		traveList: {
 			drafts: cloneDeep(traveListParams),
 			waitingGroup: cloneDeep(traveListParams),
@@ -251,6 +257,7 @@ export const useTravelStore = defineStore({
 			[TakeGroupStatus.Overtime]: '已过期',
 			[TakeGroupStatus.WaitingOutGroup]: '待出团',
 		},
+		revokeParams: {},
 	}),
 	getters: {
 		// 草稿
@@ -267,7 +274,7 @@ export const useTravelStore = defineStore({
 	},
 	actions: {
 		async getTravelList(params: object) {
-			let res = await api.travelManagement.getTravelList(params);
+			const res = await api.travelManagement.getTravelList(params);
 			res.content = res.content.map((it: TraveDataItem) => {
 				it.time = it.startDate + '-' + it.endDate;
 				it.groupTypeStr = this.groupMode[it.groupType];
@@ -294,7 +301,7 @@ export const useTravelStore = defineStore({
 			}
 		},
 		async getAuditList(params: object) {
-			let res = await api.travelManagement.getAuditList(params);
+			const res = await api.travelManagement.getAuditList(params);
 			res.content = res.content.map((it: TraveDataItem) => {
 				it.time = it.startDate + '-' + it.endDate;
 				return it;
@@ -302,7 +309,7 @@ export const useTravelStore = defineStore({
 			return res;
 		},
 		async getChangeItineraryList(params: object) {
-			let res = await api.travelManagement.getChangeItineraryList(params);
+			const res = await api.travelManagement.getChangeItineraryList(params);
 			res.content = res.content.map((it: TraveDataItem) => {
 				it.time = it.startDate + '-' + it.endDate;
 				return it;
@@ -333,31 +340,29 @@ export const useTravelStore = defineStore({
 		setTeamType(data: any) {
 			this.teamType = data;
 		},
-		setHotels(data: any, oid: string, hotelId: string) {
-			if (hotelId) {
-				data.oid = oid;
-				return Object.assign(this.hotels.filter((item: any) => hotelId == item.hotelId)[0], data);
-			}
-			if (data.oid) {
-				Object.assign(this.hotels.filter((item: any) => data.oid == item.oid)[0], data);
-			} else {
-				data.oid = oid;
-				let newData = [...this.hotels, data];
-				this.hotels = newData as any;
-				console.log(this.hotels, data, newData);
-			}
+		setHotels(data: any) {
+			this.hotels.splice(this.columnsIndex, 1, data);
+		},
+		setAllHotel(data: any) {
+			this.templateHotel = data;
+		},
+		setAllTicket(data: any) {
+			this.templateTicket = data;
+		},
+		setTemplateGuide(data: any) {
+			this.templateGuide = data;
 		},
 		setHotelsStatus(id: string) {
 			this.hotels = this.hotels.map((it: any) => {
 				if (it.oid == id) {
 					return {
 						...it,
-						orderStatus: 1
-					}
+						orderStatus: 1,
+					};
 				} else {
-					return it
+					return it;
 				}
-			}) as any
+			}) as any;
 		},
 		setTicketStatus(id: string) {
 			this.scenicTickets = this.scenicTickets.map((it: any) => {
@@ -365,25 +370,14 @@ export const useTravelStore = defineStore({
 					return {
 						...it,
 						// orderStatus: 1
-					}
+					};
 				} else {
-					return it
+					return it;
 				}
-			}) as any
+			}) as any;
 		},
-		setTicket(data: any, oid: string, productId: string) {
-			if (productId) {
-				data.oid = oid;
-				return Object.assign(this.scenicTickets.filter((item: any) => productId == item.scenicId)[0], data);
-			}
-			if (data.oid) {
-				Object.assign(this.scenicTickets.filter((item: any) => data.oid == item.oid)[0], data);
-			} else {
-				data.oid = oid;
-				let newData = [...this.scenicTickets, data];
-				this.scenicTickets = newData as any;
-				console.log(this.scenicTickets, data, newData);
-			}
+		setTicket(data: any) {
+			this.scenicTickets.splice(this.columnsIndex, 1, data);
 		},
 		setTraveList(data: any, key: Field) {
 			this.traveList[key].list = data.content;
@@ -402,9 +396,9 @@ export const useTravelStore = defineStore({
 			const res = await api.travelManagement.getItineraryStatus();
 			this.itineraryStatusList = res;
 		},
-		async getManagementExpenses(id:any) {
+		async getManagementExpenses(id: any) {
 			const res = await api.getManagementExpenses(id);
-			this.gouvyList=res
+			this.gouvyList = res;
 		},
 		async getItineraryListTab() {
 			if (this.sendTabList.length) return;
@@ -412,19 +406,50 @@ export const useTravelStore = defineStore({
 			this.sendTabList = sendTabList;
 			this.takeTabList = takeTabList;
 		},
-		async getHealthCode (list: Array<any>) {
+		async getHealthCode(list: Array<any>) {
 			const tourist = list.map((item: any) => {
 				return {
 					name: item.name,
-					certificateId: item.certificateNo
-				}
+					certificateId: item.certificateNo,
+				};
 			});
-			const res = await api.travelManagement.getHealthCode(tourist)
-			console.log(res)
+			const res = await api.travelManagement.getHealthCode(tourist);
+			console.log(res);
 			return list.map((item: any, index: number) => {
-				item.healthCode = res[index].healthCodeStatus
-				return item
-			})
-		}
+				item.healthCode = res[index].healthCodeStatus;
+				return item;
+			});
+		},
+		setRevokeParams(value: any) {
+			this.revokeParams = value;
+		},
+		tempeletSetHotels(data: any, oid: string, hotelId: string) {
+			if (hotelId) {
+				data.oid = oid;
+				return Object.assign(this.hotels.filter((item: any) => hotelId == item.hotelId)[0], data);
+			}
+			if (data.oid) {
+				Object.assign(this.hotels.filter((item: any) => data.oid == item.oid)[0], data);
+			} else {
+				data.oid = oid;
+				let newData = [...this.hotels, data];
+				this.hotels = newData as any;
+				console.log(this.hotels, data, newData);
+			}
+		},
+		tempeleteSetTicket(data: any, oid: string, productId: string) {
+			if (productId) {
+				data.oid = oid;
+				return Object.assign(this.scenicTickets.filter((item: any) => productId == item.scenicId)[0], data);
+			}
+			if (data.oid) {
+				Object.assign(this.scenicTickets.filter((item: any) => data.oid == item.oid)[0], data);
+			} else {
+				data.oid = oid;
+				let newData = [...this.scenicTickets, data];
+				this.scenicTickets = newData as any;
+				console.log(this.scenicTickets, data, newData);
+			}
+		},
 	},
 });

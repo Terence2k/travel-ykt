@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import type { UnwrapRef } from 'vue';
 
 import { useTravelStore } from '@/stores/modules/travelManagement';
-import { validateRules, validateFields, generateGuid, getAge, phoneReg } from '@/utils';
+import { validateRules, validateFields, generateGuid, getAge, phoneReg, isPositiveInteger } from '@/utils';
 import api from '@/api/index';
 import { CODEVALUE } from '@/constant'
 import { message } from 'ant-design-vue';
@@ -36,7 +36,7 @@ const rules:{[k:string]: any} = {
 	name: [{ required: true, message: '请输入姓名' }],
 	gender: [{ required: true, message: '请选择性别' }],
 	sourceAddressName: [{ required: true, message: '请选择客源地' }],
-	age: [{ required: true, message: '请输入年龄' }]
+	age: [{ required: true, validator: isPositiveInteger }]
 }
 export function useTouristInfo(props: any, emits: any): Record<string, any> {
 	const travelStore = useTravelStore()

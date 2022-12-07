@@ -185,6 +185,14 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 		methods.addRules()
 		methods.save()
 	})
+	watch(() => travelStore.guideList, (newVal: any) => {
+		for (let k in newVal) {
+			if (!newVal[k].startDate) {
+				state.editableData[newVal[k].key] = newVal[k];
+			}
+		}
+		console.log(newVal, 'guideguideguideguideguideguideguide')
+	},{immediate: true})
 	return {
 		...toRefs(state),
 		...methods,

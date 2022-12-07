@@ -98,7 +98,7 @@
 					label="单价"
 					:name="['roomTypeList', index, 'unitPrice']"
 					:wrapper-col="{ span: 16 }"
-					:rules="[{ required: true, message: '请输入您与酒店线下协商好的价格' }]"
+					:rules="[{ required: true, validator: isPositiveInteger }]"
 				>
 					<div class="d-flex align-item-center">
 						<div style="width: 500px">诚信指导价：{{honestyGuidePrice}}元 + </div>
@@ -142,7 +142,7 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 import { message } from 'ant-design-vue/es';
 import { Rule } from 'ant-design-vue/es/form';
 import dayjs, { Dayjs } from 'dayjs';
-import { disabledRangeTime, range, selectSpecialDateRange } from '@/utils';
+import { disabledRangeTime, range, isPositiveInteger, selectSpecialDateRange } from '@/utils';
 import { Modal } from 'ant-design-vue';
 import { createVNode } from 'vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
@@ -230,7 +230,7 @@ let formState = reactive<{[k: string]: any}>({
 	roomTypeList: [{ ...roomList }],
 	honestyGuidePrice: ''
 });
-const honestyGuidePrice = computed(() => formState.honestyGuidePrice / 100)
+const honestyGuidePrice = computed(() => (formState.honestyGuidePrice / 100) || 0)
 
 const addRoom = () => {
 	const room = cloneDeep(roomList)
@@ -255,6 +255,7 @@ const handleChangCheckIn = () => {
 }
 
 const changeRoomType = (e: any, option: any, index: number) => {
+	console.log(12312312312313131)
 	formState.roomTypeList[index].roomOccupancyNum = option.num;
 	formState.roomTypeList[index].roomTypeLimitPeople = option.num;
 	formState.roomTypeList[index].stockNum = option.stockNum
@@ -274,7 +275,7 @@ const handleMoeny = (i: number, e: string) => {
 const handleChange = async (id: number, option: any) => {
 	formState.honestyGuidePrice = option.price;
 	formState.hotelStarCode = option.name;
-	hotelData.hotel = await api.getHotelInfoByRated(id);
+	id && (hotelData.hotel = await api.getHotelInfoByRated(id));
 	for (let i = 0; i < formState.roomTypeList.length; i++) {
 		formState.roomTypeList[i].orderAmount = accAdd(honestyGuidePrice.value,
 		parseFloat(formState.roomTypeList[i].unitPrice));
@@ -329,10 +330,26 @@ const getOrderAmount = (data: Array<{[k:string]:any}>, startDate: string, endDat
 const submit = async () => {
 	try {
 		let traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {}
-		const form = cloneDeep(formState);
+		
 		// formState.scheduledNumber = formState.roomTypeList.map((it: any) => Number(it.checkInNumber))
 		// .reduce((prev: any, current: any) => prev + current);
-		form.roomTypeList = form.roomTypeList.map((it: any) => {
+		for (let index = 0; index < formState.roomTypeList.length; index++) {
+
+			if (!formState.roomTypeList[index].roomTypeLimitPeople) {
+				const currentRoom = hotelData.roomType.filter((id:any) => formState.roomTypeList[index].hotelRoomTypeId === id.oid)[0];
+				console.log(currentRoom)
+				changeRoomType({}, 
+						{	
+							num: currentRoom.roomOccupancyNum, 
+							stockNum: currentRoom.stockNum, 
+							name: currentRoom.roomTypeName
+						}, 
+						index
+				)
+			}
+		}
+		const form = cloneDeep(formState);
+		form.roomTypeList = form.roomTypeList.map((it: any, index: number) => {
 			it.unitPrice = it.unitPrice * 100;
 			it.orderAmount = it.orderAmount * 100
 			return it
@@ -354,10 +371,10 @@ const submit = async () => {
 		newFormState.reservePeopleCount = newFormState.roomTypeList.map((it:any) => Number(it.checkInNumber)).reduce((prev: number, next: number) => prev + next)
 		newFormState.roomCount = newFormState.roomTypeList.map((it:any) => Number(it.reserveNumber)).reduce((prev: number, next: number) => prev + next)
 		const res = await api.travelManagement.addHotel(form);
-		
+		res && (newFormState.oid = res);
 		// message.success('新增成功');
 		
-		travelStore.setHotels(newFormState, res, props.productRow.productId)
+		travelStore.setHotels(newFormState)
 		// callback()
 	} catch (errorInfo) {
 		// callback(false);
@@ -458,6 +475,28 @@ watch(dialogVisible, (newVal) => {
 											formState.hotelStarId = res.oid
 											handleChange(res.oid, {price: res.price, name: res.starCode})
 										})
+
+		if (!props.productRow.productId && !props.hotelId) {
+			for (let k in props.productRow) {
+				formState[k] = props.productRow[k];
+			}
+			hotelData.roomType = []
+			formState.roomTypeList = formState.roomTypeList.map((it: any) => {
+				hotelData.roomType.push({
+					roomTypeName: it.roomTypeName,
+					oid: it.roomTypeId
+				});
+				it.unitPrice = 0;
+				it.oid = null;
+				it.reserveNumber = '';
+				it.hotelRoomTypeId = it.roomTypeId;
+				return it;
+			})
+			
+			
+			let price = hotelData.hotelStart.filter((it:any) => it.oid == props.productRow.hotelStarId)[0]?.price
+			handleChange(props.productRow.hotelStarId, {name: props.productRow.hotelStar, price: price})
+		}
 	}
 	
 	emits('update:modelValue', newVal);

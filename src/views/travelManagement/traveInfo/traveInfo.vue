@@ -112,7 +112,7 @@
 						<div class="action-btns">
 							<!--  v-if="travelStore.reserveStatus && record.orderStatus == 0" -->
 							<a v-if="travelStore.reserveStatus" @click="reserveTicketPeple(record)">预定</a>
-							<a v-if="travelStore.teamStatus" class="item" @click="add(record.oid ? 'addTicketPop' : 'productRow', 'addTicketPop', record.oid || record)">编辑</a>
+							<a v-if="travelStore.teamStatus" class="item" @click="add('TICKET', record.oid ? 'addTicketPop' : 'productRow', 'addTicketPop', index, record.oid || record)">编辑</a>
 							<a v-if="travelStore.teamStatus" class="item" @click="delTicket(record, index)">删除</a>
 							<a class="item" @click="show('showTicketPop', record.oid)">查看</a>
 						</div>
@@ -120,7 +120,7 @@
 				</template>
 			</CommonTable>
 			<div class="footer-btn">
-				<a-button type="primary" @click="add('addTicketPop', 'addTicketPop')" v-if="travelStore.teamStatus">添加</a-button>
+				<a-button type="primary" @click="add('TICKET', 'addTicketPop', 'addTicketPop')" v-if="travelStore.teamStatus">添加</a-button>
 			</div>
 		</div>
 		<div class="item-container">
@@ -135,7 +135,7 @@
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a v-if="travelStore.reserveStatus && record.orderStatus == 0" class="item" @click="reserveHotel(record)">预定</a>
-							<a v-if="travelStore.teamStatus" class="item" @click="add(record.oid ? 'addHotelPop' : 'productRow', 'addHotelPop', record.oid || record)">编辑</a>
+							<a v-if="travelStore.teamStatus" class="item" @click="add('HOTEL', record.oid ? 'addHotelPop' : 'productRow', 'addHotelPop', index, record.oid || record)">编辑</a>
 							<a v-if="travelStore.teamStatus" class="item" @click="delHotel(record, index)">删除</a>
 							<a class="item" @click="show('showHotelPop', record.oid)">查看</a>
 						</div>
@@ -143,7 +143,7 @@
 				</template>
 			</CommonTable>
 			<div class="footer-btn">
-				<a-button type="primary" @click="add('addHotelPop', 'addHotelPop')" v-if="travelStore.teamStatus">添加</a-button>
+				<a-button type="primary" @click="add('HOTEL', 'addHotelPop', 'addHotelPop')" v-if="travelStore.teamStatus">添加</a-button>
 			</div>
 		</div>
 	</div>
@@ -219,7 +219,8 @@ const {
 	isInitiateReduction,
 	selectedRowKeys,
 	onSelectChange,
-	reserveTicketPeple
+	reserveTicketPeple,
+	columnsIndex
 } = useTraveInfo(props, emits);
 onMounted(() => {
 	onSearch();

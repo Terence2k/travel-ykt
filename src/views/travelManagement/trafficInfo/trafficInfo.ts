@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash';
 import dayjs from 'dayjs';
-import { validateRules, validateFields, generateGuid, validPhone } from '@/utils';
+import { validateRules, validateFields, generateGuid, validPhone, isPositiveInteger } from '@/utils';
 import { defineProps } from 'vue';
 import type { UnwrapRef } from 'vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
@@ -25,7 +25,7 @@ const rules = {
 	licencePlateNumber: [{ required: true, message: '请输入车牌号' }],
 	licencePlateColor: [{ required: true, message: '请选择车牌颜色' }],
 	companyName: [{ required: true, message: '请输入车企名称' }],
-	approvedLoad: [{ required: true, message: '请输入核载人数（人）' }],
+	approvedLoad: [{ required: true,  validator: isPositiveInteger }],
 	time: [{ required: true, message: '请选择用车时间段' }],
 	driver: [{ required: true, message: '请输入驾驶员' }],
 	driverPhone: [{ required: true, validator: validPhone }]
