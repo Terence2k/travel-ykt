@@ -172,6 +172,10 @@ export const useTravelStore = defineStore({
 			[FeeModel.Number]: '人数',
 			[FeeModel.Price]: '价格',
 		},
+		templateHotel: [],
+		templateTicket: [],
+		templateGuide: [],
+		columnsIndex: 0,
 		traveList: {
 			drafts: cloneDeep(traveListParams),
 			waitingGroup: cloneDeep(traveListParams),
@@ -333,19 +337,17 @@ export const useTravelStore = defineStore({
 		setTeamType(data: any) {
 			this.teamType = data;
 		},
-		setHotels(data: any, oid: string, hotelId: string) {
-			if (hotelId) {
-				data.oid = oid;
-				return Object.assign(this.hotels.filter((item: any) => hotelId == item.hotelId)[0], data);
-			}
-			if (data.oid) {
-				Object.assign(this.hotels.filter((item: any) => data.oid == item.oid)[0], data);
-			} else {
-				data.oid = oid;
-				let newData = [...this.hotels, data];
-				this.hotels = newData as any;
-				console.log(this.hotels, data, newData);
-			}
+		setHotels(data: any) {
+			this.hotels.splice(this.columnsIndex, 1, data)
+		},
+		setAllHotel(data: any) {
+			this.templateHotel = data;
+		},
+		setAllTicket(data: any) {
+			this.templateTicket = data;
+		},
+		setTemplateGuide(data: any) {
+			this.templateGuide = data;
 		},
 		setHotelsStatus(id: string) {
 			this.hotels = this.hotels.map((it: any) => {
@@ -371,19 +373,8 @@ export const useTravelStore = defineStore({
 				}
 			}) as any
 		},
-		setTicket(data: any, oid: string, productId: string) {
-			if (productId) {
-				data.oid = oid;
-				return Object.assign(this.scenicTickets.filter((item: any) => productId == item.scenicId)[0], data);
-			}
-			if (data.oid) {
-				Object.assign(this.scenicTickets.filter((item: any) => data.oid == item.oid)[0], data);
-			} else {
-				data.oid = oid;
-				let newData = [...this.scenicTickets, data];
-				this.scenicTickets = newData as any;
-				console.log(this.scenicTickets, data, newData);
-			}
+		setTicket(data: any) {
+			this.scenicTickets.splice(this.columnsIndex, 1, data)
 		},
 		setTraveList(data: any, key: Field) {
 			this.traveList[key].list = data.content;

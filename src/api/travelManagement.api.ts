@@ -57,7 +57,7 @@ export const travelManagement = {
 	},
 	getScenicList(data: any) {
 		return request({
-			url: `${commonPath}/ticket-service/public/api/scenic/lessInfos`,
+			url: `${commonPath}/ticket-service/public/api/scenic/ticketScenicInfos`,
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
 			},
@@ -594,6 +594,14 @@ export const travelManagement = {
 	getScenicTourist(data: any) {
 		return request({
 			url: `${commonPath}/ticket-service/public/api/scenic-order/scenicTourist`,
+			data,
+			method: 'get',
+			showLoading: true,
+		});
+	},
+	getTicketType(data: any) {
+		return request({
+			url: `${commonPath}/ticket-service/public/api/scenic-ticket/ticketLessInfos`,
 			data,
 			method: 'get',
 			showLoading: true,

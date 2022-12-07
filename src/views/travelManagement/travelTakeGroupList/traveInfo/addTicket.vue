@@ -148,7 +148,7 @@
 			newFormState.totalFee = newFormState.peopleCount * newFormState.unitPrice
 			const res = await api.travelManagement.addTicket(formState)
 			// travelStore.setTicket(newFormState)
-			travelStore.setTicket(newFormState, res, props.productRow.productId)
+			// travelStore.setTicket(newFormState, res, props.productRow.productId)
 			
 			callback()
 		} catch (errorInfo) {

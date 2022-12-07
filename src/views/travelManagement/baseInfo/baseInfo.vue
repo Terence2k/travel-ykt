@@ -1,7 +1,7 @@
 <template>
 	<div class="base-info-container">
 		<div class="import-btn">
-			<a-button type="primary">导入模板</a-button>
+			<a-button type="primary" @click="(dialogVisible = true)">导入模板</a-button>
 		</div>
 		<a-form
 			ref="formRef"
@@ -147,25 +147,46 @@
 			</a-form-item>
 		</a-form>
 	</div>
+	<BaseModal v-model="dialogVisible" title="选择行程单模板" :text="{confirm: '确认', cancel: '取消'}" :onOk="handleOk">
+		<a-select 
+			v-model:value="templateId" 
+			style="width: 100%"
+			placeholder="选择模板" >
+			<a-select-option 
+				:value="item.oid" 
+				:name="item.templateName"
+				v-for="item in list.templateList" 
+				:key="item.oid">
+				{{item.templateName}}
+			</a-select-option>
+		</a-select>
+	</BaseModal>
 </template>
 
 <script lang="ts" setup>
-import { disabledRangeTime, getAmount, getUserInfo } from '@/utils/util';
+import { disabledRangeTime, generateGuid, getAmount, getUserInfo } from '@/utils/util';
 import { ConfirmDailyCharge, FeeModel, GroupMode, RouteType } from '@/enum';
 import api from '@/api/index';
+import BaseModal from '@/components/common/BaseModal.vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import dayjs, { Dayjs } from 'dayjs';
 import { cloneDeep } from 'lodash';
+import { Modal } from 'ant-design-vue';
+import { createVNode } from 'vue';
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
 interface TeamType {
 	teamType: Array<any>;
 	subTravelList: Array<any>;
 	travelOperatorList: Array<any>;
+	templateList: Array<any>
 }
 
 const travelStore = useTravelStore();
 const touristCount = computed(() => travelStore.touristList.length ? travelStore.touristList.length.toString() : 0)
 const route = useRoute()
+const dialogVisible = ref(false);
+const templateId = ref();
 const page = reactive({
 	teamType: {
 		pageNo: 1,
@@ -179,7 +200,8 @@ const page = reactive({
 const list = reactive<TeamType>({
 	teamType: [],
 	subTravelList: [],
-	travelOperatorList: []
+	travelOperatorList: [],
+	templateList: []
 })
 const formRef = ref();
 
@@ -224,6 +246,98 @@ if (route.query.id) {
 		subTravelName: ''
 	}
 }
+// 模板列表
+const getTravelTemplateList = async () => {
+	const {content} = await api.travelManagement.getTravelTemplateList({
+		pageNo: 1,
+		pageSize: 999999
+	});
+	list.templateList = content;
+}
+
+
+// 导入模板
+const getTemplate = async () => {
+	try {
+		const res: any = await api.travelManagement.saveChangeTraveldetail(templateId.value);
+		res.basic.touristNum = travelStore.touristList.length || res.basic?.touristCount || 0;
+		let baseInfoParams = {}
+		const guideList = res.guideList.map((it: any) => {
+			it.edit = true;
+			it.oid = null;
+			it.key = generateGuid();
+			return it
+		})
+		const hotelList = res.hotelList.map((it: any) => {
+			it.oid = null;
+			it.orderFee = it.orderFee / 100;
+			return it;
+		})
+		const ticketList = res.ticketList.map((it: any) => {
+			it.oid = null;
+			it.unitPrice = it.unitPrice / 100;
+			return it;
+		})
+		// res.hotelList.map((it: any) => {
+		// 	it.orderFee = it.orderFee / 100
+		// 	return it;
+		// })
+		if (route.query.type) {
+			baseInfoParams = {
+				...travelStore.baseInfo,
+				...res.basic,
+				groupType: route.query.type,
+			}
+		} else {
+			baseInfoParams = {
+				...travelStore.baseInfo,
+				...res.basic,
+			}
+		}
+		travelStore.setBaseInfo(baseInfoParams);
+		travelStore.setGuideList([
+			...travelStore.guideList,
+			...guideList,
+			
+		]);
+		travelStore.setAllHotel([
+			...hotelList
+		])
+		travelStore.setAllTicket([
+			...ticketList
+		])
+	} catch (error) {
+	}
+}
+const showConfirm = () => {
+	Modal.confirm({
+		title: '提示',
+		icon: createVNode(ExclamationCircleOutlined),
+		content: createVNode('div', { style: 'color:red;' }, '当前行程单草稿中已有内容，是否还要从模板导入内容？导入后将丢失已有内容，请谨慎操作。'),
+		okText: '继续导入',
+		cancelText: '取消',
+		onOk() {
+			getTemplate();
+		},
+		onCancel() {
+			console.log('Cancel');
+		},
+		class: 'test',
+	});
+};
+// 导入确定
+const handleOk = async (callback: Function) => {
+	const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
+	const itineraryId =  route.query.id || traveListData.oid
+	if (itineraryId) {
+		showConfirm()
+		return callback()
+	}
+	getTemplate();
+	return callback()
+}
+
+
 
 
 const rulesRef = {
@@ -423,6 +537,7 @@ watch(
 
 getTeamTypeList();
 getSubtravelList();
+getTravelTemplateList();
 </script>
 <style lang="less" scoped>
 	.base-info-container {

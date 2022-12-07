@@ -301,7 +301,7 @@ const submit = async () => {
 		
 		// message.success('新增成功');
 		
-		travelStore.setHotels(newFormState, res, props.productRow.productId)
+		// travelStore.setHotels(newFormState, res, props.productRow.productId)
 		// callback()
 	} catch (errorInfo) {
 		// callback(false);
