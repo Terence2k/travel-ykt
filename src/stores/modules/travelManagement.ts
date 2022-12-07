@@ -341,7 +341,7 @@ export const useTravelStore = defineStore({
 			this.teamType = data;
 		},
 		setHotels(data: any) {
-			this.hotels.splice(this.columnsIndex, 1, data)
+			this.hotels.splice(this.columnsIndex, 1, data);
 		},
 		setAllHotel(data: any) {
 			this.templateHotel = data;
@@ -377,7 +377,7 @@ export const useTravelStore = defineStore({
 			}) as any;
 		},
 		setTicket(data: any) {
-			this.scenicTickets.splice(this.columnsIndex, 1, data)
+			this.scenicTickets.splice(this.columnsIndex, 1, data);
 		},
 		setTraveList(data: any, key: Field) {
 			this.traveList[key].list = data.content;
@@ -422,6 +422,34 @@ export const useTravelStore = defineStore({
 		},
 		setRevokeParams(value: any) {
 			this.revokeParams = value;
+		},
+		tempeletSetHotels(data: any, oid: string, hotelId: string) {
+			if (hotelId) {
+				data.oid = oid;
+				return Object.assign(this.hotels.filter((item: any) => hotelId == item.hotelId)[0], data);
+			}
+			if (data.oid) {
+				Object.assign(this.hotels.filter((item: any) => data.oid == item.oid)[0], data);
+			} else {
+				data.oid = oid;
+				let newData = [...this.hotels, data];
+				this.hotels = newData as any;
+				console.log(this.hotels, data, newData);
+			}
+		},
+		tempeleteSetTicket(data: any, oid: string, productId: string) {
+			if (productId) {
+				data.oid = oid;
+				return Object.assign(this.scenicTickets.filter((item: any) => productId == item.scenicId)[0], data);
+			}
+			if (data.oid) {
+				Object.assign(this.scenicTickets.filter((item: any) => data.oid == item.oid)[0], data);
+			} else {
+				data.oid = oid;
+				let newData = [...this.scenicTickets, data];
+				this.scenicTickets = newData as any;
+				console.log(this.scenicTickets, data, newData);
+			}
 		},
 	},
 });

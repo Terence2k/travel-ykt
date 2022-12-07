@@ -165,6 +165,7 @@ const submit = async () => {
 			newFormState.orderFee = newFormState.roomTypeList[index].unitPrice + newFormState.orderFee
 		}		
 		const res = await api.travelManagement.templateaddHotel(newFormState);
+		travelStore.tempeletSetHotels(newFormState, res, props.productRow.productId);
 		// travelStore.setHotels(newFormState, res, props.productRow.productId);
 		// callback()
 	} catch (errorInfo) {
