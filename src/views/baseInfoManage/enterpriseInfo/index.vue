@@ -84,11 +84,11 @@
               </a-button>
           </div>
         </a-form-item>
-        <a-form-item name=" contactIdNumber" label="企业联系人身份证号码">
+        <a-form-item name="contactIdNumber" label="企业联系人身份证号码">
           <div class="flex">
-            <a-input v-model:value="form. contactIdNumber" placeholder="请输入企业联系人身份证号码" :disabled="getStatus(' contactIdNumber')" />
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus(' contactIdNumber')" v-if="showChangeBtns(' contactIdNumber')">
-                {{ getStatus(' contactIdNumber') ? '修改' : '确定' }}
+            <a-input v-model:value="form.contactIdNumber" placeholder="请输入企业联系人身份证号码" :disabled="getStatus('contactIdNumber')" />
+              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('contactIdNumber')" v-if="showChangeBtns('contactIdNumber')">
+                {{ getStatus('contactIdNumber') ? '修改' : '确定' }}
               </a-button>
           </div>
         </a-form-item>
@@ -103,7 +103,7 @@
         <a-form-item name="legalPersonIdNumber" label="企业法人/负责人身份证号">
           <div class="flex">
             <a-input v-model:value="form.legalPersonIdNumber" placeholder="请输入企业法人/负责人身份证号" :disabled="getStatus('legalPersonIdNumber')" />
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus(' legalPersonIdNumber')" v-if="showChangeBtns('legalPersonIdNumber')">
+              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('legalPersonIdNumber')" v-if="showChangeBtns('legalPersonIdNumber')">
                 {{ getStatus('legalPersonIdNumber') ? '修改' : '确定' }}
               </a-button>
           </div>
