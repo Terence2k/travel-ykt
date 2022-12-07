@@ -130,3 +130,9 @@ export enum HealthCode {
   Yellow = '01',
   Red = '10'
 }
+
+export enum TicketType {
+  ONE = 1,
+  UNITE = 2,
+  SHOW = 3
+}

@@ -23,6 +23,19 @@
 				</a-select>
 			</a-form-item>
 
+			<a-form-item label="门票类型" name="ticketType" :rules="[{ required: true, message: '请选择门票类型' }]">
+				<a-select
+					@change="handelChangeType"
+                    v-model:value="formState.ticketType" 
+                    placeholder="请选择门票类型">
+					<a-select-option 
+                        :value="item.data"
+						:name="item.typeName"
+                        v-for="item in ticketData.ticketType"
+                        :key="item.data">{{item.typeName}}</a-select-option>
+				</a-select>
+			</a-form-item>
+
 			<a-form-item label="入园日期" name="startDate" :rules="[{ required: true, message: '请选择入园日期' }]">
                 <a-date-picker
 					:disabled-date="travelStore.setDisabled"
@@ -46,7 +59,6 @@
                         :key="item.oid">{{item.ticketName}}</a-select-option>
 				</a-select>
 			</a-form-item>
-
 			<a-form-item label="行程人数" name="travelName">
 				<span>{{travelStore.touristList.length}}人</span>
 			</a-form-item>
@@ -55,7 +67,32 @@
 				<span>{{ticketPrice / 100 || 0}}元</span>
 			</a-form-item>
 
-
+			<div v-if="(formState.ticketType === TicketType.SHOW || formState.ticketType === TicketType.UNITE)">
+				<a-form-item
+				label="子票详情"
+				name="ticketId"
+				:rules="[{ required: true, message: '选择座位' }]"
+			>
+				
+				</a-form-item>
+				<CommonTable
+					v-if="(formState.ticketType === TicketType.UNITE)"
+					:columns="columns" 
+					:dataSource="ticketData.childTicket" 
+					:scrollY="false">
+					<template #bodyCell="{ column, text, index, record }">
+						<template v-if="column.key === 'action'">
+							<a @click="(dialogVisibleTicket = true)">选择座位分区</a>
+						</template>
+					</template>
+				</CommonTable>
+				<selectTicket v-if="(formState.ticketType === TicketType.SHOW)"></selectTicket>
+			</div>
+			<a-form-item
+				label=""
+			>
+				
+			</a-form-item>
             <!-- <a-form-item label="入园时段" name="startDate" :rules="[{ required: true, message: '请选择入园时段' }]">
                 <a-time-picker
                     style="width: 100%"
@@ -86,15 +123,20 @@
 			
 		</a-form>
 	</BaseModal>
+	<BaseModal v-model="dialogVisibleTicket" title="选择座位分区" :width="900" :onOk="handleOkTicket">
+		<selectTicket></selectTicket>
+	</BaseModal>
 </template>
 
 <script lang="ts" setup>
     
 	import BaseModal from '@/components/common/BaseModal.vue';
+	import selectTicket from './selectTicket.vue';
     import { useTravelStore } from '@/stores/modules/travelManagement';
     import api from '@/api';
 	import { cloneDeep, debounce } from 'lodash';
-
+	import { TicketType } from '@/enum';
+	import CommonTable from '@/components/common/CommonTable.vue';
 	const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any ) || {}
 	const route = useRoute()
     const travelStore = useTravelStore()
@@ -118,7 +160,9 @@
     const tableData = ref([])
     const ticketData = reactive<{[k:string]: any}>({
         scenicList: [],
-        ticketList: []
+        ticketList: [],
+		ticketType: [],
+		childTicket: []
     })
 	const formState = reactive<{[k: string]: any}>({
 		ticketId: '',
@@ -126,8 +170,40 @@
 		endData: '',
         count: ''
 	});
-
-
+	const dialogVisibleTicket = ref(false);
+	const columns: any = [
+		{
+            title: '子票名称',
+            dataIndex: 'subTicketName',
+            key: 'subTicketName',
+        },
+		{
+            title: '票种',
+            dataIndex: 'subTicketTypeName',
+            key: 'subTicketTypeName',
+        },
+		{
+            title: '可用库存',
+            dataIndex: 'subTicketStock',
+            key: 'subTicketStock',
+        },
+		{
+            title: '单价（元）',
+            dataIndex: 'subTicketPrice',
+            key: 'subTicketPrice',
+        },
+		{
+            title: '是否有减扣',
+            dataIndex: 'isHasDiscountName',
+            key: 'isHasDiscountName',
+        },
+		// {
+        //     title: '操作',
+        //     dataIndex: 'action',
+        //     key: 'action',
+        // },
+	]
+	const dataSource = ref<any>([{startDate: '123'}]);
 	const ticketPrice = computed(() => {
         return ticketData.ticketList.filter((it:any) => it.oid === formState.ticketId)[0]?.price
     })
@@ -135,6 +211,36 @@
     const getScenicList = async () => {
         ticketData.scenicList = await api.travelManagement.getScenicList()
     }
+
+	// 获取子票详情
+	const getChildTicket = (ticketId: number | string, schoolDate: string) => {
+		api.travelManagement.getChildTicket(
+			{
+				ticketId,
+				schoolDate,
+			}
+		).then((res: any) => {
+			ticketData.childTicket = res.map((item: any) => {
+				item.subTicketTypeName = ticketData.ticketType.filter((it: any) => it.data === item.subTicketType)[0]?.typeName
+				item.subTicketPrice = item.subTicketPrice / 100;
+				item.isHasDiscountName = item.isHasDiscount ? '是' : '否';
+				return item
+			});
+		})
+	}
+
+	// handelChangeType
+	const handelChangeType = async (e: any) => {
+		formState.ticketId = ''
+		try {
+			e && (ticketData.ticketList = await api.travelManagement.getTicketList(formState.scenicId, {ticketType: getTicketInitEnum(e)}))
+		} catch (error) {
+			ticketData.ticketList = []
+		}
+		if(e === TicketType.UNITE) {
+			formState.ticketId && formState.startDate && getChildTicket(formState.ticketId, formState.startDate)
+		}
+	}
     
 	const handleOk = async (callback: Function) => {
 		try {
@@ -143,13 +249,19 @@
 			formState.unitPrice = ticketPrice.value
 			formState.itineraryId = route.query.id || traveListData.oid
 			formState.peopleCount = travelStore.touristList.length
+			if (formState.ticketType === TicketType.UNITE) {
+				formState.childTicketIds = ticketData.childTicket.map((it: any) => it.subTicketId)
+			} else {
+				formState.childTicketIds = []
+			}
 			const newFormState = cloneDeep(formState)
 			newFormState.reservePeopleCount = formState.peopleCount
 			newFormState.unitPrice = ticketPrice.value / 100;
 			newFormState.totalFee = newFormState.peopleCount * newFormState.unitPrice
 			const res = await api.travelManagement.addTicket(formState)
+			res && (newFormState.oid = res)
 			// travelStore.setTicket(newFormState)
-			travelStore.setTicket(newFormState, res, props.productRow.productId)
+			travelStore.setTicket(newFormState)
 			
 			callback()
 		} catch (errorInfo) {
@@ -157,15 +269,65 @@
 		}
 		
 	};
-
+	const getTicketInitEnum = (key: string) => {
+		let data = 0
+		key = key?.toString()
+		switch(key) {
+			case '1':
+				data = 1
+				break;
+			case '2':
+				data = 0
+				break;
+			case '3':
+				data = 2
+				break;
+		}
+		return data;
+	}
     const handleChange = async (event: number, option:any) => {
+		console.log(event, 'event &&event &&event &&event &&')
         formState.ticketId = ''
 		formState.scenicName = option.name;
-        ticketData.ticketList = await api.travelManagement.getTicketList(event)
+		ticketData.childTicket = [];
+		const ticketType = formState.ticketType || option.ticketType
+        event && (ticketType || ticketType === 0) && 
+		(ticketData.ticketList = await api.travelManagement.getTicketList(event, {ticketType: getTicketInitEnum(ticketType)}))
     }
 
 	const changeTicket = (event: number, option: any) => {
 		formState.ticketName = option.name;
+	}
+	
+	const getTicketEnum = (key: string) => {
+		let data = 0
+		switch(key) {
+			case '单票':
+				data = 1
+				break;
+			case '联票':
+				data = 2
+				break;
+			case '演出票':
+				data = 3
+				break;
+		}
+		return data;
+	}
+
+	// 获取门票类型
+	const getTicketType = async () => {
+		const res = await api.travelManagement.getTicketType();
+		ticketData.initTicketType = res;
+		ticketData.ticketType = res.map((item: any) => {
+			item.data = getTicketEnum(item.typeName);
+			return item;
+		});
+		ticketData.ticketType = ticketData.ticketType.filter((it: any) => it.data !== TicketType.SHOW)
+	}
+
+	const handleOkTicket = () => {
+
 	}
 
 	const emits = defineEmits(['update:modelValue'])
@@ -183,13 +345,20 @@
 		} else {
 			
 			!props.productRow.productId && props.ticketId && api.travelManagement.ticketDetail(props.ticketId).then((res:any) => {
-				handleChange(res.scenicId, {name: res.scenicName})
+				handleChange(res.scenicId, {name: res.scenicName, ticketType: res.ticketType})
 				for (let k in res) {
 					formState[k] = res[k]
 				}
 			})
 			formState.scenicId = props.productRow.productId;
-			props.productRow.productId && handleChange(props.productRow.productId, {name: props.productRow.scenicName})
+			props.productRow.productId && handleChange(props.productRow.productId, {name: props.productRow.scenicName, ticketType: props.productRow.ticketType})
+			if (!props.productRow.productId && !props.ticketId) {
+				handleChange(props.productRow.scenicId, {name: props.productRow.scenicName, ticketType: props.productRow.ticketType})
+				for (let k in props.productRow) {
+					formState[k] = props.productRow[k]
+				}
+				
+			}
 		}
 		emits('update:modelValue', newVal)
 	})
@@ -203,17 +372,19 @@
 	}
 	const debounceFun = debounce((ticketId: number | string, endTime: string, startTime: string) => {
 		getStock(ticketId, endTime, startTime);
+		formState.ticketType === TicketType.UNITE && getChildTicket(ticketId, startTime)
 	}, 500);
 
 	watch(
 		() => [formState.ticketId, formState.startDate],
-		([newHotelId, newallDate]) => {
-			if (newHotelId && newallDate && newallDate) {
-				debounceFun(newHotelId, newallDate, newallDate);
+		([ticketId, newallDate]) => {
+			if (ticketId && newallDate && newallDate) {
+				debounceFun(ticketId, newallDate, newallDate);
 			}
 		}
 	);
     getScenicList();
+	getTicketType();
 </script>
 
 <style lang="less" scoped>

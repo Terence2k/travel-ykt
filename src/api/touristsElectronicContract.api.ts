@@ -52,3 +52,11 @@ export function findIndividualContractById(oid: number) {
     showLoading: true
   });
 }
+// 综费产品启用列表
+export function findComprehensiveProductsList() {
+  return request({
+    url: `${commonPath}/settlement-service/public/api/comprehensive-fee-product/findEnableList`,
+    method: 'get',
+    showLoading: true
+  });
+}

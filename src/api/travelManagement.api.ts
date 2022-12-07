@@ -57,7 +57,7 @@ export const travelManagement = {
 	},
 	getScenicList(data: any) {
 		return request({
-			url: `${commonPath}/ticket-service/public/api/scenic/lessInfos`,
+			url: `${commonPath}/ticket-service/public/api/scenic/ticketScenicInfos`,
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
 			},
@@ -66,12 +66,13 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
-	getTicketList(id: any) {
+	getTicketList(id: any, data: any) {
 		return request({
 			url: `${commonPath}/ticket-service/public/api/scenic-travel-itinerary/get-all-ticket/${id}`,
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
 			},
+			data,
 			method: 'get',
 			showLoading: false,
 		});
@@ -481,6 +482,17 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
+	templateEditStatus(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/template/editTemplateStatus`,
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			data,
+			showLoading: false,
+		});
+	},
 	//撤销重提
 	repealNreapplyPage(data: any) {
 		return request({
@@ -516,6 +528,25 @@ export const travelManagement = {
 			},
 			method: 'put',
 			showLoading: false,
+		});
+	},
+	//撤销重提确认
+	confirmSubmit(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/confirmSubmit`,
+			data,
+			method: 'post',
+			showLoading: true,
+		});
+	},
+
+	//撤销重提确认
+	submitRevokeAndRecommits(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/pc/submitRevokeAndRecommit`,
+			data,
+			method: 'post',
+			showLoading: true,
 		});
 	},
 	//整团撤销
@@ -615,6 +646,22 @@ export const travelManagement = {
 	getRevokeAuditDetail(id: number) {
 		return request({
 			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/getRevokeAuditDetail/${id}`,
+			method: 'get',
+			showLoading: false,
+		});
+	},
+	getTicketType(data: any) {
+		return request({
+			url: `${commonPath}/ticket-service/public/api/scenic-ticket/ticketLessInfos`,
+			data,
+			method: 'get',
+			showLoading: true,
+		});
+	},
+	getChildTicket(data: any) {
+		return request({
+			url: `${commonPath}/ticket-service/public/api/scenic-travel-itinerary/get-all-sub-ticket`,
+			data,
 			method: 'get',
 			showLoading: false,
 		});

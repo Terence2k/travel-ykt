@@ -93,7 +93,7 @@ const columns = [
 
 const state = reactive({
 	tableData: {
-		data: [],
+		data: [] as any,
 		total: 0,
 		loading: false,
 		param: {
