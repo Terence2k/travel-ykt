@@ -20,6 +20,9 @@ import BaseModal from '@/components/common/BaseModal.vue';
 import Upload from '@/components/common/imageWrapper.vue';
 import { Form } from 'ant-design-vue';
 import api from '@/api/index';
+import { useTravelStore } from '@/stores/modules/travelManagement';
+
+const travelStore = useTravelStore();
 
 const route = useRouter();
 const modelValue = ref(false);
@@ -31,7 +34,7 @@ const formValidate = reactive({
 		pic: '',
 	},
 });
-const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
+const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField, clearValidate } = useForm(
 	formValidate,
 	reactive({
 		'data.revokeReason': [{ required: true, message: '请选择' }],
@@ -46,7 +49,7 @@ const props = defineProps({
 	// 	type: Boolean,
 	// 	default: false,
 	// },
-	// params: Object,
+	params: Object,
 	// menuList: Array,
 });
 const emit = defineEmits(['finish']);
@@ -55,11 +58,13 @@ const apply = () => {
 	validate()
 		.then(async (res) => {
 			let parms = formValidate.data;
-			parms.attachmentList = parms.pic.split(',');
-			parms.itineraryId = route.currentRoute.value?.query?.id;
-			let resP = await api.travelManagement.submitAllRevoke(parms);
-
-			statusRec.value === 'REVOKE' ? '' : emit('finish');
+			// let resP = await api.travelManagement.submitRevokeAndRecommit(parms);
+			travelStore.setRevokeParams(parms);
+			route.push({
+				path: '/travel/travel_manage/add_travel',
+				query: { id: route.currentRoute.value?.query?.id, itineraryNo: route.currentRoute.value?.query?.itineraryNo, isRevoke: 1 },
+			});
+			// statusRec.value === 'REVOKE' ? '' : emit('finish');
 			cancel();
 			// route.push({ path: '/scenic-spot/singleVote/edit', query: { t: formValidate.data.revokeReason, s: 'new' } });
 		})
@@ -78,6 +83,7 @@ const open = (status: string) => {
 // 关闭弹窗
 const cancel = () => {
 	modelValue.value = false;
+	resetFields();
 	console.log(modelValue.value, 'modelValue');
 };
 

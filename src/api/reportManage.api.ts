@@ -62,3 +62,22 @@ export async function statementBySubTravelDetail(data: any) {
 		showLoading: true,
 	});
 }
+
+// 散客结算汇总表
+export async function individualSettlementSummaryReportTravel(data: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/statement/individualTravel/statement/byTravel`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
+// 散客结算明细表
+export async function individualSettlementDetailReportTravel(data: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/statement/individualTravel/statement/byItinerary`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}

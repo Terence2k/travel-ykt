@@ -505,6 +505,19 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
+
+	//检查外部票是否已退订
+	checkOutSideTicketIsRefund(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/checkOutSideTicketIsRefund`,
+			data,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			method: 'put',
+			showLoading: false,
+		});
+	},
 	//整团撤销
 	submitAllRevoke(data: any) {
 		return request({
@@ -599,6 +612,13 @@ export const travelManagement = {
 			showLoading: true,
 		});
 	},
+	getRevokeAuditDetail(id: number) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/getRevokeAuditDetail/${id}`,
+			method: 'get',
+			showLoading: false,
+		});
+	},
 	getTicketType(data: any) {
 		return request({
 			url: `${commonPath}/ticket-service/public/api/scenic-ticket/ticketLessInfos`,
@@ -607,5 +627,4 @@ export const travelManagement = {
 			showLoading: true,
 		});
 	},
-	
 };

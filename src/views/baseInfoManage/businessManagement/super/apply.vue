@@ -65,7 +65,7 @@
 	<div class="tabs_box">
 		<a-badge :count="auditTableData.total" class="rebadge" />
 		<a-tabs v-model:activeKey="activeKey" @change="tabsChange">
-			<a-tab-pane key="1" tab="已审核">
+			<a-tab-pane key="1" tab="已审核" v-if="getTabPermission('已审核')">
 				<CommonTable :dataSource="tableData.data" :columns="columns">
 					<template #bodyCell="{ column, record }">
 						<template v-if="column.key === 'businessLicenseUrl'">
@@ -88,7 +88,7 @@
 						:total="tableData.total" @change="onHandleCurrentChange" @showSizeChange="pageSideChange" />
 				</div>
 			</a-tab-pane>
-			<a-tab-pane key="2" tab="待审核">
+			<a-tab-pane key="2" tab="待审核" v-if="getTabPermission('待审核')">
 				<CommonTable :dataSource="auditTableData.data" :columns="auditColumns">
 					<template #bodyCell="{ column, record }">
 						<template v-if="column.key === 'businessLicenseUrl'">
@@ -110,7 +110,7 @@
 						@change="auditOnHandleCurrentChange" @showSizeChange="auditPageSideChange" />
 				</div>
 			</a-tab-pane>
-			<a-tab-pane key="3" tab="审核驳回">
+			<a-tab-pane key="3" tab="审核驳回" v-if="getTabPermission('审核驳回')">
 				<CommonTable :dataSource="failTableData.data" :columns="failColumns">
 					<template #bodyCell="{ column, record }">
 						<template v-if="column.key === 'businessLicenseUrl'">
@@ -262,6 +262,7 @@ import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router';
 import { useBusinessManageOption } from '@/stores/modules/businessManage';
 import { flat } from '@/views/baseInfoManage/businessManagement/super/common';
+import { getTabPermission } from '@/utils/util';
 const businessManageOptions = useBusinessManageOption();
 const router = useRouter();
 const route = useRoute();
@@ -420,7 +421,7 @@ const commonColumns = [
 		key: 'businessLicenseUrl',
 	},
 	{
-		title: '企业来源',
+		title: '审核类型',
 		dataIndex: 'source',
 		key: 'source',
 	},
@@ -720,8 +721,8 @@ const auditEnterprise = async (record: any) => {
 		let keyList = Object.keys(keyNameList)
 		keyList.forEach((key: string) => {
 			if (newList[key] != oldList[key]) {
-				newArrList.value[key] = newList[key]
-				oldArrList.value[key] = oldList[key]
+				newArrList.value[key] = [null, undefined].includes(newList[key]) ? '无' : newList[key]
+				oldArrList.value[key] = [null, undefined].includes(oldList[key]) ? '无' : oldList[key]
 				changeKeys.value.push(key)
 			}
 		})
