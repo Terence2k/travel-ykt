@@ -25,6 +25,7 @@
 
 			<a-form-item label="门票类型" name="ticketType" :rules="[{ required: true, message: '请选择门票类型' }]">
 				<a-select
+					@change="handelChangeType"
                     v-model:value="formState.ticketType" 
                     placeholder="请选择门票类型">
 					<a-select-option 
@@ -226,6 +227,14 @@
 				return item
 			});
 		})
+	}
+
+	// handelChangeType
+	const handelChangeType = (e: any) => {
+		console.log(e)
+		if(e === TicketType.UNITE) {
+			formState.ticketId && formState.startDate && getChildTicket(formState.ticketId, formState.startDate)
+		}
 	}
     
 	const handleOk = async (callback: Function) => {
