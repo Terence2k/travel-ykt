@@ -233,7 +233,7 @@
 	const handelChangeType = async (e: any) => {
 		formState.ticketId = ''
 		try {
-			e && (ticketData.ticketList = await api.travelManagement.getTicketList(formState.scenicId, {ticketType: getTicketInitEnum(e.toString())}))
+			e && (ticketData.ticketList = await api.travelManagement.getTicketList(formState.scenicId, {ticketType: getTicketInitEnum(e)}))
 		} catch (error) {
 			ticketData.ticketList = []
 		}
@@ -269,20 +269,9 @@
 		}
 		
 	};
-
-    const handleChange = async (event: number, option:any) => {
-        formState.ticketId = ''
-		formState.scenicName = option.name;
-		ticketData.childTicket = [];
-        event && formState.ticketType && 
-		(ticketData.ticketList = await api.travelManagement.getTicketList(event, {ticketType: getTicketInitEnum(formState.ticketType.toString())}))
-    }
-
-	const changeTicket = (event: number, option: any) => {
-		formState.ticketName = option.name;
-	}
 	const getTicketInitEnum = (key: string) => {
 		let data = 0
+		key = key?.toString()
 		switch(key) {
 			case '1':
 				data = 1
@@ -296,6 +285,20 @@
 		}
 		return data;
 	}
+    const handleChange = async (event: number, option:any) => {
+		console.log(event, 'event &&event &&event &&event &&')
+        formState.ticketId = ''
+		formState.scenicName = option.name;
+		ticketData.childTicket = [];
+		const ticketType = formState.ticketType || option.ticketType
+        event && (ticketType || ticketType === 0) && 
+		(ticketData.ticketList = await api.travelManagement.getTicketList(event, {ticketType: getTicketInitEnum(ticketType)}))
+    }
+
+	const changeTicket = (event: number, option: any) => {
+		formState.ticketName = option.name;
+	}
+	
 	const getTicketEnum = (key: string) => {
 		let data = 0
 		switch(key) {
@@ -342,15 +345,15 @@
 		} else {
 			
 			!props.productRow.productId && props.ticketId && api.travelManagement.ticketDetail(props.ticketId).then((res:any) => {
-				handleChange(res.scenicId, {name: res.scenicName})
+				handleChange(res.scenicId, {name: res.scenicName, ticketType: res.ticketType})
 				for (let k in res) {
 					formState[k] = res[k]
 				}
 			})
 			formState.scenicId = props.productRow.productId;
-			props.productRow.productId && handleChange(props.productRow.productId, {name: props.productRow.scenicName})
+			props.productRow.productId && handleChange(props.productRow.productId, {name: props.productRow.scenicName, ticketType: props.productRow.ticketType})
 			if (!props.productRow.productId && !props.ticketId) {
-				handleChange(props.productRow.scenicId, {name: props.productRow.scenicName})
+				handleChange(props.productRow.scenicId, {name: props.productRow.scenicName, ticketType: props.productRow.ticketType})
 				for (let k in props.productRow) {
 					formState[k] = props.productRow[k]
 				}
