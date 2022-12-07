@@ -66,12 +66,13 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
-	getTicketList(id: any) {
+	getTicketList(id: any, data: any) {
 		return request({
 			url: `${commonPath}/ticket-service/public/api/scenic-travel-itinerary/get-all-ticket/${id}`,
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
 			},
+			data,
 			method: 'get',
 			showLoading: false,
 		});

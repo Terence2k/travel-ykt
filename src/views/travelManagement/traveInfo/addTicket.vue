@@ -230,8 +230,13 @@
 	}
 
 	// handelChangeType
-	const handelChangeType = (e: any) => {
-		console.log(e)
+	const handelChangeType = async (e: any) => {
+		formState.ticketId = ''
+		try {
+			e && (ticketData.ticketList = await api.travelManagement.getTicketList(formState.scenicId, {ticketType: getTicketInitEnum(e.toString())}))
+		} catch (error) {
+			ticketData.ticketList = []
+		}
 		if(e === TicketType.UNITE) {
 			formState.ticketId && formState.startDate && getChildTicket(formState.ticketId, formState.startDate)
 		}
@@ -269,11 +274,27 @@
         formState.ticketId = ''
 		formState.scenicName = option.name;
 		ticketData.childTicket = [];
-        event && (ticketData.ticketList = await api.travelManagement.getTicketList(event))
+        event && formState.ticketType && 
+		(ticketData.ticketList = await api.travelManagement.getTicketList(event, {ticketType: getTicketInitEnum(formState.ticketType.toString())}))
     }
 
 	const changeTicket = (event: number, option: any) => {
 		formState.ticketName = option.name;
+	}
+	const getTicketInitEnum = (key: string) => {
+		let data = 0
+		switch(key) {
+			case '1':
+				data = 1
+				break;
+			case '2':
+				data = 0
+				break;
+			case '3':
+				data = 2
+				break;
+		}
+		return data;
 	}
 	const getTicketEnum = (key: string) => {
 		let data = 0
@@ -294,6 +315,7 @@
 	// 获取门票类型
 	const getTicketType = async () => {
 		const res = await api.travelManagement.getTicketType();
+		ticketData.initTicketType = res;
 		ticketData.ticketType = res.map((item: any) => {
 			item.data = getTicketEnum(item.typeName);
 			return item;
