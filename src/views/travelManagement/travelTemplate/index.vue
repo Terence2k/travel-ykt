@@ -5,10 +5,10 @@
 				<a-input placeholder="请输入模板名称" v-model:value="state.tableData.param.templateName" />
 			</search-item>
 			<search-item label="团队类型">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.teamType" style="width: 200px" placeholder="请选择团队类型">
-				<a-select-option v-for="(item, index) in options.teamTypesLists" :value="item.oid" :key="index">{{ item.name }} </a-select-option>
-			</a-select>
-		</search-item>
+				<a-select allowClear ref="select" v-model:value="state.tableData.param.teamType" style="width: 200px" placeholder="请选择团队类型">
+					<a-select-option v-for="(item, index) in options.teamTypesLists" :value="item.oid" :key="index">{{ item.name }} </a-select-option>
+				</a-select>
+			</search-item>
 			<template #button>
 				<a-button @click="react" style="margin-right: 20px" v-permission="'重置'">重置</a-button>
 				<a-button @click="getList" v-permission="'查询'">查询</a-button>
@@ -16,15 +16,19 @@
 		</CommonSearch>
 		<CommonTable :dataSource="state.tableData.data" rowKey="oid" :row-selection="rowSelection" :columns="columns">
 			<template #button>
-				<a-button type="primary" @click="AddPage" style="margin-right: 16px" v-permission="'新增'">新增</a-button>
-				<a-button type="primary" v-permission="'导出'">导出</a-button>
+				<a-button type="primary" @click="AddPage" v-permission="'新增'">新增</a-button>
+				<!-- <a-button type="primary"  style="margin-left: 16px"  v-permission="'导出'">导出</a-button> -->
 			</template>
 			<template #bodyCell="{ column, record }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a @click="openInfoPage(record)" v-permission="'查看'">查看</a>
 						<a @click="openeditPage(record)" v-permission="'编辑'">编辑</a>
-						<a @click="openModel(record)" v-permission="record.oid ? '启用' : '禁用'">{{record.oid ? '启用' : '禁用'}}</a>
+						<a
+							@click="aduitStatus({ row: record, handle: record.templateStatus == 0 ? 'enable' : 'disable' })"
+							v-permission="record.templateStatus == 1 ? '启用' : '禁用'"
+							>{{ record.templateStatus == 0 ? '启用' : '禁用' }}</a
+						>
 					</div>
 				</template>
 			</template>
@@ -105,8 +109,8 @@ const columns = [
 	},
 	{
 		title: '状态',
-		dataIndex: 'status',
-		key: 'status',
+		dataIndex: 'templateStatusName',
+		key: 'templateStatusName',
 	},
 	{
 		title: '操作',
@@ -124,8 +128,8 @@ const state = reactive({
 		param: {
 			pageNo: 1,
 			pageSize: 10,
-			templateName:'',
-			teamType:''
+			templateName: '',
+			teamType: '',
 		},
 	},
 	params: {},
@@ -142,22 +146,20 @@ const cancel = (e: MouseEvent) => {};
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
 	state.tableData.param.pageNo = val;
-	getList()
+	getList();
 };
 
 const pageSideChange = (current: number, size: number) => {
 	console.log('changePageSize:', size);
 	state.tableData.param.pageSize = size;
-	getList()
+	getList();
 };
 
 const rowSelection = computed(() => {
 	return {
-
 		onSelect: (record: DataSourceItem, selected: boolean, selectedRows: DataSourceItem[]) => {
 			console.log(record, selected, selectedRows);
 		},
-	
 	};
 });
 
@@ -170,13 +172,9 @@ const getList = async (): Promise<void> => {
 	});
 };
 const react = () => {
-	state.tableData.param.teamType = ''
-	state.tableData.param.templateName = ''
-	getList()
-};
-const status = {
-	false: '停用',
-	true: '启用',
+	state.tableData.param.teamType = '';
+	state.tableData.param.templateName = '';
+	getList();
 };
 
 const openeditPage = (record: any) => {
@@ -189,13 +187,31 @@ const openInfoPage = (record: any) => {
 };
 const AddPage = (id: any) => {
 	const Cedit = 0;
-	travelStore.hotels = []
-	travelStore.scenicTickets = []
+	travelStore.hotels = [];
+	travelStore.scenicTickets = [];
 	router.push({ path: '/travel/travelTtemplate/info', query: { Cedit: Cedit } });
 };
-const openModel = (record: any) => {
-	console.log(record.oid);
-	
+const aduitStatus = ({ row, handle }: any) => {
+	if (handle == 'enable') {
+		let Data = new FormData();
+
+		Data.append('oid', row.oid);
+		Data.append('templateStatus', '1');
+		api.travelManagement.templateEditStatus(Data).then((res: any) => {
+			message.success('启用成功');
+			getList();
+			return;
+		});
+	} else {
+		let Data = new FormData();
+		Data.append('oid', row.oid);
+		Data.append('templateStatus', '0');
+		api.travelManagement.templateEditStatus(Data).then((res: any) => {
+			message.success('禁用成功');
+			getList();
+			return;
+		});
+	}
 };
 onMounted(() => {
 	navigatorBar.setNavigator(['行程模板管理']);

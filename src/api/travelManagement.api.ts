@@ -481,6 +481,17 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
+	templateEditStatus(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/template/editTemplateStatus`,
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			data,
+			showLoading: false,
+		});
+	},
 	//撤销重提
 	repealNreapplyPage(data: any) {
 		return request({
