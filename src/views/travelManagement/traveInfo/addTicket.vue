@@ -66,7 +66,7 @@
 				<span>{{ticketPrice / 100 || 0}}元</span>
 			</a-form-item>
 
-			<div v-if="(formState.ticketType === 0 || formState.ticketType === 2)">
+			<div v-if="(formState.ticketType === TicketType.SHOW || formState.ticketType === TicketType.UNITE)">
 				<a-form-item
 				label="子票详情"
 				name="ticketId"
@@ -75,7 +75,7 @@
 				
 				</a-form-item>
 				<CommonTable
-					v-if="(formState.ticketType === 0)"
+					v-if="(formState.ticketType === TicketType.UNITE)"
 					:columns="columns" 
 					:dataSource="ticketData.childTicket" 
 					:scrollY="false">
@@ -85,7 +85,7 @@
 						</template>
 					</template>
 				</CommonTable>
-				<selectTicket v-if="(formState.ticketType === 2)"></selectTicket>
+				<selectTicket v-if="(formState.ticketType === TicketType.SHOW)"></selectTicket>
 			</div>
 			<a-form-item
 				label=""
@@ -136,7 +136,6 @@
 	import { cloneDeep, debounce } from 'lodash';
 	import { TicketType } from '@/enum';
 	import CommonTable from '@/components/common/CommonTable.vue';
-import { GETTICKETENUM, TICKETENUM } from '@/constant';
 	const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any ) || {}
 	const route = useRoute()
     const travelStore = useTravelStore()
@@ -236,8 +235,6 @@ import { GETTICKETENUM, TICKETENUM } from '@/constant';
 			formState.unitPrice = ticketPrice.value
 			formState.itineraryId = route.query.id || traveListData.oid
 			formState.peopleCount = travelStore.touristList.length
-			let type: '0' | '1' = formState.ticketType
-			formState.ticketType = TICKETENUM[type]
 			if (formState.ticketType === TicketType.UNITE) {
 				formState.childTicketIds = ticketData.childTicket.map((it: any) => it.subTicketId)
 			} else {
@@ -269,11 +266,30 @@ import { GETTICKETENUM, TICKETENUM } from '@/constant';
 	const changeTicket = (event: number, option: any) => {
 		formState.ticketName = option.name;
 	}
+	const getTicketEnum = (key: string) => {
+		let data = 0
+		switch(key) {
+			case '单票':
+				data = 1
+				break;
+			case '联票':
+				data = 2
+				break;
+			case '演出票':
+				data = 3
+				break;
+		}
+		return data;
+	}
 
 	// 获取门票类型
 	const getTicketType = async () => {
-		ticketData.ticketType = await api.travelManagement.getTicketType();
-		ticketData.ticketType = ticketData.ticketType.filter((it: any) => it.data !== 2)
+		const res = await api.travelManagement.getTicketType();
+		ticketData.ticketType = res.map((item: any) => {
+			item.data = getTicketEnum(item.typeName);
+			return item;
+		});
+		ticketData.ticketType = ticketData.ticketType.filter((it: any) => it.data !== TicketType.SHOW)
 	}
 
 	const handleOkTicket = () => {
@@ -299,8 +315,6 @@ import { GETTICKETENUM, TICKETENUM } from '@/constant';
 				for (let k in res) {
 					formState[k] = res[k]
 				}
-				let type: '2' | '1' = formState.ticketType
-				formState.ticketType = GETTICKETENUM[type]
 			})
 			formState.scenicId = props.productRow.productId;
 			props.productRow.productId && handleChange(props.productRow.productId, {name: props.productRow.scenicName})
@@ -324,7 +338,7 @@ import { GETTICKETENUM, TICKETENUM } from '@/constant';
 	}
 	const debounceFun = debounce((ticketId: number | string, endTime: string, startTime: string) => {
 		getStock(ticketId, endTime, startTime);
-		formState.ticketType === 0 && getChildTicket(ticketId, startTime)
+		formState.ticketType === TicketType.UNITE && getChildTicket(ticketId, startTime)
 	}, 500);
 
 	watch(
