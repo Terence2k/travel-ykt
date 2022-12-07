@@ -45,7 +45,7 @@ import cancellation from './travelTakeGroupList/cancellation.vue';
 import waitingChange from './travelTakeGroupList/waitingChange.vue';
 import overtime from './travelTakeGroupList/overtime.vue';
 
-import { traveListParams, useTravelStore } from '@/stores/modules/travelManagement';
+import { takeGroupListParams, useTravelStore } from '@/stores/modules/travelManagement';
 import { TakeGroupStatus, GroupType } from '@/enum';
 import { getUserInfo, getTabPermission } from '@/utils/util';
 import { ROLE } from '@/constant';
@@ -148,7 +148,7 @@ const onSearch = async () => {
 const reset = () => {
 	let chartField: TakeGroupField = chart.value;
 
-	travelStore.takeGroupList[chartField].params = cloneDeep(traveListParams.params);
+	travelStore.takeGroupList[chartField].params = cloneDeep(takeGroupListParams.params);
 	onSearch();
 };
 watch(

@@ -41,7 +41,7 @@
 				<td class="key">行程时间</td>
 				<td class="value">{{ state.basicData.startDate + '-' + state.basicData.endDate }}</td>
 				<td class="key">综费应缴人数</td>
-				<td class="value">{{}}</td>
+				<td class="value">{{ state.basicData.productPeopleCount }}</td>
 			</tr>
 			<tr class="row">
 				<td class="key">已添加景区</td>
@@ -76,6 +76,12 @@
 			<template #bodyCell="{ column, record, index }">
 				<template v-if="column.key === 'endDate'"> {{ record.startDate }} - {{ record.endDate }} </template>
 				<template v-if="column.key === 'certificateType'"> {{ certificateTypeList[record.certificateType] }} </template>
+				<template v-if="column.key === 'codeContent'">
+					<a-image :src="record.codeContent"></a-image>
+				</template>
+				<template v-if="column.key === 'healthCodeStatus'">
+					{{ getCode[record.healthCodeStatus] }}
+				</template>
 			</template>
 		</CommonTable>
 		<p class="top-p">交通信息<span></span></p>
@@ -153,6 +159,7 @@
 		<p>请等待退订完成</p>
 		<template v-slot:footer>
 			<a-button @click="reRecokeAuditCheckVisible = false">确定</a-button>
+			<!-- <a-button @click="toSureRecoke">确定</a-button> -->
 		</template>
 	</BaseModal>
 
@@ -179,7 +186,7 @@
 		</template>
 	</BaseModal>
 
-	<reapply ref="reapplyRef" @finish="successAudit = true" />
+	<reapply ref="reapplyRef" @finish="successAudit = true" :params="state" />
 	<AllRevoke ref="allRevokeRef" />
 	<BaseModal title="撤销申请成功" v-model="successAudit">
 		<p>
@@ -295,13 +302,13 @@ const tourist = [
 	},
 	{
 		title: '健康码',
-		dataIndex: 'healthCodeName',
-		key: 'healthCodeName',
+		dataIndex: 'codeContent',
+		key: 'codeContent',
 	},
 	{
 		title: '中高风险',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
+		dataIndex: 'healthCodeStatus',
+		key: 'healthCodeStatus',
 	},
 	{
 		title: '特殊证件',
@@ -576,8 +583,6 @@ const openReapply = () => {
 	reapplyRef.value.open(btnStatus.value);
 };
 
-const checkCurrentPower = () => {};
-
 const checkPower = async () => {
 	let pW = new FormData();
 
@@ -588,15 +593,35 @@ const checkPower = async () => {
 	return true;
 };
 
+const checkOutSideTicketIsRefund = async () => {
+	let pW = new FormData();
+
+	pW.append('itineraryId', route.currentRoute.value?.query?.id);
+
+	await api.travelManagement.checkOutSideTicketIsRefund(pW);
+
+	return true;
+};
+
 const btnStatus = ref('');
 
+const toSureRecoke = async () => {
+	let params = {
+		itineraryId: route.currentRoute.value?.query?.id,
+		touristList: state.touristList,
+	};
+	await api.travelManagement.confirmSubmit(params);
+	reRecokeAuditCheckVisible.value = false;
+};
+
 const check = async (status: string) => {
-	let valid;
+	let valid, validTikcer;
 	btnStatus.value = status;
 
 	try {
 		valid = await checkPower();
-		if (valid) {
+		validTikcer = await checkOutSideTicketIsRefund();
+		if (valid && validTikcer) {
 			console.log('THROUGHT', status);
 			btnStatus.value === 'REVOKE' ? (reRecokeAuditVisible.value = true) : (reRecokeAuditAllsVisible.value = true);
 		}
@@ -607,6 +632,12 @@ const check = async (status: string) => {
 		reRecokeAuditCheckText.value = error?.msg;
 		reRecokeAuditCheckVisible.value = true;
 	}
+};
+
+const getCode = {
+	'00': '绿码',
+	'01': '黄码',
+	10: '红码',
 };
 
 const initInfo = () => {
@@ -634,6 +665,13 @@ const initInfo = () => {
 			});
 
 			state.attachmentList = arr;
+
+			state.touristList.map(async (item) => {
+				let res = await api.travelManagement.getHealthCode([{ name: item.name, certificateId: item.certificateNo }]);
+				console.log(res[0], 'asdasd', Object.assign(item, res[0]), item);
+				let o = Object.assign(item, res[0]);
+				return o;
+			});
 			// state.itineraryDetail = res;
 		})
 		.catch((err: any) => {

@@ -10,7 +10,7 @@ export default [
 		children: [
 			{
 				path: 'menuManage',
-				component: () => import('@/views/baseInfoManage/menu/index.vue'),
+				component: () => import('@/views/baseInfoManage/menu/tab.vue'),
 				name: 'menuManage',
 				meta: {
 					title: '菜单管理',

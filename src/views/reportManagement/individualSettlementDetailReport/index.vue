@@ -1,6 +1,6 @@
 <template>
 	<CommonSearch>
-        <search-item label="团单编号" style="width: 280px">
+		<search-item label="团单编号" style="width: 280px">
 			<a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入团单编号" allowClear style="width: 180px" />
 		</search-item>
 		<search-item label="组团社">
@@ -14,12 +14,12 @@
 			<a-range-picker v-model:value="state.tableData.settlementStartTimeList" @change="timeChange" />
 		</search-item>
 		<template #button>
-			<a-button @click="initList">查询</a-button>
+			<a-button @click="initList" v-permission="'查询'">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
 		<div class="list-btn">
-			<a-button type="primary" class="success">导出</a-button>
+			<a-button type="primary" class="success" v-permission="'导出'">导出</a-button>
 		</div>
 	</div>
 	<div>
@@ -31,6 +31,10 @@
 					<template v-if="column.key === 'ruleMap'"> {{ getRulePrice(record, column) }} </template>
 					<template v-if="formatColumn(column)">
 						{{ formatData(record, column) }}
+					</template>
+					<!-- 综费产品 -->
+					<template v-if="column.key === 'comprehensiveProduct'">
+						{{ getComprehensiveProduct(record, column) }}
 					</template>
 				</template>
 			</CommonTable>
@@ -53,7 +57,7 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import api from '@/api';
 import { settlementOptions } from '@/stores/modules/settlement';
-import { StateType, DataType, fixedColumn, notConsumed, subTravelVo, ticketVo, hotelVo, cateringVo, hmVo, getRulePrice, formatColumn, formatData } from '.';
+import { StateType, DataType, fixedColumn, notConsumed, ticketVo, hotelVo, getComprehensiveProduct, cateringVo, hmVo, getRulePrice, formatColumn, formatData } from '.';
 const options = settlementOptions();
 const comprehensiveGuideVoListIds = ref([]);
 const comprehensiveVoListIds = ref([]);
@@ -61,6 +65,38 @@ const columns = computed(() => {
 	const column = ref<TableColumnsType>([]);
 	column.value = fixedColumn;
 	const data: Array<DataType> = state.tableData.data;
+		// // 先添加综费项目
+	const comprehensiveFrozenPriceArray: any = [];
+	for (let index = 0; index < data.length; index++) {
+		if (data[index].comprehensiveFrozenPriceList && data[index].comprehensiveFrozenPriceList.length) {
+			const c = data[index].comprehensiveFrozenPriceList;
+			for (let i = 0; i < c.length; i++) {
+				const idx = comprehensiveFrozenPriceArray.findIndex((item: any) => item.title === c[i]['comprehensiveProductName']);
+				if (idx === -1) {
+					comprehensiveFrozenPriceArray.push({
+						title: c[i]['comprehensiveProductName'],
+						dataIndex: `comprehensiveFrozenPriceList-${i}`,
+						key: 'comprehensiveProduct',
+						width: 120,
+					});
+				}
+			}
+		}
+	}
+	const parent = {
+		title: '综费',
+		key: 'comprehensiveFrozenPriceList',
+		dataIndex: 'comprehensiveFrozenPriceList',
+		children: comprehensiveFrozenPriceArray,
+	};
+	// 避免重复插入
+	let idx = column.value
+		.filter((item: any) => {
+			return item.dataIndex == 'comprehensiveFrozenPriceList';
+		}).length
+	if (idx <= 1) {
+		column.value.splice(11, 0, parent);
+	}
 	/**
 	 * 先获取数据源，根据数据源的综费产品列表渲染到表头上
 	 * 再把数据进行整理 把数据源所有数据和表头一一对应存到 ruleMap
@@ -81,26 +117,18 @@ const columns = computed(() => {
 					dataIndex: `comprehensiveGuideVoList`,
 					id: `${vo.comprehensiveFeeProductId}`,
 					key: 'comprehensiveGuideVoList',
-					children: [
-						{
-							title: '旅行社实收',
-							dataIndex: 'travelActualPrice',
-							id: `${vo.comprehensiveFeeProductId}`,
-							key: 'comprehensiveGuideVoList',
-							width: 100,
-							parentTitle: `${vo.comprehensiveFeeProductName}`,
-						},
-						{
-							title: '集团实收',
-							dataIndex: 'groupActualPrice',
-							id: `${vo.comprehensiveFeeProductId}`,
-							key: 'comprehensiveGuideVoList',
-							width: 100,
-							parentTitle: `${vo.comprehensiveFeeProductName}`,
-						},
-					],
+					children: [],
 				};
-				column.value.push(comprehensiveGuideVo);
+				// 避免重复插入
+				let index = column.value
+					.filter((item: any) => {
+						return item.dataIndex == 'comprehensiveGuideVoList';
+					})
+					.findIndex((item: any) => item.id == vo.comprehensiveFeeProductId);
+				if (index == -1) {
+					column.value.push(comprehensiveGuideVo);
+				}
+
 				// 把数据源和表头整理到ruleMap
 				const title = `comprehensiveGuideVoList-${vo.comprehensiveFeeProductId}`;
 				if (!ruleMap[title]) {
@@ -112,51 +140,6 @@ const columns = computed(() => {
 			} else {
 				// 把数据源和表头整理到ruleMap
 				const title = `comprehensiveGuideVoList-${vo.comprehensiveFeeProductId}`;
-				if (!ruleMap[title]) {
-					ruleMap[title] = { column: {}, data: [] };
-				}
-				const idx = column.value.findIndex((item) => {
-					return item.title === vo.comprehensiveFeeProductName;
-				});
-				ruleMap[title]['column'] = column.value[idx].children;
-				ruleMap[title]['data'].push(vo['ruleList']);
-				ruleMap[title]['columnParent'] = column.value[idx];
-			}
-		}
-		// 	//综费产品-除导服费外
-		for (const key in data[index].comprehensiveVoList) {
-			const vo = data[index].comprehensiveVoList[key];
-			// 判断是否已经存在
-			const idx = comprehensiveVoListIds.value.findIndex((item) => item === vo.comprehensiveFeeProductId);
-			if (idx === -1) {
-				comprehensiveVoListIds.value.push(vo.comprehensiveFeeProductId);
-				const comprehensiveGuideVo = {
-					title: `${vo.comprehensiveFeeProductName}`,
-					dataIndex: `${vo.comprehensiveFeeProductId}`,
-					key: 'comprehensiveVoList',
-					children: [
-						{
-							title: `${vo.belongCompany}实收`,
-							dataIndex: 'actualPrice',
-							id: `${vo.comprehensiveFeeProductId}`,
-							key: 'comprehensiveVoList',
-							width: 100,
-							parentTitle: `${vo.comprehensiveFeeProductName}`,
-						},
-					],
-				};
-				column.value.push(comprehensiveGuideVo);
-				// 把数据源和表头整理到ruleMap
-				const title = `comprehensiveVoList-${vo.comprehensiveFeeProductId}`;
-				if (!ruleMap[title]) {
-					ruleMap[title] = { column: {}, data: [] };
-				}
-				ruleMap[title]['column'] = column.value[column.value.length - 1].children;
-				ruleMap[title]['data'].push(vo['ruleList']);
-				ruleMap[title]['columnParent'] = column.value[column.value.length - 1];
-			} else {
-				// 把数据源和表头整理到ruleMap
-				const title = `comprehensiveVoList-${vo.comprehensiveFeeProductId}`;
 				if (!ruleMap[title]) {
 					ruleMap[title] = { column: {}, data: [] };
 				}
@@ -190,9 +173,9 @@ const columns = computed(() => {
 		column.value.push(notConsumed);
 	}
 	// 插入地接社数据
-	if (column.value.indexOf(subTravelVo) == -1) {
-		column.value.push(subTravelVo);
-	}
+	// if (column.value.indexOf(subTravelVo) == -1) {
+	// 	column.value.push(subTravelVo);
+	// }
 	// 把所有带有结算规则的数据进行数据整理
 	for (let index = 0; index < data.length; index++) {
 		for (const key in data[index]) {
@@ -217,7 +200,7 @@ const columns = computed(() => {
 			const ruleList = ruleMap[key]['data'][subKey];
 			for (const t in ruleList) {
 				const isHasRule = ruleMap[key]['column'].some((item: any) => {
-					return item.title === ruleList[t].ruleName && item.type == ruleList[t].type;
+					return item.title === ruleList[t].ruleName;
 				});
 				// 判断标有是否已经存在数据
 				if (!isHasRule) {
@@ -226,9 +209,8 @@ const columns = computed(() => {
 						dataIndex: 'ruleMap',
 						key: 'ruleMap',
 						ruleName: `${ruleList[t].ruleName}`,
-						width: 180,
+						width: 120,
 						parent: key,
-						type: ruleList[t].type,
 					};
 					if (key.includes('List')) {
 						rule['columnParentName'] = ruleMap[key]['columnParent']['title'];
@@ -243,7 +225,7 @@ const columns = computed(() => {
 const state = reactive<StateType>({
 	tableData: {
 		param: {
-			itineraryNo:null, // 团单编号
+			itineraryNo: null, // 团单编号
 			travelId: null, //组团社id
 			settlementTimeStart: '', //结算开始时间
 			settlementTimeEnd: '', //结算结束时间
@@ -259,13 +241,168 @@ const state = reactive<StateType>({
 });
 // 查询
 const initList = async () => {
+	state.tableData.data = [];
 	state.tableData.loading = true;
 	// 调用接口
-	// let res = await api.statementByItinerary(state.tableData.param);
-	// const { total, content } = res;
-	// state.tableData.total = total;
-	// state.tableData.data = content;
+	let res = await api.individualSettlementDetailReportTravel(state.tableData.param);
+	const { total, content } = res;
+	state.tableData.total = total;
+	state.tableData.data = content;
 	state.tableData.loading = false;
+	// state.tableData.data = [
+	// 	{
+	// 		itineraryNo: '1', //团单编号
+	// 		groupName: '1', //所属集团名称
+	// 		privateNo: '1', //自编团号
+	// 		orderType: '1', //团单类型
+	// 		startDate: '2022.01.01 01:00', //出团时间
+	// 		endDate: '2022.01.01 01:00', //散团时间
+	// 		settlementTime: '2022.01.01 01:00', //结算时间
+	// 		travelId: 1, //组团社id
+	// 		travelName: '1', //组团社名称
+	// 		peopleNum: 1, //人数
+	// 		frozenPrice: '1', //团款
+	// 		actualPrice: '1',
+	// 		comprehensiveFrozenPriceList: [
+	// 			{
+	// 				comprehensiveProductId: 1, //综费产品id
+	// 				comprehensiveProductName: '散客结算手续费', //综费产品名称
+	// 				frozenPrice: '1111', //未结算费用
+	// 			},
+	// 			{
+	// 				comprehensiveProductId: 2, //综费产品id
+	// 				comprehensiveProductName: '散客监理费', //综费产品名称
+	// 				frozenPrice: '2222', //未结算费用
+	// 			},
+	// 			{
+	// 				comprehensiveProductId: 3, //综费产品id
+	// 				comprehensiveProductName: '散客导服费用', //综费产品名称
+	// 				frozenPrice: '3333', //未结算费用
+	// 			},
+	// 			{
+	// 				comprehensiveProductId: 4, //综费产品id
+	// 				comprehensiveProductName: '散客统筹费用', //综费产品名称
+	// 				frozenPrice: '4444', //未结算费用
+	// 			},
+	// 		], //综费
+	// 		hmVo: {
+	// 			frozenPrice: '100', //冻结金额
+	// 			settlementPrice: '1', //已核销金额
+	// 			actualPrice: '1000', //实收
+	// 			ruleList: [
+	// 				{
+	// 					ruleName: '古维综费', //规则名称
+	// 					rulePrice: '1000', //结算费用
+	// 				},
+	// 			], //结算规则
+	// 		}, //古维
+	// 		ticketVo: {
+	// 			frozenPrice: '2000', //冻结金额
+	// 			settlementPrice: '1', //已核销金额
+	// 			actualPrice: '2200', //实收
+	// 			ruleList: [
+	// 				{
+	// 					ruleName: '景区综费1', //规则名称
+	// 					rulePrice: '10000', //结算费用
+	// 				},
+	// 				{
+	// 					ruleName: '景区综费2', //规则名称
+	// 					rulePrice: '2000', //结算费用
+	// 				},
+	// 			], //结算规则
+	// 		}, //景区
+	// 		hotelVo: {
+	// 			frozenPrice: '1', //冻结金额
+	// 			settlementPrice: '1', //已核销金额
+	// 			actualPrice: '30000', //实收
+	// 			ruleList: [
+	// 				{
+	// 					ruleName: '酒店综费1', //规则名称
+	// 					rulePrice: '100000', //结算费用
+	// 				},
+	// 			], //结算规则
+	// 		}, //酒店
+	// 		cateringVo: {
+	// 			actualPrice: '40000', //实收
+	// 			ruleList: [
+	// 				{
+	// 					ruleName: '餐饮综费1', //规则名称
+	// 					rulePrice: '410000', //结算费用
+	// 				},
+	// 				{
+	// 					ruleName: '餐饮综费2', //规则名称
+	// 					rulePrice: '420000', //结算费用
+	// 				},
+	// 			], //结算规则
+	// 		}, //餐饮
+	// 		unSettlementPriceVo: {
+	// 			hotelPrice: '11111', //酒店
+	// 			ticketPrice: '22222', //景区
+	// 			cateringPrice: '33333', //餐饮
+	// 			hmPrice: '44444', //古维
+	// 			rulePrice: '55555', //手续费
+	// 			allPrice: '66666', //小计
+	// 			ruleList: [
+	// 				{
+	// 					ruleName: '未消费规则1', //规则名称
+	// 					rulePrice: '1000001', //结算费用
+	// 				},
+	// 				{
+	// 					ruleName: '未消费规则2', //规则名称
+	// 					rulePrice: '2000002', //结算费用
+	// 				},
+	// 			], //结算规则
+	// 		}, //未消费费用
+	// 		comprehensiveGuideVoList: [
+	// 			{
+	// 				comprehensiveFeeProductId: 1, //综费产品id
+	// 				comprehensiveFeeProductName: '导服费1', //综费产品名称
+	// 				travelActualPrice: '1', //旅行社实收
+	// 				groupActualPrice: '1', //集团实收
+	// 				ruleList: [
+	// 					{
+	// 						ruleName: '旅行社导服费', //规则名称
+	// 						rulePrice: '10010', //结算费用
+	// 					},
+	// 					{
+	// 						ruleName: '集团导服费', //规则名称
+	// 						rulePrice: '20020', //结算费用
+	// 					},
+	// 				], //结算规则
+	// 			},
+	// 			{
+	// 				comprehensiveFeeProductId: 2, //综费产品id
+	// 				comprehensiveFeeProductName: '导服费2', //综费产品名称
+	// 				travelActualPrice: '1', //旅行社实收
+	// 				groupActualPrice: '1', //集团实收
+	// 				ruleList: [
+	// 					{
+	// 						ruleName: '旅行社导服费', //规则名称
+	// 						rulePrice: '100101', //结算费用
+	// 					},
+	// 					{
+	// 						ruleName: '集团导服费', //规则名称
+	// 						rulePrice: '200202', //结算费用
+	// 					},
+	// 				], //结算规则
+	// 			},
+	// 		], //综费产品-导服费
+	// 		comprehensiveVoList: [
+	// 			{
+	// 				comprehensiveFeeProductId: 1, //综费产品id
+	// 				comprehensiveFeeProductName: '非导服费', //综费产品名称
+	// 				belongCompany: '1', //费用归属
+	// 				actualPrice: '1', //实收
+	// 				ruleList: [
+	// 					{
+	// 						ruleName: '1', //规则名称
+	// 						rulePrice: '1', //结算费用
+	// 					},
+	// 				], //结算规则
+	// 			},
+	// 		], //综费产品-除导服费外
+	// 	},
+	// ];
 };
 
 //搜索

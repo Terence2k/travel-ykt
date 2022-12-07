@@ -4,7 +4,7 @@
   <div class="tabs_box">
     <a-badge :count="tableData1.total" class="rebadge" v-show="rolesLevel === 1" />
     <a-tabs v-model:activeKey="activeKey" @change="tabsChange">
-      <a-tab-pane key="1" tab="已审核">
+      <a-tab-pane key="1" tab="已审核" v-if="getTabPermission('已审核')">
         <CommonTable :dataSource="tableData.data" :columns="columns">
           <template #bodyCell="{ column, record, index }">
             <template v-if="column.key === 'index'">
@@ -21,8 +21,8 @@
             </template>
             <template v-if="column.key === 'ticketCompany'">
               <div v-if="record.individualLineTicketVos?.length > 0">
-                <span v-for="(item, index) in record.individualLineTicketVos">{{
-                    `${item.ticketCompanyName}${(record.individualLineTicketVos.length - 1) === index ? ''
+                <span v-for="(item, index) in cmpIndividualLineTicketVos(record.individualLineTicketVos)">{{
+                    `${item}${(cmpIndividualLineTicketVos(record.individualLineTicketVos).length - 1) === index ? ''
                       : '、'}`
                 }}</span>
               </div>
@@ -30,8 +30,8 @@
             </template>
             <template v-if="column.key === 'hotelCompany'">
               <div v-if="record.individualLineHotelVos?.length > 0">
-                <span v-for="(item, index) in record.individualLineHotelVos">{{
-                    `${item.hotelCompanyName}${(record.individualLineHotelVos.length - 1) === index ? ''
+                <span v-for="(item, index) in cmpIndividualLineHotelVos(record.individualLineHotelVos)">{{
+                    `${item}${(cmpIndividualLineHotelVos(record.individualLineHotelVos).length - 1) === index ? ''
                       : '、'}`
                 }}</span>
               </div>
@@ -39,8 +39,8 @@
             </template>
             <template v-if="column.key === 'cateringCompany'">
               <div v-if="record.individualLineCateringVos?.length > 0">
-                <span v-for="(item, index) in record.individualLineCateringVos">{{
-                    `${item.cateringCompanyName}${(record.individualLineCateringVos.length - 1) === index ? ''
+                <span v-for="(item, index) in cmpIndividualLineCateringVos(record.individualLineCateringVos)">{{
+                    `${item}${(cmpIndividualLineCateringVos(record.individualLineCateringVos).length - 1) === index ? ''
                       : '、'}`
                 }}</span>
               </div>
@@ -48,9 +48,9 @@
             </template>
             <template v-if="column.key === 'action'">
               <div class="action-btns">
-                <a @click="checkDetails(record)">查看</a>
-                <a @click="addOrUpdate({ row: record, handle: 'update' })"
-                  v-show="modifyVisible(record.creatorId)">修改</a>
+                <a @click="checkDetails(record)" v-permission="'已审核_查看'">查看</a>
+                <a @click="addOrUpdate({ row: record, handle: 'update' })" v-show="modifyVisible(record.creatorId)"
+                  v-permission="'已审核_修改'">修改</a>
                 <!-- <a-popconfirm title="是否要禁用该操作员？禁用后该操作员不可再登录一卡通平台。" ok-text="确认" cancel-text="取消"
                   @confirm="disable(0, record.userId)">
                   <a v-show="record.enableSatus">禁用</a>
@@ -69,7 +69,7 @@
             :total="tableData.total" @change="onHandleCurrentChange" @showSizeChange="pageSideChange" />
         </div>
       </a-tab-pane>
-      <a-tab-pane key="2" tab="待审核">
+      <a-tab-pane key="2" tab="待审核" v-if="getTabPermission('待审核')">
         <CommonTable :dataSource="tableData1.data" :columns="columns1">
           <template #bodyCell="{ column, record, index }">
             <template v-if="column.key === 'index'">
@@ -86,8 +86,8 @@
             </template>
             <template v-if="column.key === 'ticketCompany'">
               <div v-if="record.individualLineTicketVos?.length > 0">
-                <span v-for="(item, index) in record.individualLineTicketVos">{{
-                    `${item.ticketCompanyName}${(record.individualLineTicketVos.length - 1) === index ? ''
+                <span v-for="(item, index) in cmpIndividualLineTicketVos(record.individualLineTicketVos)">{{
+                    `${item}${(cmpIndividualLineTicketVos(record.individualLineTicketVos).length - 1) === index ? ''
                       : '、'}`
                 }}</span>
               </div>
@@ -95,8 +95,8 @@
             </template>
             <template v-if="column.key === 'hotelCompany'">
               <div v-if="record.individualLineHotelVos?.length > 0">
-                <span v-for="(item, index) in record.individualLineHotelVos">{{
-                    `${item.hotelCompanyName}${(record.individualLineHotelVos.length - 1) === index ? ''
+                <span v-for="(item, index) in cmpIndividualLineHotelVos(record.individualLineHotelVos)">{{
+                    `${item}${(cmpIndividualLineHotelVos(record.individualLineHotelVos).length - 1) === index ? ''
                       : '、'}`
                 }}</span>
               </div>
@@ -104,8 +104,8 @@
             </template>
             <template v-if="column.key === 'cateringCompany'">
               <div v-if="record.individualLineCateringVos?.length > 0">
-                <span v-for="(item, index) in record.individualLineCateringVos">{{
-                    `${item.cateringCompanyName}${(record.individualLineCateringVos.length - 1) === index ? ''
+                <span v-for="(item, index) in cmpIndividualLineCateringVos(record.individualLineCateringVos)">{{
+                    `${item}${(cmpIndividualLineCateringVos(record.individualLineCateringVos).length - 1) === index ? ''
                       : '、'}`
                 }}</span>
               </div>
@@ -114,9 +114,9 @@
             <template v-if="column.key === 'action'">
               <div class="action-btns">
                 <template v-if="record?.isAudit">
-                  <a @click="auditStore(record)">去审核</a>
+                  <a @click="auditStore(record)" v-permission="'已审核_去审核'">去审核</a>
                 </template>
-                <a @click="checkDetails(record)">查看</a>
+                <a @click="checkDetails(record)" v-permission="'已审核_查看'">查看</a>
               </div>
             </template>
           </template>
@@ -128,7 +128,7 @@
         </div>
       </a-tab-pane>
       <template #rightExtra>
-        <a-button type="primary" @click="addOrUpdate({ handle: 'add' })">创建新路线</a-button>
+        <a-button type="primary" @click="addOrUpdate({ handle: 'add' })" v-permission="'创建新路线'">创建新路线</a-button>
       </template>
     </a-tabs>
   </div>
@@ -181,7 +181,7 @@
           </a-select>
         </a-form-item>
       </a-form-item>
-      <a-form-item label="选择线路内商家">
+      <!-- <a-form-item label="选择线路内商家">
         <a-form-item name="TICKETSelected" label="景区">
           <a-select placeholder="请选择景区" mode="multiple" v-model:value="form.TICKETSelected" allowClear>
             <a-select-option v-for="item in TICKETOptions" :value="item.oid">{{ item.name }}
@@ -200,7 +200,99 @@
             </a-select-option>
           </a-select>
         </a-form-item>
+      </a-form-item> -->
+      <a-form-item label="选择线路内商家"></a-form-item>
+      <a-form-item v-for="(item, index) in form.TICKETSelected" :key="item.key" :label="index === 0 ? '景区' : ' '"
+        :colon="index === 0 ? true : false" :name="['TICKETSelected', index, 'value']" style="margin-bottom: 8px;">
+        <div style="display: flex">
+          <a-form-item style="flex:1;margin-bottom: 8px;">
+            <a-input-number v-model:value="item.day" addon-before="第" addon-after="天" :min="1"
+              class="mr8"></a-input-number>
+          </a-form-item>
+          <a-form-item style="flex:3;margin-bottom: 8px;">
+            <a-select placeholder="请选择景区" mode="multiple" v-model:value="item.selectedList" allowClear>
+              <a-select-option v-for="item in TICKETOptions" :value="item.oid">{{ item.name }}
+              </a-select-option>
+            </a-select>
+          </a-form-item>
+          <MinusCircleOutlined v-if="form.TICKETSelected.length > 1" class="dynamic-delete-button"
+            @click="removeSelectedItem(item, form.TICKETSelected)" style="margin-left: 8px;" />
+        </div>
       </a-form-item>
+      <a-form-item label=" " :colon="false">
+        <a-button type="dashed" @click="addSelectedItem(form.TICKETSelected)">
+          <PlusOutlined />
+          添加
+        </a-button>
+      </a-form-item>
+
+      <a-form-item v-for="(item, index) in form.HOTELSelected" :key="item.key" :label="index === 0 ? '酒店' : ' '"
+        :colon="index === 0 ? true : false" :name="['HOTELSelected', index, 'value']" style="margin-bottom: 8px;">
+        <div style="display: flex">
+          <a-form-item style="flex:1;margin-bottom: 8px;">
+            <a-input-number v-model:value="item.day" addon-before="第" addon-after="天" :min="1"
+              class="mr8"></a-input-number>
+          </a-form-item>
+          <a-form-item style="flex:3;margin-bottom: 8px;">
+            <a-select placeholder="请选择酒店" mode="multiple" v-model:value="item.selectedList" allowClear>
+              <a-select-option v-for=" item in HOTELOptions" :value="item.oid">{{ item.name }}
+              </a-select-option>
+            </a-select>
+          </a-form-item>
+          <MinusCircleOutlined v-if="form.HOTELSelected.length > 1" class="dynamic-delete-button"
+            @click="removeSelectedItem(item, form.HOTELSelected)" style="margin-left: 8px;" />
+        </div>
+      </a-form-item>
+      <a-form-item label=" " :colon="false">
+        <a-button type="dashed" @click="addSelectedItem(form.HOTELSelected)">
+          <PlusOutlined />
+          添加
+        </a-button>
+      </a-form-item>
+
+      <a-form-item v-for="(item, index) in form.CATERINGSelected" :key="item.key" :label="index === 0 ? '餐厅' : ' '"
+        :colon="index === 0 ? true : false" :name="['CATERINGSelected', index, 'value']" style="margin-bottom: 8px;">
+        <div style="display: flex">
+          <a-form-item style="flex:1;margin-bottom: 8px;">
+            <a-input-number v-model:value="item.day" addon-before="第" addon-after="天" :min="1"
+              class="mr8"></a-input-number>
+          </a-form-item>
+          <a-form-item style="flex:3;margin-bottom: 8px;">
+            <a-select placeholder="请选择餐厅" mode="multiple" v-model:value="item.selectedList" allowClear>
+              <a-select-option v-for="item in CATERINGOptions" :value="item.oid">{{ item.name }}
+              </a-select-option>
+            </a-select>
+          </a-form-item>
+          <MinusCircleOutlined v-if="form.CATERINGSelected.length > 1" class="dynamic-delete-button"
+            @click="removeSelectedItem(item, form.CATERINGSelected)" style="margin-left: 8px;" />
+        </div>
+      </a-form-item>
+      <a-form-item label=" " :colon="false">
+        <a-button type="dashed" @click="addSelectedItem(form.CATERINGSelected)">
+          <PlusOutlined />
+          添加
+        </a-button>
+      </a-form-item>
+
+      <!-- <a-form-item name="TICKETSelected" label="景区">
+          <a-select placeholder="请选择景区" mode="multiple" v-model:value="form.TICKETSelected" allowClear>
+            <a-select-option v-for="item in TICKETOptions" :value="item.oid">{{ item.name }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item name="HOTELSelected" label="酒店">
+          <a-select placeholder="请选择酒店" mode="multiple" v-model:value="form.HOTELSelected" allowClear>
+            <a-select-option v-for="item in HOTELOptions" :value="item.oid">{{ item.name }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item name="CATERINGSelected" label="餐厅">
+          <a-select placeholder="请选择餐厅" mode="multiple" v-model:value="form.CATERINGSelected" allowClear>
+            <a-select-option v-for="item in CATERINGOptions" :value="item.oid">{{ item.name }}
+            </a-select-option>
+          </a-select>
+        </a-form-item> -->
+
       <!-- <a-form-item v-for="(domain, index) in form.domains" :key="domain.key" :label="index === 0 ? '包含景区' : ' '"
         :colon="index === 0 ? true : false" :name="['domains', index, 'value']">
         <div style="display: flex">
@@ -219,8 +311,8 @@
           <PlusOutlined />
           添加
         </a-button>
-      </a-form-item>
-      <a-form-item v-for="(domain, index) in form.domains1" :key="domain.key" :label="index === 0 ? '包含酒店' : ' '"
+      </a-form-item> -->
+      <!-- <a-form-item v-for="(domain, index) in form.domains1" :key="domain.key" :label="index === 0 ? '包含酒店' : ' '"
         :colon="index === 0 ? true : false" :name="['domains1', index, 'value']">
         <div style="display: flex">
           <a-select placeholder="请选择一个酒店" v-model:value="domain.value" allowClear
@@ -296,10 +388,10 @@
         </a-button>
       </a-form-item> -->
       <a-form-item label="一口价">
-        <a-form-item v-for="item in state.YKJList" :name="item.codeValue" :label="item.name">
-          <a-input v-model:value.number="form[item.codeValue]" placeholder="输入价格">
-          </a-input>
-        </a-form-item>
+      </a-form-item>
+      <a-form-item v-for="item in state.YKJList" :name="item.codeValue" :label="item.name">
+        <a-input v-model:value.number="form[item.codeValue]" placeholder="输入价格">
+        </a-input>
       </a-form-item>
       <a-form-item name="enableSatus" label="启用状态" v-show="!state.isAdd">
         <a-radio-group v-model:value="form.enableSatus">
@@ -383,11 +475,12 @@ import api from '@/api';
 import { useRouter, useRoute } from 'vue-router';
 import type { Rule } from 'ant-design-vue/es/form';
 import { message } from 'ant-design-vue/es';
+import { getTabPermission } from '@/utils/util';
 const router = useRouter();
 const route = useRoute();
-interface Domain {
-  value: string | undefined | number;
-  business: string | undefined | number;
+interface ticketType {
+  day: undefined | number;
+  selectedList: number[];
   key: number;
 }
 interface Sights {
@@ -517,15 +610,27 @@ const form = reactive({
   suitableRangeStoreId: undefined, // 适用范围门店id
   lineName: '',
   lineDescribe: '',
-  TICKETSelected: [],
-  CATERINGSelected: [],
-  HOTELSelected: [],
+  TICKETSelected: [{
+    day: 1,
+    selectedList: [],
+    key: Date.now(),
+  }],
+  CATERINGSelected: [{
+    day: 1,
+    selectedList: [],
+    key: Date.now(),
+  }],
+  HOTELSelected: [{
+    day: 1,
+    selectedList: [],
+    key: Date.now(),
+  }],
   enableSatus: 1,
   /* domains: [{
     value: undefined,
     business: undefined,
     key: Date.now(),
-  }],
+  }], 
   domains1: [{
     value: undefined,
     key: Date.now(),
@@ -534,7 +639,7 @@ const form = reactive({
     id: undefined,
     price: undefined,
     key: Date.now(),
-  }] */
+  }]*/
 })
 const failForm = reactive({
   auditTypeCode: 21, // 21:创建线路,22:修改线路信息
@@ -558,7 +663,7 @@ const newArrList = ref<any>({})
 const oldArrList = ref<any>({})
 const changeKeys = ref<string[]>([])
 const labelCol = { style: { width: '110px' } }
-/* const enableOption = [
+const enableOption = [
   { codeValue: 0, name: '本社全部部门可用' },
   { codeValue: 1, name: '仅创建门店可用' },
 ]
@@ -567,7 +672,7 @@ const businessTypeOption = [
   { codeValue: 1, name: '酒店' },
   { codeValue: 2, name: '餐厅' },
 ]
-const sceneOption = ref([
+/* const sceneOption = ref([
   { codeValue: 0, markValue: '0_0', name: '景区1' },
   { codeValue: 1, markValue: '0_1', name: '景区2' },
   { codeValue: 2, markValue: '0_2', name: '景区3' },
@@ -616,8 +721,8 @@ const sceneOption3 = ref([
   { codeValue: 1, name: '老人价' },
   { codeValue: 2, name: '儿童价' },
   { codeValue: 3, name: '会员一口价' },
-])
-const businessOption = computed(() => (val: number | undefined) => {
+]) */
+/* const businessOption = computed(() => (val: number | undefined) => {
   if (val === 0) {
     return sceneOption.value
   } else if (val === 1) {
@@ -672,6 +777,33 @@ const cmpDetailsKeys = computed(() => {
     return obj
   } else {
     return detailsKeys
+  }
+})
+const cmpIndividualLineTicketVos = computed(() => (val: any) => {
+  if (val?.length) {
+    return Array.from(new Set(val.map((item: any) => {
+      return item.ticketCompanyName
+    })))
+  } else {
+    return []
+  }
+})
+const cmpIndividualLineHotelVos = computed(() => (val: any) => {
+  if (val?.length) {
+    return Array.from(new Set(val.map((item: any) => {
+      return item.hotelCompanyName
+    })))
+  } else {
+    return []
+  }
+})
+const cmpIndividualLineCateringVos = computed(() => (val: any) => {
+  if (val?.length) {
+    return Array.from(new Set(val.map((item: any) => {
+      return item.cateringCompanyName
+    })))
+  } else {
+    return []
   }
 })
 const tabsChange = () => { };
@@ -934,40 +1066,54 @@ const getParams = () => {
     HOTELSelected,
     enableSatus
   } = form
-  let individualLineTicketBos: { ticketCompanyId: number | string, ticketCompanyName: string }[] = []
-  let individualLineHotelBos: { hotelCompanyId: number | string, hotelCompanyName: string }[] = []
-  let individualLineCateringBos: { cateringCompanyId: number | string, cateringCompanyName: string }[] = []
+  let individualLineTicketBos: { day: number | undefined, ticketCompanyId: number | string, ticketCompanyName: string }[] = []
+  let individualLineHotelBos: { day: number, hotelCompanyId: number | string, hotelCompanyName: string }[] = []
+  let individualLineCateringBos: { day: number, cateringCompanyId: number | string, cateringCompanyName: string }[] = []
   let individualLinePriceBos: { priceTypeCode: string, priceAmount: number | string }[] = []
   if (TICKETSelected.length > 0) {
-    TICKETOptions.value.forEach((item: any) => {
-      if (TICKETSelected.includes(item.oid)) {
-        individualLineTicketBos.push(
-          {
-            ticketCompanyId: item.oid,
-            ticketCompanyName: item.name
+    for (let i = 0, l = TICKETSelected.length; i < l; i++) {
+      const item = TICKETSelected[i];
+      for (let j = 0, l = TICKETOptions.value.length; j < l; j++) {
+        const citem = TICKETOptions.value[j];
+        if (item.selectedList.includes(citem.oid)) {
+          individualLineTicketBos.push({
+            day: item.day,
+            ticketCompanyId: citem.oid,
+            ticketCompanyName: citem.name
           })
+        }
       }
-    });
+    }
   }
   if (HOTELSelected.length > 0) {
-    HOTELOptions.value.forEach((item: any) => {
-      if (HOTELSelected.includes(item.oid)) {
-        individualLineHotelBos.push({
-          hotelCompanyId: item.oid,
-          hotelCompanyName: item.name
-        })
+    for (let i = 0, l = HOTELSelected.length; i < l; i++) {
+      const item = HOTELSelected[i];
+      for (let j = 0, l = HOTELOptions.value.length; j < l; j++) {
+        const citem = HOTELOptions.value[j];
+        if (item.selectedList.includes(citem.oid)) {
+          individualLineHotelBos.push({
+            day: item.day,
+            hotelCompanyId: citem.oid,
+            hotelCompanyName: citem.name
+          })
+        }
       }
-    })
+    }
   }
   if (CATERINGSelected.length > 0) {
-    CATERINGOptions.value.forEach((item: any) => {
-      if (CATERINGSelected.includes(item.oid)) {
-        individualLineCateringBos.push({
-          cateringCompanyId: item.oid,
-          cateringCompanyName: item.name
-        })
+    for (let i = 0, l = CATERINGSelected.length; i < l; i++) {
+      const item = CATERINGSelected[i];
+      for (let j = 0, l = CATERINGOptions.value.length; j < l; j++) {
+        const citem = CATERINGOptions.value[j];
+        if (item.selectedList.includes(citem.oid)) {
+          individualLineCateringBos.push({
+            day: item.day,
+            cateringCompanyId: citem.oid,
+            cateringCompanyName: citem.name
+          })
+        }
       }
-    })
+    }
   }
   if (state.YKJList.length > 0) {
     individualLinePriceBos = state.YKJList.map((item: any) => {
@@ -1039,6 +1185,21 @@ const cancel = () => {
   form.suitableRangeTravelId = undefined
   form.suitableRangeStoreId = undefined
   form.suitableRange = undefined
+  form.TICKETSelected = [{
+    day: 1,
+    selectedList: [],
+    key: Date.now(),
+  }]
+  form.CATERINGSelected = [{
+    day: 1,
+    selectedList: [],
+    key: Date.now(),
+  }]
+  form.HOTELSelected = [{
+    day: 1,
+    selectedList: [],
+    key: Date.now(),
+  }]
   state.modalVisible = false
 }
 interface addInterface {
@@ -1056,6 +1217,36 @@ const addOrUpdate = ({ row, handle }: addInterface) => {
     getEditDetails(row.oid)
   }
 }
+const groupBy = (objectArray: any[], property: string) => {
+  return objectArray.reduce(function (acc, obj) {
+    let key = obj[property]
+    if (!acc[key]) {
+      acc[key] = []
+    }
+    acc[key].push(obj)
+    return acc
+  }, {})
+}
+const getData = (obj: any, property: string) => {
+  if (Object.prototype.toString.call(obj) === '[object Object]') {
+    let arr: any[] = []
+    const keys = Object.keys(obj)
+    keys.forEach((item: any, index: number) => {
+      const element = obj[item];
+      arr[index] = {
+        day: item,
+        key: Date.now(),
+        selectedList: []
+      }
+      element.forEach((citem: any, cindex: number) => {
+        arr[index].selectedList.push(citem[property])
+      })
+    })
+    return arr
+  } else {
+    return []
+  }
+}
 const getEditDetails = async (oid: number) => {
   const res = await api.findIndividualLineById(oid)
   if (res) {
@@ -1071,15 +1262,9 @@ const getEditDetails = async (oid: number) => {
       individualLineTicketBos,
       individualLinePriceBos
     } = res
-    form.CATERINGSelected = individualLineCateringBos?.map((item: any) => {
-      return item.cateringCompanyId
-    })
-    form.HOTELSelected = individualLineHotelBos?.map((item: any) => {
-      return item.hotelCompanyId
-    })
-    form.TICKETSelected = individualLineTicketBos?.map((item: any) => {
-      return item.ticketCompanyId
-    })
+    form.CATERINGSelected = getData(groupBy(individualLineCateringBos, 'day'), 'cateringCompanyId')
+    form.TICKETSelected = getData(groupBy(individualLineTicketBos, 'day'), 'ticketCompanyId')
+    form.HOTELSelected = getData(groupBy(individualLineHotelBos, 'day'), 'hotelCompanyId')
     individualLinePriceBos?.forEach((item: any) => {
       form[item.priceTypeCode] = item.priceAmount
     })
@@ -1110,33 +1295,46 @@ const auditStore = async (record: any) => {
   }
 }
 const setValue = (res: any) => {
+  // 餐厅
   if (res.individualLineCateringBos) {
+    const arr = Array.from(new Set(res.individualLineCateringBos.map((item: any) => {
+      return item.cateringCompanyName
+    })))
     let strArr = ''
-    res.individualLineCateringBos.forEach((item: any, index: number) => {
-      strArr += `${item.cateringCompanyName}${(res.individualLineCateringBos.length - 1) === index ? '' : '、'}`
+    arr.forEach((item: any, index: number) => {
+      strArr += `${item}${(arr.length - 1) === index ? '' : '、'}`
     })
     res.cateringCompanysName = strArr
   } else {
     res.cateringCompanysName = '无'
   }
+  // 酒店
   if (res.individualLineHotelBos) {
+    const arr = Array.from(new Set(res.individualLineHotelBos.map((item: any) => {
+      return item.hotelCompanyName
+    })))
     let strArr = ''
-    res.individualLineHotelBos.forEach((item: any, index: number) => {
-      strArr += `${item.hotelCompanyName}${(res.individualLineHotelBos.length - 1) === index ? '' : '、'}`
+    arr.forEach((item: any, index: number) => {
+      strArr += `${item}${(arr.length - 1) === index ? '' : '、'}`
     })
     res.hotelCompanysName = strArr
   } else {
     res.hotelCompanysName = '无'
   }
+  // 景区
   if (res.individualLineTicketBos) {
+    const arr = Array.from(new Set(res.individualLineTicketBos.map((item: any) => {
+      return item.ticketCompanyName
+    })))
     let strArr = ''
-    res.individualLineTicketBos.forEach((item: any, index: number) => {
-      strArr += `${item.ticketCompanyName}${(res.individualLineTicketBos.length - 1) === index ? '' : '、'}`
+    arr.forEach((item: any, index: number) => {
+      strArr += `${item}${(arr.length - 1) === index ? '' : '、'}`
     })
     res.ticketCompanysName = strArr
   } else {
     res.ticketCompanysName = '无'
   }
+  // 一口价
   if (res.individualLinePriceBos) {
     let strArr = ''
     res.individualLinePriceBos.forEach((item: any, index: number) => {
@@ -1170,6 +1368,19 @@ const getChangeInfo = async (oid: string | number) => {
     }
   })
 }
+const addSelectedItem = (domainsList: ticketType[]) => {
+  domainsList.push({
+    day: domainsList.length + 1,
+    selectedList: [],
+    key: Date.now(),
+  });
+};
+const removeSelectedItem = (item: ticketType, domainsList: ticketType[]) => {
+  let index = domainsList.indexOf(item);
+  if (index !== -1) {
+    domainsList.splice(index, 1);
+  }
+};
 const addDomain = (domainsList: Domain[]) => {
   domainsList.push({
     value: undefined,
@@ -1301,7 +1512,7 @@ const sceneDeselect = (val: number | string | undefined, options: any[]) => {
       break
     }
   }
-} 
+}
 const removeDomain = (item: Domain, domainsList: Domain[], options: any[]) => {
   let index = domainsList.indexOf(item);
   if (index !== -1) {
@@ -1316,7 +1527,7 @@ const removeSights = (item: Sights, domainsList: Sights[], options: any[]) => {
     domainsList.splice(index, 1);
   }
   sightsChange()
-};*/
+}; */
 onMounted(async () => {
   getUserInfo()
   await onSearch()

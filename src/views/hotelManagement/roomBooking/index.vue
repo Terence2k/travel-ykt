@@ -19,7 +19,7 @@
 					</a-select>
 				</div>
 				<div class="item-button item">
-					<a-button @click="clearSearchFilter" class="button-search item">清空</a-button>
+					<a-button @click="clearSearchFilter" class="button-search item" v-permission="'清空'">清空</a-button>
 				</div>
 			</div>
 

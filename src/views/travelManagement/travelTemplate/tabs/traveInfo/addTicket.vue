@@ -85,6 +85,7 @@ const submit = async () => {
 		const res = await api.travelManagement.templateaddTicket(newFormState);
 		// travelStore.setTicket(newFormState)
 		travelStore.tempeleteSetTicket(newFormState, res, props.productRow.productId);
+		// travelStore.setTicket(newFormState, res, props.productRow.productId);
 	} catch (errorInfo) {}
 };
 

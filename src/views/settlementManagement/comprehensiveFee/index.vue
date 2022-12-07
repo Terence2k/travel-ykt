@@ -10,13 +10,13 @@
 			</a-select>
 		</search-item>
 		<template #button>
-			<a-button @click="initList">查询</a-button>
+			<a-button @click="initList" v-permission="'查询'">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
 		<div class="list-btn">
-			<a-button type="primary" class="success" @click="toAdd">新增</a-button>
-			<a-button style="margin-left: 8px" @click="del">删除</a-button>
+			<a-button type="primary" class="success" @click="toAdd" v-permission="'新增'">新增</a-button>
+			<a-button style="margin-left: 8px" @click="del" v-permission="'删除'">删除</a-button>
 		</div>
 	</div>
 	<div>
@@ -29,10 +29,11 @@
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a href="javascript:;" @click="toCheck(record)">查看</a>
-							<a href="javascript:;" @click="toEditPage(record)">编辑</a>
-							<a href="javascript:;" @click="toDisable(record)">{{ record?.status === 0 ? '启用' : '禁用' }}</a>
-							<a href="javascript:;" @click="toDelete(record)">删除</a>
+							<a href="javascript:;" @click="toCheck(record)" v-permission="'查看'">查看</a>
+							<a href="javascript:;" @click="toEditPage(record)" v-permission="'编辑'">编辑</a>
+							<a href="javascript:;" @click="toDisable(record)" v-if="record?.status === 0" v-permission="'启用'">启用</a>
+							<a href="javascript:;" @click="toDisable(record)" v-if="record?.status !== 0" v-permission="'禁用'">禁用</a>
+							<a href="javascript:;" @click="toDelete(record)" v-permission="'删除'">删除</a>
 						</div>
 					</template>
 				</template>

@@ -22,6 +22,7 @@
 					<div class="action-btns">
 						<a @click="goToPath(record)" v-permission="'已出团_查看'">查看</a>
 						<a @click="goToChange(record)" v-permission="'已出团_行程变更'">行程变更</a>
+						<a @click="goToPath(record, 4)" v-permission="'已出团_进入预订'">进入预订</a>
 					</div>
 				</template>
 			</template>
@@ -121,16 +122,16 @@ const onHandleCurrentChange = (e: any) => {
 };
 const pageSideChange = () => {};
 
-const goToPath = (row: any) => {
+const goToPath = (row: any, tab?: any) => {
 	router.push({
 		path: '/travel/travel_manage/add_travel',
 		query: {
 			id: row.oid,
 			itineraryNo: row.itineraryNo,
+      tab: tab
 		},
 	});
 };
-
 const goToDetail = (row: any) => {
 	router.push({
 		path: '/travel/travel_manage/travel_detail',

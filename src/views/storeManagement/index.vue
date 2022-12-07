@@ -36,7 +36,7 @@
       <a-input v-model:value="tableData1.param.storeName" placeholder="请输入门店名称" allowClear />
     </search-item>
     <template #button>
-      <a-button @click="onQuery">查询</a-button>
+      <a-button @click="onQuery" v-permission="'查询'">查询</a-button>
     </template>
   </CommonSearch>
   <div class="tabs_box">

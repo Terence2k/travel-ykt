@@ -102,6 +102,12 @@ const saveItinerary = (val: any) => {
 		if (!travelStore.touristList.length) return message.error('请添加游客');
 		if (!travelStore.trafficList.length) return message.error('请添加交通信息');
 	}
+	const guideTime = travelStore.guideList.some((it: any) => !it.startDate)
+	if (guideTime) {
+		activeKey.value = 1;
+		return message.error('请补充完导游信息');
+		
+	}
 	const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 	const itineraryId =  route.query.id || traveListData.oid
 	let ajax = itineraryId ? api.travelManagement.editItinerary : api.travelManagement.saveItinerary;
@@ -221,7 +227,10 @@ const getTraveDetail = () => {
 			res.attachmentList.length && travelStore.setFileInfo(res.attachmentList);
 			travelStore.setGuideList(res.guideList);
 			travelStore.setTouristList(res.touristList.content.map((it: any) => {
-				it.specialCertificatePicture = it.specialCertificatePicture?.split(',');
+				if (it.specialCertificatePicture instanceof String) {
+					it.specialCertificatePicture = it.specialCertificatePicture?.split(',');
+				}
+				
 				return it;
 			}));
 			
@@ -243,10 +252,13 @@ const getTraveDetail = () => {
 			const hotel = [...res.waitBuyItem.waitBuyHotel, ...res.hotelList.map((it:any) => {
 				it.orderFee = it.orderFee / 100;
 				return it;
-			})]
-			travelStore.hotels = hotel as any;
+			}), ...travelStore.templateHotel]
+			travelStore.hotels = [...hotel] as any;
 			travelStore.productList = res.productList;
-			travelStore.scenicTickets = [...res.waitBuyItem.waitBuyTicket, ...res.ticketList] as any;
+			travelStore.scenicTickets = [...res.waitBuyItem.waitBuyTicket, ...res.ticketList.map((it:any) => {
+				it.unitPrice = it.unitPrice / 100;
+				return it;
+			}), ...travelStore.templateTicket] as any;
 			travelStore.teamTime = [res.basic.startDate, res.basic.endDate]  as any
 			travelStore.setDisabled = disDate(res);
 			

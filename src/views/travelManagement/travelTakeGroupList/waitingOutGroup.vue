@@ -25,6 +25,7 @@
 						<a v-if="dateTime > dayjs(record.startDate).unix()" @click="outGroup(record)" v-permission="'待出团_手动出团'">手动出团</a>
 						<a @click="goToChange(record)" v-permission="'待出团_行程变更'">行程变更</a>
 						<a v-permission="'待出团_查看日志'">查看日志</a>
+						<a @click="goToPath(record)" v-permission="'待出团_进入预订'">进入预订</a>
 					</div>
 				</template>
 			</template>
@@ -133,6 +134,16 @@ const goToChange = (row: any) => {
 		} else {
 			message.error('该行程单发生过核销不可变更');
 		}
+	});
+};
+const goToPath = (row: any) => {
+	router.push({
+		path: '/travel/travel_manage/add_travel',
+		query: {
+			id: row.oid,
+			itineraryNo: row.itineraryNo,
+      tab: 4
+		},
 	});
 };
 const goToDetail = (row: any) => {
