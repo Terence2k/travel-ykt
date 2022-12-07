@@ -161,6 +161,17 @@ export default [
 					isDetail: false, // 在左侧的导航栏不会展示
 				},
 			},
+			{
+				path: 'sms_Management',
+				component: () => import('@/views/baseInfoManage/smsManagement/index.vue'),
+				name: 'sms_Management',
+				meta: {
+					title: '短信群发配置',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					isDetail: false, // 在左侧的导航栏不会展示
+				},
+			},
 		],
 	},
 ];

@@ -425,6 +425,34 @@ export const useTravelStore = defineStore({
 				item.healthCode = res[index].healthCodeStatus
 				return item
 			})
-		}
+		},
+		tempeletSetHotels(data: any, oid: string, hotelId: string) {
+			if (hotelId) {
+				data.oid = oid;
+				return Object.assign(this.hotels.filter((item: any) => hotelId == item.hotelId)[0], data);
+			}
+			if (data.oid) {
+				Object.assign(this.hotels.filter((item: any) => data.oid == item.oid)[0], data);
+			} else {
+				data.oid = oid;
+				let newData = [...this.hotels, data];
+				this.hotels = newData as any;
+				console.log(this.hotels, data, newData);
+			}
+		},
+		tempeleteSetTicket(data: any, oid: string, productId: string) {
+			if (productId) {
+				data.oid = oid;
+				return Object.assign(this.scenicTickets.filter((item: any) => productId == item.scenicId)[0], data);
+			}
+			if (data.oid) {
+				Object.assign(this.scenicTickets.filter((item: any) => data.oid == item.oid)[0], data);
+			} else {
+				data.oid = oid;
+				let newData = [...this.scenicTickets, data];
+				this.scenicTickets = newData as any;
+				console.log(this.scenicTickets, data, newData);
+			}
+		},
 	},
 });
