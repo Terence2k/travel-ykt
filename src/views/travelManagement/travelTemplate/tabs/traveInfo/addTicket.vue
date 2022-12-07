@@ -84,7 +84,8 @@ const submit = async () => {
 		// newFormState.totalFee = newFormState.peopleCount * newFormState.unitPrice
 		const res = await api.travelManagement.templateaddTicket(newFormState);
 		// travelStore.setTicket(newFormState)
-		travelStore.setTicket(newFormState, res, props.productRow.productId);
+		travelStore.tempeleteSetTicket(newFormState, res, props.productRow.productId);
+		// travelStore.setTicket(newFormState, res, props.productRow.productId);
 	} catch (errorInfo) {}
 };
 

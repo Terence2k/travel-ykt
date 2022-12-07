@@ -16,8 +16,8 @@
         <div class="action-btns">
           <a @click="addOrUpdate({ row: record, handle: 'update' })" v-permission="'编辑'">编辑</a>
           <a @click="resetPassword(record.oid)" v-permission="'重置密码'">重置密码</a>
-          <a @click="disable(0, record.oid)" v-show="record.state === 1" v-permission="'禁用'">禁用</a>
-          <a @click="disable(1, record.oid)" v-show="record.state === 0" v-permission="'启用'">启用</a>
+          <a @click="disable(0, record.oid)" v-show="record.userStatus === 1" v-permission="'禁用'">禁用</a>
+          <a @click="disable(1, record.oid)" v-show="record.userStatus === 0" v-permission="'启用'">启用</a>
         </div>
       </template>
     </template>

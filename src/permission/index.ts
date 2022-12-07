@@ -1,40 +1,19 @@
-let targetMenu: any;
-// btnValue: 按钮名字,tabValue: tab页名
-const treeForeach = (tree: any, btnValue: any, tabValue?: any) => {
-  // 获取用户有权限菜单
-  const userInfo = JSON.parse(<string>localStorage.getItem('userInfo') || '{}');
-  return tree.some((item: any) => {
-    // 如果菜单名字与按钮名字匹配
-    if (item.menuName === btnValue) {
-      // 通过parentId找出所属父级菜单
-      findFatherMenu(userInfo.sysMenuVos, item.parentId);
-      // 通过当前路由地址匹配父级菜单是否一致
-      if (targetMenu && !tabValue) return window.location.href.split('/#')[1].indexOf(targetMenu.url) !== -1;
-      if (targetMenu && tabValue) {
-        let tabMenu = targetMenu.childMenuList.find((item: any) => item.menuName === tabValue);
-        return window.location.href.split('/#')[1].indexOf(targetMenu.url) !== -1
-        && tabMenu && tabMenu.childMenuList.some((item: any) => item.menuName === btnValue);
-      }
-    }
-    // 如有子菜单
-    if (item.childMenuList?.length) return treeForeach(item.childMenuList, btnValue, tabValue);
-    return false;
-  })
-}
 
-const findFatherMenu = (menuList: any, pid: any) => {
-  // 获取用户有权限菜单
-  const userInfo = JSON.parse(<string>localStorage.getItem('userInfo') || '{}');
-  // 通过parentId找出所属父级菜单
-  const res = menuList.find((item: any) => {
-    if (item.childMenuList?.length && item.oid != pid) findFatherMenu(item.childMenuList, pid);
-    return item.oid === pid;
-  });
-  // 如果菜单类型是tab页,再找其所属父级菜单以找到url
-  if (res?.menuType === 2) {
-    findFatherMenu(userInfo.sysMenuVos, res.parentId);
-  } else if (res) {
-    targetMenu = res;
+import router from "@/router/index";
+// btnValue: 按钮名字,tabValue: tab页名
+const treeForeach = (btnValue: any, tabValue?: any) => {
+  const tabArr = JSON.parse(<string>localStorage.getItem('tabArr') || '[]');
+  const btnArr = JSON.parse(<string>localStorage.getItem('btnArr') || '[]');
+  if (!tabArr.length || !btnArr.length) {
+    window.localStorage.setItem("authorization", "");
+    window.localStorage.setItem("userInfo", "");
+    router.push("/login");
+  }
+  if (tabValue) {
+    let res = tabArr.find((item: any) => item.menuName === tabValue && window.location.href.split('/#')[1].indexOf(item.pUrl) !== -1 );
+    return res.childMenuList.some((item: any) => item.menuName === btnValue && item.menuType === 3);
+  } else {
+    return btnArr.some((item: any) => item.menuName === btnValue && window.location.href.split('/#')[1].indexOf(item.pUrl) !== -1)
   }
 }
 
@@ -43,12 +22,9 @@ const directives = [
     name: 'permission',
     value: {
       mounted(el: HTMLElement, binding: any) {
-        // 获取用户有权限菜单
-        const userInfo = JSON.parse(<string>localStorage.getItem('userInfo') || '{}');
         const type = binding.value || '';
         let status = false;
-        if (type.split('_').length)
-        status = treeForeach(userInfo.sysMenuVos, type.split('_')[type.split('_').length - 1], type.split('_')[type.split('_').length - 2]);
+        status = treeForeach(type.split('_')[type.split('_').length - 1], type.split('_')[type.split('_').length - 2]);
         // 没有匹配则隐藏按钮
         if (!status) {
           el.style.display = 'none'

@@ -176,6 +176,9 @@ watch(
 	}
 );
 
+travelStore.setAllHotel([])
+travelStore.setAllTicket([])
+
 const showAddBtn = computed(() => {
 	return userInfo.sysRoles.some((it: any) => it.roleCode === ROLE.TRAVE_CODE);
 });
