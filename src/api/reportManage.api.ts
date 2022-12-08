@@ -85,7 +85,7 @@ export async function individualSettlementDetailReportTravel(data: any) {
 
 export async function travelAgencyAndScenicSpotReportStatement(data: any) {
 	return request({
-		url: `${commonPath}/settlement-service/public/api/statement`,
+		url: `${commonPath}/settlement-service/public/api/statement/individualTravel/statement/byItineraryTicket`,
 		method: 'post',
 		data,
 		showLoading: true,
