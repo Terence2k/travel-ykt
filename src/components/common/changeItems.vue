@@ -86,6 +86,7 @@ const init = async () => {
 	formValidate.value = { ...props.changeParams };
 	state.id=formValidate.value.id
 	state.itineraryNo=formValidate.value.itineraryNo
+	console.log(formValidate.value,'数据')
 };
 
 watch(
