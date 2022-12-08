@@ -258,13 +258,7 @@ const getTraveDetail = () => {
 			res.basic.touristNum = res.basic.touristCount || 0;
 			travelStore.setBaseInfo(res.basic);
 			res.attachmentList.length && travelStore.setFileInfo(res.attachmentList);
-			travelStore.setGuideList(res.guideList);
-			if(route.query.index=='10')
-			{
-				travelStore.setTouristList([]);
-				console.log('游客变更')
-			}else{
-				travelStore.setTouristList(
+			travelStore.setTouristList(
 				res.touristList.content.map((it: any) => {
 					if (it.specialCertificatePicture instanceof String) {
 						it.specialCertificatePicture = it.specialCertificatePicture?.split(',');
@@ -273,7 +267,6 @@ const getTraveDetail = () => {
 					return it;
 				})
 			);
-			}
 			res.transportList = res.transportList.map((it: any) => {
 				it.time = [it.startDate, it.endDate];
 				return it;

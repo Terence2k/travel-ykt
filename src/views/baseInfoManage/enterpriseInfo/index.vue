@@ -562,7 +562,8 @@ const initOpeion = async () => {
   validateArray.value = Object.keys(form.value).map((item: any) => {
     return {
       name: item,
-      disabled: item.value ? false : true
+      disabled: form.value[item] ? true : false,
+      value: form.value[item]
     }
   });
 };
@@ -581,9 +582,11 @@ const getStatus = (name: string) => {
   return validateArray.value?.find((it: any) => it.name === name)?.disabled && ![0].includes(form.value.informationAuditStatus);
 }
 
+// 0未提交 1待审核 2审核通过 3审核未通过
 // 是否隐藏修改确定按钮
 const showChangeBtns = (name: string) => {
-  return validateArray.value.map((it:any) => it.name).some((it: any) => it === name) && ![0, 1].includes(form.value.informationAuditStatus);
+  // 如果有值 && 需要判断的字段是否有包括 && 当前审核状态不为未提交和待审核
+  return validateArray.value.find((it: any) => it.name === name)?.value && validateArray.value.map((it:any) => it.name).find((it: any) => it === name) && ![0, 1].includes(form.value.informationAuditStatus);
 }
 
 // 餐饮营业时间

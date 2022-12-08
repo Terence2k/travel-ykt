@@ -134,7 +134,6 @@ const newTravel = () => {
 			path: '/travel/travel_manage/add_travel',
 			query: {
 				id: res.newItineraryId,
-				index: 10,
 			},
 		});
 	});

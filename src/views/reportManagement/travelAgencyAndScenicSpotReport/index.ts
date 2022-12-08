@@ -34,13 +34,13 @@ export const fixedColumn: Array<any> = [
 		title: '核销时间',
 		dataIndex: 'verificationTime',
 		key: 'verificationTime',
-		width: 100,
+		width: 180,
 	},
 	{
 		title: '结算时间',
 		dataIndex: 'settlementTime',
 		key: 'settlementTime',
-		width: 100,
+		width: 180,
 	},
 	{
 		title: '门票单价',
@@ -168,3 +168,11 @@ export const twoDecimalPlaces = (number: any): string => {
 	}
 	return Number(number / 100).toFixed(2);
 };
+export const getAllPrice = computed(() => (column: any, record: any): string => {
+	const priceArray = ['breaksPrice', 'ticketPrice', 'scenicPrice', 'unitPrice', 'ticketUnitPrice', 'orderPrice', 'unSettlementPrice'];
+	const idx = priceArray.findIndex((item: any) => item === column.key);
+	if (idx !== -1) {
+		return record[priceArray[idx]] ? twoDecimalPlaces(record[priceArray[idx]]) : '';
+	}
+	return record[column.key];
+});

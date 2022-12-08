@@ -81,3 +81,22 @@ export async function individualSettlementDetailReportTravel(data: any) {
 		showLoading: true,
 	});
 }
+// 景区对账表
+
+export async function travelAgencyAndScenicSpotReportStatement(data: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/statement/individualTravel/statement/byItineraryTicket`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
+// 酒店对账表
+export async function travelAgencyAndHotelReportStatement(data: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/statement/individualHotel/statement/byItineraryHotel`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
