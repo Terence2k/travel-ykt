@@ -158,24 +158,24 @@ const state = reactive({
 		},
 		{
 			title: '撤销前人数',
-			dataIndex: 'teamTypeName',
-			key: 'teamTypeName',
+			dataIndex: 'touristCount"',
+			key: 'touristCount"',
 		},
 		{
 			title: '变更后人数',
-			dataIndex: 'travelOperatorName',
-			key: 'travelOperatorName',
+			dataIndex: 'newTouristCount',
+			key: 'newTouristCount',
 		},
-		{
-			title: '撤销前冻结金额',
-			dataIndex: 'touristCount',
-			key: 'touristCount',
-		},
-		{
-			title: '变更后金额',
-			dataIndex: 'newOrderAmount',
-			key: 'newOrderAmount',
-		},
+		// {
+		// 	title: '撤销前冻结金额',
+		// 	dataIndex: 'touristCount',
+		// 	key: 'touristCount',
+		// },
+		// {
+		// 	title: '变更后金额',
+		// 	dataIndex: 'newOrderAmount',
+		// 	key: 'newOrderAmount',
+		// },
 		{
 			title: '审核结果',
 			dataIndex: 'newOrderAmount',

@@ -627,4 +627,24 @@ export const travelManagement = {
 			showLoading: true,
 		});
 	},
+	// 行程变更游客列表
+	listByItinerary(id: number) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryTourist/listByItinerary/${id}`,
+			method: 'get',
+			showLoading: false,
+		});
+	},
+	//行程变更游客填写新的行程单
+	changeTouristFillNewItinerary(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/change/changeTouristFillNewItinerary`,
+			data,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			method: 'put',
+			showLoading: false,
+		});
+	},
 };

@@ -1,7 +1,6 @@
 <template>
 	<div class="table-area">
 		<div class="p">
-			<p>当前行程共有{{}}名游客，已经添加过{{}}次游客。您可以继续添加</p>
 			<a-tooltip color="cyan">
 				<template #title>
 					如行程中需要增加游客，需要为新游客发起新的 行程填报，点击添加游客按钮，系统将引导您填 报新行程单。如线下有游客未到，无需删除，最
@@ -10,15 +9,23 @@
 				<span class="d-span">(游客添加规则说明)</span>
 			</a-tooltip>
 		</div>
-		<CommonTable :row-selection="{}" :columns="columns" rowKey="oid" :scrollY="false"> </CommonTable>
+		<CommonTable :row-selection="{}" :dataSource="state.tableData.data" :columns="columns" rowKey="oid" :scrollY="false">
+			<template #bodyCell="{ column, index, record }">
+				<template v-if="column.key === 'healthCodeStatus'">
+					<span v-if="record.healthCodeStatus == '00'">绿码</span>
+					<span v-else-if="record.healthCodeStatus == '01'">黄码</span>
+					<span v-else-if="record.healthCodeStatus == '10'">红码</span>
+				</template>
+			</template>
+		</CommonTable>
 		<div class="add-div">
-			<a-button type="primary" @click="modelValue=true">添加游客</a-button>
+			<a-button type="primary" @click="modelValue = true">添加游客</a-button>
 		</div>
 		<BaseModal title="添加游客提醒" v-model="modelValue" :width="400" @close="">
 			<p>如需添加新游客，需要为新游客填报新的 行程单，原行程单依然有效。系统会自动 记录新行程单与原行程单的关联关系。</p>
 			<template v-slot:footer>
 				<a-button @click="modelValue = false">取消</a-button>
-				<a-button type="primary">填报新行程单</a-button>
+				<a-button type="primary" @click="newTravel">填报新行程单</a-button>
 			</template>
 		</BaseModal>
 	</div>
@@ -33,17 +40,18 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 import { message } from 'ant-design-vue';
 import api from '@/api';
 import { any, object, string } from 'vue-types';
-const route = useRouter();
+const route = useRoute();
 const dialogVisible = ref(false);
 const navigatorBar = useNavigatorBar();
 const formValidate: Ref<Record<string, any>> = ref({});
 const travelStore = useTravelStore();
-const modelValue =ref(false)
+const modelValue = ref(false);
+const router = useRouter();
 const columns = [
 	{
 		title: '姓名',
-		dataIndex: 'touristName',
-		key: 'touristName',
+		dataIndex: 'name',
+		key: 'name',
 	},
 	{
 		title: '身份证件类型',
@@ -67,18 +75,18 @@ const columns = [
 	},
 	{
 		title: '联系电话',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
+		dataIndex: 'phone',
+		key: 'phone',
 	},
-	{
-		title: '中高风险地区判断',
-		dataIndex: 'specialCertificateTypeName',
-		key: 'specialCertificateTypeName',
-	},
+	// {
+	// 	title: '中高风险地区判断',
+	// 	dataIndex: 'specialCertificateTypeName',
+	// 	key: 'specialCertificateTypeName',
+	// },
 	{
 		title: '健康码状态',
-		dataIndex: 'specialCertificateTypeName',
-		key: 'specialCertificateTypeName',
+		dataIndex: 'healthCodeStatus',
+		key: 'healthCodeStatus',
 	},
 	{
 		title: '特殊证件类型',
@@ -87,17 +95,51 @@ const columns = [
 	},
 	{
 		title: '特殊证件照片',
-		dataIndex: 'specialCertificateImg',
-		key: 'specialCertificateImg',
+		dataIndex: 'specialCertificatePicture',
+		key: 'specialCertificatePicture',
 	},
 ];
 const state = reactive({
 	tableData: {
 		data: [],
 	},
+	newItineraryId: '',
 });
 const auditRef = ref();
-const init = async () => {};
+const onSearch = () => {
+	console.log(route.query.id, '1231313');
+	api.travelManagement.listByItinerary(route.query.id).then((res: any) => {
+		let data = res.map((i: any) => {
+			return {
+				name: i.name,
+				certificateId: i.certificateNo,
+			};
+		});
+		api.travelManagement.getHealthCode(data).then((item: any) => {
+			let status = item.map((i: any) => {
+				return i.healthCodeStatus;
+			});
+			state.tableData.data = res.map((it: any, index: number) => {
+				it.healthCodeStatus = status[index];
+				return it;
+			});
+		});
+	});
+};
+const newTravel = () => {
+	let pW = new FormData();
+	pW.append('itineraryId', route.query.id);
+	api.travelManagement.changeTouristFillNewItinerary(pW).then((res: any) => {
+		router.push({
+			path: '/travel/travel_manage/add_travel',
+			query: {
+				id: res.newItineraryId,
+				index: 10,
+			},
+		});
+	});
+};
+onSearch();
 </script>
 
 <style lang="less" scoped>
@@ -109,7 +151,7 @@ const init = async () => {};
 	width: 90%;
 	margin: 10px auto;
 	display: flex;
-	justify-content: space-between;
+	justify-content: end;
 }
 .d-span {
 	color: rgb(14, 171, 241);
