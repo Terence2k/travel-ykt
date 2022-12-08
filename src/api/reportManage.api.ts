@@ -91,3 +91,12 @@ export async function travelAgencyAndScenicSpotReportStatement(data: any) {
 		showLoading: true,
 	});
 }
+// 酒店对账表
+export async function travelAgencyAndHotelReportStatement(data: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/statement/individualHotel/statement/byItineraryHotel`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
