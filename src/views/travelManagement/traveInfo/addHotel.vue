@@ -98,7 +98,7 @@
 					label="单价"
 					:name="['roomTypeList', index, 'unitPrice']"
 					:wrapper-col="{ span: 16 }"
-					:rules="[{ required: true, validator: isPositiveInteger }]"
+					:rules="[{ required: true, validator: isOneHundred }]"
 				>
 					<div class="d-flex align-item-center">
 						<div style="width: 500px">诚信指导价：{{honestyGuidePrice}}元 + </div>
@@ -142,7 +142,7 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 import { message } from 'ant-design-vue/es';
 import { Rule } from 'ant-design-vue/es/form';
 import dayjs, { Dayjs } from 'dayjs';
-import { disabledRangeTime, range, isPositiveInteger, selectSpecialDateRange } from '@/utils';
+import { disabledRangeTime, range, isPositiveInteger, selectSpecialDateRange, isOneHundred } from '@/utils';
 import { Modal } from 'ant-design-vue';
 import { createVNode } from 'vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
