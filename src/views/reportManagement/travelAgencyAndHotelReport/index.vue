@@ -42,9 +42,9 @@
 			<CommonTable :dataSource="state.tableData.data" :columns="columns">
 				<template #bodyCell="{ column, record }">
 					<!-- 团队类型 -->
-					<template v-if="column.key === 'teamType'">
+					<!-- <template v-if="column.key === 'teamType'">
 						<span>{{ getTeamTypesName(record.teamType) }}</span>
-					</template>
+					</template> -->
 					<!-- 预订金额 单位转成元-->
 					<template v-if="column.key === 'scheduledAmount'">
 						{{ record.scheduledAmount / 100 > 0 ? (record.scheduledAmount / 100).toFixed(2) : 0 }}
@@ -153,16 +153,16 @@ const initOption = async () => {
 	await options.getEarthContactAgencyList();
 };
 // 计算属性 匹配团队类型
-const getTeamTypesName = computed(() => (value: any) => {
-	if (options.teamTypesLists) {
-		const idx = options.teamTypesLists.findIndex((item) => item.oid === value);
-		if (idx !== -1) {
-			return options.teamTypesLists[idx]['name'];
-		}
-		return '';
-	}
-	return '';
-});
+// const getTeamTypesName = computed(() => (value: any) => {
+// 	if (options.teamTypesLists) {
+// 		const idx = options.teamTypesLists.findIndex((item) => item.oid === value);
+// 		if (idx !== -1) {
+// 			return options.teamTypesLists[idx]['name'];
+// 		}
+// 		return '';
+// 	}
+// 	return '';
+// });
 const columns = computed(() => {
 	const column: TableColumnsType = [
 		{
@@ -338,39 +338,39 @@ const initList = async () => {
 	state.tableData.total = total;
 	state.tableData.data = content;
 	state.tableData.loading = false;
-	state.tableData.data = [
-		{
-			privateNo: '111', //自编团号
-			hotelOrderId: 1, //酒店主订单id
-			orderNo: '订单编号', //订单号
-			itineraryNo: '团单编号', //团单编号
-			teamType: 1, //团队类型id
-			subTravelOid: 1, //旅行社id
-			subTravelName: '地接社名称', //地接社名称
-			settlementTime: '1111111111', //结算时间
-			hotelName: '酒店名称', //酒店名称
-			verificationTime: '2222222222', //核销时间
-			hotelStarCode: '酒店星级', //酒店星级
-			scheduledRooms: 1, //预定人数
-			actualRooms: 1, //实刷数
-			arrivalDate: '入住日期', //入住日期
-			departureDate: '离店日期', //离店日期
-			scheduledAmount: 1, //预定金额
-			noVerificationAmount: 1, //未核销金额
-			reduceAfterAmount: 1, //减免后金额
-			actualFullNumber: 1, //实际减免数量
-			actualFullAmount: 1, //实际减满金额
-			actualAmount: 1, //实际金额
-			hotelPrice: 1, //酒店冻结
-			settlementRuleList: [
-				{
-					costName: '规则名称', //费用名称
-					settlementCost: 1, //结算费用
-					costType: 1, //costType
-				},
-			], //结算规则信息
-		},
-	];
+	// state.tableData.data = [
+	// 	{
+	// 		privateNo: '111', //自编团号
+	// 		hotelOrderId: 1, //酒店主订单id
+	// 		orderNo: '订单编号', //订单号
+	// 		itineraryNo: '团单编号', //团单编号
+	// 		teamType: 1, //团队类型id
+	// 		subTravelOid: 1, //旅行社id
+	// 		subTravelName: '地接社名称', //地接社名称
+	// 		settlementTime: '1111111111', //结算时间
+	// 		hotelName: '酒店名称', //酒店名称
+	// 		verificationTime: '2222222222', //核销时间
+	// 		hotelStarCode: '酒店星级', //酒店星级
+	// 		scheduledRooms: 1, //预定人数
+	// 		actualRooms: 1, //实刷数
+	// 		arrivalDate: '入住日期', //入住日期
+	// 		departureDate: '离店日期', //离店日期
+	// 		scheduledAmount: 1, //预定金额
+	// 		noVerificationAmount: 1, //未核销金额
+	// 		reduceAfterAmount: 1, //减免后金额
+	// 		actualFullNumber: 1, //实际减免数量
+	// 		actualFullAmount: 1, //实际减满金额
+	// 		actualAmount: 1, //实际金额
+	// 		hotelPrice: 1, //酒店冻结
+	// 		settlementRuleList: [
+	// 			{
+	// 				costName: '规则名称', //费用名称
+	// 				settlementCost: 1, //结算费用
+	// 				costType: 1, //costType
+	// 			},
+	// 		], //结算规则信息
+	// 	},
+	// ];
 };
 //搜索
 const onHandleCurrentChange = (val: number) => {
