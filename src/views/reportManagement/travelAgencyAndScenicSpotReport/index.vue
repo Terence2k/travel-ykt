@@ -1,16 +1,17 @@
 <template>
 	<CommonSearch>
-		<search-item label="团队类型" style="width: 280px">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.travelTypeId" style="width: 200px" placeholder="请选择团队类型">
-				<a-select-option v-for="(item, index) in options.teamTypesLists" :value="item.oid" :key="index">{{ item.name }} </a-select-option>
+		<search-item label="团单编号"> <a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入团单编号" /></search-item>
+		<search-item label="景区名称">
+			<a-select
+				v-model:value="state.tableData.param.scenicId"
+				placeholder="请选择景区名称"
+				allowClear
+				:options="state.viewList.map((item) => ({ value: item.ticketId, label: item.ticketName }))"
+			>
 			</a-select>
 		</search-item>
-		<search-item label="组团社">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.travelId" style="width: 200px" placeholder="请选择旅行社名称">
-				<a-select-option v-for="(item, index) in options.groupSocietyList" :value="item.travelAgencyId" :key="index"
-					>{{ item.travelAgencyName }}
-				</a-select-option>
-			</a-select>
+		<search-item label="门票名称">
+			<a-input v-model:value="state.tableData.param.ticketName" placeholder="请输入门票名称" />
 		</search-item>
 		<search-item label="地接社">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.subTravelId" style="width: 200px" placeholder="请选择旅行社名称">
@@ -19,7 +20,7 @@
 				</a-select-option>
 			</a-select>
 		</search-item>
-		<search-item label="结算时间" style="width: 280px">
+		<search-item label="结算时间">
 			<a-range-picker v-model:value="state.tableData.settlementStartTimeList" @change="timeChange" />
 		</search-item>
 		<template #button>
@@ -85,18 +86,15 @@ const columns = computed(() => {
 			}
 		}
 	}
-	/**
-	 * 需等数据后再对表头进行更改
-	 */
 	return column.value;
 });
 const state = reactive<StateType>({
 	tableData: {
 		param: {
 			itineraryNo: '', //团单编号
-			scenicId: '', //关联景区id
+			scenicId: null, //关联景区id
 			ticketName: '', //门票名称
-			subTravelId: '', //地接社id
+			subTravelId: null, //地接社id
 			settlementStartTime: '', //结算开始时间
 			settlementEndTime: '', //结算结束时间
 			pageSize: 10, //页大小
@@ -113,47 +111,52 @@ const state = reactive<StateType>({
 const initList = async () => {
 	state.tableData.loading = true;
 	// 调用接口
-	// let res = await api.statementByItinerary(state.tableData.param);
-	// const { total, content } = res;
-	// state.tableData.total = total;
-	// state.tableData.data = content;
+	let res = await api.travelAgencyAndScenicSpotReportStatement(state.tableData.param);
+	const { total, content } = res;
+	state.tableData.total = total;
+	state.tableData.data = content;
 	state.tableData.loading = false;
-	state.tableData.data = [
-		{
-			itineraryNo: '团单编号', //团单编号
-			privateNo: '自编团号', //自编团号
-			scenicId: 1, //关联景区id
-			scenicName: '111', //景区名称
-			ticketId: 1, //票id
-			ticketName: '111', //门票名称
-			subTravelId: 1, //地接社id
-			subTravelName: 111, //地接社名称
-			verificationTime: '2022.03.01 09:00', //核销时间
-			settlementTime: '2022.03.01 09:00', //结算时间
-			ticketUnitPrice: '1', //门票单价
-			unitPrice: '1', //单价
-			reservationNum: 1, //预定数
-			settlementNum: 1, //实刷数
-			breaksNum: 1, //减免数
-			orderPrice: '1', //预定金额
-			unSettlementPrice: '1', //未核销金额
-			breaksPrice: '1', //减免金额
-			ticketPrice: '1', //景区冻结
-			scenicPrice: '1', //景点实收
-			settlementRuleList: [
-				{
-					ruleName: '结算规则名称1', //结算规则名称
-					rulePrice: '2000', //结算费用
-				},
-				{
-					ruleName: '结算规则名称2', //结算规则名称
-					rulePrice: '9000', //结算费用
-				},
-			], //结算规则信息
-		},
-	];
+	// state.tableData.data = [
+	// 	{
+	// 		itineraryNo: '团单编号', //团单编号
+	// 		privateNo: '自编团号', //自编团号
+	// 		scenicId: 1, //关联景区id
+	// 		scenicName: '111', //景区名称
+	// 		ticketId: 1, //票id
+	// 		ticketName: '111', //门票名称
+	// 		subTravelId: 1, //地接社id
+	// 		subTravelName: 111, //地接社名称
+	// 		verificationTime: '2022.03.01 09:00', //核销时间
+	// 		settlementTime: '2022.03.01 09:00', //结算时间
+	// 		ticketUnitPrice: '1', //门票单价
+	// 		unitPrice: '1', //单价
+	// 		reservationNum: 1, //预定数
+	// 		settlementNum: 1, //实刷数
+	// 		breaksNum: 1, //减免数
+	// 		orderPrice: '1', //预定金额
+	// 		unSettlementPrice: '1', //未核销金额
+	// 		breaksPrice: '1', //减免金额
+	// 		ticketPrice: '1', //景区冻结
+	// 		scenicPrice: '1', //景点实收
+	// 		settlementRuleList: [
+	// 			{
+	// 				ruleName: '结算规则名称1', //结算规则名称
+	// 				rulePrice: '2000', //结算费用
+	// 			},
+	// 			{
+	// 				ruleName: '结算规则名称2', //结算规则名称
+	// 				rulePrice: '9000', //结算费用
+	// 			},
+	// 		], //结算规则信息
+	// 	},
+	// ];
 };
-
+// 获取景区下拉列表
+const getViewList = async () => {
+	const result = await api.getViewList();
+	state.viewList = result;
+	console.log(state.viewList, `state.viewList`);
+};
 //搜索
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
@@ -170,6 +173,7 @@ onMounted(() => {
 	options.getTeamTypeList();
 	options.getGroupSocietyList();
 	options.getEarthContactAgencyList();
+	getViewList();
 	initList();
 });
 const timeChange = (arr: any) => {

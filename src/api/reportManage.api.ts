@@ -81,3 +81,13 @@ export async function individualSettlementDetailReportTravel(data: any) {
 		showLoading: true,
 	});
 }
+// 景区对账表
+
+export async function travelAgencyAndScenicSpotReportStatement(data: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/statement`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}

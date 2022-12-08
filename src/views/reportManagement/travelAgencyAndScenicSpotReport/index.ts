@@ -34,13 +34,13 @@ export const fixedColumn: Array<any> = [
 		title: '核销时间',
 		dataIndex: 'verificationTime',
 		key: 'verificationTime',
-		width: 100,
+		width: 180,
 	},
 	{
 		title: '结算时间',
 		dataIndex: 'settlementTime',
 		key: 'settlementTime',
-		width: 100,
+		width: 180,
 	},
 	{
 		title: '门票单价',
