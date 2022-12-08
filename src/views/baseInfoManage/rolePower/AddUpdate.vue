@@ -41,15 +41,28 @@
         label="角色权限"
         name="menuIds"
       >
-        <a-tree
-          v-if="dialogVisible"
-          v-model:checkedKeys="checkedKeys"
-          checkable
-          :selectable="false"
-          :tree-data="menuTreeDate"
-          :field-names="fieldNames"
-        >
-        </a-tree>
+      <a-collapse v-model:activeKey="activeKey" :bordered="false" v-if="dialogVisible">
+        <a-collapse-panel key="1" header="一卡通PC端">
+          <a-tree
+            v-model:checkedKeys="pcCheckedKeys"
+            checkable
+            :selectable="false"
+            :tree-data="pcMenuTreeDate"
+            :field-names="fieldNames"
+          >
+          </a-tree>
+        </a-collapse-panel>
+        <a-collapse-panel key="2" header="一卡通App端">
+          <a-tree
+            v-model:checkedKeys="appCheckedKeys"
+            checkable
+            :selectable="false"
+            :tree-data="appMenuTreeDate"
+            :field-names="fieldNames"
+          >
+          </a-tree>
+        </a-collapse-panel>
+      </a-collapse>
       </a-form-item>
       <a-form-item
         label="角色编码"
@@ -92,17 +105,37 @@
   import { message } from 'ant-design-vue';
   import type { TreeProps } from 'ant-design-vue';
 
-  const checkedKeys = ref<string[]>(['0-0-0', '0-0-1']);
-  const menuTreeDate: Ref<Array<any>> = ref([]);
-  const menuIdsInfo: Ref<Array<any>> = ref([]);
+  const pcCheckedKeys = ref<string[]>([]);
+  const pcMenuTreeDate: Ref<Array<any>> = ref([]);
+  const pcMenuIdsInfo: Ref<Array<any>> = ref([]);
 
-  watch(checkedKeys, () => {
+  const appCheckedKeys = ref<string[]>([]);
+  const appMenuTreeDate: Ref<Array<any>> = ref([]);
+  const appMenuIdsInfo: Ref<Array<any>> = ref([]);
+
+  const activeKey = ref(['']);
+
+  watch(pcCheckedKeys, () => {
+    console.log('pcCheckedKeys:', pcCheckedKeys.value);
     // 处理通过子级id查找返回父级id（只要选了子级就要返回父级无论有无选中父级）
     let arr = new Set();
-    checkedKeys.value.forEach((item: any) => {
-      checkList( menuTreeDate.value, item ).forEach((it: any) => arr.add(it));
+    pcCheckedKeys.value.forEach((item: any) => {
+      checkList( pcMenuTreeDate.value, item ).forEach((it: any) => arr.add(it));
     });
-    formValidate.value.menuIds = Array.from(arr);
+    console.log('arr:', arr);
+    
+    pcMenuIdsInfo.value = Array.from(arr);
+  });
+
+  watch(appCheckedKeys, () => {
+    console.log('appCheckedKeys:', appCheckedKeys.value);
+    // 处理通过子级id查找返回父级id（只要选了子级就要返回父级无论有无选中父级）
+    let arr = new Set();
+    appCheckedKeys.value.forEach((item: any) => {
+      checkList( appMenuTreeDate.value, item ).forEach((it: any) => arr.add(it));
+    });
+    console.log('arr:', arr);
+    appMenuIdsInfo.value = Array.from(arr);
   });
   
   const props = defineProps({
@@ -137,6 +170,7 @@
   };
   
   const save = () => {
+    formValidate.value.menuIds = pcMenuIdsInfo.value.concat(appMenuIdsInfo.value)
     formRef.value
     .validateFields()
     .then((values: any) => {
@@ -177,12 +211,12 @@
   //   }
   // }
 
-  const getDetailMenuIds = (data: any) => {
+  const getDetailMenuIds = (data: any, isPc: boolean) => {
     data.forEach((item: any) => {
       if (item.childMenuList?.length) {
-        getDetailMenuIds(item.childMenuList);
+        getDetailMenuIds(item.childMenuList, isPc);
       } else {
-        menuIdsInfo.value.push(item.oid);
+        isPc ? pcMenuIdsInfo.value.push(item.oid) : appMenuIdsInfo.value.push(item.oid);
       }
       // menuIdsInfo.value = [159]
       
@@ -192,10 +226,11 @@
   const getDetail = async (id: number) => {
     await api.roleDetail(id).then((res: any) => {
       formValidate.value = res;
-      console.log('menuTreeDate.value:', menuTreeDate.value);
       console.log('角色权限菜单：', res.roleMenu);
-      getDetailMenuIds(res.roleMenu);
-      checkedKeys.value = menuIdsInfo.value;
+      getDetailMenuIds(res.roleMenu.filter((item: any) => item.systemMark === 0), true);
+      getDetailMenuIds(res.roleMenu.filter((item: any) => item.systemMark === 1), false);
+      pcCheckedKeys.value = pcMenuIdsInfo.value;
+      appCheckedKeys.value = appMenuIdsInfo.value;
     }).catch((err: any) => {
       console.error(err);
     })
@@ -215,21 +250,32 @@
 
   const getMenuList = async () => {
     const res = await api.menuList();
+    let pcMenu = res.filter((item: any) => item.systemMark === 0);
+    let appMenu = res.filter((item: any) => item.systemMark === 1);
     ///转换树
-    menuTreeDate.value = convertTree(res, {
-      value: 'oid',
-      label: 'menuName',
-      children: 'children',
-    });
-    
+      // pc端
+      pcMenuTreeDate.value = convertTree(pcMenu, {
+        value: 'oid',
+        label: 'menuName',
+        children: 'children',
+      });
+      // App端
+      appMenuTreeDate.value = convertTree(appMenu, {
+        value: 'oid',
+        label: 'menuName',
+        children: 'children',
+      });
+      
     if (props.params?.oid) {
       await getDetail(props.params.oid);
     }
   }
 
   const init = async () => {
-    checkedKeys.value = [];
-    menuIdsInfo.value = [];
+    pcCheckedKeys.value = [];
+    appCheckedKeys.value = [];
+    pcMenuIdsInfo.value = [];
+    appMenuIdsInfo.value = [];
     formValidate.value = {
       roleStatus: 1
     };
