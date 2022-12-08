@@ -1,4 +1,4 @@
-import { HealthCode } from "@/enum"
+import { HealthCode, Insurance } from "@/enum"
 
 export const ROLE = {
     TRAVE_CODE: 'TRAVEL_OPERATOR' //计调
@@ -39,4 +39,10 @@ export const TICKET = {
     'ONE': '单票',
     'UNITE': '联票',
     'SHOW': '演出票'
+}
+
+export const INSURANCE = {
+    [Insurance.NOTSURE]: '没有确认',
+    [Insurance.SUBBUY]: '应地接社购买',
+    [Insurance.TEAMBUY]: '组团社确认已购买'
 }

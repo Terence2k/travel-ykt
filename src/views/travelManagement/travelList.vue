@@ -145,8 +145,10 @@ const chart = computed(() => pages.filter((it: any) => it.value === activeKey.va
 
 //查询
 const onSearch = async () => {
+
 	let chartField: Field = chart.value;
 	let storeParams = travelStore.traveList[chartField].params;
+	travelStore.traveList[chartField].params.pageNo = 1;
 	travelStore.traveList[chartField].params.status = activeKey.value;
 	travelStore.traveList[chartField].params.startDate = storeParams.time[0];
 	travelStore.traveList[chartField].params.endDate = storeParams.time[1];

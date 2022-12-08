@@ -158,6 +158,8 @@ export const useTravelStore = defineStore({
 		hotels: [],
 		productList: [{ productId: null }], //综费
 		scenicTickets: [],
+		insuranceStatus: null,
+		checkInsurance: false,
 		gouvyList: [
 			{
 				feeName: '古维管理费',
