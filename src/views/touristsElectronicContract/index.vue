@@ -13,13 +13,13 @@
       <a-input v-model:value="tableData.param.lineName" placeholder="请输入线路名称" allowClear />
     </search-item>
     <template #button>
-      <a-button @click="onQuery">查询</a-button>
+      <a-button @click="onQuery" v-permission="'查询'">查询</a-button>
     </template>
   </CommonSearch>
   <div class="add_box">
     <div>共 {{ tableData.total }} 条可用的电子合同</div>
     <div>
-      <a-button type="primary" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
+      <a-button type="primary" @click="addOrUpdate({ handle: 'add' })" v-permission="'新增'">新增</a-button>
     </div>
   </div>
   <CommonTable :dataSource="tableData.data" :columns="columns">
@@ -32,9 +32,10 @@
       </template>
       <template v-if="column.key === 'action'">
         <div class="action-btns">
-          <a @click="checkDetails(record.oid)">查看</a>
-          <a @click="addOrUpdate({ row: record, handle: 'update' })" v-show="(record.contractStatus === 1)">编辑</a>
-          <a @click="withdraw">撤销</a>
+          <a @click="checkDetails(record.oid)" v-permission="'查看'">查看</a>
+          <a @click="addOrUpdate({ row: record, handle: 'update' })" v-show="(record.contractStatus === 1)"
+            v-permission="'编辑'">编辑</a>
+          <a @click="withdraw" v-show="([2, 3].includes(record.contractStatus))" v-permission="'撤销'">撤销</a>
         </div>
       </template>
     </template>
@@ -104,12 +105,12 @@ const columns = [{
   key: 'itineraryNo',
 },
 {
-  title: '签署门店',
+  title: '合同创建方',
   dataIndex: 'contractEstablish',
   key: 'contractEstablish',
 },
 {
-  title: '门店操作员',
+  title: '合同创建人',
   dataIndex: 'creatorName',
   key: 'creatorName',
 },
@@ -159,7 +160,9 @@ const contractStatusOption = [
   { codeValue: 7, name: '已解除' },
 ]
 const withdraw = () => { }
-const checkDetails = (id: number) => { }
+const checkDetails = (id: number) => {
+  goTo('electronicContratDetails', { id })
+}
 interface addInterface {
   row?: any
   handle: 'update' | 'add'

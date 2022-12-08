@@ -114,9 +114,9 @@
             <template v-if="column.key === 'action'">
               <div class="action-btns">
                 <template v-if="record?.isAudit">
-                  <a @click="auditStore(record)" v-permission="'已审核_去审核'">去审核</a>
+                  <a @click="auditStore(record)" v-permission="'待审核_去审核'">去审核</a>
                 </template>
-                <a @click="checkDetails(record)" v-permission="'已审核_查看'">查看</a>
+                <a @click="checkDetails(record)" v-permission="'待审核_查看'">查看</a>
               </div>
             </template>
           </template>
@@ -407,7 +407,7 @@
       <table class="info_table" cellpadding="16px" border="1">
         <tr class="row" v-for="(value, key) in cmpDetailsKeys">
           <td class="key">{{ value }}</td>
-          <td class="value">
+          <td class="value" style="white-space: pre-wrap;">
             {{ detailsForm[key] }}
           </td>
         </tr>
@@ -421,7 +421,7 @@
       <table class="info_table" cellpadding="16px" border="1">
         <tr class="row" v-for="(value, key) in auditKeys">
           <td class="key">{{ value }}</td>
-          <td class="value">{{ detailsForm[key] }}</td>
+          <td class="value" style="white-space: pre-wrap;">{{ detailsForm[key] }}</td>
         </tr>
       </table>
     </div>
@@ -438,8 +438,8 @@
         </tr>
         <tr class="row" v-for="(item, index) in changeKeys" :key="index">
           <td class="key">{{ compareKeys[item] }}</td>
-          <td class="value">{{ oldArrList[item] }}</td>
-          <td class="value">{{ newArrList[item] }}</td>
+          <td class="value" style="white-space: pre-wrap;">{{ oldArrList[item] }}</td>
+          <td class="value" style="white-space: pre-wrap;">{{ newArrList[item] }}</td>
         </tr>
       </table>
     </div>
@@ -476,6 +476,7 @@ import { useRouter, useRoute } from 'vue-router';
 import type { Rule } from 'ant-design-vue/es/form';
 import { message } from 'ant-design-vue/es';
 import { getTabPermission } from '@/utils/util';
+import { forEach } from 'lodash';
 const router = useRouter();
 const route = useRoute();
 interface ticketType {
@@ -1294,43 +1295,36 @@ const auditStore = async (record: any) => {
     getChangeInfo(record.oid)
   }
 }
+const setString = (normalArr: any, key: string) => {
+  const obj = groupBy(normalArr, 'day')
+  const keys = Object.keys(obj)
+  let resStr = ''
+  keys.forEach((item: any) => {
+    const day = `第${item}天`
+    let nameStr = ''
+    obj[item].forEach((citem: any, index: number) => {
+      nameStr += `${citem[key]}${(obj[item].length - 1) === index ? '' : '、'}`
+    })
+    resStr += `${day}\n${nameStr}\n`
+  })
+  return resStr
+}
 const setValue = (res: any) => {
   // 餐厅
   if (res.individualLineCateringBos) {
-    const arr = Array.from(new Set(res.individualLineCateringBos.map((item: any) => {
-      return item.cateringCompanyName
-    })))
-    let strArr = ''
-    arr.forEach((item: any, index: number) => {
-      strArr += `${item}${(arr.length - 1) === index ? '' : '、'}`
-    })
-    res.cateringCompanysName = strArr
+    res.cateringCompanysName = setString(res.individualLineCateringBos, 'cateringCompanyName')
   } else {
     res.cateringCompanysName = '无'
   }
   // 酒店
   if (res.individualLineHotelBos) {
-    const arr = Array.from(new Set(res.individualLineHotelBos.map((item: any) => {
-      return item.hotelCompanyName
-    })))
-    let strArr = ''
-    arr.forEach((item: any, index: number) => {
-      strArr += `${item}${(arr.length - 1) === index ? '' : '、'}`
-    })
-    res.hotelCompanysName = strArr
+    res.hotelCompanysName = setString(res.individualLineHotelBos, 'hotelCompanyName')
   } else {
     res.hotelCompanysName = '无'
   }
   // 景区
   if (res.individualLineTicketBos) {
-    const arr = Array.from(new Set(res.individualLineTicketBos.map((item: any) => {
-      return item.ticketCompanyName
-    })))
-    let strArr = ''
-    arr.forEach((item: any, index: number) => {
-      strArr += `${item}${(arr.length - 1) === index ? '' : '、'}`
-    })
-    res.ticketCompanysName = strArr
+    res.ticketCompanysName = setString(res.individualLineTicketBos, 'ticketCompanyName')
   } else {
     res.ticketCompanysName = '无'
   }

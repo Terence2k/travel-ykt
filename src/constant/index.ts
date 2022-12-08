@@ -35,3 +35,8 @@ export const CODEVALUE= {
         [HealthCode.Red]: '红码'
     }
 }
+export const TICKET = {
+    'ONE': '单票',
+    'UNITE': '联票',
+    'SHOW': '演出票'
+}

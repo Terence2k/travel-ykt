@@ -5,7 +5,7 @@
 				<component @onSuccess="save" :onCheck="check" :is="item.name"></component>
 			</a-tab-pane>
 		</a-tabs>
-		<div class="footer d-flex justify-content-between" v-if="travelStore.teamStatus">
+		<div class="footer d-flex justify-content-between" v-if="travelStore.teamStatus && !isRevoke">
 			<div class="footer-btn">
 				<a-button
 					type="primary"
@@ -105,6 +105,7 @@ const save = (e: any) => {
 		});
 	}
 };
+
 
 const sendGroup = async (id: string) => {
 	const formData = new FormData();

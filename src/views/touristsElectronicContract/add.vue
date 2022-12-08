@@ -9,14 +9,14 @@
             <div class="reform">
               <a-form-item style="flex: 1;" name="contractDays">
                 <div style="display:flex;align-items:center;">
-                  <a-input v-model:value="form.contractDays" placeholder="请输入合同天数">
+                  <a-input v-model:value.number="form.contractDays" placeholder="请输入合同天数">
                   </a-input>
                   <span style="margin:0 10px">天</span>
                 </div>
               </a-form-item>
               <a-form-item style="flex: 1;" name="travelNight">
                 <div style="display:flex;align-items:center;">
-                  <a-input v-model:value="form.travelNight" placeholder="请输入合同夜数" />
+                  <a-input v-model:value.number="form.travelNight" placeholder="请输入合同夜数" />
                   <span style="margin-left:10px">夜</span>
                 </div>
               </a-form-item>
@@ -50,7 +50,7 @@
             </a-select>
           </a-form-item>
           <a-form-item name="contractFileUrl" label="上传附件" v-if="!isShow">
-            <Upload v-model="form.contractFileUrl" :maxCount="5" />
+            <Upload v-model="form.contractFileUrl" :maxCount="9" />
           </a-form-item>
           <div class="tag">选择线路</div>
           <a-table :columns="lineColumns" :data-source="dataLineSource" bordered :pagination="false">
@@ -291,7 +291,7 @@
                 {{ text }}
               </template>
             </template>
-            <template v-if="column.dataIndex === 'action'">
+            <template v-if="(column.dataIndex === 'action' && record.isOperate)">
               <div class="editable-row-operations">
                 <span v-if="record.isEdit">
                   <a @click="save(dataCostSource[index])">确定</a>
@@ -372,8 +372,8 @@ const isAdd = ref(true)
 const form = ref({
   oid: undefined,
   companyId: undefined, //合同创建旅行社id
-  contractDays: "", //合同天数
-  travelNight: "", //合同夜数
+  contractDays: undefined, //合同天数
+  travelNight: undefined, //合同夜数
   entrustTravelId: undefined, //委托旅行社id
   travelData: [], //行程日期
   tripStartTime: "", //合同行程开始时间
@@ -389,6 +389,7 @@ const form = ref({
   certificatesAddress: "",//游客详细住址
   contractAmount: 0,
 })
+const comprehensiveProductsList = ref([]) //综费产品
 const adultNumber = ref(0)
 const childNumber = ref(0)
 const businessManageOptions = useBusinessManageOption();
@@ -661,6 +662,7 @@ interface CostItem {
   childNumber: number;
   individualSubtotal: string;
   isEdit: boolean,
+  isOperate?: boolean
 }
 interface TouristItem {
   certificatesType: undefined | string; //证件类型
@@ -730,6 +732,7 @@ const onTouristDelete = (index: number) => {
 const handleCostAdd = () => {
   const newData = {
     isEdit: true,
+    isOperate: true,
     priceName: "",
     adultPrice: "",
     childPrice: "",
@@ -754,12 +757,11 @@ const edit = (obj: any) => {
 };
 // 步骤跳转
 const nextTep = (val: string) => {
-  console.log(dataTouristSource.value);
   activeKey.value = val
   if (val === '2') {
+    // 计算成人数、儿童数
     let adult = 0
     let child = 0
-    let sum = 0
     dataTouristSource.value.forEach((item: any) => {
       if (item.touristType === 1) {
         adult += 1
@@ -767,15 +769,70 @@ const nextTep = (val: string) => {
         child += 1
       }
     })
-    adultNumber.value = adult
-    childNumber.value = child
+    adultNumber.value = adult // 成人数
+    childNumber.value = child // 儿童数
+    const arr: CostItem[] = []
+    // 计算费用
     dataCostSource.value.forEach((item: any) => {
-      item.adultNumber = adult
-      item.childNumber = child
-      rowPrice(item)
-      sum += item.individualSubtotal
+      // 如果已有行程费用列表，又回到上一步添加游客，需重新计算人数和价格
+      // 自定义费用流程
+      if (item.isOperate) {
+        item.adultNumber = adult
+        item.childNumber = child
+        rowPrice(item)
+        arr.push(item)
+      }
     })
-    form.value.contractAmount = sum
+    dataCostSource.value = [...comprehensiveProductsFeeList(), ...arr]
+    allPrice()
+  }
+}
+/* 
+收费模式：人数，人数*收费数量
+收费模式：价格，直接用价格
+然后看是否按天数：是，上面算出的价格*天数；否，使用上面算出的价格 */
+const comprehensiveProductsFeeList = () => {
+  if (adultNumber.value || childNumber.value) {
+    const contractDays = form.value.contractDays !== undefined ? form.value.contractDays : 0
+    return comprehensiveProductsList.value.map((item: any) => {
+      let adultPrice: string | number = 0
+      let childPrice: string | number = 0
+      let individualSubtotal = 0
+      //feeModel 收费模式: 0-人数 1-价格
+      //confirmDailyCharge 是否按天收费: 0-否,1-是
+      if (item.feeModel === 1) {
+        adultPrice = '/'
+        childPrice = '/'
+        if (item.confirmDailyCharge === 1) {
+          // 如果按天收费要乘上天数
+          individualSubtotal = item.feeNumber * contractDays
+        } else {
+          individualSubtotal = item.feeNumber
+        }
+      } else if (item.feeModel === 0) {
+        // 按照人数收费
+        adultPrice = item.feeNumber
+        childPrice = item.feeNumber
+        if (item.confirmDailyCharge === 1) {
+          // 如果按天收费要乘上天数
+          individualSubtotal = (adultNumber.value + childNumber.value) * item.feeNumber * contractDays
+        } else {
+          individualSubtotal = (adultNumber.value + childNumber.value) * item.feeNumber
+        }
+      }
+      return {
+        priceName: item.comprehensiveFeeProductName,
+        adultNumber: adultNumber.value,
+        childNumber: childNumber.value,
+        adultPrice,
+        childPrice,
+        individualSubtotal,
+        isEdit: false,
+        isOperate: false
+      }
+    })
+  } else {
+    return []
   }
 }
 const saveDraft = () => {
@@ -834,6 +891,13 @@ const getParams = () => {
     otherAgreements, //其他约定
     contractAmount, //行程费用
   } = form.value
+  /* const arr: CostItem[] = []
+  // 只上传自定义费用
+  dataCostSource.value.forEach((item: any) => {
+    if (item.isOperate) {
+      arr.push(item)
+    }
+  }) */
   return {
     oid,
     companyId, //合同创建旅行社id
@@ -883,6 +947,7 @@ const touristChange = () => {
     dataTouristSource.value.forEach((item: any) => {
       if (item.certificatesNo === form.value.touristName) {
         form.value.phone = item.phone
+        form.value.certificatesNo = item.certificatesNo
         item.certificatesAddress = form.value.certificatesAddress
         item.isRepresentative = 1 // 是否为游客代表 1：是、0：否
       } else {
@@ -931,6 +996,7 @@ const allPrice = () => {
 // 价格改变事件自动计算总费用
 let priceTimer: NodeJS.Timeout
 const priceChange = (obj: any) => {
+  // form.registeredCapital = form.registeredCapital?.replace(/[^0-9.]/g, '')
   priceTimer && clearTimeout(priceTimer)
   priceTimer = setTimeout(async () => {
     rowPrice(obj)
@@ -1049,6 +1115,7 @@ const getEditDetails = async (oid: any) => {
     dataCostSource.value = res.individualContractPriceBos.map((item: any) => {
       return {
         isEdit: false,
+        isOperate: true,
         ...item,
       }
     })
@@ -1056,9 +1123,14 @@ const getEditDetails = async (oid: any) => {
     contractOptionChange(form.value.contractType)
   }
 }
+const getComprehensiveProductsList = async () => {
+  const res = await api.findComprehensiveProductsList()
+  comprehensiveProductsList.value = res || []
+}
 onMounted(() => {
   initOpeion()
   getLineOptions()
+  getComprehensiveProductsList()
 })
 watch(
   dataTouristSource,
