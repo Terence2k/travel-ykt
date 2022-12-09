@@ -126,6 +126,10 @@ const saveItinerary = (val: any) => {
 		if (!travelStore.guideList.length) return message.error('请选择带团导游');
 		if (!travelStore.touristList.length) return message.error('请添加游客');
 		if (!travelStore.trafficList.length) return message.error('请添加交通信息');
+		if (!travelStore.insuranceStatus) return message.error('请选择保险购买方');
+	}
+	if (travelStore.insuranceStatus && !travelStore.checkInsurance) {
+		return message.error('请同意《云南省团队旅游保险购买政策》、《一卡通平台免责声明》')
 	}
 	const guideTime = travelStore.guideList.some((it: any) => !it.startDate);
 	if (guideTime) {
@@ -146,6 +150,7 @@ const saveItinerary = (val: any) => {
 			attachmentList: travelStore.attachmentList,
 			basicParam: val.basicParam || {},
 			guideList: travelStore.guideList.filter((it: any) => it.edit),
+			insuranceStatus: travelStore.insuranceStatus,
 			itineraryInfoParam: {
 				compositeProducts: travelStore.curentProduct,
 			},
@@ -304,6 +309,8 @@ const getTraveDetail = () => {
 				}),
 				...travelStore.templateTicket,
 			] as any;
+			travelStore.insuranceStatus = res.insuranceStatus?.toString();
+			travelStore.checkInsurance = res.insuranceStatus ? true : false;
 			travelStore.teamTime = [res.basic.startDate, res.basic.endDate] as any;
 			travelStore.setDisabled = disDate(res);
 			travelStore.setStarEndHMS = disTime(res);

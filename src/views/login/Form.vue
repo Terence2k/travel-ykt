@@ -89,7 +89,6 @@ const btnArr: any = ref([]);
 
 const getTabMenuList = (menuList: any, pUrl?: any) => {
   menuList.forEach((item: any) => {
-    console.log('item:', item);
     if (item.menuType == 2) {
       item.pUrl = pUrl;
       tabArr.value.push(item);

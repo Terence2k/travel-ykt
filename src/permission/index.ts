@@ -4,16 +4,11 @@ import router from "@/router/index";
 const treeForeach = (btnValue: any, tabValue?: any) => {
   const tabArr = JSON.parse(<string>localStorage.getItem('tabArr') || '[]');
   const btnArr = JSON.parse(<string>localStorage.getItem('btnArr') || '[]');
-  if (!tabArr.length || !btnArr.length) {
-    window.localStorage.setItem("authorization", "");
-    window.localStorage.setItem("userInfo", "");
-    router.push("/login");
-  }
   if (tabValue) {
-    let res = tabArr.find((item: any) => item.menuName === tabValue && window.location.href.split('/#')[1].indexOf(item.pUrl) !== -1 );
-    return res.childMenuList.some((item: any) => item.menuName === btnValue && item.menuType === 3);
+    let res = tabArr?.find((item: any) => item.menuName === tabValue && window.location.href.split('/#')[1].indexOf(item.pUrl) !== -1 );
+    return res?.childMenuList?.some((item: any) => item.menuName === btnValue && item.menuType === 3);
   } else {
-    return btnArr.some((item: any) => item.menuName === btnValue && window.location.href.split('/#')[1].indexOf(item.pUrl) !== -1)
+    return btnArr?.some((item: any) => item.menuName === btnValue && window.location.href.split('/#')[1].indexOf(item.pUrl) !== -1)
   }
 }
 

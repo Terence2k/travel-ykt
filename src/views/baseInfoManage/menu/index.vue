@@ -1,7 +1,7 @@
 <template>
   <CommonTable :dataSource="state.tableData.data" :columns="columns">
       <template #button>
-        <a-button type="primary" @click="addOrUpdate({ handle: 'add' })" v-permission="'新增'">新增</a-button>
+        <a-button type="primary" @click="addOrUpdate({ handle: 'add' })" v-permission="'管理平台_新增'">新增</a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'menuType'">
@@ -12,8 +12,8 @@
         </template>
         <template v-if="column.key === 'action'">
           <div class="action-btns">
-            <a @click="addOrUpdate({  row: record,  handle: 'update'})" v-permission="'编辑'">编辑</a>
-            <a @click="deleteRow(record)" v-permission="'删除'">删除</a>
+            <a @click="addOrUpdate({  row: record,  handle: 'update'})" v-permission="'管理平台_编辑'">编辑</a>
+            <a @click="deleteRow(record)" v-permission="'管理平台_删除'">删除</a>
           </div>
         </template>
     </template>
@@ -118,7 +118,8 @@
   const onSearch = () => {
     api.menuList().then((res: any) => {
       handleMenuTree(res);
-      state.tableData.data = res;
+      // 只拿取systemMark为0的pc端菜单
+      state.tableData.data = res?.filter((item: any) => item.systemMark === 0);
       state.tableData.total = res.total;
     })
   }
