@@ -23,8 +23,6 @@ import BaseModal from '@/components/common/BaseModal.vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import { isIntegerNotMust, isBtnZeroToHundred } from '@/utils/validator';
 import { Ref } from 'vue';
-import lodash from 'lodash';
-import { message } from 'ant-design-vue';
 const dialogVisible = ref(false);
 const props = defineProps({
 	modelValue: {
