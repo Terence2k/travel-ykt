@@ -194,12 +194,12 @@
         key: 'businessTypeName',
       },
       {
-        title: '管理员姓名',
+        title: '用户姓名',
         dataIndex: 'username',
         key: 'username',
       },
       {
-        title: '管理员手机号',
+        title: '手机号',
         dataIndex: 'mobile',
         key: 'mobile',
       },
@@ -209,7 +209,7 @@
         key: 'account',
       },
       {
-        title: '管理员角色',
+        title: '角色',
         dataIndex: 'roleList',
         key: 'roleList',
       },

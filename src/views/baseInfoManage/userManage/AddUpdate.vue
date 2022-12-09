@@ -187,6 +187,7 @@
       formValidate.value.roleIds = formValidate.value.roleList.map((item: any) => item.oid);
       options.title = '编辑用户';
     } else {
+      formValidate.value.userStatus = 1;
       options.title = '新增用户';
     }
   }
