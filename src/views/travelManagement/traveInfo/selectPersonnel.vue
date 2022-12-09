@@ -44,7 +44,7 @@
 						</a-select>
 					</template>
 					<template v-if="column.key === 'specialCertificateImg'">
-						<Upload v-model="record.specialCertificateImg" :maxCount="5" v-if="(record.purchased == 2 && record.specialCertificateType !=null)" disabled/>
+						<Upload v-model="record.specialCertificateImg" :maxCount="record.num" v-if="(record.purchased == 2 && record.specialCertificateType !=null)" disabled/>
 						<Upload v-model="record.specialCertificateImg" :maxCount="5" v-else-if="record.specialCertificateType == 1 && record.purchased != 2" />
 					</template>
 				</template>
@@ -291,6 +291,12 @@ const onSearch = () => {
 	//props.routeId后面传这个
 	api.getItineraryTourist(props.routeId).then((res: any) => {
 		state.tableData.data = res;
+		// 处理显示照片个数
+		let specialCertificateImgData=res.touristList.filter((it:any)=>it.purchased==2)
+		specialCertificateImgData.map((i:any,index:number)=>{
+			i.num=specialCertificateImgData[index].specialCertificateImg.split(',').length
+			return i
+		})
 		state.tableData.data.touristList.map((it: any)=>{
 			return it.disabledValue=true
 		})

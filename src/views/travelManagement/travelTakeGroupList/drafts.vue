@@ -121,6 +121,15 @@
 	const pageSideChange = () => {
 
 	}
+	const goToPath = (row: any) => {
+		router.push({
+			path: '/travel/travel_manage/add_travel',
+			query: {
+				id: row.oid,
+				itineraryNo: row.itineraryNo
+			}
+		})
+	}
 	const goToDetail = (row: any) => {
 		router.push({
       path: '/travel/travel_manage/travel_detail',

@@ -136,3 +136,9 @@ export enum TicketType {
   UNITE = 2,
   SHOW = 3
 }
+
+export enum Insurance {
+  NOTSURE = 1, //没有确认
+  SUBBUY = 2, //地接社购买
+  TEAMBUY = 3 //组团社购买
+}

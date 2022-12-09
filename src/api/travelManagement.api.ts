@@ -66,12 +66,13 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
-	getTicketList(id: any) {
+	getTicketList(id: any, data: any) {
 		return request({
 			url: `${commonPath}/ticket-service/public/api/scenic-travel-itinerary/get-all-ticket/${id}`,
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
 			},
+			data,
 			method: 'get',
 			showLoading: false,
 		});
@@ -529,6 +530,25 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
+	//撤销重提确认
+	confirmSubmit(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/confirmSubmit`,
+			data,
+			method: 'post',
+			showLoading: true,
+		});
+	},
+
+	//撤销重提确认
+	submitRevokeAndRecommits(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/pc/submitRevokeAndRecommit`,
+			data,
+			method: 'post',
+			showLoading: true,
+		});
+	},
 	//整团撤销
 	submitAllRevoke(data: any) {
 		return request({
@@ -638,11 +658,31 @@ export const travelManagement = {
 			showLoading: true,
 		});
 	},
+	// 行程变更游客列表
+	listByItinerary(id: number) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryTourist/listByItinerary/${id}`,
+			method: 'get',
+			showLoading: false,
+		});
+	},
 	getChildTicket(data: any) {
 		return request({
 			url: `${commonPath}/ticket-service/public/api/scenic-travel-itinerary/get-all-sub-ticket`,
 			data,
 			method: 'get',
+			showLoading: false,
+		});
+	},
+	//行程变更游客填写新的行程单
+	changeTouristFillNewItinerary(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/change/changeTouristFillNewItinerary`,
+			data,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			method: 'put',
 			showLoading: false,
 		});
 	},

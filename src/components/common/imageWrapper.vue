@@ -6,7 +6,7 @@
 			list-type="picture-card"
 			:beforeUpload="beforeUpload"
       :customRequest="uploadFile"
-			accept=".jpg,.png"
+			accept=".jpg,.png,.pdf"
 			@preview="handlePreview"
       @remove="removeImg"
       :disabled="disabled"
@@ -22,7 +22,7 @@
 			list-type="picture-card"
 			:beforeUpload="beforeUpload"
       :customRequest="uploadFile"
-			accept=".jpg,.png"
+			accept=".jpg,.png,.pdf"
 			@preview="handlePreview"
       @remove="removeImg"
       :disabled="disabled"
@@ -43,9 +43,8 @@ import { PlusOutlined } from '@ant-design/icons-vue';
 import { defineComponent, ref, Ref } from 'vue';
 import type { UploadProps } from 'ant-design-vue';
 import { message } from 'ant-design-vue';
-import awsUploadFile from '@/utils/awsUpload';
+import { awsUploadFile, awsGetPreSignedUrl } from '@/utils/awsUpload';
 import { getUserInfo } from '@/utils/util';
-import api from '@/api';
 
 const props = defineProps({
 	modelValue: {
@@ -136,8 +135,8 @@ const handlePreview = async (file: UploadProps['fileList'][number]) => {
 };
 const removeImg = (file: any) => {
   emit('remove', {url: file.url, index: file.index});
-  tempData.value.splice(file.index, 1);
-  unHandleImage.value.splice(file.index, 1);
+  tempData.value.splice(Number(file.uid), 1);
+  unHandleImage.value.splice(Number(file.uid), 1);
   setTimeout(() => {
     emit('update:modelValue', tempData.value?.join(','));
   }, 0);
@@ -145,19 +144,18 @@ const removeImg = (file: any) => {
 }
 
 const handleImage = async (val: any) => {
-  const config = await api.commonApi.cosUploadUrl();
-  fileList.value = val.split(',').map((item: any, index: any) => {
+	fileList.value = val.split(',').map(async (item: any, index: any) => {
     if (item.indexOf('http:') === -1) {
-      item = `http://${config.hostName}/${config.bucket}${config.prefix}/${item}`
+      item = await awsGetPreSignedUrl(item);
     }
     return {
       uid: index.toString(),
       name: item,
       status: 'done',
       url: item,
-      index: index
     }
   })
+  fileList.value = await Promise.all(fileList.value);
 }
 
 watch(

@@ -42,9 +42,9 @@
 			<CommonTable :dataSource="state.tableData.data" :columns="columns">
 				<template #bodyCell="{ column, record }">
 					<!-- 团队类型 -->
-					<template v-if="column.key === 'teamType'">
+					<!-- <template v-if="column.key === 'teamType'">
 						<span>{{ getTeamTypesName(record.teamType) }}</span>
-					</template>
+					</template> -->
 					<!-- 预订金额 单位转成元-->
 					<template v-if="column.key === 'scheduledAmount'">
 						{{ record.scheduledAmount / 100 > 0 ? (record.scheduledAmount / 100).toFixed(2) : 0 }}
@@ -94,15 +94,14 @@ import { any } from 'vue-types';
 import api from '@/api';
 interface StateType {
 	tableData: TableDataType;
-	settlementTimeList: Array<any>,
-	verificationTimeList: Array<any>,
+	settlementTimeList: Array<any>;
+	verificationTimeList: Array<any>;
 }
 interface TableDataType {
 	param: ParamType;
 	data: Array<DataType>;
 	total: number;
 	loading: boolean;
-	
 }
 interface ParamType {
 	orderNo?: number | string; //订单编号
@@ -110,19 +109,20 @@ interface ParamType {
 	hotelName?: number | string; //酒店名称
 	teamType?: number | string | null; //团队类型id
 	subTravelOid?: number | string | null; //地接社id
-	verificationStartTime: ''; //核销开始时间
-	verificationEndTime: ''; //核销结束时间
+	verificationStartTime: number | string | null; //核销开始时间
+	verificationEndTime: number | string | null; //核销结束时间
 	settlementStartTime: number | string | null; //结算开始时间
 	settlementEndTime: number | string | null; //结算结束时间
 	pageSize?: number; //页大小
 	pageNo?: number; //页号
 }
 interface DataType {
-	hotelOrderId?: string | number;
-	orderNo?: string | number; //订单编号
+	privateNo?: string | number; //自编团号
+	hotelOrderId?: string | number; //酒店主订单id
+	orderNo?: string | number; //订单号
 	itineraryNo?: string | number; //团单编号
-	teamType?: string | number; //团队类型
-	subTravelOid?: string | number; //地接社id
+	teamType?: string | number; //团队类型id
+	subTravelOid?: string | number; //旅行社id
 	subTravelName?: string | number; //地接社名称
 	settlementTime?: string | number; //结算时间
 	hotelName?: string | number; //酒店名称
@@ -134,19 +134,17 @@ interface DataType {
 	departureDate?: string | number; //离店日期
 	scheduledAmount?: string | number; //预定金额
 	noVerificationAmount?: string | number; //未核销金额
-	fullRule?: string | number; //满减规则-满
-	reduceRule?: string | number; //满减规则-减
 	reduceAfterAmount?: string | number; //减免后金额
 	actualFullNumber?: string | number; //实际减免数量
 	actualFullAmount?: string | number; //实际减满金额
 	actualAmount?: string | number; //实际金额
-	hotelPrice?: string | number; //酒店实收
+	hotelPrice?: string | number; //酒店冻结
 	settlementRuleList: Array<SettlementRuleListType>; //结算规则信息
 }
 interface SettlementRuleListType {
 	costName: string; //结算规则名称
 	settlementCost: string | number; //结算费用
-	costType: string | number //结算类型
+	costType: string | number; //结算类型
 }
 const options = settlementOptions();
 const initOption = async () => {
@@ -155,16 +153,16 @@ const initOption = async () => {
 	await options.getEarthContactAgencyList();
 };
 // 计算属性 匹配团队类型
-const getTeamTypesName = computed(() => (value: any) => {
-	if (options.teamTypesLists) {
-		const idx = options.teamTypesLists.findIndex((item) => item.oid === value);
-		if (idx !== -1) {
-			return options.teamTypesLists[idx]['name'];
-		}
-		return '';
-	}
-	return '';
-});
+// const getTeamTypesName = computed(() => (value: any) => {
+// 	if (options.teamTypesLists) {
+// 		const idx = options.teamTypesLists.findIndex((item) => item.oid === value);
+// 		if (idx !== -1) {
+// 			return options.teamTypesLists[idx]['name'];
+// 		}
+// 		return '';
+// 	}
+// 	return '';
+// });
 const columns = computed(() => {
 	const column: TableColumnsType = [
 		{
@@ -181,34 +179,16 @@ const columns = computed(() => {
 		},
 		{
 			title: '自编团号',
-			dataIndex: 'itineraryNo',
-			key: 'itineraryNo',
+			dataIndex: 'privateNo',
+			key: 'privateNo',
 			width: 100,
 		},
 		{
 			title: '旅行社',
-			dataIndex: 'itineraryNo',
-			key: 'itineraryNo',
+			dataIndex: 'subTravelName',
+			key: 'subTravelName',
 			width: 100,
 		},
-		// {
-		// 	title: '团队类型',
-		// 	dataIndex: 'teamType',
-		// 	key: 'teamType',
-		// 	width: 100,
-		// },
-		// {
-		// 	title: '地接社',
-		// 	dataIndex: 'subTravelName',
-		// 	key: 'subTravelName',
-		// 	width: 100,
-		// },
-		// {
-		// 	title: '作团人',
-		// 	dataIndex: 'feeText',
-		// 	key: 'feeText',
-		// 	width: 80
-		// },
 		{
 			title: '结算时间',
 			dataIndex: 'settlementTime',
@@ -260,18 +240,6 @@ const columns = computed(() => {
 					key: 'departureDate',
 					width: 100,
 				},
-				// {
-				// 	title: '单价(元)',
-				// 	dataIndex: 'companyAddress',
-				// 	key: 'companyAddress',
-				// 	width: 80
-				// },
-				// {
-				// 	title: '加价(元)',
-				// 	dataIndex: 'companyAddress',
-				// 	key: 'companyAddress',
-				// 	width: 80
-				// },
 				{
 					title: '预订金额(元)',
 					dataIndex: 'scheduledAmount',
@@ -365,87 +333,11 @@ const state = reactive<StateType>({
 // 查询
 const initList = async () => {
 	state.tableData.loading = true;
-	let res = await api.hotelAccountList(state.tableData.param);
+	let res = await api.travelAgencyAndHotelReportStatement(state.tableData.param);
 	const { total, content } = res;
 	state.tableData.total = total;
 	state.tableData.data = content;
 	state.tableData.loading = false;
-	// state.tableData.data = [
-	// 		{
-	// 			hotelOrderId: 1,
-	// 			orderNo: "订单编号", //订单编号
-	// 			itineraryNo: "团单编号", //团单编号
-	// 			teamType: 64, //团队类型
-	// 			subTravelOid: 1, //地接社id
-	// 			subTravelName: "地接社名称", //地接社名称
-	// 			settlementTime: "2011-10-10", //结算时间
-	// 			hotelName: "酒店名称", //酒店名称
-	// 			verificationTime: "2011-10-10", //核销时间
-	// 			hotelStarCode: "酒店星级", //酒店星级
-	// 			scheduledRooms: 1, //预定人数
-	// 			actualRooms: 1, //实刷数
-	// 			arrivalDate: "2011-10-10 18:00:00", //入住日期
-	// 			departureDate: "2011-10-10 20:20:00", //离店日期
-	// 			scheduledAmount: 1, //预定金额
-	// 			noVerificationAmount: 1, //未核销金额
-	// 			fullRule: 1, //满减规则-满
-	// 			reduceRule: 1, //满减规则-减
-	// 			reduceAfterAmount: 1, //减免后金额
-	// 			actualFullNumber: 1, //实际减免数量
-	// 			actualFullAmount: 1, //实际减满金额
-	// 			actualAmount: 1, //实际金额
-	// 			hotelPrice: 1, //酒店实收
-	// 			settlementRuleList: [
-	// 				{
-	// 					costName: "规则1", //费用名称
-	// 					settlementCost: 1, //结算费用
-	// 					costType: 1 //结算类型
-	// 				},
-	// 				{
-	// 					costName: "规则2", //费用名称
-	// 					settlementCost: 1, //结算费用
-	// 					costType: 1 //结算类型
-	// 				}
-	// 			] //结算规则名称list
-	// 		},
-	// 		{
-	// 			hotelOrderId: 1,
-	// 			orderNo: "订单编号", //订单编号
-	// 			itineraryNo: "团单编号", //团单编号
-	// 			teamType: 64, //团队类型
-	// 			subTravelOid: 1, //地接社id
-	// 			subTravelName: "地接社名称", //地接社名称
-	// 			settlementTime: "2011-10-10", //结算时间
-	// 			hotelName: "酒店名称", //酒店名称
-	// 			verificationTime: "2011-10-10", //核销时间
-	// 			hotelStarCode: "酒店星级", //酒店星级
-	// 			scheduledRooms: 1, //预定人数
-	// 			actualRooms: 1, //实刷数
-	// 			arrivalDate: "2011-10-10 18:00:00", //入住日期
-	// 			departureDate: "2011-10-10 20:20:00", //离店日期
-	// 			scheduledAmount: 1, //预定金额
-	// 			noVerificationAmount: 1, //未核销金额
-	// 			fullRule: 1, //满减规则-满
-	// 			reduceRule: 1, //满减规则-减
-	// 			reduceAfterAmount: 1, //减免后金额
-	// 			actualFullNumber: 1, //实际减免数量
-	// 			actualFullAmount: 1, //实际减满金额
-	// 			actualAmount: 1, //实际金额
-	// 			hotelPrice: 1, //酒店实收
-	// 			settlementRuleList: [
-	// 				{
-	// 					costName: "规则2", //费用名称
-	// 					settlementCost: 1, //结算费用
-	// 					costType: 1 //结算类型
-	// 				},
-	// 				{
-	// 					costName: "规则3", //费用名称
-	// 					settlementCost: 1, //结算费用
-	// 					costType: 1 //结算类型
-	// 				}
-	// 			] //结算规则名称list
-	// 		}
-	// 	]
 };
 //搜索
 const onHandleCurrentChange = (val: number) => {
@@ -483,7 +375,8 @@ const getSettlementRule = computed(() => (column: TableColumnsType, record: Data
 	const data = record.settlementRuleList;
 	for (const key in data) {
 		if (column.title === data[key].costName) {
-			return data[key].settlementCost;
+			let price:any = data[key].settlementCost;
+			return ((price / 100) > 0 ? (price / 100).toFixed(2) : 0);
 		}
 	}
 	return '';

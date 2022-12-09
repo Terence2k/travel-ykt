@@ -67,6 +67,25 @@ export function isBtnZeroToHundred(rule: any, value: any, callback: any) {
 
 	// }, 100);
 }
+// 验证是否是大于等于0的数
+export function isOneHundred(rule: any, value: any, callback: any) {
+	if (!value && value != 0) {
+		return Promise.reject('输入不可为空');
+	}
+	console.log(parseFloat(value))
+	if (isNaN(parseFloat(value))) {
+		return Promise.reject('请输入数字');
+	} else {
+		if (value < 0) {
+			return Promise.reject('请输入大于等于0的数字');
+		} else {
+			return Promise.resolve();
+		}
+	}
+	// setTimeout(() => {
+
+	// }, 100);
+}
 // 验证0-1的数，保留以为小数点
 export function isOnedecimalpoint(rule: any, value: string, callback: (error?: Error) => void): void {
 	if (!value) {

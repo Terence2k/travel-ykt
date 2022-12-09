@@ -3,7 +3,7 @@ import { request, commonPath } from '@/utils/index';
 // 菜单列表
 export async function menuList(data: any) {
 	return request({
-		url: `${commonPath}/customer-service/public/api/menu/tree`,
+		url: `${commonPath}/customer-service/public/api/menu/tree/authorizationMenu`,
 		method: 'get',
 		data,
 		showLoading: true

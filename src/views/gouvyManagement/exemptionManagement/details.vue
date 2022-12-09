@@ -36,7 +36,7 @@
 			<CommonTable :dataSource="state.tableData.data.applyReduceTouristList" :columns="columns" :scrollY="false">
 				<template #bodyCell="{ column, index, record }">
 					<template v-if="column.key === 'specialCertificateImg'">
-						<Upload v-model="record.specialCertificateImg" :maxCount="5" v-if="record.specialCertificateType!=null"  disabled />
+						<Upload v-model="record.specialCertificateImg" :maxCount="record.num" v-if="record.specialCertificateType!=null"  disabled />
 					</template>
 				</template>
 			</CommonTable>
@@ -175,8 +175,13 @@ const download = () => {
 	message.success('下载成功');
 };
 const informationList = () => {
-	api.ExemptionManagementDetail(route?.query?.oid).then((res) => {
+	api.ExemptionManagementDetail(route?.query?.oid).then((res:any) => {
 		state.tableData.data = res;
+		// 处理显示照片个数
+		res.applyReduceTouristList.map((i:any,index:number)=>{
+			i.num=res.applyReduceTouristList[index].specialCertificateImg.split(',').length
+			return i
+		})
 	});
 };
 const go = () => {

@@ -54,7 +54,7 @@ const newAwsObj = () => {
   });
 };
 
-const awsUploadFile = (options: any) => {
+export const awsUploadFile = (options: any) => {
   return new Promise<{
     files: string[];
   }>(async (resolve, reject) => {
@@ -110,9 +110,43 @@ const awsUploadFile = (options: any) => {
   });
 }
 
+export const awsGetPreSignedUrl = (fileUrl: string) => {
+  return new Promise(async (resolve, reject) => {
+    // businessType业态
+    const { aws, bucket, filePath, prefix } = await newAwsObj();
+    if (!aws) {
+      handleUploadErr(reject, '生成 aws 实例失败');
+    } else {
+      try {
+        console.log('fileUrl:', fileUrl)
+        aws.getSignedUrl('getObject', {
+          Bucket: `${bucket}${prefix}`,
+          Key: fileUrl,
+        }, async (err: any, data: any) => {
+          console.log(err);
+          console.log(data);
+          if (!data) {
+            handleUploadErr(reject, 'aws获取访问链接错误');
+          }
+
+          if (data) {
+            resolve(data);
+          } else {
+            handleUploadErr(reject, 'aws获取访问链接错误');
+          }
+          if (err) {
+            handleUploadErr(reject, 'aws获取访问链接错误');
+          }
+        })
+      } catch (error) {
+        console.log(error);
+        reject(error);
+      }
+    }
+  });
+}
+
 // 上传错误处理
 const handleUploadErr = (reject: any, err: any) => {
   reject(err);
 };
-
-export default awsUploadFile;

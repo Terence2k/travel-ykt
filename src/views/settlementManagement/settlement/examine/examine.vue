@@ -19,6 +19,11 @@
 					<div v-else-if="record.accountingIsNormal == 1">正常</div>
 					<div v-else>-</div>
 				</template>
+				<!-- 冻结状态 -->
+				<template v-if="column.key === 'test'">
+					<div class="red" v-if="record.test == 0">已冻结</div>
+					<div v-else>未冻结</div>
+				</template>
 				<!-- 行程费用 单位转成元-->
 				<template v-if="column.key === 'totalFee'">
 					{{ record.totalFee / 100 > 0 ? (record.totalFee / 100).toFixed(2) : 0 }}
@@ -27,6 +32,8 @@
 					<div class="action-btns">
 						<a @click="examine('one', record)" v-permission="'预结算_审核'">审核</a>
 						<a @click="reclosing(record)" v-permission="'预结算_重新结算'">重新结算</a>
+						<a @click="thaw(record)" v-permission="'预结算_解冻'" v-if="record.test == 0">解冻</a>
+						<a @click="frozen(record)" v-permission="'预结算_冻结'" v-else>冻结</a>
 						<a @click="toInfo(record)" v-permission="'预结算_查看'">查看</a>
 					</div>
 				</template>
@@ -104,6 +111,11 @@ const columns = [
 		key: 'accountingIsNormal',
 	},
 	{
+		title: '冻结状态',
+		dataIndex: 'test',
+		key: 'test',
+	},
+	{
 		title: '操作',
 		key: 'action',
 		fixed: 'right',
@@ -131,6 +143,14 @@ const tipSubmit = async () => {
 			message.success('操作成功');
 			onSearch();
 		});
+		tipCancel();
+	}
+	// 冻结&冻结
+	if (modalData.value.type == 'frozen' || modalData.value.type == 'thaw') {
+		// api.settlementUpdate(modalData.value.data).then((res: any) => {
+		// 	message.success('操作成功');
+		// 	onSearch();
+		// });
 		tipCancel();
 	}
 };
@@ -205,7 +225,6 @@ const onSearch = async () => {
 	const list: [any] = dealData(content);
 	state.tableData.data = list;
 	state.tableData.loading = false;
-	console.log(state.tableData.param);
 };
 // 向父组件暴露方法
 defineExpose({ onSearch });
@@ -219,6 +238,26 @@ const reclosing = (record: any) => {
 	};
 	modalData.value.show = true;
 };
+// 冻结
+const frozen = (record: any) => {
+	modalData.value.params = { title: '冻结', content: '是否确定冻结行程单' };
+	modalData.value.type = 'frozen';
+	modalData.value.data = {
+		status: 14,
+		itineraryNoList: [record.itineraryNo],
+	};
+	modalData.value.show = true;
+}
+// 解冻
+const thaw = (record: any) => {
+	modalData.value.params = { title: '解冻', content: '是否确定解冻行程单' };
+	modalData.value.type = 'thaw';
+	modalData.value.data = {
+		status: 14,
+		itineraryNoList: [record.itineraryNo],
+	};
+	modalData.value.show = true;
+}
 // 审核通过
 const examine = (type: string, record: any) => {
 	// type:one单项  all批量
