@@ -13,7 +13,6 @@
         <table class="change_table" cellpadding="16px" border="1">
           <tr class="row" v-for="(value, key) in detailsArrList" :key="key">
             <td class="key">{{ keyNameList[key] }}</td>
-
             <td class="value" v-if="['manageUrl', 'businessLicenseUrl', 'legalPersonUrl'].includes(key) && value">
               <a-image width="200px" :src="value" />
             </td>
