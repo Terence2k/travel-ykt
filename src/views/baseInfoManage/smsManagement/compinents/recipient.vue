@@ -1,9 +1,9 @@
 <template>
-	<BaseModal :title="options.title" v-model="dialogVisible" style="width: 800px">
-		<div class="head_btn">
+	<BaseModal :title="options.title" v-model="dialogVisible" style="width: 900px">
+		<!-- <div class="head_btn">
 			<a>下载模板</a>
 			<a>导入名单</a>
-		</div>
+		</div> -->
 		<a-form ref="formRef" :rules="rulesRef" :model="editableData" autocomplete="off" labelAlign="left">
 			<CommonTable :dataSource="tableData" :columns="columns" style="padding: 0" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
@@ -11,15 +11,19 @@
 						{{ index + 1 }}
 					</template>
 					<template v-if="inputKey.includes(column.key)">
-						<div>
-							<a-form-item :name="[record.key ? record.key : record.oid, column.key]">
-								<a-input v-model:value="editableData[record.key ? record.key : record.oid][column.key]" placeholder="请输入" />
+						<div style="width: 98px">
+							<a-form-item v-if="editableData[record.key ? record.key : record.oid]" :name="[record.key ? record.key : record.oid, column.key]">
+								<a-input v-model:value="editableData[record.key ? record.key : record.oid][column.key]" placeholder="请输入" style="width: 150px" />
 							</a-form-item>
+							<template v-else>
+								{{ text }}
+							</template>
 						</div>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a class="item" @click="save(record.key ? record.key : record.oid)">确定</a>
+							<a class="item" v-if="!editableData[record.key ? record.key : record.oid]" @click="edit(record.key ? record.key : record.oid)">编辑</a>
+							<a class="item" v-else @click="save(record.key ? record.key : record.oid)">确定</a>
 							<a class="item" @click="del(index)">删除</a>
 						</div>
 					</template>
@@ -31,7 +35,7 @@
 		</div>
 		<template v-slot:footer>
 			<a-button @click="cancel">取消</a-button>
-			<a-button type="primary" @click="dialogVisible = false">确定</a-button>
+			<a-button type="primary" @click="onSubimt">确定</a-button>
 		</template>
 	</BaseModal>
 </template>
@@ -40,8 +44,8 @@
 import { ref, Ref, computed, watch, toRefs, reactive } from 'vue';
 import BaseModal from '@/components/common/BaseModal.vue';
 import CommonTable from '@/components/common/CommonTable.vue';
-import { useTouristInfo } from './recipient';
-const props = reactive({
+import { usesmsInfo } from './recipient';
+const props = defineProps({
 	modelValue: {
 		type: Boolean,
 		default: false,
@@ -49,7 +53,7 @@ const props = reactive({
 	params: Object,
 });
 const emits = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
-const { columns, editableData, dialogVisible, options, rulesRef, formRef, tableData, inputKey, add, cancel, del, save } = useTouristInfo(
+const { columns, editableData, dialogVisible, options, rulesRef, formRef, tableData, inputKey, edit, add, cancel, del, save, onSubimt } = usesmsInfo(
 	props,
 	emits
 );
@@ -74,5 +78,9 @@ const { columns, editableData, dialogVisible, options, rulesRef, formRef, tableD
 }
 .ant-form-item {
 	margin-top: 22px;
+}
+
+.ant-form-item-with-help {
+	width: 130px;
 }
 </style>
