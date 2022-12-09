@@ -118,7 +118,8 @@
   const onSearch = () => {
     api.menuList().then((res: any) => {
       handleMenuTree(res);
-      state.tableData.data = res;
+      // 只拿取systemMark为0的pc端菜单
+      state.tableData.data = res?.filter((item: any) => item.systemMark === 0);
       state.tableData.total = res.total;
     })
   }
