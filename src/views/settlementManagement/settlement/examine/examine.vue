@@ -32,7 +32,8 @@
 					<div class="action-btns">
 						<a @click="examine('one', record)" v-permission="'预结算_审核'">审核</a>
 						<a @click="reclosing(record)" v-permission="'预结算_重新结算'">重新结算</a>
-						<a @click="frozen(record)" v-permission="'预结算_冻结'">冻结</a>
+						<a @click="thaw(record)" v-permission="'预结算_解冻'" v-if="record.test == 0">解冻</a>
+						<a @click="frozen(record)" v-permission="'预结算_冻结'" v-else>冻结</a>
 						<a @click="toInfo(record)" v-permission="'预结算_查看'">查看</a>
 					</div>
 				</template>
@@ -144,8 +145,8 @@ const tipSubmit = async () => {
 		});
 		tipCancel();
 	}
-	// 冻结
-	if (modalData.value.type == 'frozen') {
+	// 冻结&冻结
+	if (modalData.value.type == 'frozen' || modalData.value.type == 'thaw') {
 		// api.settlementUpdate(modalData.value.data).then((res: any) => {
 		// 	message.success('操作成功');
 		// 	onSearch();
@@ -241,6 +242,16 @@ const reclosing = (record: any) => {
 const frozen = (record: any) => {
 	modalData.value.params = { title: '冻结', content: '是否确定冻结行程单' };
 	modalData.value.type = 'frozen';
+	modalData.value.data = {
+		status: 14,
+		itineraryNoList: [record.itineraryNo],
+	};
+	modalData.value.show = true;
+}
+// 解冻
+const thaw = (record: any) => {
+	modalData.value.params = { title: '解冻', content: '是否确定解冻行程单' };
+	modalData.value.type = 'thaw';
 	modalData.value.data = {
 		status: 14,
 		itineraryNoList: [record.itineraryNo],
