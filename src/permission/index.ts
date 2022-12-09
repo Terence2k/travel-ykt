@@ -6,7 +6,7 @@ const treeForeach = (btnValue: any, tabValue?: any) => {
   const btnArr = JSON.parse(<string>localStorage.getItem('btnArr') || '[]');
   if (tabValue) {
     let res = tabArr?.find((item: any) => item.menuName === tabValue && window.location.href.split('/#')[1].indexOf(item.pUrl) !== -1 );
-    return res.childMenuList.some((item: any) => item.menuName === btnValue && item.menuType === 3);
+    return res?.childMenuList?.some((item: any) => item.menuName === btnValue && item.menuType === 3);
   } else {
     return btnArr?.some((item: any) => item.menuName === btnValue && window.location.href.split('/#')[1].indexOf(item.pUrl) !== -1)
   }
