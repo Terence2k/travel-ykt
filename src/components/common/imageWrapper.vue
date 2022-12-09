@@ -145,13 +145,15 @@ const removeImg = (file: any) => {
 
 const handleImage = async (val: any) => {
 	fileList.value = val.split(',').map(async (item: any, index: any) => {
-    const res = await awsGetPreSignedUrl(item);
+    if (item.indexOf('http:') === -1) {
+      item = await awsGetPreSignedUrl(item);
+    }
     return {
-            uid: index.toString(),
-            name: res,
-            status: 'done',
-            url: res,
-          }
+      uid: index.toString(),
+      name: item,
+      status: 'done',
+      url: item,
+    }
   })
   fileList.value = await Promise.all(fileList.value);
 }
