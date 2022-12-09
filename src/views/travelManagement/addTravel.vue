@@ -33,24 +33,6 @@
 				提交发团
 			</div>
 		</div>
-
-		<div class="footer d-flex justify-content-between" v-if="isRevoke">
-			<div class="footer-btn">
-				<a-button
-					type="primary"
-					@click="
-						() => {
-							check = !check;
-							sendTeam = false;
-							isSaveBtn = true;
-						}
-					"
-					>保存</a-button
-				>
-				<a-button v-show="activeKey < pages.length - 1" type="primary" @click="activeKey = activeKey + 1">下一步</a-button>
-			</div>
-			<div class="submit-btn" @click="revoke">撤销重提</div>
-		</div>
 	</div>
 </template>
 <script lang="ts" setup>
@@ -75,6 +57,9 @@ const activeKey = ref(0);
 const check = ref(false); //触发保存
 const sendTeam = ref(false); //发团判断
 const isSaveBtn = ref(false); //是否点击保存按钮
+const state = reactive({
+	newItineraryId:''
+});
 const pages = [
 	{
 		name: baseInfo,
@@ -106,6 +91,7 @@ const pages = [
 	},
 ];
 let rulesPass = reactive<{ [k: string]: any }>([]);
+
 let obj = reactive({
 	data: {},
 });
@@ -120,36 +106,6 @@ const save = (e: any) => {
 	}
 };
 
-const isRevoke = computed(() => router.currentRoute.value.query.isRevoke);
-
-const revokePower = async () => {
-	let pW = new FormData();
-
-	pW.append('itineraryId', router.currentRoute.value.query.id);
-	pW.append('relatedItineraryNo', router.currentRoute.value.query.itineraryNo);
-
-	await api.travelManagement.checkOutSideTicketIsRefund(pW);
-
-	return true;
-};
-
-const revoke = async () => {
-	let res = await revokePower();
-
-	if (res) {
-		const { pic, revokeReason } = travelStore.revokeParams;
-		let params = {
-			itineraryId: router.currentRoute.value.query.id,
-			revokeReason,
-			attachmentList: pic.split(','),
-			hotelList: travelStore.hotelList,
-			ticketList: travelStore.ticketList,
-			touristList: travelStore.touristList,
-		};
-
-		console.log(res, params);
-	}
-};
 
 const sendGroup = async (id: string) => {
 	const formData = new FormData();
@@ -170,6 +126,10 @@ const saveItinerary = (val: any) => {
 		if (!travelStore.guideList.length) return message.error('请选择带团导游');
 		if (!travelStore.touristList.length) return message.error('请添加游客');
 		if (!travelStore.trafficList.length) return message.error('请添加交通信息');
+		if (!travelStore.insuranceStatus) return message.error('请选择保险购买方');
+	}
+	if (travelStore.insuranceStatus && !travelStore.checkInsurance) {
+		return message.error('请同意《云南省团队旅游保险购买政策》、《一卡通平台免责声明》')
 	}
 	const guideTime = travelStore.guideList.some((it: any) => !it.startDate);
 	if (guideTime) {
@@ -190,6 +150,7 @@ const saveItinerary = (val: any) => {
 			attachmentList: travelStore.attachmentList,
 			basicParam: val.basicParam || {},
 			guideList: travelStore.guideList.filter((it: any) => it.edit),
+			insuranceStatus: travelStore.insuranceStatus,
 			itineraryInfoParam: {
 				compositeProducts: travelStore.curentProduct,
 			},
@@ -277,10 +238,10 @@ const disTime = (res: any) => {
 const getHealthCode = async () => {
 	travelStore.touristList = (await travelStore.getHealthCode(travelStore.touristList)) as any;
 };
-
 const getTraveDetail = () => {
 	const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
-	if (!route.query.id && !traveListData.oid) {
+	console.log(traveListData,'traveListData')
+	if (!route.query.id  && !traveListData.oid) {
 		travelStore.setBaseInfo({});
 		travelStore.setGuideList([]);
 		travelStore.setTouristList([]);
@@ -290,7 +251,7 @@ const getTraveDetail = () => {
 	api.travelManagement
 		.getItineraryDetail(
 			{
-				oid: route.query.id || traveListData.oid,
+				oid: route.query.id  || traveListData.oid ,
 				pageNo: 1,
 				pageSize: 100000,
 			},
@@ -302,7 +263,6 @@ const getTraveDetail = () => {
 			res.basic.touristNum = res.basic.touristCount || 0;
 			travelStore.setBaseInfo(res.basic);
 			res.attachmentList.length && travelStore.setFileInfo(res.attachmentList);
-			travelStore.setGuideList(res.guideList);
 			travelStore.setTouristList(
 				res.touristList.content.map((it: any) => {
 					if (it.specialCertificatePicture instanceof String) {
@@ -312,7 +272,6 @@ const getTraveDetail = () => {
 					return it;
 				})
 			);
-
 			res.transportList = res.transportList.map((it: any) => {
 				it.time = [it.startDate, it.endDate];
 				return it;
@@ -350,9 +309,10 @@ const getTraveDetail = () => {
 				}),
 				...travelStore.templateTicket,
 			] as any;
+			travelStore.insuranceStatus = res.insuranceStatus?.toString();
+			travelStore.checkInsurance = res.insuranceStatus ? true : false;
 			travelStore.teamTime = [res.basic.startDate, res.basic.endDate] as any;
 			travelStore.setDisabled = disDate(res);
-
 			travelStore.setStarEndHMS = disTime(res);
 			console.log(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end, '-----');
 			travelStore.setDisabledTime = disabledRangeTime(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end) as any;

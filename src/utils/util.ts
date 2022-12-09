@@ -337,7 +337,7 @@ export const disabledRangeTime = (start: any, end: any) => {
 
 // tab页是否有权限
 export const getTabPermission = (tabName: any) => {
-  const tabArr = JSON.parse(<string>localStorage.getItem('tabArr') || '{}');
+  const tabArr = JSON.parse(<string>localStorage.getItem('tabArr') || '[]');
   let currentUrl = router.currentRoute.value.fullPath;
-  return tabArr.some((item: any) => item.menuName === tabName && currentUrl.indexOf(item.pUrl) !== -1 );
+  return tabArr?.some((item: any) => item.menuName === tabName && currentUrl.indexOf(item.pUrl) !== -1 );
 }
