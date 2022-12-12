@@ -110,10 +110,10 @@ const initOption = async () => {
 };
 // 计算属性 匹配费用归属企业类型
 const getBelongCompanyName = computed(() => (value: any) => {
-	if (useOptions.businessTypeOptionList) {
-		const idx = useOptions.businessTypeOptionList.findIndex((item) => item.codeValue === value);
+	if (useOptions.businessTypeOptionListAll) {
+		const idx = useOptions.businessTypeOptionListAll.findIndex((item) => item.codeValue === value);
 		if (idx !== -1) {
-			return useOptions.businessTypeOptionList[idx]['name'];
+			return useOptions.businessTypeOptionListAll[idx]['name'];
 		}
 		return '';
 	}
