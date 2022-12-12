@@ -23,7 +23,7 @@
 			</a-select>
 		</search-item>
 		<search-item label="行程时间">
-			<a-range-picker @change="timeChange" value-format="YYYY-MM-DD HH:mm:ss"/>
+			<a-range-picker @change="timeChange" value-format="YYYY-MM-DD HH:mm:ss" />
 		</search-item>
 		<template #button>
 			<a-button @click="initList" v-permission="'查询'">查询</a-button>
@@ -33,7 +33,13 @@
 		<!-- 等待行程单枚举获取完成 -->
 		<a-tabs v-model:activeKey="activeKey" v-if="options.itineraryStatus.length > 0">
 			<a-tab-pane v-for="(item, index) in filterPages" :key="index" :tab="item.label">
-				<component ref="listRef" :is="item.name" v-if="index == activeKey" :params="state.tableData.param" :status="getItineraryStatus(item.codeName)"></component>
+				<component
+					ref="listRef"
+					:is="item.name"
+					v-if="index == activeKey"
+					:params="state.tableData.param"
+					:status="getItineraryStatus(item.codeName)"
+				></component>
 			</a-tab-pane>
 		</a-tabs>
 	</div>
@@ -48,6 +54,8 @@ import trip from './trip/trip.vue';
 import examine from './examine/examine.vue';
 import settlement from './settlement/settlement.vue';
 import transferred from './transferred/transferred.vue';
+import massesEnd from './massesEnd/massesEnd.vue';
+
 import { settlementOptions } from '@/stores/modules/settlement';
 import { getTabPermission } from '@/utils';
 import { log } from 'console';
@@ -62,8 +70,8 @@ const getItineraryStatus = computed(() => (value: any) => {
 		}
 		return '';
 	}
-	return ''
-})
+	return '';
+});
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 const route = useRouter();
@@ -74,22 +82,27 @@ const pages = [
 	{
 		name: trip,
 		label: '行程中',
-		codeName: 'AT_OUT'
+		codeName: 'AT_OUT',
+	},
+	{
+		name: massesEnd,
+		label: '已散团',
+		codeName: 'TEAM_END',
 	},
 	{
 		name: examine,
 		label: '预结算',
-		codeName: 'PRE_SETTLE'
+		codeName: 'PRE_SETTLE',
 	},
 	{
 		name: settlement,
 		label: '已结算',
-		codeName: 'HAD_SETTLED'
+		codeName: 'HAD_SETTLED',
 	},
 	{
 		name: transferred,
 		label: '已申请转账',
-		codeName: 'HAD_APPLY_TRANSFER'
+		codeName: 'HAD_APPLY_TRANSFER',
 	},
 ];
 const filterPages = pages.filter((item: any) => getTabPermission(item.label));
@@ -120,7 +133,7 @@ const listRef = ref<any>();
 
 // 搜索触发子组件查询
 const initList = async () => {
-	if(listRef.value) {
+	if (listRef.value) {
 		listRef.value[0].onSearch();
 	}
 };
@@ -136,12 +149,12 @@ onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
 });
 const timeChange = (arr: any) => {
-	console.log(arr)
+	console.log(arr);
 	if (arr && arr.length > 0) {
-		const timeList: any = [arr[0],arr[1]]
-		state.tableData.param.time = timeList
+		const timeList: any = [arr[0], arr[1]];
+		state.tableData.param.time = timeList;
 	} else {
-		state.tableData.param.time = ''
+		state.tableData.param.time = '';
 	}
 };
 </script>

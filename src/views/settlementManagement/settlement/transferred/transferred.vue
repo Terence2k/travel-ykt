@@ -32,8 +32,6 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import { reactive, onMounted } from 'vue';
 import api from '@/api';
-import { message } from 'ant-design-vue';
-import { Modal } from 'ant-design-vue';
 import { StateType } from '../index';
 
 const props = defineProps({
@@ -157,7 +155,6 @@ const onSearch = async() => {
 	const list: [any] = dealData(content);
 	state.tableData.data = list;
 	state.tableData.loading = false;
-	console.log(state.tableData.param);
 };
 // 向父组件暴露方法
 defineExpose({ onSearch });
@@ -167,7 +164,6 @@ const toInfo = (record: any) => {
 	router.push({ path: '/settlementManagement/settlement/examineInfo', query: { itineraryNo: encodeURIComponent(record.itineraryNo) } });
 };
 onMounted(() => {
-	// getRoleList();
 	onSearch();
 });
 </script>

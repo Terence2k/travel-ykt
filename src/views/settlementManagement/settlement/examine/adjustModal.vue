@@ -31,7 +31,6 @@ import { isIntegerNotMust, isBtnZeroToHundred } from '@/utils/validator';
 import { Ref } from 'vue';
 import lodash from 'lodash';
 import { message } from 'ant-design-vue';
-import { log } from 'console';
 const props = defineProps({
 	modelValue: {
 		type: Boolean,
@@ -51,7 +50,6 @@ const rules: any = {
 };
 const init = async () => {
 	formValidate.value = props.params.from;
-	// console.log(props.params.from);
 	
 };
 const formRef = ref();
@@ -61,8 +59,6 @@ const save = () => {
 		.then((result: any) => {
 			const params = { params: props.params, form: lodash.cloneDeep(formValidate.value) };
 			emit('submit', params);
-			// console.log('ssssssss');
-			// console.log(params);
 			formValidate.value = {};
 			dialogVisible.value = false;
 		})
@@ -84,7 +80,6 @@ watch(
 );
 
 watch(dialogVisible, (nVal) => {
-	console.log('dialogVisible:', nVal);
 	emit('update:modelValue', nVal);
 });
 </script>

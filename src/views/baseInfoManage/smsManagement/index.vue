@@ -6,12 +6,17 @@
 				<template v-if="column.key === 'index'">
 					{{ index + 1 }}
 				</template>
+				<template v-if="column.key === 'sendModel'">
+					{{(record.sendModel == 1 ? '自动发送' : '手动发送')}}
+				</template>
+				<template v-if="column.key === 'isEnable'">
+					{{(record.isEnable == 1 ? '禁用' : '启用')}}
+				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a @click="BaseModalmethods.showRecipient(record)">设置接收人</a>
 						<a  @click="BaseModalmethods.showPreview(record)">预览发送</a>
-						<a @click="BaseModalmethods.showAudit(record)">启用</a>
-						<a @click="BaseModalmethods.showAudit(record)">禁用</a>
+						<a @click="BaseModalmethods.showAudit(record)">{{(record.isEnable == 0 ? '禁用' : '启用')}}</a>
 					</div>
 				</template>
 			</template>
@@ -23,9 +28,9 @@
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
 		/>
-		<Audit v-model="state.operationModal.isAudit" :params="state.params" @cancel="cancel" />
-		<Recipient v-model="state.operationModal.isRecipient" :params="state.params" @cancel="cancel" />
-		<Preview v-model="state.operationModal.isPreview" :params="state.params" @cancel="cancel" />
+		<Audit v-model="state.operationModal.isAudit" :params="state.params" @cancel="cancel" @onSearch="onSearch"/>
+		<Recipient v-model="state.operationModal.isRecipient" :params="state.params" @cancel="cancel" @onSearch="onSearch" />
+		<Preview v-model="state.operationModal.isPreview" :params="state.params" @cancel="cancel" @onSearch="onSearch" />
 	</div>
 </template>
 
@@ -47,34 +52,43 @@ const columns = [
 	},
 	{
 		title: '任务名称',
-		dataIndex: 'auditTypeName',
-		key: 'auditTypeName',
+		dataIndex: 'taskName',
+		key: 'taskName',
+		width: '140px',
+
 	},
 	{
 		title: '短信自动拼接后文案内容示例',
-		dataIndex: 'auditTypeExplain',
-		key: 'auditTypeExplain',
+		dataIndex: 'smsContent',
+		key: 'smsContent',
+		width: '300px',
+
 	},
 	{
 		title: '发送模式',
-		dataIndex: 'auditTypePage',
-		key: 'auditTypePage',
+		dataIndex: 'sendModel',
+		key: 'sendModel',
+		width: '140px',
 	},
 	{
 		title: '发送时间',
-		dataIndex: 'businessTypeNameOrRoles',
-		key: 'businessTypeNameOrRoles',
+		dataIndex: 'sendTime',
+		key: 'sendTime',
+		width: '140px',
+
 	},
 	{
 		title: '启用状态',
-		dataIndex: 'businessTypeNameOrRoles',
-		key: 'businessTypeNameOrRoles',
+		dataIndex: 'isEnable',
+		key: 'isEnable',
+		width: '140px',
+
 	},
 	{
 		title: '操作',
 		key: 'action',
 		fixed: 'right',
-		width: 208,
+		width: '140px',
 	},
 ];
 const state = reactive({
@@ -85,9 +99,6 @@ const state = reactive({
 		param: {
 			pageNo: 1,
 			pageSize: 10,
-			phone: null,
-			shopName: null,
-			auditStatus: null,
 		},
 	},
 	operationModal: {
@@ -132,7 +143,7 @@ const cancel = (): any => {
 };
 
 const onSearch = async () => {
-	let res = await api.getAuditList(state.tableData.param);
+	let res = await api.getSysSmsTemplates(state.tableData.param);
 	state.tableData.data = res.content;
 	state.tableData.total = res.total;
 };
