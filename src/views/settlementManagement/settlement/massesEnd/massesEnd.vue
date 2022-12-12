@@ -201,7 +201,7 @@ const settlement = (type: string, record: any) => {
 		}
 		oid = state.selectedRowKeys;
 	}
-	modalData.value.params = { title: '下团结算', content: '你即将对行程单手动执行下团并结算操作，下团结算后，无法进行补刷、改刷操作。是否确定执行？' };
+	modalData.value.params = { title: '预结算', content: '你即将对行程单手动执行预结算操作，是否确定执行？' };
 	modalData.value.data = {
 		status: 14,
 		itineraryNoList: oid,

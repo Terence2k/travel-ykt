@@ -107,10 +107,10 @@ const modalData = ref({
 	data: {}, // 传参对象
 });
 const tipSubmit = async () => {
-	api.settlementUpdate(modalData.value.data).then((res: any) => {
+	// api.settlementUpdate(modalData.value.data).then((res: any) => {
 		message.success('操作成功');
 		onSearch();
-	});
+	// });
 	tipCancel();
 };
 const tipCancel = () => {
@@ -196,12 +196,12 @@ const settlement = (type: string, record: any) => {
 	} else {
 		// 判断是否有选择项
 		if (state.selectedRowKeys.length == 0) {
-			message.warn('请先选择结算项');
+			message.warn('请先选择操作项');
 			return;
 		}
 		oid = state.selectedRowKeys;
 	}
-	modalData.value.params = { title: '下团结算', content: '你即将对行程单手动执行下团并结算操作，下团结算后，无法进行补刷、改刷操作。是否确定执行？' };
+	modalData.value.params = { title: '手动下团', content: '你即将对行程单手动执行下团操作，是否确定执行？' };
 	modalData.value.data = {
 		status: 14,
 		itineraryNoList: oid,
