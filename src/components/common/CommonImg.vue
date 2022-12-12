@@ -10,7 +10,11 @@ const attrs = useAttrs() as any;
 const imgUrl = ref('');
 
 onMounted(async () => {
-    imgUrl.value = await awsGetPreSignedUrl(attrs.src);
+    if (attrs.src.indexOf('http:') === -1) {
+        imgUrl.value = await awsGetPreSignedUrl(attrs.src);
+    } else {
+        imgUrl.value = attrs.src;
+    }
 })
 
 </script>
