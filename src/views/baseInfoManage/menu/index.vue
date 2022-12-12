@@ -1,5 +1,4 @@
 <template>
-  <CommonImg v-for="item in imgUrl" :src="item" width="100"/>
   <CommonTable :dataSource="state.tableData.data" :columns="columns">
       <template #button>
         <a-button type="primary" @click="addOrUpdate({ handle: 'add' })" v-permission="'管理平台_新增'">新增</a-button>
@@ -35,7 +34,6 @@
 </template>
 
 <script setup lang="ts">
-  import CommonImg from '@/components/common/CommonImg.vue'
   import CommonTable from '@/components/common/CommonTable.vue'
   import CommonPagination from '@/components/common/CommonPagination.vue'
   import AddUpdate from './AddUpdate.vue';
@@ -44,7 +42,6 @@
   import { useMenuManage } from '@/stores/modules/menuManage';
   import { Modal } from 'ant-design-vue';
   
-  const imgUrl = ref(['yktPic/16705520842586063.jpg', 'yktPic/16708357087684510.png']);
   const columns = [
     {
       title: '菜单名称',
