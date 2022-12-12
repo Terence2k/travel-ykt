@@ -24,7 +24,7 @@
           </a-form-item>
           <a-form-item name="entrustTravelId" label="委托旅行社">
             <a-select placeholder="请选择委托旅行社" v-model:value="form.entrustTravelId" allowClear>
-              <a-select-option v-for="item in entrustTravelOption" :value="item.oid">{{ item.name }}
+              <a-select-option v-for="item in entrustTravelOption" :value="item.oid" :key="item.oid">{{ item.name }}
               </a-select-option>
             </a-select>
           </a-form-item>
@@ -38,14 +38,17 @@
           </a-form-item>
           <a-form-item name="insuranceBuyMode" label="保险购买方式">
             <a-select placeholder="请选择保险购买方式" v-model:value="form.insuranceBuyMode" allowClear>
-              <a-select-option v-for="item in insuranceOption" :value="item.codeValue">{{ item.name }}
+              <a-select-option v-for="item in insuranceOption" :value="item.codeValue" :key="item.codeValue">{{
+                  item.name
+              }}
               </a-select-option>
             </a-select>
           </a-form-item>
           <a-form-item name="contractType" label="散客合同类型">
             <a-select placeholder="请选择散客合同类型" v-model:value="form.contractType" @change="contractOptionChange"
               allowClear>
-              <a-select-option v-for="item in contractOption" :value="item.codeValue">{{ item.name }}
+              <a-select-option v-for="item in contractOption" :value="item.codeValue" :key="item.codeValue">{{ item.name
+              }}
               </a-select-option>
             </a-select>
           </a-form-item>
@@ -62,7 +65,8 @@
               <template v-if="column.dataIndex === 'lineId'">
                 <a-select v-if="record.isEdit" v-model:value="dataLineSource[index][column.dataIndex]"
                   @change="() => { lineSelectChange(dataLineSource[index]) }" placeholder="请选择可用线路" allowClear>
-                  <a-select-option v-for="item in lineOption" :value="item.codeValue">{{ item.name }}
+                  <a-select-option v-for="item in lineOption" :value="item.codeValue" :key="item.codeValue">{{ item.name
+                  }}
                   </a-select-option>
                 </a-select>
                 <template v-else>
@@ -129,7 +133,8 @@
                     <a-form-item name="certificatesType">
                       <a-select placeholder="请选择身份证件类型" v-model:value="dataTouristSource[index][column.dataIndex]"
                         allowClear>
-                        <a-select-option v-for="item in certificatesTypeOption" :value="item.codeValue">{{ item.name }}
+                        <a-select-option v-for="item in certificatesTypeOption" :value="item.codeValue"
+                          :key="item.codeValue">{{ item.name }}
                         </a-select-option>
                       </a-select>
                     </a-form-item>
@@ -168,7 +173,9 @@
               <template v-if="column.dataIndex === 'touristType'">
                 <a-select placeholder="请选择游客类型" v-if="record.isEdit"
                   v-model:value="dataTouristSource[index][column.dataIndex]" allowClear>
-                  <a-select-option v-for="item in touristTypeOption" :value="item.codeValue">{{ item.name }}
+                  <a-select-option v-for="item in touristTypeOption" :value="item.codeValue" :key="item.codeValue">{{
+                      item.name
+                  }}
                   </a-select-option>
                 </a-select>
                 <template v-else>
@@ -192,7 +199,8 @@
               <template v-if="column.dataIndex === 'ancientUygurReduction'">
                 <a-select placeholder="请选择是否减免" v-if="record.isEdit"
                   v-model:value="dataTouristSource[index][column.dataIndex]" allowClear>
-                  <a-select-option v-for="item in ancientUygurReductionOption" :value="item.codeValue">{{ item.name }}
+                  <a-select-option v-for="item in ancientUygurReductionOption" :value="item.codeValue"
+                    :key="item.codeValue">{{ item.name }}
                   </a-select-option>
                 </a-select>
                 <template v-else>
@@ -228,7 +236,8 @@
           <div v-if="isShow">
             <a-form-item name="touristName" label="游客代表">
               <a-select @change="touristChange" placeholder="请选择游客代表" v-model:value="form.touristName" allowClear>
-                <a-select-option v-for="item in dataTouristSource" :value="item.certificatesNo">{{ item.touristName }}
+                <a-select-option v-for="item in dataTouristSource" :value="item.certificatesNo"
+                  :key="item.certificatesNo">{{ item.touristName }}
                 </a-select-option>
               </a-select>
             </a-form-item>

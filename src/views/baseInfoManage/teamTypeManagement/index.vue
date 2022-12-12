@@ -10,7 +10,7 @@
       <template v-if="column.key === 'productsLength'">
         <a-popover title="必购项目">
           <template #content>
-            <p v-for="item in record.productItems">{{ item }}</p>
+            <p v-for="(item, index) in record.productItems" :key="index">{{ item }}</p>
           </template>
           <div style="color:#4197EF" v-show="record.productItems && record.productItems.length !== 0">{{
               `${record.productItems && record.productItems.length}项`

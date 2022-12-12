@@ -217,7 +217,7 @@ export default [
 				path: 'tourists',
 				name: 'tourists',
 				component: () => import('@/views/individualTouristsGroup/index.vue'),
-				redirect: '/travel/tourists/individualTouristsGroup',
+				redirect: '/travel/tourists/newGroup',
 				meta: {
 					title: '散客拼团',
 					// icon: 'liulanqi',
@@ -225,6 +225,17 @@ export default [
 					// isDetail: true, // 在左侧的导航栏不会展示
 				},
 				children: [
+					{
+						path: 'newGroup',
+						name: 'newGroup',
+						component: () => import('@/views/individualTouristsGroup/newGroup.vue'),
+						meta: {
+							title: '新增拼团',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
 					{
 						path: 'individualTouristsGroup',
 						name: 'individualTouristsGroup',
