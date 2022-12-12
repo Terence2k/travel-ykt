@@ -24,7 +24,7 @@
           </a-form-item>
           <a-form-item name="entrustTravelId" label="委托旅行社">
             <a-select placeholder="请选择委托旅行社" v-model:value="form.entrustTravelId" allowClear>
-              <a-select-option v-for="item in entrustTravelOption" :value="item.oid">{{ item.name }}
+              <a-select-option v-for="item in entrustTravelOption" :value="item.oid" :key="item.oid">{{ item.name }}
               </a-select-option>
             </a-select>
           </a-form-item>
@@ -38,19 +38,23 @@
           </a-form-item>
           <a-form-item name="insuranceBuyMode" label="保险购买方式">
             <a-select placeholder="请选择保险购买方式" v-model:value="form.insuranceBuyMode" allowClear>
-              <a-select-option v-for="item in insuranceOption" :value="item.codeValue">{{ item.name }}
+              <a-select-option v-for="item in insuranceOption" :value="item.codeValue" :key="item.codeValue">{{
+                  item.name
+              }}
               </a-select-option>
             </a-select>
           </a-form-item>
           <a-form-item name="contractType" label="散客合同类型">
             <a-select placeholder="请选择散客合同类型" v-model:value="form.contractType" @change="contractOptionChange"
               allowClear>
-              <a-select-option v-for="item in contractOption" :value="item.codeValue">{{ item.name }}
+              <a-select-option v-for="item in contractOption" :value="item.codeValue" :key="item.codeValue">{{ item.name
+              }}
               </a-select-option>
             </a-select>
           </a-form-item>
           <a-form-item name="contractFileUrl" label="上传附件" v-if="!isShow">
             <Upload v-model="form.contractFileUrl" :maxCount="9" />
+            <pdfUpload v-model="form.pdfFileUrl" :maxCount="1" />
           </a-form-item>
           <div class="tag">选择线路</div>
           <a-table :columns="lineColumns" :data-source="dataLineSource" bordered :pagination="false">
@@ -61,7 +65,8 @@
               <template v-if="column.dataIndex === 'lineId'">
                 <a-select v-if="record.isEdit" v-model:value="dataLineSource[index][column.dataIndex]"
                   @change="() => { lineSelectChange(dataLineSource[index]) }" placeholder="请选择可用线路" allowClear>
-                  <a-select-option v-for="item in lineOption" :value="item.codeValue">{{ item.name }}
+                  <a-select-option v-for="item in lineOption" :value="item.codeValue" :key="item.codeValue">{{ item.name
+                  }}
                   </a-select-option>
                 </a-select>
                 <template v-else>
@@ -128,7 +133,8 @@
                     <a-form-item name="certificatesType">
                       <a-select placeholder="请选择身份证件类型" v-model:value="dataTouristSource[index][column.dataIndex]"
                         allowClear>
-                        <a-select-option v-for="item in certificatesTypeOption" :value="item.codeValue">{{ item.name }}
+                        <a-select-option v-for="item in certificatesTypeOption" :value="item.codeValue"
+                          :key="item.codeValue">{{ item.name }}
                         </a-select-option>
                       </a-select>
                     </a-form-item>
@@ -167,7 +173,9 @@
               <template v-if="column.dataIndex === 'touristType'">
                 <a-select placeholder="请选择游客类型" v-if="record.isEdit"
                   v-model:value="dataTouristSource[index][column.dataIndex]" allowClear>
-                  <a-select-option v-for="item in touristTypeOption" :value="item.codeValue">{{ item.name }}
+                  <a-select-option v-for="item in touristTypeOption" :value="item.codeValue" :key="item.codeValue">{{
+                      item.name
+                  }}
                   </a-select-option>
                 </a-select>
                 <template v-else>
@@ -191,7 +199,8 @@
               <template v-if="column.dataIndex === 'ancientUygurReduction'">
                 <a-select placeholder="请选择是否减免" v-if="record.isEdit"
                   v-model:value="dataTouristSource[index][column.dataIndex]" allowClear>
-                  <a-select-option v-for="item in ancientUygurReductionOption" :value="item.codeValue">{{ item.name }}
+                  <a-select-option v-for="item in ancientUygurReductionOption" :value="item.codeValue"
+                    :key="item.codeValue">{{ item.name }}
                   </a-select-option>
                 </a-select>
                 <template v-else>
@@ -227,7 +236,8 @@
           <div v-if="isShow">
             <a-form-item name="touristName" label="游客代表">
               <a-select @change="touristChange" placeholder="请选择游客代表" v-model:value="form.touristName" allowClear>
-                <a-select-option v-for="item in dataTouristSource" :value="item.certificatesNo">{{ item.touristName }}
+                <a-select-option v-for="item in dataTouristSource" :value="item.certificatesNo"
+                  :key="item.certificatesNo">{{ item.touristName }}
                 </a-select-option>
               </a-select>
             </a-form-item>
@@ -344,6 +354,7 @@
 import { useRouter, useRoute } from 'vue-router';
 import { CloseOutlined } from '@ant-design/icons-vue';
 import Upload from '@/components/common/imageWrapper.vue';
+import pdfUpload from '@/components/common/pdfWrapper.vue';
 import type { UnwrapRef } from 'vue';
 import { cloneDeep } from 'lodash';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
@@ -388,6 +399,7 @@ const form = ref({
   phone: "", //电话
   certificatesAddress: "",//游客详细住址
   contractAmount: 0,
+  pdfFileUrl: ""
 })
 const comprehensiveProductsList = ref([]) //综费产品
 const adultNumber = ref(0)
@@ -625,6 +637,7 @@ const contractOptionChange = (val: number) => {
     case 1:
       isShow.value = true
       form.value.contractFileUrl = ''
+      form.value.pdfFileUrl = ''
       break;
     case 2:
       isShow.value = false
@@ -642,6 +655,7 @@ const contractOptionChange = (val: number) => {
       form.value.certificatesAddress = ''
       form.value.certificatesNo = undefined
       form.value.contractFileUrl = ''
+      form.value.pdfFileUrl = ''
   }
 }
 // 行程日期改变事件
@@ -888,6 +902,7 @@ const getParams = () => {
     insuranceBuyMode, //保险购买方式
     contractType, //合同类型
     contractFileUrl, //附件
+    pdfFileUrl,
     otherAgreements, //其他约定
     contractAmount, //行程费用
   } = form.value
@@ -898,6 +913,15 @@ const getParams = () => {
       arr.push(item)
     }
   }) */
+  let fileUrl
+  if (contractFileUrl && pdfFileUrl) {
+    fileUrl = contractFileUrl + ',' + pdfFileUrl
+  } else if (contractFileUrl && !pdfFileUrl) {
+    fileUrl = contractFileUrl
+  } else if (!contractFileUrl && pdfFileUrl) {
+    fileUrl = pdfFileUrl
+  }
+
   return {
     oid,
     companyId, //合同创建旅行社id
@@ -909,7 +933,7 @@ const getParams = () => {
     touristPeopleNumber, //游客人数
     insuranceBuyMode, //保险购买方式
     contractType, //合同类型
-    contractFileUrl, //附件
+    contractFileUrl: fileUrl, //附件
     otherAgreements, //其他约定
     contractAmount: contractAmount * 100,
     individualContractLineBos: dataLineSource.value, // 线路
@@ -1082,6 +1106,18 @@ const getEditDetails = async (oid: any) => {
   const res = await api.editFindIndividualContractById(oid)
   if (res) {
     form.value = res
+    const files = form.value.contractFileUrl.split(',')
+    const contractFileUrl: string[] = []
+    const pdfFileUrl: string[] = []
+    files.forEach((item: any) => {
+      if (['jpg', 'png'].indexOf(item.split('.')[1]) !== -1) {
+        contractFileUrl.push(item)
+      } else if (['pdf'].indexOf(item.split('.')[1]) !== -1) {
+        pdfFileUrl.push(item)
+      }
+    })
+    form.value.contractFileUrl = contractFileUrl.toString()
+    form.value.pdfFileUrl = pdfFileUrl.toString()
     form.value.travelData = [res.tripStartTime, res.tripEndTime]
     dataLineSource.value = res.individualContractLineBos.map((item: any) => {
       return {

@@ -12,7 +12,7 @@
             </template>
             <template v-if="column.key === 'price'">
               <div v-if="record.individualLinePriceVos?.length > 0">
-                <span v-for="(item, index) in record.individualLinePriceVos">{{
+                <span v-for="(item, index) in record.individualLinePriceVos" :key="index">{{
                     `${item.priceTypeName}价${item.priceAmount}元${(record.individualLinePriceVos.length - 1) === index ? ''
                       : '、'}`
                 }}</span>
@@ -21,16 +21,17 @@
             </template>
             <template v-if="column.key === 'ticketCompany'">
               <div v-if="record.individualLineTicketVos?.length > 0">
-                <span v-for="(item, index) in cmpIndividualLineTicketVos(record.individualLineTicketVos)">{{
-                    `${item}${(cmpIndividualLineTicketVos(record.individualLineTicketVos).length - 1) === index ? ''
-                      : '、'}`
-                }}</span>
+                <span v-for="(item, index) in cmpIndividualLineTicketVos(record.individualLineTicketVos)"
+                  :key="index">{{
+                      `${item}${(cmpIndividualLineTicketVos(record.individualLineTicketVos).length - 1) === index ? ''
+                        : '、'}`
+                  }}</span>
               </div>
               <div v-else>无</div>
             </template>
             <template v-if="column.key === 'hotelCompany'">
               <div v-if="record.individualLineHotelVos?.length > 0">
-                <span v-for="(item, index) in cmpIndividualLineHotelVos(record.individualLineHotelVos)">{{
+                <span v-for="(item, index) in cmpIndividualLineHotelVos(record.individualLineHotelVos)" :key="index">{{
                     `${item}${(cmpIndividualLineHotelVos(record.individualLineHotelVos).length - 1) === index ? ''
                       : '、'}`
                 }}</span>
@@ -39,10 +40,11 @@
             </template>
             <template v-if="column.key === 'cateringCompany'">
               <div v-if="record.individualLineCateringVos?.length > 0">
-                <span v-for="(item, index) in cmpIndividualLineCateringVos(record.individualLineCateringVos)">{{
-                    `${item}${(cmpIndividualLineCateringVos(record.individualLineCateringVos).length - 1) === index ? ''
-                      : '、'}`
-                }}</span>
+                <span v-for="(item, index) in cmpIndividualLineCateringVos(record.individualLineCateringVos)"
+                  :key="index">{{
+                      `${item}${(cmpIndividualLineCateringVos(record.individualLineCateringVos).length - 1) === index ? ''
+                        : '、'}`
+                  }}</span>
               </div>
               <div v-else>无</div>
             </template>
@@ -77,7 +79,7 @@
             </template>
             <template v-if="column.key === 'price'">
               <div v-if="record.individualLinePriceVos?.length > 0">
-                <span v-for="(item, index) in record.individualLinePriceVos">{{
+                <span v-for="(item, index) in record.individualLinePriceVos" :key="index">{{
                     `${item.priceTypeName}价${item.priceAmount}元${(record.individualLinePriceVos.length - 1) === index ? ''
                       : '、'}`
                 }}</span>
@@ -86,16 +88,17 @@
             </template>
             <template v-if="column.key === 'ticketCompany'">
               <div v-if="record.individualLineTicketVos?.length > 0">
-                <span v-for="(item, index) in cmpIndividualLineTicketVos(record.individualLineTicketVos)">{{
-                    `${item}${(cmpIndividualLineTicketVos(record.individualLineTicketVos).length - 1) === index ? ''
-                      : '、'}`
-                }}</span>
+                <span v-for="(item, index) in cmpIndividualLineTicketVos(record.individualLineTicketVos)"
+                  :key="index">{{
+                      `${item}${(cmpIndividualLineTicketVos(record.individualLineTicketVos).length - 1) === index ? ''
+                        : '、'}`
+                  }}</span>
               </div>
               <div v-else>无</div>
             </template>
             <template v-if="column.key === 'hotelCompany'">
               <div v-if="record.individualLineHotelVos?.length > 0">
-                <span v-for="(item, index) in cmpIndividualLineHotelVos(record.individualLineHotelVos)">{{
+                <span v-for="(item, index) in cmpIndividualLineHotelVos(record.individualLineHotelVos)" :key="index">{{
                     `${item}${(cmpIndividualLineHotelVos(record.individualLineHotelVos).length - 1) === index ? ''
                       : '、'}`
                 }}</span>
@@ -104,10 +107,11 @@
             </template>
             <template v-if="column.key === 'cateringCompany'">
               <div v-if="record.individualLineCateringVos?.length > 0">
-                <span v-for="(item, index) in cmpIndividualLineCateringVos(record.individualLineCateringVos)">{{
-                    `${item}${(cmpIndividualLineCateringVos(record.individualLineCateringVos).length - 1) === index ? ''
-                      : '、'}`
-                }}</span>
+                <span v-for="(item, index) in cmpIndividualLineCateringVos(record.individualLineCateringVos)"
+                  :key="index">{{
+                      `${item}${(cmpIndividualLineCateringVos(record.individualLineCateringVos).length - 1) === index ? ''
+                        : '、'}`
+                  }}</span>
               </div>
               <div v-else>无</div>
             </template>
@@ -166,7 +170,7 @@
         </a-form-item> -->
         <a-form-item name="suitableRangeTravelId" v-show="travelVisible">
           <a-select placeholder="选择旅行社" v-model:value="form.suitableRangeTravelId" allowClear @change="getStoreList">
-            <a-select-option v-for="item in TRAVELOptions" :value="item.oid">{{
+            <a-select-option v-for="item in TRAVELOptions" :value="item.oid" :key="item.oid">{{
                 item.name
             }}
             </a-select-option>
@@ -174,7 +178,7 @@
         </a-form-item>
         <a-form-item name="suitableRangeStoreId" v-show="storeVisible">
           <a-select placeholder="选择门店" v-model:value="form.suitableRangeStoreId" allowClear>
-            <a-select-option v-for="item in storeOptions" :value="item.oid">{{
+            <a-select-option v-for="item in storeOptions" :value="item.oid" :key="item.oid">{{
                 item.name
             }}
             </a-select-option>
@@ -211,7 +215,7 @@
           </a-form-item>
           <a-form-item style="flex:3;margin-bottom: 8px;">
             <a-select placeholder="请选择景区" mode="multiple" v-model:value="item.selectedList" allowClear>
-              <a-select-option v-for="item in TICKETOptions" :value="item.oid">{{ item.name }}
+              <a-select-option v-for="item in TICKETOptions" :value="item.oid" :key="item.oid">{{ item.name }}
               </a-select-option>
             </a-select>
           </a-form-item>
@@ -235,7 +239,7 @@
           </a-form-item>
           <a-form-item style="flex:3;margin-bottom: 8px;">
             <a-select placeholder="请选择酒店" mode="multiple" v-model:value="item.selectedList" allowClear>
-              <a-select-option v-for=" item in HOTELOptions" :value="item.oid">{{ item.name }}
+              <a-select-option v-for=" item in HOTELOptions" :value="item.oid" :key="item.oid">{{ item.name }}
               </a-select-option>
             </a-select>
           </a-form-item>
@@ -259,7 +263,7 @@
           </a-form-item>
           <a-form-item style="flex:3;margin-bottom: 8px;">
             <a-select placeholder="请选择餐厅" mode="multiple" v-model:value="item.selectedList" allowClear>
-              <a-select-option v-for="item in CATERINGOptions" :value="item.oid">{{ item.name }}
+              <a-select-option v-for="item in CATERINGOptions" :value="item.oid" :key="item.oid">{{ item.name }}
               </a-select-option>
             </a-select>
           </a-form-item>
@@ -389,7 +393,7 @@
       </a-form-item> -->
       <a-form-item label="一口价">
       </a-form-item>
-      <a-form-item v-for="item in state.YKJList" :name="item.codeValue" :label="item.name">
+      <a-form-item v-for="item in state.YKJList" :name="item.codeValue" :label="item.name" :key="item.codeValue">
         <a-input v-model:value.number="form[item.codeValue]" placeholder="输入价格">
         </a-input>
       </a-form-item>
@@ -405,7 +409,7 @@
     @cancel="detailsClose" :is-cancel="false">
     <div class="table_box">
       <table class="info_table" cellpadding="16px" border="1">
-        <tr class="row" v-for="(value, key) in cmpDetailsKeys">
+        <tr class="row" v-for="(value, key) in cmpDetailsKeys" :key="key">
           <td class="key">{{ value }}</td>
           <td class="value" style="white-space: pre-wrap;">
             {{ detailsForm[key] }}
@@ -419,7 +423,7 @@
     提交审核时间：{{ detailsForm.createTime }}
     <div class="table_box">
       <table class="info_table" cellpadding="16px" border="1">
-        <tr class="row" v-for="(value, key) in auditKeys">
+        <tr class="row" v-for="(value, key) in auditKeys" :key="key">
           <td class="key">{{ value }}</td>
           <td class="value" style="white-space: pre-wrap;">{{ detailsForm[key] }}</td>
         </tr>
