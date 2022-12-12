@@ -90,17 +90,6 @@ export default [
 						},
 						props: true,
 					},
-					{
-						path: 'modifyEnterpriseInfo/name/:name/addressDetail/:addressDetail/legalPerson/:legalPerson/managementRange/:managementRange/registeredCapital/:registeredCapital/establishTime/:establishTime/businessTerm/:businessTerm/contactName/:contactName/phone/:phone/accountType/:accountType/bankAccountName/:bankAccountName/accountAddress/:accountAddress/bankAccount/:bankAccount/businessLicenseUrl/:businessLicenseUrl/manageUrl/:manageUrl/oid/:oid',
-						component: () => import('@/views/enterpriseInfoManagement/modifyEnterpriseInfo.vue'),
-						name: 'modifyEnterpriseInfo',
-						meta: {
-							title: '修改企业信息',
-							// icon: 'liulanqi',
-							// auth: ["admin"],
-							isDetail: true, // 在左侧的导航栏不会展示
-						},
-					},
 				],
 			},
 			// fundManagement
