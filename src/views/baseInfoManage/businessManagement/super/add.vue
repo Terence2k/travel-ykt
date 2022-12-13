@@ -51,11 +51,11 @@
           }">
           </a-input> -->
         </a-form-item>
-        <a-form-item name="establishTime" label="成立日期" v-show="formRules?.establishTime">
+        <a-form-item label="成立日期" v-show="formRules?.establishTime">
           <a-date-picker v-model:value="form.establishTime" placeholder="请选择成立日期" style="width:100%"
             :valueFormat="dateFormat" :disabled-date="disabledAfterDate" />
         </a-form-item>
-        <a-form-item name="businessTerm" label="营业期限" v-show="formRules?.businessTerm">
+        <a-form-item label="营业期限" v-show="formRules?.businessTerm">
           <a-date-picker v-model:value="form.businessTerm" placeholder="请选择营业期限" style="width:100%"
             :valueFormat="dateFormat" :disabled-date="disabledBeforeDate" />
         </a-form-item>

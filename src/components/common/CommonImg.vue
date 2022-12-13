@@ -1,6 +1,9 @@
 <template>
     <div>
-        <img v-bind="$attrs" :src="imgUrl">
+        <a-image
+            v-bind="$attrs" :src="imgUrl"
+            :width="$attrs.width"
+        />
     </div>
 </template>
 
@@ -11,7 +14,7 @@ const imgUrl = ref('');
 
 onMounted(async () => {
     if (attrs.src.indexOf('http:') === -1) {
-        imgUrl.value = await awsGetPreSignedUrl(attrs.src);
+        imgUrl.value = await awsGetPreSignedUrl(attrs.src) as string;
     } else {
         imgUrl.value = attrs.src;
     }
