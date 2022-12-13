@@ -123,6 +123,7 @@ export enum TakeGroupStatus {
   WaitingChange,  // 待变更 6
   Overtime,        // 已过期 7
   WaitingOutGroup,        // 待出团 8
+  WaitingHandle    //  待处理 9
 }
 
 export enum HealthCode {
