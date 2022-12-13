@@ -207,8 +207,6 @@ const getsmscode = () => {
 	};
 	api.getSmsVerifyCode(data).then((res: any) => {
 		message.success('验证码已发送至您的手机，请注意查收');
-		console.log(res);
-		formModel.code = res;
 	});
 	// if (state.countdown == '获取验证码') {
 	// 	state.countdown = 5;
@@ -241,7 +239,7 @@ const getsmscode = () => {
 	margin-top: 24px;
 	background-color: #fff;
 	border-radius: 4px;
-	height: 464px;
+	height: 500px;
 	
 	.btn {
 		width: 100%;
