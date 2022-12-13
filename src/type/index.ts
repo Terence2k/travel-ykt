@@ -9,7 +9,7 @@ export type Field = 'drafts' |
 				'refuseGroup' | 
 				'waitingChange' | 
 				'closeAnAccount' | 
-				'cancellation' | 'overtime' | 'waitRegiment'
+				'cancellation' | 'overtime' | 'waitRegiment' | 'waitingTask'
 				// |
 				
 

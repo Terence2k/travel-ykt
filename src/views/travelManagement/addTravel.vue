@@ -263,6 +263,7 @@ const getTraveDetail = () => {
 			res.basic.touristNum = res.basic.touristCount || 0;
 			travelStore.setBaseInfo(res.basic);
 			res.attachmentList.length && travelStore.setFileInfo(res.attachmentList);
+			travelStore.setGuideList(res.guideList);
 			travelStore.setTouristList(
 				res.touristList.content.map((it: any) => {
 					if (it.specialCertificatePicture instanceof String) {
