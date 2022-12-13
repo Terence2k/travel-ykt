@@ -328,7 +328,7 @@
           <div>
             <a-button type="primary" @click="nextTep('1')" class="mr20">上一步</a-button>
             <a-button type="primary" @click="saveDraft" class="mr20">保存草稿</a-button>
-            <a-button type="primary" @click="">提交签署</a-button>
+            <a-button type="primary" @click="submitVisible = true" :disabled="!hasId">提交签署</a-button>
           </div>
         </div>
       </a-tab-pane>
@@ -341,11 +341,16 @@
   </div>
   <CommonModal title="散客合同签署确认" v-model:visible="submitVisible" @cancel="submitCancel" @close="submitCancel"
     :conform-text="'确定签署'" @conform="saveDraftConfirm">
-    <p>您即将发起编号为ljc412211030906308的散客合同签署，合同总金额 6600.00 元。发出后将由游客代表 张三 通过网页完成签署，签署成功后会同步至12301平台。请确保合同内容无误。</p>
+    <p>您即将发起散客合同签署，合同总金额<span class="cred">{{ form.contractAmount }}</span>元。发出后将由游客代表<span class="cred">{{
+        form.touristName
+    }}</span>通过网页完成签署，签署成功后会同步至12301平台。请确保合同内容无误。
+    </p>
   </CommonModal>
   <CommonModal title="散客合同签署结果" v-model:visible="submitResultVisible" @close="submitResultVisible = false"
     :conform-text="'确定'" :is-cancel="false" @conform="submitResultVisible = false">
-    <p v-if="true">您已发起编号为ljc412211030906308的散客合同签署。请等待游客代表 张三 通过网页完成签署，签署后可使用该电子合同发起拼团</p>
+    <p v-if="true">您已发起散客合同签署。请等待游客代表<span class="cred">{{
+        form.touristName
+    }}</span>通过网页完成签署，签署后可使用该电子合同发起拼团</p>
     <p v-else>您已完成编号为ljc412211030906308的散客电子合同（来源：门店线下合同）补录，后续您和授权社均可使用该合同发起散客拼团</p>
   </CommonModal>
 </template>
@@ -380,6 +385,7 @@ const formRef1 = ref()
 const formRef2 = ref()
 const formRef3 = ref()
 const isAdd = ref(true)
+const hasId = ref(false)
 const form = ref({
   oid: undefined,
   companyId: undefined, //合同创建旅行社id
@@ -863,7 +869,8 @@ const saveDraft = () => {
       if (res) {
         message.success('保存草稿成功！')
         isRefresh.value = '1'
-        back()
+        hasId.value = true
+        form.value.oid = res
       } else {
         message.error('保存草稿失败！')
       }
@@ -872,7 +879,7 @@ const saveDraft = () => {
       if (res) {
         message.success('编辑草稿成功！')
         isRefresh.value = '1'
-        back()
+        hasId.value = true
       } else {
         message.error('编辑草稿失败！')
       }
@@ -942,7 +949,13 @@ const getParams = () => {
   }
 }
 const saveDraftConfirm = async () => {
-
+  const res = await api.releaseContract(form.value.oid)
+  if (res) {
+    submitResultVisible.value = true
+  } else {
+    message.error('合同签署失败！')
+  }
+  submitVisible.value = false
 }
 // 获取线路选项
 const getLineOptions = async () => {
@@ -1105,11 +1118,12 @@ const configCodeName = (certificateCodes: any) => {
 const getEditDetails = async (oid: any) => {
   const res = await api.editFindIndividualContractById(oid)
   if (res) {
+    hasId.value = true
     form.value = res
-    const files = form.value.contractFileUrl.split(',')
+    const files = form.value.contractFileUrl?.split(',')
     const contractFileUrl: string[] = []
     const pdfFileUrl: string[] = []
-    files.forEach((item: any) => {
+    files?.forEach((item: any) => {
       if (['jpg', 'png'].indexOf(item.split('.')[1]) !== -1) {
         contractFileUrl.push(item)
       } else if (['pdf'].indexOf(item.split('.')[1]) !== -1) {
@@ -1125,7 +1139,6 @@ const getEditDetails = async (oid: any) => {
         ...item,
       }
     })
-
     dataTouristSource.value = res.individualContractTouristBos.map((item: any) => {
       // 获取游客代表
       if (item.isRepresentative === 1) {
@@ -1201,6 +1214,10 @@ onActivated(() => {
 </script>
 
 <style scoped lang="scss">
+.cred {
+  color: #d9001b;
+}
+
 .reform {
   display: flex;
   justify-content: space-between;
