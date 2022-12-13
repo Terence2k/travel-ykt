@@ -10,6 +10,7 @@ export const settlementOptions = defineStore('settlement', {
 		groupSocietyList: [], //组团社
 		earthContactAgencyList: [], // 地接社
 		businessTypeOptionList: [], //企业类型
+		businessTypeOptionListAll: [], //没有筛选过的企业类型
 		itineraryStatus: [], //行程单枚举状态
 		testStatus: 10,
 	}),
@@ -50,7 +51,8 @@ export const settlementOptions = defineStore('settlement', {
 					this.businessTypeOptionList = res.filter((item: any) => {
 						// 筛除 酒店、餐饮、景区 选项
 						return item.oid !== 116 && item.oid !== 117 && item.oid !== 118;
-					});;
+					});
+					this.businessTypeOptionListAll = res;
 				});
 			}
 		},

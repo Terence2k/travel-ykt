@@ -137,17 +137,21 @@
   </div>
   <CommonModal title="散客合同签署确认" v-model:visible="modalVisible" @close="(modalVisible = false)"
     @cancel="(modalVisible = false)" @conform="(modalVisible = false)" :conform-text="'关闭'" :is-cancel="false">
-    <Upload v-model="form.contractFileUrl" :maxCount="9" />
+    <p>已上传{{ imageCount }}张图片，{{ pdfCount }}个pdf：</p>
+    <div v-for="(item, index) in form.contractFileUrlList" :key="index" class="file">
+      <a :href="item" class="file_box" v-if="item.indexOf('.pdf') !== -1">合同附件.pdf</a>
+      <a-image width="104px" :src="item" v-else />
+    </div>
   </CommonModal>
 </template>
 
 <script setup lang="ts">
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
-import Upload from '@/components/common/imageWrapper.vue';
 import { CloseOutlined } from '@ant-design/icons-vue';
 import api from '@/api';
 import { useRouter, useRoute } from 'vue-router';
+import { awsGetPreSignedUrl } from '@/utils/awsUpload';
 const router = useRouter();
 const route = useRoute();
 const back = () => {
@@ -156,6 +160,8 @@ const back = () => {
   })
 }
 const modalVisible = ref(false)
+const imageCount = ref(0)
+const pdfCount = ref(0)
 const form = ref({
   contractNo: '',
   travelDayNight: '',
@@ -415,7 +421,19 @@ const getDetails = async (id: number) => {
       individualContractPriceBos,
       otherAgreements
     } = res
-    // const contractFileUrlList = contractFileUrl ? contractFileUrl.split(',') : []
+    const arr = contractFileUrl ? contractFileUrl.split(',') : []
+    let contractFileUrlList = arr.map(async (item: any) => {
+      if (['jpg', 'png'].indexOf(item.split('.')[1]) !== -1) {
+        imageCount.value += 1
+      } else if (['pdf'].indexOf(item.split('.')[1]) !== -1) {
+        pdfCount.value += 1
+      }
+      if (item.indexOf('http:') === -1) {
+        item = await awsGetPreSignedUrl(item);
+      }
+      return item
+    })
+    contractFileUrlList = await Promise.all(contractFileUrlList);
     const insuranceBuyModeName = (function () {
       let res
       switch (insuranceBuyMode) {
@@ -477,7 +495,7 @@ const getDetails = async (id: number) => {
       insuranceBuyModeName,
       contractTypeName,
       contractType,
-      // contractFileUrlList,
+      contractFileUrlList,
       contractFileUrl,
       contractStatusName: contractStatusName || '/',
       itineraryNo: itineraryNo || '尚未成团',
@@ -572,5 +590,20 @@ watch(
   margin-left: 40px;
   cursor: pointer;
   color: #209cd3;
+}
+
+.file_box {
+  display: inline-block;
+  width: 104px;
+  height: 104px;
+  line-height: 88px;
+  margin: 0 8px 8px 0;
+  padding: 8px;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+}
+
+.file {
+  display: inline-block;
 }
 </style>

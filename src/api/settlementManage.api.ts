@@ -334,3 +334,12 @@ export async function exportReconciliation(data: any) {
 		showLoading: false,
 	});
 }
+// 行程下团
+export async function updateItineraryStatusEnd(data: any) {
+	return request({
+		url: `${commonPath}/travel-agency-service/public/api/itinerary/updateItineraryStatusEnd`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}

@@ -51,12 +51,12 @@
           }">
           </a-input> -->
         </a-form-item>
-        <a-form-item name="establishTime" label="成立日期" v-show="formRules?.establishTime">
+        <a-form-item label="成立日期" v-show="formRules?.establishTime">
           <a-date-picker v-model:value="form.establishTime" placeholder="请选择成立日期" style="width:100%"
-            :format="dateFormat" :valueFormat="dateFormat" :disabled-date="disabledAfterDate" />
+            :valueFormat="dateFormat" :disabled-date="disabledAfterDate" />
         </a-form-item>
-        <a-form-item name="businessTerm" label="营业期限" v-show="formRules?.businessTerm">
-          <a-date-picker v-model:value="form.businessTerm" placeholder="请选择营业期限" style="width:100%" :format="dateFormat"
+        <a-form-item label="营业期限" v-show="formRules?.businessTerm">
+          <a-date-picker v-model:value="form.businessTerm" placeholder="请选择营业期限" style="width:100%"
             :valueFormat="dateFormat" :disabled-date="disabledBeforeDate" />
         </a-form-item>
         <a-form-item name="contactName" label="联系人" v-show="formRules?.contactName">
@@ -303,11 +303,12 @@ const regionChange = () => {
   form.areaId = form.regionCode ? form.regionCode[2] : undefined
 }
 const submit = () => {
-  formRef.value.validateFields().then(() => {
+  console.log(form);
+  /* formRef.value.validateFields().then(() => {
     saveVisible.value = true
   }).catch((error: Error) => {
     console.log(error);
-  })
+  }) */
 }
 const saveCancel = () => {
   saveVisible.value = false

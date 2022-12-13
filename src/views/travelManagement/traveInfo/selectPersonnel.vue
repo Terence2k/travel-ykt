@@ -264,7 +264,7 @@ const submit = () => {
 			return false;
 		}
 	}
-	api.applyReduction(data).then((res) => {
+	api.applyReduction(data).then((res:any) => {
 		message.success('提交成功');
 		dialogVisible.value = false;
 		travelStore.getManagementExpenses(props.routeId)
