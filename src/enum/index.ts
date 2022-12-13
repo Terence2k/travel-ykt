@@ -38,6 +38,7 @@ export enum GroupStatus {
   WaitingChange,  //待变更6
   // CloseAnAccount = 15, //已结算8
   Overtime,        //已过期7
+  WaitingTask     //待处理8
   // Unpaid,         //未支付
 }
 

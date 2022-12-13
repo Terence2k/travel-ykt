@@ -75,6 +75,7 @@ export const useTravelStore = defineStore({
 			[GroupStatus.WaitingChange]: '待变更',
 			// [GroupStatus.CloseAnAccount]: '已结算',
 			[GroupStatus.Overtime]: '已过期',
+			[GroupStatus.WaitingTask]: '待处理'
 		},
 		guideType: {
 			[GuideType.UnderGuide]: '直属导游',
@@ -190,6 +191,7 @@ export const useTravelStore = defineStore({
 			cancellation: cloneDeep(traveListParams),
 			overtime: cloneDeep(traveListParams),
 			waitRegiment: cloneDeep(traveListParams),
+			waitingTask: cloneDeep(traveListParams)
 		},
 		auditList: {
 			financeSendGroup: cloneDeep(auditListParams),
