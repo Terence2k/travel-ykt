@@ -41,6 +41,7 @@ import waitingGroup from './travelTakeGroupList/waitingGroup.vue';
 import waitingReserved from './travelTakeGroupList/waitingReserved.vue';
 import waitingOutGroup from './travelTakeGroupList/waitingOutGroup.vue';
 import dispatched from './travelTakeGroupList/dispatched.vue';
+import waitingHandle from './travelTakeGroupList/waitingHandle.vue';
 import cancellation from './travelTakeGroupList/cancellation.vue';
 import waitingChange from './travelTakeGroupList/waitingChange.vue';
 import overtime from './travelTakeGroupList/overtime.vue';
@@ -48,8 +49,6 @@ import overtime from './travelTakeGroupList/overtime.vue';
 import { takeGroupListParams, useTravelStore } from '@/stores/modules/travelManagement';
 import { TakeGroupStatus, GroupType } from '@/enum';
 import { getUserInfo, getTabPermission } from '@/utils/util';
-import { ROLE } from '@/constant';
-import api from '@/api';
 import { TakeGroupField } from '@/type';
 import { cloneDeep } from 'lodash';
 
@@ -96,6 +95,12 @@ const pages = [
 		label: travelStore.takeGroupStatus[TakeGroupStatus.Dispatched],
 		value: TakeGroupStatus.Dispatched,
 		chart: 'dispatched',
+	},
+	{
+		name: waitingHandle,
+		label: travelStore.takeGroupStatus[TakeGroupStatus.WaitingHandle],
+		value: TakeGroupStatus.WaitingHandle,
+		chart: 'waitingHandle',
 	},
 	{
 		name: cancellation,

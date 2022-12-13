@@ -294,9 +294,11 @@ export const range = (start: number, end: number) => {
 
 export const disabledRangeTime = (start: any, end: any) => {
 	return (_: Dayjs, type: 'start' | 'end') => {
+   
     const current = dayjs(dayjs(_).format('YYYY-MM-DD')).unix()
-    const startUnix = dayjs(dayjs(travelStore.baseInfo.startDate).format('YYYY-MM-DD')).unix();
-    const endUnix = dayjs(dayjs(travelStore.baseInfo.endDate).format('YYYY-MM-DD')).unix();
+    
+    const startUnix = dayjs(dayjs(travelStore.teamTime[0]).format('YYYY-MM-DD')).unix();
+    const endUnix = dayjs(dayjs(travelStore.teamTime[1]).format('YYYY-MM-DD')).unix();
     
     // 判断日期选择是开始时间
 		if (type === 'start') {
@@ -316,16 +318,18 @@ export const disabledRangeTime = (start: any, end: any) => {
         disabledMinutes: () => [],
         disabledSeconds: () => [],
       };
-		}
-    // 如果结束日期 === 所选日期就限制
-		if (endUnix === current) {
-      console.log('结束日期等于所选日期')
-      return {
-        disabledHours: () => range(0, 24).splice(end.hour + 1, 24 - end.hour),
-        disabledMinutes: () => range(0, 60).splice(end.min + 1, 60 - end.min),
-        disabledSeconds: () => range(0, 60).splice(end.second + 1, 60 - end.second),
-      };
+		} else {
+      // 如果结束日期 === 所选日期就限制
+      if (endUnix === current) {
+        console.log('结束日期等于所选日期')
+        return {
+          disabledHours: () => range(0, 24).splice(end.hour + 1, 24 - end.hour),
+          disabledMinutes: () => range(0, 60).splice(end.min + 1, 60 - end.min),
+          disabledSeconds: () => range(0, 60).splice(end.second + 1, 60 - end.second),
+        };
+      }
     }
+    
     console.log('结束日期小于所选日期')
     return {
       disabledHours: () => [],
@@ -333,6 +337,38 @@ export const disabledRangeTime = (start: any, end: any) => {
       disabledSeconds: () => [],
     };
 	}
+};
+
+export const disabledDateTime = (data: any, type: string) => {
+  let start: any = {}
+  
+  return (_: Dayjs) => {
+    const current = dayjs(dayjs(_).format('YYYY-MM-DD')).unix()
+    const startUnix = dayjs(dayjs(data).format('YYYY-MM-DD')).unix();
+    if (data && (current === startUnix)) {
+      start.hour = dayjs(data).hour();
+      start.min = dayjs(data).minute();
+      start.second = dayjs(data).second();
+      if (type === 'start') {
+        return {
+          disabledHours: () => range(0, 24).splice(0, start.hour),
+          disabledMinutes: () => range(0, 60).splice(0, start.min),
+          disabledSeconds: () => range(0, 60).splice(0, start.second)
+        };
+      } else {
+        return {
+          disabledHours: () => range(0, 24).splice(start.hour + 1, 24 - start.hour),
+          disabledMinutes: () => range(0, 60).splice(start.min + 1, 60 - start.min),
+          disabledSeconds: () => range(0, 60).splice(start.second + 1, 60 - start.second),
+        };
+      }
+    }
+    return {
+      disabledHours: () => [],
+      disabledMinutes: () => [],
+      disabledSeconds: () => [],
+    };
+  }
 };
 
 // tab页是否有权限
