@@ -35,6 +35,22 @@
 			@showSizeChange="pageSideChange"
 		/>
 	</div>
+
+	<BaseModal title="整团撤销提醒" v-model="reRecokeAuditAllsVisible">
+		<p>是否直接整团撤销？整团撤销需要组团社计调 、古维管理员审核。审核通过后系统会自动为 您撤销该行程，已冻结金额将返回给组团社。</p>
+		<template v-slot:footer>
+			<a-button @click="reRecokeAuditAllsVisible = false">取消</a-button>
+			<!-- <a-button @click="openAllReapply" type="primary">继续撤销</a-button> -->
+		</template>
+	</BaseModal>
+	<BaseModal title="第三方门票退订提醒" v-model="reRecokeAuditCheckVisible">
+		<p>{{ reRecokeAuditCheckText }}</p>
+		<p>请等待退订完成</p>
+		<template v-slot:footer>
+			<a-button @click="reRecokeAuditCheckVisible = false">确定</a-button>
+		</template>
+	</BaseModal>
+	<AllRevoke ref="allRevokeRef" />
 </template>
 <script lang="ts" setup>
 import CommonTable from '@/components/common/CommonTable.vue';
@@ -45,9 +61,14 @@ import api from '@/api/index';
 import BaseModal from '@/components/common/BaseModal.vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import { GroupMode, TakeGroupStatus } from '@/enum';
+import AllRevoke from './revoke/components/allRevoke.vue';
+
 const travelStore = useTravelStore();
 const router = useRouter();
 const modelValue = ref(false);
+const reRecokeAuditAllsVisible = ref(false);
+const reRecokeAuditCheckVisible = ref(false);
+const reRecokeAuditCheckText = ref('');
 const state = reactive({
 	total: computed(() => travelStore.takeGroupList.waitingHandle.total),
 	params: {
@@ -121,15 +142,48 @@ const onHandleCurrentChange = (e: any) => {
 };
 const pageSideChange = () => {};
 
-const revoke = (row: any) => {
-	router.push({
-		path: '/travel/take_group/revoke',
-		query: {
-			id: row.oid,
-			itineraryNo: row.itineraryNo,
-		},
-	});
+const checkPower = async (id: any) => {
+	let pW = new FormData();
+
+	pW.append('itineraryId', id);
+
+	await api.travelManagement.repealNreapplyPage(pW);
+	return true;
 };
+
+const checkOutSideTicketIsRefund = async (id: any) => {
+	let pW = new FormData();
+
+	pW.append('itineraryId', id);
+
+	await api.travelManagement.checkOutSideTicketIsRefund(pW);
+
+	return true;
+};
+
+//打开弹窗
+const allRevokeRef = ref();
+
+const openAllReapply = () => {
+	reRecokeAuditAllsVisible.value = false;
+	allRevokeRef.value.open();
+};
+
+const revoke = async (row: any) => {
+	let valid, validTikcer;
+	try {
+		valid = await checkPower(row.oid);
+		validTikcer = await checkOutSideTicketIsRefund(row.oid);
+		if (valid && validTikcer) {
+			reRecokeAuditAllsVisible.value = true;
+		}
+	} catch (error: any) {
+		console.log(error, 'error');
+		reRecokeAuditCheckText.value = error?.msg;
+		reRecokeAuditCheckVisible.value = true;
+	}
+};
+
 const goToDetail = (row: any) => {
 	router.push({
 		path: '/travel/travel_manage/travel_detail',
