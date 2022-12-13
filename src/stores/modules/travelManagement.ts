@@ -209,6 +209,7 @@ export const useTravelStore = defineStore({
 			waitingChange: cloneDeep(takeGroupListParams),
 			overtime: cloneDeep(takeGroupListParams),
 			waitingOutGroup: cloneDeep(takeGroupListParams),
+			waitingHandle: cloneDeep(takeGroupListParams),
 		},
 		enterpriseState: [
 			{
@@ -260,6 +261,7 @@ export const useTravelStore = defineStore({
 			[TakeGroupStatus.WaitingChange]: '待变更',
 			[TakeGroupStatus.Overtime]: '已过期',
 			[TakeGroupStatus.WaitingOutGroup]: '待出团',
+			[TakeGroupStatus.WaitingHandle]: '待处理',
 		},
 		revokeParams: {},
 	}),
