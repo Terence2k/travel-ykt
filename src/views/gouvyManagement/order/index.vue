@@ -139,14 +139,17 @@
 			</p>
 		</div>
 		<CommonTable
-			:row-selection="{ onSelect, onSelectAll }"
 			:columns="strongColumns"
 			:dataSource="state.strongTouristList"
 			rowKey="oid"
 			:scrollY="false"
 			style="padding: 0"
 		>
-			<template #bodyCell="{ column, index, record }"> </template>
+			<template #bodyCell="{ column, index, record }"> 
+				<template v-if="column.key === 'Checkbox'">
+					<a-checkbox v-model:checked="record.checked" :disabled="record.disabled"></a-checkbox>
+				</template>
+			</template>
 		</CommonTable>
 		<div class="checked-div">
 			<a-checkbox v-model:checked="checked"
@@ -268,6 +271,11 @@ const columns = [
 ];
 const strongColumns = [
 	{
+		title: '选择',
+		dataIndex: 'Checkbox',
+		key: 'Checkbox',
+	},
+	{
 		title: '线下查验结果',
 		dataIndex: 'checkResult',
 		key: 'checkResult',
@@ -374,7 +382,7 @@ const state = reactive({
 	reduceNum: '',
 	notPresentNum: '',
 	checkStatus: '',
-	touristData:[] as any
+	touristData:[] as any,
 });
 
 const onHandleCurrentChange = (val: number) => {
@@ -456,7 +464,19 @@ const changeSubmit = () => {};
 const strongSubmit = () => {
 	selectStrongTouristVisible.value = true;
 	api.listTourist(state.tableData.details.oid).then((i: any) => {
+		i.touristList.map((i:any)=>{
+			if(i.purchased==2 || i.purchased==3 || i.purchased==4 )
+			{
+				return i.disabled=true
+			}
+			if(i.purchased==0 ||i.purchased==1)
+			{
+				return i.checked=true
+			}
+			return i
+		})
 		state.strongTouristList = i.touristList;
+		console.log(state.strongTouristList,'state.strongTouristList')
 		state.touristNum = i.touristNum;
 		state.reduceNum = i.reduceNum;
 		state.notPresentNum = i.notPresentNum;
@@ -481,14 +501,14 @@ const cancel = () => {
 	state.tableData.forceBrushStatus = '';
 	state.tableData.updateBrushStatus = '';
 };
-const onSelect = (record: any, selected: boolean, selectedRows: any) => {};
+const onSelect = (record: any, selected: boolean, selectedRows: any) => {
+};
 const onSelectAll = (record: any, selected: boolean, selectedRows: any) => {};
 const see = (id:any) => {
 	touristDetails.value=true
 	console.log(id,'id')
 	api.getItineraryTourist(id).then((res: any) => {
 		state.touristData=res
-		console.log(state.touristData,'数据')
 	});
 };
 const gotoDetails=(oid:any)=>{
