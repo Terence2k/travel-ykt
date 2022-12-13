@@ -107,10 +107,10 @@ const modalData = ref({
 	data: {}, // 传参对象
 });
 const tipSubmit = async () => {
-	// api.settlementUpdate(modalData.value.data).then((res: any) => {
+	api.updateItineraryStatusEnd(modalData.value.data).then((res: any) => {
 		message.success('操作成功');
 		onSearch();
-	// });
+	});
 	tipCancel();
 };
 const tipCancel = () => {
@@ -187,7 +187,7 @@ const onSearch = async () => {
 // 向父组件暴露方法
 defineExpose({ onSearch });
 
-// 下团结算
+// 行程手动下团
 const settlement = (type: string, record: any) => {
 	let oid;
 	// type:one单项  all批量
@@ -202,10 +202,7 @@ const settlement = (type: string, record: any) => {
 		oid = state.selectedRowKeys;
 	}
 	modalData.value.params = { title: '手动下团', content: '你即将对行程单手动执行下团操作，是否确定执行？' };
-	modalData.value.data = {
-		status: 14,
-		itineraryNoList: oid,
-	};
+	modalData.value.data = oid;
 	modalData.value.show = true;
 };
 
