@@ -35,8 +35,8 @@
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a href="javascript:;" @click="toSee(record.oid)" v-permission="'查看'">查看</a>
-						<a href="javascript:;" @click="change(record)" v-permission="'去改刷'" v-if="record.updateBrushStatus == 2">去改刷</a>
-						<a href="javascript:;" @click="strong(record)" v-permission="'去强刷'" v-if="record.forceBrushStatus == 1 || record.forceBrushStatus == 2"
+						<a href="javascript:;" @click="change(record)" v-permission="'去改刷'" v-if="record.updateBrushPermission == true">去改刷</a>
+						<a href="javascript:;" @click="strong(record)" v-permission="'去强刷'" v-if="record.forceBrushPermission == true"
 							>去强刷</a
 						>
 					</div>
@@ -116,25 +116,16 @@
 					<td class="key">最后一次改刷时间</td>
 					<td class="value">{{ state.tableData.details.lastUpdateBrushTime }}</td>
 				</tr>
-				<tr class="row" v-if="state.tableData.updateBrushStatus == '2'">
+				<!-- <tr class="row" v-if="state.tableData.updateBrushStatus == '2'">
 					<td class="key">改刷剩余时间</td>
 					<td class="value">{{ state.tableData.details.deadline }}</td>
-				</tr>
+				</tr> -->
 			</table>
 		</div>
 		<template v-slot:footer>
 			<a-button @click="cancel()">取消</a-button>
 			<a-button type="primary" @click="changeSubmit" v-if="state.tableData.updateBrushStatus == '2'">立即改刷</a-button>
 			<a-button type="primary" @click="strongSubmit" v-if="state.tableData.forceBrushStatus == '1'">立即强刷</a-button>
-		</template>
-	</BaseModal>
-	<BaseModal title="强刷提示" v-model="Visible" :width="400">
-		<p>
-			当前行程单已于 {{ state.tableData.details.endDate }} 过期。古维订单还未核销，但其他订单有核销记录。系统将于 2022.10.12 09:00:23
-			对该古维订单做自动强刷。您无需手动操作。
-		</p>
-		<template v-slot:footer>
-			<a-button type="primary" @click="Visible = false">确认</a-button>
 		</template>
 	</BaseModal>
 	<BaseModal title="选择需要强刷的游客" v-model="selectStrongTouristVisible" :width="1000">
@@ -409,59 +400,55 @@ const onSearch = () => {
 const orderDetails = (item: any) => {
 	api.brushOrder(item).then((res: any) => {
 		state.tableData.details = res;
-		let downTime = dayjs(res.deadline).format('YYYY-MM-DD HH:mm:ss');
-		// let downTime='2022-12-09 17:31:00'
-		if (dayjs(downTime).valueOf() > dayjs().valueOf()) {
-			countDown(downTime);
-			state.payTimer = setInterval(() => {
-				countDown(downTime);
-			}, 1000);
-		} else {
-			state.tableData.details.deadline = '00:00';
-		}
+		// let downTime = dayjs(res.deadline).format('YYYY-MM-DD HH:mm:ss');
+		// // let downTime='2022-12-09 17:31:00'
+		// if (dayjs(downTime).valueOf() > dayjs().valueOf()) {
+		// 	countDown(downTime);
+		// 	state.payTimer = setInterval(() => {
+		// 		countDown(downTime);
+		// 	}, 1000);
+		// } else {
+		// 	state.tableData.details.deadline = '00:00';
+		// }
 	});
 };
-const countDown = (end: any) => {
-	let nowTime = Date.parse(new Date()); //现在时间
-	let endTime = Date.parse(end); //活动结束时间
-	let changeTime = endTime - nowTime; //时间戳差值
-	// 所剩天数换算
-	let day = parseInt(changeTime / 1000 / 60 / 60 / 24) > 0 ? parseInt(changeTime / 1000 / 60 / 60 / 24) + '天' : '';
-	//所剩小时换算，不足10时，前面补0
-	let hour =
-		parseInt((changeTime / 1000 / 60 / 60) % 24) > 9
-			? parseInt((changeTime / 1000 / 60 / 60) % 24) + '小时'
-			: '0' + parseInt((changeTime / 1000 / 60 / 60) % 24) + '小时';
-	//所剩分钟换算，不足10时，前面补0
-	let min =
-		parseInt((changeTime / 1000 / 60) % 60) > 9
-			? parseInt((changeTime / 1000 / 60) % 60) + '分'
-			: '0' + parseInt((changeTime / 1000 / 60) % 60) + '分';
-	// 所剩秒数换算，不足10时，前面补0
-	let sec = parseInt((changeTime / 1000) % 60) > 9 ? parseInt((changeTime / 1000) % 60) + '秒' : '0' + parseInt((changeTime / 1000) % 60) + '秒';
-	if (changeTime <= 0) {
-		// 如果差值小于0，代表活动已结束，清空定时器
-		clearInterval(state.payTimer);
-		state.payTimer = null;
-		state.tableData.details.deadline = '00:00';
-	} else {
-		// 如活动未结束，赋值所剩时间
-		state.tableData.details.deadline = day + hour + min + sec;
-	}
-};
+// const countDown = (end: any) => {
+// 	let nowTime = Date.parse(new Date()); //现在时间
+// 	let endTime = Date.parse(end); //活动结束时间
+// 	let changeTime = endTime - nowTime; //时间戳差值
+// 	// 所剩天数换算
+// 	let day = parseInt(changeTime / 1000 / 60 / 60 / 24) > 0 ? parseInt(changeTime / 1000 / 60 / 60 / 24) + '天' : '';
+// 	//所剩小时换算，不足10时，前面补0
+// 	let hour =
+// 		parseInt((changeTime / 1000 / 60 / 60) % 24) > 9
+// 			? parseInt((changeTime / 1000 / 60 / 60) % 24) + '小时'
+// 			: '0' + parseInt((changeTime / 1000 / 60 / 60) % 24) + '小时';
+// 	//所剩分钟换算，不足10时，前面补0
+// 	let min =
+// 		parseInt((changeTime / 1000 / 60) % 60) > 9
+// 			? parseInt((changeTime / 1000 / 60) % 60) + '分'
+// 			: '0' + parseInt((changeTime / 1000 / 60) % 60) + '分';
+// 	// 所剩秒数换算，不足10时，前面补0
+// 	let sec = parseInt((changeTime / 1000) % 60) > 9 ? parseInt((changeTime / 1000) % 60) + '秒' : '0' + parseInt((changeTime / 1000) % 60) + '秒';
+// 	if (changeTime <= 0) {
+// 		// 如果差值小于0，代表活动已结束，清空定时器
+// 		clearInterval(state.payTimer);
+// 		state.payTimer = null;
+// 		state.tableData.details.deadline = '00:00';
+// 	} else {
+// 		// 如活动未结束，赋值所剩时间
+// 		state.tableData.details.deadline = day + hour + min + sec;
+// 	}
+// };
 const strong = (item: any) => {
 	orderDetails(item.oid);
-	state.tableData.forceBrushStatus = item.forceBrushStatus;
-	if (item.forceBrushStatus == 2) {
-		Visible.value = true;
-	} else {
-		state.title = '古维订单强刷';
-		strongBrushVisible.value = true;
-	}
+	state.tableData.forceBrushStatus ='1';
+	state.title = '古维订单强刷';
+	strongBrushVisible.value = true;
 };
 const change = (item: any) => {
 	orderDetails(item.oid);
-	state.tableData.updateBrushStatus = item.updateBrushStatus;
+	state.tableData.updateBrushStatus = '2';
 	strongBrushVisible.value = true;
 	state.title = '古维订单改刷';
 };
