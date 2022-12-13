@@ -77,12 +77,13 @@
 						<!-- <Upload class="upload-img"></Upload> -->
 						<div>
 							<div v-if="!editableData[record.key ? record.key : record.oid]">
-								<a-image
+								<!-- <a-image
 									v-for="url in record.specialCertificatePicture"
 									:key="url"
 									:width="50"
 									:src="url"
-								/>
+								/> -->
+								<CommonImg v-for="url in record.specialCertificatePicture" :key="url" :width="50" :src="url"></CommonImg>
 							</div>
 							<Upload 
 								v-else
@@ -133,6 +134,7 @@ import Upload from '@/components/common/imageWrapper.vue';
 import { useTouristInfo } from './touristInfo';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import { CODEVALUE } from '@/constant';
+import CommonImg from '@/components/common/CommonImg.vue';
 
 const props = defineProps({
 	onCheck: {
