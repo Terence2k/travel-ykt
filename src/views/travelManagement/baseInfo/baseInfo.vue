@@ -111,9 +111,11 @@
 			</a-form-item> -->
 
 			<a-form-item label="行程时间" name="time">
-				<!-- <div class="d-flex align-item-center">
+				<div class="d-flex align-item-center">
 					<a-form-item name="startDate" style="margin-bottom: 0">
 						<a-date-picker 
+							:disabled-date="disabledDateStart"
+							:disabled-time="disabledDateTime(formState.endDate, 'end')"
 							:show-time="{ format: 'HH:mm:ss' }" 
 							format="YYYY-MM-DD HH:mm:ss"
 							value-format="YYYY-MM-DD HH:mm:ss"
@@ -122,21 +124,24 @@
 					<span class="flex-1 text-center"> 至 </span> 
 					<a-form-item name="endDate" style="margin-bottom: 0"> 
 						<a-date-picker  
+							:disabled-date="disabledDate"
+							:disabled-time="disabledDateTime(formState.startDate, 'start')"
 							:show-time="{ format: 'HH:mm:ss' }" 
 							format="YYYY-MM-DD HH:mm:ss"
 							value-format="YYYY-MM-DD HH:mm:ss"
 							v-model:value="formState.endDate" />
 					</a-form-item>
-				</div> -->
+				</div>
 				<!-- :disabled-date="disabledDate" -->
-				<a-range-picker
+				<!-- <a-range-picker
 					style="width: 100%"
+					:disabled-date="disabledDate"
 					@change="handleChangeTime"
 					v-model:value="formState.time"
 					show-time
 					format="YYYY-MM-DD HH:mm:ss"
 					value-format="YYYY-MM-DD HH:mm:ss"
-				/>
+				/> -->
 			</a-form-item>
 
 			<a-form-item label="行程单号" name="teamId">
@@ -164,7 +169,7 @@
 </template>
 
 <script lang="ts" setup>
-import { disabledRangeTime, generateGuid, getAmount, getUserInfo } from '@/utils/util';
+import { disabledRangeTime, generateGuid, getAmount, getUserInfo, disabledDateTime } from '@/utils/util';
 import { ConfirmDailyCharge, FeeModel, GroupMode, RouteType } from '@/enum';
 import api from '@/api/index';
 import BaseModal from '@/components/common/BaseModal.vue';
@@ -360,11 +365,24 @@ const rulesRef = {
 
 
 const formState = ref<{[k:string]: any}>(route.query.id ? computed(() => travelStore.baseInfo) : addParams);
-
-
-const disabledDate = (current: Dayjs) => {
-	return current && current < dayjs().startOf('day');
+// 开始时间限制
+const disabledDateStart = (current: Dayjs) => {
+	if (formState.value.endDate) {
+		return current && current > dayjs(formState.value.endDate).startOf('day');
+	}
+	
 }
+// 结束时间限制
+const disabledDate = (current: Dayjs) => {
+	if (formState.value.startDate && dayjs(formState.value.startDate).unix() > dayjs(current).unix() ) {
+		return current && current < dayjs(formState.value.startDate).startOf('day');
+	} else {
+		return current && current < dayjs().startOf('day');
+	}
+	
+}
+// 结束时分秒限制
+// const disabledDateTime = (c)
 
 const onSubmit = async () => {
 	try {
@@ -400,8 +418,8 @@ const handleChangeTime = (event: any) => {
 	let dis = null;
 	let disTime = null;
 	if (event) {
-		formState.value.startDate = event[0];
-		formState.value.endDate = event[1];
+		// formState.value.startDate = event[0];
+		// formState.value.endDate = event[1];
 
 		let start = {
 			hour: 0,
@@ -435,8 +453,8 @@ const handleChangeTime = (event: any) => {
 		}
 		console.log(dis, '---------')
 	} else {
-		formState.value.startDate = '';
-		formState.value.endDate = '';
+		// formState.value.startDate = '';
+		// formState.value.endDate = '';
 		dis = (current: Dayjs) => {
 			return current && current < dayjs().endOf('day') || 
 			current > dayjs().startOf('day');
@@ -535,6 +553,11 @@ watch(
 		
 	}
 );
+
+watch(() => [formState.value.startDate, formState.value.endDate], ([newStar, newEnd]) => {
+	formState.value.time = newStar && newEnd ? [newStar, newEnd] : null
+	handleChangeTime(formState.value.time);
+})
 
 getTeamTypeList();
 getSubtravelList();
