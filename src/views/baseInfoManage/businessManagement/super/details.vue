@@ -87,6 +87,9 @@ const getComputedVal = computed(() => (key: string, val: any) => {
       case 'YKT':
         name = '一卡通'
         break;
+      case 'INSURANCE_COMPANY':
+        name = '保险公司'
+        break;
     }
     return name
   } else if (key === 'scenicLevel') {

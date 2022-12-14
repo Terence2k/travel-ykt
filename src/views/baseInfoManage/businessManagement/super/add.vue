@@ -110,6 +110,10 @@
         </a-form-item>
         <a-form-item label="创建超级管理员账号">
         </a-form-item>
+        <a-form-item name="phone" label="超级管理员电话" v-show="formRules?.accountPhone">
+          <a-input v-model:value="form.accountPhone" placeholder="请输入手机号">
+          </a-input>
+        </a-form-item>
         <a-form-item name="account" label="超级管理员账号">
           <a-input v-model:value="form.account" placeholder="请输入超级管理员账号">
           </a-input>
@@ -199,7 +203,8 @@ type detailsType = {
   checkPass?: string,
   licenseNo?: string,
   isIndividual?: 0 | 1,
-  legalPersonUrl?: string
+  legalPersonUrl?: string,
+  accountPhone?: string
 }
 const form = reactive<detailsType>({
   regionCode: [],
@@ -244,6 +249,7 @@ let validatePass2 = async (_rule: Rule, value: string) => {
   }
 };
 const common: Record<string, Rule[]> = {
+  accountPhone: [{ required: true, trigger: 'blur', message: '请输入超级管理员手机号' }],
   account: [{ required: true, trigger: 'blur', message: '请输入超级管理员账号' }],
   password: [{ required: true, validator: validatePass, trigger: 'change' }],
   checkPass: [{ validator: validatePass2, trigger: 'change' }],
@@ -269,11 +275,13 @@ const businessTypeOption = [
   { codeValue: 'TICKET', name: '景区' },
   { codeValue: 'TRAVEL', name: '旅行社' },
   { codeValue: 'GROUP', name: '集团' },
-  /* { codeValue: 'YKT', name: '一卡通' },
+  { codeValue: 'YKT', name: '一卡通' },
   { codeValue: 'SUPERVISE', name: '监理' },
   { codeValue: 'ASSOCIATION', name: '协会' },
   { codeValue: 'CULTURE_BUREAU', name: '文旅局' },
-  { codeValue: 'ANCIENT_UYGUR', name: '古维管理部门' } */
+  { codeValue: 'ANCIENT_UYGUR', name: '古维管理部门' },
+  // { codeValue: 'ANCIENT_UYGUR', name: '古维管理部门' },
+  { codeValue: 'INSURANCE_COMPANY', name: '保险公司' },
 ];
 /* const businessManageOptions = useBusinessManageOption();
 const initOpeion = async () => {

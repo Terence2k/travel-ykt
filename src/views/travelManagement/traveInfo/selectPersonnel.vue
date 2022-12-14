@@ -303,7 +303,7 @@ const onSearch = () => {
 	});
 };
 const getCheckboxProps = (record: any) => ({
-	disabled: record.purchased == 2,
+	disabled: record.purchased == 2 || record.purchased == 3 || record.purchased == 4,
 	// defaultChecked:selectedRowKeys.includes(record.purchased==2)
 });
 const onSearchList = () => {

@@ -263,3 +263,21 @@ export async function listTourist(id: number) {
 		showLoading: false,
 	});
 }
+//古维强刷
+export async function force(data: any) {
+	return request({
+		url: `${commonPath}/heritage-maintenance-service/public/api/hm-order/brushOrder/force`,
+		method: 'post',
+		showLoading: false,
+		data,
+	});
+}
+//古维改刷
+export async function brushOrderUpdate(data: any) {
+	return request({
+		url: `${commonPath}/heritage-maintenance-service/public/api/hm-order/brushOrder/update`,
+		method: 'post',
+		showLoading: false,
+		data,
+	});
+}
