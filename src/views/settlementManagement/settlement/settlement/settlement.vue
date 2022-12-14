@@ -47,6 +47,7 @@ import DelModal from '@/components/common/DelModal.vue';
 import TransferModal from '@/views/settlementManagement/settlement/settlement/transferModal.vue';
 import { downloadFile } from '@/utils/util';
 import { StateType } from '../index';
+import { number } from 'vue-types';
 
 const props = defineProps({
 	params: Object,
@@ -182,8 +183,10 @@ const rowSelection = computed(() => {
 })
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
-	state.tableData.param.pageNo = val;
-	onSearch();
+	if(typeof val == 'number') {
+		state.tableData.param.pageNo = val;
+		onSearch();
+	}
 };
 
 const pageSideChange = (current: number, size: number) => {

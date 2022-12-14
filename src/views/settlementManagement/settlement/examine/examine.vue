@@ -190,8 +190,10 @@ const rowSelection = computed(() => {
 
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
-	state.tableData.param.pageNo = val;
-	onSearch();
+	if(typeof val == 'number') {
+		state.tableData.param.pageNo = val;
+		onSearch();
+	}
 };
 
 const pageSideChange = (current: number, size: number) => {
