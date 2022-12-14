@@ -32,8 +32,8 @@
 					<div class="action-btns">
 						<a @click="examine('one', record)" v-permission="'预结算_审核'">审核</a>
 						<a @click="reclosing(record)" v-permission="'预结算_重新结算'">重新结算</a>
-						<a @click="thaw(record)" v-permission="'预结算_解冻'" v-if="record.test == 0">解冻</a>
-						<a @click="frozen(record)" v-permission="'预结算_冻结'" v-else>冻结</a>
+						<!-- <a @click="thaw(record)" v-permission="'预结算_解冻'" v-if="record.test == 0">解冻</a>
+						<a @click="frozen(record)" v-permission="'预结算_冻结'" v-else>冻结</a> -->
 						<a @click="toInfo(record)" v-permission="'预结算_查看'">查看</a>
 					</div>
 				</template>
@@ -110,11 +110,11 @@ const columns = [
 		dataIndex: 'accountingIsNormal',
 		key: 'accountingIsNormal',
 	},
-	{
-		title: '冻结状态',
-		dataIndex: 'test',
-		key: 'test',
-	},
+	// {
+	// 	title: '冻结状态',
+	// 	dataIndex: 'test',
+	// 	key: 'test',
+	// },
 	{
 		title: '操作',
 		key: 'action',
@@ -247,7 +247,7 @@ const frozen = (record: any) => {
 		itineraryNoList: [record.itineraryNo],
 	};
 	modalData.value.show = true;
-}
+};
 // 解冻
 const thaw = (record: any) => {
 	modalData.value.params = { title: '解冻', content: '是否确定解冻行程单' };
@@ -257,7 +257,7 @@ const thaw = (record: any) => {
 		itineraryNoList: [record.itineraryNo],
 	};
 	modalData.value.show = true;
-}
+};
 // 审核通过
 const examine = (type: string, record: any) => {
 	// type:one单项  all批量
