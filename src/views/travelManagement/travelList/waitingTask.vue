@@ -16,8 +16,9 @@
 
 		<template v-if="column.key === 'action'">
 			<div class="action-btns">
-				<a @click="goToPath(record)" v-permission="'待接团_查看行程单'">查看行程单</a>
-				<a v-permission="'待接团_催促地接社'">催促地接社</a>
+				<a @click="goToPath(record)" v-permission="'待处理_行程详情'">行程详情</a>
+				<a @click="openAllReapply(record)" v-permission="'待处理_申请撤销'">申请撤销</a>
+				<a v-permission="'待处理_查看日志'">查看日志</a>
 			</div>
 		</template>
 				</template>
@@ -30,15 +31,17 @@
 			@showSizeChange="pageSideChange"
 		/>
 	</div>
+	<allRevoke :itineraryId="itineraryId" ref="allRevokeRef" />
 </template>
 <script lang="ts" setup>
 	import CommonTable from '@/components/common/CommonTable.vue';
 	import CommonPagination from '@/components/common/CommonPagination.vue';
-
+	import allRevoke from '@/views/travelManagement/travelTakeGroupList/revoke/components/allRevoke.vue';
 	import api from '@/api/index';
 
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, GroupStatus } from '@/enum'
+	import { message } from 'ant-design-vue';
 
 
 	const travelStore = useTravelStore();
@@ -67,36 +70,36 @@
 					dataIndex: 'routeName',
 					key: 'routeName',
 			},
-			{
-					title: '组团社',
-					dataIndex: 'travelName',
-					key: 'travelName',
-			},
+			// {
+			// 		title: '组团社',
+			// 		dataIndex: 'travelName',
+			// 		key: 'travelName',
+			// },
 			{
 					title: '地接社',
 					dataIndex: 'subTravelName',
 					key: 'subTravelName',
 			},
 			{
-					title: '团队类型',
-					dataIndex: 'teamTypeName',
-					key: 'teamTypeName',
+					title: '行程时间',
+					dataIndex: 'time',
+					key: 'time',
 			},
-			// {
-			// 		title: '带队导游',
-			// 		dataIndex: 'guides',
-			// 		key: 'guides',
-			// },
+			{
+					title: '带队导游',
+					dataIndex: 'guides',
+					key: 'guides',
+			},
 			{
 					title: '团客人数',
 					dataIndex: 'touristCount',
 					key: 'touristCount',
 			},
-			{
-					title: '已冻结金额',
-					dataIndex: 'touristCount1',
-					key: 'touristCount1',
-			},
+			// {
+			// 		title: '已冻结金额',
+			// 		dataIndex: 'touristCount1',
+			// 		key: 'touristCount1',
+			// },
 			{
 					title: '操作',
 					fixed: 'right',
@@ -130,4 +133,37 @@
 		})
 	}
 	onSearch()
+	const checkPower = async (row: any) => {
+		let pW = new FormData();
+
+		pW.append('itineraryId', row.oid);
+
+		await api.travelManagement.repealNreapplyPage(pW);
+
+		return true;
+	};
+	const checkOutSideTicketIsRefund = async (row: any) => {
+		let pW = new FormData();
+
+		pW.append('itineraryId', row.oid);
+
+		await api.travelManagement.checkOutSideTicketIsRefund(pW);
+
+		return true;
+	};
+	//打开弹窗
+	const allRevokeRef = ref();
+	const itineraryId = ref();
+	const openAllReapply = async (row: any) => {
+		itineraryId.value = row.oid;
+		try {
+			await checkPower(row);
+			await checkOutSideTicketIsRefund(row);
+			allRevokeRef.value.open()
+		} catch (error: any) {
+			// message.error(error)
+		}
+		
+
+	};
 </script>
