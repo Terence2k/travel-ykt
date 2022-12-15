@@ -5,6 +5,14 @@
         <a-form ref="formRef" :model="form" :rules="formRules" name="addStore" autocomplete="off" :label-col="labelCol"
           :wrapper-col="{ span: 10 }">
           <div class="tag">基本信息</div>
+          <a-form-item name="contractType" label="散客合同类型">
+            <a-select placeholder="请选择散客合同类型" v-model:value="form.contractType" @change="contractOptionChange"
+              allowClear>
+              <a-select-option v-for="item in contractOption" :value="item.codeValue" :key="item.codeValue">{{ item.name
+              }}
+              </a-select-option>
+            </a-select>
+          </a-form-item>
           <a-form-item name="day" label="合同天数">
             <div class="reform">
               <a-form-item style="flex: 1;" name="contractDays">
@@ -36,21 +44,25 @@
             <a-input v-model:value="form.touristPeopleNumber" placeholder="无需填写，输入名单后自动生成" disabled>
             </a-input>
           </a-form-item>
-          <a-form-item name="insuranceBuyMode" label="保险购买方式">
+          <!-- <a-form-item name="insuranceBuyMode" label="保险购买方式">
             <a-select placeholder="请选择保险购买方式" v-model:value="form.insuranceBuyMode" allowClear>
               <a-select-option v-for="item in insuranceOption" :value="item.codeValue" :key="item.codeValue">{{
                   item.name
               }}
               </a-select-option>
             </a-select>
+          </a-form-item> -->
+          <a-form-item name="departurePlace" label="出发地">
+            <a-input v-model:value="form.departurePlace" placeholder="请填写出发地">
+            </a-input>
           </a-form-item>
-          <a-form-item name="contractType" label="散客合同类型">
-            <a-select placeholder="请选择散客合同类型" v-model:value="form.contractType" @change="contractOptionChange"
-              allowClear>
-              <a-select-option v-for="item in contractOption" :value="item.codeValue" :key="item.codeValue">{{ item.name
-              }}
-              </a-select-option>
-            </a-select>
+          <a-form-item name="destination" label="目的地">
+            <a-input v-model:value="form.destination" placeholder="请填写目的地">
+            </a-input>
+          </a-form-item>
+          <a-form-item name="returnPlace" label="返回地">
+            <a-input v-model:value="form.returnPlace" placeholder="请填写返回地">
+            </a-input>
           </a-form-item>
           <a-form-item name="contractFileUrl" label="上传附件" v-if="!isShow">
             <Upload v-model="form.contractFileUrl" :maxCount="9" />
@@ -132,7 +144,7 @@
                   <a-form ref="formRef1" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
                     <a-form-item name="certificatesType">
                       <a-select placeholder="请选择身份证件类型" v-model:value="dataTouristSource[index][column.dataIndex]"
-                        allowClear>
+                        allowClear style="width: 110px">
                         <a-select-option v-for="item in certificatesTypeOption" :value="item.codeValue"
                           :key="item.codeValue">{{ item.name }}
                         </a-select-option>
@@ -182,11 +194,42 @@
                   {{ cmpTouristType(text) }}
                 </template>
               </template>
+              <template v-if="column.dataIndex === 'gender'">
+                <a-select placeholder="请选择性别" v-if="record.isEdit"
+                  v-model:value="dataTouristSource[index][column.dataIndex]" allowClear style="width: 80px">
+                  <a-select-option v-for="item in genderOption" :value="item.codeValue" :key="item.codeValue">{{
+                      item.name
+                  }}
+                  </a-select-option>
+                </a-select>
+                <template v-else>
+                  {{ text }}
+                </template>
+              </template>
+              <template v-if="column.dataIndex === 'age'">
+                <a-input placeholder="请输入年龄" v-if="record.isEdit"
+                  v-model:value.number="dataTouristSource[index][column.dataIndex]" style="margin: -5px 0" />
+                <template v-else>
+                  {{ text }}
+                </template>
+              </template>
               <template v-if="column.dataIndex === 'phone'">
                 <a-input placeholder="请输入电话号码" v-if="record.isEdit"
                   v-model:value="dataTouristSource[index][column.dataIndex]" style="margin: -5px 0" />
                 <template v-else>
                   {{ text }}
+                </template>
+              </template>
+              <template v-if="column.dataIndex === 'isHealthy'">
+                <a-select placeholder="请选健康状态" v-if="record.isEdit"
+                  v-model:value="dataTouristSource[index][column.dataIndex]" allowClear style="width: 80px">
+                  <a-select-option v-for="item in isHealthyOption" :value="item.codeValue" :key="item.codeValue">{{
+                      item.name
+                  }}
+                  </a-select-option>
+                </a-select>
+                <template v-else>
+                  {{ cmpIsHealthy(text) }}
                 </template>
               </template>
               <template v-if="column.dataIndex === 'healthyCode'">
@@ -196,7 +239,19 @@
                   {{ text }}
                 </template>
               </template>
-              <template v-if="column.dataIndex === 'ancientUygurReduction'">
+              <template v-if="column.dataIndex === 'isAncientUygur'">
+                <a-select placeholder="请选择古维费代收代缴" v-if="record.isEdit"
+                  v-model:value="dataTouristSource[index][column.dataIndex]" allowClear style="width: 130px">
+                  <a-select-option v-for="item in ancientUygurOption" :value="item.codeValue" :key="item.codeValue">{{
+                      item.name
+                  }}
+                  </a-select-option>
+                </a-select>
+                <template v-else>
+                  {{ cmpAncientUygur(text) }}
+                </template>
+              </template>
+              <!-- <template v-if="column.dataIndex === 'ancientUygurReduction'">
                 <a-select placeholder="请选择是否减免" v-if="record.isEdit"
                   v-model:value="dataTouristSource[index][column.dataIndex]" allowClear>
                   <a-select-option v-for="item in ancientUygurReductionOption" :value="item.codeValue"
@@ -206,7 +261,7 @@
                 <template v-else>
                   {{ cmpAncientUygurReduction(text) }}
                 </template>
-              </template>
+              </template> -->
               <!-- <template v-if="column.dataIndex === 'reductionUrl'">
                 <Upload v-if="editableTouristData[record.key]"
                   v-model="editableTouristData[record.key][column.dataIndex]" :maxCount="3" />
@@ -324,6 +379,17 @@
           </div>
           <a-button @click="handleCostAdd" style="margin-left:20px">添加预订产品</a-button>
         </div>
+        <a-form ref="formRef4" :model="form" :rules="formRules" autocomplete="off">
+          <a-form-item name="paymentMethod" label="游客费用支付方式">
+            <a-select @change="touristChange" placeholder="选择游客线下的实际支付方式" v-model:value="form.paymentMethod" allowClear
+              style="width:20%">
+              <a-select-option v-for="item in paymentOptions" :value="item.codeValue" :key="item.codeValue">{{
+                  item.name
+              }}
+              </a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-form>
         <div class="btn_box">
           <div>
             <a-button type="primary" @click="nextTep('1')" class="mr20">上一步</a-button>
@@ -384,6 +450,7 @@ const formRef = ref()
 const formRef1 = ref()
 const formRef2 = ref()
 const formRef3 = ref()
+const formRef4 = ref()
 const isAdd = ref(true)
 const hasId = ref(false)
 const form = ref({
@@ -405,7 +472,11 @@ const form = ref({
   phone: "", //电话
   certificatesAddress: "",//游客详细住址
   contractAmount: 0,
-  pdfFileUrl: ""
+  pdfFileUrl: "",
+  paymentMethod: undefined,
+  departurePlace: '',
+  destination: '',
+  returnPlace: ''
 })
 const comprehensiveProductsList = ref([]) //综费产品
 const adultNumber = ref(0)
@@ -429,6 +500,10 @@ const ancientUygurReductionOption = [
   { codeValue: 1, name: '是' },
   { codeValue: 0, name: '否' }
 ]
+const ancientUygurOption = [
+  { codeValue: 1, name: '本次需要代收' },
+  { codeValue: 0, name: '本次不需要代收' }
+]
 const contractOption = [
   { codeValue: 1, name: '线上合同' },
   { codeValue: 2, name: '线下合同（需传附件）' }
@@ -437,7 +512,24 @@ const touristTypeOption = [
   { codeValue: 1, name: '成人' },
   { codeValue: 2, name: '儿童' }
 ]
+const paymentOptions = [
+  { codeValue: 1, name: '现金' },
+  { codeValue: 2, name: '转账' },
+  { codeValue: 3, name: '线下支付' },
+]
+const genderOption = [
+  { codeValue: '男', name: '男' },
+  { codeValue: '女', name: '女' }
+]
+const isHealthyOption = [
+  { codeValue: 1, name: '是' },
+  { codeValue: 0, name: '否' }
+]
 const formRules = {
+  paymentMethod: [{ required: true, trigger: 'blur', message: '选择游客线下的实际支付方式' }],
+  departurePlace: [{ required: true, trigger: 'blur', message: '请填写出发地' }],
+  destination: [{ required: true, trigger: 'blur', message: '请填写目的地' }],
+  returnPlace: [{ required: true, trigger: 'blur', message: '请填写返回地' }],
   contractDays: [{ required: true, trigger: 'blur', message: '请输入合同天数' }],
   travelNight: [{ required: true, trigger: 'blur', message: '请输入合同夜数' }],
   travelData: [{ required: true, trigger: 'blur', message: '请选择行程日期' }],
@@ -526,20 +618,40 @@ const touristColumns = [
     key: 'touristType',
   },
   {
+    title: '性别',
+    dataIndex: 'gender',
+    key: 'gender',
+  },
+  {
+    title: '年龄',
+    dataIndex: 'age',
+    key: 'age',
+  },
+  {
     title: '电话号码',
     dataIndex: 'phone',
     key: 'phone',
   },
   {
-    title: '健康码状态',
+    title: '是否健康',
+    dataIndex: 'isHealthy',
+    key: 'isHealthy',
+  },
+  {
+    title: '健康码颜色',
     dataIndex: 'healthyCode',
     key: 'healthyCode',
   },
   {
+    title: '古维费代收代缴',
+    dataIndex: 'isAncientUygur',
+    key: 'isAncientUygur',
+  },
+  /* {
     title: '古维减免',
     dataIndex: 'ancientUygurReduction',
     key: 'ancientUygurReduction',
-  },
+  }, */
   /* {
     title: '减免依据',
     dataIndex: 'reductionUrl',
@@ -550,7 +662,7 @@ const touristColumns = [
     key: 'action',
     dataIndex: 'action',
     fixed: 'right',
-    width: 110
+    width: 70
   }
 ]
 const costColumns = [
@@ -627,6 +739,26 @@ const cmpAncientUygurReduction = computed(() => (val: any) => {
   })
   return res
 });
+// 获取健康状态
+const cmpIsHealthy = computed(() => (val: any) => {
+  let res
+  isHealthyOption.forEach((item: any) => {
+    if (item.codeValue == val) {
+      res = item.name
+    }
+  })
+  return res
+});
+// 获取是否代收古维
+const cmpAncientUygur = computed(() => (val: any) => {
+  let res
+  ancientUygurOption.forEach((item: any) => {
+    if (item.codeValue == val) {
+      res = item.name
+    }
+  })
+  return res
+});
 // 根据线路id获取线路名称
 const cmplineName = computed(() => (val: any) => {
   let res
@@ -681,8 +813,8 @@ interface CostItem {
   adultNumber: number;
   childNumber: number;
   individualSubtotal: string;
-  isEdit: boolean,
-  isOperate?: boolean
+  isEdit: boolean;
+  isOperate?: boolean;
 }
 interface TouristItem {
   certificatesType: undefined | string; //证件类型
@@ -693,9 +825,13 @@ interface TouristItem {
   ancientUygurReduction: undefined | number; //古维减免
   // reductionUrl: string; //减免依据附件
   certificatesAddress: string; //游客详细住址
-  isRepresentative: number //是否为游客代表
-  healthyCode?: string,
-  isEdit: boolean,
+  isRepresentative: number; //是否为游客代表
+  age: number; //年龄
+  gender: undefined | string; // 性别
+  isHealthy: undefined | number; // 是否健康
+  isAncientUygur: undefined | number; //是否代收古维
+  healthyCode?: string;
+  isEdit: boolean;
 }
 interface LineItem {
   lineId: undefined | number;
@@ -704,8 +840,8 @@ interface LineItem {
   lineEndTime: string;
   adultPrice: number | string;
   childPrice: number | string;
-  lineDescribe: string,
-  isEdit: boolean,
+  lineDescribe: string;
+  isEdit: boolean;
 }
 const dataCostSource = ref<CostItem[]>([])
 const dataTouristSource = ref<TouristItem[]>([])
@@ -860,7 +996,8 @@ const saveDraft = () => {
     formRef.value?.validateFields(),
     formRef1.value?.validateFields(),
     formRef2.value?.validateFields(),
-    formRef3.value?.validateFields()
+    formRef3.value?.validateFields(),
+    formRef4.value?.validateFields()
   ])
   a.then(async () => {
     const params = getParams()
@@ -912,6 +1049,10 @@ const getParams = () => {
     pdfFileUrl,
     otherAgreements, //其他约定
     contractAmount, //行程费用
+    paymentMethod,
+    departurePlace,
+    destination,
+    returnPlace,
   } = form.value
   /* const arr: CostItem[] = []
   // 只上传自定义费用
@@ -930,6 +1071,10 @@ const getParams = () => {
   }
 
   return {
+    paymentMethod,
+    departurePlace,
+    destination,
+    returnPlace,
     oid,
     companyId, //合同创建旅行社id
     contractDays, //合同天数
