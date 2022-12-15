@@ -2,7 +2,8 @@
   <CommonSearch>
     <search-item label="合同状态">
       <a-select v-model:value="tableData.param.contractStatus" placeholder="请选择合同状态" allowClear>
-        <a-select-option v-for="item in contractStatusOption" :value="item.codeValue">{{ item.name }}
+        <a-select-option v-for="item in contractStatusOption" :value="item.codeValue" :key="item.codeValue">{{ item.name
+        }}
         </a-select-option>
       </a-select>
     </search-item>
@@ -35,7 +36,10 @@
           <a @click="checkDetails(record.oid)" v-permission="'查看'">查看</a>
           <a @click="addOrUpdate({ row: record, handle: 'update' })" v-show="(record.contractStatus === 1)"
             v-permission="'编辑'">编辑</a>
-          <a @click="withdraw" v-show="([2, 3].includes(record.contractStatus))" v-permission="'撤销'">撤销</a>
+          <a-popconfirm title="确认撤销这条数据吗？" ok-text="确认" cancel-text="取消" @confirm="withdraw(record.oid)"
+            v-show="([2, 3].includes(record.contractStatus))">
+            <a v-permission="'撤销'">撤销</a>
+          </a-popconfirm>
         </div>
       </template>
     </template>
@@ -51,6 +55,7 @@ import CommonSearch from '@/components/common/CommonSearch.vue'
 import SearchItem from '@/components/common/CommonSearchItem.vue'
 import api from '@/api';
 import { useRouter, useRoute } from 'vue-router';
+import { message } from 'ant-design-vue/es';
 const router = useRouter();
 const route = useRoute()
 const goTo = (name: string, value?: any) => {
@@ -159,7 +164,14 @@ const contractStatusOption = [
   { codeValue: 6, name: '旅行社解除' },
   { codeValue: 7, name: '已解除' },
 ]
-const withdraw = () => { }
+const withdraw = async (id: number) => {
+  const res = await api.revokeContract(id)
+  if (res) {
+    message.success('撤销成功!')
+  } else {
+    message.error('撤销失败！')
+  }
+}
 const checkDetails = (id: number) => {
   goTo('electronicContratDetails', { id })
 }

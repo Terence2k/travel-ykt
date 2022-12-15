@@ -686,4 +686,13 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
+	// 手动出团
+	handGoOut(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/handGoOut/${data}`,
+			method: 'put',
+			showLoading: true,
+		});
+	}
+	
 };

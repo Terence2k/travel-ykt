@@ -298,11 +298,13 @@ const delCancel = () => {
 };
 const addRules = () => {
 	cacheData.value.rulesShow = true;
-	cacheData.value.rulesParams = { add: true };
+	cacheData.value.rulesParams = { add: true, splitList: lodash.cloneDeep(formState.splitList) };
 };
 const editItem = (e: any, index: number) => {
 	cacheData.value.rulesShow = true;
-	cacheData.value.rulesParams = { add: false, from: lodash.cloneDeep(e), index: index };
+	const splitList = lodash.cloneDeep(formState.splitList);
+	splitList.splice(index, 1);
+	cacheData.value.rulesParams = { add: false, from: lodash.cloneDeep(e), index: index, splitList };
 };
 const rulesSubmit = (e: any) => {
 	if (e.params.add) {

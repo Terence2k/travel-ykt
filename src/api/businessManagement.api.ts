@@ -138,8 +138,8 @@ export function getBusinessDetails({ oid, businessType }: paramsType) {
 			method: 'get',
 			showLoading: true
 		});
-	} else if (['TRAVEL', 'SUPERVISE', 'ASSOCIATION', 'GROUP', 'CULTURE_BUREAU', 'ANCIENT_UYGUR', 'YKT'].includes(businessType)) {
-		// 旅行社、监理、协会、集团、文旅局、古维管理部门、一卡通根据id获取企业详情
+	} else if (['TRAVEL', 'SUPERVISE', 'ASSOCIATION', 'GROUP', 'CULTURE_BUREAU', 'ANCIENT_UYGUR', 'YKT', 'INSURANCE_COMPANY'].includes(businessType)) {
+		// 旅行社、监理、协会、集团、文旅局、古维管理部门、一卡通、保险公司根据id获取企业详情
 		return request({
 			url: `${commonPart}getCompanyInformation?oid=${oid}`,
 			method: 'post',

@@ -18,7 +18,12 @@
 		</p>
 		<FormWrap>
 			<FormItem title="线路名称" :i-value="state.detail.itinerarySubmitRevokeBasicVo.routeName" />
-			<FormItem title="行程单编号" :i-value="state.detail.itinerarySubmitRevokeBasicVo.itineraryNo" />
+			<tr class="row">
+				<td class="key">行程单编号</td>
+				<td class="value">{{state.detail.itinerarySubmitRevokeBasicVo.itineraryNo}}
+				<span class="td-span" @click="gotoDetails(state.detail.itinerarySubmitRevokeBasicVo.itineraryId)">查看行程单</span>
+				</td>
+			</tr>
 			<FormItem title="地接社" :i-value="state.detail.itinerarySubmitRevokeBasicVo.subTravelName" />
 			<FormItem
 				title="出散团时间"
@@ -53,11 +58,8 @@
 			>
 				<td class="key">重提后变更人数</td>
 				<td class="value">
-					<div style="margin-bottom: 20px">
 						{{ state.detail.itinerarySubmitRevokeBasicVo.peopleChangeCount }}人
-
-						<a-button @click="toCompare" style="margin-left:30px"> 查看对比</a-button>
-					</div>
+						<span @click="toCompare" class="td-span"> 查看对比</span>
 				</td>
 			</tr>
 			<FormItem title="撤销原因" :i-value="state.detail.itinerarySubmitRevokeBasicVo.revokeReason" />
@@ -285,6 +287,14 @@ const init = async () => {
 		state.title = '行程单撤销重提审核详情';
 	}
 };
+const gotoDetails=(oid:any)=>{
+	route.push({
+		path: '/travel/travel_manage/travel_detail',
+		query: {
+			oid:oid,
+		},
+	});
+}
 defineExpose({
 	close,
 });
@@ -362,5 +372,10 @@ watch(dialogVisible, (nVal) => {
 	display: flex;
 	justify-content: space-between;
 	margin-bottom: 20px;
+}
+.td-span{
+	color: rgb(2, 167, 240);
+	margin-left: 30px;
+	cursor: pointer;
 }
 </style>
