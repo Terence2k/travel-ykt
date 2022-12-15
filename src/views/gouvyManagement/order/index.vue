@@ -115,10 +115,10 @@
 					<td class="key">已出票金额</td>
 					<td class="value">{{ accMul(accDiv(state.tableData.details.unitPrice, 100), state.tableData.details.purchaseNum) }}元</td>
 				</tr>
-				<tr class="row" v-if="state.tableData.updateBrushStatus == '2'">
+				<!-- <tr class="row" v-if="state.tableData.updateBrushStatus == '2'">
 					<td class="key">最后一次改刷时间</td>
 					<td class="value">{{ state.tableData.details.lastUpdateBrushTime }}</td>
-				</tr>
+				</tr> -->
 				<!-- <tr class="row" v-if="state.tableData.updateBrushStatus == '2'">
 					<td class="key">改刷剩余时间</td>
 					<td class="value">{{ state.tableData.details.deadline }}</td>
@@ -282,6 +282,7 @@ const columns = [
 		width: 208,
 	},
 ];
+// 强刷
 const strongColumns = [
 	{
 		title: '选择',
@@ -329,6 +330,7 @@ const strongColumns = [
 		key: 'reduceCondition',
 	},
 ];
+// 改刷详情
 const ticketingColumns = [
 	{
 		title: '游客姓名',
@@ -371,6 +373,7 @@ const ticketingColumns = [
 		key: 'specialCertificateImg',
 	},
 ];
+// 改刷
 const updateVisibleColumns = [
 	{
 		title: '选择',
@@ -450,7 +453,7 @@ const onHandleCurrentChange = (val: number) => {
 	state.tableData.param.pageNo = val;
 	onSearch();
 };
-//查看
+//查看古维订单
 const toSee = (oid: any) => {
 	route.push({ path: '/gouvyManagement/order/order_edit', query: { oid: oid } });
 };
@@ -465,6 +468,7 @@ const onSearch = () => {
 		state.tableData.total = res.total;
 	});
 };
+// 改刷强刷详情
 const orderDetails = (item: any) => {
 	api.brushOrder(item).then((res: any) => {
 		state.tableData.details = res;
@@ -508,33 +512,14 @@ const orderDetails = (item: any) => {
 // 		state.tableData.details.deadline = day + hour + min + sec;
 // 	}
 // };
+// 点击强刷按钮
 const strong = (item: any) => {
 	orderDetails(item.oid);
 	state.tableData.forceBrushStatus = '1';
 	state.title = '古维订单强刷';
 	strongBrushVisible.value = true;
 };
-const change = (item: any) => {
-	orderDetails(item.oid);
-	state.tableData.updateBrushStatus = '2';
-	strongBrushVisible.value = true;
-	state.title = '古维订单改刷';
-};
-const changeSubmit = () => {
-	updateVisible.value=true;
-	api.getItineraryTourist(state.tableData.details.itineraryId).then((res: any) => {
-		res.touristList.map((i:any)=>{
-			if (i.purchased == 2 || i.purchased == 3 || i.purchased == 4) {
-				return (i.disabled = true);
-			}
-			if (i.purchased == 0 || i.purchased == 1) {
-				return (i.checked = true);
-			}
-			return i;
-		})
-		state.touristData = res;
-	});
-};
+// 打开选择需要强刷的游客弹窗
 const strongSubmit = () => {
 	selectStrongTouristVisible.value = true;
 	api.listTourist(state.tableData.details.oid).then((i: any) => {
@@ -548,47 +533,13 @@ const strongSubmit = () => {
 			return i;
 		});
 		state.strongTouristList = i.touristList;
-		console.log(state.strongTouristList, 'state.strongTouristList');
 		state.touristNum = i.touristNum;
 		state.reduceNum = i.reduceNum;
 		state.notPresentNum = i.notPresentNum;
 		state.checkStatus = i.checkStatus;
 	});
 };
-const reset = () => {
-	state.tableData.param.isReductionExist = '';
-	state.tableData.param.itineraryNo = '';
-	state.tableData.param.subTravelName = '';
-	state.tableData.param.itineraryStartDate = '';
-	onSearch();
-};
-const download = () => {
-	api.exportGouvyOrder(state.tableData.param).then((res: any) => {
-		downloadFile(res, '古维订单');
-		message.success('导出成功');
-	});
-};
-const cancel = () => {
-	strongBrushVisible.value = false;
-	state.tableData.forceBrushStatus = '';
-	state.tableData.updateBrushStatus = '';
-};
-const onSelect = (record: any, selected: boolean, selectedRows: any) => {};
-const onSelectAll = (record: any, selected: boolean, selectedRows: any) => {};
-const see = (id: any) => {
-	touristDetails.value = true;
-	api.getItineraryTourist(id).then((res: any) => {
-		state.touristData = res;
-	});
-};
-const gotoDetails = (oid: any) => {
-	route.push({
-		path: '/travel/travel_manage/travel_detail',
-		query: {
-			oid: oid,
-		},
-	});
-};
+// 强刷提交
 const submit = () => {
 	let checkedList = state.strongTouristList.filter((i: any) => i.checked == true);
 	if (checkedList.length == 0) {
@@ -614,6 +565,42 @@ const submit = () => {
 
 	console.log(data, '勾选');
 };
+
+
+// 点击改刷按钮
+const change = (item: any) => {
+	orderDetails(item.oid);
+	state.tableData.updateBrushStatus = '2';
+	strongBrushVisible.value = true;
+	state.title = '古维订单改刷';
+};
+
+// 打开改刷勾选古维费应缴游客弹窗
+const changeSubmit = () => {
+	updateVisible.value=true;
+	api.getItineraryTourist(state.tableData.details.itineraryId).then((res: any) => {
+		res.touristList.map((i:any)=>{
+			if (i.purchased == 2 || i.purchased == 3 || i.purchased == 4) {
+				return (i.disabled = true);
+			}
+			if (i.purchased == 0 || i.purchased == 1) {
+				return (i.checked = true);
+			}
+			return i;
+		})
+		state.touristData = res;
+	});
+};
+
+// 查看改刷已减免人数
+const see = (id: any) => {
+	touristDetails.value = true;
+	api.getItineraryTourist(id).then((res: any) => {
+		state.touristData = res;
+	});
+};
+
+// 改刷提交
 const updateSubmit=()=>{
 	let checkedList = state.touristData.touristList.filter((i: any) => i.checked == true);
 	if (checkedList.length == 0) {
@@ -632,9 +619,40 @@ const updateSubmit=()=>{
 		strongBrushVisible.value = false;
 		onSearch();
 	});
-
-	console.log(data, '勾选');
 }
+// 重置
+const reset = () => {
+	state.tableData.param.isReductionExist = '';
+	state.tableData.param.itineraryNo = '';
+	state.tableData.param.subTravelName = '';
+	state.tableData.param.itineraryStartDate = '';
+	onSearch();
+};
+// 导出
+const download = () => {
+	api.exportGouvyOrder(state.tableData.param).then((res: any) => {
+		downloadFile(res, '古维订单');
+		message.success('导出成功');
+	});
+};
+
+const cancel = () => {
+	strongBrushVisible.value = false;
+	state.tableData.forceBrushStatus = '';
+	state.tableData.updateBrushStatus = '';
+};
+
+// 查看行程单信息
+const gotoDetails = (oid: any) => {
+	route.push({
+		path: '/travel/travel_manage/travel_detail',
+		query: {
+			oid: oid,
+		},
+	});
+};
+
+
 onMounted(() => {
 	onSearch();
 });
