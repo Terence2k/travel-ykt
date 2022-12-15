@@ -45,3 +45,23 @@ export function smsLogin(data: any) {
 		showLoading: true
 	});
 }
+
+// 短信查询阅览内容
+export function getTemplateReadInfo(data: any) {
+	return request({
+		url: `${commonPath}/customer-service/public/api/smsTemplate/getTemplateReadInfo`,
+		method: 'post',
+		data,
+		showLoading: true
+	});
+}
+
+// 手动发送短信
+export function manualSendSms(data: any) {
+	return request({
+		url: `${commonPath}/customer-service/public/api/smsTemplate/manualSendSms`,
+		method: 'post',
+		data,
+		showLoading: true
+	});
+}

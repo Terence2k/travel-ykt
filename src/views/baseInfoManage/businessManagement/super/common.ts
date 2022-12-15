@@ -89,7 +89,7 @@ const keyNameList5 = {
   bank: '开户行',
   bankAccount: '公司账号',
 }
-// 旅游协会、文旅局、一卡通
+// 旅游协会、文旅局、一卡通、保险公司
 const keyNameList6 = {
   businessType: '企业类型',
   name: '企业名称',
@@ -146,6 +146,7 @@ function getKeylist(businessType: string) {
     case 'CULTURE_BUREAU':
     case 'ASSOCIATION':
     case 'YKT':
+    case 'INSURANCE_COMPANY':
       keys = keyNameList6
       break;
   }
@@ -194,7 +195,7 @@ const commonFormRules7: Record<string, Rule[]> = {
   bank: [{ required: true, trigger: 'blur', message: '请输入开户行' }],
   bankAccount: [{ required: true, trigger: 'blur', message: '请输入公司账号' }],
 }
-// 旅游协会、文旅局
+// 旅游协会、文旅局、保险公司
 const commonFormRules8: Record<string, Rule[]> = {
   businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
   name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
@@ -232,8 +233,8 @@ const condition1 = ['GROUP', 'HOTEL', 'TICKET', 'CATERING']
 const condition2 = ['YKT']
 // 监理、古维管理部门
 const condition3 = ['SUPERVISE', 'ANCIENT_UYGUR']
-// 旅游协会、文旅局
-const condition4 = ['ASSOCIATION', 'CULTURE_BUREAU']
+// 旅游协会、文旅局、保险公司
+const condition4 = ['ASSOCIATION', 'CULTURE_BUREAU', 'INSURANCE_COMPANY']
 // 旅行社
 const condition5 = ['TRAVEL']
 // 对象扁平化

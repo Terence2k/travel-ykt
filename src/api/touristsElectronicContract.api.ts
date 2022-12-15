@@ -60,3 +60,19 @@ export function findComprehensiveProductsList() {
     showLoading: true
   });
 }
+// 撤销合同
+export function revokeContract(oid: number) {
+  return request({
+    url: `${commonPart}revokeContract?oid=${oid}`,
+    method: 'post',
+    showLoading: true
+  });
+}
+// 发布合同
+export function releaseContract(oid: number) {
+  return request({
+    url: `${commonPart}releaseContract?oid=${oid}`,
+    method: 'post',
+    showLoading: true
+  });
+}

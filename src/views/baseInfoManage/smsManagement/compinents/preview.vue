@@ -22,7 +22,7 @@
 		</a-form>
 		<template v-slot:footer>
 			<a-button @click="cencel">取消</a-button>
-			<a-button type="primary" @click="dialogVisible = false">确认发送</a-button>
+			<a-button type="primary" @click="send">确认发送</a-button>
 		</template>
 	</BaseModal>
 </template>
@@ -31,6 +31,7 @@
 import { ref, Ref, computed, watch, toRefs, reactive } from 'vue';
 import BaseModal from '@/components/common/BaseModal.vue';
 import api from '@/api';
+import { message } from 'ant-design-vue';
 
 const props = defineProps({
 	modelValue: {
@@ -52,30 +53,42 @@ const rulesRef = {
 
 const cencel = () => {
 	formRef.value.resetFields();
-	formValidate.value = {}
-	// state.previewData = '';
-	// state.tips = '';
+	formValidate.value = {};
 	emit('cancel');
 };
 
 const onSubmit = () => {
 	formRef.value.validate().then(() => {
-		// await api.slaEdit(state.ruleForm)
-		formValidate.value.previewData =
-			'【丽江一卡通】2022年10月1日至2022年10月7日，丽江一卡通平台制卡情况：标准团200团5445人，散客门店组团178团692人，合计378团6137人。';
-		formValidate.value.tips = '短信内容已生成，确认无误即可确定发送！';
+		const data = {
+			templateOid: props?.params?.oid, //短信模板oid
+			startDate: formValidate.value.time[0], //开始时间
+			endDate: formValidate.value.time[1], //结束时间
+		};
+		api.getTemplateReadInfo(data).then((res: any) => {
+			formValidate.value.previewData = res;
+			formValidate.value.tips = '短信内容已生成，确认无误即可确定发送！';
+		});
 	});
 };
 
-const init = async () => {};
+const send = () => {
+	formRef.value.validate().then(() => {
+		const data = {
+			templateOid: props?.params?.oid, //短信模板oid
+			startDate: formValidate.value.time[0], //开始时间
+			endDate: formValidate.value.time[1], //结束时间
+		};
+		api.manualSendSms(data).then((res: any) => {
+			message.success('发送成功');
+			cencel()
+		});
+	});
+};
 
 watch(
 	() => props.modelValue,
 	async (nVal) => {
 		dialogVisible.value = nVal;
-		if (dialogVisible.value) {
-			await init();
-		}
 	}
 );
 

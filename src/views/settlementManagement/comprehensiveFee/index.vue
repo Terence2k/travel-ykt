@@ -202,8 +202,10 @@ const del = () => {
 };
 //搜索
 const onHandleCurrentChange = (val: number) => {
-	state.tableData.param.pageNo = val;
-	initList();
+	if(typeof val == 'number') {
+		state.tableData.param.pageNo = val;
+		initList();
+	}
 };
 //翻页
 const pageSideChange = (current: number, size: number) => {

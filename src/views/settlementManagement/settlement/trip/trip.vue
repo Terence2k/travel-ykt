@@ -147,14 +147,16 @@ const rowSelection = computed(() => {
 });
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
-	state.tableData.param.pageNo = val;
-	// onSearch();
+	if(typeof val == 'number') {
+		state.tableData.param.pageNo = val;
+		onSearch();
+	}
 };
 
 const pageSideChange = (current: number, size: number) => {
 	console.log('changePageSize:', size);
 	state.tableData.param.pageSize = size;
-	// onSearch();
+	onSearch();
 };
 
 // 数据处理
