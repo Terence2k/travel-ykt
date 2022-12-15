@@ -98,11 +98,6 @@ const columns = [
 		key: 'departureDate',
 	},
 	{
-		title: '预定人数',
-		dataIndex: 'scheduledNumber',
-		key: 'scheduledNumber',
-	},
-	{
 		title: '预定房数',
 		dataIndex: 'scheduledRooms',
 		key: 'scheduledRooms',
