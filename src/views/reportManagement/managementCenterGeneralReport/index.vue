@@ -1,7 +1,7 @@
 <template>
 	<CommonSearch>
 		<search-item label="团队类型" style="width: 280px">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.travelTypeId" style="width: 200px" placeholder="请选择团队类型">
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.travelTypeId" style="width: 180px" placeholder="请选择团队类型">
 				<a-select-option v-for="(item, index) in options.teamTypesLists" :value="item.oid" :key="index">{{ item.name }} </a-select-option>
 			</a-select>
 		</search-item>
@@ -13,14 +13,14 @@
 			</a-select>
 		</search-item>
 		<search-item label="地接社">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.subTravelId" style="width: 200px" placeholder="请选择旅行社名称">
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.subTravelId" placeholder="请选择旅行社名称" style="width: 200px">
 				<a-select-option v-for="(item, index) in options.earthContactAgencyList" :value="item.travelAgencyId" :key="index"
 					>{{ item.travelAgencyName }}
 				</a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="结算时间" style="width: 280px">
-			<a-range-picker v-model:value="state.times" @change="timeChange" />
+			<a-range-picker v-model:value="state.times" @change="timeChange" style="width: 180px" />
 		</search-item>
 		<template #button>
 			<a-button @click="initList" v-permission="`查询`">查询</a-button>
