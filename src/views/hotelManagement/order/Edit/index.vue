@@ -12,7 +12,6 @@
 							<a-form-item label="接团旅行社"> {{ state.data.subTravelName }} </a-form-item>
 							<a-form-item label="行程时间"> {{ state.data.arrivalDate }} - {{ state.data.departureDate }} </a-form-item>
 							<a-form-item label="行程人数"> {{ state.data.tripNumber }} </a-form-item>
-							<a-form-item label="预定人数"> {{ state.data.scheduledNumber }} </a-form-item>
 							<a-form-item label="预定房数"> {{ state.data.scheduledRooms }} </a-form-item>
 
 							<div class="title">订房信息</div>
