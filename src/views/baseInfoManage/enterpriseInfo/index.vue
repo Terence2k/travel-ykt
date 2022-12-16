@@ -108,6 +108,14 @@
               </a-button>
           </div>
         </a-form-item>
+        <a-form-item name="bankAddressIds" label="企业开户行所在地">
+          <div class="flex">
+            <address-selector placeholder="请选择所属地区" v-model:value="form.bankAddressIds" :disabled="getStatus('bankAddressIds')" :isProvince="false"/>
+            <a-button type="primary" class="status-btn" @click="changeDisabledStatus('bankAddressIds')" v-if="showChangeBtns('bankAddressIds')">
+              {{ getStatus('bankAddressIds') ? '修改' : '确定' }}
+            </a-button>
+          </div>
+        </a-form-item>
         <a-form-item name="bankNo" label="企业开户行行号">
           <div class="flex">
             <a-input v-model:value="form.bankNo" placeholder="请输入企业开户行行号" :disabled="getStatus('bankNo')" />
@@ -271,6 +279,22 @@
               </a-radio-group>
               <a-button type="primary" class="status-btn" @click="changeDisabledStatus('isIndividual')" v-if="showChangeBtns('isIndividual')">
                 {{ getStatus('isIndividual') ? '修改' : '确定' }}
+              </a-button>
+            </div>
+          </a-form-item>
+          <a-form-item name="individualDeparturePlace" label="散客常用出发地">
+            <div class="flex">
+              <a-input v-model:value="form.individualDeparturePlace" placeholder="请输入散客常用出发地" :disabled="getStatus('individualDeparturePlace')"/>
+              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('individualDeparturePlace')" v-if="showChangeBtns('individualDeparturePlace')">
+                {{ getStatus('individualDeparturePlace') ? '修改' : '确定' }}
+              </a-button>
+            </div>
+          </a-form-item>
+          <a-form-item name="individualReturnPlace" label="散客常用返回地">
+            <div class="flex">
+              <a-input v-model:value="form.individualReturnPlace" placeholder="请输入散客常用返回地" :disabled="getStatus('individualReturnPlace')"/>
+              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('individualReturnPlace')" v-if="showChangeBtns('individualReturnPlace')">
+                {{ getStatus('individualReturnPlace') ? '修改' : '确定' }}
               </a-button>
             </div>
           </a-form-item>
@@ -460,10 +484,26 @@ const state = reactive<any>({
 })
 const { form } = toRefs(state);
 const travelStore = useTravelStore();
+
+const validateFullRule = async (_rule: Rule, value: string) => {
+  if (!value && form.value.derate) {
+    return Promise.reject('请输入减免规则');
+  } else {
+    return Promise.resolve();
+  }
+};
+const validateReduceRule = async (_rule: Rule, value: string) => {
+  if (!value && form.value.derate) {
+    return Promise.reject('请输入减免规则');
+  } else {
+    return Promise.resolve();
+  }
+};
 const formRules: Record<string, Rule[]> = {
   businessType: [{ required: true, trigger: 'change', message: '请选择企业类型' }],
   name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
   addressIds: [{ required: true, trigger: 'change', message: '请选择所属地区' }],
+  bankAddressIds: [{ required: true, trigger: 'change', message: '请选择开户行所在地' }],
   addressDetail: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
   legalPerson: [{ required: true, trigger: 'blur', message: '请输入法定代表人' }],
   managementRange: [{ required: true, trigger: 'blur', message: '请输入经营范围' }],
@@ -488,8 +528,8 @@ const formRules: Record<string, Rule[]> = {
   rangeTime: [{ required: true, trigger: 'change', message: '请选择营业时间' }],
   shopPhone: [{ required: true, trigger: 'blur', message: '请输入店铺联系电话' }],
   cateringDesc: [{ required: true, trigger: 'blur', message: '请输入其他描述' }],
-  fullRule: [{ required: true, trigger: 'blur', message: '请输入减免规则' }],
-  reduceRule: [{ required: true, trigger: 'blur', message: '请输入减免规则' }],
+  fullRule: [{ required: true, trigger: 'blur', validator: validateFullRule }],
+  reduceRule: [{ required: true, trigger: 'blur', validator: validateReduceRule }],
 }
 const userInfo = getUserInfo();
 const submitFunc = ref();
@@ -538,6 +578,7 @@ const initOpeion = async () => {
   let data = await infoFunc;
   state.form = { ...data, ...data.companyBo};
   if (state.form?.areaId) state.form.addressIds = [state.form.provinceId, state.form.cityId, state.form.areaId];
+  if (state.form?.bankAccountProvince && state.form?.bankAccountCity) state.form.bankAddressIds = [Number(state.form.bankAccountProvince), Number(state.form.bankAccountCity)];
   state.form.rangeTime = [state.form.startTime, state.form.endTime];
   console.log('state.form:', state.form);
   
@@ -605,6 +646,11 @@ const submit = () => {
     queryData.cityId = queryData.addressIds[1];
     queryData.areaId = queryData.addressIds[2];
     delete queryData.addressIds;
+  }
+  if (queryData.bankAddressIds?.length) {
+    queryData.bankAccountProvince = queryData.bankAddressIds[0];
+    queryData.bankAccountCity = queryData.bankAddressIds[1];
+    delete queryData.bankAddressIds;
   }
   console.log('提交表单：', queryData)
   console.log('submitFunc', submitFunc.value)

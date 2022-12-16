@@ -10,6 +10,8 @@ const travelStore = useTravelStore();
 export const to2 = () => {
   window.localStorage.setItem("authorization", "");
   window.localStorage.setItem("userInfo", "");
+  window.localStorage.setItem("tabArr", "");
+  window.localStorage.setItem("btnArr", "");
   router.push("/login");
   // location.reload();
 };
