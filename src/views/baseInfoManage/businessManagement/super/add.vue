@@ -52,12 +52,12 @@
           </a-input> -->
         </a-form-item>
         <a-form-item label="成立日期" v-show="formRules?.establishTime">
-          <a-date-picker v-model:value="form.establishTime" placeholder="请选择成立日期" style="width:100%"
-            :valueFormat="dateFormat" :disabled-date="disabledAfterDate" />
+          <a-date-picker v-model:value="form.establishTime" placeholder="请选择成立日期" :valueFormat="dateFormat"
+            :disabled-date="disabledAfterDate" style="width:100%" />
         </a-form-item>
         <a-form-item label="营业期限" v-show="formRules?.businessTerm">
-          <a-date-picker v-model:value="form.businessTerm" placeholder="请选择营业期限" style="width:100%"
-            :valueFormat="dateFormat" :disabled-date="disabledBeforeDate" />
+          <a-date-picker v-model:value="form.businessTerm" placeholder="请选择营业期限" :valueFormat="dateFormat"
+            :disabled-date="disabledBeforeDate" style="width:100%" />
         </a-form-item>
         <a-form-item name="contactName" label="联系人" v-show="formRules?.contactName">
           <a-input v-model:value="form.contactName" placeholder="请输入联系人">
@@ -156,6 +156,7 @@ import Upload from '@/components/common/imageWrapper.vue';
 import type { Rule } from 'ant-design-vue/es/form';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
+import type { Dayjs } from 'dayjs';
 import {
   commonFormRules5,
   commonFormRules6,
@@ -188,8 +189,8 @@ type detailsType = {
   legalPerson?: string,
   managementRange?: string,
   registeredCapital?: string,
-  establishTime?: string,
-  businessTerm?: string,
+  establishTime?: Dayjs,
+  businessTerm?: Dayjs,
   contactName?: string,
   phone?: string,
   accountType?: 1 | 2,
@@ -311,11 +312,13 @@ const regionChange = () => {
   form.areaId = form.regionCode ? form.regionCode[2] : undefined
 }
 const submit = () => {
-  formRef.value.validateFields().then(() => {
-    saveVisible.value = true
-  }).catch((error: Error) => {
-    console.log(error);
-  })
+  console.log(form);
+
+  /*  formRef.value.validateFields().then(() => {
+     saveVisible.value = true
+   }).catch((error: Error) => {
+     console.log(error);
+   }) */
 }
 const saveCancel = () => {
   saveVisible.value = false
