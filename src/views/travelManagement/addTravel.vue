@@ -1,10 +1,12 @@
 <template>
 	<div class="trave-contaner">
-		<a-tabs v-model:activeKey="activeKey">
-			<a-tab-pane v-for="(item, index) in pages" :key="index" :tab="item.label">
-				<component @onSuccess="save" :onCheck="check" :is="item.name"></component>
-			</a-tab-pane>
-		</a-tabs>
+		<div class="tab-container">
+			<a-tabs v-model:activeKey="activeKey">
+				<a-tab-pane v-for="(item, index) in pages" :key="index" :tab="item.label">
+					<component @onSuccess="save" :onCheck="check" :is="item.name"></component>
+				</a-tab-pane>
+			</a-tabs>
+		</div>
 		<div class="footer d-flex justify-content-between" v-if="travelStore.teamStatus && !isRevoke">
 			<div class="footer-btn">
 				<a-button
@@ -344,6 +346,12 @@ travelStore.getItineraryStatus();
 <style lang="less" scoped>
 .trave-contaner {
 	height: 100%;
+	display: flex;
+	flex-direction: column;
+	.tab-container {
+		flex: 1;
+		overflow-y: auto;
+	}
 	::v-deep(.ant-tabs-nav) {
 		padding: 0 20px;
 	}
@@ -371,9 +379,9 @@ travelStore.getItineraryStatus();
 }
 
 .footer {
-	margin-top: 100px;
-	position: sticky;
-	bottom: 0;
+	margin-top: 50px;
+	// position: sticky;
+	// bottom: 0;
 	line-height: 64px;
 	width: 100%;
 	border-top: 1px solid #f1f2f5;

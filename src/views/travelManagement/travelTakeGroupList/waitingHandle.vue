@@ -20,8 +20,9 @@
 
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a @click="goToDetail(record)" v-permission="'待处理_查看'">查看</a>
-						<a @click="revoke(record)" v-permission="'待处理_撤销行程'">撤销行程</a>
+						<a @click="goToDetail(record)" v-permission="'待处理_行程详情'">行程详情</a>
+						<a @click="revoke(record)" v-permission="'待处理_申请撤销'">申请撤销</a>
+						<a v-permission="'待处理_查看日志'">查看日志</a>
 					</div>
 				</template>
 			</template>
@@ -40,7 +41,7 @@
 		<p>是否直接整团撤销？整团撤销需要组团社计调 、古维管理员审核。审核通过后系统会自动为 您撤销该行程，已冻结金额将返回给组团社。</p>
 		<template v-slot:footer>
 			<a-button @click="reRecokeAuditAllsVisible = false">取消</a-button>
-			<!-- <a-button @click="openAllReapply" type="primary">继续撤销</a-button> -->
+			<a-button @click="openAllReapply" type="primary">继续撤销</a-button>
 		</template>
 	</BaseModal>
 	<BaseModal title="第三方门票退订提醒" v-model="reRecokeAuditCheckVisible">

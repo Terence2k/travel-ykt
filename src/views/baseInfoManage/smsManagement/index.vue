@@ -15,7 +15,7 @@
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a @click="BaseModalmethods.showRecipient(record)">设置接收人</a>
-						<a  @click="BaseModalmethods.showPreview(record)">预览发送</a>
+						<a  @click="BaseModalmethods.showPreview(record)" v-if="record.sendModel == 0">预览发送</a>
 						<a @click="BaseModalmethods.showAudit(record)">{{(record.isEnable == 0 ? '禁用' : '启用')}}</a>
 					</div>
 				</template>

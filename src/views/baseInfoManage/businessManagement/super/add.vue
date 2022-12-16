@@ -24,7 +24,7 @@
           </a-select>
         </a-form-item>
         <a-form-item name="name" label="企业名称" v-show="formRules?.name">
-          <a-input v-model:value="form.name" placeholder="请输入企业名称">
+          <a-input v-model:value="form.name" placeholder="请输入企业名称" allowClear>
           </a-input>
         </a-form-item>
         <a-form-item name="regionCode" label="企业所属地区" v-show="formRules?.regionCode">
@@ -32,19 +32,19 @@
           </address-selector>
         </a-form-item>
         <a-form-item name="addressDetail" label="企业详情地址" v-show="formRules?.addressDetail">
-          <a-input v-model:value="form.addressDetail" placeholder="请输入企业详情地址">
+          <a-input v-model:value="form.addressDetail" placeholder="请输入企业详情地址" allowClear>
           </a-input>
         </a-form-item>
         <a-form-item name="legalPerson" label="法定代表人" v-show="formRules?.legalPerson">
-          <a-input v-model:value="form.legalPerson" placeholder="请输入法定代表人">
+          <a-input v-model:value="form.legalPerson" placeholder="请输入法定代表人" allowClear>
           </a-input>
         </a-form-item>
         <a-form-item name="managementRange" label="经营范围" v-show="formRules?.managementRange">
-          <a-textarea v-model:value="form.managementRange" placeholder="请输入经营范围" :rows="2">
+          <a-textarea v-model:value="form.managementRange" placeholder="请输入经营范围" :rows="2" allowClear>
           </a-textarea>
         </a-form-item>
         <a-form-item name="registeredCapital" label="注册资本" v-show="formRules?.registeredCapital">
-          <a-input v-model:value.number="form.registeredCapital" placeholder="请输入注册资本" suffix="万元">
+          <a-input v-model:value.number="form.registeredCapital" placeholder="请输入注册资本" suffix="万元" allowClear>
           </a-input>
           <!-- <a-input v-model:value="form.registeredCapital" placeholder="请输入注册资本" suffix="万元" @change="() => {
             form.registeredCapital = form.registeredCapital?.replace(/[^0-9.]/g, '')
@@ -52,19 +52,19 @@
           </a-input> -->
         </a-form-item>
         <a-form-item label="成立日期" v-show="formRules?.establishTime">
-          <a-date-picker v-model:value="form.establishTime" placeholder="请选择成立日期" style="width:100%"
-            :valueFormat="dateFormat" :disabled-date="disabledAfterDate" />
+          <a-date-picker v-model:value="form.establishTime" placeholder="请选择成立日期" :valueFormat="dateFormat"
+            :disabled-date="disabledAfterDate" style="width:100%" />
         </a-form-item>
         <a-form-item label="营业期限" v-show="formRules?.businessTerm">
-          <a-date-picker v-model:value="form.businessTerm" placeholder="请选择营业期限" style="width:100%"
-            :valueFormat="dateFormat" :disabled-date="disabledBeforeDate" />
+          <a-date-picker v-model:value="form.businessTerm" placeholder="请选择营业期限" :valueFormat="dateFormat"
+            :disabled-date="disabledBeforeDate" style="width:100%" />
         </a-form-item>
         <a-form-item name="contactName" label="联系人" v-show="formRules?.contactName">
-          <a-input v-model:value="form.contactName" placeholder="请输入联系人">
+          <a-input v-model:value="form.contactName" placeholder="请输入联系人" allowClear>
           </a-input>
         </a-form-item>
         <a-form-item name="phone" label="联系电话" v-show="formRules?.phone">
-          <a-input v-model:value="form.phone" placeholder="请输入联系电话">
+          <a-input v-model:value="form.phone" placeholder="请输入联系电话" allowClear>
           </a-input>
         </a-form-item>
         <a-form-item name="accountType" label="公司账户类型" v-show="formRules?.accountType">
@@ -74,23 +74,23 @@
           </a-radio-group>
         </a-form-item>
         <a-form-item name="bankAccountName" label="公司账户名称" v-show="formRules?.bankAccountName">
-          <a-input v-model:value="form.bankAccountName" placeholder="请输入公司账户名称">
+          <a-input v-model:value="form.bankAccountName" placeholder="请输入公司账户名称" allowClear>
           </a-input>
         </a-form-item>
         <a-form-item name="bank" label="开户行" v-show="formRules?.bank">
-          <a-input v-model:value="form.bank" placeholder="请输入开户行">
+          <a-input v-model:value="form.bank" placeholder="请输入开户行" allowClear>
           </a-input>
         </a-form-item>
         <a-form-item name="bankAccount" label="公司账号" v-show="formRules?.bankAccount">
-          <a-input v-model:value="form.bankAccount" placeholder="请输入公司账号">
+          <a-input v-model:value="form.bankAccount" placeholder="请输入公司账号" allowClear>
           </a-input>
         </a-form-item>
         <a-form-item name="creditCode" label="统一社会信用代码" v-show="formRules?.creditCode">
-          <a-input v-model:value="form.creditCode" placeholder="请输入统一社会信用代码">
+          <a-input v-model:value="form.creditCode" placeholder="请输入统一社会信用代码" allowClear>
           </a-input>
         </a-form-item>
         <a-form-item name="licenseNo" label="12301旅行社许可证号" v-show="formRules?.licenseNo">
-          <a-input v-model:value="form.licenseNo" placeholder="请输入12301旅行社许可证号">
+          <a-input v-model:value="form.licenseNo" placeholder="请输入12301旅行社许可证号" allowClear>
           </a-input>
         </a-form-item>
         <a-form-item name="isIndividual" label="是否为散客中心" v-show="formRules?.isIndividual">
@@ -98,6 +98,14 @@
             <a-radio :value="1">是</a-radio>
             <a-radio :value="0">否</a-radio>
           </a-radio-group>
+        </a-form-item>
+        <a-form-item name="individualDeparturePlace" label="散客常用出发地" v-show="formRules?.individualDeparturePlace">
+          <a-input v-model:value="form.individualDeparturePlace" placeholder="请输入散客常用出发地" allowClear>
+          </a-input>
+        </a-form-item>
+        <a-form-item name="individualReturnPlace" label="散客常用返回地" v-show="formRules?.individualReturnPlace">
+          <a-input v-model:value="form.individualReturnPlace" placeholder="请输入散客常用返回地" allowClear>
+          </a-input>
         </a-form-item>
 
         <a-form-item name="legalPersonUrl" label="法人身份证附件" v-show="formRules?.legalPersonUrl">
@@ -111,19 +119,19 @@
         <a-form-item label="创建超级管理员账号">
         </a-form-item>
         <a-form-item name="phone" label="超级管理员电话" v-show="formRules?.accountPhone">
-          <a-input v-model:value="form.accountPhone" placeholder="请输入手机号">
+          <a-input v-model:value="form.accountPhone" placeholder="请输入手机号" allowClear>
           </a-input>
         </a-form-item>
         <a-form-item name="account" label="超级管理员账号">
-          <a-input v-model:value="form.account" placeholder="请输入超级管理员账号">
+          <a-input v-model:value="form.account" placeholder="请输入超级管理员账号" allowClear>
           </a-input>
         </a-form-item>
         <a-form-item name="password" label="超级管理员密码" has-feedback>
-          <a-input v-model:value="form.password" placeholder="请输入超级管理员密码" type="password">
+          <a-input v-model:value="form.password" placeholder="请输入超级管理员密码" type="password" allowClear>
           </a-input>
         </a-form-item>
         <a-form-item name="checkPass" label="再输入一遍密码" has-feedback>
-          <a-input v-model:value="form.checkPass" placeholder="请输入再输入一遍密码" type="password">
+          <a-input v-model:value="form.checkPass" placeholder="请输入再输入一遍密码" type="password" allowClear>
           </a-input>
         </a-form-item>
         <a-form-item>
@@ -156,6 +164,7 @@ import Upload from '@/components/common/imageWrapper.vue';
 import type { Rule } from 'ant-design-vue/es/form';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
+import type { Dayjs } from 'dayjs';
 import {
   commonFormRules5,
   commonFormRules6,
@@ -188,8 +197,8 @@ type detailsType = {
   legalPerson?: string,
   managementRange?: string,
   registeredCapital?: string,
-  establishTime?: string,
-  businessTerm?: string,
+  establishTime?: Dayjs,
+  businessTerm?: Dayjs,
   contactName?: string,
   phone?: string,
   accountType?: 1 | 2,
@@ -203,6 +212,8 @@ type detailsType = {
   checkPass?: string,
   licenseNo?: string,
   isIndividual?: 0 | 1,
+  individualDeparturePlace?: string,
+  individualReturnPlace?: string,
   legalPersonUrl?: string,
   accountPhone?: string
 }
@@ -311,11 +322,11 @@ const regionChange = () => {
   form.areaId = form.regionCode ? form.regionCode[2] : undefined
 }
 const submit = () => {
-  formRef.value.validateFields().then(() => {
-    saveVisible.value = true
-  }).catch((error: Error) => {
-    console.log(error);
-  })
+   formRef.value.validateFields().then(() => {
+     saveVisible.value = true
+   }).catch((error: Error) => {
+     console.log(error);
+   })
 }
 const saveCancel = () => {
   saveVisible.value = false

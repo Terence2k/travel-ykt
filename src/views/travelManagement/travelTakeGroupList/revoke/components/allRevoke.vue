@@ -60,15 +60,18 @@ const props = defineProps({
 	// },
 	// params: Object,
 	// menuList: Array,
+	itineraryId: {
+		type: String
+	}
 });
 const emit = defineEmits(['finish']);
 
 const apply = async () => {
 	validate()
 		.then(async (res) => {
-			let parms = formValidate.data;
+			let parms: any = formValidate.data;
 			parms.attachmentList = parms.pic.split(',');
-			parms.itineraryId = route.currentRoute.value?.query?.id;
+			parms.itineraryId = route.currentRoute.value?.query?.id || props.itineraryId;
 			console.log(parms, 'parms');
 			let resP = await api.travelManagement.submitAllRevoke(parms);
 			console.log(resP, 'resP');
