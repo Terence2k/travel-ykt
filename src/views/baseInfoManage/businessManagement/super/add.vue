@@ -322,11 +322,11 @@ const regionChange = () => {
   form.areaId = form.regionCode ? form.regionCode[2] : undefined
 }
 const submit = () => {
-   formRef.value.validateFields().then(() => {
-     saveVisible.value = true
-   }).catch((error: Error) => {
-     console.log(error);
-   })
+  formRef.value.validateFields().then(() => {
+    saveVisible.value = true
+  }).catch((error: Error) => {
+    console.log(error);
+  })
 }
 const saveCancel = () => {
   saveVisible.value = false

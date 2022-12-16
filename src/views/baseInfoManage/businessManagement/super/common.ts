@@ -117,6 +117,8 @@ const keyNameList7 = {
   bankAccount: '公司账号',
   creditCode: '统一社会信用代码',
   licenseNo: "12301旅行社许可证号",
+  individualDeparturePlace: '散客常用出发地',
+  individualReturnPlace: '散客常用返回地',
   isIndividual: "是否为散客中心",
   legalPersonUrl: "法人身份证附件",
   businessLicenseUrl: '营业执照',
