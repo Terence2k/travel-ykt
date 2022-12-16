@@ -108,14 +108,14 @@
               </a-button>
           </div>
         </a-form-item>
-        <!-- <a-form-item name="bankAddressIds" label="企业开户行所在地">
+        <a-form-item name="bankAddressIds" label="企业开户行所在地">
           <div class="flex">
-            <address-selector placeholder="请选择所属地区" v-model:value="form.bankAddressIds" :disabled="getStatus('bankAddressIds')" />
+            <address-selector placeholder="请选择所属地区" v-model:value="form.bankAddressIds" :disabled="getStatus('bankAddressIds')" :isProvince="false"/>
             <a-button type="primary" class="status-btn" @click="changeDisabledStatus('bankAddressIds')" v-if="showChangeBtns('bankAddressIds')">
               {{ getStatus('bankAddressIds') ? '修改' : '确定' }}
             </a-button>
           </div>
-        </a-form-item> -->
+        </a-form-item>
         <a-form-item name="bankNo" label="企业开户行行号">
           <div class="flex">
             <a-input v-model:value="form.bankNo" placeholder="请输入企业开户行行号" :disabled="getStatus('bankNo')" />
@@ -578,7 +578,7 @@ const initOpeion = async () => {
   let data = await infoFunc;
   state.form = { ...data, ...data.companyBo};
   if (state.form?.areaId) state.form.addressIds = [state.form.provinceId, state.form.cityId, state.form.areaId];
-  if (state.form?.bankAccountProvince && state.form?.bankAccountCity) state.form.bankAddressIds = [state.form.bankAccountProvince, state.form.bankAccountCity];
+  if (state.form?.bankAccountProvince && state.form?.bankAccountCity) state.form.bankAddressIds = [Number(state.form.bankAccountProvince), Number(state.form.bankAccountCity)];
   state.form.rangeTime = [state.form.startTime, state.form.endTime];
   console.log('state.form:', state.form);
   
