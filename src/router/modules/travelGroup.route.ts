@@ -234,6 +234,17 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
+					{
+						path: 'singleEntrustmentContractDetails',
+						name: 'singleEntrustmentContractDetails',
+						component: () => import('@/views/singleEntrustmentContract/details.vue'),
+						meta: {
+							title: '合同详情',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
 				]
 			},
 			// lineManagement

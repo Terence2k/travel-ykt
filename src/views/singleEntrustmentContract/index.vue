@@ -186,7 +186,7 @@ const withdrawConfirm = async () => {
   withdrawVisible.value = false
 }
 const checkDetails = (id: number) => {
-  goTo('electronicContratDetails', { id })
+  goTo('singleEntrustmentContractDetails', { id })
 }
 interface addInterface {
   row?: any
