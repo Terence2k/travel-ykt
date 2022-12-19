@@ -30,7 +30,7 @@ const state = reactive({
 const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
 const dialogVisible = ref(false);
 const init = async () => {
-	state.data = props.params;	
+	state.data = props.params;
 };
 
 const Audit = async () => {
