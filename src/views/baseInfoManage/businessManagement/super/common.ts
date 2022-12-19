@@ -89,7 +89,7 @@ const keyNameList5 = {
   bank: '开户行',
   bankAccount: '公司账号',
 }
-// 旅游协会、文旅局、一卡通
+// 旅游协会、文旅局、一卡通、保险公司
 const keyNameList6 = {
   businessType: '企业类型',
   name: '企业名称',
@@ -117,6 +117,8 @@ const keyNameList7 = {
   bankAccount: '公司账号',
   creditCode: '统一社会信用代码',
   licenseNo: "12301旅行社许可证号",
+  individualDeparturePlace: '散客常用出发地',
+  individualReturnPlace: '散客常用返回地',
   isIndividual: "是否为散客中心",
   legalPersonUrl: "法人身份证附件",
   businessLicenseUrl: '营业执照',
@@ -146,6 +148,7 @@ function getKeylist(businessType: string) {
     case 'CULTURE_BUREAU':
     case 'ASSOCIATION':
     case 'YKT':
+    case 'INSURANCE_COMPANY':
       keys = keyNameList6
       break;
   }
@@ -194,7 +197,7 @@ const commonFormRules7: Record<string, Rule[]> = {
   bank: [{ required: true, trigger: 'blur', message: '请输入开户行' }],
   bankAccount: [{ required: true, trigger: 'blur', message: '请输入公司账号' }],
 }
-// 旅游协会、文旅局
+// 旅游协会、文旅局、保险公司
 const commonFormRules8: Record<string, Rule[]> = {
   businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
   name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
@@ -223,6 +226,8 @@ const commonFormRules5: Record<string, Rule[]> = {
   creditCode: [{ required: true, trigger: 'blur', message: '请输入统一社会信用代码' }],
   licenseNo: [{ required: true, trigger: 'blur', message: '请输入旅行社许可证号' }],
   isIndividual: [{ required: true, trigger: 'blur', message: '选择是否为散客中心' }],
+  individualDeparturePlace: [{ required: true, trigger: 'blur', message: '请输入散客常用出发地' }],
+  individualReturnPlace: [{ required: true, trigger: 'blur', message: '请输入散客常用返回地' }],
   legalPersonUrl: [{ required: true, trigger: 'blur', message: '请上传法人身份证附件' }],
   businessLicenseUrl: [{ required: true, trigger: 'blur', message: '请上传营业执照照片' }],
 }
@@ -232,8 +237,8 @@ const condition1 = ['GROUP', 'HOTEL', 'TICKET', 'CATERING']
 const condition2 = ['YKT']
 // 监理、古维管理部门
 const condition3 = ['SUPERVISE', 'ANCIENT_UYGUR']
-// 旅游协会、文旅局
-const condition4 = ['ASSOCIATION', 'CULTURE_BUREAU']
+// 旅游协会、文旅局、保险公司
+const condition4 = ['ASSOCIATION', 'CULTURE_BUREAU', 'INSURANCE_COMPANY']
 // 旅行社
 const condition5 = ['TRAVEL']
 // 对象扁平化

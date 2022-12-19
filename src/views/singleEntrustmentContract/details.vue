@@ -15,8 +15,8 @@
           <div class="key_val">{{ form.contractNo }}</div>
         </div>
         <div class="content_item">
-          <div class="key_name">合同天数</div>
-          <div class="key_val">{{ form.travelDayNight }}</div>
+          <div class="key_name">行程日期</div>
+          <div class="key_val">{{ form.travelDate }}</div>
         </div>
         <div class="content_item">
           <div class="key_name">委托旅行社</div>
@@ -24,17 +24,10 @@
           </div>
         </div>
         <div class="content_item">
-          <div class="key_name">行程日期</div>
-          <div class="key_val">{{ form.travelDate }}</div>
-        </div>
-        <div class="content_item">
           <div class="key_name">游客人数</div>
           <div class="key_val"><span class="count">{{ form.touristPeopleNumber }}</span>人</div>
         </div>
-        <div class="content_item">
-          <div class="key_name">保险购买方式</div>
-          <div class="key_val">{{ form.insuranceBuyModeName }}</div>
-        </div>
+
         <div class="content_item">
           <div class="key_name">合同类型</div>
           <div class="key_val">{{ form.contractTypeName }} <span @click="(modalVisible = true)" class="append"
@@ -45,6 +38,26 @@
         <div class="content_item">
           <div class="key_name">合同状态</div>
           <div class="key_val">{{ form.contractStatusName }}</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">合同定金</div>
+          <div class="key_val">{{ }}元（游客向旅行社支付）</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">合同终止违约金</div>
+          <div class="key_val">{{ }}x 合同总金额（违约方支付）</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">黄金周保证金</div>
+          <div class="key_val">{{ }}元（游客向旅行社支付）</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">紧急联系人</div>
+          <div class="key_val">{{ }}</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">紧急联系方式</div>
+          <div class="key_val">{{ }}</div>
         </div>
       </div>
       <div class="flex1">
@@ -73,6 +86,18 @@
           <div class="key_val">{{ form.creatorName }}</div>
         </div>
         <div class="content_item">
+          <div class="key_name">游客违约则扣罚</div>
+          <div class="key_val">酒店：{{}}；租车：{{}}；总价：{{}}</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">旅行社违约则扣罚</div>
+          <div class="key_val">未履约：{{}}；不达标：{{}}；转委托：{{}}。（按照合同总额扣罚）</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">争议解决办法</div>
+          <div class="key_val">{{ }}</div>
+        </div>
+        <div class="content_item">
           <div class="key_name">合同总金额</div>
           <div class="key_val"><span class="count">{{ form.contractAmount }}</span>元</div>
         </div>
@@ -80,17 +105,13 @@
           <div class="key_name">合同录入时间</div>
           <div class="key_val">{{ form.createTime }}</div>
         </div>
-        <!-- <div class="content_item">
-          <div class="key_name">合同生效时间</div>
-          <div class="key_val">{{ form.takeEffectTime }}</div>
-        </div> -->
       </div>
     </div>
     <div class="tag">
-      已选择线路（<span class="count">{{ form.individualContractLineBos.length }}</span>）
+      委托项目（<span class="count">{{ form.individualContractLineBos.length }}</span>）
     </div>
     <div class="content">
-      <CommonTable :dataSource="form.individualContractLineBos" :columns="lineColumns">
+      <CommonTable :dataSource="form.individualContractLineBos" :columns="entrustedProjectColumns">
         <template #bodyCell="{ column, record, index }">
           <template v-if="column.key === 'index'">
             {{ index + 1 }}
@@ -216,41 +237,21 @@ const form = ref({
   returnPlace: '',
   paymentMethodName: ''
 })
-const lineColumns = [
+const entrustedProjectColumns = [
   {
     title: '序号',
     dataIndex: 'index',
     key: 'index',
   },
   {
-    title: '线路名称',
-    dataIndex: 'lineId',
-    key: 'lineId',
+    title: '委托项目',
+    dataIndex: '',
+    key: '',
   },
   {
-    title: '开始时间',
-    dataIndex: 'lineStartTime',
-    key: 'lineStartTime',
-  },
-  {
-    title: '结束时间',
-    dataIndex: 'lineEndTime',
-    key: 'lineEndTime',
-  },
-  {
-    title: '成人价格(元）',
-    dataIndex: 'adultPrice',
-    key: 'adultPrice',
-  },
-  {
-    title: '小孩价格（元）',
-    dataIndex: 'childPrice',
-    key: 'childPrice',
-  },
-  {
-    title: '行程描述',
-    dataIndex: 'lineDescribe',
-    key: 'lineDescribe',
+    title: '委托价格',
+    dataIndex: '',
+    key: '',
   },
 ]
 const touristColumns = [

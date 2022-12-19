@@ -3,105 +3,140 @@
     <a-tabs v-model:activeKey="activeKey" @change="nextTep">
       <a-tab-pane key="1" tab="行程信息">
         <a-form ref="formRef" :model="form" :rules="formRules" name="addStore" autocomplete="off" :label-col="labelCol"
-          :wrapper-col="{ span: 10 }">
+          :wrapper-col="{ span: 15 }">
           <div class="tag">基本信息</div>
-          <a-form-item name="contractType" label="散客合同类型">
-            <a-select placeholder="请选择散客合同类型" v-model:value="form.contractType" @change="contractOptionChange"
-              allowClear>
-              <a-select-option v-for="item in contractOption" :value="item.codeValue" :key="item.codeValue">{{ item.name
-              }}
-              </a-select-option>
-            </a-select>
-          </a-form-item>
-          <a-form-item name="day" label="合同天数">
-            <div class="reform">
-              <a-form-item style="flex: 1;" name="contractDays">
-                <div style="display:flex;align-items:center;">
-                  <a-input v-model:value.number="form.contractDays" placeholder="请输入合同天数">
-                  </a-input>
-                  <span style="margin:0 10px">天</span>
-                </div>
+          <div class="disflex">
+            <div class="flex1">
+              <a-form-item name="travelData" label="行程日期">
+                <a-range-picker v-model:value="form.travelData" @change="datePickerChange"
+                  :placeholder="['请选择开始时间', '请选择结束时间']" :format="dateFormat" :valueFormat="dateFormat"
+                  style="width:100%" />
               </a-form-item>
-              <a-form-item style="flex: 1;" name="travelNight">
-                <div style="display:flex;align-items:center;">
-                  <a-input v-model:value.number="form.travelNight" placeholder="请输入合同夜数" />
-                  <span style="margin-left:10px">夜</span>
-                </div>
+              <a-form-item name="entrustTravelId" label="委托旅行社">
+                <a-select placeholder="请选择委托旅行社" v-model:value="form.entrustTravelId" allowClear>
+                  <a-select-option v-for="item in entrustTravelOption" :value="item.oid" :key="item.oid">{{ item.name }}
+                  </a-select-option>
+                </a-select>
+              </a-form-item>
+              <a-form-item name="touristPeopleNumber" label="游客人数">
+                <a-input v-model:value="form.touristPeopleNumber" placeholder="无需填写，输入名单后自动生成" disabled>
+                </a-input>
+              </a-form-item>
+              <a-form-item name="departurePlace" label="出发地">
+                <a-input v-model:value="form.departurePlace" placeholder="请填写出发地">
+                </a-input>
+              </a-form-item>
+              <a-form-item name="destination" label="目的地">
+                <a-input v-model:value="form.destination" placeholder="请填写目的地">
+                </a-input>
+              </a-form-item>
+              <a-form-item name="returnPlace" label="返回地">
+                <a-input v-model:value="form.returnPlace" placeholder="请填写返回地">
+                </a-input>
+              </a-form-item>
+              <a-form-item name="" label="紧急联系人">
+                <a-input v-model:value="form.returnPlace" placeholder="请填写紧急联系人">
+                </a-input>
+              </a-form-item>
+              <a-form-item name="" label="紧急联系电话">
+                <a-input v-model:value="form.returnPlace" placeholder="请填写紧急联系电话">
+                </a-input>
               </a-form-item>
             </div>
-          </a-form-item>
-          <a-form-item name="entrustTravelId" label="委托旅行社">
-            <a-select placeholder="请选择委托旅行社" v-model:value="form.entrustTravelId" allowClear>
-              <a-select-option v-for="item in entrustTravelOption" :value="item.oid" :key="item.oid">{{ item.name }}
-              </a-select-option>
-            </a-select>
-          </a-form-item>
-          <a-form-item name="travelData" label="行程日期">
-            <a-range-picker v-model:value="form.travelData" @change="datePickerChange"
-              :placeholder="['请选择开始时间', '请选择结束时间']" :format="dateFormat" :valueFormat="dateFormat" style="width:100%" />
-          </a-form-item>
-          <a-form-item name="touristPeopleNumber" label="游客人数">
-            <a-input v-model:value="form.touristPeopleNumber" placeholder="无需填写，输入名单后自动生成" disabled>
-            </a-input>
-          </a-form-item>
-          <!-- <a-form-item name="insuranceBuyMode" label="保险购买方式">
-            <a-select placeholder="请选择保险购买方式" v-model:value="form.insuranceBuyMode" allowClear>
-              <a-select-option v-for="item in insuranceOption" :value="item.codeValue" :key="item.codeValue">{{
-                  item.name
-              }}
-              </a-select-option>
-            </a-select>
-          </a-form-item> -->
-          <a-form-item name="departurePlace" label="出发地">
-            <a-input v-model:value="form.departurePlace" placeholder="请填写出发地">
-            </a-input>
-          </a-form-item>
-          <a-form-item name="destination" label="目的地">
-            <a-input v-model:value="form.destination" placeholder="请填写目的地">
-            </a-input>
-          </a-form-item>
-          <a-form-item name="returnPlace" label="返回地">
-            <a-input v-model:value="form.returnPlace" placeholder="请填写返回地">
-            </a-input>
-          </a-form-item>
-          <a-form-item name="contractFileUrl" label="上传附件" v-if="!isShow">
-            <Upload v-model="form.contractFileUrl" :maxCount="9" />
-            <pdfUpload v-model="form.pdfFileUrl" :maxCount="1" />
-          </a-form-item>
-          <div class="tag">选择线路</div>
-          <a-table :columns="lineColumns" :data-source="dataLineSource" bordered :pagination="false">
+            <div class="flex1">
+              <a-form-item name="" label="合同定金">
+                <div style="display:flex;align-items:center;">
+                  <a-input v-model:value.number="form.contractDays" placeholder="请输入合同定金" style="width:50%">
+                  </a-input>
+                  <span style="margin:0 10px">元（游客向旅行社支付）</span>
+                </div>
+              </a-form-item>
+              <a-form-item name="" label="合同终止违约金">
+                <div style="display:flex;align-items:center;">
+                  <a-input v-model:value.number="form.contractDays" placeholder="请输入合同终止违约金" style="width:50%">
+                  </a-input>
+                  <span style="margin:0 10px">% x 合同总金额（违约方支付）</span>
+                </div>
+              </a-form-item>
+              <a-form-item name="" label="黄金周保证金">
+                <div style="display:flex;align-items:center;">
+                  <a-input v-model:value.number="form.contractDays" placeholder="请输入黄金周保证金" style="width:50%">
+                  </a-input>
+                  <span style="margin:0 10px">元（游客向旅行社支付）</span>
+                </div>
+              </a-form-item>
+              <a-form-item name="" label="游客违约则扣罚">
+                <div class="reform">
+                  <a-form-item style="flex: 1;" name="" label="酒店">
+                    <div style="display:flex;align-items:center;">
+                      <a-input v-model:value.number="form.contractDays" placeholder="">
+                      </a-input>
+                      <span style="margin:0 10px">%</span>
+                    </div>
+                  </a-form-item>
+                  <a-form-item style="flex: 1;" name="" label="租车">
+                    <div style="display:flex;align-items:center;">
+                      <a-input v-model:value.number="form.travelNight" placeholder="" />
+                      <span style="margin:0 10px">%</span>
+                    </div>
+                  </a-form-item>
+                  <a-form-item style="flex: 1;" name="" label="总价">
+                    <div style="display:flex;align-items:center;">
+                      <a-input v-model:value.number="form.travelNight" placeholder="" />
+                      <span style="margin-left:10px">%</span>
+                    </div>
+                  </a-form-item>
+                </div>
+              </a-form-item>
+              <a-form-item name="" label="旅行社违约则扣罚">
+                <div class="reform">
+                  <a-form-item style="flex: 1;" name="" label="未履约">
+                    <div style="display:flex;align-items:center;">
+                      <a-input v-model:value.number="form.contractDays" placeholder="">
+                      </a-input>
+                      <span style="margin:0 10px">%</span>
+                    </div>
+                  </a-form-item>
+                  <a-form-item style="flex: 1;" name="" label="不达标">
+                    <div style="display:flex;align-items:center;">
+                      <a-input v-model:value.number="form.travelNight" placeholder="" />
+                      <span style="margin:0 10px">%</span>
+                    </div>
+                  </a-form-item>
+                  <a-form-item style="flex: 1;" name="" label="转委托">
+                    <div style="display:flex;align-items:center;">
+                      <a-input v-model:value.number="form.travelNight" placeholder="" />
+                      <span style="margin-left:10px">%</span>
+                    </div>
+                  </a-form-item>
+                </div>
+              </a-form-item>
+              <a-form-item name="" label="争议解决办法">
+                <a-select placeholder="请选择争议解决办法" v-model:value="form.entrustTravelId" allowClear>
+                  <a-select-option v-for="item in []" :value="item.oid" :key="item.oid">{{ item.name }}
+                  </a-select-option>
+                </a-select>
+              </a-form-item>
+            </div>
+          </div>
+
+          <div class="tag">添加委托项目</div>
+          <a-table :columns="entrustedProjectColumns" :data-source="dataEntrustedProjectSource" bordered
+            :pagination="false">
             <template #bodyCell="{ column, text, record, index }">
               <template v-if="column.key === 'index'">
                 {{ index + 1 }}
               </template>
-              <template v-if="column.dataIndex === 'lineId'">
-                <a-select v-if="record.isEdit" v-model:value="dataLineSource[index][column.dataIndex]"
-                  @change="() => { lineSelectChange(dataLineSource[index]) }" placeholder="请选择可用线路" allowClear>
-                  <a-select-option v-for="item in lineOption" :value="item.codeValue" :key="item.codeValue">{{ item.name
-                  }}
-                  </a-select-option>
-                </a-select>
-                <template v-else>
-                  {{ cmplineName(text) }}
-                </template>
-              </template>
-              <template v-if="column.dataIndex === 'lineStartTime'">
-                <a-date-picker v-if="record.isEdit" v-model:value="dataLineSource[index][column.dataIndex]"
-                  placeholder="请选择开始时间" style="width:100%" :format="dateFormat" :valueFormat="dateFormat" />
+              <template v-if="column.dataIndex === 'a'">
+                <a-input v-if="record.isEdit" v-model:value="dataEntrustedProjectSource[index][column.dataIndex]"
+                  placeholder="请输入委托项目" style="margin: -5px 0" />
                 <template v-else>
                   {{ text }}
                 </template>
               </template>
-              <template v-if="column.dataIndex === 'lineEndTime'">
-                <a-date-picker v-if="record.isEdit" v-model:value="dataLineSource[index][column.dataIndex]"
-                  placeholder="请选择结束时间" style="width:100%" :format="dateFormat" :valueFormat="dateFormat" />
-                <template v-else>
-                  {{ text }}
-                </template>
-              </template>
-              <template v-if="['adultPrice', 'childPrice', 'lineDescribe',].includes(column.dataIndex)">
-                <a-input v-if="record.isEdit" v-model:value="dataLineSource[index][column.dataIndex]"
-                  placeholder="选择线路自动生成" disabled style="margin: -5px 0" />
+              <template v-if="column.dataIndex === 'b'">
+                <a-input v-if="record.isEdit" v-model:value="dataEntrustedProjectSource[index][column.dataIndex]"
+                  placeholder="请输入委托价格" style="margin: -5px 0" />
                 <template v-else>
                   {{ text }}
                 </template>
@@ -109,12 +144,12 @@
               <template v-if="column.dataIndex === 'action'">
                 <div class="editable-row-operations">
                   <span v-if="record.isEdit">
-                    <a @click="save(dataLineSource[index])">确定</a>
-                    <a @click="cancel(dataLineSource[index])">取消</a>
+                    <a @click="save(dataEntrustedProjectSource[index])">确定</a>
+                    <a @click="cancel(dataEntrustedProjectSource[index])">取消</a>
                   </span>
                   <span v-else>
-                    <a @click="edit(dataLineSource[index])">编辑</a>
-                    <a-popconfirm title="确认删除数据？" @confirm="onLineDelete(index)">
+                    <a @click="edit(dataEntrustedProjectSource[index])">编辑</a>
+                    <a-popconfirm title="确认删除数据？" @confirm="onEntrustedProjectDelete(index)">
                       <a>删除</a>
                     </a-popconfirm>
                   </span>
@@ -194,7 +229,7 @@
                   {{ cmpTouristType(text) }}
                 </template>
               </template>
-              <template v-if="column.dataIndex === 'gender'">
+              <!-- <template v-if="column.dataIndex === 'gender'">
                 <a-select placeholder="请选择性别" v-if="record.isEdit"
                   v-model:value="dataTouristSource[index][column.dataIndex]" allowClear style="width: 80px">
                   <a-select-option v-for="item in genderOption" :value="item.codeValue" :key="item.codeValue">{{
@@ -212,7 +247,7 @@
                 <template v-else>
                   {{ text }}
                 </template>
-              </template>
+              </template> -->
               <template v-if="column.dataIndex === 'phone'">
                 <a-input placeholder="请输入电话号码" v-if="record.isEdit"
                   v-model:value="dataTouristSource[index][column.dataIndex]" style="margin: -5px 0" />
@@ -220,7 +255,7 @@
                   {{ text }}
                 </template>
               </template>
-              <template v-if="column.dataIndex === 'isHealthy'">
+              <!-- <template v-if="column.dataIndex === 'isHealthy'">
                 <a-select placeholder="请选健康状态" v-if="record.isEdit"
                   v-model:value="dataTouristSource[index][column.dataIndex]" allowClear style="width: 80px">
                   <a-select-option v-for="item in isHealthyOption" :value="item.codeValue" :key="item.codeValue">{{
@@ -231,7 +266,7 @@
                 <template v-else>
                   {{ cmpIsHealthy(text) }}
                 </template>
-              </template>
+              </template> -->
               <template v-if="column.dataIndex === 'healthyCode'">
                 <a-input placeholder="系统自动生成" v-if="record.isEdit"
                   v-model:value="dataTouristSource[index][column.dataIndex]" disabled style="margin: -5px 0" />
@@ -328,7 +363,7 @@
             <template v-if="column.key === 'index'">
               {{ index + 1 }}
             </template>
-            <template v-if="column.dataIndex === 'priceName'">
+            <!-- <template v-if="column.dataIndex === 'priceName'">
               <a-input v-if="record.isEdit" v-model:value="dataCostSource[index][column.dataIndex]"
                 style="margin: -5px 0" placeholder="输入产品名称" />
               <template v-else>
@@ -355,7 +390,7 @@
               <template v-else>
                 {{ text }}
               </template>
-            </template>
+            </template> -->
             <template v-if="(column.dataIndex === 'action' && record.isOperate)">
               <div class="editable-row-operations">
                 <span v-if="record.isEdit">
@@ -377,7 +412,7 @@
             <div class="cost_item">费用合计</div>
             <div class="cost_item">{{ form.contractAmount }}</div>
           </div>
-          <a-button @click="handleCostAdd" style="margin-left:20px">添加预订产品</a-button>
+          <!-- <a-button @click="handleCostAdd" style="margin-left:20px">添加预订产品</a-button> -->
         </div>
         <a-form ref="formRef4" :model="form" :rules="formRules" autocomplete="off">
           <a-form-item name="paymentMethod" label="游客费用支付方式">
@@ -394,7 +429,7 @@
           <div>
             <a-button type="primary" @click="nextTep('1')" class="mr20">上一步</a-button>
             <a-button type="primary" @click="saveDraft" class="mr20">保存草稿</a-button>
-            <a-button type="primary" @click="submitVisible = true" :disabled="!hasId">提交签署</a-button>
+            <a-button type="primary" @click="submitVisible = true" :disabled="!hasId">发出签署</a-button>
           </div>
         </div>
       </a-tab-pane>
@@ -438,14 +473,14 @@ const route = useRoute();
 const isRefresh = ref('0')
 const back = () => {
   router.push({
-    name: 'electronicContratList',
+    name: 'singleEntrustmentContract',
     params: {
       isRefresh: isRefresh.value
     }
   })
 }
 const dateFormat = 'YYYY-MM-DD';
-const labelCol = { style: { width: '110px' } }
+const labelCol = { style: { width: '130px' } }
 const formRef = ref()
 const formRef1 = ref()
 const formRef2 = ref()
@@ -464,7 +499,6 @@ const form = ref({
   tripEndTime: "", //合同行程结束时间
   touristPeopleNumber: "", //游客人数
   insuranceBuyMode: undefined, //保险购买方式
-  contractType: undefined, //合同类型
   contractFileUrl: "", //附件
   otherAgreements: "", //其他约定
   touristName: undefined, //游客姓名
@@ -504,10 +538,6 @@ const ancientUygurOption = [
   { codeValue: 1, name: '本次需要代收' },
   { codeValue: 0, name: '本次不需要代收' }
 ]
-const contractOption = [
-  { codeValue: 1, name: '线上合同' },
-  { codeValue: 2, name: '线下合同（需传附件）' }
-]
 const touristTypeOption = [
   { codeValue: 1, name: '成人' },
   { codeValue: 2, name: '儿童' }
@@ -535,7 +565,6 @@ const formRules = {
   travelData: [{ required: true, trigger: 'blur', message: '请选择行程日期' }],
   touristPeopleNumber: [{ required: true, trigger: 'blur', message: '游客人数不能为空' }],
   insuranceBuyMode: [{ required: true, trigger: 'blur', message: '请选择保险购买方式' }],
-  contractType: [{ required: true, trigger: 'blur', message: '请选择散客合同类型' }],
   certificatesType: [{ required: true, trigger: 'blur', message: '请选择身份证件类型' }],
   certificatesNo: [{ required: true, trigger: 'blur', message: '请输入证件号码' }],
   touristName: [{ required: true, trigger: 'blur', message: '请选择游客代表' }],
@@ -547,41 +576,21 @@ const activeKey = ref('1')
 const submitVisible = ref(false)
 const submitResultVisible = ref(false)
 const isShow = ref(true)
-const lineColumns = [
+const entrustedProjectColumns = [
   {
     title: '序号',
     dataIndex: 'index',
     key: 'index',
   },
   {
-    title: '线路名称',
-    dataIndex: 'lineId',
-    key: 'lineId',
+    title: '委托项目',
+    dataIndex: 'a',
+    key: 'a',
   },
   {
-    title: '开始时间',
-    dataIndex: 'lineStartTime',
-    key: 'lineStartTime',
-  },
-  {
-    title: '结束时间',
-    dataIndex: 'lineEndTime',
-    key: 'lineEndTime',
-  },
-  {
-    title: '成人价格(元）',
-    dataIndex: 'adultPrice',
-    key: 'adultPrice',
-  },
-  {
-    title: '小孩价格（元）',
-    dataIndex: 'childPrice',
-    key: 'childPrice',
-  },
-  {
-    title: '行程描述',
-    dataIndex: 'lineDescribe',
-    key: 'lineDescribe',
+    title: '委托价格',
+    dataIndex: 'b',
+    key: 'b',
   },
   {
     title: '操作',
@@ -617,7 +626,7 @@ const touristColumns = [
     dataIndex: 'touristType',
     key: 'touristType',
   },
-  {
+  /* {
     title: '性别',
     dataIndex: 'gender',
     key: 'gender',
@@ -626,19 +635,19 @@ const touristColumns = [
     title: '年龄',
     dataIndex: 'age',
     key: 'age',
-  },
+  }, */
   {
     title: '电话号码',
     dataIndex: 'phone',
     key: 'phone',
   },
-  {
+  /* {
     title: '是否健康',
     dataIndex: 'isHealthy',
     key: 'isHealthy',
-  },
+  }, */
   {
-    title: '健康码颜色',
+    title: '健康码状态',
     dataIndex: 'healthyCode',
     key: 'healthyCode',
   },
@@ -769,33 +778,6 @@ const cmplineName = computed(() => (val: any) => {
   })
   return res
 })
-// 根据不同合同类型控制不同表单显示
-const contractOptionChange = (val: number) => {
-  switch (val) {
-    case 1:
-      isShow.value = true
-      form.value.contractFileUrl = ''
-      form.value.pdfFileUrl = ''
-      break;
-    case 2:
-      isShow.value = false
-      form.value.touristName = undefined
-      form.value.phone = ''
-      form.value.certificatesAddress = ''
-      form.value.certificatesNo = undefined
-      touristChange()
-      break;
-    default:
-      isShow.value = true
-      touristChange()
-      form.value.touristName = undefined
-      form.value.phone = ''
-      form.value.certificatesAddress = ''
-      form.value.certificatesNo = undefined
-      form.value.contractFileUrl = ''
-      form.value.pdfFileUrl = ''
-  }
-}
 // 行程日期改变事件
 const datePickerChange = () => {
   if (form.value.travelData) {
@@ -833,36 +815,26 @@ interface TouristItem {
   healthyCode?: string;
   isEdit: boolean;
 }
-interface LineItem {
-  lineId: undefined | number;
-  lineName: string;
-  lineStartTime: string;
-  lineEndTime: string;
-  adultPrice: number | string;
-  childPrice: number | string;
-  lineDescribe: string;
+interface EntrustedProjectItem {
+  a: undefined | number;
+  b: string;
   isEdit: boolean;
 }
 const dataCostSource = ref<CostItem[]>([])
 const dataTouristSource = ref<TouristItem[]>([])
-const dataLineSource = ref<LineItem[]>([])
-// 添加线路
+const dataEntrustedProjectSource = ref<EntrustedProjectItem[]>([])
+// 添加委托项目
 const handleLineAdd = () => {
   const newData = {
     isEdit: true,
-    lineId: undefined,
-    lineName: '',
-    lineStartTime: '',
-    lineEndTime: '',
-    adultPrice: '',
-    childPrice: '',
-    lineDescribe: '',
+    a: '',
+    b: '',
   };
-  dataLineSource.value.push(newData);
+  dataEntrustedProjectSource.value.push(newData);
 };
-// 删除线路
-const onLineDelete = (index: number) => {
-  dataLineSource.value.splice(index, 1)
+// 删除委托项目
+const onEntrustedProjectDelete = (index: number) => {
+  dataEntrustedProjectSource.value.splice(index, 1)
 };
 // 添加游客
 const handleTouristAdd = () => {
@@ -1044,7 +1016,6 @@ const getParams = () => {
     tripEndTime, //合同行程结束时间
     touristPeopleNumber, //游客人数
     insuranceBuyMode, //保险购买方式
-    contractType, //合同类型
     contractFileUrl, //附件
     pdfFileUrl,
     otherAgreements, //其他约定
@@ -1084,11 +1055,10 @@ const getParams = () => {
     tripEndTime, //合同行程结束时间
     touristPeopleNumber, //游客人数
     insuranceBuyMode, //保险购买方式
-    contractType, //合同类型
     contractFileUrl: fileUrl, //附件
     otherAgreements, //其他约定
     contractAmount: contractAmount * 100,
-    individualContractLineBos: dataLineSource.value, // 线路
+    individualContractLineBos: dataEntrustedProjectSource.value, // 线路
     individualContractTouristBos: dataTouristSource.value, // 游客
     individualContractPriceBos: dataCostSource.value, // 费用
   }
@@ -1278,7 +1248,7 @@ const getEditDetails = async (oid: any) => {
     form.value.contractFileUrl = contractFileUrl.toString()
     form.value.pdfFileUrl = pdfFileUrl.toString()
     form.value.travelData = [res.tripStartTime, res.tripEndTime]
-    dataLineSource.value = res.individualContractLineBos.map((item: any) => {
+    dataEntrustedProjectSource.value = res.individualContractLineBos.map((item: any) => {
       return {
         isEdit: false,
         ...item,
@@ -1314,7 +1284,6 @@ const getEditDetails = async (oid: any) => {
       }
     })
     allPrice()
-    contractOptionChange(form.value.contractType)
   }
 }
 const getComprehensiveProductsList = async () => {
@@ -1418,6 +1387,15 @@ onActivated(() => {
   .cost_item {
     flex: 1;
     text-align: center;
+  }
+}
+
+.disflex {
+  display: flex;
+  justify-content: space-around;
+
+  .flex1 {
+    flex: 1;
   }
 }
 </style>

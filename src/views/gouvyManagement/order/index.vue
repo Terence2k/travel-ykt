@@ -36,9 +36,7 @@
 					<div class="action-btns">
 						<a href="javascript:;" @click="toSee(record.oid)" v-permission="'查看'">查看</a>
 						<a href="javascript:;" @click="change(record)" v-permission="'去改刷'" v-if="record.updateBrushPermission == true">去改刷</a>
-						<a href="javascript:;" @click="strong(record)" v-permission="'去强刷'" v-if="record.forceBrushPermission == true"
-							>去强刷</a
-						>
+						<a href="javascript:;" @click="strong(record)" v-permission="'去强刷'" v-if="record.forceBrushPermission == true">去强刷</a>
 					</div>
 				</template>
 				<template v-if="column.key === 'itineraryStartDate'">
@@ -70,7 +68,10 @@
 				</tr>
 				<tr class="row">
 					<td class="key">行程单编号</td>
-					<td class="value">{{ state.tableData.details.itineraryNo }} <span class="spanSee" @click="gotoDetails(state.tableData.details.itineraryId)">查看行程单</span></td>
+					<td class="value">
+						{{ state.tableData.details.itineraryNo }}
+						<span class="spanSee" @click="gotoDetails(state.tableData.details.itineraryId)">查看行程单</span>
+					</td>
 				</tr>
 				<tr class="row">
 					<td class="key">组团社</td>
@@ -98,7 +99,9 @@
 				</tr>
 				<tr class="row" v-if="state.tableData.updateBrushStatus == '2'">
 					<td class="key">已减免人数</td>
-					<td class="value">{{ state.tableData.details.reduceNum }}人<span class="spanSee" @click="see(state.tableData.details.itineraryId)">查看详情</span></td>
+					<td class="value">
+						{{ state.tableData.details.reduceNum }}人<span class="spanSee" @click="see(state.tableData.details.itineraryId)">查看详情</span>
+					</td>
 				</tr>
 				<tr class="row" v-if="state.tableData.forceBrushStatus == '1'">
 					<td class="key">查验未到场人数</td>
@@ -112,10 +115,10 @@
 					<td class="key">已出票金额</td>
 					<td class="value">{{ accMul(accDiv(state.tableData.details.unitPrice, 100), state.tableData.details.purchaseNum) }}元</td>
 				</tr>
-				<tr class="row" v-if="state.tableData.updateBrushStatus == '2'">
+				<!-- <tr class="row" v-if="state.tableData.updateBrushStatus == '2'">
 					<td class="key">最后一次改刷时间</td>
 					<td class="value">{{ state.tableData.details.lastUpdateBrushTime }}</td>
-				</tr>
+				</tr> -->
 				<!-- <tr class="row" v-if="state.tableData.updateBrushStatus == '2'">
 					<td class="key">改刷剩余时间</td>
 					<td class="value">{{ state.tableData.details.deadline }}</td>
@@ -138,14 +141,8 @@
 				<span v-else>未完成查验</span>
 			</p>
 		</div>
-		<CommonTable
-			:columns="strongColumns"
-			:dataSource="state.strongTouristList"
-			rowKey="oid"
-			:scrollY="false"
-			style="padding: 0"
-		>
-			<template #bodyCell="{ column, index, record }"> 
+		<CommonTable :columns="strongColumns" :dataSource="state.strongTouristList" rowKey="oid" :scrollY="false" style="padding: 0">
+			<template #bodyCell="{ column, index, record }">
 				<template v-if="column.key === 'Checkbox'">
 					<a-checkbox v-model:checked="record.checked" :disabled="record.disabled"></a-checkbox>
 				</template>
@@ -165,7 +162,7 @@
 	<BaseModal title="改刷游客详情" v-model="touristDetails" :width="800">
 		<div class="div-select">
 			<a-button @click="touristDetails = false">返回</a-button>
-			<p>全部游客{{state.touristData.total}}名,已减免{{state.touristData.reduceNum}}人。</p>
+			<p>全部游客{{ state.touristData.total }}名,已减免{{ state.touristData.reduceNum }}人。</p>
 		</div>
 		<CommonTable :columns="ticketingColumns" :dataSource="state.touristData.touristList" :scrollY="false">
 			<template #bodyCell="{ column, text, index, record }">
@@ -174,7 +171,22 @@
 				</template> -->
 			</template>
 		</CommonTable>
+		<template v-slot:footer> </template>
+	</BaseModal>
+	<BaseModal title="勾选古维费应缴游客" v-model="updateVisible" :width="800">
+		<div class="div-select">
+			<a-button @click="updateVisible = false">返回</a-button>
+			<p>全部游客{{ state.touristData.total }}名</p>
+		</div>
+		<CommonTable :columns="updateVisibleColumns" :dataSource="state.touristData.touristList" :scrollY="false">
+			<template #bodyCell="{ column, text, index, record }">
+				<template v-if="column.key === 'Checkbox'">
+					<a-checkbox v-model:checked="record.checked" :disabled="record.disabled"></a-checkbox>
+				</template>
+			</template>
+		</CommonTable>
 		<template v-slot:footer>
+			<a-button type="primary" @click="updateSubmit">已重新确认应缴人员，提交改刷</a-button>
 		</template>
 	</BaseModal>
 </template>
@@ -200,6 +212,7 @@ const Visible = ref(false);
 const selectStrongTouristVisible = ref(false);
 const checked = ref(false);
 const touristDetails = ref(false);
+const updateVisible=ref(false)
 // import { userList } from '@/api';
 const columns = [
 	{
@@ -269,6 +282,7 @@ const columns = [
 		width: 208,
 	},
 ];
+// 强刷
 const strongColumns = [
 	{
 		title: '选择',
@@ -316,7 +330,56 @@ const strongColumns = [
 		key: 'reduceCondition',
 	},
 ];
+// 改刷详情
 const ticketingColumns = [
+	{
+		title: '游客姓名',
+		dataIndex: 'touristName',
+		key: 'touristName',
+	},
+	{
+		title: '身份证号码',
+		dataIndex: 'certificateNo',
+		key: 'certificateNo',
+	},
+	{
+		title: '性别',
+		dataIndex: 'genderName',
+		key: 'genderName',
+	},
+	{
+		title: '年龄',
+		dataIndex: 'age',
+		key: 'age',
+	},
+	{
+		title: '联系方式',
+		dataIndex: 'purchased',
+		key: 'purchased',
+	},
+	{
+		title: '客源地',
+		dataIndex: 'sourceAddressName',
+		key: 'sourceAddressName',
+	},
+	{
+		title: '费用减免类型',
+		dataIndex: 'discountRuleName',
+		key: 'discountRuleName',
+	},
+	{
+		title: '减免依据',
+		dataIndex: 'specialCertificateImg',
+		key: 'specialCertificateImg',
+	},
+];
+// 改刷
+const updateVisibleColumns = [
+	{
+		title: '选择',
+		dataIndex: 'Checkbox',
+		key: 'Checkbox',
+	},
 	{
 		title: '游客姓名',
 		dataIndex: 'touristName',
@@ -382,7 +445,7 @@ const state = reactive({
 	reduceNum: '',
 	notPresentNum: '',
 	checkStatus: '',
-	touristData:[] as any,
+	touristData: [] as any,
 });
 
 const onHandleCurrentChange = (val: number) => {
@@ -390,7 +453,7 @@ const onHandleCurrentChange = (val: number) => {
 	state.tableData.param.pageNo = val;
 	onSearch();
 };
-//查看
+//查看古维订单
 const toSee = (oid: any) => {
 	route.push({ path: '/gouvyManagement/order/order_edit', query: { oid: oid } });
 };
@@ -405,6 +468,7 @@ const onSearch = () => {
 		state.tableData.total = res.total;
 	});
 };
+// 改刷强刷详情
 const orderDetails = (item: any) => {
 	api.brushOrder(item).then((res: any) => {
 		state.tableData.details = res;
@@ -448,41 +512,115 @@ const orderDetails = (item: any) => {
 // 		state.tableData.details.deadline = day + hour + min + sec;
 // 	}
 // };
+// 点击强刷按钮
 const strong = (item: any) => {
 	orderDetails(item.oid);
-	state.tableData.forceBrushStatus ='1';
+	state.tableData.forceBrushStatus = '1';
 	state.title = '古维订单强刷';
 	strongBrushVisible.value = true;
 };
-const change = (item: any) => {
-	orderDetails(item.oid);
-	state.tableData.updateBrushStatus = '2';
-	strongBrushVisible.value = true;
-	state.title = '古维订单改刷';
-};
-const changeSubmit = () => {};
+// 打开选择需要强刷的游客弹窗
 const strongSubmit = () => {
 	selectStrongTouristVisible.value = true;
 	api.listTourist(state.tableData.details.oid).then((i: any) => {
-		i.touristList.map((i:any)=>{
-			if(i.purchased==2 || i.purchased==3 || i.purchased==4 )
-			{
-				return i.disabled=true
+		i.touristList.map((i: any) => {
+			if (i.purchased == 2 || i.purchased == 3 || i.purchased == 4) {
+				return (i.disabled = true);
 			}
-			if(i.purchased==0 ||i.purchased==1)
-			{
-				return i.checked=true
+			if (i.purchased == 0 || i.purchased == 1) {
+				return (i.checked = true);
 			}
-			return i
-		})
+			return i;
+		});
 		state.strongTouristList = i.touristList;
-		console.log(state.strongTouristList,'state.strongTouristList')
 		state.touristNum = i.touristNum;
 		state.reduceNum = i.reduceNum;
 		state.notPresentNum = i.notPresentNum;
 		state.checkStatus = i.checkStatus;
 	});
 };
+// 强刷提交
+const submit = () => {
+	let checkedList = state.strongTouristList.filter((i: any) => i.checked == true);
+	if (checkedList.length == 0) {
+		message.warning('请勾选游客');
+		return false;
+	}
+	if (!checked.value) {
+		message.warning('请阅读并勾选确认');
+		return false;
+	}
+	let data = {
+		itineraryId: state.tableData.details.itineraryId,
+		touristOidList: checkedList.map((i: any) => {
+			return i.oid;
+		}),
+	};
+	api.force(data).then((res: any) => {
+		message.success('强刷成功');
+		selectStrongTouristVisible.value = false;
+		strongBrushVisible.value = false;
+		onSearch();
+	});
+
+	console.log(data, '勾选');
+};
+
+
+// 点击改刷按钮
+const change = (item: any) => {
+	orderDetails(item.oid);
+	state.tableData.updateBrushStatus = '2';
+	strongBrushVisible.value = true;
+	state.title = '古维订单改刷';
+};
+
+// 打开改刷勾选古维费应缴游客弹窗
+const changeSubmit = () => {
+	updateVisible.value=true;
+	api.getItineraryTourist(state.tableData.details.itineraryId).then((res: any) => {
+		res.touristList.map((i:any)=>{
+			if (i.purchased == 2 || i.purchased == 3 || i.purchased == 4) {
+				return (i.disabled = true);
+			}
+			if (i.purchased == 0 || i.purchased == 1) {
+				return (i.checked = true);
+			}
+			return i;
+		})
+		state.touristData = res;
+	});
+};
+
+// 查看改刷已减免人数
+const see = (id: any) => {
+	touristDetails.value = true;
+	api.getItineraryTourist(id).then((res: any) => {
+		state.touristData = res;
+	});
+};
+
+// 改刷提交
+const updateSubmit=()=>{
+	let checkedList = state.touristData.touristList.filter((i: any) => i.checked == true);
+	if (checkedList.length == 0) {
+		message.warning('请勾选游客');
+		return false;
+	}
+	let data = {
+		itineraryId: state.tableData.details.itineraryId,
+		touristOidList: checkedList.map((i: any) => {
+			return i.oid;
+		}),
+	};
+	api.brushOrderUpdate(data).then((res: any) => {
+		message.success('改刷成功');
+		updateVisible.value = false;
+		strongBrushVisible.value = false;
+		onSearch();
+	});
+}
+// 重置
 const reset = () => {
 	state.tableData.param.isReductionExist = '';
 	state.tableData.param.itineraryNo = '';
@@ -490,42 +628,31 @@ const reset = () => {
 	state.tableData.param.itineraryStartDate = '';
 	onSearch();
 };
+// 导出
 const download = () => {
 	api.exportGouvyOrder(state.tableData.param).then((res: any) => {
 		downloadFile(res, '古维订单');
 		message.success('导出成功');
 	});
 };
+
 const cancel = () => {
 	strongBrushVisible.value = false;
 	state.tableData.forceBrushStatus = '';
 	state.tableData.updateBrushStatus = '';
 };
-const onSelect = (record: any, selected: boolean, selectedRows: any) => {
-};
-const onSelectAll = (record: any, selected: boolean, selectedRows: any) => {};
-const see = (id:any) => {
-	touristDetails.value=true
-	console.log(id,'id')
-	api.getItineraryTourist(id).then((res: any) => {
-		state.touristData=res
-	});
-};
-const gotoDetails=(oid:any)=>{
+
+// 查看行程单信息
+const gotoDetails = (oid: any) => {
 	route.push({
 		path: '/travel/travel_manage/travel_detail',
 		query: {
-			oid:oid,
+			oid: oid,
 		},
 	});
-}
-const submit = () => {
-	if (!checked.value) {
-		message.warning('请阅读并勾选确认');
-		return false;
-	}
-	console.log(checked.value, '勾选');
 };
+
+
 onMounted(() => {
 	onSearch();
 });

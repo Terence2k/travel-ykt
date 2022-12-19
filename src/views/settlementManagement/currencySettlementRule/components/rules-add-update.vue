@@ -25,12 +25,7 @@
 					<a-radio v-for="item in state.chargeModelList" :value="item.value" :key="item.name">{{ item.name }}</a-radio>
 				</a-radio-group>
 			</a-form-item>
-			<a-form-item
-				label="分账金额"
-				v-if="formValidate.splitModel === 2"
-				name="splitCount"
-				:rules="[{ required: formValidate.splitModel === 2 ? true : false, validator: isIntegerNotMust, trigger: 'blur' }]"
-			>
+			<a-form-item label="分账金额" v-if="formValidate.splitModel === 2" name="splitCount" :rules="rules.money">
 				<a-input-number v-model:value="formValidate.splitCount" placeholder="请输入分账金额（单位：元）" style="width: 100%">
 					<template #addonAfter>
 						<span>元</span>
@@ -105,7 +100,9 @@ const rules: any = {
 	// percentage: [{ required: formValidate.value.splitModel === 1 ? true : false, validator: isBtnZeroToHundred, trigger: 'blur' }],
 	// // 人数和金额
 	// integer: [{ required: formValidate.value.splitModel === 2 ? true : false, validator: isIntegerNotMust, trigger: 'blur' }],
+	money: [{ required: true, message: '请输入金额' }],
 };
+const splitList = ref([]);
 const init = async () => {
 	generaRulesOptions.getPrepaidCompanyList();
 	if (props.params.add) {
@@ -115,9 +112,10 @@ const init = async () => {
 		options.title = '编辑分账规则';
 		formValidate.value = props.params.from;
 		if (props.params.from.splitModel === 2) {
-			formValidate.value.splitCount = props.params.splitCount / 100;
+			formValidate.value.splitCount = Number(props.params.from.splitCount) / 100;
 		}
 	}
+	splitList.value = props.params.splitList;
 	console.log('params', props.params);
 };
 const formRef = ref();
@@ -125,6 +123,9 @@ const save = () => {
 	formRef.value
 		.validate()
 		.then(() => {
+			if (!exceeding100()) {
+				return;
+			}
 			// 价格 * 100
 			if (formValidate.value.splitModel === 2) {
 				formValidate.value.splitCount = formValidate.value.splitCount * 100;
@@ -155,6 +156,34 @@ watch(dialogVisible, (nVal) => {
 	console.log('dialogVisible:', nVal);
 	emit('update:modelValue', nVal);
 });
+// 同一优先级下超出100判断
+const exceeding100 = () => {
+	// 优先级对象
+	const priority: any = {};
+	// 如果本身是半分比则添加上
+	if (Number(formValidate.value.splitModel) === 1) {
+		priority[formValidate.value.level] = formValidate.value.splitCount;
+	}
+	if (splitList.value && splitList.value.length) {
+		for (let index = 0; index < splitList.value.length; index++) {
+			const k = splitList.value[index];
+			if (Number(k.splitModel) === 1) {
+				if (priority[k.level]) {
+					priority[k.level] = priority[k.level] + k.splitCount;
+				} else {
+					priority[k.level] = k.splitCount;
+				}
+			}
+		}
+	}
+	for (const key in priority) {
+		if (priority[key] > 100) {
+			message.error(`优先级为${key}的百分比已经超出100%`);
+			return false;
+		}
+	}
+	return true;
+};
 </script>
 
 <style scoped>

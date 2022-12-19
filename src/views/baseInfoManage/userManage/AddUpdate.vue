@@ -163,7 +163,6 @@
   }
 
   const addOrUpdateAPI = (apiName: string) => {
-    formValidate.value.roleIds = [formValidate.value.roleIds];
     console.log('formValidate:', formValidate.value);
     api[apiName]({...formValidate.value}).then((res: any) => {
       // console.log('res:', res);

@@ -69,6 +69,7 @@ import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import BaseModal from '@/components/common/BaseModal.vue';
 import api from '@/api';
+import Upload from '@/components/common/imageWrapper.vue';
 import { SelectProps, TableColumnsType } from 'ant-design-vue';
 import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
 import { HotelStatus } from '@/enum';
@@ -117,11 +118,6 @@ const columns = [
 		title: '离店时间',
 		dataIndex: 'departureDate',
 		key: 'departureDate',
-	},
-	{
-		title: '预定人数',
-		dataIndex: 'scheduledNumber',
-		key: 'scheduledNumber',
 	},
 	{
 		title: '预定房数',

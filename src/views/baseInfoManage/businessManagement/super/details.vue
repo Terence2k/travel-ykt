@@ -35,6 +35,7 @@ import AddressSelector from '@/views/baseInfoManage/businessManagement/component
 import { getKeylist, flat } from '@/views/baseInfoManage/businessManagement/super/common'
 import api from '@/api';
 import { string } from 'vue-types';
+import { awsGetPreSignedUrl } from '@/utils/awsUpload';
 const router = useRouter();
 const route = useRoute();
 type queryParamsType = {
@@ -47,6 +48,17 @@ const detailsArrList = ref<any>({})
 const keyNameList = ref()
 
 const queryParams = reactive<queryParamsType>({})
+const cmpImageURL = computed(() => async (url: string) => {
+  if (url) {
+    let res
+    if (url.indexOf('http:') === -1) {
+      res = await awsGetPreSignedUrl(url)
+      return res
+    }
+  } else {
+    return ''
+  }
+})
 const getComputedVal = computed(() => (key: string, val: any) => {
   if (key === 'accountType') {
     return val == 1 ? '对公账户' : '对私账户'
@@ -87,6 +99,9 @@ const getComputedVal = computed(() => (key: string, val: any) => {
       case 'YKT':
         name = '一卡通'
         break;
+      case 'INSURANCE_COMPANY':
+        name = '保险公司'
+        break;
     }
     return name
   } else if (key === 'scenicLevel') {
@@ -97,6 +112,17 @@ const getComputedVal = computed(() => (key: string, val: any) => {
     return val
   }
 })
+const getURL = async (url: string) => {
+  if (url) {
+    let res
+    if (url.indexOf('http:') === -1) {
+      res = await awsGetPreSignedUrl(url)
+    }
+    return res
+  } else {
+    return ''
+  }
+}
 const getData = async () => {
   detailsArrList.value = {}
   let res = await api.getBusinessDetails(queryParams)
@@ -104,7 +130,7 @@ const getData = async () => {
   if (Object.prototype.toString.call(res) !== '[object Object]') return
   keyNameList.value = getKeylist(res.businessType)
   let keyList = Object.keys(keyNameList.value)
-  keyList.forEach((key: string) => {
+  keyList.forEach(async (key: string) => {
     if (key === 'regionCode') {
       if (res.provinceId) {
         const region = [res.provinceId, res.cityId, res.areaId]
@@ -114,6 +140,8 @@ const getData = async () => {
       if (res.reduceRule && res.fullRule) {
         detailsArrList.value['reduceRules'] = `满${res.fullRule}减${res.reduceRule}`
       }
+    } else if (['manageUrl', 'businessLicenseUrl', 'legalPersonUrl'].includes(key)) {
+      detailsArrList.value[key] = await getURL(res[key])
     } else {
       detailsArrList.value[key] = res[key]
     }
