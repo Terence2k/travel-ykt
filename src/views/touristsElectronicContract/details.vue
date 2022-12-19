@@ -8,65 +8,91 @@
         <close-outlined />
       </span>
     </div>
-    <div class="content">
-      <div class="content_item">
-        <div class="key_name">合同编号</div>
-        <div class="key_val">{{ form.contractNo }}</div>
-      </div>
-      <div class="content_item">
-        <div class="key_name">合同天数</div>
-        <div class="key_val">{{ form.travelDayNight }}</div>
-      </div>
-      <div class="content_item">
-        <div class="key_name">委托旅行社</div>
-        <div class="key_val" :class="{ gray_text: form.entrustTravelName === '未填写' }">{{ form.entrustTravelName }}</div>
-      </div>
-      <div class="content_item">
-        <div class="key_name">行程日期</div>
-        <div class="key_val">{{ form.travelDate }}</div>
-      </div>
-      <div class="content_item">
-        <div class="key_name">游客人数</div>
-        <div class="key_val"><span class="count">{{ form.touristPeopleNumber }}</span>人</div>
-      </div>
-      <div class="content_item">
-        <div class="key_name">保险购买方式</div>
-        <div class="key_val">{{ form.insuranceBuyModeName }}</div>
-      </div>
-      <div class="content_item">
-        <div class="key_name">合同类型</div>
-        <div class="key_val">{{ form.contractTypeName }} <span @click="(modalVisible = true)" class="append"
-            v-show="(form.contractType === 2)">查看已上传附件
-          </span>
+    <div class="content disflex">
+      <div class="flex1">
+        <div class="content_item">
+          <div class="key_name">系统编号</div>
+          <div class="key_val">{{ form.contractNo }}</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">出发地</div>
+          <div class="key_val">{{ form.departurePlace }}</div>
+        </div>
+
+        <div class="content_item">
+          <div class="key_name">委托旅行社</div>
+          <div class="key_val" :class="{ gray_text: form.entrustTravelName === '未填写' }">{{ form.entrustTravelName }}
+          </div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">行程日期</div>
+          <div class="key_val">{{ form.travelDate }}</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">游客人数</div>
+          <div class="key_val"><span class="count">{{ form.touristPeopleNumber }}</span>人</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">合同类型</div>
+          <div class="key_val">{{ form.contractTypeName }} <span @click="(modalVisible = true)" class="append"
+              v-show="(form.contractType === 1)">查看已上传附件
+            </span>
+          </div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">合同状态</div>
+          <div class="key_val">{{ form.contractStatusName }}</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">紧急联系人</div>
+          <div class="key_val">{{ form.emergencyContact }}</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">紧急联系方式</div>
+          <div class="key_val">{{ form.emergencyContactPhone }}</div>
         </div>
       </div>
-      <div class="content_item">
-        <div class="key_name">合同状态</div>
-        <div class="key_val">{{ form.contractStatusName }}</div>
-      </div>
-      <div class="content_item">
-        <div class="key_name">关联行程单号</div>
-        <div class="key_val" :class="{ gray_text: form.itineraryNo === '尚未成团' }">{{ form.itineraryNo }}</div>
-      </div>
-      <div class="content_item">
-        <div class="key_name">合同创建方</div>
-        <div class="key_val">{{ form.contractEstablish }}</div>
-      </div>
-      <div class="content_item">
-        <div class="key_name">合同创建人</div>
-        <div class="key_val">{{ form.creatorName }}</div>
-      </div>
-      <div class="content_item">
-        <div class="key_name">合同总金额</div>
-        <div class="key_val"><span class="count">{{ form.contractAmount }}</span>元</div>
-      </div>
-      <div class="content_item">
-        <div class="key_name">合同录入时间</div>
-        <div class="key_val">{{ form.createTime }}</div>
-      </div>
-      <div class="content_item">
-        <div class="key_name">合同生效时间</div>
-        <div class="key_val">{{ form.takeEffectTime }}</div>
+      <div class="flex1">
+        <!-- 当合同状态为 已登记、已签署、已成团、已出团、旅行社解除、已解除 6个状态时，在【合同编号】字段处显示“下载12301合同电子版”按钮 -->
+        <div class="content_item"
+          v-show="((form.contractType === 2) && [2, 3, 4, 5, 6, 7].includes(form.contractStatus))">
+          <div class="key_name">合同编号</div>
+          <div class="key_val">{{ form.electronicContractNo }}<a :href="form.fileUrl" class="append"
+              v-show="form.fileUrl">下载12301合同电子版
+            </a></div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">目的地</div>
+          <div class="key_val">{{ form.destination }}</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">返回地</div>
+          <div class="key_val">{{ form.returnPlace }}</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">合同天数</div>
+          <div class="key_val">{{ form.travelDayNight }}</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">合同创建方</div>
+          <div class="key_val">{{ form.contractEstablish }}</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">合同创建人</div>
+          <div class="key_val">{{ form.creatorName }}</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">合同总金额</div>
+          <div class="key_val"><span class="count">{{ form.contractAmount }}</span>元</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">合同录入时间</div>
+          <div class="key_val">{{ form.createTime }}</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">关联行程单号</div>
+          <div class="key_val" :class="{ gray_text: form.itineraryNo === '尚未成团' }">{{ form.itineraryNo }}</div>
+        </div>
       </div>
     </div>
     <div class="tag">
@@ -96,7 +122,7 @@
         </template>
       </CommonTable>
     </div>
-    <div class="content">
+    <div class="content" v-show="(form.contractType === 2)">
       <div class="content_item">
         <div class="key_name">游客代表</div>
         <div class="key_val">{{ form.touristName }}</div>
@@ -114,9 +140,15 @@
         <div class="key_val">{{ form.certificatesAddress }}</div>
       </div>
     </div>
-    <div class="tag">
-      行程费用明细
+    <div class="btn_box">
+      <div class="tag">
+        行程费用明细
+      </div>
+      <div>
+        游客合同费用支付方式：{{ form.paymentMethodName }}
+      </div>
     </div>
+
     <div class="content">
       <CommonTable :dataSource="form.individualContractPriceBos" :columns="costColumns">
         <template #bodyCell="{ column, record, index }">
@@ -137,17 +169,21 @@
   </div>
   <CommonModal title="散客合同签署确认" v-model:visible="modalVisible" @close="(modalVisible = false)"
     @cancel="(modalVisible = false)" @conform="(modalVisible = false)" :conform-text="'关闭'" :is-cancel="false">
-    <Upload v-model="form.contractFileUrl" :maxCount="9" />
+    <p>已上传{{ imageCount }}张图片，{{ pdfCount }}个pdf：</p>
+    <div v-for="(item, index) in form.contractFileUrlList" :key="index" class="file">
+      <a :href="item" class="file_box" v-if="item.indexOf('.pdf') !== -1">合同附件.pdf</a>
+      <a-image width="104px" :src="item" v-else />
+    </div>
   </CommonModal>
 </template>
 
 <script setup lang="ts">
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
-import Upload from '@/components/common/imageWrapper.vue';
 import { CloseOutlined } from '@ant-design/icons-vue';
 import api from '@/api';
 import { useRouter, useRoute } from 'vue-router';
+import { awsGetPreSignedUrl } from '@/utils/awsUpload';
 const router = useRouter();
 const route = useRoute();
 const back = () => {
@@ -156,6 +192,8 @@ const back = () => {
   })
 }
 const modalVisible = ref(false)
+const imageCount = ref(0)
+const pdfCount = ref(0)
 const form = ref({
   contractNo: '',
   travelDayNight: '',
@@ -181,7 +219,16 @@ const form = ref({
   touristName: '',
   certificatesNo: '',
   phone: '',
-  certificatesAddress: ''
+  certificatesAddress: '',
+  departurePlace: '',
+  destination: '',
+  returnPlace: '',
+  paymentMethodName: '',
+  emergencyContact: '',
+  emergencyContactPhone: '',
+  electronicContractNo: '',
+  fileUrl: '',
+  contractStatus: -1,
 })
 const lineColumns = [
   {
@@ -242,24 +289,29 @@ const touristColumns = [
     key: 'certificatesNo',
   },
   {
-    title: '性别',
-    dataIndex: 'gender',
-    key: 'gender',
-  },
-  {
-    title: '联系方式',
-    dataIndex: 'phone',
-    key: 'phone',
-  },
-  {
     title: '游客类型',
     dataIndex: 'touristType',
     key: 'touristType',
   },
   {
-    title: '客源地',
-    dataIndex: 'certificatesAddress',
-    key: 'certificatesAddress',
+    title: '性别',
+    dataIndex: 'gender',
+    key: 'gender',
+  },
+  {
+    title: '年龄',
+    dataIndex: 'age',
+    key: 'age',
+  },
+  {
+    title: '电话号码',
+    dataIndex: 'phone',
+    key: 'phone',
+  },
+  {
+    title: '是否健康',
+    dataIndex: 'isHealthy',
+    key: 'isHealthy',
   },
   {
     title: '健康码',
@@ -267,20 +319,10 @@ const touristColumns = [
     key: 'healthyCode',
   },
   {
-    title: '中高风险',
-    dataIndex: 'riskArea',
-    key: 'riskArea',
+    title: '古维费代收代缴',
+    dataIndex: 'isAncientUygur',
+    key: 'isAncientUygur',
   },
-  {
-    title: '古维减免',
-    dataIndex: 'ancientUygurReduction',
-    key: 'ancientUygurReduction',
-  },
-  /* {
-    title: '减免依据',
-    dataIndex: 'reductionUrl',
-    key: 'reductionUrl',
-  }, */
 ]
 const costColumns = [
   {
@@ -367,14 +409,28 @@ const setList1 = (list: any) => {
       const element = keys[i];
       if (element === 'touristType') {
         item[element] = [undefined, null, ''].includes(item[element]) ? '/' : item[element] === 1 ? '成人' : '儿童'
-      } else if (element === 'ancientUygurReduction') {
+      } else if (element === 'isHealthy') {
         item[element] = [undefined, null, ''].includes(item[element]) ? '/' : item[element] === 1 ? '是' : '否'
+      } else if (element === 'isAncientUygur') {
+        item[element] = [undefined, null, ''].includes(item[element]) ? '/' : item[element] === 1 ? '本次需要代收' : '本次不需要代收'
+      } else if (element === 'certificatesType') {
+        switch (item[element]) {
+          case 'IDENTITY_CARD':
+            item[element] = '身份证'
+            break
+          case 'PASSPORT':
+            item[element] = '护照'
+            break
+          case 'COMPATRIOT_CARD':
+            item[element] = '港澳台同胞证'
+            break
+          default:
+            item[element] = '/'
+        }
       } else {
         item[element] = [undefined, null, ''].includes(item[element]) ? '/' : item[element]
       }
     }
-    item.gender = '/'
-    item.riskArea = '/'
   })
 }
 const configCodeName = (certificateCodes: any, targetArr: any) => {
@@ -413,9 +469,30 @@ const getDetails = async (id: number) => {
       individualContractLineBos,
       individualContractTouristBos,
       individualContractPriceBos,
-      otherAgreements
+      otherAgreements,
+      departurePlace,
+      destination,
+      returnPlace,
+      paymentMethodName,
+      emergencyContact,
+      emergencyContactPhone,
+      electronicContractNo,
+      fileUrl,
+      contractStatus
     } = res
-    // const contractFileUrlList = contractFileUrl ? contractFileUrl.split(',') : []
+    const arr = contractFileUrl ? contractFileUrl.split(',') : []
+    let contractFileUrlList = arr.map(async (item: any) => {
+      if (['jpg', 'png'].indexOf(item.split('.')[1]) !== -1) {
+        imageCount.value += 1
+      } else if (['pdf'].indexOf(item.split('.')[1]) !== -1) {
+        pdfCount.value += 1
+      }
+      if (item.indexOf('http:') === -1) {
+        item = await awsGetPreSignedUrl(item);
+      }
+      return item
+    })
+    contractFileUrlList = await Promise.all(contractFileUrlList);
     const insuranceBuyModeName = (function () {
       let res
       switch (insuranceBuyMode) {
@@ -477,7 +554,7 @@ const getDetails = async (id: number) => {
       insuranceBuyModeName,
       contractTypeName,
       contractType,
-      // contractFileUrlList,
+      contractFileUrlList,
       contractFileUrl,
       contractStatusName: contractStatusName || '/',
       itineraryNo: itineraryNo || '尚未成团',
@@ -493,7 +570,16 @@ const getDetails = async (id: number) => {
       touristName,
       certificatesNo,
       phone,
-      certificatesAddress
+      certificatesAddress,
+      departurePlace,
+      destination,
+      returnPlace,
+      paymentMethodName,
+      emergencyContact,
+      emergencyContactPhone,
+      electronicContractNo: electronicContractNo || '/',
+      fileUrl,
+      contractStatus
     }
   }
 }
@@ -544,12 +630,10 @@ watch(
   margin-bottom: 10px;
 
   .key_name {
-    flex: 3;
+    width: 130px;
   }
 
-  .key_val {
-    flex: 20;
-  }
+  .key_val {}
 }
 
 .gray_text {
@@ -572,5 +656,29 @@ watch(
   margin-left: 40px;
   cursor: pointer;
   color: #209cd3;
+}
+
+.file_box {
+  display: inline-block;
+  width: 104px;
+  height: 104px;
+  line-height: 88px;
+  margin: 0 8px 8px 0;
+  padding: 8px;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+}
+
+.file {
+  display: inline-block;
+}
+
+.disflex {
+  display: flex;
+  justify-content: space-around;
+
+  .flex1 {
+    flex: 1;
+  }
 }
 </style>

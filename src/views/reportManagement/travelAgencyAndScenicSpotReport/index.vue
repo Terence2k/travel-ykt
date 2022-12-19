@@ -1,17 +1,20 @@
 <template>
 	<CommonSearch>
-		<search-item label="团单编号"> <a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入团单编号" /></search-item>
+		<search-item label="团单编号">
+			<a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入团单编号" style="width: 180px"
+		/></search-item>
 		<search-item label="景区名称">
 			<a-select
 				v-model:value="state.tableData.param.scenicId"
 				placeholder="请选择景区名称"
 				allowClear
+				style="width: 180px"
 				:options="state.viewList.map((item) => ({ value: item.ticketId, label: item.ticketName }))"
 			>
 			</a-select>
 		</search-item>
 		<search-item label="门票名称">
-			<a-input v-model:value="state.tableData.param.ticketName" placeholder="请输入门票名称" />
+			<a-input v-model:value="state.tableData.param.ticketName" placeholder="请输入门票名称" style="width: 180px" />
 		</search-item>
 		<search-item label="地接社">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.subTravelId" style="width: 200px" placeholder="请选择旅行社名称">
@@ -21,7 +24,7 @@
 			</a-select>
 		</search-item>
 		<search-item label="结算时间">
-			<a-range-picker v-model:value="state.tableData.settlementStartTimeList" @change="timeChange" />
+			<a-range-picker v-model:value="state.tableData.settlementStartTimeList" @change="timeChange" style="width: 180px" />
 		</search-item>
 		<template #button>
 			<a-button @click="initList" v-permission="`查询`">查询</a-button>

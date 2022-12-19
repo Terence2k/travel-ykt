@@ -241,3 +241,43 @@ export async function queryRevokeTouristCompare(id: number) {
 		showLoading: false,
 	});
 }
+//获取古维强刷、改刷订单信息
+export async function brushOrder(id: number) {
+	return request({
+		url: `${commonPath}/heritage-maintenance-service/public/api/hm-order/brushOrder/get/${id}`,
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		method: 'get',
+		showLoading: false,
+	});
+}
+//获取古维强刷订单游客信息
+export async function listTourist(id: number) {
+	return request({
+		url: `${commonPath}/heritage-maintenance-service/public/api/hm-order/brushOrder/listTourist/${id}`,
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		method: 'get',
+		showLoading: false,
+	});
+}
+//古维强刷
+export async function force(data: any) {
+	return request({
+		url: `${commonPath}/heritage-maintenance-service/public/api/hm-order/brushOrder/force`,
+		method: 'post',
+		showLoading: false,
+		data,
+	});
+}
+//古维改刷
+export async function brushOrderUpdate(data: any) {
+	return request({
+		url: `${commonPath}/heritage-maintenance-service/public/api/hm-order/brushOrder/update`,
+		method: 'post',
+		showLoading: false,
+		data,
+	});
+}

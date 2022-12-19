@@ -12,10 +12,10 @@
 	},
 	"dependencies": {
 		"@ant-design/icons-vue": "^6.1.0",
-		"ant-design-vue": "^3.2.10",
-		"ant3-ui": "^0.1.6",
+		"ant-design-vue": "^3.2.14",
+		"ant3-ui": "^0.2.6",
 		"axios": "^0.27.2",
-		"dayjs": "^1.11.3",
+		"dayjs": "^1.11.7",
 		"lodash": "^4.17.21",
 		"nprogress": "^0.2.0",
 		"pinia": "^2.0.16",

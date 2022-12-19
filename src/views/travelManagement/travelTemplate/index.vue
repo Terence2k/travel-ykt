@@ -6,7 +6,7 @@
 			</search-item>
 			<search-item label="团队类型">
 				<a-select allowClear ref="select" v-model:value="state.tableData.param.teamType" style="width: 200px" placeholder="请选择团队类型">
-					<a-select-option v-for="(item, index) in options.teamTypesLists" :value="item.oid" :key="index">{{ item.name }} </a-select-option>
+					<a-select-option v-for="(item, index) in (options.teamTypesLists as any)" :value="item.oid" :key="index">{{ item.name }} </a-select-option>
 				</a-select>
 			</search-item>
 			<template #button>
@@ -169,6 +169,7 @@ const getList = async (): Promise<void> => {
 	api.travelManagement.getTravelTemplateList(state.tableData.param).then((res: any) => {
 		state.tableData.total = res.total;
 		state.tableData.data = res.content;
+		state.tableData.param.pageNo = 1
 	});
 };
 const react = () => {

@@ -21,12 +21,9 @@
 
 <script setup lang="ts">
 import BaseModal from '@/components/common/BaseModal.vue';
-import { isIntegerNotMust, isBtnZeroToHundred } from '@/utils/validator';
 import { Ref } from 'vue';
 import api from '@/api';
-import lodash from 'lodash';
 import { message } from 'ant-design-vue';
-import { log } from 'console';
 const props = defineProps({
 	modelValue: {
 		type: Boolean,

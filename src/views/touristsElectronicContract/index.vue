@@ -2,7 +2,8 @@
   <CommonSearch>
     <search-item label="合同状态">
       <a-select v-model:value="tableData.param.contractStatus" placeholder="请选择合同状态" allowClear>
-        <a-select-option v-for="item in contractStatusOption" :value="item.codeValue">{{ item.name }}
+        <a-select-option v-for="item in contractStatusOption" :value="item.codeValue" :key="item.codeValue">{{ item.name
+        }}
         </a-select-option>
       </a-select>
     </search-item>
@@ -35,13 +36,25 @@
           <a @click="checkDetails(record.oid)" v-permission="'查看'">查看</a>
           <a @click="addOrUpdate({ row: record, handle: 'update' })" v-show="(record.contractStatus === 1)"
             v-permission="'编辑'">编辑</a>
-          <a @click="withdraw" v-show="([2, 3].includes(record.contractStatus))" v-permission="'撤销'">撤销</a>
+          <a v-permission="'撤销'" v-if="([2, 3].includes(record.contractStatus))" @click="withdraw(record)">撤销</a>
         </div>
       </template>
     </template>
   </CommonTable>
   <CommonPagination v-model:current="tableData.param.pageNo" v-model:page-size="tableData.param.pageSize"
     :total="tableData.total" @change="onHandleCurrentChange" @showSizeChange="pageSideChange" />
+  <CommonModal title="散客合同撤销确认" v-model:visible="withdrawVisible" @cancel="withdrawVisible = false"
+    @close="withdrawVisible = false" :conform-text="'确认撤销'" @conform="withdrawConfirm">
+    <p>您即将撤销编号为{{ form.contractNo }}的散客合同，合同总金额<span class="cred">{{ form.contractAmount }}</span>元。提交撤销后将由游客代表<span
+        class="cred">{{
+            form.representativeName
+        }}</span>通过短信完成确认，确认成功后12301平台也将同步撤销。是否确认要撤销？
+    </p>
+  </CommonModal>
+  <CommonModal title="提交成功" v-model:visible="withdrawresVisible" @cancel="withdrawresVisible = false"
+    @close="withdrawresVisible = false" :conform-text="'确定'" @conform="withdrawresVisible = false" :is-cancel="false">
+    散客合同{{ form.contractNo }}已提交撤销，请等待游客代表完成确认。撤销成功后一卡通系统将更新合同状态。
+  </CommonModal>
 </template>
 
 <script setup lang="ts">
@@ -49,8 +62,10 @@ import CommonTable from '@/components/common/CommonTable.vue'
 import CommonPagination from '@/components/common/CommonPagination.vue'
 import CommonSearch from '@/components/common/CommonSearch.vue'
 import SearchItem from '@/components/common/CommonSearchItem.vue'
+import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import api from '@/api';
 import { useRouter, useRoute } from 'vue-router';
+import { message } from 'ant-design-vue/es';
 const router = useRouter();
 const route = useRoute()
 const goTo = (name: string, value?: any) => {
@@ -64,6 +79,14 @@ const goTo = (name: string, value?: any) => {
     query: value
   })
 }
+const form = ref({
+  contractAmount: '',
+  representativeName: '',
+  oid: '',
+  contractNo: ''
+})
+const withdrawresVisible = ref(false)
+const withdrawVisible = ref(false)
 const state = reactive({
   tableData: {
     data: [],
@@ -85,9 +108,14 @@ const columns = [{
   key: 'index',
 },
 {
-  title: '合同编号',
+  title: '系统编号',
   dataIndex: 'contractNo',
   key: 'contractNo',
+},
+{
+  title: '合同编号',
+  dataIndex: 'electronicContractNo',
+  key: 'electronicContractNo',
 },
 {
   title: '合同类型',
@@ -159,7 +187,23 @@ const contractStatusOption = [
   { codeValue: 6, name: '旅行社解除' },
   { codeValue: 7, name: '已解除' },
 ]
-const withdraw = () => { }
+const withdraw = (record: any) => {
+  withdrawVisible.value = true
+  form.value.oid = record.oid
+  form.value.contractAmount = record.contractAmount
+  form.value.representativeName = record.representativeName
+  form.value.contractNo = record.contractNo
+}
+const withdrawConfirm = async () => {
+  const res = await api.revokeContract(form.value.oid)
+  if (res) {
+    withdrawresVisible.value = true
+    onSearch()
+  } else {
+    message.error('撤销失败！')
+  }
+  withdrawVisible.value = false
+}
 const checkDetails = (id: number) => {
   goTo('electronicContratDetails', { id })
 }
@@ -209,5 +253,9 @@ onMounted(() => {
   border-bottom: 1px solid black;
   margin: 0 20px 10px;
   padding: 20px 0;
+}
+
+.cred {
+  color: #d9001b;
 }
 </style>

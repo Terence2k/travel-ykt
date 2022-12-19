@@ -50,7 +50,7 @@ import haveABall from './travelList/haveABall.vue';
 // import closeAnAccount from './travelList/closeAnAccount.vue';
 import waitingChange from './travelList/waitingChange.vue';
 import cancellation from './travelList/cancellation.vue';
-
+import waitingTask from './travelList/waitingTask.vue';
 import { traveListParams, useTravelStore } from '@/stores/modules/travelManagement';
 import { GroupStatus, GroupType } from '@/enum';
 import { getUserInfo, getTabPermission } from '@/utils/util';
@@ -96,6 +96,12 @@ const pages = [
 		label: travelStore.groupStatus[GroupStatus.HaveABall],
 		value: GroupStatus.HaveABall,
 		chart: 'haveABall',
+	},
+	{
+		name: waitingTask,
+		label: travelStore.groupStatus[GroupStatus.WaitingTask],
+		value: GroupStatus.WaitingTask,
+		chart: 'waitingTask',
 	},
 	{
 		name: cancellation,

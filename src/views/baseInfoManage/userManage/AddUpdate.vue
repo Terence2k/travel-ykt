@@ -163,7 +163,7 @@
   }
 
   const addOrUpdateAPI = (apiName: string) => {
-    formValidate.value.roleIds = [formValidate.value.roleIds];
+    if (typeof formValidate.value.roleIds === 'number') formValidate.value.roleIds = [formValidate.value.roleIds];
     console.log('formValidate:', formValidate.value);
     api[apiName]({...formValidate.value}).then((res: any) => {
       // console.log('res:', res);
@@ -187,6 +187,7 @@
       formValidate.value.roleIds = formValidate.value.roleList.map((item: any) => item.oid);
       options.title = '编辑用户';
     } else {
+      formValidate.value.userStatus = 1;
       options.title = '新增用户';
     }
   }
