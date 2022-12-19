@@ -40,22 +40,6 @@
 				<span>{{ accDiv(ticketPrice,100) || '' }}元</span>
 			</a-form-item>
 
-			<!-- <a-form-item label="入园时段" name="startDate" :rules="[{ required: true, message: '请选择入园时段' }]">
-                <a-time-picker
-                    style="width: 100%"
-					v-model:value="formState.startDate"
-					format="HH:mm" valueFormat="HH:mm"
-				/>
-			</a-form-item> -->
-
-			<!-- <a-form-item label="订票人数" name="count" :rules="[{ required: true, message: '请勾选订票人数' }]">
-				<a-input v-model:value="formState.count" disabled placeholder="无需填写，勾选人员名单后自动计算" />
-			</a-form-item> -->
-
-			<!-- <a-form-item label="免票人数">
-				<a-input v-model:value="formState.startDate" disabled placeholder="无需填写，勾选人员名单后自动计算（如符合满16减1政策）" />
-			</a-form-item> -->
-
 			<a-form-item label="订单金额">
 				<a-input v-model:value="formState.price" disabled placeholder="无需填写，勾选人员名单后自动计算" />
 			</a-form-item>
