@@ -116,25 +116,20 @@
   const activeKey = ref(['']);
 
   watch(pcCheckedKeys, () => {
-    console.log('pcCheckedKeys:', pcCheckedKeys.value);
     // 处理通过子级id查找返回父级id（只要选了子级就要返回父级无论有无选中父级）
     let arr = new Set();
     pcCheckedKeys.value.forEach((item: any) => {
       checkList( pcMenuTreeDate.value, item ).forEach((it: any) => arr.add(it));
     });
-    console.log('arr:', arr);
-    
     pcMenuIdsInfo.value = Array.from(arr);
   });
 
   watch(appCheckedKeys, () => {
-    console.log('appCheckedKeys:', appCheckedKeys.value);
     // 处理通过子级id查找返回父级id（只要选了子级就要返回父级无论有无选中父级）
     let arr = new Set();
     appCheckedKeys.value.forEach((item: any) => {
       checkList( appMenuTreeDate.value, item ).forEach((it: any) => arr.add(it));
     });
-    console.log('arr:', arr);
     appMenuIdsInfo.value = Array.from(arr);
   });
   
@@ -226,7 +221,6 @@
   const getDetail = async (id: number) => {
     await api.roleDetail(id).then((res: any) => {
       formValidate.value = res;
-      console.log('角色权限菜单：', res.roleMenu);
       getDetailMenuIds(res.roleMenu.filter((item: any) => item.systemMark === 0), true);
       getDetailMenuIds(res.roleMenu.filter((item: any) => item.systemMark === 1), false);
       pcCheckedKeys.value = pcMenuIdsInfo.value;
