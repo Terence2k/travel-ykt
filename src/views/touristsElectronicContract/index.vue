@@ -108,9 +108,14 @@ const columns = [{
   key: 'index',
 },
 {
-  title: '合同编号',
+  title: '系统编号',
   dataIndex: 'contractNo',
   key: 'contractNo',
+},
+{
+  title: '合同编号',
+  dataIndex: 'electronicContractNo',
+  key: 'electronicContractNo',
 },
 {
   title: '合同类型',

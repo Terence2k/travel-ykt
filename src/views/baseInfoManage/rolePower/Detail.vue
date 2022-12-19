@@ -28,13 +28,28 @@
         label="角色权限"
         name="menuIds"
       >
-        <a-tree
-          v-model:checkedKeys="checkedKeys"
-          checkable
-          :tree-data="menuTreeDate"
-          :field-names="fieldNames"
-        >
-        </a-tree>
+      <a-collapse v-model:activeKey="activeKey" :bordered="false" v-if="dialogVisible">
+        <a-collapse-panel key="1" header="一卡通PC端">
+          <a-tree
+            v-model:checkedKeys="pcCheckedKeys"
+            checkable
+            :selectable="false"
+            :tree-data="pcMenuTreeDate"
+            :field-names="fieldNames"
+          >
+          </a-tree>
+        </a-collapse-panel>
+        <a-collapse-panel key="2" header="一卡通App端">
+          <a-tree
+            v-model:checkedKeys="appCheckedKeys"
+            checkable
+            :selectable="false"
+            :tree-data="appMenuTreeDate"
+            :field-names="fieldNames"
+          >
+          </a-tree>
+        </a-collapse-panel>
+      </a-collapse>
       </a-form-item>
       <a-form-item
         label="角色编码"
@@ -89,51 +104,70 @@
   const dialogVisible = ref(false);
   const formValidate: Ref<Record<string, any>> = ref({});
   const options = reactive({ title: '查看角色' });
-  const checkedKeys = ref<string[]>(['0-0-0', '0-0-1']);
-  const menuTreeDate: Ref<Array<any>> = ref([]);
-  const menuIdsInfo: Ref<Array<any>> = ref([]);
 
-  const getMenuList = () => {
-    api.menuList().then((res: any) => {
-      ///转换树
-      menuTreeDate.value = convertTree(res, {
+  const pcCheckedKeys = ref<string[]>([]);
+  const pcMenuTreeDate: Ref<Array<any>> = ref([]);
+  const pcMenuIdsInfo: Ref<Array<any>> = ref([]);
+
+  const appCheckedKeys = ref<string[]>([]);
+  const appMenuTreeDate: Ref<Array<any>> = ref([]);
+  const appMenuIdsInfo: Ref<Array<any>> = ref([]);
+
+  const activeKey = ref(['']);
+
+  const getMenuList = async () => {
+    const res = await api.menuList();
+    let pcMenu = res.filter((item: any) => item.systemMark === 0);
+    let appMenu = res.filter((item: any) => item.systemMark === 1);
+    ///转换树
+      // pc端
+      pcMenuTreeDate.value = convertTree(pcMenu, {
         value: 'oid',
         label: 'menuName',
         children: 'children',
       });
-    })
+      // App端
+      appMenuTreeDate.value = convertTree(appMenu, {
+        value: 'oid',
+        label: 'menuName',
+        children: 'children',
+      });
+      
+    if (props.params?.oid) {
+      await getDetail(props.params.oid);
+    }
   }
 
-  const getDetailMenuIds = (data: any) => {
+  const getDetailMenuIds = (data: any, isPc: boolean) => {
     data.forEach((item: any) => {
-      const firstMenu = menuTreeDate.value.find((it: any) => it.value == item.oid);
-      // 如果父级菜单没有全选则不选中
-      if (firstMenu && firstMenu.children?.length == item.childMenuList?.length) {
-          menuIdsInfo.value.push(item.oid);
-      }
       if (item.childMenuList?.length) {
-        getDetailMenuIds(item.childMenuList);
-      } else if (!item.childMenuList) {
-        menuIdsInfo.value.push(item.oid);
+        getDetailMenuIds(item.childMenuList, isPc);
+      } else {
+        isPc ? pcMenuIdsInfo.value.push(item.oid) : appMenuIdsInfo.value.push(item.oid);
       }
+      // menuIdsInfo.value = [159]
+      
     })
   }
 
-  const getDetail = (id: number) => {
-    checkedKeys.value = [];
-    api.roleDetail(id).then((res: any) => {
-      console.log('res:', res);
-      getDetailMenuIds(res.roleMenu);
+  const getDetail = async (id: number) => {
+    await api.roleDetail(id).then((res: any) => {
       formValidate.value = res;
-      checkedKeys.value = menuIdsInfo.value;
+      console.log('角色权限菜单：', res.roleMenu);
+      getDetailMenuIds(res.roleMenu.filter((item: any) => item.systemMark === 0), true);
+      getDetailMenuIds(res.roleMenu.filter((item: any) => item.systemMark === 1), false);
+      pcCheckedKeys.value = pcMenuIdsInfo.value;
+      appCheckedKeys.value = appMenuIdsInfo.value;
     }).catch((err: any) => {
       console.error(err);
     })
   }
 
   const init = async () => {
-    console.log('params', props.params);
-    getDetail(props.params.oid);
+    pcCheckedKeys.value = [];
+    appCheckedKeys.value = [];
+    pcMenuIdsInfo.value = [];
+    appMenuIdsInfo.value = [];
   }
 
   watch(() => props.modelValue, async (nVal) => {

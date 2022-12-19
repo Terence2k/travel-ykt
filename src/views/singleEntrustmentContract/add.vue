@@ -120,40 +120,23 @@
             </div>
           </div>
 
-          <div class="tag">选择线路</div>
-          <a-table :columns="lineColumns" :data-source="dataLineSource" bordered :pagination="false">
+          <div class="tag">添加委托项目</div>
+          <a-table :columns="entrustedProjectColumns" :data-source="dataEntrustedProjectSource" bordered
+            :pagination="false">
             <template #bodyCell="{ column, text, record, index }">
               <template v-if="column.key === 'index'">
                 {{ index + 1 }}
               </template>
-              <template v-if="column.dataIndex === 'lineId'">
-                <a-select v-if="record.isEdit" v-model:value="dataLineSource[index][column.dataIndex]"
-                  @change="() => { lineSelectChange(dataLineSource[index]) }" placeholder="请选择可用线路" allowClear>
-                  <a-select-option v-for="item in lineOption" :value="item.codeValue" :key="item.codeValue">{{ item.name
-                  }}
-                  </a-select-option>
-                </a-select>
-                <template v-else>
-                  {{ cmplineName(text) }}
-                </template>
-              </template>
-              <template v-if="column.dataIndex === 'lineStartTime'">
-                <a-date-picker v-if="record.isEdit" v-model:value="dataLineSource[index][column.dataIndex]"
-                  placeholder="请选择开始时间" style="width:100%" :format="dateFormat" :valueFormat="dateFormat" />
+              <template v-if="column.dataIndex === 'a'">
+                <a-input v-if="record.isEdit" v-model:value="dataEntrustedProjectSource[index][column.dataIndex]"
+                  placeholder="请输入委托项目" style="margin: -5px 0" />
                 <template v-else>
                   {{ text }}
                 </template>
               </template>
-              <template v-if="column.dataIndex === 'lineEndTime'">
-                <a-date-picker v-if="record.isEdit" v-model:value="dataLineSource[index][column.dataIndex]"
-                  placeholder="请选择结束时间" style="width:100%" :format="dateFormat" :valueFormat="dateFormat" />
-                <template v-else>
-                  {{ text }}
-                </template>
-              </template>
-              <template v-if="['adultPrice', 'childPrice', 'lineDescribe',].includes(column.dataIndex)">
-                <a-input v-if="record.isEdit" v-model:value="dataLineSource[index][column.dataIndex]"
-                  placeholder="选择线路自动生成" disabled style="margin: -5px 0" />
+              <template v-if="column.dataIndex === 'b'">
+                <a-input v-if="record.isEdit" v-model:value="dataEntrustedProjectSource[index][column.dataIndex]"
+                  placeholder="请输入委托价格" style="margin: -5px 0" />
                 <template v-else>
                   {{ text }}
                 </template>
@@ -161,12 +144,12 @@
               <template v-if="column.dataIndex === 'action'">
                 <div class="editable-row-operations">
                   <span v-if="record.isEdit">
-                    <a @click="save(dataLineSource[index])">确定</a>
-                    <a @click="cancel(dataLineSource[index])">取消</a>
+                    <a @click="save(dataEntrustedProjectSource[index])">确定</a>
+                    <a @click="cancel(dataEntrustedProjectSource[index])">取消</a>
                   </span>
                   <span v-else>
-                    <a @click="edit(dataLineSource[index])">编辑</a>
-                    <a-popconfirm title="确认删除数据？" @confirm="onLineDelete(index)">
+                    <a @click="edit(dataEntrustedProjectSource[index])">编辑</a>
+                    <a-popconfirm title="确认删除数据？" @confirm="onEntrustedProjectDelete(index)">
                       <a>删除</a>
                     </a-popconfirm>
                   </span>
@@ -246,7 +229,7 @@
                   {{ cmpTouristType(text) }}
                 </template>
               </template>
-              <template v-if="column.dataIndex === 'gender'">
+              <!-- <template v-if="column.dataIndex === 'gender'">
                 <a-select placeholder="请选择性别" v-if="record.isEdit"
                   v-model:value="dataTouristSource[index][column.dataIndex]" allowClear style="width: 80px">
                   <a-select-option v-for="item in genderOption" :value="item.codeValue" :key="item.codeValue">{{
@@ -264,7 +247,7 @@
                 <template v-else>
                   {{ text }}
                 </template>
-              </template>
+              </template> -->
               <template v-if="column.dataIndex === 'phone'">
                 <a-input placeholder="请输入电话号码" v-if="record.isEdit"
                   v-model:value="dataTouristSource[index][column.dataIndex]" style="margin: -5px 0" />
@@ -272,7 +255,7 @@
                   {{ text }}
                 </template>
               </template>
-              <template v-if="column.dataIndex === 'isHealthy'">
+              <!-- <template v-if="column.dataIndex === 'isHealthy'">
                 <a-select placeholder="请选健康状态" v-if="record.isEdit"
                   v-model:value="dataTouristSource[index][column.dataIndex]" allowClear style="width: 80px">
                   <a-select-option v-for="item in isHealthyOption" :value="item.codeValue" :key="item.codeValue">{{
@@ -283,7 +266,7 @@
                 <template v-else>
                   {{ cmpIsHealthy(text) }}
                 </template>
-              </template>
+              </template> -->
               <template v-if="column.dataIndex === 'healthyCode'">
                 <a-input placeholder="系统自动生成" v-if="record.isEdit"
                   v-model:value="dataTouristSource[index][column.dataIndex]" disabled style="margin: -5px 0" />
@@ -380,7 +363,7 @@
             <template v-if="column.key === 'index'">
               {{ index + 1 }}
             </template>
-            <template v-if="column.dataIndex === 'priceName'">
+            <!-- <template v-if="column.dataIndex === 'priceName'">
               <a-input v-if="record.isEdit" v-model:value="dataCostSource[index][column.dataIndex]"
                 style="margin: -5px 0" placeholder="输入产品名称" />
               <template v-else>
@@ -407,7 +390,7 @@
               <template v-else>
                 {{ text }}
               </template>
-            </template>
+            </template> -->
             <template v-if="(column.dataIndex === 'action' && record.isOperate)">
               <div class="editable-row-operations">
                 <span v-if="record.isEdit">
@@ -429,7 +412,7 @@
             <div class="cost_item">费用合计</div>
             <div class="cost_item">{{ form.contractAmount }}</div>
           </div>
-          <a-button @click="handleCostAdd" style="margin-left:20px">添加预订产品</a-button>
+          <!-- <a-button @click="handleCostAdd" style="margin-left:20px">添加预订产品</a-button> -->
         </div>
         <a-form ref="formRef4" :model="form" :rules="formRules" autocomplete="off">
           <a-form-item name="paymentMethod" label="游客费用支付方式">
@@ -446,7 +429,7 @@
           <div>
             <a-button type="primary" @click="nextTep('1')" class="mr20">上一步</a-button>
             <a-button type="primary" @click="saveDraft" class="mr20">保存草稿</a-button>
-            <a-button type="primary" @click="submitVisible = true" :disabled="!hasId">提交签署</a-button>
+            <a-button type="primary" @click="submitVisible = true" :disabled="!hasId">发出签署</a-button>
           </div>
         </div>
       </a-tab-pane>
@@ -593,41 +576,21 @@ const activeKey = ref('1')
 const submitVisible = ref(false)
 const submitResultVisible = ref(false)
 const isShow = ref(true)
-const lineColumns = [
+const entrustedProjectColumns = [
   {
     title: '序号',
     dataIndex: 'index',
     key: 'index',
   },
   {
-    title: '线路名称',
-    dataIndex: 'lineId',
-    key: 'lineId',
+    title: '委托项目',
+    dataIndex: 'a',
+    key: 'a',
   },
   {
-    title: '开始时间',
-    dataIndex: 'lineStartTime',
-    key: 'lineStartTime',
-  },
-  {
-    title: '结束时间',
-    dataIndex: 'lineEndTime',
-    key: 'lineEndTime',
-  },
-  {
-    title: '成人价格(元）',
-    dataIndex: 'adultPrice',
-    key: 'adultPrice',
-  },
-  {
-    title: '小孩价格（元）',
-    dataIndex: 'childPrice',
-    key: 'childPrice',
-  },
-  {
-    title: '行程描述',
-    dataIndex: 'lineDescribe',
-    key: 'lineDescribe',
+    title: '委托价格',
+    dataIndex: 'b',
+    key: 'b',
   },
   {
     title: '操作',
@@ -663,7 +626,7 @@ const touristColumns = [
     dataIndex: 'touristType',
     key: 'touristType',
   },
-  {
+  /* {
     title: '性别',
     dataIndex: 'gender',
     key: 'gender',
@@ -672,19 +635,19 @@ const touristColumns = [
     title: '年龄',
     dataIndex: 'age',
     key: 'age',
-  },
+  }, */
   {
     title: '电话号码',
     dataIndex: 'phone',
     key: 'phone',
   },
-  {
+  /* {
     title: '是否健康',
     dataIndex: 'isHealthy',
     key: 'isHealthy',
-  },
+  }, */
   {
-    title: '健康码颜色',
+    title: '健康码状态',
     dataIndex: 'healthyCode',
     key: 'healthyCode',
   },
@@ -852,36 +815,26 @@ interface TouristItem {
   healthyCode?: string;
   isEdit: boolean;
 }
-interface LineItem {
-  lineId: undefined | number;
-  lineName: string;
-  lineStartTime: string;
-  lineEndTime: string;
-  adultPrice: number | string;
-  childPrice: number | string;
-  lineDescribe: string;
+interface EntrustedProjectItem {
+  a: undefined | number;
+  b: string;
   isEdit: boolean;
 }
 const dataCostSource = ref<CostItem[]>([])
 const dataTouristSource = ref<TouristItem[]>([])
-const dataLineSource = ref<LineItem[]>([])
-// 添加线路
+const dataEntrustedProjectSource = ref<EntrustedProjectItem[]>([])
+// 添加委托项目
 const handleLineAdd = () => {
   const newData = {
     isEdit: true,
-    lineId: undefined,
-    lineName: '',
-    lineStartTime: '',
-    lineEndTime: '',
-    adultPrice: '',
-    childPrice: '',
-    lineDescribe: '',
+    a: '',
+    b: '',
   };
-  dataLineSource.value.push(newData);
+  dataEntrustedProjectSource.value.push(newData);
 };
-// 删除线路
-const onLineDelete = (index: number) => {
-  dataLineSource.value.splice(index, 1)
+// 删除委托项目
+const onEntrustedProjectDelete = (index: number) => {
+  dataEntrustedProjectSource.value.splice(index, 1)
 };
 // 添加游客
 const handleTouristAdd = () => {
@@ -1105,7 +1058,7 @@ const getParams = () => {
     contractFileUrl: fileUrl, //附件
     otherAgreements, //其他约定
     contractAmount: contractAmount * 100,
-    individualContractLineBos: dataLineSource.value, // 线路
+    individualContractLineBos: dataEntrustedProjectSource.value, // 线路
     individualContractTouristBos: dataTouristSource.value, // 游客
     individualContractPriceBos: dataCostSource.value, // 费用
   }
@@ -1295,7 +1248,7 @@ const getEditDetails = async (oid: any) => {
     form.value.contractFileUrl = contractFileUrl.toString()
     form.value.pdfFileUrl = pdfFileUrl.toString()
     form.value.travelData = [res.tripStartTime, res.tripEndTime]
-    dataLineSource.value = res.individualContractLineBos.map((item: any) => {
+    dataEntrustedProjectSource.value = res.individualContractLineBos.map((item: any) => {
       return {
         isEdit: false,
         ...item,

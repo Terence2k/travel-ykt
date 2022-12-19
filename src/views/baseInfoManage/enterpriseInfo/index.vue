@@ -5,8 +5,7 @@
         我的企业基本信息
       </span>
       <span
-        class="enterprise_state"
-        v-if="['TRAVEL', 'HOTEL', 'TICKET'].includes(userInfo.sysCompany.businessType)">
+        class="enterprise_state">
         {{ enterpriseState }}
       </span>
     </div>
@@ -591,14 +590,6 @@ const initOpeion = async () => {
   // 右上角文字描述判断
   enterpriseState.value = travelStore.enterpriseState[state.form.informationAuditStatus]?.descriptions;
 
-  // 判断字段是否为空，如为空则显示待补充信息
-  // formRef.value.validate().then((res: any) => {
-  //   enterpriseState.value = travelStore.enterpriseState[state.form.informationAuditStatus]?.descriptions;
-	// }).catch((err: any) => {
-  //   console.log(err)
-  //   // enterpriseState.value = '信息不完善，待补充。';
-  //   formRef.value.clearValidate();
-  // });
 
   validateArray.value = Object.keys(form.value).map((item: any) => {
     return {
@@ -626,8 +617,10 @@ const getStatus = (name: string) => {
 // 0未提交 1待审核 2审核通过 3审核未通过
 // 是否隐藏修改确定按钮
 const showChangeBtns = (name: string) => {
+  let resValue = validateArray.value.find((it: any) => it.name === name)?.value;
+  if (!resValue) enterpriseState.value = '信息不完善，待补充。';
   // 如果有值 && 需要判断的字段是否有包括 && 当前审核状态不为未提交和待审核
-  return validateArray.value.find((it: any) => it.name === name)?.value && validateArray.value.map((it:any) => it.name).find((it: any) => it === name) && ![0, 1].includes(form.value.informationAuditStatus);
+  return resValue && validateArray.value.map((it:any) => it.name).find((it: any) => it === name) && ![0, 1].includes(form.value.informationAuditStatus);
 }
 
 // 餐饮营业时间
