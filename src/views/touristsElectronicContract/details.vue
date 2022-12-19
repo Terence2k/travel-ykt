@@ -11,13 +11,14 @@
     <div class="content disflex">
       <div class="flex1">
         <div class="content_item">
-          <div class="key_name">合同编号</div>
+          <div class="key_name">系统编号</div>
           <div class="key_val">{{ form.contractNo }}</div>
         </div>
         <div class="content_item">
-          <div class="key_name">合同天数</div>
-          <div class="key_val">{{ form.travelDayNight }}</div>
+          <div class="key_name">出发地</div>
+          <div class="key_val">{{ form.departurePlace }}</div>
         </div>
+
         <div class="content_item">
           <div class="key_name">委托旅行社</div>
           <div class="key_val" :class="{ gray_text: form.entrustTravelName === '未填写' }">{{ form.entrustTravelName }}
@@ -32,13 +33,9 @@
           <div class="key_val"><span class="count">{{ form.touristPeopleNumber }}</span>人</div>
         </div>
         <div class="content_item">
-          <div class="key_name">保险购买方式</div>
-          <div class="key_val">{{ form.insuranceBuyModeName }}</div>
-        </div>
-        <div class="content_item">
           <div class="key_name">合同类型</div>
           <div class="key_val">{{ form.contractTypeName }} <span @click="(modalVisible = true)" class="append"
-              v-show="(form.contractType === 2)">查看已上传附件
+              v-show="(form.contractType === 1)">查看已上传附件
             </span>
           </div>
         </div>
@@ -46,11 +43,23 @@
           <div class="key_name">合同状态</div>
           <div class="key_val">{{ form.contractStatusName }}</div>
         </div>
+        <div class="content_item">
+          <div class="key_name">紧急联系人</div>
+          <div class="key_val">{{ form.emergencyContact }}</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">紧急联系方式</div>
+          <div class="key_val">{{ form.emergencyContactPhone }}</div>
+        </div>
       </div>
       <div class="flex1">
-        <div class="content_item">
-          <div class="key_name">出发地</div>
-          <div class="key_val">{{ form.departurePlace }}</div>
+        <!-- 当合同状态为 已登记、已签署、已成团、已出团、旅行社解除、已解除 6个状态时，在【合同编号】字段处显示“下载12301合同电子版”按钮 -->
+        <div class="content_item"
+          v-show="((form.contractType === 2) && [2, 3, 4, 5, 6, 7].includes(form.contractStatus))">
+          <div class="key_name">合同编号</div>
+          <div class="key_val">{{ form.electronicContractNo }}<a :href="form.fileUrl" class="append"
+              v-show="form.fileUrl">下载12301合同电子版
+            </a></div>
         </div>
         <div class="content_item">
           <div class="key_name">目的地</div>
@@ -61,8 +70,8 @@
           <div class="key_val">{{ form.returnPlace }}</div>
         </div>
         <div class="content_item">
-          <div class="key_name">关联行程单号</div>
-          <div class="key_val" :class="{ gray_text: form.itineraryNo === '尚未成团' }">{{ form.itineraryNo }}</div>
+          <div class="key_name">合同天数</div>
+          <div class="key_val">{{ form.travelDayNight }}</div>
         </div>
         <div class="content_item">
           <div class="key_name">合同创建方</div>
@@ -80,10 +89,10 @@
           <div class="key_name">合同录入时间</div>
           <div class="key_val">{{ form.createTime }}</div>
         </div>
-        <!-- <div class="content_item">
-          <div class="key_name">合同生效时间</div>
-          <div class="key_val">{{ form.takeEffectTime }}</div>
-        </div> -->
+        <div class="content_item">
+          <div class="key_name">关联行程单号</div>
+          <div class="key_val" :class="{ gray_text: form.itineraryNo === '尚未成团' }">{{ form.itineraryNo }}</div>
+        </div>
       </div>
     </div>
     <div class="tag">
@@ -113,7 +122,7 @@
         </template>
       </CommonTable>
     </div>
-    <div class="content">
+    <div class="content" v-show="(form.contractType === 2)">
       <div class="content_item">
         <div class="key_name">游客代表</div>
         <div class="key_val">{{ form.touristName }}</div>
@@ -136,7 +145,7 @@
         行程费用明细
       </div>
       <div>
-        游客合同费用支付方式：{{ form.paymentMethod }}
+        游客合同费用支付方式：{{ form.paymentMethodName }}
       </div>
     </div>
 
@@ -214,7 +223,12 @@ const form = ref({
   departurePlace: '',
   destination: '',
   returnPlace: '',
-  paymentMethodName: ''
+  paymentMethodName: '',
+  emergencyContact: '',
+  emergencyContactPhone: '',
+  electronicContractNo: '',
+  fileUrl: '',
+  contractStatus: -1,
 })
 const lineColumns = [
   {
@@ -459,7 +473,12 @@ const getDetails = async (id: number) => {
       departurePlace,
       destination,
       returnPlace,
-      paymentMethodName
+      paymentMethodName,
+      emergencyContact,
+      emergencyContactPhone,
+      electronicContractNo,
+      fileUrl,
+      contractStatus
     } = res
     const arr = contractFileUrl ? contractFileUrl.split(',') : []
     let contractFileUrlList = arr.map(async (item: any) => {
@@ -555,7 +574,12 @@ const getDetails = async (id: number) => {
       departurePlace,
       destination,
       returnPlace,
-      paymentMethodName
+      paymentMethodName,
+      emergencyContact,
+      emergencyContactPhone,
+      electronicContractNo: electronicContractNo || '/',
+      fileUrl,
+      contractStatus
     }
   }
 }

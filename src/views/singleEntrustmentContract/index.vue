@@ -99,19 +99,24 @@ const columns = [{
   key: 'index',
 },
 {
-  title: '合同编号',
+  title: '系统编号',
   dataIndex: 'contractNo',
   key: 'contractNo',
 },
 {
+  title: '合同编号',
+  dataIndex: 'electronicContractNo',
+  key: 'electronicContractNo',
+},
+{
   title: '出发地点',
-  dataIndex: 'contractTypeName',
-  key: 'contractTypeName',
+  dataIndex: 'departurePlace',
+  key: 'departurePlace',
 },
 {
   title: '委托项目',
-  dataIndex: 'lineNames',
-  key: 'lineNames',
+  dataIndex: 'entrustedProject',
+  key: 'entrustedProject',
 },
 {
   title: '关联行程单',
@@ -150,8 +155,8 @@ const columns = [{
 },
 {
   title: '行程时间',
-  dataIndex: 'takeEffectTime',
-  key: 'takeEffectTime',
+  dataIndex: 'tripTime',
+  key: 'tripTime',
 },
 {
   title: '操作',
@@ -208,6 +213,12 @@ const pageSideChange = (current: number, size: number) => {
   onSearch();
 }
 const onSearch = async () => {
+  const res = await api.selectSingleContractList(state.tableData.param)
+  state.tableData.data = res.content.map((item: any) => {
+    item.tripTime = item.tripStartTime + '~' + item.tripEndTime
+    return item
+  })
+  state.tableData.total = res.total
 }
 const onQuery = () => {
   state.tableData.param.pageNo = 1;
