@@ -114,6 +114,7 @@ const handleMenuTree = (menuList: any) => {
 			keys: item.url,
 			path: item.url,
 			title: item.menuName,
+			available: item.available
 		};
 	});
 	return menuList;
@@ -133,6 +134,8 @@ watchEffect(() => {
 			delete item.children;
 		}
 	});
+	console.log('菜单:', userInfo.sysMenuVos);
+	
 });
 const state = reactive({
 	routeList: [],
