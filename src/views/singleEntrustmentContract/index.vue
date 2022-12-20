@@ -181,7 +181,7 @@ const withdraw = (record: any) => {
   form.value.contractNo = record.contractNo
 }
 const withdrawConfirm = async () => {
-  const res = await api.revokeContract(form.value.oid)
+  const res = await api.revokeSingleContract(form.value.oid)
   if (res) {
     withdrawresVisible.value = true
     onSearch()

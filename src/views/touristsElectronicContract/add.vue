@@ -895,7 +895,7 @@ interface TouristItem {
   // reductionUrl: string; //减免依据附件
   certificatesAddress: string; //游客详细住址
   isRepresentative: number; //是否为游客代表
-  age: number; //年龄
+  age: string; //年龄
   gender: undefined | string; // 性别
   isHealthy: undefined | number; // 是否健康
   isAncientUygur: undefined | number; //是否代收古维
@@ -937,12 +937,11 @@ const onLineDelete = (index: number) => {
 const handleTouristAdd = () => {
   const newData = {
     isEdit: true,
-    certificatesType: undefined, //证件类型
+    certificatesType: "IDENTITY_CARD", //证件类型
     certificatesNo: "", //证件号码
     touristName: "", //游客姓名
     touristType: 1, //游客类型（成人、儿童）
     phone: "", //电话
-    ancientUygurReduction: undefined, //古维减免
     // reductionUrl: "", //减免依据附件
     certificatesAddress: "", //游客详细住址
     isRepresentative: 0,//是否为游客代表
