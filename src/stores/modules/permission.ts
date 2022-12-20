@@ -12,6 +12,7 @@ export interface MenuList {
 	keys?: string;
 	activeMenu?: unknown;
 	children?: MenuList[];
+	available?: boolean
 }
 
 interface PermissioState {

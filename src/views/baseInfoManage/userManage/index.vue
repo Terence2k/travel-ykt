@@ -236,9 +236,9 @@
     ]
     columns.value.forEach((item: any, index: any) => {
       // if (item.key === 'action' && isGroupSuperAdmin.value) {
-      if (item.key === 'action') {
-        delete columns.value[index];
-      }
+      // if (item.key === 'action') {
+      //   delete columns.value[index];
+      // }
       if (['unitName', 'businessTypeName'].includes(item.key) && isBusinessSuperAdmin.value) {
         delete columns.value[index];
       }
