@@ -15,6 +15,7 @@ declare module '@vue/runtime-core' {
     CommonSearch: typeof import('./src/components/common/CommonSearch.vue')['default']
     CommonSearchItem: typeof import('./src/components/common/CommonSearchItem.vue')['default']
     CommonTable: typeof import('./src/components/common/CommonTable.vue')['default']
+    DatePicker: typeof import('./src/components/common/datePicker.vue')['default']
     DelModal: typeof import('./src/components/common/DelModal.vue')['default']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElDatePicker: typeof import('element-plus/es')['ElDatePicker']

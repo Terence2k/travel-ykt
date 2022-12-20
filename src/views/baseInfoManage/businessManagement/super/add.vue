@@ -54,10 +54,8 @@
         <a-form-item label="成立日期" v-show="formRules?.establishTime">
           <!-- <a-date-picker v-model:value="form.establishTime" placeholder="请选择成立日期" :valueFormat="dateFormat"
             :disabled-date="disabledAfterDate" style="width:100%" /> -->
-          <el-config-provider :locale="zhCn">
-            <el-date-picker v-model="form.establishTime" type="date" placeholder="请选择成立日期" />
-          </el-config-provider>
 
+          <picker v-model="form.establishTime" type="date" placeholder="请选择成立日期" style="width:100%"></picker>
         </a-form-item>
         <a-form-item label="营业期限" v-show="formRules?.businessTerm">
           <a-date-picker v-model:value="form.businessTerm" placeholder="请选择营业期限" :valueFormat="dateFormat"
@@ -169,7 +167,7 @@ import type { Rule } from 'ant-design-vue/es/form';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
 import type { Dayjs } from 'dayjs';
-import zhCn from 'element-plus/lib/locale/lang/zh-cn';
+import picker from '@/components/common/datePicker.vue'
 import {
   commonFormRules5,
   commonFormRules6,
