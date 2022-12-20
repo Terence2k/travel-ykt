@@ -11,7 +11,7 @@
     <div class="content disflex">
       <div class="flex1">
         <div class="content_item">
-          <div class="key_name">合同编号</div>
+          <div class="key_name">系统编号</div>
           <div class="key_val">{{ form.contractNo }}</div>
         </div>
         <div class="content_item">
@@ -41,26 +41,36 @@
         </div>
         <div class="content_item">
           <div class="key_name">合同定金</div>
-          <div class="key_val">{{ }}元（游客向旅行社支付）</div>
+          <div class="key_val">{{ form.deposit }}元（游客向旅行社支付）</div>
         </div>
         <div class="content_item">
           <div class="key_name">合同终止违约金</div>
-          <div class="key_val">{{ }}x 合同总金额（违约方支付）</div>
+          <div class="key_val">{{ form.liquidatedDamages }}% x 合同总金额（违约方支付）</div>
         </div>
         <div class="content_item">
           <div class="key_name">黄金周保证金</div>
-          <div class="key_val">{{ }}元（游客向旅行社支付）</div>
+          <div class="key_val">{{ form.bond }}元（游客向旅行社支付）</div>
         </div>
         <div class="content_item">
           <div class="key_name">紧急联系人</div>
-          <div class="key_val">{{ }}</div>
+          <div class="key_val">{{ form.emergencyContact }}</div>
         </div>
         <div class="content_item">
           <div class="key_name">紧急联系方式</div>
-          <div class="key_val">{{ }}</div>
+          <div class="key_val">{{ form.emergencyContactPhone }}</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">合同录入时间</div>
+          <div class="key_val">{{ form.createTime }}</div>
         </div>
       </div>
       <div class="flex1">
+        <div class="content_item">
+          <div class="key_name">合同编号</div>
+          <div class="key_val">{{ form.electronicContractNo }}<a :href="form.fileUrl" class="append"
+              v-show="form.fileUrl">下载12301合同电子版
+            </a></div>
+        </div>
         <div class="content_item">
           <div class="key_name">出发地</div>
           <div class="key_val">{{ form.departurePlace }}</div>
@@ -87,31 +97,30 @@
         </div>
         <div class="content_item">
           <div class="key_name">游客违约则扣罚</div>
-          <div class="key_val">酒店：{{}}；租车：{{}}；总价：{{}}</div>
+          <div class="key_val">酒店：{{ form.hotelFine }}%；租车：{{ form.carRentalFine }}%；总价：{{ form.totalPriceFine }}%</div>
         </div>
         <div class="content_item">
           <div class="key_name">旅行社违约则扣罚</div>
-          <div class="key_val">未履约：{{}}；不达标：{{}}；转委托：{{}}。（按照合同总额扣罚）</div>
+          <div class="key_val">
+            未履约：{{ form.nonPerformanceFine }}%；不达标：{{ form.nonStandardFine }}%；转委托：{{ form.entrustFine }}%。（按照合同总额扣罚）
+          </div>
         </div>
         <div class="content_item">
           <div class="key_name">争议解决办法</div>
-          <div class="key_val">{{ }}</div>
+          <div class="key_val">{{ form.disputeResolutionName }}</div>
         </div>
         <div class="content_item">
           <div class="key_name">合同总金额</div>
           <div class="key_val"><span class="count">{{ form.contractAmount }}</span>元</div>
         </div>
-        <div class="content_item">
-          <div class="key_name">合同录入时间</div>
-          <div class="key_val">{{ form.createTime }}</div>
-        </div>
+
       </div>
     </div>
     <div class="tag">
-      委托项目（<span class="count">{{ form.individualContractLineBos.length }}</span>）
+      委托项目
     </div>
     <div class="content">
-      <CommonTable :dataSource="form.individualContractLineBos" :columns="entrustedProjectColumns">
+      <CommonTable :dataSource="form.dataEntrustedProjectSource" :columns="entrustedProjectColumns">
         <template #bodyCell="{ column, record, index }">
           <template v-if="column.key === 'index'">
             {{ index + 1 }}
@@ -157,7 +166,7 @@
         行程费用明细
       </div>
       <div>
-        游客合同费用支付方式：{{ form.paymentMethod }}
+        游客合同费用支付方式：{{ form.paymentMethodName }}
       </div>
     </div>
 
@@ -200,7 +209,7 @@ const router = useRouter();
 const route = useRoute();
 const back = () => {
   router.push({
-    name: 'electronicContratList',
+    name: 'singleEntrustmentContractList',
   })
 }
 const modalVisible = ref(false)
@@ -218,6 +227,22 @@ const form = ref({
   contractFileUrlList: '',
   contractFileUrl: '',
   contractStatusName: '',
+
+  deposit: '',
+  liquidatedDamages: '',
+  bond: '',
+  emergencyContact: '',
+  emergencyContactPhone: '',
+  electronicContractNo: '',
+  fileUrl: '',
+  hotelFine: '',
+  carRentalFine: '',
+  totalPriceFine: '',
+  nonPerformanceFine: '',
+  nonStandardFine: '',
+  entrustFine: '',
+  disputeResolutionName: '',
+
   itineraryNo: '尚未成团',
   contractEstablish: '',
   creatorName: '',
@@ -225,7 +250,10 @@ const form = ref({
   createTime: '',
   takeEffectTime: '',
   otherAgreements: '',
-  individualContractLineBos: [],
+  dataEntrustedProjectSource: [{
+    entrustedProject: '',
+    entrustedProjectAmount: '',
+  }],
   individualContractTouristBos: [],
   individualContractPriceBos: [],
   touristName: '',
@@ -239,20 +267,15 @@ const form = ref({
 })
 const entrustedProjectColumns = [
   {
-    title: '序号',
-    dataIndex: 'index',
-    key: 'index',
-  },
-  {
     title: '委托项目',
-    dataIndex: '',
-    key: '',
+    dataIndex: 'entrustedProject',
+    key: 'entrustedProject',
   },
   {
     title: '委托价格',
-    dataIndex: '',
-    key: '',
-  },
+    dataIndex: 'entrustedProjectAmount',
+    key: 'entrustedProjectAmount',
+  }
 ]
 const touristColumns = [
   {
@@ -433,7 +456,7 @@ const configCodeName = (certificateCodes: any, targetArr: any) => {
   }
 }
 const getDetails = async (id: number) => {
-  const res = await api.findIndividualContractById(id)
+  const res = await api.getSingleContractDetails(id)
   if (res) {
     let {
       contractNo,
@@ -447,13 +470,31 @@ const getDetails = async (id: number) => {
       contractType,
       contractFileUrl,
       contractStatusName,
+
+      deposit,
+      liquidatedDamages,
+      bond,
+      emergencyContact,
+      emergencyContactPhone,
+      electronicContractNo,
+      fileUrl,
+      hotelFine,
+      carRentalFine,
+      totalPriceFine,
+      nonPerformanceFine,
+      nonStandardFine,
+      entrustFine,
+      disputeResolutionName,
+
+      entrustedProject,
+      entrustedProjectAmount,
+
       itineraryNo,
       contractEstablish,
       creatorName,
       contractAmount,
       createTime,
       takeEffectTime,
-      individualContractLineBos,
       individualContractTouristBos,
       individualContractPriceBos,
       otherAgreements,
@@ -511,7 +552,6 @@ const getDetails = async (id: number) => {
     // 将健康码和游客列表数据关联
     configCodeName(certificateCodes, individualContractTouristBos)
 
-    setList(individualContractLineBos)
     setList(individualContractPriceBos)
     setList1(individualContractTouristBos)
     const travelDayNight = `${contractDays}天${travelNight}夜`
@@ -539,6 +579,28 @@ const getDetails = async (id: number) => {
       contractFileUrlList,
       contractFileUrl,
       contractStatusName: contractStatusName || '/',
+
+      deposit,
+      liquidatedDamages,
+      bond,
+      emergencyContact,
+      emergencyContactPhone,
+      electronicContractNo: electronicContractNo || '/',
+      fileUrl,
+      hotelFine,
+      carRentalFine,
+      totalPriceFine,
+      nonPerformanceFine,
+      nonStandardFine,
+      entrustFine,
+      disputeResolutionName,
+
+      dataEntrustedProjectSource: [{
+        entrustedProject,
+        entrustedProjectAmount,
+      }],
+
+
       itineraryNo: itineraryNo || '尚未成团',
       contractEstablish: contractEstablish || '/',
       creatorName: creatorName || '/',
@@ -546,7 +608,6 @@ const getDetails = async (id: number) => {
       createTime,
       takeEffectTime: takeEffectTime || '/',
       otherAgreements: otherAgreements || '/',
-      individualContractLineBos,
       individualContractTouristBos,
       individualContractPriceBos,
       touristName,
@@ -563,7 +624,7 @@ const getDetails = async (id: number) => {
 watch(
   route,
   (newVal) => {
-    if (newVal.name === "electronicContratDetails") {
+    if (newVal.name === "singleEntrustmentContractDetails") {
       getDetails(newVal.query.id)
     }
   },
