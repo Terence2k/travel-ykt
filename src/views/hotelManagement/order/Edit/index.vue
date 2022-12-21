@@ -12,12 +12,11 @@
 							<a-form-item label="接团旅行社"> {{ state.data.subTravelName }} </a-form-item>
 							<a-form-item label="行程时间"> {{ state.data.arrivalDate }} - {{ state.data.departureDate }} </a-form-item>
 							<a-form-item label="行程人数"> {{ state.data.tripNumber }} </a-form-item>
-							<a-form-item label="预定人数"> {{ state.data.scheduledNumber }} </a-form-item>
 							<a-form-item label="预定房数"> {{ state.data.scheduledRooms }} </a-form-item>
 
 							<div class="title">订房信息</div>
 							<CommonTable :columns="columns" :dataSource="state.data.hotelTypeList" :scrollY="false">
-								<template #bodyCell="{ column, index,record}">
+								<template #bodyCell="{ column, index, record }">
 									<template v-if="column.key === 'index'">
 										<div>
 											{{ index + 1 }}
@@ -25,16 +24,15 @@
 									</template>
 									<template v-if="column.key === 'orderAmount'">
 										<div>
-											{{accDiv( record.orderAmount,100)}}
+											{{ accDiv(record.orderAmount, 100) }}
 										</div>
 									</template>
 									<template v-if="column.key === 'Subtotal'">
 										<div>
-											{{accDiv(accMul( record.orderAmount,record.reserveNumber),100)}}
+											{{ accDiv(accMul(record.orderAmount, record.reserveNumber), 100) }}
 										</div>
 									</template>
-									</template
-								>
+								</template>
 							</CommonTable>
 						</a-form>
 					</div>
@@ -73,7 +71,7 @@ import api from '@/api';
 import type { Rule } from 'ant-design-vue/es/form';
 import { message } from 'ant-design-vue';
 import CommonTable from '@/components/common/CommonTable.vue';
-import { accDiv,accMul} from '@/utils/compute';
+import { accDiv, accMul } from '@/utils/compute';
 
 const router = useRouter();
 const navigatorBar = useNavigatorBar();
@@ -82,7 +80,6 @@ const route = useRoute();
 const visible = ref(false);
 const activeKey = ref('1');
 const formRef = ref();
-const formState = ref();
 const columns = [
 	{
 		title: '序号',
@@ -127,6 +124,7 @@ const rules: any = {
 	flag: [{ required: true, trigger: 'change', message: '请选择审核状态' }],
 	rejectReason: [{ required: true, trigger: 'blur', message: '请输入审核不通过原因' }],
 };
+
 const resetForm = () => {
 	visible.value = false;
 	formRef.value.resetFields();
@@ -140,13 +138,14 @@ const success = () => {
 			.then((res: any) => {
 				visible.value = false;
 				router.push({ path: '/hotelManagement/hotelOrder/index' });
-				message.success('审核成功')
+				message.success('审核成功');
 			})
 			.catch((err: any) => {
-				message.error(err)
+				message.error(err);
 			});
 	});
 };
+
 const notAuditing = () => {
 	router.push({ path: '/hotelManagement/hotelOrder/index' });
 };
@@ -162,9 +161,11 @@ onMounted(() => {
 	initPage();
 	navigatorBar.setNavigator(['订单管理', '查看']);
 });
+
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
 });
+
 </script>
 <style lang="less" scoped>
 .warp {

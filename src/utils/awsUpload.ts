@@ -112,7 +112,6 @@ export const awsUploadFile = (options: any) => {
 
 export const awsGetPreSignedUrl = (fileUrl: string) => {
   return new Promise(async (resolve, reject) => {
-    // businessType业态
     const { aws, bucket, filePath, prefix } = await newAwsObj();
     if (!aws) {
       handleUploadErr(reject, '生成 aws 实例失败');

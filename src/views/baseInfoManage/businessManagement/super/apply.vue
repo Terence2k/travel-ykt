@@ -69,15 +69,15 @@
 				<CommonTable :dataSource="tableData.data" :columns="columns">
 					<template #bodyCell="{ column, record }">
 						<template v-if="column.key === 'businessLicenseUrl'">
-							<a-image width="100%" :src="record.businessLicenseUrl" />
+							<a-image width="100%" :src="record?.businessLicenseUrl" />
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a @click="disable(record)" v-if="record.onOff" v-permission="'已审核_禁用'">禁用</a>
+								<a @click="disable(record)" v-if="record?.onOff" v-permission="'已审核_禁用'">禁用</a>
 								<a v-else @click="enable(record)" v-permission="'已审核_启用'">启用</a>
 								<a @click="goTo(record, 'details')" v-permission="'已审核_查看'">查看</a>
 								<a @click="resetPassword(record.oid)" v-permission="'已审核_重置密码'">重置密码</a>
-								<a @click="edit(record)" v-show="editVisible(record.businessType)" v-permission="'已审核_编辑'">编辑</a>
+								<a @click="edit(record)" v-show="editVisible(record?.businessType)" v-permission="'已审核_编辑'">编辑</a>
 							</div>
 						</template>
 					</template>
@@ -92,7 +92,7 @@
 				<CommonTable :dataSource="auditTableData.data" :columns="auditColumns">
 					<template #bodyCell="{ column, record }">
 						<template v-if="column.key === 'businessLicenseUrl'">
-							<a-image width="100%" :src="record.businessLicenseUrl" />
+							<a-image width="100%" :src="record?.businessLicenseUrl" />
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
@@ -263,6 +263,7 @@ import { useRouter } from 'vue-router';
 import { useBusinessManageOption } from '@/stores/modules/businessManage';
 import { flat } from '@/views/baseInfoManage/businessManagement/super/common';
 import { getTabPermission } from '@/utils/util';
+import { awsGetPreSignedUrl } from '@/utils/awsUpload';
 const businessManageOptions = useBusinessManageOption();
 const router = useRouter();
 const route = useRoute();
@@ -627,11 +628,28 @@ const failPageSideChange = (current: number, size: number) => {
 	state.failTableData.param.pageSize = size;
 	onFailSearch();
 }
-const onSearch = () => {
-	api.findCompanyList(state.tableData.param).then((res: any) => {
-		state.tableData.data = res.content;
-		state.tableData.total = res.total;
+const getData = (res: any) => {
+	let newArr = res.map(async (item: any) => {
+		if (item.businessLicenseUrl) {
+			if (item.businessLicenseUrl.indexOf('http:') === -1) {
+				item.businessLicenseUrl = await awsGetPreSignedUrl(item.businessLicenseUrl)
+				return item
+			}
+		} else {
+			return item
+		}
 	})
+	return newArr
+}
+const onSearch = async () => {
+	let { content, total } = await api.findCompanyList(state.tableData.param)
+	if (content) {
+		state.tableData.data = await Promise.all(getData(content));
+		state.tableData.total = total;
+	} else {
+		state.tableData.data = [];
+		state.tableData.total = 0;
+	}
 }
 const onAuditSearch = async () => {
 	let res = await api.findCompanyList(state.auditTableData.param)
@@ -656,12 +674,12 @@ const onAuditSearch = async () => {
 			})
 		}
 	}
-	state.auditTableData.data = res.content;
+	state.auditTableData.data = await Promise.all(getData(res.content));
 	state.auditTableData.total = res.total;
 }
 const onFailSearch = () => {
-	api.findCompanyList(state.failTableData.param).then((res: any) => {
-		state.failTableData.data = res.content;
+	api.findCompanyList(state.failTableData.param).then(async (res: any) => {
+		state.failTableData.data = await Promise.all(getData(res.content));
 		state.failTableData.total = res.total;
 	})
 }

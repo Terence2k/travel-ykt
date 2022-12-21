@@ -142,11 +142,7 @@ import { message } from 'ant-design-vue/es';
 import { Rule } from 'ant-design-vue/es/form';
 import dayjs, { Dayjs } from 'dayjs';
 import { selectSpecialDateRange } from '@/utils';
-import { Modal } from 'ant-design-vue';
 import { accDiv, accMul } from '@/utils/compute';
-
-import { createVNode } from 'vue';
-import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { validateRules, validateFields, generateGuid } from '@/utils';
 
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
@@ -327,9 +323,7 @@ const submit = async () => {
 		console.log('newFormState.roomTypeList:', newFormState.roomTypeList);
 
 		travelStore.SetHotels(newFormState, formState.oid || null, props.productRow.key);
-		// callback()
 	} catch (errorInfo) {
-		// callback(false);
 	}
 };
 
@@ -394,13 +388,7 @@ watch(dialogVisible, (newVal) => {
 		formState.orderFee = accDiv(data.orderFee, 100) || '无需填写，提交审核后自动计算';
 		formState.roomCount = data.roomCount;
 		formState.hotelId = props.productRow.hotelId;
-		// formState.hotelRoomTypeId = props.productRow.hotelRoomTypeId;
 		formState.hotelName = props.productRow.hotelName;
-		// props.productRow.productId &&
-		// 	api.travelManagement.getGuidePriceStarCodeByHotelId(props.productRow.productId).then((res: any) => {
-		// 		formState.hotelStarId = res.oid;
-		// 		handleChange(res.oid, { price: res.price, name: res.starCode });
-		// 	});
 	} else {
 		for (let k in formState) {
 			if (k === 'roomTypeList') {
@@ -409,7 +397,6 @@ watch(dialogVisible, (newVal) => {
 				formState[k] = '';
 			}
 		}
-		// formState.orderFee = accMul(formState.orderFee,100) || '无需填写，提交审核后自动计算'
 	}
 	emits('update:modelValue', newVal);
 });
@@ -426,6 +413,7 @@ watch(
 		}
 	}
 );
+
 getHotelStarList();
 </script>
 

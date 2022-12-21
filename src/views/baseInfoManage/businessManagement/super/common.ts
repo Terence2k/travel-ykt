@@ -117,6 +117,8 @@ const keyNameList7 = {
   bankAccount: '公司账号',
   creditCode: '统一社会信用代码',
   licenseNo: "12301旅行社许可证号",
+  individualDeparturePlace: '散客常用出发地',
+  individualReturnPlace: '散客常用返回地',
   isIndividual: "是否为散客中心",
   legalPersonUrl: "法人身份证附件",
   businessLicenseUrl: '营业执照',
@@ -224,6 +226,8 @@ const commonFormRules5: Record<string, Rule[]> = {
   creditCode: [{ required: true, trigger: 'blur', message: '请输入统一社会信用代码' }],
   licenseNo: [{ required: true, trigger: 'blur', message: '请输入旅行社许可证号' }],
   isIndividual: [{ required: true, trigger: 'blur', message: '选择是否为散客中心' }],
+  individualDeparturePlace: [{ required: true, trigger: 'blur', message: '请输入散客常用出发地' }],
+  individualReturnPlace: [{ required: true, trigger: 'blur', message: '请输入散客常用返回地' }],
   legalPersonUrl: [{ required: true, trigger: 'blur', message: '请上传法人身份证附件' }],
   businessLicenseUrl: [{ required: true, trigger: 'blur', message: '请上传营业执照照片' }],
 }

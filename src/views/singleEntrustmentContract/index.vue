@@ -10,17 +10,14 @@
     <search-item label="合同编号">
       <a-input v-model:value="tableData.param.contractNo" placeholder="请输入合同编号" allowClear />
     </search-item>
-    <search-item label="线路名称">
-      <a-input v-model:value="tableData.param.lineName" placeholder="请输入线路名称" allowClear />
-    </search-item>
     <template #button>
       <a-button @click="onQuery" v-permission="'查询'">查询</a-button>
     </template>
   </CommonSearch>
   <div class="add_box">
-    <div>共 {{ tableData.total }} 条可用的电子合同</div>
+    <div>共 {{ tableData.total }} 条可用的单项委托合同</div>
     <div>
-      <a-button type="primary" @click="addOrUpdate({ handle: 'add' })" v-permission="'新增'">新增</a-button>
+      <a-button type="primary" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
     </div>
   </div>
   <CommonTable :dataSource="tableData.data" :columns="columns">
@@ -69,11 +66,6 @@ import { message } from 'ant-design-vue/es';
 const router = useRouter();
 const route = useRoute()
 const goTo = (name: string, value?: any) => {
-  /* let newObj: any = {
-    oid: encodeURIComponent(JSON.stringify(value.oid)),
-    businessType: encodeURIComponent(JSON.stringify(value.businessType)),
-    fromPath: encodeURIComponent(JSON.stringify('apply')),
-  } */
   router.push({
     name: name,
     query: value
@@ -95,7 +87,6 @@ const state = reactive({
     param: {
       contractStatus: undefined,
       contractNo: '',
-      lineName: '',
       pageNo: 1,
       pageSize: 10,
     },
@@ -118,17 +109,17 @@ const columns = [{
   key: 'electronicContractNo',
 },
 {
-  title: '合同类型',
-  dataIndex: 'contractTypeName',
-  key: 'contractTypeName',
+  title: '出发地点',
+  dataIndex: 'departurePlace',
+  key: 'departurePlace',
 },
 {
-  title: '线路名称',
-  dataIndex: 'lineNames',
-  key: 'lineNames',
+  title: '委托项目',
+  dataIndex: 'entrustedProject',
+  key: 'entrustedProject',
 },
 {
-  title: '关联行程单号',
+  title: '关联行程单',
   dataIndex: 'itineraryNo',
   key: 'itineraryNo',
 },
@@ -148,14 +139,9 @@ const columns = [{
   key: 'contractStatusName',
 },
 {
-  title: '合同人数',
+  title: '游客人数',
   dataIndex: 'touristPeopleNumber',
   key: 'touristPeopleNumber',
-},
-{
-  title: '天数',
-  dataIndex: 'contractDays',
-  key: 'contractDays',
 },
 {
   title: '合同金额（元）',
@@ -168,9 +154,9 @@ const columns = [{
   key: 'createTime',
 },
 {
-  title: '合同生效时间',
-  dataIndex: 'takeEffectTime',
-  key: 'takeEffectTime',
+  title: '行程时间',
+  dataIndex: 'tripTime',
+  key: 'tripTime',
 },
 {
   title: '操作',
@@ -195,7 +181,7 @@ const withdraw = (record: any) => {
   form.value.contractNo = record.contractNo
 }
 const withdrawConfirm = async () => {
-  const res = await api.revokeContract(form.value.oid)
+  const res = await api.revokeSingleContract(form.value.oid)
   if (res) {
     withdrawresVisible.value = true
     onSearch()
@@ -205,7 +191,7 @@ const withdrawConfirm = async () => {
   withdrawVisible.value = false
 }
 const checkDetails = (id: number) => {
-  goTo('electronicContratDetails', { id })
+  goTo('singleEntrustmentContractDetails', { id })
 }
 interface addInterface {
   row?: any
@@ -213,9 +199,9 @@ interface addInterface {
 }
 const addOrUpdate = async ({ row, handle }: addInterface) => {
   if (handle === 'add') {
-    goTo('addElectronicContrat', { operation: handle })
+    goTo('addSingleEntrustmentContract', { operation: handle })
   } else if (handle === 'update') {
-    goTo('addElectronicContrat', { operation: handle, oid: row.oid })
+    goTo('addSingleEntrustmentContract', { operation: handle, oid: row.oid })
   }
 }
 const onHandleCurrentChange = (val: number) => {
@@ -227,9 +213,12 @@ const pageSideChange = (current: number, size: number) => {
   onSearch();
 }
 const onSearch = async () => {
-  let { content, total } = await api.selectIndividualContractList(state.tableData.param)
-  state.tableData.data = content
-  state.tableData.total = total
+  const res = await api.selectSingleContractList(state.tableData.param)
+  state.tableData.data = res.content.map((item: any) => {
+    item.tripTime = item.tripStartTime + '~' + item.tripEndTime
+    return item
+  })
+  state.tableData.total = res.total
 }
 const onQuery = () => {
   state.tableData.param.pageNo = 1;

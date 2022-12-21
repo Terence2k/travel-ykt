@@ -200,6 +200,53 @@ export default [
 					},
 				]
 			},
+			{
+				path: 'singleEntrustmentContract',
+				name: 'singleEntrustmentContract',
+				redirect: '/travel/singleEntrustmentContract/singleEntrustmentContractList',
+				// component: () => import('@/views/touristsElectronicContract/index.vue'),
+				meta: {
+					title: '单项委托合同',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					// isDetail: true, // 在左侧的导航栏不会展示
+				},
+				children: [
+					{
+						path: 'singleEntrustmentContractList',
+						name: 'singleEntrustmentContractList',
+						component: () => import('@/views/singleEntrustmentContract/index.vue'),
+						meta: {
+							title: '',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'addSingleEntrustmentContract',
+						name: 'addSingleEntrustmentContract',
+						component: () => import('@/views/singleEntrustmentContract/add.vue'),
+						meta: {
+							title: '新增',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'singleEntrustmentContractDetails',
+						name: 'singleEntrustmentContractDetails',
+						component: () => import('@/views/singleEntrustmentContract/details.vue'),
+						meta: {
+							title: '合同详情',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				]
+			},
 			// lineManagement
 			{
 				path: 'lineManagement',

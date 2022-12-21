@@ -15,33 +15,41 @@
           <div class="key_val">{{ form.contractNo }}</div>
         </div>
         <div class="content_item">
-          <div class="key_name">出发地</div>
-          <div class="key_val">{{ form.departurePlace }}</div>
+          <div class="key_name">行程日期</div>
+          <div class="key_val">{{ form.travelDate }}</div>
         </div>
-
         <div class="content_item">
           <div class="key_name">委托旅行社</div>
           <div class="key_val" :class="{ gray_text: form.entrustTravelName === '未填写' }">{{ form.entrustTravelName }}
           </div>
         </div>
         <div class="content_item">
-          <div class="key_name">行程日期</div>
-          <div class="key_val">{{ form.travelDate }}</div>
-        </div>
-        <div class="content_item">
           <div class="key_name">游客人数</div>
           <div class="key_val"><span class="count">{{ form.touristPeopleNumber }}</span>人</div>
         </div>
+
         <div class="content_item">
           <div class="key_name">合同类型</div>
           <div class="key_val">{{ form.contractTypeName }} <span @click="(modalVisible = true)" class="append"
-              v-show="(form.contractType === 1)">查看已上传附件
+              v-show="(form.contractType === 2)">查看已上传附件
             </span>
           </div>
         </div>
         <div class="content_item">
           <div class="key_name">合同状态</div>
           <div class="key_val">{{ form.contractStatusName }}</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">合同定金</div>
+          <div class="key_val">{{ form.deposit }}元（游客向旅行社支付）</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">合同终止违约金</div>
+          <div class="key_val">{{ form.liquidatedDamages }}% x 合同总金额（违约方支付）</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">黄金周保证金</div>
+          <div class="key_val">{{ form.bond }}元（游客向旅行社支付）</div>
         </div>
         <div class="content_item">
           <div class="key_name">紧急联系人</div>
@@ -51,15 +59,21 @@
           <div class="key_name">紧急联系方式</div>
           <div class="key_val">{{ form.emergencyContactPhone }}</div>
         </div>
+        <div class="content_item">
+          <div class="key_name">合同录入时间</div>
+          <div class="key_val">{{ form.createTime }}</div>
+        </div>
       </div>
       <div class="flex1">
-        <!-- 当合同状态为 已登记、已签署、已成团、已出团、旅行社解除、已解除 6个状态时，在【合同编号】字段处显示“下载12301合同电子版”按钮 -->
-        <div class="content_item"
-          v-show="((form.contractType === 2) && [2, 3, 4, 5, 6, 7].includes(form.contractStatus))">
+        <div class="content_item">
           <div class="key_name">合同编号</div>
           <div class="key_val">{{ form.electronicContractNo }}<a :href="form.fileUrl" class="append"
               v-show="form.fileUrl">下载12301合同电子版
             </a></div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">出发地</div>
+          <div class="key_val">{{ form.departurePlace }}</div>
         </div>
         <div class="content_item">
           <div class="key_name">目的地</div>
@@ -70,8 +84,8 @@
           <div class="key_val">{{ form.returnPlace }}</div>
         </div>
         <div class="content_item">
-          <div class="key_name">合同天数</div>
-          <div class="key_val">{{ form.travelDayNight }}</div>
+          <div class="key_name">关联行程单号</div>
+          <div class="key_val" :class="{ gray_text: form.itineraryNo === '尚未成团' }">{{ form.itineraryNo }}</div>
         </div>
         <div class="content_item">
           <div class="key_name">合同创建方</div>
@@ -82,24 +96,31 @@
           <div class="key_val">{{ form.creatorName }}</div>
         </div>
         <div class="content_item">
+          <div class="key_name">游客违约则扣罚</div>
+          <div class="key_val">酒店：{{ form.hotelFine }}%；租车：{{ form.carRentalFine }}%；总价：{{ form.totalPriceFine }}%</div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">旅行社违约则扣罚</div>
+          <div class="key_val">
+            未履约：{{ form.nonPerformanceFine }}%；不达标：{{ form.nonStandardFine }}%；转委托：{{ form.entrustFine }}%。（按照合同总额扣罚）
+          </div>
+        </div>
+        <div class="content_item">
+          <div class="key_name">争议解决办法</div>
+          <div class="key_val">{{ form.disputeResolutionName }}</div>
+        </div>
+        <div class="content_item">
           <div class="key_name">合同总金额</div>
           <div class="key_val"><span class="count">{{ form.contractAmount }}</span>元</div>
         </div>
-        <div class="content_item">
-          <div class="key_name">合同录入时间</div>
-          <div class="key_val">{{ form.createTime }}</div>
-        </div>
-        <div class="content_item">
-          <div class="key_name">关联行程单号</div>
-          <div class="key_val" :class="{ gray_text: form.itineraryNo === '尚未成团' }">{{ form.itineraryNo }}</div>
-        </div>
+
       </div>
     </div>
     <div class="tag">
-      已选择线路（<span class="count">{{ form.individualContractLineBos.length }}</span>）
+      委托项目
     </div>
     <div class="content">
-      <CommonTable :dataSource="form.individualContractLineBos" :columns="lineColumns">
+      <CommonTable :dataSource="form.dataEntrustedProjectSource" :columns="entrustedProjectColumns">
         <template #bodyCell="{ column, record, index }">
           <template v-if="column.key === 'index'">
             {{ index + 1 }}
@@ -122,7 +143,7 @@
         </template>
       </CommonTable>
     </div>
-    <div class="content" v-show="(form.contractType === 2)">
+    <div class="content">
       <div class="content_item">
         <div class="key_name">游客代表</div>
         <div class="key_val">{{ form.touristName }}</div>
@@ -188,7 +209,7 @@ const router = useRouter();
 const route = useRoute();
 const back = () => {
   router.push({
-    name: 'electronicContratList',
+    name: 'singleEntrustmentContractList',
   })
 }
 const modalVisible = ref(false)
@@ -206,6 +227,22 @@ const form = ref({
   contractFileUrlList: '',
   contractFileUrl: '',
   contractStatusName: '',
+
+  deposit: '',
+  liquidatedDamages: '',
+  bond: '',
+  emergencyContact: '',
+  emergencyContactPhone: '',
+  electronicContractNo: '',
+  fileUrl: '',
+  hotelFine: '',
+  carRentalFine: '',
+  totalPriceFine: '',
+  nonPerformanceFine: '',
+  nonStandardFine: '',
+  entrustFine: '',
+  disputeResolutionName: '',
+
   itineraryNo: '尚未成团',
   contractEstablish: '',
   creatorName: '',
@@ -213,7 +250,10 @@ const form = ref({
   createTime: '',
   takeEffectTime: '',
   otherAgreements: '',
-  individualContractLineBos: [],
+  dataEntrustedProjectSource: [{
+    entrustedProject: '',
+    entrustedProjectAmount: '',
+  }],
   individualContractTouristBos: [],
   individualContractPriceBos: [],
   touristName: '',
@@ -223,49 +263,19 @@ const form = ref({
   departurePlace: '',
   destination: '',
   returnPlace: '',
-  paymentMethodName: '',
-  emergencyContact: '',
-  emergencyContactPhone: '',
-  electronicContractNo: '',
-  fileUrl: '',
-  contractStatus: -1,
+  paymentMethodName: ''
 })
-const lineColumns = [
+const entrustedProjectColumns = [
   {
-    title: '序号',
-    dataIndex: 'index',
-    key: 'index',
+    title: '委托项目',
+    dataIndex: 'entrustedProject',
+    key: 'entrustedProject',
   },
   {
-    title: '线路名称',
-    dataIndex: 'lineId',
-    key: 'lineId',
-  },
-  {
-    title: '开始时间',
-    dataIndex: 'lineStartTime',
-    key: 'lineStartTime',
-  },
-  {
-    title: '结束时间',
-    dataIndex: 'lineEndTime',
-    key: 'lineEndTime',
-  },
-  {
-    title: '成人价格(元）',
-    dataIndex: 'adultPrice',
-    key: 'adultPrice',
-  },
-  {
-    title: '小孩价格（元）',
-    dataIndex: 'childPrice',
-    key: 'childPrice',
-  },
-  {
-    title: '行程描述',
-    dataIndex: 'lineDescribe',
-    key: 'lineDescribe',
-  },
+    title: '委托价格',
+    dataIndex: 'entrustedProjectAmount',
+    key: 'entrustedProjectAmount',
+  }
 ]
 const touristColumns = [
   {
@@ -446,7 +456,7 @@ const configCodeName = (certificateCodes: any, targetArr: any) => {
   }
 }
 const getDetails = async (id: number) => {
-  const res = await api.findIndividualContractById(id)
+  const res = await api.getSingleContractDetails(id)
   if (res) {
     let {
       contractNo,
@@ -460,25 +470,38 @@ const getDetails = async (id: number) => {
       contractType,
       contractFileUrl,
       contractStatusName,
+
+      deposit,
+      liquidatedDamages,
+      bond,
+      emergencyContact,
+      emergencyContactPhone,
+      electronicContractNo,
+      fileUrl,
+      hotelFine,
+      carRentalFine,
+      totalPriceFine,
+      nonPerformanceFine,
+      nonStandardFine,
+      entrustFine,
+      disputeResolutionName,
+
+      entrustedProject,
+      entrustedProjectAmount,
+
       itineraryNo,
       contractEstablish,
       creatorName,
       contractAmount,
       createTime,
       takeEffectTime,
-      individualContractLineBos,
       individualContractTouristBos,
       individualContractPriceBos,
       otherAgreements,
       departurePlace,
       destination,
       returnPlace,
-      paymentMethodName,
-      emergencyContact,
-      emergencyContactPhone,
-      electronicContractNo,
-      fileUrl,
-      contractStatus
+      paymentMethodName
     } = res
     const arr = contractFileUrl ? contractFileUrl.split(',') : []
     let contractFileUrlList = arr.map(async (item: any) => {
@@ -529,7 +552,6 @@ const getDetails = async (id: number) => {
     // 将健康码和游客列表数据关联
     configCodeName(certificateCodes, individualContractTouristBos)
 
-    setList(individualContractLineBos)
     setList(individualContractPriceBos)
     setList1(individualContractTouristBos)
     const travelDayNight = `${contractDays}天${travelNight}夜`
@@ -557,6 +579,28 @@ const getDetails = async (id: number) => {
       contractFileUrlList,
       contractFileUrl,
       contractStatusName: contractStatusName || '/',
+
+      deposit,
+      liquidatedDamages,
+      bond,
+      emergencyContact,
+      emergencyContactPhone,
+      electronicContractNo: electronicContractNo || '/',
+      fileUrl,
+      hotelFine,
+      carRentalFine,
+      totalPriceFine,
+      nonPerformanceFine,
+      nonStandardFine,
+      entrustFine,
+      disputeResolutionName,
+
+      dataEntrustedProjectSource: [{
+        entrustedProject,
+        entrustedProjectAmount,
+      }],
+
+
       itineraryNo: itineraryNo || '尚未成团',
       contractEstablish: contractEstablish || '/',
       creatorName: creatorName || '/',
@@ -564,7 +608,6 @@ const getDetails = async (id: number) => {
       createTime,
       takeEffectTime: takeEffectTime || '/',
       otherAgreements: otherAgreements || '/',
-      individualContractLineBos,
       individualContractTouristBos,
       individualContractPriceBos,
       touristName,
@@ -574,19 +617,14 @@ const getDetails = async (id: number) => {
       departurePlace,
       destination,
       returnPlace,
-      paymentMethodName,
-      emergencyContact,
-      emergencyContactPhone,
-      electronicContractNo: electronicContractNo || '/',
-      fileUrl,
-      contractStatus
+      paymentMethodName
     }
   }
 }
 watch(
   route,
   (newVal) => {
-    if (newVal.name === "electronicContratDetails") {
+    if (newVal.name === "singleEntrustmentContractDetails") {
       getDetails(newVal.query.id)
     }
   },

@@ -23,7 +23,7 @@
   </CommonSearch>
   <CommonTable :dataSource="state.tableData.data" :columns="columns">
       <template #button>
-        <a-button type="primary" @click="addOrUpdate({ handle: 'add' })" v-if="!isGroupSuperAdmin" v-permission="'新增'">新增</a-button>
+        <a-button type="primary" @click="addOrUpdate({ handle: 'add' })" v-permission="'新增'">新增</a-button>
       </template>
       <template #bodyCell="{ column, index, record }">
         <template v-if="column.key === 'index'">
@@ -101,7 +101,7 @@
   });
   const userInfo = getUserInfo();
   const isBusinessSuperAdmin = ref(false);
-  const isGroupSuperAdmin = ref(false);
+  // const isGroupSuperAdmin = ref(false);
 
   const onHandleCurrentChange = (val: number) => {
     console.log('change:', val);
@@ -176,7 +176,7 @@
     // 企业超级管理员不显示搜索区域
     isBusinessSuperAdmin.value = userInfo.sysRoles.some((item: any) => !['PLATFORM_SUPER_ADMIN', 'GROUP_SUPER_ADMIN'].includes(item.roleCode));
     // 集团超级管理员不显示操作
-    isGroupSuperAdmin.value = userInfo.sysRoles.some((item: any) => ['GROUP_SUPER_ADMIN'].includes(item.roleCode));
+    // isGroupSuperAdmin.value = userInfo.sysRoles.some((item: any) => ['GROUP_SUPER_ADMIN'].includes(item.roleCode));
     columns.value = [
       {
         title: '序号',
@@ -235,9 +235,10 @@
       },
     ]
     columns.value.forEach((item: any, index: any) => {
-      if (item.key === 'action' && isGroupSuperAdmin.value) {
-        delete columns.value[index];
-      }
+      // if (item.key === 'action' && isGroupSuperAdmin.value) {
+      // if (item.key === 'action') {
+      //   delete columns.value[index];
+      // }
       if (['unitName', 'businessTypeName'].includes(item.key) && isBusinessSuperAdmin.value) {
         delete columns.value[index];
       }

@@ -6,15 +6,26 @@
 import api from '@/api';
 import { CascaderProps } from 'ant-design-vue';
 import { useAttrs } from 'vue'
+export interface Props {
+    // reproduce?: (number | string)[],
+    isProvince?: boolean,
+    isCity?: boolean,
+}
 const attrs = useAttrs()
-const props = defineProps<{
-    reproduce?: (number | string)[]
-}>()
+/* const props = defineProps<{
+    reproduce?: (number | string)[],
+    isProvince?: true
+}>() */
+
+const props = withDefaults(defineProps<Props>(), {
+    isProvince: true,
+    isCity: true,
+})
 const list = ref<any>([])
 function getAllAreaProvice(pid: any): any[] {
     return api.getAllArea(pid, 1).then((res: any) => {
         const options = res.map((i: any) => {
-            return { label: i.name, value: i.oid, isLeaf: false, level: i.level };
+            return { label: i.name, value: i.oid, isLeaf: !props.isCity, level: i.level };
         });
         return Promise.resolve(options);
     });
@@ -27,7 +38,7 @@ function getAllAreaProvice(pid: any): any[] {
 function getAllAreaCity(pid: any): any[] {
     return api.getAllArea(pid, 2).then((res: any) => {
         const options = res.map((i: any) => {
-            return { label: i.name, value: i.oid, isLeaf: false, level: i.level };
+            return { label: i.name, value: i.oid, isLeaf: !props.isProvince, level: i.level };
         });
         return Promise.resolve(options);
     });
@@ -89,7 +100,7 @@ const reproduceOpetion = async () => {
     if (regionCode && regionCode.length > 0) {
         const provinceId = regionCode[0]// '省'
         const cityId = regionCode[1]// '市'
-        if (provinceId && cityId) {
+        if (provinceId && cityId && props.isProvince) {
             const data = await getAllAreaCity(provinceId)
             for (let i = 0, l = data.length; i < l; i++) {
                 const element = data[i];
