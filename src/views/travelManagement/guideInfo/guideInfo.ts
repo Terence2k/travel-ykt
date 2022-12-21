@@ -65,17 +65,17 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 				dataIndex: 'guideCertificateNo',
 				key: 'guideCertificateNo',
 			},
-			{
-				title: '导游类型',
-				dataIndex: 'guideType',
-				key: 'guideType',
-				data: travelStore.guideType
-			},
-			{
-				title: '签约旅行社',
-				dataIndex: 'belongTravelAgencyName',
-				key: 'belongTravelAgencyName',
-			},
+			// {
+			// 	title: '导游类型',
+			// 	dataIndex: 'guideType',
+			// 	key: 'guideType',
+			// 	data: travelStore.guideType
+			// },
+			// {
+			// 	title: '签约旅行社',
+			// 	dataIndex: 'belongTravelAgencyName',
+			// 	key: 'belongTravelAgencyName',
+			// },
 			{
 				title: '操作',
 				key: 'action',
@@ -162,15 +162,15 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 		},
 
 		async getGuideList() {
-			const res = await api.travelManagement.getGuideList(state.guideParams);
-			state.guideData = res.content;
+			const res = await api.travelManagement.getGuideList();
+			state.guideData = res;
 		},
 		guideChange(value:any, { item }: any, key:any) {
 			state.editableData[key] = {
 				...state.editableData[key],
 				guidePhone: item.phone,
 				belongTravelOid: item.belongTravelAgencyId,
-				guideType: item.guideType || 2,	
+				// guideType: item.guideType || 2,	
 				guideCertificateNo: item.guideCertificateNo,
 				guideOid: item.oid,	
 				belongTravelAgencyName: item.belongTravelAgencyName,

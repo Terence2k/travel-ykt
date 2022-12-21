@@ -441,6 +441,18 @@
             </div>
           </a-form-item>
         </template>
+        <!-- 驳回原因 -->
+        <template v-if="form.informationAuditStatus === 3">
+          <p style="color: red;">{{ enterpriseState }}</p>
+          <div class="flex" style="color: red;">
+            <span style="margin: 0 30px 24px 0;">驳回原因:</span>
+            {{ form.rejectReason }}
+          </div>
+          <div class="flex" style="color: red;">
+            <span style="margin: 0 30px 24px 0;">驳回时间:</span>
+            {{ form.lastUpdateTime }}
+          </div>
+        </template>
         <a-form-item>
             <a-button
               type="primary"
@@ -618,7 +630,7 @@ const getStatus = (name: string) => {
 // 是否隐藏修改确定按钮
 const showChangeBtns = (name: string) => {
   let resValue = validateArray.value.find((it: any) => it.name === name)?.value;
-  if (!resValue) enterpriseState.value = '信息不完善，待补充。';
+  if (!resValue && ![3].includes(form.value.informationAuditStatus)) enterpriseState.value = '信息不完善，待补充。';
   // 如果有值 && 需要判断的字段是否有包括 && 当前审核状态不为未提交和待审核
   return resValue && validateArray.value.map((it:any) => it.name).find((it: any) => it === name) && ![0, 1].includes(form.value.informationAuditStatus);
 }

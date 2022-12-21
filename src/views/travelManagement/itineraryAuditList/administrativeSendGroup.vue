@@ -65,23 +65,23 @@
 				</tr>
 				<tr class="row">
 					<td class="key">古维管理费</td>
-					<td class="value">{{accDiv(state.detail.maintainFee,100) }}</td>
+					<td class="value">{{accDiv(state.detail.maintainFee,100) }}元</td>
 				</tr>
 				<tr class="row">
 					<td class="key">综费产品</td>
-					<td class="value">{{accDiv(state.detail.productFee,100) }}</td>
+					<td class="value">{{accDiv(state.detail.productFee,100) }}元</td>
 				</tr>
 				<tr class="row">
 					<td class="key">酒店</td>
-					<td class="value">{{accDiv(state.detail.hotelFee,100)  }}</td>
+					<td class="value">{{accDiv(state.detail.hotelFee,100)  }}元</td>
 				</tr>
 				<tr class="row">
 					<td class="key">景区</td>
-					<td class="value">{{accDiv(state.detail.ticketFee,100)  }}</td>
+					<td class="value">{{accDiv(state.detail.ticketFee,100)  }}元</td>
 				</tr>
 				<tr class="row">
 					<td class="key">餐饮</td>
-					<td class="value">{{accDiv(state.detail.cateringFee,100)}}</td>
+					<td class="value">{{accDiv(state.detail.cateringFee,100)}}元</td>
 				</tr>
 			</table>
 		</div>

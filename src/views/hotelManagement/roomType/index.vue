@@ -15,6 +15,11 @@
 						<template #bodyCell="{ column, record }">
 							<template v-if="column.dataIndex === 'unitStatus'">
 								<div class="cell-unitStatus">
+									<span class="item">{{ record?.unitStatus === 0 ? '开业' : '停业' }}</span>
+								</div>
+							</template>
+							<template v-if="column.dataIndex === 'unitTaskStatus'">
+								<div class="cell-unitTaskStatus">
 									<span class="item">待审核</span>
 								</div>
 							</template>
@@ -96,8 +101,8 @@ const columns: TableColumnsType = [
 	},
 	{
 		title: '开业状态',
-		dataIndex: 'openStatus',
-		key: 'openStatus',
+		dataIndex: 'unitStatus',
+		key: 'unitStatus',
 		width: '6%',
 	},
 	{
@@ -114,8 +119,8 @@ const columns: TableColumnsType = [
 	},
 	{
 		title: '审核任务状态',
-		dataIndex: 'unitStatus',
-		key: 'unitStatus',
+		dataIndex: 'unitTaskStatus',
+		key: 'unitTaskStatus',
 		width: '7%',
 	},
 	{

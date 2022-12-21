@@ -21,7 +21,7 @@ export function createSingleContract(data: any) {
 // 查看单项合同详情
 export function getSingleContractDetails(oid: number) {
   return request({
-    url: `${commonPart}selectSingleContractList?oid=${oid}`,
+    url: `${commonPart}findSingleContractById?oid=${oid}`,
     method: 'post',
     showLoading: false
   });
