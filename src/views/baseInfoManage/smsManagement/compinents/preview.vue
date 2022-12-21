@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
 	<BaseModal :title="options.title" v-model="dialogVisible" style="width: 650px">
 		<a-form ref="formRef" :rules="rulesRef" :model="formValidate" autocomplete="off" labelAlign="left">
 			<a-form-item label="选择数据日期范围" :label-col="labelCol" name="time">
@@ -97,4 +97,4 @@ watch(dialogVisible, (nVal) => {
 });
 </script>
 
-<style></style>
+<style></style> -->
