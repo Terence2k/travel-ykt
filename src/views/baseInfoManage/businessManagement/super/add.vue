@@ -128,7 +128,7 @@
         </a-form-item>
         <a-form-item label="创建超级管理员账号">
         </a-form-item>
-        <a-form-item name="phone" label="超级管理员电话" v-show="formRules?.accountPhone">
+        <a-form-item name="accountPhone" label="超级管理员电话" v-show="formRules?.accountPhone">
           <a-input v-model:value="form.accountPhone" placeholder="请输入手机号" allowClear>
           </a-input>
         </a-form-item>
@@ -147,7 +147,6 @@
         <a-form-item>
           <a-button type="primary" @click="submit(dateFormRef)" style="margin-right:20px"
             :loading="loading">保存</a-button>
-          <!-- <a-button @click="rest" style="margin-right:20px" :loading="loading">重置</a-button> -->
         </a-form-item>
       </a-form>
     </div>
@@ -177,6 +176,7 @@ import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModa
 import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
 import type { Dayjs } from 'dayjs';
 import picker from '@/components/common/datePicker.vue'
+import type { FormInstance } from 'element-plus'
 import {
   commonFormRules5,
   commonFormRules6,
@@ -194,7 +194,7 @@ import {
 const router = useRouter();
 const route = useRoute();
 const formRef = ref();
-const dateFormRef = ref();
+const dateFormRef = ref<FormInstance>();
 const dateFormat = 'YYYY-MM-DD';
 const saveVisible = ref(false);
 const tipVisible = ref(false);
@@ -242,9 +242,6 @@ const form = reactive<detailsType>({
   name: undefined,
   businessLicenseUrl: ''
 })
-const rest = () => {
-  formRef.value?.resetFields()
-}
 const isRefresh = ref('0')
 const back = () => {
   router.push({
@@ -308,8 +305,10 @@ formRules.value = formRules6
 onActivated(() => {
   isRefresh.value = '0'
   formRef.value.clearValidate()
+  dateFormRef.value?.clearValidate()
 })
 onDeactivated(() => {
+  dateFormRef.value?.resetFields()
   formRef.value?.resetFields()
   formRules.value = formRules6
 })
@@ -387,6 +386,7 @@ const saveConform = () => {
 const tipCancel = () => {
   tipVisible.value = false
   formRef.value?.resetFields()
+  dateFormRef.value?.resetFields()
   form.businessLicenseUrl = undefined
   back()
 }
