@@ -11,7 +11,7 @@
       </div>
       <div class="form_body">
         <a-form ref="formRef" :model="form" :rules="formRules" name="add-business" autocomplete="off" labelAlign="left"
-          :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
+          :label-col="labelCol" :wrapper-col="{ span: 24 }">
           <a-form-item name="businessType" label="企业类型">
             <a-select v-model:value="form.businessType" placeholder="请选择企业类型" disabled>
               <a-select-option v-for="item in businessTypeOption" :value="item.codeValue" :key="item.codeValue">{{
@@ -44,14 +44,24 @@
             <a-input v-model:value="form.registeredCapital" placeholder="请输入注册资本" suffix="万元">
             </a-input>
           </a-form-item>
-          <a-form-item name="establishTime" label="成立日期" v-show="formRules?.establishTime">
+          <!-- <a-form-item name="establishTime" label="成立日期" v-show="formRules?.establishTime">
             <a-date-picker v-model:value="form.establishTime" placeholder="请选择成立日期" style="width:100%"
               :format="dateFormat" :valueFormat="dateFormat" />
           </a-form-item>
           <a-form-item name="businessTerm" label="营业期限" v-show="formRules?.businessTerm">
             <a-date-picker v-model:value="form.businessTerm" placeholder="请选择营业期限" style="width:100%"
               :format="dateFormat" :valueFormat="dateFormat" />
-          </a-form-item>
+          </a-form-item> -->
+          <el-form ref="dateFormRef" :model="form" :rules="dateRules" :label-width="labelWidth" label-position="left">
+            <el-form-item label="成立日期：" prop="establishTime">
+              <picker v-model="form.establishTime" type="date" :value-format="dateFormat"
+                :disabled-date="disabledAfterDate" placeholder="请选择成立日期" style="width:100%"></picker>
+            </el-form-item>
+            <el-form-item label="营业期限：" prop="businessTerm">
+              <picker v-model="form.businessTerm" type="date" :value-format="dateFormat"
+                :disabled-date="disabledBeforeDate" placeholder="请选择营业期限" style="width:100%"></picker>
+            </el-form-item>
+          </el-form>
           <a-form-item name="contactName" label="联系人" v-show="formRules?.contactName">
             <a-input v-model:value="form.contactName" placeholder="请输入联系人">
             </a-input>
@@ -109,12 +119,15 @@ import {
   condition1,
   condition2,
   condition3,
-  condition4
+  condition4,
+  disabledBeforeDate,
+  disabledAfterDate
 } from '@/views/baseInfoManage/businessManagement/super/common';
 import { message } from 'ant-design-vue';
 import imgUpload from '@/views/baseInfoManage/businessManagement/components/imgUpload.vue';
 import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
 import api from '@/api';
+import picker from '@/components/common/datePicker.vue'
 const router = useRouter();
 const route = useRoute();
 const isRefresh = ref('0')
@@ -178,7 +191,28 @@ const businessTypeOption = [
   { codeValue: 'CULTURE_BUREAU', name: '文旅局' },
   { codeValue: 'ANCIENT_UYGUR', name: '古维管理部门' }
 ];
+const dateRules = {
+  establishTime: [
+    {
+      type: 'date',
+      required: true,
+      message: '请选择成立日期',
+      trigger: 'change',
+    },
+  ],
+  businessTerm: [
+    {
+      type: 'date',
+      required: true,
+      message: '请选择营业期限',
+      trigger: 'change',
+    },
+  ],
+}
+const labelWidth = '160px'
+const labelCol = { style: { width: labelWidth } }
 const formRef = ref();
+const dateFormRef = ref();
 const loading = ref(false);
 const dateFormat = 'YYYY-MM-DD';
 const formRules = ref<Record<string, Rule[]>>({})
@@ -207,7 +241,11 @@ const regionChange = () => {
   form.value.areaId = form.value.regionCode ? form.value.regionCode[2] : undefined
 }
 const submit = () => {
-  formRef.value.validateFields().then(async () => {
+  const a = Promise.all([
+    formRef.value?.validateFields(),
+    dateFormRef.value?.validate()
+  ])
+  a.then(async () => {
     let res = await api.editCompany(toRaw(form.value))
     if (res) {
       isRefresh.value = '1'
@@ -244,6 +282,7 @@ onActivated(() => {
 })
 onDeactivated(() => {
   formRef.value.resetFields()
+  dateFormRef.value?.resetFields()
   form.value = {}
 })
 </script>

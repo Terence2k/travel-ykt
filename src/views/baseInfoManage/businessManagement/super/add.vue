@@ -56,11 +56,11 @@
             :disabled-date="disabledAfterDate" style="width:100%" />
         </a-form-item> -->
         <el-form ref="dateFormRef" :model="form" :rules="dateRules" :label-width="labelWidth" label-position="left">
-          <el-form-item label="成立日期" prop="establishTime">
+          <el-form-item label="成立日期：" prop="establishTime">
             <picker v-model="form.establishTime" type="date" :value-format="dateFormat"
               :disabled-date="disabledAfterDate" placeholder="请选择成立日期" style="width:100%"></picker>
           </el-form-item>
-          <el-form-item label="营业期限" prop="businessTerm">
+          <el-form-item label="营业期限：" prop="businessTerm">
             <picker v-model="form.businessTerm" type="date" :value-format="dateFormat"
               :disabled-date="disabledBeforeDate" placeholder="请选择营业期限" style="width:100%"></picker>
           </el-form-item>

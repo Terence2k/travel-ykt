@@ -92,7 +92,7 @@
 				<CommonTable :dataSource="auditTableData.data" :columns="auditColumns">
 					<template #bodyCell="{ column, record }">
 						<template v-if="column.key === 'businessLicenseUrl'">
-							<a-image width="100%" :src="record.businessLicenseUrl" />
+							<a-image width="100%" :src="record?.businessLicenseUrl" />
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">

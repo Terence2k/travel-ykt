@@ -2,80 +2,89 @@
   <div class="content_box">
     <a-tabs v-model:activeKey="activeKey" @change="nextTep">
       <a-tab-pane key="1" tab="行程信息">
-        <a-form ref="formRef" :model="form" :rules="formRules" name="addStore" autocomplete="off" :label-col="labelCol"
-          :wrapper-col="{ span: 10 }">
-          <div class="tag">基本信息</div>
-          <a-form-item name="contractType" label="散客合同类型">
-            <a-select placeholder="请选择散客合同类型" v-model:value="form.contractType" @change="contractOptionChange"
-              allowClear>
-              <a-select-option v-for="item in contractOption" :value="item.codeValue" :key="item.codeValue">{{ item.name
-              }}
-              </a-select-option>
-            </a-select>
-          </a-form-item>
-          <a-form-item name="day" label="合同天数">
-            <div class="reform">
-              <a-form-item style="flex: 1;" name="contractDays">
-                <div style="display:flex;align-items:center;">
-                  <a-input v-model:value.number="form.contractDays" placeholder="请输入合同天数" allowClear>
-                  </a-input>
-                  <span style="margin:0 10px">天</span>
-                </div>
-              </a-form-item>
-              <a-form-item style="flex: 1;" name="travelNight">
-                <div style="display:flex;align-items:center;">
-                  <a-input v-model:value.number="form.travelNight" placeholder="请输入合同夜数" allowClear />
-                  <span style="margin-left:10px">夜</span>
-                </div>
-              </a-form-item>
-            </div>
-          </a-form-item>
-          <a-form-item name="entrustTravelId" label="委托旅行社">
-            <a-select placeholder="请选择委托旅行社" v-model:value="form.entrustTravelId" allowClear>
-              <a-select-option v-for="item in entrustTravelOption" :value="item.oid" :key="item.oid">{{ item.name }}
-              </a-select-option>
-            </a-select>
-          </a-form-item>
-          <a-form-item name="travelData" label="行程日期">
+        <a-form ref="formRef" :model="form" :rules="formRules" name="addStore" autocomplete="off" :label-col="labelCol">
+          <div style="width:60%">
+            <div class="tag">基本信息</div>
+            <a-form-item name="contractType" label="散客合同类型">
+              <a-select placeholder="请选择散客合同类型" v-model:value="form.contractType" @change="contractOptionChange"
+                allowClear>
+                <a-select-option v-for="item in contractOption" :value="item.codeValue" :key="item.codeValue">{{
+                    item.name
+                }}
+                </a-select-option>
+              </a-select>
+            </a-form-item>
+            <a-form-item name="day" label="合同天数">
+              <div class="reform">
+                <a-form-item style="flex: 1;" name="contractDays">
+                  <div style="display:flex;align-items:center;">
+                    <a-input v-model:value.number="form.contractDays" placeholder="请输入合同天数" allowClear>
+                    </a-input>
+                    <span style="margin:0 10px">天</span>
+                  </div>
+                </a-form-item>
+                <a-form-item style="flex: 1;" name="travelNight">
+                  <div style="display:flex;align-items:center;">
+                    <a-input v-model:value.number="form.travelNight" placeholder="请输入合同夜数" allowClear />
+                    <span style="margin-left:10px">夜</span>
+                  </div>
+                </a-form-item>
+              </div>
+            </a-form-item>
+            <a-form-item name="entrustTravelId" label="委托旅行社">
+              <a-select placeholder="请选择委托旅行社" v-model:value="form.entrustTravelId" allowClear>
+                <a-select-option v-for="item in entrustTravelOption" :value="item.oid" :key="item.oid">{{ item.name }}
+                </a-select-option>
+              </a-select>
+            </a-form-item>
+            <!-- <a-form-item name="travelData" label="行程日期">
             <a-range-picker v-model:value="form.travelData" @change="datePickerChange"
               :placeholder="['请选择开始时间', '请选择结束时间']" :format="dateFormat" :valueFormat="dateFormat" style="width:100%" />
-          </a-form-item>
-          <a-form-item name="touristPeopleNumber" label="游客人数">
-            <a-input v-model:value="form.touristPeopleNumber" placeholder="无需填写，输入名单后自动生成" disabled>
-            </a-input>
-          </a-form-item>
-          <!-- <a-form-item name="insuranceBuyMode" label="保险购买方式">
+            </a-form-item> -->
+            <el-form ref="dateFormRef" :model="form" :rules="dateRules" :label-width="labelWidth"
+              label-position="right">
+              <el-form-item label="行程日期：" prop="travelData">
+                <picker v-model="form.travelData" @change="datePickerChange" type="daterange" :value-format="dateFormat"
+                  start-placeholder="请选择开始时间" end-placeholder="请选择结束时间" style="width:100%"></picker>
+              </el-form-item>
+            </el-form>
+            <a-form-item name="touristPeopleNumber" label="游客人数">
+              <a-input v-model:value="form.touristPeopleNumber" placeholder="无需填写，输入名单后自动生成" disabled>
+              </a-input>
+            </a-form-item>
+            <!-- <a-form-item name="insuranceBuyMode" label="保险购买方式">
             <a-select placeholder="请选择保险购买方式" v-model:value="form.insuranceBuyMode" allowClear>
               <a-select-option v-for="item in insuranceOption" :value="item.codeValue" :key="item.codeValue">{{
                   item.name
               }}
               </a-select-option>
             </a-select>
-          </a-form-item> -->
-          <a-form-item name="departurePlace" label="出发地">
-            <a-input v-model:value="form.departurePlace" placeholder="请填写出发地" allowClear>
-            </a-input>
-          </a-form-item>
-          <a-form-item name="destination" label="目的地">
-            <a-input v-model:value="form.destination" placeholder="请填写目的地" allowClear>
-            </a-input>
-          </a-form-item>
-          <a-form-item name="returnPlace" label="返回地">
-            <a-input v-model:value="form.returnPlace" placeholder="请填写返回地" allowClear>
-            </a-input>
-          </a-form-item>
-          <a-form-item name="emergencyContact" label="紧急联系人">
-            <a-input v-model:value="form.emergencyContact" placeholder="请填写紧急联系人" allowClear>
-            </a-input>
-          </a-form-item>
-          <a-form-item name="emergencyContactPhone" label="紧急联系电话">
-            <a-input v-model:value="form.emergencyContactPhone" placeholder="请填写紧急联系电话" allowClear>
-            </a-input>
-          </a-form-item>
-          <a-form-item name="contractFileUrl" label="上传附件" v-if="!isShow">
-            <Upload v-model="form.contractFileUrl" :maxCount="9" />
-            <pdfUpload v-model="form.pdfFileUrl" :maxCount="1" />
-          </a-form-item>
+            </a-form-item> -->
+            <a-form-item name="departurePlace" label="出发地">
+              <a-input v-model:value="form.departurePlace" placeholder="请填写出发地" allowClear>
+              </a-input>
+            </a-form-item>
+            <a-form-item name="destination" label="目的地">
+              <a-input v-model:value="form.destination" placeholder="请填写目的地" allowClear>
+              </a-input>
+            </a-form-item>
+            <a-form-item name="returnPlace" label="返回地">
+              <a-input v-model:value="form.returnPlace" placeholder="请填写返回地" allowClear>
+              </a-input>
+            </a-form-item>
+            <a-form-item name="emergencyContact" label="紧急联系人">
+              <a-input v-model:value="form.emergencyContact" placeholder="请填写紧急联系人" allowClear>
+              </a-input>
+            </a-form-item>
+            <a-form-item name="emergencyContactPhone" label="紧急联系电话">
+              <a-input v-model:value="form.emergencyContactPhone" placeholder="请填写紧急联系电话" allowClear>
+              </a-input>
+            </a-form-item>
+            <a-form-item name="contractFileUrl" label="上传附件" v-if="!isShow">
+              <Upload v-model="form.contractFileUrl" :maxCount="9" />
+              <pdfUpload v-model="form.pdfFileUrl" :maxCount="1" />
+            </a-form-item>
+          </div>
           <div class="tag">选择线路</div>
           <a-table :columns="lineColumns" :data-source="dataLineSource" bordered :pagination="false">
             <template #bodyCell="{ column, text, record, index }">
@@ -85,7 +94,8 @@
               <template v-if="column.dataIndex === 'lineId'">
                 <a-select v-if="record.isEdit" v-model:value="dataLineSource[index][column.dataIndex]"
                   @change="() => { lineSelectChange(dataLineSource[index]) }" placeholder="请选择可用线路" allowClear>
-                  <a-select-option v-for="item in lineOption" :value="item.codeValue" :key="item.codeValue">{{ item.name
+                  <a-select-option v-for="item in lineOption" :value="item.codeValue" :key="item.codeValue">{{
+                      item.name
                   }}
                   </a-select-option>
                 </a-select>
@@ -94,15 +104,19 @@
                 </template>
               </template>
               <template v-if="column.dataIndex === 'lineStartTime'">
-                <a-date-picker v-if="record.isEdit" v-model:value="dataLineSource[index][column.dataIndex]"
-                  placeholder="请选择开始时间" style="width:100%" :format="dateFormat" :valueFormat="dateFormat" />
+                <!-- <a-date-picker v-if="record.isEdit" v-model:value="dataLineSource[index][column.dataIndex]"
+                  placeholder="请选择开始时间" style="width:100%" :format="dateFormat" :valueFormat="dateFormat" /> -->
+                <picker v-if="record.isEdit" v-model="dataLineSource[index][column.dataIndex]" type="date"
+                  :value-format="dateFormat" placeholder="请选择开始时间" style="width:100%"></picker>
                 <template v-else>
                   {{ text }}
                 </template>
               </template>
               <template v-if="column.dataIndex === 'lineEndTime'">
-                <a-date-picker v-if="record.isEdit" v-model:value="dataLineSource[index][column.dataIndex]"
-                  placeholder="请选择结束时间" style="width:100%" :format="dateFormat" :valueFormat="dateFormat" />
+                <!-- <a-date-picker v-if="record.isEdit" v-model:value="dataLineSource[index][column.dataIndex]"
+                  placeholder="请选择结束时间" style="width:100%" :format="dateFormat" :valueFormat="dateFormat" /> -->
+                <picker v-if="record.isEdit" v-model="dataLineSource[index][column.dataIndex]" type="date"
+                  :value-format="dateFormat" placeholder="请选择结束时间" style="width:100%"></picker>
                 <template v-else>
                   {{ text }}
                 </template>
@@ -342,7 +356,7 @@
           <div class="add_box">
             <a-button @click="handleTouristAdd">添加</a-button>
           </div>
-          <div v-if="isShow">
+          <div v-if="isShow" style="width:60%">
             <a-form-item name="touristName" label="游客代表">
               <a-select @change="touristChange" placeholder="请选择游客代表" v-model:value="form.touristName" allowClear>
                 <a-select-option v-for="item in dataTouristSource" :value="item.certificatesNo"
@@ -480,13 +494,12 @@ import { useRouter, useRoute } from 'vue-router';
 import { CloseOutlined } from '@ant-design/icons-vue';
 import Upload from '@/components/common/imageWrapper.vue';
 import pdfUpload from '@/components/common/pdfWrapper.vue';
-import type { UnwrapRef } from 'vue';
 import { cloneDeep } from 'lodash';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import { useBusinessManageOption } from '@/stores/modules/businessManage';
 import api from '@/api';
-import { number } from 'vue-types';
 import { message } from 'ant-design-vue/es';
+import picker from '@/components/common/datePicker.vue'
 const router = useRouter();
 const route = useRoute();
 const isRefresh = ref('0')
@@ -499,8 +512,10 @@ const back = () => {
   })
 }
 const dateFormat = 'YYYY-MM-DD';
-const labelCol = { style: { width: '110px' } }
+const labelWidth = '130px'
+const labelCol = { style: { width: labelWidth } }
 const formRef = ref()
+const dateFormRef = ref()
 const formRef1 = ref()
 const formRef2 = ref()
 const formRef3 = ref()
@@ -778,6 +793,15 @@ const costColumns = [
     width: 110
   }
 ]
+const dateRules = {
+  travelData: [
+    {
+      required: true,
+      message: '请选择行程日期',
+      trigger: 'change',
+    },
+  ],
+}
 // 根据身份类型id获取身份证类型
 const cmpCertificatesType = computed(() => (val: any) => {
   let res
@@ -1076,6 +1100,7 @@ const saveDraft = () => {
     formRef7.value?.validateFields(),
     formRef8.value?.validateFields(),
     formRef9.value?.validateFields(),
+    dateFormRef.value?.validate()
   ])
   a.then(async () => {
     const params = getParams()
