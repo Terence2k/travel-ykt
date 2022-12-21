@@ -14,7 +14,7 @@
     <!-- 文旅局 -->
     <div class="form_body">
       <a-form ref="formRef" :model="form" :rules="formRules" name="add-business" autocomplete="off" labelAlign="left"
-        :label-col="labelCol" :wrapper-col="{ span: 19 }">
+        :label-col="labelCol">
         <a-form-item name="businessType" label="企业类型">
           <a-select v-model:value="form.businessType" placeholder="请选择企业类型" @change="optionChange">
             <a-select-option v-for="item in businessTypeOption" :value="item.codeValue" :key="item.codeValue">{{
@@ -55,8 +55,7 @@
           <a-date-picker v-model:value="form.establishTime" placeholder="请选择成立日期" :valueFormat="dateFormat"
             :disabled-date="disabledAfterDate" style="width:100%" />
         </a-form-item> -->
-        <el-form ref="dateFormRef" :model="form" :rules="dateRules" label-width="130px" label-position="left"
-          status-icon>
+        <el-form ref="dateFormRef" :model="form" :rules="dateRules" :label-width="labelWidth" label-position="left">
           <el-form-item label="成立日期" prop="establishTime">
             <picker v-model="form.establishTime" type="date" :value-format="dateFormat"
               :disabled-date="disabledAfterDate" placeholder="请选择成立日期" style="width:100%"></picker>
@@ -200,7 +199,8 @@ const dateFormat = 'YYYY-MM-DD';
 const saveVisible = ref(false);
 const tipVisible = ref(false);
 const loading = ref(false);
-const labelCol = { style: { width: '130px' } }
+const labelWidth = '160px'
+const labelCol = { style: { width: labelWidth } }
 type detailsType = {
   businessType?: string,
   name?: string,
