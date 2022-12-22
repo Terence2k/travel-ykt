@@ -1,9 +1,5 @@
-<template>
+<!-- <template>
 	<BaseModal :title="options.title" v-model="dialogVisible" style="width: 900px">
-		<!-- <div class="head_btn">
-			<a>下载模板</a>
-			<a>导入名单</a>
-		</div> -->
 		<a-form ref="formRef" :rules="rulesRef" :model="editableData" autocomplete="off" labelAlign="left">
 			<CommonTable :dataSource="tableData" :columns="columns" style="padding: 0" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
@@ -44,7 +40,7 @@
 import { ref, Ref, computed, watch, toRefs, reactive } from 'vue';
 import BaseModal from '@/components/common/BaseModal.vue';
 import CommonTable from '@/components/common/CommonTable.vue';
-import { usesmsInfo } from './recipient';
+import { usesmsInfo } from '../recipient';
 const props = defineProps({
 	modelValue: {
 		type: Boolean,
@@ -83,4 +79,4 @@ const { columns, editableData, dialogVisible, options, rulesRef, formRef, tableD
 .ant-form-item-with-help {
 	width: 130px;
 }
-</style>
+</style> -->

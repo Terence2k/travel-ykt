@@ -2,21 +2,26 @@
 	<div>
 		<div class="page-title" style="margin-top: 20px">共{{ state.tableData.total }}条 短信群发任务</div>
 		<CommonTable :dataSource="state.tableData.data" :columns="columns">
+			<template #button>
+				<a-button type="primary" @click="BaseModalmethods.addUpdate">新增</a-button>
+			</template>
 			<template #bodyCell="{ column, record, index }">
 				<template v-if="column.key === 'index'">
 					{{ index + 1 }}
 				</template>
 				<template v-if="column.key === 'sendModel'">
-					{{(record.sendModel == 1 ? '自动发送' : '手动发送')}}
+					{{ record.sendModel == 1 ? '自动发送' : '手动发送' }}
 				</template>
 				<template v-if="column.key === 'isEnable'">
-					{{(record.isEnable == 1 ? '禁用' : '启用')}}
+					{{ record.isEnable == 1 ? '禁用' : '启用' }}
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a @click="BaseModalmethods.showRecipient(record)">设置接收人</a>
-						<a  @click="BaseModalmethods.showPreview(record)" v-if="record.sendModel == 0">预览发送</a>
-						<a @click="BaseModalmethods.showAudit(record)">{{(record.isEnable == 0 ? '禁用' : '启用')}}</a>
+						<a @click="BaseModalmethods.addUpdate(record)">编辑</a>
+						<a @click="BaseModalmethods.showPreview(record)">发送短信</a>
+						<a @click="BaseModalmethods.showRecording(record)">发送记录</a>
+						<!-- <a @click="BaseModalmethods.showAudit(record)">{{ record.isEnable == 0 ? '禁用' : '启用' }}</a> -->
+						<a @click="del(record)">删除</a>
 					</div>
 				</template>
 			</template>
@@ -28,9 +33,10 @@
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
 		/>
-		<Audit v-model="state.operationModal.isAudit" :params="state.params" @cancel="cancel" @onSearch="onSearch"/>
-		<Recipient v-model="state.operationModal.isRecipient" :params="state.params" @cancel="cancel" @onSearch="onSearch" />
-		<Preview v-model="state.operationModal.isPreview" :params="state.params" @cancel="cancel" @onSearch="onSearch" />
+		<Audit v-model="state.operationModal.isAudit" :params="state.params" @cancel="cancel" @onSearch="onSearch" />
+		<!-- <Recipient v-model="state.operationModal.isRecipient" :params="state.params" @cancel="cancel" @onSearch="onSearch" />
+		<Preview v-model="state.operationModal.isPreview" :params="state.params" @cancel="cancel" @onSearch="onSearch" /> -->
+		<Update v-model="state.operationModal.isUpdate" :params="state.params" @cancel="cancel" @onSearch="onSearch" />
 	</div>
 </template>
 
@@ -38,10 +44,14 @@
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import Audit from './compinents/aduit.vue';
-import Recipient from './compinents/recipient.vue';
-import Preview from './compinents/preview.vue';
-
+// import Recipient from './compinents/recipient.vue';
+// import Preview from './compinents/preview.vue';
+import Update from './compinents/update.vue';
 import api from '@/api';
+import { message } from 'ant-design-vue';
+
+const router = useRouter();
+
 
 const columns = [
 	{
@@ -55,14 +65,12 @@ const columns = [
 		dataIndex: 'taskName',
 		key: 'taskName',
 		width: '140px',
-
 	},
 	{
 		title: '短信自动拼接后文案内容示例',
 		dataIndex: 'smsContent',
 		key: 'smsContent',
 		width: '300px',
-
 	},
 	{
 		title: '发送模式',
@@ -75,14 +83,12 @@ const columns = [
 		dataIndex: 'sendTime',
 		key: 'sendTime',
 		width: '140px',
-
 	},
 	{
 		title: '启用状态',
 		dataIndex: 'isEnable',
 		key: 'isEnable',
 		width: '140px',
-
 	},
 	{
 		title: '操作',
@@ -105,6 +111,7 @@ const state = reactive({
 		isAudit: false,
 		isRecipient: false,
 		isPreview: false,
+		isUpdate: false,
 	},
 	params: {},
 });
@@ -130,9 +137,21 @@ const BaseModalmethods = {
 		state.operationModal.isRecipient = true;
 	},
 	showPreview: (row: any) => {
+		router.push({
+			path: '/baseInfo/sms_Management/preview',
+			query: { templateId: row.oid },
+		});
+	},
+	showRecording:(row:any)=>{
+		router.push({
+			path: '/baseInfo/sms_Management/preview',
+			query: { templateId: row.oid },
+		});
+	},
+	addUpdate: (row: any) => {
 		state.params = {};
 		state.params = row;
-		state.operationModal.isPreview = true;
+		state.operationModal.isUpdate = true;
 	},
 };
 
@@ -140,6 +159,7 @@ const cancel = (): any => {
 	state.operationModal.isRecipient = false;
 	state.operationModal.isAudit = false;
 	state.operationModal.isPreview = false;
+	state.operationModal.isUpdate = false;
 };
 
 const onSearch = async () => {
@@ -147,6 +167,14 @@ const onSearch = async () => {
 	state.tableData.data = res.content;
 	state.tableData.total = res.total;
 };
+
+const del = (row:any) => {
+ api.deleteSysSmsTemplate(row.oid).then((res:any)=>{
+	message.success('删除成功')
+	onSearch()
+	return
+ })
+}
 
 onMounted(() => {
 	onSearch();

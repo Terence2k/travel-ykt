@@ -163,14 +163,34 @@ export default [
 			},
 			{
 				path: 'sms_Management',
-				component: () => import('@/views/baseInfoManage/smsManagement/index.vue'),
+				redirect: '/baseInfo/sms_Management/index',				
 				name: 'sms_Management',
 				meta: {
 					title: '短信群发配置',
 					// icon: 'liulanqi',
 					// auth: ["admin"],
-					isDetail: false, // 在左侧的导航栏不会展示
+					// isDetail: false, // 在左侧的导航栏不会展示
 				},
+				children: [
+					{
+						path: 'index',
+						component: () => import('@/views/baseInfoManage/smsManagement/index.vue'),						meta: {
+							title: '短信群发配置',
+							isDetail: true,
+						},
+					},
+					{
+						path: 'preview',
+						component: () => import('@/views/baseInfoManage/smsManagement/preview.vue'),
+						name: 'preview',
+						meta: {
+							title: '发送短信',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+				],
 			},
 		],
 	},

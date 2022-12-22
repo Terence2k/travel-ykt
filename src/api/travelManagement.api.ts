@@ -12,8 +12,8 @@ export const travelManagement = {
 
 	getGuideList(data: any) {
 		return request({
-			url: `${commonPath}/travel-agency-service/public/api/guide/list`,
-			method: 'post',
+			url: `${commonPath}/travel-agency-service/public/api/guide/signGuideList`,
+			method: 'get',
 			data,
 			showLoading: false,
 		});

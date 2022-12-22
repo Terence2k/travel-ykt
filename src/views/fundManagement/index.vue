@@ -82,8 +82,10 @@
       <a-tab-pane key="1" tab="充值记录查询" v-if="getTabPermission('充值记录查询')">
         <CommonSearch>
           <search-item label="充值时间">
-            <a-date-picker v-model:value="tableData1.param.createTime" :format="dateFormat" :valueFormat="dateFormat"
-              placeholder="请选择充值时间" />
+            <!-- <a-date-picker v-model:value="tableData1.param.createTime" :format="dateFormat" :valueFormat="dateFormat"
+              placeholder="请选择充值时间" /> -->
+            <picker v-model="tableData1.param.createTime" type="date" :value-format="dateFormat" placeholder="请选择充值时间">
+            </picker>
           </search-item>
           <search-item label="充值流水号">
             <a-input v-model:value="tableData1.param.serialNumber" placeholder="请输入订单号" allowClear />
@@ -109,8 +111,10 @@
       <a-tab-pane key="2" tab="资金支出记录" v-if="getTabPermission('资金支出记录')">
         <CommonSearch>
           <search-item label="支出时间">
-            <a-date-picker v-model:value="tableData2.param.createTime" :format="dateFormat" :valueFormat="dateFormat"
-              placeholder="请选择支出时间" />
+            <!-- <a-date-picker v-model:value="tableData2.param.createTime" :format="dateFormat" :valueFormat="dateFormat"
+              placeholder="请选择支出时间" /> -->
+            <picker v-model="tableData2.param.createTime" type="date" :value-format="dateFormat" placeholder="请选择支出时间">
+            </picker>
           </search-item>
           <search-item label="支出流水号">
             <a-input v-model:value="tableData2.param.serialNumber" placeholder="请输入订单号" allowClear />
@@ -136,8 +140,10 @@
       <a-tab-pane key="3" tab="预冻结资金" v-if="getTabPermission('预冻结资金')">
         <CommonSearch>
           <search-item label="预冻结时间">
-            <a-date-picker v-model:value="tableData3.param.createTime" :format="dateFormat" :valueFormat="dateFormat"
-              placeholder="请选择预冻结时间" />
+            <!-- <a-date-picker v-model:value="tableData3.param.createTime" :format="dateFormat" :valueFormat="dateFormat"
+              placeholder="请选择预冻结时间" /> -->
+            <picker v-model="tableData3.param.createTime" type="date" :value-format="dateFormat" placeholder="请选择预冻结时间">
+            </picker>
           </search-item>
           <search-item label="预冻结流水号">
             <a-input v-model:value="tableData3.param.serialNumber" placeholder="请输入订单号" allowClear />
@@ -173,6 +179,7 @@ import api from '@/api';
 import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router';
 import { getTabPermission } from '@/utils/util';
+import picker from '@/components/common/datePicker.vue'
 const router = useRouter();
 const activeKey = ref('1');
 const dateFormat = 'YYYY-MM-DD';

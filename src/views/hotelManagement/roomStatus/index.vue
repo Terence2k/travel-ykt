@@ -4,7 +4,7 @@
 			<div class="search-bar">
 				<div class="item">
 					<span class="field-select item">日期</span>
-					<a-date-picker class="select-status select item" placeholder="请选择日期" v-model:value="date" value-format="YYYY-MM-DD" />
+					<DatePicker class="select-status select item" placeholder="请选择日期" v-model="date" />
 				</div>
 
 				<div class="item">
@@ -56,6 +56,7 @@
 
 <script lang="ts" setup>
 import RoomStatusTable from './components/roomStatusTable/roomStatusTable.vue';
+import DatePicker from '@/components/common/datePicker.vue';
 const activeTabKey = ref('1');
 const role = ref('hotel');
 const date = ref('');

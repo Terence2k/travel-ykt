@@ -3,15 +3,23 @@
     <a-tabs v-model:activeKey="activeKey" @change="nextTep">
       <a-tab-pane key="1" tab="行程信息">
         <a-form ref="formRef" :model="form" :rules="formRules" name="addStore" autocomplete="off" :label-col="labelCol"
-          :wrapper-col="{ span: 15 }">
+          :wrapper-col="{ span: 24 }">
           <div class="tag">基本信息</div>
           <div class="disflex">
             <div class="flex1">
-              <a-form-item name="travelData" label="行程日期">
+              <el-form ref="dateFormRef" :model="form" :rules="dateRules" :label-width="labelWidth"
+                label-position="right">
+                <el-form-item label="行程日期：" prop="travelData">
+                  <picker v-model="form.travelData" @change="datePickerChange" type="daterange"
+                    :value-format="dateFormat" start-placeholder="请选择开始时间" end-placeholder="请选择结束时间" style="width:100%">
+                  </picker>
+                </el-form-item>
+              </el-form>
+              <!-- <a-form-item name="travelData" label="行程日期">
                 <a-range-picker v-model:value="form.travelData" @change="datePickerChange"
                   :placeholder="['请选择开始时间', '请选择结束时间']" :format="dateFormat" :valueFormat="dateFormat"
                   style="width:100%" />
-              </a-form-item>
+              </a-form-item> -->
               <a-form-item name="entrustTravelId" label="委托旅行社">
                 <a-select placeholder="请选择委托旅行社" v-model:value="form.entrustTravelId" allowClear>
                   <a-select-option v-for="item in entrustTravelOption" :value="item.oid" :key="item.oid">{{ item.name }}
@@ -483,14 +491,13 @@ import { useRouter, useRoute } from 'vue-router';
 import { CloseOutlined } from '@ant-design/icons-vue';
 import Upload from '@/components/common/imageWrapper.vue';
 import pdfUpload from '@/components/common/pdfWrapper.vue';
-import type { UnwrapRef } from 'vue';
 import { cloneDeep } from 'lodash';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import { useBusinessManageOption } from '@/stores/modules/businessManage';
 import api from '@/api';
-import { number } from 'vue-types';
 import { message } from 'ant-design-vue/es';
 import dayjs, { Dayjs } from 'dayjs';
+import picker from '@/components/common/datePicker.vue'
 const router = useRouter();
 const route = useRoute();
 const isRefresh = ref('0')
@@ -503,8 +510,10 @@ const back = () => {
   })
 }
 const dateFormat = 'YYYY-MM-DD';
-const labelCol = { style: { width: '130px' } }
+const labelWidth = '130px'
+const labelCol = { style: { width: labelWidth } }
 const formRef = ref()
+const dateFormRef = ref()
 const formRef1 = ref()
 const formRef2 = ref()
 const formRef3 = ref()
@@ -751,6 +760,15 @@ const costColumns = [
     width: 110
   }
 ]
+const dateRules = {
+  travelData: [
+    {
+      required: true,
+      message: '请选择行程日期',
+      trigger: 'change',
+    },
+  ],
+}
 // 根据身份类型id获取身份证类型
 const cmpCertificatesType = computed(() => (val: any) => {
   let res
@@ -995,7 +1013,8 @@ const saveDraft = () => {
     formRef1.value?.validateFields(),
     formRef2.value?.validateFields(),
     formRef3.value?.validateFields(),
-    formRef4.value?.validateFields()
+    formRef4.value?.validateFields(),
+    dateFormRef.value?.validate(),
   ])
   a.then(async () => {
     const params = getParams()
@@ -1418,6 +1437,7 @@ onActivated(() => {
 
   .flex1 {
     flex: 1;
+    margin-right: 20px;
   }
 }
 </style>

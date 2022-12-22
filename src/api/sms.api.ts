@@ -34,3 +34,28 @@ export function handleSysSmsTemplateSendPerson(data:any) {
 		data
 	});
 }
+
+// 新增短信模板
+export function addSmsTemplate(data:any) {
+	return request({
+		url: `${commonPart}/smsTemplate/addSmsTemplate`,
+		method: 'post',
+		data
+	});
+}
+
+// 查询短信模板
+export function getSysSmsTemplate(templateId:any) {
+	return request({
+		url: `${commonPart}/smsTemplate/getSysSmsTemplate/${templateId}`,
+		method: 'get',
+	});
+}
+
+// 删除短信模板
+export function deleteSysSmsTemplate(templateId:any) {
+	return request({
+		url: `${commonPart}/smsTemplate/deleteSysSmsTemplate/${templateId}`,
+		method: 'delete',
+	});
+}
