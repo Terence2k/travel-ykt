@@ -341,6 +341,158 @@ export const disabledRangeTime = (start: any, end: any) => {
 	}
 };
 
+/**
+ * @param currentDate Arrary 当前时间
+ * @param type 当前选择的是开始时间还是结束时间
+ * @returns Array 当前禁用时间
+ */
+export const disabledRangeHours = (currentDate: any, type: string) => {
+  const currentStart = dayjs(dayjs(currentDate[0]).format('YYYY-MM-DD')).unix()
+  const currentEnd = dayjs(dayjs(currentDate[1]).format('YYYY-MM-DD')).unix()
+    
+  const startUnix = dayjs(dayjs(travelStore.teamTime[0]).format('YYYY-MM-DD')).unix();
+  const endUnix = dayjs(dayjs(travelStore.teamTime[1]).format('YYYY-MM-DD')).unix();
+
+  
+  if (travelStore.teamTime[0] && type === 'start') {
+    let hour = dayjs(travelStore.teamTime[0]).hour();
+    if (currentStart === startUnix) {
+      return range(0, 24).splice(0, hour)
+
+    } else {
+      return []
+    }
+    
+  } else if (travelStore.teamTime[0] && type === 'end') {
+    let hour = dayjs(travelStore.teamTime[1]).hour();
+    if (currentEnd === endUnix) {
+      return range(0, 24).splice(hour + 1, 24 - hour)
+
+    } else {
+      return []
+    }
+    
+  } else {
+    return []
+  }
+    
+};
+
+export const disabledRangeMinutes = (currentDate: any, type: string) => {
+  
+  const currentStart = dayjs(dayjs(currentDate[0]).format('YYYY-MM-DD')).unix()
+  const currentEnd = dayjs(dayjs(currentDate[1]).format('YYYY-MM-DD')).unix()
+    
+  const startUnix = dayjs(dayjs(travelStore.teamTime[0]).format('YYYY-MM-DD')).unix();
+  const endUnix = dayjs(dayjs(travelStore.teamTime[1]).format('YYYY-MM-DD')).unix();
+
+  
+  if (travelStore.teamTime[0] && type === 'start') {
+    let min = dayjs(travelStore.teamTime[0]).minute();
+    if (currentStart === startUnix) {
+      return range(0, 60).splice(0, min)
+
+    } else {
+      return []
+    }
+    
+  } else if (travelStore.teamTime[0] && type === 'end') {
+    let min = dayjs(travelStore.teamTime[1]).minute();
+    if (currentEnd === endUnix) {
+      return range(0, 60).splice(min + 1, 60 - min)
+
+    } else {
+      return []
+    }
+    
+  } else {
+    return []
+  }
+    
+}
+
+export const disabledRangeSeconds = (currentDate: any, type: string) => {
+  console.log(type)
+  const currentStart = dayjs(dayjs(currentDate[0]).format('YYYY-MM-DD')).unix()
+  const currentEnd = dayjs(dayjs(currentDate[1]).format('YYYY-MM-DD')).unix()
+    
+  const startUnix = dayjs(dayjs(travelStore.teamTime[0]).format('YYYY-MM-DD')).unix();
+  const endUnix = dayjs(dayjs(travelStore.teamTime[1]).format('YYYY-MM-DD')).unix();
+
+  
+  if (travelStore.teamTime[0] && type === 'start') {
+    let second = dayjs(travelStore.teamTime[0]).second();
+    if (currentStart === startUnix) {
+      return range(0, 60).splice(0, second)
+
+    } else {
+      return []
+    }
+    
+  } else if (travelStore.teamTime[0] && type === 'end') {
+    let second = dayjs(travelStore.teamTime[1]).second();
+    if (currentEnd === endUnix) {
+      return range(0, 60).splice(second + 1, 60 - second)
+
+    } else {
+      return []
+    }
+    
+  } else {
+    return []
+  }
+    
+}
+
+/**
+ * 
+ * @param data 当前需要做比较的值
+ * @param cur 当前选择的值
+ * @returns Array 当前禁用时间
+ */
+export const disabledHours = (data: any, cur: any, type?: string) => {
+  console.log(data, cur)
+  let hour: any = ''
+  const current = dayjs(dayjs(cur).format('YYYY-MM-DD')).unix()
+  const startUnix = dayjs(dayjs(data).format('YYYY-MM-DD')).unix();
+  
+  if (data && cur && (current === startUnix)) {
+    hour = dayjs(data).hour();
+    return type === 'start' ? range(0, 24).splice(0, hour) : range(0, 24).splice(hour + 1, 24 - hour)
+  } else {
+    return []
+  }
+}
+
+
+
+export const disabledMinutes = (data: any, cur: any, type?: string) => {
+  let min: any = ''
+  const current = dayjs(dayjs(cur).format('YYYY-MM-DD')).unix()
+  const startUnix = dayjs(dayjs(data).format('YYYY-MM-DD')).unix();
+  
+  if (data && cur && (current === startUnix)) {
+    min = dayjs(data).minute();
+    return type === 'start' ? range(0, 60).splice(0, min) : range(0, 60).splice(min + 1, 60 - min)
+  } else {
+    return []
+  }
+}
+
+export const disabledSeconds = (data: any, cur: any, type?: string) => {
+  let second: any = ''
+  const current = dayjs(dayjs(cur).format('YYYY-MM-DD')).unix()
+  const startUnix = dayjs(dayjs(data).format('YYYY-MM-DD')).unix();
+  
+  if (data && cur && (current === startUnix)) {
+    second = dayjs(data).second();
+    return type === 'start' ? range(0, 60).splice(0, second) : range(0, 60).splice(second + 1, 60 - second)
+  } else {
+    return []
+  }
+}
+
+
 export const disabledDateTime = (data: any, type: string) => {
   let start: any = {}
   

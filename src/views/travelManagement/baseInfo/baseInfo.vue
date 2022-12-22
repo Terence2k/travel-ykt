@@ -113,23 +113,43 @@
 			<a-form-item label="行程时间" name="time">
 				<div class="d-flex align-item-center">
 					<a-form-item name="startDate" style="margin-bottom: 0">
-						<a-date-picker 
+						<!-- <a-date-picker 
 							:disabled-date="disabledDateStart"
 							:disabled-time="disabledDateTime(formState.endDate, 'end')"
 							:show-time="{ format: 'HH:mm:ss' }" 
 							format="YYYY-MM-DD HH:mm:ss"
 							value-format="YYYY-MM-DD HH:mm:ss"
-							v-model:value="formState.startDate" /> 
+							v-model:value="formState.startDate" />  -->
+							<datePicker 
+								placeholder="选择行程开始日期"
+									popper-class="hidden-date-picker"
+									v-model="formState.startDate"
+									:disabled-date="disabledDateStart"
+									value-format="YYYY-MM-DD HH:mm:ss"
+									:disabled-hours="() => disabledHours(formState.endDate, formState.startDate, 'end')"
+									:disabled-minutes="() => disabledMinutes(formState.endDate, formState.startDate, 'end')"
+									:disabled-seconds="() => disabledSeconds(formState.endDate, formState.startDate, 'end')"
+									type="datetime" />
 					</a-form-item >
 					<span class="flex-1 text-center"> 至 </span> 
 					<a-form-item name="endDate" style="margin-bottom: 0"> 
-						<a-date-picker  
+						<!-- <a-date-picker  
 							:disabled-date="disabledDate"
 							:disabled-time="disabledDateTime(formState.startDate, 'start')"
 							:show-time="{ format: 'HH:mm:ss' }" 
 							format="YYYY-MM-DD HH:mm:ss"
 							value-format="YYYY-MM-DD HH:mm:ss"
-							v-model:value="formState.endDate" />
+							v-model:value="formState.endDate" /> -->
+							<datePicker 
+									popper-class="hidden-date-picker"
+									v-model="formState.endDate"
+									placeholder="选择行程结束日期"
+									:disabled-date="disabledDate"
+									value-format="YYYY-MM-DD HH:mm:ss"
+									:disabled-hours="() => disabledHours(formState.startDate, formState.endDate, 'start')"
+									:disabled-minutes="() => disabledMinutes(formState.startDate, formState.endDate, 'start')"
+									:disabled-seconds="() => disabledSeconds(formState.startDate, formState.endDate, 'start')"
+									type="datetime" />
 					</a-form-item>
 				</div>
 				<!-- :disabled-date="disabledDate" -->
@@ -169,7 +189,7 @@
 </template>
 
 <script lang="ts" setup>
-import { disabledRangeTime, generateGuid, getAmount, getUserInfo, disabledDateTime } from '@/utils/util';
+import { disabledRangeTime, generateGuid, getAmount, getUserInfo, disabledDateTime, disabledHours, disabledMinutes, disabledSeconds } from '@/utils/util';
 import { ConfirmDailyCharge, FeeModel, GroupMode, RouteType } from '@/enum';
 import api from '@/api/index';
 import BaseModal from '@/components/common/BaseModal.vue';
@@ -179,6 +199,7 @@ import { cloneDeep } from 'lodash';
 import { Modal } from 'ant-design-vue';
 import { createVNode } from 'vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import datePicker from '@/components/common/datePicker.vue';
 
 interface TeamType {
 	teamType: Array<any>;
@@ -374,7 +395,7 @@ const disabledDateStart = (current: Dayjs) => {
 }
 // 结束时间限制
 const disabledDate = (current: Dayjs) => {
-	if (formState.value.startDate && dayjs(formState.value.startDate).unix() > dayjs(current).unix() ) {
+	if (formState.value.startDate && current <  dayjs(formState.value.startDate).startOf('day')) {
 		return current && current < dayjs(formState.value.startDate).startOf('day');
 	} else {
 		return current && current < dayjs().startOf('day');
@@ -451,6 +472,8 @@ const handleChangeTime = (event: any) => {
 			start,
 			end
 		}
+		travelStore.defaultStartTime = new Date(2022, 12, 1, start.hour, start.min, start.second);
+		travelStore.defaultEndTime = new Date(2022, 12, 1, end.hour, end.min, end.second);
 		console.log(dis, '---------')
 	} else {
 		// formState.value.startDate = '';
@@ -555,6 +578,7 @@ watch(
 );
 
 watch(() => [formState.value.startDate, formState.value.endDate], ([newStar, newEnd]) => {
+	console.log(newStar, newEnd)
 	formState.value.time = newStar && newEnd ? [newStar, newEnd] : null
 	handleChangeTime(formState.value.time);
 })
