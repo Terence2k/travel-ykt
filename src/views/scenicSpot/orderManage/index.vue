@@ -2,15 +2,24 @@
 	<a-spin size="large" :spinning="state.tableData.loading" style="min-height: 50vh">
 		<CommonSearch>
 			<SearchItem label="入园日期">
-				<a-date-picker format="YYYY-MM-DD " value-format="YYYY-MM-DD " v-model:value="state.tableData.param.schoolDate" placeholder="入园日期" />
+				<picker v-model="state.tableData.param.schoolDate" type="date" value-format="YYYY-MM-DD" format="YYYY-MM-DD" placeholder="入园日期"></picker>
+				<!-- <a-date-picker format="YYYY-MM-DD " value-format="YYYY-MM-DD " v-model:value="state.tableData.param.schoolDate" placeholder="入园日期" /> -->
 			</SearchItem>
 			<SearchItem label="核销日期">
-				<a-date-picker
+				<picker
+					v-model="state.tableData.param.verificationTime"
+					type="date"
+					value-format="YYYY-MM-DD"
+					format="YYYY-MM-DD"
+					placeholder="入园日期"
+				></picker>
+
+				<!-- <a-date-picker
 					format="YYYY-MM-DD "
 					value-format="YYYY-MM-DD "
 					v-model:value="state.tableData.param.verificationTime"
 					placeholder="入园日期"
-				/>
+				/> -->
 				<!-- <a-date-picker
 					v-model:value="state.tableData.param.verificationTime"
 					:show-time="{ format: 'HH:mm:ss' }"
@@ -106,6 +115,7 @@ import api from '@/api';
 import viewTable from './components/table.vue';
 import ApplyChange from './components/applyChange.vue';
 import { useScenicSpotOption } from '@/stores/modules/scenicSpot';
+import picker from '@/components/common/datePicker.vue';
 
 const scenicSpotOptions = useScenicSpotOption();
 const navigatorBar = useNavigatorBar();

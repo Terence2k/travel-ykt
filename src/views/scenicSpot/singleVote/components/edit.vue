@@ -28,13 +28,21 @@
 				<br />
 				<br />
 				当日最晚可定票时间：
-				<a-time-picker
+				<!-- <a-time-picker
 					v-model:value="formData.data.orderTime"
 					valueFormat="HH:mm"
 					format="HH:mm"
 					:placeholder="formData.data.orderTime"
 					style="width: 120px"
-				/>
+				/> -->
+
+				<timePicker
+					style="width: 120px"
+					v-model="formData.data.orderTime"
+					valueFormat="HH:mm"
+					format="HH:mm"
+					:placeholder="formData.data.orderTime"
+				></timePicker>
 			</a-form-item>
 
 			<a-form-item label="有效期" name="data.validTime" v-bind="validateInfos[`data.validTime`]" :wrapper-col="{ span: 12 }">
@@ -112,6 +120,7 @@ import EditPriceTable from './editPriceTable.vue';
 import EditRuleTable from './editRuleTable.vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
+import timePicker from '@/components/common/timePicker.vue';
 
 const route = useRouter();
 
