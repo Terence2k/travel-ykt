@@ -15,12 +15,12 @@
 			</a-form-item>
 
 			<a-form-item label="入园日期" name="startDate" :rules="[{ required: true, message: '请选择入园日期' }]">
-				<a-date-picker
+				<picker
 					:disabled-date="travelStore.setDisabled"
 					style="width: 100%"
-					v-model:value="formState.startDate"
-					format="YYYY-MM-DD"
+					v-model="formState.startDate"
 					value-format="YYYY-MM-DD"
+					placeholder="请选择入园日期"
 				/>
 			</a-form-item>
 
@@ -62,6 +62,7 @@ import api from '@/api';
 import { cloneDeep, debounce } from 'lodash';
 import { validateRules, validateFields, generateGuid } from '@/utils';
 import { accDiv,accMul} from '@/utils/compute';
+import picker from '@/components/common/datePicker.vue'
 
 import { Modal } from 'ant-design-vue';
 import { createVNode } from 'vue';

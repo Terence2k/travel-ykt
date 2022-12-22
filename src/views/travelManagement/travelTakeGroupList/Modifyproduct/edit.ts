@@ -264,9 +264,9 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 	};
 	const changTiemshow = () => {
 		state.tiemformshow = !state.tiemformshow;
-		if (state.timeformState.time) {
-			state.startTime = state.timeformState.time[0];
-			state.endTime = state.timeformState.time[1];
+		if (state.timeformState.startTime && state.timeformState.endTime) {
+			state.startTime = state.timeformState.startTime;
+			state.endTime = state.timeformState.endTime;
 			let dis = null;
 			dis = (current: Dayjs) => {
 				return (
@@ -276,7 +276,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			};
 
 			travelStore.setDisabled = dis as any;
-			travelStore.teamTime = state.timeformState.time;
+			// travelStore.teamTime = state.timeformState.time;
 		}
 	};
 	const install = () => {
@@ -338,9 +338,9 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 	const submitReview = async (callback: Function) => {
 		const start = ref();
 		const end = ref();
-		if (state.timeformState.time) {
-			end.value = dayjs(dayjs(state.timeformState.time[1]).format('YYYY-MM-DD')).valueOf();
-			start.value = dayjs(dayjs(state.timeformState.time[0]).format('YYYY-MM-DD')).valueOf();
+		if (state.timeformState.startTime && state.timeformState.endTime) {
+			end.value = dayjs(dayjs(state.timeformState.endTime).format('YYYY-MM-DD')).valueOf();
+			start.value = dayjs(dayjs(state.timeformState.startTime).format('YYYY-MM-DD')).valueOf();
 		}
 
 		for (let index = 0; index < travelStore.hotelList?.length; index++) {
@@ -406,9 +406,9 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			reserveHotelParams: state.hotelparams,
 			addTicketParams: state.tiecketparams,
 		};
-		if (state.timeformState.time) {
-			data.startDate = state.timeformState.time[0];
-			data.endDate = state.timeformState.time[1];
+		if (state.timeformState.endTime && state.timeformState.startTime) {
+			data.startDate = state.timeformState.startTime;
+			data.endDate = state.timeformState.endTime;
 		}
 		api.travelManagement.travelChangeCheckTicketRefund(data).then((res: any) => {
 			if (res.checkStatus == true) {
@@ -436,9 +436,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			.travelChangeOrderProduct(data)
 			.then((res: any) => {
 				message.success('提交审核成功');
-				router.push({
-					path: '/travel/travel_manage/travel_list',
-				});
+				router.go(-1)
 			})
 			.catch((error: any) => {
 				state.tiecketparams = state.tiecketparams.map((item: any) => {

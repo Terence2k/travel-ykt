@@ -35,27 +35,23 @@
 			</a-form-item>
 
 			<a-form-item label="入住日期" name="arrivalDate" :rules="[{ required: true, message: '请选择入住日期' }]">
-				<a-date-picker
+				<picker
 					style="width: 100%"
+					placeholder="请选择入住时间"
 					:disabled-date="travelStore.setDisabled"
 					@change="handleChangCheckIn"
-					:show-time="{ format: 'HH:mm:ss' }"
-					format="YYYY-MM-DD HH:mm:ss"
 					value-format="YYYY-MM-DD HH:mm:ss"
-					v-model:value="formState.arrivalDate"
+					v-model="formState.arrivalDate"
 				/>
 			</a-form-item>
 
 			<a-form-item label="离店日期" name="departureDate" :rules="[{ required: true, message: '请选择离店日期' }]">
-				<a-date-picker
+				<picker
 					style="width: 100%"
 					:disabled-date="disLeave"
-					:disabled="formState.arrivalDate === ''"
 					placeholder="请先选择入住时间"
-					:show-time="{ format: 'HH:mm:ss' }"
-					format="YYYY-MM-DD HH:mm:ss"
 					value-format="YYYY-MM-DD HH:mm:ss"
-					v-model:value="formState.departureDate"
+					v-model="formState.departureDate"
 				/>
 			</a-form-item>
 			<div v-for="(room, index) in formState.roomTypeList" :key="index">
@@ -144,6 +140,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { selectSpecialDateRange } from '@/utils';
 import { accDiv, accMul } from '@/utils/compute';
 import { validateRules, validateFields, generateGuid } from '@/utils';
+import picker from '@/components/common/datePicker.vue'
 
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 const route = useRoute();

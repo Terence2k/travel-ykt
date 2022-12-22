@@ -3,12 +3,12 @@
 		<CommonSearch>
 			<search-item label="预定时间">
 				<a-space direction="vertical">
-					<a-date-picker v-model:value="hotelStore.HotelList[chart].params.scheduledTime" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
+					<picker style="width:200px" placeholder="请输入预定时间" v-model="hotelStore.HotelList[chart].params.scheduledTime"  value-format="YYYY-MM-DD" />
 				</a-space>
 			</search-item>
 			<search-item label="入住时间">
 				<a-space direction="vertical">
-					<a-date-picker v-model:value="hotelStore.HotelList[chart].params.arrivalDate" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
+					<picker style="width:200px" placeholder="请输入入住时间" v-model="hotelStore.HotelList[chart].params.arrivalDate"  value-format="YYYY-MM-DD" />
 				</a-space>
 			</search-item>
 			<search-item label="行程单号">
@@ -33,6 +33,7 @@ import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { useHotelStore,hotelListParams } from '@/stores/modules/hotelManage';
 import api from '@/api';
+import picker from '@/components/common/datePicker.vue'
 import { HotelStatus } from '@/enum';
 import waits from './wait/index.vue';
 import success from './success/index.vue';
