@@ -44,23 +44,29 @@
 
 			<header>短信群发配置</header>
 			<div class="contant">
-				<a-form ref="formtwoRef" :rules="rulestwo" :model="formValidate" autocomplete="off" labelAlign="left">
-					<a-form-item label="短信模板" :label-col="labelCol" name="time">
+				<a-form ref="formtwoRef" :model="formValidate" autocomplete="off" labelAlign="left" :labelCol="{ span: 5 }">
+					<a-form-item label="短信模板">
 						{{ formValidate.smsContent }}
 					</a-form-item>
-
-					<a-form-item label="参数配置" name="ss" :label-col="labelCol">
-                        <div style="margin-bottom:10px ;" v-for="i in pre"  :label-col="labelCol">
-                            <span style="margin-right: 20px">参数 {{ i }}</span
-							><a-input v-model:value="formValidate.ss" :placeholder="'请输入参数 ' + i" style="width: 200px" />
-                        </div>							
-					</a-form-item>
-					<a-form-item label="短信预览" :label-col="labelCol">
-						<a-textarea :rows="4" />
+					<div style="width: 600px" v-for="(i, index) in formValidate.preParam" :key="i">
+						<a-form-item
+							label="参数配置"
+							:name="['preParam', index, 'unice']"
+							:rules="[{ required: true, message: '请输入参数' + i.key }]"
+							:wrapper-col="{ span: 16 }"
+						>
+							<div style="display: flex; align-items: center; width: 400px">
+								<span style="margin-right: 20px">参数 {{ i.key }}</span
+								><a-input v-model:value="i.unice" :placeholder="'请输入参数 ' + i.key" style="width: 300px" />
+							</div>
+						</a-form-item>
+					</div>
+					<a-form-item label="短信预览">
+						<a-textarea :rows="4" v-model:value="formValidate.smsLook" />
 						<a-button style="margin-top: 10px" @click="onlook">生成预览内容</a-button>
 					</a-form-item>
-					<a-form-item label="预览电话" :label-col="labelCol">
-						<a-input placeholder></a-input>
+					<a-form-item label="预览电话">
+						<a-input placeholder style="width: 300px"></a-input>
 					</a-form-item>
 				</a-form>
 				<div>
@@ -79,12 +85,12 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import { usesmsInfo } from './recipient';
 
 const emits = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
+
 const {
 	columns,
 	onlook,
 	editableData,
 	labelCol,
-	rulestwo,
 	formValidate,
 	rulesRef,
 	formtwoRef,
@@ -100,6 +106,7 @@ const {
 	onHandleCurrentChange,
 	pageSideChange,
 	pre,
+	CheckNum,
 } = usesmsInfo();
 </script>
 
@@ -118,7 +125,7 @@ const {
 		border-bottom: 1px solid #f1f2f5;
 	}
 	.contant {
-		width: 600px;
+		width: 601px;
 	}
 }
 .footer-btn {
@@ -137,11 +144,8 @@ const {
 		padding: 0 10px;
 	}
 }
-.ant-form-item {
-	margin-top: 22px;
-}
 
-.ant-form-item-with-help {
-	width: 130px;
+.ant-form-item-explain-error {
+	width: 100px !important;
 }
 </style>

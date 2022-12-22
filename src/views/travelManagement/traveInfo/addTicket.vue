@@ -37,13 +37,19 @@
 			</a-form-item>
 
 			<a-form-item label="入园日期" name="startDate" :rules="[{ required: true, message: '请选择入园日期' }]">
-                <a-date-picker
+                <!-- <a-date-picker
 					:disabled-date="travelStore.setDisabled"
 					style="width: 100%"
 					v-model:value="formState.startDate"
 					format="YYYY-MM-DD"
 					value-format="YYYY-MM-DD"
-				/>
+				/> -->
+				<datePicker style="width: 100%"
+							v-model="formState.startDate"
+							placeholder="入园日期"
+							:disabled-date="travelStore.setDisabled"
+							value-format="YYYY-MM-DD"
+							type="date" />
 			</a-form-item>
 
 			<a-form-item
@@ -133,6 +139,7 @@
 	import BaseModal from '@/components/common/BaseModal.vue';
 	import selectTicket from './selectTicket.vue';
     import { useTravelStore } from '@/stores/modules/travelManagement';
+	import datePicker from '@/components/common/datePicker.vue';
     import api from '@/api';
 	import { cloneDeep, debounce } from 'lodash';
 	import { TicketType } from '@/enum';

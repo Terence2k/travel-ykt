@@ -4,6 +4,7 @@ import { validateRules, validateFields, generateGuid, validPhone } from '@/utils
 import { useSmsStore } from '@/stores/modules/sms';
 import api from '@/api/index';
 import { message } from 'ant-design-vue';
+import { Rule } from 'ant-design-vue/es/form';
 interface DataItem {
 	key: string;
 	name: string;
@@ -22,7 +23,7 @@ const rules: { [k: string]: any } = {
 export function usesmsInfo(): Record<string, any> {
 	const router = useRouter();
 	const route = useRoute();
-	const labelCol = { style: { width: '150px' } };
+	const labelCol = { span:6 };
 	const smsStore = useSmsStore();
 	const options = reactive({ title: '设置接收人' });
 	const dialogVisible = ref(false);
@@ -31,12 +32,14 @@ export function usesmsInfo(): Record<string, any> {
 		formRef: null,
 		formtwoRef: null,
 		editableData: {},
-		formValidate: {},
+		formValidate: {
+			preParam:[]
+		},
 		newList: [],
 		paramW: [],
 		total: 0,
 		param: {
-			templateId:  route?.query.templateId,
+			templateId: route?.query.templateId,
 			pageNo: 1,
 			pageSize: 10,
 		},
@@ -47,7 +50,7 @@ export function usesmsInfo(): Record<string, any> {
 		},
 		// tableData: computed(() => smsStore.recipientList),
 		tableData: [],
-		pre:'',
+		pre: [],
 		columns: [
 			{
 				title: '序号',
@@ -76,9 +79,15 @@ export function usesmsInfo(): Record<string, any> {
 			},
 		],
 	});
-	const rulestwo = {
-		time: [{ required: true, message: '您还未选择日期范围！', trigger: 'change' }],
+	// 校验
+	const CheckNum = async (_rule: Rule, value: string, index: number) => {
+		if (value === '') {
+			return Promise.reject('请输入参数');
+		} else {
+			return Promise.resolve();
+		}
 	};
+
 	const methods = {
 		add: () => {
 			let key = generateGuid();
@@ -100,7 +109,7 @@ export function usesmsInfo(): Record<string, any> {
 		save: async (key?: any) => {
 			const res = await validateFields(state.formRef);
 			if (!res) return;
-			const param =  [].concat.call(state.editableData[key]);
+			const param = [].concat.call(state.editableData[key]);
 			const data = {
 				templateId: state.templateId, //短信模板
 				sysSmsSendPersonVos: param,
@@ -108,14 +117,13 @@ export function usesmsInfo(): Record<string, any> {
 			api.handleSysSmsTemplateSendPerson(data).then((res: any) => {
 				message.success('设置成功');
 				delete state.editableData[key];
-				install()
+				install();
 				return;
 			});
-
 		},
 		del: (key: string) => {
 			state.newList.push({ ...state.tableData[key], ...{ delete: true } });
-			if(state.tableData[key].oid){
+			if (state.tableData[key].oid) {
 				const data = {
 					templateId: state.templateId, //短信模板
 					sysSmsSendPersonVos: state.newList,
@@ -123,13 +131,11 @@ export function usesmsInfo(): Record<string, any> {
 				api.handleSysSmsTemplateSendPerson(data).then((res: any) => {
 					message.success('删除成功');
 					state.tableData.splice(key, 1);
-					install()
+					install();
 				});
-			}else{
+			} else {
 				state.tableData.splice(key, 1);
-
 			}
-			
 		},
 		cancel: () => {
 			state.formRef.value = '';
@@ -144,11 +150,13 @@ export function usesmsInfo(): Record<string, any> {
 		});
 		api.getSysSmsTemplate(state.templateId).then((res: any) => {
 			state.formValidate.smsContent = res.smsContent;
-			if(state.formValidate.smsContent){
-				for(let i=0;i<state.formValidate.smsContent.length;i++){
-					if(state.formValidate.smsContent[i] == "{"){
-						state.pre ++
-					}					
+			if (state.formValidate.smsContent) {
+				let j = 0;
+				for (let i = 0; i < state.formValidate.smsContent.length; i++) {
+					if (state.formValidate.smsContent[i] == '{') {
+						j++;
+						state.formValidate.preParam.push({ key: j, unice: '' });
+					}
 				}
 			}
 		});
@@ -156,14 +164,45 @@ export function usesmsInfo(): Record<string, any> {
 
 	const onHandleCurrentChange = (val: any) => {
 		state.param.pageNo = val;
-		install()
+		install();
 	};
 	const pageSideChange = (current: number, size: number) => {
 		state.param.pageSize = size;
-		install()
+		install();
 	};
 
 	const onlook = () => {
+		
+		state.formtwoRef.validateFields().then((res:any)=>{
+			console.log(state.formValidate.preParam,'state.formValidate.preParam');
+			// for (let i = 0; i < state.formValidate.smsContent.length; i++) {
+			// 	for (let j = 0; j < state.formValidate.preParam.length; j++) {
+			// 		if (state.formValidate.smsContent[i] == j) {
+			// 			console.log(state.formValidate.smsContent[i]);
+						
+						// state.formValidate.smsContent[i] = state.formValidate.preParam[i].unice
+			// 		}
+			// 		console.log(state.formValidate.smsContent,'state.formValidate.smsContent');
+					
+			// 	}
+			// }
+			// for (let i = 0; i < state.formValidate.smsContent.length; i++) {
+				// console.log(state.formValidate.preParam[i].unice,'state.formValidate.preParam[i].unice');
+				// state.formValidate.smsContent.replace("Microsoft","Runoob")
+				// if (state.formValidate.smsContent.indexOf(`{${i}}`)) {
+					// console.log(state.formValidate.smsContent.match(i),'state.formValidate.smsContent.match(i)');
+				// 	state.formValidate.smsContent.indexOf(`{${i}}`)[0] = state.formValidate.preParam[i].unice
+				// 	console.log(state.formValidate.smsContent.indexOf(`{${i}}`)[0],'state.formValidate.smsContent.match(i)[0]');
+					
+				// }
+				//  state.formValidate.smsLook = state.formValidate.smsContent
+				
+			// }
+			state.formValidate.smsContent.replace('1','123')
+			console.log(state.formValidate.smsContent);
+			
+			
+		})
 		// formRef.value.validate().then(() => {
 		// 	const data = {
 		// 		templateOid: props?.params?.oid, //短信模板oid
@@ -196,9 +235,9 @@ export function usesmsInfo(): Record<string, any> {
 		dialogVisible,
 		options,
 		labelCol,
-		rulestwo,
 		onlook,
 		onHandleCurrentChange,
 		pageSideChange,
+		CheckNum
 	};
 }

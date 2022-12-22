@@ -13,13 +13,16 @@
 				<a-form :model="timeformState" ref="timeformRef">
 				<a-form-item >
 					<span slot="label" class="title" >行程时间</span>
-					<a-range-picker
+					<picker
 					style="margin-left: 40px;"
 					:disabled-date="disabledDate"
-					v-model:value="timeformState.time"
-					show-time
-					format="YYYY-MM-DD HH:mm:ss"
-					value-format="YYYY-MM-DD HH:mm:ss"
+					v-model="timeformState.startTime"
+					value-format="YYYY-MM-DD"
+				/>至
+				<picker
+					:disabled-date="disabledDate"
+					v-model="timeformState.endTime"
+					value-format="YYYY-MM-DD"
 				/>				
 				<span class="time_btn"  @click="changTiemshow">确定</span>
 				</a-form-item>
@@ -93,6 +96,7 @@
 import CommonTable from '@/components/common/CommonTable.vue';
 import addHotel from './addHotel.vue';
 import addTicket from './addTicket.vue';
+import picker from '@/components/common/datePicker.vue'
 
 import { useTraveInfo } from './edit';
 import { accDiv, accMul } from '@/utils/compute';

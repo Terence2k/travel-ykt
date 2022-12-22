@@ -20,7 +20,7 @@
 							<a-form-item 
 								v-if="editableData[record.key ? record.key : record.oid]" 
 								:name="[record.key ? record.key : record.oid, column.key]">
-									<a-range-picker
+									<!-- <a-range-picker
 										:disabled-date="travelStore.setDisabled"
 										:disabled-time="travelStore.setDisabledTime"
 										
@@ -34,6 +34,21 @@
 											}"
 										format="YYYY-MM-DD HH:mm:ss"
 										value-format="YYYY-MM-DD HH:mm:ss"
+									/> -->
+									
+									<datePicker
+										v-model="editableData[record.key ? record.key : record.oid][column.key]"
+										type="datetimerange"
+										popper-class="hidden-date-picker"
+										:default-time="[travelStore.defaultStartTime, travelStore.defaultEndTime]"
+										start-placeholder="带团开始日期"
+										end-placeholder="带团结束日期"
+										@calendar-change="handelChange"
+										value-format="YYYY-MM-DD HH:mm:ss"
+										:disabled-hours="(type: string) => disabledRangeHours(currentDate, type)"
+										:disabled-minutes="(_: any, type: string) => disabledRangeMinutes(currentDate, type)"
+										:disabled-seconds="(_: any, m: any , type: string) => disabledRangeSeconds(currentDate, type)"
+										:disabled-date="travelStore.setDisabled"
 									/>
 							</a-form-item>
 							<template v-else>
@@ -94,12 +109,19 @@ import { CaretDownOutlined } from '@ant-design/icons-vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import { useGuideInfo } from './guideInfo';
 import dayjs from 'dayjs';
-
+import datePicker from '@/components/common/datePicker.vue';
+import { disabledRangeHours, disabledRangeMinutes, disabledRangeSeconds } from '@/utils';
 const props = defineProps({
 	onCheck: {
 		type: Boolean
 	}
 })
+const currentDate = ref([])
+// 点击日期组件的回调
+const handelChange = (event: any) => {
+	console.log(event)
+	currentDate.value = event;
+}
 const emits = defineEmits(['onSuccess'])
 const { 
 	columns, 

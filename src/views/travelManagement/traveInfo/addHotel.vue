@@ -35,7 +35,7 @@
 			</a-form-item>
 
 			<a-form-item label="入住日期" name="arrivalDate" :rules="[{ required: true, message: '请选择入住日期' }]">
-				<a-date-picker style="width: 100%"
+				<!-- <a-date-picker style="width: 100%"
 					:disabled-date="travelStore.setDisabled"
 					@change="handleChangCheckIn"
 					:show-time="{
@@ -45,13 +45,25 @@
 					:disabled-time="disCheckInTime"
 					format="YYYY-MM-DD HH:mm:ss" 
 					value-format="YYYY-MM-DD HH:mm:ss" 
-					v-model:value="formState.arrivalDate" />
+					v-model:value="formState.arrivalDate" /> -->
+					<datePicker style="width: 100%"
+							v-model="formState.arrivalDate"
+							@change="handleChangCheckIn"
+							placeholder="请选择入住日期"
+							popper-class="hidden-date-picker"
+							:default-time="travelStore.defaultStartTime"
+							:disabled-date="travelStore.setDisabled"
+							value-format="YYYY-MM-DD HH:mm:ss"
+							:disabled-hours="() => disabledHours(travelStore.teamTime[0], formState.arrivalDate, 'start')"
+							:disabled-minutes="() => disabledMinutes(travelStore.teamTime[0], formState.arrivalDate, 'start')"
+							:disabled-seconds="() => disabledSeconds(travelStore.teamTime[0], formState.arrivalDate, 'start')"
+							type="datetime" />
 			</a-form-item>
 
 			<a-form-item label="离店日期"
 				name="departureDate" 
 				:rules="[{ required: true, message: '请选择离店日期' }]">
-				<a-date-picker style="width: 100%" 
+				<!-- <a-date-picker style="width: 100%" 
 					:disabled-date="disLeave"
 					:disabled="formState.arrivalDate === ''"
 					dropdownClassName="hidden-date-picker"
@@ -62,7 +74,19 @@
 						}"
 					format="YYYY-MM-DD HH:mm:ss" 
 					value-format="YYYY-MM-DD HH:mm:ss" 
-					v-model:value="formState.departureDate" />
+					v-model:value="formState.departureDate" /> -->
+					<datePicker style="width: 100%"
+							v-model="formState.departureDate"
+							placeholder="请选择离店时间"
+							popper-class="hidden-date-picker"
+							:default-time="travelStore.defaultEndTime"
+							:disabled-date="disabeldleave"
+							:disabled="formState.arrivalDate === ''"
+							value-format="YYYY-MM-DD HH:mm:ss"
+							:disabled-hours="() => disabledHours(travelStore.teamTime[1], formState.departureDate)"
+							:disabled-minutes="() => disabledMinutes(travelStore.teamTime[1], formState.departureDate)"
+							:disabled-seconds="() => disabledSeconds(travelStore.teamTime[1], formState.departureDate)"
+							type="datetime" />
 			</a-form-item>
 			<div v-for="(room, index) in formState.roomTypeList" :key="index">
 				<h3>房型{{ index + 1 }}</h3>
@@ -142,11 +166,12 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 import { message } from 'ant-design-vue/es';
 import { Rule } from 'ant-design-vue/es/form';
 import dayjs, { Dayjs } from 'dayjs';
-import { disabledRangeTime, range, isPositiveInteger, selectSpecialDateRange, isOneHundred } from '@/utils';
+import { disabledRangeTime, range, isPositiveInteger, selectSpecialDateRange, isOneHundred, disabledHours, disabledMinutes, disabledSeconds } from '@/utils';
 import { Modal } from 'ant-design-vue';
 import { createVNode } from 'vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import {accAdd, accDiv} from '@/utils/compute.js'
+import datePicker from '@/components/common/datePicker.vue';
 
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any ) || {}
 const route = useRoute()
@@ -246,12 +271,17 @@ const handleHotel = (e: any, option: any) => {
 }
 
 const handleChangCheckIn = () => {
-	disLeave.value = (current: Dayjs): any => current && current < dayjs(formState.arrivalDate).endOf('day') || 
-	(dayjs(travelStore.teamTime[1]).endOf('day') < current && current)
+	// disLeave.value = (current: Dayjs): any => current && current < dayjs(formState.arrivalDate).endOf('day') || 
+	// (dayjs(travelStore.teamTime[1]).endOf('day') < current && current)
 	const isAfter = dayjs(dayjs(formState.arrivalDate)).isAfter(dayjs(formState.departureDate).subtract(1, 'day'))
 	if (formState.departureDate && isAfter) {
 		formState.departureDate = '';
 	}
+}
+
+const disabeldleave = (current: Dayjs) => {
+	return current && current > dayjs(travelStore.teamTime[1]).endOf('day') || (current && current < dayjs(formState.arrivalDate).endOf('day'));
+	
 }
 
 const changeRoomType = (e: any, option: any, index: number) => {
