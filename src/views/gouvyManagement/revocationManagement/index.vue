@@ -5,9 +5,7 @@
 				<a-input v-model:value="gouvyStore.revocationManagementList[chart].params.subTravelName" placeholder="请输入接团社" />
 			</search-item>
 			<search-item label="出团时间">
-				<a-space direction="vertical">
-					<a-date-picker v-model:value="gouvyStore.revocationManagementList[chart].params.itineraryStartDate" />
-				</a-space>
+				<picker placeholder="请选择出团时间" v-model="gouvyStore.revocationManagementList[chart].params.itineraryStartDate"  value-format="YYYY-MM-DD"/>
 			</search-item>
 			<search-item label="行程单号">
 				<a-input v-model:value="gouvyStore.revocationManagementList[chart].params.itineraryNo" placeholder="请输入行程单号" />
@@ -44,6 +42,7 @@ import { useGouvyStore, revocationManagementParams } from '@/stores/modules/gouv
 import { cloneDeep } from 'lodash';
 import { Fieold } from './type/index';
 import { getUserInfo, getTabPermission } from '@/utils/util';
+import picker from '@/components/common/datePicker.vue';
 const gouvyStore = useGouvyStore();
 const activeKey = ref(revocationStatus.waits);
 const check = ref(false);

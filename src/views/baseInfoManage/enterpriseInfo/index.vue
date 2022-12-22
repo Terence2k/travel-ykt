@@ -386,8 +386,8 @@
             </div>
           </a-form-item>
           <a-form-item name="rangeTime" label="营业时间">
-            <div class="flex">
-              <a-range-picker v-model:value="form.rangeTime" @change="changeTime" :disabled="getStatus('rangeTime')" value-format="YYYY-MM-DD"/>
+            <div class="flex" style="width:300px">
+              <picker v-model="form.rangeTime" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" @change="changeTime" value-format="YYYY-MM-DD" :disabled="getStatus('rangeTime')"/>
               <a-button type="primary" class="status-btn" @click="changeDisabledStatus('rangeTime')" v-if="showChangeBtns('rangeTime')">
                 {{ getStatus('rangeTime') ? '修改' : '确定' }}
               </a-button>
@@ -694,7 +694,6 @@ const submit = () => {
   } else {
     uploadData();
   }
-
 }
 
 onMounted(() => {
