@@ -630,7 +630,7 @@ const getStatus = (name: string) => {
 // 是否隐藏修改确定按钮
 const showChangeBtns = (name: string) => {
   let resValue = validateArray.value.find((it: any) => it.name === name)?.value;
-  if (!resValue && ![3].includes(form.value.informationAuditStatus)) enterpriseState.value = '信息不完善，待补充。';
+  if (!resValue && ![2,3].includes(form.value.informationAuditStatus)) enterpriseState.value = '信息不完善，待补充。';
   // 如果有值 && 需要判断的字段是否有包括 && 当前审核状态不为未提交和待审核
   return resValue && validateArray.value.map((it:any) => it.name).find((it: any) => it === name) && ![0, 1].includes(form.value.informationAuditStatus);
 }
