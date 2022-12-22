@@ -167,7 +167,7 @@
           </a-form-item>
           <a-form-item name="establishTime" label="成立日期">
             <div class="flex">
-              <a-date-picker v-model:value="form.establishTime" placeholder="请选择成立日期" style="width:100%" valueFormat="YYYY-MM-DD" :disabled="getStatus('establishTime')"/>
+              <picker v-model="form.establishTime" type="date" value-format="YYYY-MM-DD" placeholder="请选择成立日期" style="width:100%" :disabled="getStatus('establishTime')"/>
               <a-button type="primary" class="status-btn" @click="changeDisabledStatus('establishTime')" v-if="showChangeBtns('establishTime')">
                 {{ getStatus('establishTime') ? '修改' : '确定' }}
               </a-button>
@@ -175,7 +175,7 @@
           </a-form-item>
           <a-form-item name="businessTerm" label="营业期限">
             <div class="flex">
-              <a-date-picker v-model:value="form.businessTerm" placeholder="请选择营业期限" style="width:100%" valueFormat="YYYY-MM-DD" :disabled="getStatus('businessTerm')"/>
+              <picker v-model="form.businessTerm" type="date" value-format="YYYY-MM-DD" placeholder="请选择营业期限" style="width:100%" :disabled="getStatus('businessTerm')"/>
               <a-button type="primary" class="status-btn" @click="changeDisabledStatus('businessTerm')" v-if="showChangeBtns('businessTerm')">
                 {{ getStatus('businessTerm') ? '修改' : '确定' }}
               </a-button>
@@ -485,6 +485,7 @@ import AddressSelector from '@/views/baseInfoManage/businessManagement/component
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import { getUserInfo } from '@/utils/util';
 import Upload from '@/components/common/imageWrapper.vue';
+import picker from '@/components/common/datePicker.vue'
 
 const formRef = ref()
 const loading = ref(false)
@@ -630,7 +631,7 @@ const getStatus = (name: string) => {
 // 是否隐藏修改确定按钮
 const showChangeBtns = (name: string) => {
   let resValue = validateArray.value.find((it: any) => it.name === name)?.value;
-  if (!resValue && ![2,3].includes(form.value.informationAuditStatus)) enterpriseState.value = '信息不完善，待补充。';
+  if (!resValue && [0].includes(form.value.informationAuditStatus)) enterpriseState.value = '信息不完善，待补充。';
   // 如果有值 && 需要判断的字段是否有包括 && 当前审核状态不为未提交和待审核
   return resValue && validateArray.value.map((it:any) => it.name).find((it: any) => it === name) && ![0, 1].includes(form.value.informationAuditStatus);
 }
