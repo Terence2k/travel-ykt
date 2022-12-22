@@ -316,7 +316,10 @@ const getTraveDetail = () => {
 			travelStore.checkInsurance = res.insuranceStatus ? true : false;
 			travelStore.teamTime = [res.basic.startDate, res.basic.endDate] as any;
 			travelStore.setDisabled = disDate(res);
-			travelStore.setStarEndHMS = disTime(res);
+			const dateTime = disTime(res);
+			travelStore.setStarEndHMS = dateTime
+			travelStore.defaultStartTime = new Date(2022, 12, 1, dateTime.start.hour, dateTime.start.min, dateTime.start.second);
+			travelStore.defaultEndTime = new Date(2022, 12, 1, dateTime.end.hour, dateTime.end.min, dateTime.end.second)
 			console.log(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end, '-----');
 			travelStore.setDisabledTime = disabledRangeTime(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end) as any;
 			route.query.tab && setTimeout(() => (activeKey.value = Number(route.query.tab)));
