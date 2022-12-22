@@ -1,7 +1,13 @@
 <template>
 	<div class="table-container">
 		<p class="tips">选择导游（提交后系统会自动联系导游接单）</p>
-		<a-form ref="formRef" :rules="rulesRef" :model="editableData" autocomplete="off" labelAlign="left">
+		<a-form 
+			ref="formRef" 
+			:rules="rulesRef" 
+			:model="editableData"
+			autocomplete="off" 
+			labelAlign="left"
+		>
 			<CommonTable :columns="columns" :dataSource="tableData" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
 					<template v-if="column.key === 'index'">
@@ -11,13 +17,29 @@
 					</template>
 					<template v-if="column.key === 'time'">
 						<div>
-							<a-form-item v-if="editableData[record.key ? record.key : record.oid]" :name="[record.key ? record.key : record.oid, column.key]">
-								<a-range-picker
+							<a-form-item 
+							v-if="editableData[record.key ? record.key : record.oid]" 
+							:name="[record.key ? record.key : record.oid, column.key]">
+								<!-- <a-range-picker
 									:disabled-date="travelStore.setDisabled"
 									v-model:value="editableData[record.key ? record.key : record.oid][column.key]"
 									show-time
 									format="YYYY-MM-DD HH:mm:ss"
 									value-format="YYYY-MM-DD HH:mm:ss"
+								/> -->
+								<datePicker
+									v-model="editableData[record.key ? record.key : record.oid][column.key]"
+									type="datetimerange"
+									popper-class="hidden-date-picker"
+									:default-time="[travelStore.defaultStartTime, travelStore.defaultEndTime]"
+									start-placeholder="带团开始日期"
+									end-placeholder="带团结束日期"
+									@calendar-change="handelChange"
+									value-format="YYYY-MM-DD HH:mm:ss"
+									:disabled-hours="(type: string) => disabledRangeHours(currentDate, type)"
+									:disabled-minutes="(_: any, type: string) => disabledRangeMinutes(currentDate, type)"
+									:disabled-seconds="(_: any, m: any , type: string) => disabledRangeSeconds(currentDate, type)"
+									:disabled-date="travelStore.setDisabled"
 								/>
 							</a-form-item>
 							<template v-else>
@@ -30,7 +52,9 @@
 
 					<template v-if="column.key === 'guideName'">
 						<div>
-							<a-form-item v-if="editableData[record.key ? record.key : record.oid]" :name="[record.key ? record.key : record.oid, 'guideOid']">
+							<a-form-item 
+							v-if="editableData[record.key ? record.key : record.oid]" 
+							:name="[record.key ? record.key : record.oid, 'guideOid']">
 								<!-- <a-button class="select-guide" v-if="editableData[record.key ? record.key : record.oid]" >
 									{{text ? text : '请选择导游'}}
 									<caret-down-outlined />
@@ -40,7 +64,12 @@
 									@change="(val: any, option: any) => guideChange(val, option, record.key ? record.key : record.oid)"
 									v-model:value="editableData[record.key ? record.key : record.oid]['guideOid']"
 								>
-									<a-select-option v-for="item in guideData" :item="item" :key="item.oid" :value="item.oid">{{ item.guideName }}</a-select-option>
+									<a-select-option 
+										v-for="item in guideData" 
+										:item="item" 
+										:key="item.oid" 
+										:value="item.oid"
+										>{{ item.guideName }}</a-select-option>
 								</a-select>
 							</a-form-item>
 							<template v-else>
@@ -70,15 +99,31 @@
 import { CaretDownOutlined } from '@ant-design/icons-vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import { useGuideInfo } from './guideInfo';
-
+import datePicker from '@/components/common/datePicker.vue';
+import { disabledRangeHours, disabledRangeMinutes, disabledRangeSeconds } from '@/utils';
 const props = defineProps({
 	onCheck: {
 		type: Boolean,
 	},
 });
+const currentDate = ref([]);
+// 点击日期组件的回调
+const handelChange = (event: any) => {
+	console.log(event);
+	currentDate.value = event;
+};
 const emits = defineEmits(['onSuccess']);
-const { columns, tableData, editableData, edit, save, rulesRef, formRef, getGuideList, add, del, guideData, guideChange, travelStore, aa } =
-	useGuideInfo(props, emits);
+const { 
+	columns, 
+	tableData, 
+	editableData, 
+	edit, 
+	save, 
+	rulesRef, 
+	formRef, 
+	getGuideList, 
+	add, 
+	del, guideData, guideChange, travelStore,} =useGuideInfo(props, emits);
 getGuideList();
 </script>
 <style lang="less" scoped>

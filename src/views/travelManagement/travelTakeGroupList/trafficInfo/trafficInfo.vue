@@ -40,14 +40,29 @@
 					<template v-if="column.key === 'time'">
 						<div>
 							<a-form-item v-if="editableData[record.key ? record.key : record.oid]" :name="[record.key ? record.key : record.oid, column.key]">
-								<a-range-picker
+								<!-- <a-range-picker
 									:disabled-date="travelStore.setDisabled"
 									v-model:value="editableData[record.key ? record.key : record.oid][column.key]"
 									show-time
 									format="YYYY-MM-DD HH:mm:ss"
 									value-format="YYYY-MM-DD HH:mm:ss"
 									@change="(event) => handleTime(event, record.key ? record.key : record.oid)"
-								/>
+								/> -->
+								<datePicker
+										v-model="editableData[record.key ? record.key : record.oid][column.key]"
+										type="datetimerange"
+										popper-class="hidden-date-picker"
+										:default-time="[travelStore.defaultStartTime, travelStore.defaultEndTime]"
+										start-placeholder="用车开始时间"
+										end-placeholder="用车结束时间"
+										@calendar-change="handelChange"
+										@change="(event) => handleTime(event, record.key ? record.key : record.oid)"
+										value-format="YYYY-MM-DD HH:mm:ss"
+										:disabled-hours="(type: string) => disabledRangeHours(currentDate, type)"
+										:disabled-minutes="(_: any, type: string) => disabledRangeMinutes(currentDate, type)"
+										:disabled-seconds="(_: any, m: any , type: string) => disabledRangeSeconds(currentDate, type)"
+										:disabled-date="travelStore.setDisabled"
+									/>
 							</a-form-item>
 
 							<template v-else>
@@ -75,11 +90,19 @@
 import CommonTable from '@/components/common/CommonTable.vue';
 import Upload from '@/components/common/Upload.vue';
 import { useTrafficInfo } from './trafficInfo';
+import { disabledRangeHours, disabledRangeMinutes, disabledRangeSeconds } from '@/utils';
+import datePicker from '@/components/common/datePicker.vue';
 const props = defineProps({
 	onCheck: {
 		type: Boolean,
 	},
 });
+const currentDate = ref([])
+// 点击日期组件的回调
+const handelChange = (event: any) => {
+	console.log(event)
+	currentDate.value = event;
+}
 const emits = defineEmits(['onSuccess']);
 const { columns, tableData, editableData, edit, save, onSelect, selectKey, inputKey, travelStore, add, del, rulesRef, formRef, handleTime } =
 	useTrafficInfo(props, emits);
