@@ -18,6 +18,7 @@ declare module '@vue/runtime-core' {
     DelModal: typeof import('./src/components/common/DelModal.vue')['default']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
+    ElTimePicker: typeof import('element-plus/es')['ElTimePicker']
     FormItem: typeof import('./src/components/common/formItem.vue')['default']
     FormWrap: typeof import('./src/components/common/formWrap.vue')['default']
     Icon: typeof import('./src/components/Icon/index.vue')['default']
@@ -28,6 +29,7 @@ declare module '@vue/runtime-core' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SliderItem: typeof import('./src/components/layout/SliderItem.vue')['default']
+    TimePicker: typeof import('./src/components/common/timePicker.vue')['default']
     ToggleScreen: typeof import('./src/components/layout/toggleScreen.vue')['default']
     Upload: typeof import('./src/components/common/Upload.vue')['default']
   }
