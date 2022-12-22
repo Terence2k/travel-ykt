@@ -19,13 +19,15 @@
 			</a-select>
 		</search-item>
 		<search-item label="结算时间">
-			<a-range-picker v-model:value="state.settlementTimeList" @change="settlementTimeChange" />
+			<!-- <a-range-picker v-model:value="state.settlementTimeList" @change="settlementTimeChange" /> -->
+			<picker v-model="state.settlementTimeList" @change="settlementTimeChange" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"> </picker>
 		</search-item>
 		<search-item label="酒店名称" style="width: 280px">
 			<a-input v-model:value="state.tableData.param.hotelName" placeholder="请输入酒店名称" allowClear style="width: 180px" />
 		</search-item>
 		<search-item label="核销时间">
-			<a-range-picker v-model:value="state.verificationTimeList" @change="verificationTimeChange" />
+			<!-- <a-range-picker v-model:value="state.verificationTimeList" @change="verificationTimeChange" /> -->
+			<picker v-model="state.verificationTimeList" @change="verificationTimeChange" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"> </picker>
 		</search-item>
 		<template #button>
 			<a-button @click="initList" v-permission="'查询'">查询</a-button>
@@ -90,7 +92,7 @@ import SearchItem from '@/components/common/CommonSearchItem.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import { settlementOptions } from '@/stores/modules/settlement';
 import type { TableColumnsType } from 'ant-design-vue';
-import { any } from 'vue-types';
+import picker from '@/components/common/datePicker.vue';
 import api from '@/api';
 interface StateType {
 	tableData: TableDataType;
@@ -353,8 +355,8 @@ const pageSideChange = (current: number, size: number) => {
 };
 const settlementTimeChange = (arr: any) => {
 	if (arr && arr.length > 0) {
-		state.tableData.param.settlementStartTime = arr[0]['$d'];
-		state.tableData.param.settlementEndTime = arr[1]['$d'];
+		state.tableData.param.settlementStartTime = arr[0];
+		state.tableData.param.settlementEndTime = arr[1];
 	} else {
 		state.tableData.param.settlementStartTime = '';
 		state.tableData.param.settlementEndTime = '';
@@ -362,8 +364,8 @@ const settlementTimeChange = (arr: any) => {
 };
 const verificationTimeChange = (arr: any) => {
 	if (arr && arr.length > 0) {
-		state.tableData.param.verificationStartTime = arr[0]['$d'];
-		state.tableData.param.verificationEndTime = arr[1]['$d'];
+		state.tableData.param.verificationStartTime = arr[0];
+		state.tableData.param.verificationEndTime = arr[1];
 	} else {
 		state.tableData.param.verificationStartTime = '';
 		state.tableData.param.verificationEndTime = '';

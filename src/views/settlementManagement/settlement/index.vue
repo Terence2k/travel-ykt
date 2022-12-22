@@ -23,7 +23,8 @@
 			</a-select>
 		</search-item>
 		<search-item label="行程时间">
-			<a-range-picker @change="timeChange" value-format="YYYY-MM-DD HH:mm:ss" />
+			<!-- <a-range-picker @change="timeChange" value-format="YYYY-MM-DD HH:mm:ss" /> -->
+			<picker v-model="state.tableData.param.time" type="daterange" value-format="YYYY-MM-DD HH:mm:ss" start-placeholder="开始日期" end-placeholder="结束日期"> </picker>
 		</search-item>
 		<template #button>
 			<a-button @click="initList" v-permission="'查询'">查询</a-button>
@@ -55,10 +56,10 @@ import examine from './examine/examine.vue';
 import settlement from './settlement/settlement.vue';
 import transferred from './transferred/transferred.vue';
 import massesEnd from './massesEnd/massesEnd.vue';
+import picker from '@/components/common/datePicker.vue';
 
 import { settlementOptions } from '@/stores/modules/settlement';
 import { getTabPermission } from '@/utils';
-import { log } from 'console';
 const options = settlementOptions();
 
 // 计算属性 匹配费用归属企业类型

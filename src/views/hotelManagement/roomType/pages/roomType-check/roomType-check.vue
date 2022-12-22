@@ -63,6 +63,7 @@ import api from '@/api';
 import CommonTable from '@/components/common/CommonTable.vue';
 import { accDiv } from '@/utils/compute';
 const route = useRoute();
+const router = useRouter();
 const userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
 const columns = [
 	{
@@ -182,6 +183,7 @@ const auditPass = () => {
 					console.log('房型审核通过返回：', res);
 					message.success('审核成功');
 					initPage();
+					router.go(-1);
 				})
 				.catch((err: any) => {
 					message.error(err || '审核失败');
@@ -194,6 +196,7 @@ const auditPass = () => {
 					console.log('房型审核通过返回：', res);
 					message.success('审核成功');
 					initPage();
+					router.go(-1);
 				})
 				.catch((err: any) => {
 					message.error(err || '审核失败');
@@ -214,12 +217,14 @@ const auditFail = () => {
 				console.log('房型审核通过返回：', res);
 				message.success('审核成功');
 				initPage();
+				router.go(-1);
 			});
 		} else if (res[0]?.roleId && res[0]?.auditBusinessType) {
 			console.log('当前roleId为：', res[0]?.roleId);
 			api.auditRoomDetailInfo(state.auditOrderId, res[0].roleId, res[0].auditBusinessType, false).then((res) => {
 				console.log('房型审核通过返回：', res);
 				message.success('审核成功');
+				router.go(-1);
 				initPage();
 			});
 		} else {
