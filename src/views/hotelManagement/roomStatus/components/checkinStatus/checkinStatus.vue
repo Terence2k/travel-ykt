@@ -15,7 +15,7 @@
 						<span>入住情况</span>
 					</div>
 					<a-form-item class="form-item" label="日期" name="date">
-						<a-date-picker placeholder="请选择入住情况对应的日期" v-model:value="formValidate.date" value-format="YYYY-MM-DD" />
+						<DatePicker placeholder="请选择入住情况对应的日期" v-model="formValidate.date" />
 					</a-form-item>
 					<a-form-item class="form-item" label="总房数" name="roomTotal">
 						<a-input placeholder="请输入房间总数" v-model:value="formValidate.roomTotal" />
@@ -75,6 +75,7 @@ import dayjs from 'dayjs';
 import api from '@/api';
 import { useRoomStatusStore } from '@/stores/modules/roomStatus';
 import { message } from 'ant-design-vue';
+import DatePicker from '@/components/common/datePicker.vue';
 
 const useRoomStatus = useRoomStatusStore();
 
