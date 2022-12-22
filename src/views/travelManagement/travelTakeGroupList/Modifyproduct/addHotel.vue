@@ -219,8 +219,8 @@ const handleHotel = (e: any, option: any) => {
 };
 
 const handleChangCheckIn = () => {
-	// disLeave.value = (current: Dayjs): any =>
-	// 	(current && current < dayjs(formState.arrivalDate).add(1, 'day')) || (dayjs(travelStore.teamTime[1]).add(1, 'day') < current && current);
+	disLeave.value = (current: Dayjs): any =>
+		(current && current < dayjs(formState.arrivalDate).add(1, 'day')) || (dayjs(travelStore.teamTime[1]).add(1, 'day') < current && current);
 	const isAfter = dayjs(dayjs(formState.arrivalDate)).isAfter(dayjs(formState.departureDate).subtract(1, 'day'));
 	if (formState.departureDate && isAfter) {
 		formState.departureDate = '';
