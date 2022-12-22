@@ -23,9 +23,9 @@
 		</search-item>
 		<search-item label="地接社" style="width: 280px">
 			<a-select allowClear ref="select" v-model:value="state.tableData.param.subTravelId" style="width: 200px" placeholder="请选择地接社名称">
-				<a-se+lect-option v-for="(item, index) in options.earthContactAgencyList" :value="item.travelAgencyId" :key="index"
+				<a-select-option v-for="(item, index) in options.earthContactAgencyList" :value="item.travelAgencyId" :key="index"
 					>{{ item.travelAgencyName }}
-				</a-se+lect-option>
+				</a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="结算时间" style="width: 280px">

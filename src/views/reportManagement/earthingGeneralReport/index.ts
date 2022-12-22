@@ -217,6 +217,7 @@ export const subTravel = {
 export interface StateType {
 	tableData: TableDataType;
 	viewList: Array<any>;
+	times: String;
 }
 export interface TableDataType {
 	param: ParamType;
