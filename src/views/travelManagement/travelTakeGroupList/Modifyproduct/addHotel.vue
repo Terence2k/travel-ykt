@@ -37,21 +37,34 @@
 			<a-form-item label="入住日期" name="arrivalDate" :rules="[{ required: true, message: '请选择入住日期' }]">
 				<picker
 					style="width: 100%"
-					placeholder="请选择入住时间"
-					:disabled-date="travelStore.setDisabled"
-					@change="handleChangCheckIn"
-					value-format="YYYY-MM-DD HH:mm:ss"
 					v-model="formState.arrivalDate"
+					@change="handleChangCheckIn"
+					placeholder="请选择入住日期"
+					popper-class="hidden-date-picker"
+					:default-time="travelStore.defaultStartTime"
+					:disabled-date="travelStore.setDisabled"
+					value-format="YYYY-MM-DD HH:mm:ss"
+					:disabled-hours="() => disabledHours(travelStore.teamTime[0], formState.arrivalDate, 'start')"
+					:disabled-minutes="() => disabledMinutes(travelStore.teamTime[0], formState.arrivalDate, 'start')"
+					:disabled-seconds="() => disabledSeconds(travelStore.teamTime[0], formState.arrivalDate, 'start')"
+					type="datetime"
 				/>
 			</a-form-item>
 
 			<a-form-item label="离店日期" name="departureDate" :rules="[{ required: true, message: '请选择离店日期' }]">
 				<picker
 					style="width: 100%"
-					:disabled-date="disLeave"
-					placeholder="请先选择入住时间"
-					value-format="YYYY-MM-DD HH:mm:ss"
 					v-model="formState.departureDate"
+					placeholder="请选择离店时间"
+					popper-class="hidden-date-picker"
+					:default-time="travelStore.defaultEndTime"
+					:disabled-date="disLeave"
+					:disabled="formState.arrivalDate === ''"
+					value-format="YYYY-MM-DD HH:mm:ss"
+					:disabled-hours="() => disabledHours(travelStore.teamTime[1], formState.departureDate)"
+					:disabled-minutes="() => disabledMinutes(travelStore.teamTime[1], formState.departureDate)"
+					:disabled-seconds="() => disabledSeconds(travelStore.teamTime[1], formState.departureDate)"
+					type="datetime"
 				/>
 			</a-form-item>
 			<div v-for="(room, index) in formState.roomTypeList" :key="index">
@@ -139,8 +152,8 @@ import { Rule } from 'ant-design-vue/es/form';
 import dayjs, { Dayjs } from 'dayjs';
 import { selectSpecialDateRange } from '@/utils';
 import { accDiv, accMul } from '@/utils/compute';
-import { validateRules, validateFields, generateGuid } from '@/utils';
-import picker from '@/components/common/datePicker.vue'
+import { validateRules, validateFields, generateGuid, disabledHours, disabledMinutes, disabledSeconds } from '@/utils';
+import picker from '@/components/common/datePicker.vue';
 
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 const route = useRoute();
@@ -156,7 +169,7 @@ const travelStore = useTravelStore();
 const formRef = ref();
 
 let disLeave = ref((current: Dayjs) => {
-	return (current && current < dayjs().subtract(1, 'day')) || current > dayjs().startOf('day');
+	return (current && current > dayjs(travelStore.teamTime[1]).endOf('day')) || (current && current < dayjs(formState.arrivalDate).endOf('day'));
 });
 
 const props = defineProps({
@@ -206,8 +219,8 @@ const handleHotel = (e: any, option: any) => {
 };
 
 const handleChangCheckIn = () => {
-	disLeave.value = (current: Dayjs): any =>
-		(current && current < dayjs(formState.arrivalDate).add(1, 'day')) || (dayjs(travelStore.teamTime[1]).add(1, 'day') < current && current);
+	// disLeave.value = (current: Dayjs): any =>
+	// 	(current && current < dayjs(formState.arrivalDate).add(1, 'day')) || (dayjs(travelStore.teamTime[1]).add(1, 'day') < current && current);
 	const isAfter = dayjs(dayjs(formState.arrivalDate)).isAfter(dayjs(formState.departureDate).subtract(1, 'day'));
 	if (formState.departureDate && isAfter) {
 		formState.departureDate = '';
@@ -284,7 +297,7 @@ const submit = async () => {
 		formState.roomTypeList = formState.roomTypeList.map((it: any) => {
 			it.unitPrice = it.unitPrice * 100;
 			it.orderAmount = it.orderAmount * 100;
-			it.reserveNumber = it.roomCount
+			it.reserveNumber = it.roomCount;
 			return it;
 		});
 		formState.scheduledNumber = formState.roomTypeList.map((it: any) => Number(it.checkInNumber)).reduce((prev: any, current: any) => prev + current);
@@ -320,8 +333,7 @@ const submit = async () => {
 		console.log('newFormState.roomTypeList:', newFormState.roomTypeList);
 
 		travelStore.SetHotels(newFormState, formState.oid || null, props.productRow.key);
-	} catch (errorInfo) {
-	}
+	} catch (errorInfo) {}
 };
 
 const handleOk = async (callback: Function) => {

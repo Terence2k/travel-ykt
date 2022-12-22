@@ -48,6 +48,8 @@ export const useTravelStore = defineStore({
 		setDisabled: (current: Dayjs) => {
 			return (current && current < dayjs().subtract(1, 'day')) || current > dayjs().startOf('day');
 		},
+		defaultStartTime: new Date(2022, 12, 1, 0, 0, 0),
+		defaultEndTime: new Date(2022, 12, 1, 0, 0, 0),
 		baseInfo: [] as any,
 		guideList: [],
 		trafficList: [],

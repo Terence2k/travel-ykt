@@ -276,7 +276,9 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			};
 
 			travelStore.setDisabled = dis as any;
-			// travelStore.teamTime = state.timeformState.time;
+			travelStore.teamTime[0] = state.timeformState.startTime;
+			travelStore.teamTime[1] = state.timeformState.endTime;
+			console.log(travelStore.teamTime, 'travelStore.teamTime');
 		}
 	};
 	const install = () => {
@@ -436,7 +438,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			.travelChangeOrderProduct(data)
 			.then((res: any) => {
 				message.success('提交审核成功');
-				router.go(-1)
+				router.go(-1);
 			})
 			.catch((error: any) => {
 				state.tiecketparams = state.tiecketparams.map((item: any) => {
