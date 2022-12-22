@@ -459,7 +459,8 @@
               html-type="submit"
               style="margin-right:20px"
               :loading="loading"
-              v-if="form.informationAuditStatus != 1" v-permission="['TRAVEL', 'HOTEL', 'TICKET', 'CATERING'].includes(userInfo.sysCompany.businessType) ? '提交审核' : '保存'">
+              v-if="form.informationAuditStatus != 1"
+              v-permission="['TRAVEL', 'HOTEL', 'TICKET', 'CATERING'].includes(userInfo.sysCompany.businessType) ? '提交审核' : '保存'">
               <!-- 除酒店、景点、旅行社外不提交审核 -->
               <template v-if="['TRAVEL', 'HOTEL', 'TICKET', 'CATERING'].includes(userInfo.sysCompany.businessType)">
                 提交审核
@@ -472,6 +473,19 @@
       </a-form>
     </div>
   </div>
+	<BaseModal title="企业信息提交审核" v-model="confirmDialog">
+    是否要将本次修改完善的企业信息提交给行政机关单位管理员审核？
+		<template v-slot:footer>
+			<a-button @click="confirmDialog = false">取消</a-button>
+			<a-button type="primary" @click="uploadData">确定</a-button>
+		</template>
+  </BaseModal>
+	<BaseModal title="企业信息提交审核" v-model="successDialog">
+    已提交审核，审核通过后您将收到短信通知。
+		<template v-slot:footer>
+			<a-button type="primary" @click="successDialog = false">确定</a-button>
+		</template>
+  </BaseModal>
 </template>
 
 <script setup lang="ts">
@@ -485,7 +499,8 @@ import AddressSelector from '@/views/baseInfoManage/businessManagement/component
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import { getUserInfo } from '@/utils/util';
 import Upload from '@/components/common/imageWrapper.vue';
-import picker from '@/components/common/datePicker.vue'
+import picker from '@/components/common/datePicker.vue';
+import BaseModal from '@/components/common/BaseModal.vue';
 
 const formRef = ref()
 const loading = ref(false)
@@ -496,6 +511,8 @@ const state = reactive<any>({
 })
 const { form } = toRefs(state);
 const travelStore = useTravelStore();
+const confirmDialog = ref(false);
+const successDialog = ref(false);
 
 const validateFullRule = async (_rule: Rule, value: string) => {
   if (!value && form.value.derate) {
@@ -642,7 +659,7 @@ const changeTime = (date: string, dateString: string) => {
   form.value.endTime = dateString[1];
 }
 
-const submit = () => {
+const uploadData = () => {
   let queryData = form.value;
   if (userInfo.sysCompany.businessType == 'HOTEL') {
     queryData.hotelName = queryData.name;
@@ -663,10 +680,21 @@ const submit = () => {
   api[submitFunc.value](queryData).then((res: any) => {
     console.log('res:', res);
     message.success('保存成功');
+    successDialog.value = true;
     initOpeion();
   }).catch((err: any) => {
     console.error(err);
   })
+  confirmDialog.value = false;
+}
+
+const submit = () => {
+  if (['TRAVEL', 'HOTEL', 'TICKET', 'CATERING'].includes(userInfo.sysCompany.businessType)) {
+    confirmDialog.value = true;
+  } else {
+    uploadData();
+  }
+
 }
 
 onMounted(() => {
