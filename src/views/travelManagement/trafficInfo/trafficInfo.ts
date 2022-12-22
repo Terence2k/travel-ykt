@@ -89,6 +89,7 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 				title: '用车时段',
 				dataIndex: 'time',
 				key: 'time',
+				width: 300
 			},
 			{
 				title: '驾驶员',
