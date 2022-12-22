@@ -21,6 +21,7 @@
 					v-model="formState.startDate"
 					value-format="YYYY-MM-DD"
 					placeholder="请选择入园日期"
+					type="date"
 				/>
 			</a-form-item>
 
