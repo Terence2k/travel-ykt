@@ -10,12 +10,7 @@
 			<a-input placeholder="请输入接团旅行社" style="width: 200px" v-model:value="state.tableData.param.subTravelName" />
 		</SearchItem>
 		<SearchItem label="行程时间">
-			<a-date-picker
-				format="YYYY-MM-DD"
-				value-format="YYYY-MM-DD"
-				placeholder="请选择行程开始时间"
-				v-model:value="state.tableData.param.itineraryStartDate"
-			/>
+			<picker placeholder="请选择行程开始时间" v-model="state.tableData.param.itineraryStartDate" value-format="YYYY-MM-DD" />
 		</SearchItem>
 		<SearchItem label="行程单号">
 			<a-input placeholder="请输入行程单号" style="width: 200px" v-model:value="state.tableData.param.itineraryNo" />
@@ -205,6 +200,8 @@ import { accDiv, accMul } from '@/utils/compute';
 import api from '@/api';
 import { downloadFile } from '@/utils/util';
 import dayjs, { Dayjs } from 'dayjs';
+import picker from '@/components/common/datePicker.vue';
+
 const route = useRouter();
 const navigatorBar = useNavigatorBar();
 const strongBrushVisible = ref(false);
@@ -212,7 +209,7 @@ const Visible = ref(false);
 const selectStrongTouristVisible = ref(false);
 const checked = ref(false);
 const touristDetails = ref(false);
-const updateVisible=ref(false)
+const updateVisible = ref(false);
 // import { userList } from '@/api';
 const columns = [
 	{
@@ -566,7 +563,6 @@ const submit = () => {
 	console.log(data, '勾选');
 };
 
-
 // 点击改刷按钮
 const change = (item: any) => {
 	orderDetails(item.oid);
@@ -577,9 +573,9 @@ const change = (item: any) => {
 
 // 打开改刷勾选古维费应缴游客弹窗
 const changeSubmit = () => {
-	updateVisible.value=true;
+	updateVisible.value = true;
 	api.getItineraryTourist(state.tableData.details.itineraryId).then((res: any) => {
-		res.touristList.map((i:any)=>{
+		res.touristList.map((i: any) => {
 			if (i.purchased == 2 || i.purchased == 3 || i.purchased == 4) {
 				return (i.disabled = true);
 			}
@@ -587,7 +583,7 @@ const changeSubmit = () => {
 				return (i.checked = true);
 			}
 			return i;
-		})
+		});
 		state.touristData = res;
 	});
 };
@@ -601,7 +597,7 @@ const see = (id: any) => {
 };
 
 // 改刷提交
-const updateSubmit=()=>{
+const updateSubmit = () => {
 	let checkedList = state.touristData.touristList.filter((i: any) => i.checked == true);
 	if (checkedList.length == 0) {
 		message.warning('请勾选游客');
@@ -619,7 +615,7 @@ const updateSubmit=()=>{
 		strongBrushVisible.value = false;
 		onSearch();
 	});
-}
+};
 // 重置
 const reset = () => {
 	state.tableData.param.isReductionExist = '';
@@ -651,7 +647,6 @@ const gotoDetails = (oid: any) => {
 		},
 	});
 };
-
 
 onMounted(() => {
 	onSearch();

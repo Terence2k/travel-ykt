@@ -1,43 +1,46 @@
 <template>
   <CommonSearch>
-    <search-item label="委派状态">
-      <a-select placeholder="请选择委派状态" v-model:value="tableData.param.businessType" allowClear>
-        <a-select-option v-for="item in tourGuideTypeOption" :value="item.codeValue">{{ item.name }}
-        </a-select-option>
-      </a-select>
-    </search-item>
-    <search-item label="导游姓名">
-      <a-input v-model:value="tableData.param.name" placeholder="请输入导游姓名" />
-    </search-item>
-    <search-item label="导游电话">
-      <a-input v-model:value="tableData.param.name" placeholder="请输入导游电话" />
-    </search-item>
-    <search-item label="导游证号">
-      <a-input v-model:value="tableData.param.name" placeholder="请输入导游证号" />
-    </search-item>
-    <template #button>
-      <a-button @click="onSearch" v-permission="'查询'">查询</a-button>
-    </template>
-  </CommonSearch>
+		<SearchItem label="委派状态">
+      <a-select ref="select" style="width: 200px" placeholder="请选择委派状态" v-model:value="state.tableData.param.signStatus">
+        <a-select-option value="0">邀请中</a-select-option>
+				<a-select-option value="1">已签约</a-select-option>
+				<a-select-option value="-1">未签约</a-select-option>
+			</a-select>
+		</SearchItem>
+		<SearchItem label="导游姓名">
+			<a-input placeholder="请输入导游姓名" style="width: 200px" v-model:value="state.tableData.param.guideName"  />
+		</SearchItem>
+		<SearchItem label="导游电话">
+			<a-input placeholder="请输入导游电话" style="width: 200px" v-model:value="state.tableData.param.phone" />
+		</SearchItem>
+    <SearchItem label="导游证号">
+      <a-input placeholder="请输入导游证号" style="width: 200px" v-model:value="state.tableData.param.guideCertificateNo"/>
+    </SearchItem>
+		<template #button>
+			<a-button  v-permission="'重置'">重置</a-button>
+			<a-button class="btn"  v-permission="'查询'">查询</a-button>
+		</template>
+	</CommonSearch>
   <CommonTable :dataSource="tableData.data" :columns="columns">
     <template #button>
       <a-button type="primary" style="margin-right:20px" v-permission="'导出'">导出</a-button>
-      <a-button type="primary" @click="addTourGuide" v-permission="'委派新导游'">委派新导游</a-button>
+      <a-button type="primary" style="margin-right:20px" v-permission="'一机管同步'">一机管同步</a-button>
+      <a-button type="primary" @click="addTourGuide" v-permission="'手动签约'">手动签约</a-button>
     </template>
     <template #bodyCell="{ column, record }">
-      <template v-if="column.key === 'businessLicenseUrl'">
-        <a-image width="100%" :src="record.businessLicenseUrl" />
-      </template>
       <template v-if="column.key === 'action'">
-        <div class="action-btns">
+         <a-button type="primary" @click="viewProfile" style="margin-right:20px" v-permission="'查看资料'">查看资料</a-button>
+          <a-button type="primary" style="margin-right:20px" v-permission="'取消签约'">取消签约</a-button>
+          <a-button type="primary"  v-permission="'重新签约'">重新签约</a-button>
+        <!-- <div class="action-btns">
           <a @click="viewProfile" v-permission="'查看资料'">查看资料</a>
-          <a-popconfirm title="确认取消委派吗?" ok-text="确认" cancel-text="取消" @confirm="cancelDelegate(record.oid)">
-            <a v-permission="'取消委派'">取消委派</a>
+          <a-popconfirm title="确认取消签约吗?" ok-text="确认" cancel-text="取消" @confirm="cancelDelegate(record.oid)">
+            <a v-permission="'取消签约'">取消签约</a>
           </a-popconfirm>
-          <a-popconfirm title="确认撤回邀请吗?" ok-text="确认" cancel-text="取消" @confirm="cancelInvitation(record.oid)">
-            <a v-permission="'撤回邀请'">撤回邀请</a>
+          <a-popconfirm title="确认重新签约吗?" ok-text="确认" cancel-text="取消" @confirm="cancelInvitation(record.oid)">
+            <a v-permission="'重新签约'">重新签约</a>
           </a-popconfirm>
-        </div>
+        </div> -->
       </template>
     </template>
   </CommonTable>
@@ -124,6 +127,7 @@
 </template>
 
 <script setup lang="ts">
+import BaseModal from '@/components/common/BaseModal.vue';
 import CommonTable from '@/components/common/CommonTable.vue'
 import CommonPagination from '@/components/common/CommonPagination.vue'
 import CommonSearch from '@/components/common/CommonSearch.vue'
@@ -141,13 +145,10 @@ const state = reactive({
     param: {
       pageNo: 1,
       pageSize: 10,
-      businessType: undefined,
-      regionCode: undefined,
-      auditStatus: undefined,
-      name: undefined,
-      provinceId: undefined,
-      cityId: undefined,
-      areaId: undefined
+      guideCertificateNo:'',
+      guideName:'',
+      phone:'',
+      signStatus:''
     },
   },
   modalVisible: false
@@ -158,28 +159,38 @@ const { tableData, modalVisible } = toRefs(state)
 const columns = [
   {
     title: '导游姓名',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'guideName',
+    key: 'guideName',
   },
   {
     title: '导游电话',
-    dataIndex: 'businessTypeName',
-    key: 'businessTypeName',
+    dataIndex: 'phone',
+    key: 'phone',
   },
   {
     title: '导游证号',
-    dataIndex: 'regionName',
-    key: 'regionName',
+    dataIndex: 'guideCertificateNo',
+    key: 'guideCertificateNo',
   },
   {
     title: '身份证号',
-    dataIndex: 'creditCode',
-    key: 'creditCode',
+    dataIndex: 'certificateNo',
+    key: 'certificateNo',
   },
   {
     title: '委派状态',
     dataIndex: 'businessLicenseUrl',
     key: 'businessLicenseUrl',
+  },
+  {
+    title: '导游证有效期',
+    dataIndex: 'businessLicenseUrl',
+    key: 'businessLicenseUrl',
+  },
+  {
+    title: '委派到期时间',
+    dataIndex: 'businessLic',
+    key: 'businessLic',
   },
   {
     title: '操作',
