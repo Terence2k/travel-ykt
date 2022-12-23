@@ -225,6 +225,7 @@ const reset = () => {
 	state.tableData.param.ticketName = '';
 	state.tableData.param.putaway = null;
 	state.tableData.param.pageNo = 1;
+	search();
 };
 const search = () => {
 	state.tableData.param.pageNo = 1;

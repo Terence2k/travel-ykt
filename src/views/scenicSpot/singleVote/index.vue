@@ -179,6 +179,7 @@ const state = reactive({
 const reset = () => {
 	state.tableData.param.ticketName = '';
 	state.tableData.param.pageNo = 1;
+	initList();
 };
 //搜索
 const onHandleCurrentChange = (val: number) => {
