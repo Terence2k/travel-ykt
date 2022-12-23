@@ -21,7 +21,15 @@
 
 				<div class="item">
 					<span class="field-input item">核销日期</span>
-					<a-range-picker class="input-writeOff-date item" v-model:value="tableState.tableData.param.startTime" />
+					<!-- <a-range-picker class="input-writeOff-date item" v-model:value="tableState.tableData.param.startTime" /> -->
+					<picker
+						class="input-writeOff-date item"
+						v-model="tableState.tableData.param.startTime"
+						type="daterange"
+						start-placeholder="开始日期"
+						end-placeholder="结束日期"
+					>
+					</picker>
 				</div>
 
 				<div class="item">
@@ -83,6 +91,7 @@ import { ref } from 'vue';
 import dayjs from 'dayjs';
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
+import picker from '@/components/common/datePicker.vue';
 import api from '@/api';
 import { useScenicSpotOption } from '@/stores/modules/scenicSpot';
 

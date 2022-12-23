@@ -12,12 +12,7 @@
 			</search-item>
 
 			<search-item label="行程时间">
-				<a-range-picker
-					v-model:value="travelStore.auditList[chart].params.time"
-					show-time
-					format="YYYY-MM-DD HH:mm"
-					value-format="YYYY-MM-DD HH:mm"
-				/>
+        <picker v-model="travelStore.auditList[chart].params.time" type="datetimerange" start-placeholder="开始日期" end-placeholder="结束日期" value-format="YYYY-MM-DD HH:mm"/>
 			</search-item>
 
 			<template #button>
@@ -46,6 +41,7 @@ import { ROLE } from '@/constant';
 import { AuditField } from '@/type';
 import { cloneDeep } from 'lodash';
 import api from '@/api';
+import picker from '@/components/common/datePicker.vue';
 
 const userInfo = getUserInfo();
 const travelStore = useTravelStore();

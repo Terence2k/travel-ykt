@@ -20,27 +20,27 @@
               </a-select-option>
             </a-select>
           </a-form-item>
-          <a-form-item name="name" label="企业名称" v-show="formRules?.name">
+          <a-form-item name="name" label="企业名称" v-show="formKeys?.name">
             <a-input v-model:value="form.name" placeholder="请输入企业名称">
             </a-input>
           </a-form-item>
-          <a-form-item name="regionCode" label="企业所属地区" v-show="formRules?.regionCode">
+          <a-form-item name="regionCode" label="企业所属地区" v-show="formKeys?.regionCode">
             <address-selector placeholder="请选择所属地区" v-model:value="form.regionCode" @change="regionChange">
             </address-selector>
           </a-form-item>
-          <a-form-item name="addressDetail" label="企业详情地址" v-show="formRules?.addressDetail">
+          <a-form-item name="addressDetail" label="企业详情地址" v-show="formKeys?.addressDetail">
             <a-input v-model:value="form.addressDetail" placeholder="请输入企业详情地址">
             </a-input>
           </a-form-item>
-          <a-form-item name="legalPerson" label="法定代表人" v-show="formRules?.legalPerson">
+          <a-form-item name="legalPerson" label="法定代表人" v-show="formKeys?.legalPerson">
             <a-input v-model:value="form.legalPerson" placeholder="请输入法定代表人">
             </a-input>
           </a-form-item>
-          <a-form-item name="managementRange" label="经营范围" v-show="formRules?.managementRange">
+          <a-form-item name="managementRange" label="经营范围" v-show="formKeys?.managementRange">
             <a-textarea v-model:value="form.managementRange" placeholder="请输入经营范围" :rows="2">
             </a-textarea>
           </a-form-item>
-          <a-form-item name="registeredCapital" label="注册资本" v-show="formRules?.registeredCapital">
+          <a-form-item name="registeredCapital" label="注册资本" v-show="formKeys?.registeredCapital">
             <a-input v-model:value="form.registeredCapital" placeholder="请输入注册资本" suffix="万元">
             </a-input>
           </a-form-item>
@@ -53,53 +53,177 @@
               :format="dateFormat" :valueFormat="dateFormat" />
           </a-form-item> -->
           <el-form ref="dateFormRef" :model="form" :rules="dateRules" :label-width="labelWidth" label-position="left">
-            <el-form-item label="成立日期：" prop="establishTime">
+            <el-form-item label="成立日期：" prop="establishTime" v-show="formKeys?.establishTime">
               <picker v-model="form.establishTime" type="date" :value-format="dateFormat"
                 :disabled-date="disabledAfterDate" placeholder="请选择成立日期" style="width:100%"></picker>
             </el-form-item>
-            <el-form-item label="营业期限：" prop="businessTerm">
+            <el-form-item label="营业期限：" prop="businessTerm" v-show="formKeys?.businessTerm">
               <picker v-model="form.businessTerm" type="date" :value-format="dateFormat"
                 :disabled-date="disabledBeforeDate" placeholder="请选择营业期限" style="width:100%"></picker>
             </el-form-item>
           </el-form>
-          <a-form-item name="contactName" label="联系人" v-show="formRules?.contactName">
+          <a-form-item name="contactName" label="联系人" v-show="formKeys?.contactName">
             <a-input v-model:value="form.contactName" placeholder="请输入联系人">
             </a-input>
           </a-form-item>
-          <a-form-item name="phone" label="联系电话" v-show="formRules?.phone">
+          <a-form-item name="phone" label="联系电话" v-show="formKeys?.phone">
             <a-input v-model:value="form.phone" placeholder="请输入联系电话">
             </a-input>
           </a-form-item>
-          <a-form-item name="accountType" label="公司账户类型" v-show="formRules?.accountType">
+          <a-form-item name="accountType" label="公司账户类型" v-show="formKeys?.accountType">
             <a-radio-group v-model:value="form.accountType">
               <a-radio :value="1">对公账户</a-radio>
               <a-radio :value="2">对私账户</a-radio>
             </a-radio-group>
           </a-form-item>
-          <a-form-item name="bankAccountName" label="公司账户名称" v-show="formRules?.bankAccountName">
+          <a-form-item name="bankAccountName" label="公司账户名称" v-show="formKeys?.bankAccountName">
             <a-input v-model:value="form.bankAccountName" placeholder="请输入公司账户名称">
             </a-input>
           </a-form-item>
-          <a-form-item name="bank" label="开户行" v-show="formRules?.bank">
+          <a-form-item name="bank" label="开户行" v-show="formKeys?.bank">
             <a-input v-model:value="form.bank" placeholder="请输入开户行">
             </a-input>
           </a-form-item>
-          <a-form-item name="bankAccount" label="公司账号" v-show="formRules?.bankAccount">
+          <a-form-item name="bankAccount" label="公司账号" v-show="formKeys?.bankAccount">
             <a-input v-model:value="form.bankAccount" placeholder="请输入公司账号">
             </a-input>
           </a-form-item>
-          <a-form-item name="creditCode" label="统一社会信用代码" v-show="formRules?.creditCode">
+          <a-form-item name="creditCode" label="统一社会信用代码" v-show="formKeys?.creditCode">
             <a-input v-model:value="form.creditCode" placeholder="请输入统一社会信用代码">
             </a-input>
           </a-form-item>
-          <a-form-item name="businessLicenseUrl" label="营业执照" v-show="formRules?.businessLicenseUrl">
-            <!-- <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl" @done="uploadDown">
-            </img-upload> -->
+          <a-form-item name="businessLicenseUrl" label="营业执照" v-show="formKeys?.businessLicenseUrl">
             <Upload v-model="form.businessLicenseUrl" :maxCount="1" />
+          </a-form-item>
+          <div class="tag" v-show="['TRAVEL', 'HOTEL', 'TICKET', 'CATERING'].includes(queryParams.businessType || '')">
+            扩展信息：
+          </div>
+          <a-form-item name="manageUrl" label="经营许可证" v-show="formKeys?.manageUrl">
+            <Upload v-model="form.manageUrl" :maxCount="1" />
+          </a-form-item>
+          <a-form-item name="licenseNo" label="12301旅行社许可证号" v-show="formKeys?.licenseNo">
+            <a-input v-model:value="form.licenseNo" placeholder="请输入12301旅行社许可证号" allowClear>
+            </a-input>
+          </a-form-item>
+          <a-form-item name="isIndividual" label="是否为散客中心" v-show="formKeys?.isIndividual">
+            <a-radio-group v-model:value="form.isIndividual">
+              <a-radio :value="1">是</a-radio>
+              <a-radio :value="0">否</a-radio>
+            </a-radio-group>
+          </a-form-item>
+          <a-form-item name="individualDeparturePlace" label="散客常用出发地" v-show="formKeys?.individualDeparturePlace">
+            <a-input v-model:value="form.individualDeparturePlace" placeholder="请输入散客常用出发地" allowClear>
+            </a-input>
+          </a-form-item>
+          <a-form-item name="individualReturnPlace" label="散客常用返回地" v-show="formKeys?.individualReturnPlace">
+            <a-input v-model:value="form.individualReturnPlace" placeholder="请输入散客常用返回地" allowClear>
+            </a-input>
+          </a-form-item>
+          <a-form-item name="unitStatus" label="开业状态"
+            v-show="formKeys?.unitStatus && queryParams.businessType === 'HOTEL'">
+            <a-radio-group v-model:value="form.unitStatus">
+              <a-radio :value="1">开业</a-radio>
+              <a-radio :value="0">停业</a-radio>
+            </a-radio-group>
+          </a-form-item>
+          <a-form-item name="unitStatus" label="开业状态"
+            v-show="formKeys?.unitStatus && ['CATERING', 'TICKET'].includes(queryParams.businessType || '')">
+            <a-radio-group v-model:value="form.unitStatus">
+              <a-radio :value="true">开业</a-radio>
+              <a-radio :value="false">停业</a-radio>
+            </a-radio-group>
+          </a-form-item>
+          <a-form-item name="hotelStarId" label="星级" v-show="formKeys?.hotelStarId">
+            <a-select v-model:value="form.hotelStarId" placeholder="请选择酒店星级">
+              <a-select-option v-for="item in hotelStarList" :value="item.oid" :key="item.oid">
+                {{ item.starCode }}
+              </a-select-option>
+            </a-select>
+          </a-form-item>
+          <a-form-item name="scenicLevel" label="等级" v-show="formKeys?.scenicLevel">
+            <a-select v-model:value="form.scenicLevel" placeholder="请选择景区等级">
+              <a-select-option v-for="item in scenicLevelList" :value="item.levelId" :key="item.levelId">
+                {{ item.levelName }}
+              </a-select-option>
+            </a-select>
+          </a-form-item>
+          <a-form-item name="derate" label="是否支持减免" v-show="formKeys?.derate">
+            <a-radio-group v-model:value="form.derate">
+              <a-radio :value="true">是</a-radio>
+              <a-radio :value="false">否</a-radio>
+            </a-radio-group>
+          </a-form-item>
+          <a-form-item name="fullRule" label="减免规则" v-show="formKeys?.fullRule && formKeys?.reduceRule">
+            <div style="display: flex;align-items: start;">
+              <div style="display: flex;align-items: center;">
+                <span style="margin: 0 5px;">满</span>
+                <a-input placeholder="请配置数字" style="width: 150px;" v-model:value="form.fullRule"
+                  oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')" />
+              </div>
+              <a-form-item name="reduceRule">
+                <div style="display: flex;align-items: center;">
+                  <span style="margin: 0 5px;">减</span>
+                  <a-input placeholder="请配置数字" style="width: 150px;" v-model:value="form.reduceRule"
+                    oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')" />
+                </div>
+              </a-form-item>
+            </div>
+          </a-form-item>
+          <el-form :model="form" :label-width="labelWidth" label-position="left">
+            <el-form-item label="营业时间：" v-show="formKeys?.startTime && formKeys?.endTime">
+              <tPicker is-range v-model="form.rangeTime" @change="timePickerChange" format="HH:mm"
+                start-placeholder="请选择开始时间" end-placeholder="请选择结束时间" style="width:100%">
+              </tPicker>
+            </el-form-item>
+          </el-form>
+          <a-form-item name="shopPhone" label="店铺联系电话" v-show="formKeys?.shopPhone">
+            <a-input v-model:value="form.shopPhone" placeholder="请输入店铺联系电话" />
+          </a-form-item>
+          <a-form-item name="cateringDesc" label="其他" v-show="formKeys?.cateringDesc">
+            <a-input v-model:value="form.cateringDesc" placeholder="其他描述" />
+          </a-form-item>
+          <div class="tag" v-show="formKeys?.companyUserEmail">
+            银行二级账户开通信息（如果需要充值或收付款、提现，均需先开通银行二级账户）：
+          </div>
+          <a-form-item name="companyUserEmail" label="企业对公邮箱" v-show="formKeys?.companyUserEmail">
+            <a-input v-model:value="form.companyUserEmail" placeholder="请输入企业对公邮箱" />
+          </a-form-item>
+          <a-form-item name="postalCode" label="企业所在地邮编" v-show="formKeys?.postalCode">
+            <a-input v-model:value="form.postalCode" placeholder="请输入企业所在地邮编" />
+          </a-form-item>
+          <a-form-item name="businessLicenseNo" label="企业营业执照证件号码" v-show="formKeys?.businessLicenseNo">
+            <a-input v-model:value="form.businessLicenseNo" placeholder="请输入企业营业执照证件号码" />
+          </a-form-item>
+          <a-form-item name="contactEmail" label="企业联系人邮箱" v-show="formKeys?.contactEmail">
+            <a-input v-model:value="form.contactEmail" placeholder="请输入企业联系人邮箱" />
+          </a-form-item>
+          <a-form-item name="contactIdNumber" label="企业联系人身份证号码" v-show="formKeys?.contactIdNumber">
+            <a-input v-model:value="form.contactIdNumber" placeholder="请输入企业联系人身份证号码" />
+          </a-form-item>
+          <a-form-item name="legalPersonPhone" label="企业法人/负责人手机号" v-show="formKeys?.legalPersonPhone">
+            <a-input v-model:value="form.legalPersonPhone" placeholder="请输入企业法人/负责人手机号" />
+          </a-form-item>
+          <a-form-item name="legalPersonIdNumber" label="企业法人/负责人身份证号" v-show="formKeys?.legalPersonIdNumber">
+            <a-input v-model:value="form.legalPersonIdNumber" placeholder="请输入企业法人/负责人身份证号" />
+          </a-form-item>
+          <a-form-item name="bankAddressIds" label="企业开户行所在地" v-show="formKeys?.bankAddressIds">
+            <address-selector placeholder="请选择所属地区" v-model:value="form.bankAddressIds" :isProvince="false"
+              @change="regionChange1" />
+          </a-form-item>
+          <a-form-item name="bankNo" label="企业开户行行号" v-show="formKeys?.bankNo">
+            <a-input v-model:value="form.bankNo" placeholder="请输入企业开户行行号" />
+          </a-form-item>
+          <a-form-item name="bankReservePhone" label="企业开户行预留手机号" v-show="formKeys?.bankReservePhone">
+            <a-input v-model:value="form.bankReservePhone" placeholder="请输入企业开户行预留手机号" />
+          </a-form-item>
+          <a-form-item name="memberRegistrationPhone" label="企业会员注册手机号" v-show="formKeys?.memberRegistrationPhone">
+            <a-input v-model:value="form.memberRegistrationPhone" placeholder="请输入企业会员注册手机号" />
+          </a-form-item>
+          <a-form-item name="legalPersonUrl" label="法人身份证附件" v-show="formKeys?.legalPersonUrl">
+            <Upload v-model="form.legalPersonUrl" :maxCount="2" />
           </a-form-item>
           <a-form-item>
             <a-button type="primary" @click="submit" style="margin-right:20px" :loading="loading">保存</a-button>
-            <!-- <a-button @click="rest" style="margin-right:20px" :loading="loading">重置</a-button> -->
           </a-form-item>
         </a-form>
       </div>
@@ -112,6 +236,7 @@ import { CloseOutlined } from '@ant-design/icons-vue';
 import { useRouter, useRoute } from 'vue-router';
 import type { Rule } from 'ant-design-vue/es/form';
 import {
+  commonFormRules5,
   commonFormRules6,
   commonFormRules9,
   commonFormRules7,
@@ -120,14 +245,18 @@ import {
   condition2,
   condition3,
   condition4,
+  condition5,
   disabledBeforeDate,
-  disabledAfterDate
+  disabledAfterDate,
+  getKeylist,
+  businessTypeOption
 } from '@/views/baseInfoManage/businessManagement/super/common';
 import { message } from 'ant-design-vue';
-import imgUpload from '@/views/baseInfoManage/businessManagement/components/imgUpload.vue';
 import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
 import api from '@/api';
 import picker from '@/components/common/datePicker.vue'
+import tPicker from '@/components/common/timePicker.vue'
+import Upload from '@/components/common/imageWrapper.vue';
 const router = useRouter();
 const route = useRoute();
 const isRefresh = ref('0')
@@ -140,6 +269,7 @@ const back = () => {
   })
 }
 type detailsType = {
+  oid?: number,
   businessType?: string,
   name?: string,
   regionCode?: (string | number)[],
@@ -159,10 +289,40 @@ type detailsType = {
   bank?: string,
   bankAccount?: string,
   creditCode?: string | number,
+  licenseNo?: string,
+  isIndividual?: number,
+  individualDeparturePlace?: string,
+  individualReturnPlace?: string,
+  legalPersonUrl?: string,
   businessLicenseUrl?: string,
+  manageUrl?: string,
   account?: string,
   password?: string,
-  checkPass?: string
+  checkPass?: string,
+  unitStatus?: number | boolean,
+  hotelStarId?: string,
+  derate?: number,
+  fullRule?: number,
+  reduceRule?: number,
+  scenicLevel?: string,
+  companyUserEmail?: string,
+  postalCode?: string,
+  businessLicenseNo?: string,
+  contactEmail?: string,
+  contactIdNumber?: string,
+  legalPersonPhone?: string,
+  legalPersonIdNumber?: string,
+  bankAddressIds?: (string | number)[],
+  bankAccountProvince?: string | number,
+  bankAccountCity?: string | number,
+  bankNo?: string,
+  bankReservePhone?: string,
+  memberRegistrationPhone?: string,
+  shopPhone?: string,
+  cateringDesc?: string,
+  rangeTime?: string[],
+  startTime?: string,
+  endTime?: string,
 }
 const form = ref<detailsType>({
   regionCode: [],
@@ -171,7 +331,6 @@ const form = ref<detailsType>({
   checkPass: '',
   accountType: 1,
   name: undefined,
-  businessLicenseUrl: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
 })
 type queryParamsType = {
   oid?: string,
@@ -179,20 +338,8 @@ type queryParamsType = {
 }
 const props = defineProps<queryParamsType>()
 const queryParams = reactive<queryParamsType>({})
-const businessTypeOption = [
-  { codeValue: 'HOTEL', name: '酒店' },
-  { codeValue: 'CATERING', name: '餐饮' },
-  { codeValue: 'TICKET', name: '景区' },
-  { codeValue: 'TRAVEL', name: '旅行社' },
-  { codeValue: 'GROUP', name: '集团' },
-  { codeValue: 'YKT', name: '一卡通' },
-  { codeValue: 'SUPERVISE', name: '监理' },
-  { codeValue: 'ASSOCIATION', name: '协会' },
-  { codeValue: 'CULTURE_BUREAU', name: '文旅局' },
-  { codeValue: 'ANCIENT_UYGUR', name: '古维管理部门' }
-];
 const dateRules = {
-  establishTime: [
+  /* establishTime: [
     {
       type: 'date',
       required: true,
@@ -207,38 +354,88 @@ const dateRules = {
       message: '请选择营业期限',
       trigger: 'change',
     },
-  ],
+  ], */
 }
-const labelWidth = '160px'
+const labelWidth = '180px'
 const labelCol = { style: { width: labelWidth } }
 const formRef = ref();
 const dateFormRef = ref();
 const loading = ref(false);
 const dateFormat = 'YYYY-MM-DD';
 const formRules = ref<Record<string, Rule[]>>({})
-formRules.value = commonFormRules6
-watch(
-  () => form.value.businessType,
-  (newVal) => {
-    if (newVal) {
-      if (condition1.includes(newVal)) {
-        formRules.value = commonFormRules6
-      } else if (condition2.includes(newVal)) {
-        formRules.value = commonFormRules9
-      } else if (condition3.includes(newVal)) {
-        formRules.value = commonFormRules7
-      } else if (condition4.includes(newVal)) {
-        formRules.value = commonFormRules8
-      }
-    }
-  })
-const uploadDown = () => {
-  form.value.businessLicenseUrl = form.value.businessLicenseUrl ? form.value.businessLicenseUrl[0] : undefined
+const formKeys = ref();
+const hotelStarList = ref();
+const scenicLevelList = ref();
+
+// 获取酒店星级下拉数据
+const getHotelStarList = async () => {
+  hotelStarList.value = await api.getHotelStarList();
+}
+// 获取景区等级下拉数据
+const getScenicLevels = async () => {
+  scenicLevelList.value = await api.getScenicLevels();
 }
 const regionChange = () => {
   form.value.provinceId = form.value.regionCode ? form.value.regionCode[0] : undefined
   form.value.cityId = form.value.regionCode ? form.value.regionCode[1] : undefined
   form.value.areaId = form.value.regionCode ? form.value.regionCode[2] : undefined
+}
+const regionChange1 = () => {
+  form.value.bankAccountProvince = form.value.bankAddressIds ? form.value.bankAddressIds[0] : undefined
+  form.value.bankAccountCity = form.value.bankAddressIds ? form.value.bankAddressIds[1] : undefined
+}
+const timePickerChange = () => {
+  if (form.value.rangeTime) {
+    form.value.startTime = form.value.rangeTime[0]
+    form.value.endTime = form.value.rangeTime[1]
+  } else {
+    form.value.startTime = ''
+    form.value.endTime = ''
+  }
+}
+const getParams = () => {
+  form.value.oid = queryParams.oid
+  if (queryParams.businessType === 'TRAVEL') {
+    // 旅行社
+    const {
+      licenseNo,
+      isIndividual,
+      individualDeparturePlace,
+      individualReturnPlace
+    } = form.value
+    const travelAgencyInformationBo = {
+      licenseNo,
+      isIndividual,
+      individualDeparturePlace,
+      individualReturnPlace
+    }
+    return {
+      ...toRaw(form.value),
+      travelAgencyInformationBo
+    }
+  } else if (queryParams.businessType === 'CATERING') {
+    // 餐厅
+    const {
+      startTime,
+      endTime,
+      shopPhone,
+      cateringDesc,
+      unitStatus
+    } = form.value
+    const cateringInfoBO = {
+      startTime,
+      endTime,
+      shopPhone,
+      cateringDesc,
+      unitStatus
+    }
+    return {
+      ...toRaw(form.value),
+      cateringInfoBO
+    }
+  } else {
+    return toRaw(form.value)
+  }
 }
 const submit = () => {
   const a = Promise.all([
@@ -246,7 +443,8 @@ const submit = () => {
     dateFormRef.value?.validate()
   ])
   a.then(async () => {
-    let res = await api.editCompany(toRaw(form.value))
+    const params = getParams()
+    let res = await api.editCompany(params)
     if (res) {
       isRefresh.value = '1'
       message.success('编辑企业信息成功！')
@@ -266,9 +464,34 @@ const getData = async () => {
     } else {
       form.value.regionCode = []
     }
+    if (res.bankAccountProvince && res.bankAccountCity) {
+      form.value.bankAddressIds = [res.bankAccountProvince, res.bankAccountCity]
+    } else {
+      form.value.bankAddressIds = []
+    }
+    if (res.startTime && res.endTime) {
+      form.value.rangeTime = [res.startTime, res.endTime]
+    } else {
+      form.value.rangeTime = []
+    }
   }
 }
-onActivated(() => {
+const getFormRules = (type: string) => {
+  /* if (condition1.includes(type)) {
+    formRules.value = commonFormRules6
+  } else if (condition2.includes(type)) {
+    formRules.value = commonFormRules9
+  } else if (condition3.includes(type)) {
+    formRules.value = commonFormRules7
+  } else if (condition4.includes(type)) {
+    formRules.value = commonFormRules8
+  } else if (condition5.includes(type)) {
+    // 旅行社
+    formRules.value = commonFormRules5
+  } */
+  formKeys.value = getKeylist(type, 'edit')
+}
+const initOpeion = () => {
   isRefresh.value = '0'
   if (props.oid) {
     let key: keyof queryParamsType;
@@ -277,9 +500,18 @@ onActivated(() => {
         queryParams[key] = JSON.parse(decodeURIComponent(props[key] as string))
       }
     }
+    queryParams.businessType && getFormRules(queryParams.businessType)
     getData()
+    queryParams.businessType === 'HOTEL' && getHotelStarList();
+    queryParams.businessType === 'TICKET' && getScenicLevels();
   }
-})
+}
+
+watch(() => props.oid, (newVal) => {
+  if (newVal) {
+    initOpeion()
+  }
+}, { immediate: true })
 onDeactivated(() => {
   formRef.value.resetFields()
   dateFormRef.value?.resetFields()
@@ -315,6 +547,10 @@ onDeactivated(() => {
     .form_body {
       margin-top: 20px;
       width: 60%;
+
+      .tag {
+        padding: 24px 0;
+      }
     }
   }
 }

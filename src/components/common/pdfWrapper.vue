@@ -164,7 +164,11 @@ watch(
 	}
 );
 onMounted(() => {
-  if (props.modelValue) handleImage(props.modelValue);
+  if (props.modelValue) {
+    unHandleImage.value = props.modelValue?.split(',');
+    tempData.value = props.modelValue?.split(',');
+    handleImage(props.modelValue)
+  };
 })
 </script>
 <style lang="less" scoped>
