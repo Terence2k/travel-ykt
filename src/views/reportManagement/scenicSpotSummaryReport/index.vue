@@ -12,8 +12,17 @@
 		<search-item label="门票名称" style="width: 280px">
 			<a-input v-model:value="state.tableData.param.ticketName" placeholder="请输入门票名称" allowClear style="width: 180px" />
 		</search-item>
-		<search-item label="结算时间" style="width: 280px">
-			<a-range-picker v-model:value="state.times" @change="timeChange" />
+		<search-item label="结算时间" style="width: 350px">
+			<picker
+				v-model="state.tableData.settlementStartTimeList"
+				type="daterange"
+				value-format="YYYY-MM-DD HH:mm:ss"
+				start-placeholder="开始日期"
+				end-placeholder="结束日期"
+				@change="timeChange"
+				style="width: 180px"
+			>
+			</picker>
 		</search-item>
 		<!-- <search-item label="景区名称" style="width: 280px">
 			<a-input v-model:value="state.tableData.param.itineraryNo" placeholder="请输入景区名称" allowClear style="width: 180px" />
@@ -61,6 +70,7 @@ import SearchItem from '@/components/common/CommonSearchItem.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import { settlementOptions } from '@/stores/modules/settlement';
 import type { TableColumnsType } from 'ant-design-vue';
+import picker from '@/components/common/datePicker.vue';
 import api from '@/api';
 const options = settlementOptions();
 interface StateType {
@@ -73,6 +83,7 @@ interface TableDataType {
 	data: Array<DataType>;
 	total: number;
 	loading: boolean;
+	settlementStartTimeList: Array<any>;
 }
 interface ParamType {
 	scenicId: null | number; //关联景区id
@@ -229,6 +240,7 @@ const state = reactive<StateType>({
 		data: [],
 		total: 11,
 		loading: false,
+		settlementStartTimeList: [],
 	},
 	viewList: [],
 	times: [],
@@ -392,13 +404,24 @@ const getViewList = async () => {
 	state.viewList = result;
 	console.log(state.viewList, `state.viewList`);
 };
+// const timeChange = (arr: any) => {
+// 	if (arr && arr.length > 0) {
+// 		state.tableData.param.settlementStartTime = arr[0]['$d'];
+// 		state.tableData.param.settlementEndTime = arr[1]['$d'];
+// 	} else {
+// 		state.tableData.param.settlementStartTime = null;
+// 		state.tableData.param.settlementEndTime = null;
+// 	}
+// };
 const timeChange = (arr: any) => {
+	console.log(arr);
 	if (arr && arr.length > 0) {
-		state.tableData.param.settlementStartTime = arr[0]['$d'];
-		state.tableData.param.settlementEndTime = arr[1]['$d'];
+		// const timeList: any = [arr[0], arr[1]];
+		state.tableData.param.settlementEndTime = Date.parse(arr[0]);
+		state.tableData.param.settlementStartTime = Date.parse(arr[1]);
 	} else {
-		state.tableData.param.settlementStartTime = null;
 		state.tableData.param.settlementEndTime = null;
+		state.tableData.param.settlementStartTime = null;
 	}
 };
 onMounted(() => {

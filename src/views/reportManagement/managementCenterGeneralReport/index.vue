@@ -19,8 +19,17 @@
 				</a-select-option>
 			</a-select>
 		</search-item>
-		<search-item label="结算时间" style="width: 280px">
-			<a-range-picker v-model:value="state.times" @change="timeChange" style="width: 180px" />
+		<search-item label="结算时间" style="width: 350px">
+			<picker
+				v-model="state.tableData.settlementStartTimeList"
+				type="daterange"
+				value-format="YYYY-MM-DD HH:mm:ss"
+				start-placeholder="开始日期"
+				end-placeholder="结束日期"
+				@change="timeChange"
+				style="width: 180px"
+			>
+			</picker>
 		</search-item>
 		<template #button>
 			<a-button @click="initList" v-permission="`查询`">查询</a-button>
@@ -64,6 +73,7 @@
 
 <script setup lang="ts">
 import CommonSearch from '@/components/common/CommonSearch.vue';
+import picker from '@/components/common/datePicker.vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
@@ -455,13 +465,24 @@ onMounted(() => {
 	initList();
 	// getViewList();
 });
+// const timeChange = (arr: any) => {
+// 	if (arr && arr.length > 0) {
+// 		state.tableData.param.settlementTimeStart = arr[0]['$d'];
+// 		state.tableData.param.settlementTimeEnd = arr[1]['$d'];
+// 	} else {
+// 		state.tableData.param.settlementTimeStart = null;
+// 		state.tableData.param.settlementTimeEnd = null;
+// 	}
+// };
 const timeChange = (arr: any) => {
+	console.log(arr);
 	if (arr && arr.length > 0) {
-		state.tableData.param.settlementTimeStart = arr[0]['$d'];
-		state.tableData.param.settlementTimeEnd = arr[1]['$d'];
+		// const timeList: any = [arr[0], arr[1]];
+		state.tableData.param.settlementEndTime = Date.parse(arr[0]);
+		state.tableData.param.settlementStartTime = Date.parse(arr[1]);
 	} else {
-		state.tableData.param.settlementTimeStart = null;
-		state.tableData.param.settlementTimeEnd = null;
+		state.tableData.param.settlementEndTime = null;
+		state.tableData.param.settlementStartTime = null;
 	}
 };
 </script>
