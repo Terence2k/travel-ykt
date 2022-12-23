@@ -94,7 +94,7 @@ const columns = [
 		title: '操作',
 		key: 'action',
 		fixed: 'right',
-		width: '140px',
+		width: '200px',
 	},
 ];
 const state = reactive({
@@ -144,7 +144,7 @@ const BaseModalmethods = {
 	},
 	showRecording:(row:any)=>{
 		router.push({
-			path: '/baseInfo/sms_Management/preview',
+			path: '/baseInfo/sms_Management/recording',
 			query: { templateId: row.oid },
 		});
 	},
@@ -172,7 +172,6 @@ const del = (row:any) => {
  api.deleteSysSmsTemplate(row.oid).then((res:any)=>{
 	message.success('删除成功')
 	onSearch()
-	return
  })
 }
 
