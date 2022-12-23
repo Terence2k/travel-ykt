@@ -36,6 +36,7 @@ import { getKeylist, flat } from '@/views/baseInfoManage/businessManagement/supe
 import api from '@/api';
 import { string } from 'vue-types';
 import { awsGetPreSignedUrl } from '@/utils/awsUpload';
+import dayjs, { Dayjs } from 'dayjs';
 const router = useRouter();
 const route = useRoute();
 type queryParamsType = {
@@ -144,6 +145,14 @@ const getData = async () => {
       detailsArrList.value[key] = await getURL(res[key])
     } else if (key === 'bankAddressIds') {
       detailsArrList.value['bankAddressIds'] = [parseInt(res.bankAccountProvince), parseInt(res.bankAccountCity)]
+    } else if (key === 'rangeTime') {
+      if (res.endTime && res.startTime) {
+        const startDate = dayjs(res.startTime).format('YYYY-MM-DD HH:mm')
+        const endDate = dayjs(res.endTime).format('YYYY-MM-DD HH:mm')
+        const startTime = startDate.split(' ')[1]
+        const endTime = endDate.split(' ')[1]
+        detailsArrList.value['rangeTime'] = `${startTime} 至 ${endTime}`
+      }
     } else {
       detailsArrList.value[key] = res[key]
     }

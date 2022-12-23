@@ -3,11 +3,13 @@
 		<CommonTable :dataSource="tableList" :columns="columnsCount" :scrollY="false" bordered class="left">
 			<template #bodyCell="{ column, record, index }">
 				<template v-if="column.key === 'discount'">
-					<span v-if="record.discount">{{ record.discount * 10 }}%</span>
+					<span v-if="typeof record.discount !== 'number' && record.discount">{{ record.discount * 10 }}%</span>
+					<span v-else-if="record.discount === 0"> 0</span>
 					<span v-else> --</span>
 				</template>
 				<template v-if="column.key === 'discountPrice'">
-					<span v-if="record.discountPrice">{{ record.discountPrice / 100 }}</span>
+					<span v-if="typeof record.discountPrice !== 'number' && record.discountPrice">{{ record.discountPrice / 100 }}</span>
+					<span v-else-if="record.discountPrice === 0"> 0</span>
 					<span v-else> --</span>
 				</template>
 				<template v-if="column.key === 'action'">

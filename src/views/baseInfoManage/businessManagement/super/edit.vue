@@ -169,10 +169,13 @@
               </a-form-item>
             </div>
           </a-form-item>
-          <a-form-item name="rangeTime" label="营业时间" v-show="formKeys?.startTime && formKeys?.endTime">
-            <a-time-range-picker v-model:value="form.rangeTime" @change="timePickerChange"
-              :placeholder="['请选择开始时间', '请选择结束时间']" value-format="HH:mm" format="HH:mm" style="width:100%" />
-          </a-form-item>
+          <el-form :model="form" :label-width="labelWidth" label-position="left">
+            <el-form-item label="营业时间：" v-show="formKeys?.startTime && formKeys?.endTime">
+              <tPicker is-range v-model="form.rangeTime" @change="timePickerChange" format="HH:mm"
+                start-placeholder="请选择开始时间" end-placeholder="请选择结束时间" style="width:100%">
+              </tPicker>
+            </el-form-item>
+          </el-form>
           <a-form-item name="shopPhone" label="店铺联系电话" v-show="formKeys?.shopPhone">
             <a-input v-model:value="form.shopPhone" placeholder="请输入店铺联系电话" />
           </a-form-item>
@@ -252,6 +255,7 @@ import { message } from 'ant-design-vue';
 import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
 import api from '@/api';
 import picker from '@/components/common/datePicker.vue'
+import tPicker from '@/components/common/timePicker.vue'
 import Upload from '@/components/common/imageWrapper.vue';
 const router = useRouter();
 const route = useRoute();

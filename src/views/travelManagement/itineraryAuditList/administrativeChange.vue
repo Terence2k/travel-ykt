@@ -183,9 +183,11 @@
 	const onSearch = async () => {
 		travelStore.auditList.administrativeChange.params.status = AuditStaus.AdministrativeChange;
 		const res = await travelStore.getAuditList(travelStore.auditList.administrativeChange.params);
-    res.content.forEach( async (item: any) => {
+    let result = res.content.map( async (item: any) => {
       item.auditInfo = await getAuditButton(item.auditUuid);
-    })
+      return item;
+    });
+    res.content = await Promise.all(result);
 		travelStore.setAuditList(res, 'administrativeChange');
 	}
   const cancel = (): any => {
