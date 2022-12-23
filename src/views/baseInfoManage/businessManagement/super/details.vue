@@ -16,7 +16,7 @@
             <td class="value" v-if="['manageUrl', 'businessLicenseUrl', 'legalPersonUrl'].includes(key) && value">
               <a-image width="200px" :src="value" />
             </td>
-            <td class="value" v-else-if="key === 'regionCode'">
+            <td class="value" v-else-if="['regionCode', 'bankAddressIds'].includes(key)">
               <address-selector v-if="value[0]" key="oldadd" style="width:30%" :value="value" disabled>
               </address-selector>
             </td>
@@ -142,6 +142,8 @@ const getData = async () => {
       }
     } else if (['manageUrl', 'businessLicenseUrl', 'legalPersonUrl'].includes(key)) {
       detailsArrList.value[key] = await getURL(res[key])
+    } else if (key === 'bankAddressIds') {
+      detailsArrList.value['bankAddressIds'] = [parseInt(res.bankAccountProvince), parseInt(res.bankAccountCity)]
     } else {
       detailsArrList.value[key] = res[key]
     }
