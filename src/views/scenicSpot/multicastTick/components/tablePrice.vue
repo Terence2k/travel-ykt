@@ -41,7 +41,17 @@
 					<div class="set-wrap">
 						<p>
 							<span class="label">时间：</span>
-							<a-range-picker v-model:value="dateRange" :disabled-date="disabledDate" />
+							<!-- <a-range-picker v-model:value="dateRange" :disabled-date="disabledDate" /> -->
+
+							<picker
+								v-model="dateRange"
+								type="daterange"
+								value-format="YYYY-MM-DD"
+								format="YYYY-MM-DD"
+								:disabled-date="disabledDate"
+								start-placeholder="开始日期"
+								end-placeholder="结束日期"
+							></picker>
 						</p>
 						<!-- <p>
 							<span class="label">库存:</span>
@@ -76,6 +86,8 @@ import { shijianYMD, getAllDateCN, nextYear } from '@/utils/formatTimes';
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import { accDiv } from '@/utils/compute.js';
+import picker from '@/components/common/datePicker.vue';
+
 const route = useRouter();
 const loading = ref(false);
 // 数据

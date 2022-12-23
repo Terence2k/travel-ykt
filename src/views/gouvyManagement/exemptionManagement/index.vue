@@ -3,7 +3,7 @@
 		<CommonSearch>
 			<search-item label="出团时间">
 				<a-space direction="vertical">
-					<a-date-picker v-model:value="gouvyStore.gouvyList[chart].params.itineraryStartDate" />
+					<picker placeholder="请选择出团时间" v-model="gouvyStore.gouvyList[chart].params.itineraryStartDate"  value-format="YYYY-MM-DD"/>
 				</a-space>
 			</search-item>
 			<search-item label="行程单号">
@@ -40,6 +40,8 @@ import { useGouvyStore, gouvyListParams } from '@/stores/modules/gouvy';
 import { cloneDeep } from 'lodash';
 import { Field } from './type/index';
 import { getUserInfo, getTabPermission } from '@/utils/util';
+import picker from '@/components/common/datePicker.vue';
+
 const gouvyStore = useGouvyStore();
 const activeKey = ref(GouvyStatus.waits);
 const check = ref(false);

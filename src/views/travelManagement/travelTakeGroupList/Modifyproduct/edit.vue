@@ -6,26 +6,34 @@
 		<div class="item-container">
 			<div class="title" v-if="tiemformshow == false">
 				行程时间
-				<span style="margin-left: 40px" >{{ startTime  }} —— {{ endTime }}</span>
+				<span style="margin-left: 40px">{{ startTime }} —— {{ endTime }}</span>
 				<span class="time_btn" @click="changTiemshow">修改时间</span>
 			</div>
-			<div v-else style="margin-top:20px">
+			<div v-else style="margin-top: 20px">
 				<a-form :model="timeformState" ref="timeformRef">
-				<a-form-item >
-					<span slot="label" class="title" >行程时间</span>
-					<a-range-picker
-					style="margin-left: 40px;"
-					:disabled-date="disabledDate"
-					v-model:value="timeformState.time"
-					show-time
-					format="YYYY-MM-DD HH:mm:ss"
-					value-format="YYYY-MM-DD HH:mm:ss"
-				/>				
-				<span class="time_btn"  @click="changTiemshow">确定</span>
-				</a-form-item>
-			</a-form>
+					<a-form-item>
+						<span slot="label" class="title">行程时间</span>
+						<picker
+							style="margin-left: 40px"
+							v-model="timeformState.startTime"
+							value-format="YYYY-MM-DD HH:mm:ss"
+							:disabled-hours="() => disabledHours(travelStore.teamTime[0], timeformState.startTime)"
+							:disabled-minutes="() => disabledMinutes(travelStore.teamTime[0], timeformState.startTime)"
+							:disabled-seconds="() => disabledSeconds(travelStore.teamTime[0], timeformState.startTime)"
+							type="datetime"
+						/> —— 
+						<picker
+							v-model="timeformState.endTime"
+							value-format="YYYY-MM-DD HH:mm:ss"
+							:disabled-hours="() => disabledHours(travelStore.teamTime[1], timeformState.endTime)"
+							:disabled-minutes="() => disabledMinutes(travelStore.teamTime[1], timeformState.endTime)"
+							:disabled-seconds="() => disabledSeconds(travelStore.teamTime[1], timeformState.endTime)"
+							type="datetime"
+						/>
+						<span class="time_btn" @click="changTiemshow">确定</span>
+					</a-form-item>
+				</a-form>
 			</div>
-			
 
 			<p class="title">酒店住宿</p>
 			<CommonTable :columns="hotelColumns" :dataSource="hotelData" :scrollY="false">
@@ -37,12 +45,12 @@
 					</template>
 					<template v-if="column.key === 'orderFee'">
 						<div>
-							{{ accDiv(record.orderFee,100) }}
+							{{ accDiv(record.orderFee, 100) }}
 						</div>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a class="item" @click="add(record.oid ? 'addHotelPop' : 'productRow', 'addHotelPop', record.oid ? record.oid :null ,record)">编辑</a>
+							<a class="item" @click="add(record.oid ? 'addHotelPop' : 'productRow', 'addHotelPop', record.oid ? record.oid : null, record)">编辑</a>
 							<a class="item" @click="delhotel(index)">删除</a>
 						</div>
 					</template>
@@ -63,17 +71,17 @@
 					</template>
 					<template v-if="column.key === 'totalFee'">
 						<div>
-							{{ accDiv(record.reservePeopleCount * record.unitPrice , 100) }}
+							{{ accDiv(record.reservePeopleCount * record.unitPrice, 100) }}
 						</div>
 					</template>
 					<template v-if="column.key === 'unitPrice'">
 						<div>
-							{{ accDiv(record.unitPrice , 100) }}
+							{{ accDiv(record.unitPrice, 100) }}
 						</div>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a class="item" @click="add(record.oid ? 'addTicketPop' : 'productRow', 'addTicketPop', record.oid ,record)">编辑</a>
+							<a class="item" @click="add(record.oid ? 'addTicketPop' : 'productRow', 'addTicketPop', record.oid, record)">编辑</a>
 							<a class="item" @click="delticket(index)">删除</a>
 						</div>
 					</template>
@@ -87,13 +95,22 @@
 	</div>
 	<addHotel :productRow="editId.productRow" :hotelId="editId.addHotelPop" v-model="addHotelPop" />
 	<addTicket :productRow="editId.productRow" :ticketId="editId.addTicketPop" v-model="addTicketPop" />
-
 </template>
 <script lang="ts" setup>
 import CommonTable from '@/components/common/CommonTable.vue';
 import addHotel from './addHotel.vue';
 import addTicket from './addTicket.vue';
-
+import picker from '@/components/common/datePicker.vue';
+import {
+	disabledRangeTime,
+	range,
+	isPositiveInteger,
+	selectSpecialDateRange,
+	isOneHundred,
+	disabledHours,
+	disabledMinutes,
+	disabledSeconds,
+} from '@/utils';
 import { useTraveInfo } from './edit';
 import { accDiv, accMul } from '@/utils/compute';
 import { GroupStatus } from '@/enum';
@@ -125,7 +142,8 @@ const {
 	timeformRef,
 	delhotel,
 	delticket,
-	changTiemshow
+	changTiemshow,
+	travelStore,
 } = useTraveInfo(props, emits);
 onMounted(() => {
 	onSearch();
@@ -173,7 +191,7 @@ onMounted(() => {
 	margin-top: 20px;
 	color: black;
 }
-.time_btn{
+.time_btn {
 	margin-left: 40px;
 	font-size: 14px;
 	cursor: pointer;
