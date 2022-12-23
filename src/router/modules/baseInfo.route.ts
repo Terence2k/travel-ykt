@@ -179,7 +179,7 @@ export default [
 							isDetail: true,
 						},
 					},
-					{
+					/* {
 						path: 'preview',
 						component: () => import('@/views/baseInfoManage/smsManagement/preview.vue'),
 						name: 'preview',
@@ -189,7 +189,7 @@ export default [
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
-					},
+					}, */
 				],
 			},
 		],

@@ -189,7 +189,8 @@ import {
   condition4,
   condition5,
   disabledBeforeDate,
-  disabledAfterDate
+  disabledAfterDate,
+  businessTypeOption
 } from '@/views/baseInfoManage/businessManagement/super/common'
 const router = useRouter();
 const route = useRoute();
@@ -272,7 +273,7 @@ let validatePass2 = async (_rule: Rule, value: string) => {
   }
 };
 const dateRules = {
-  establishTime: [
+  /* establishTime: [
     {
       type: 'date',
       required: true,
@@ -287,7 +288,7 @@ const dateRules = {
       message: '请选择营业期限',
       trigger: 'change',
     },
-  ],
+  ], */
 }
 const common: Record<string, Rule[]> = {
   accountPhone: [{ required: true, trigger: 'blur', message: '请输入超级管理员手机号' }],
@@ -312,20 +313,7 @@ onDeactivated(() => {
   formRef.value?.resetFields()
   formRules.value = formRules6
 })
-const businessTypeOption = [
-  { codeValue: 'HOTEL', name: '酒店' },
-  { codeValue: 'CATERING', name: '餐饮' },
-  { codeValue: 'TICKET', name: '景区' },
-  { codeValue: 'TRAVEL', name: '旅行社' },
-  { codeValue: 'GROUP', name: '集团' },
-  { codeValue: 'YKT', name: '一卡通' },
-  { codeValue: 'SUPERVISE', name: '监理' },
-  { codeValue: 'ASSOCIATION', name: '协会' },
-  { codeValue: 'CULTURE_BUREAU', name: '文旅局' },
-  { codeValue: 'ANCIENT_UYGUR', name: '古维管理部门' },
-  // { codeValue: 'ANCIENT_UYGUR', name: '古维管理部门' },
-  { codeValue: 'INSURANCE_COMPANY', name: '保险公司' },
-];
+
 /* const businessManageOptions = useBusinessManageOption();
 const initOpeion = async () => {
   await businessManageOptions.getBusinessTypeOption();
