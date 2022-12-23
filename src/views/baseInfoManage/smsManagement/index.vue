@@ -19,7 +19,7 @@
 					<div class="action-btns">
 						<a @click="BaseModalmethods.addUpdate(record)" v-permission="'编辑'">编辑</a>
 						<a @click="BaseModalmethods.showPreview(record)" v-permission="'发送短信'">发送短信</a>
-						<a @click="BaseModalmethods.showRecording(record)" v-permission="'发送记录'">发送记录</a>
+						<!-- <a @click="BaseModalmethods.showRecording(record)" v-permission="'发送记录'">发送记录</a> -->
 						<a @click="del(record)" v-permission="'删除'">删除</a>
 					</div>
 				</template>
