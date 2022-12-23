@@ -59,3 +59,43 @@ export function deleteSysSmsTemplate(templateId:any) {
 		method: 'delete',
 	});
 }
+
+// 发送阅览短信
+export function sendSmsRead(data:any) {
+	return request({
+		url: `${commonPart}/smsTemplate/sendSmsRead`,
+		method: 'post',
+		data
+	});
+}
+
+// 群发短信
+export function sendSmsByManual(data:any) {
+	return request({
+		url: `${commonPart}/smsTemplate/sendSmsByManual`,
+		method: 'post',
+		data
+	});
+}
+
+//导入接收人信息
+export function importSmsSendPerson(data:any) {
+	return request({
+		url: `${commonPart}/smsTemplate/importSmsSendPerson`,
+		method: 'post',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		data
+	});
+}
+
+// 下载模板
+export function downloadTemplate(data:any) {
+	return request({
+		url: `${commonPart}/smsTemplate/downloadTemplate`,
+		method: 'get',
+		responseType: 'blob',
+		data
+	});
+}

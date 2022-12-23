@@ -55,7 +55,7 @@
 				<picker
 					style="width: 100%"
 					v-model="formState.departureDate"
-					placeholder="请选择离店时间"
+					placeholder="请先选择入住日期"
 					popper-class="hidden-date-picker"
 					:default-time="travelStore.defaultEndTime"
 					:disabled-date="disLeave"

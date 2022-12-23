@@ -38,6 +38,7 @@
 							:parser="(value) => value.replace(/\D/g, '')"
 							placeholder="可核销次数"
 							:controls="false"
+							:max="9999999"
 						/>
 					</template>
 					<template v-if="column.key === 'ifVerification'">

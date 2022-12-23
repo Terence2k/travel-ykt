@@ -118,10 +118,12 @@ watch(
 				console.log('找到目标景区id，无需多余操作');
 			} else {
 				console.log('找不到目标景区id，自动补上');
-				scenicSpotOptionsData.value.push({
-					value: targetId,
-					label: targetName,
-				});
+				if (targetId) {
+					scenicSpotOptionsData.value.push({
+						value: targetId,
+						label: targetName,
+					});
+				}
 			}
 		});
 		dialogVisible.value = nVal;

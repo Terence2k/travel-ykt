@@ -3,7 +3,7 @@
 		<div class="page-title" style="margin-top: 20px">共{{ state.tableData.total }}条 短信群发任务</div>
 		<CommonTable :dataSource="state.tableData.data" :columns="columns">
 			<template #button>
-				<a-button type="primary" @click="BaseModalmethods.addUpdate">新增</a-button>
+				<a-button type="primary" @click="BaseModalmethods.addUpdate" v-permission="'新增'">新增</a-button>
 			</template>
 			<template #bodyCell="{ column, record, index }">
 				<template v-if="column.key === 'index'">
@@ -17,11 +17,10 @@
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a @click="BaseModalmethods.addUpdate(record)">编辑</a>
-						<a @click="BaseModalmethods.showPreview(record)">发送短信</a>
-						<a @click="BaseModalmethods.showRecording(record)">发送记录</a>
-						<!-- <a @click="BaseModalmethods.showAudit(record)">{{ record.isEnable == 0 ? '禁用' : '启用' }}</a> -->
-						<a @click="del(record)">删除</a>
+						<a @click="BaseModalmethods.addUpdate(record)" v-permission="'编辑'">编辑</a>
+						<a @click="BaseModalmethods.showPreview(record)" v-permission="'发送短信'">发送短信</a>
+						<!-- <a @click="BaseModalmethods.showRecording(record)" v-permission="'发送记录'">发送记录</a> -->
+						<a @click="del(record)" v-permission="'删除'">删除</a>
 					</div>
 				</template>
 			</template>
@@ -94,7 +93,7 @@ const columns = [
 		title: '操作',
 		key: 'action',
 		fixed: 'right',
-		width: '140px',
+		width: '200px',
 	},
 ];
 const state = reactive({
@@ -144,7 +143,7 @@ const BaseModalmethods = {
 	},
 	showRecording:(row:any)=>{
 		router.push({
-			path: '/baseInfo/sms_Management/preview',
+			path: '/baseInfo/sms_Management/recording',
 			query: { templateId: row.oid },
 		});
 	},
@@ -172,7 +171,6 @@ const del = (row:any) => {
  api.deleteSysSmsTemplate(row.oid).then((res:any)=>{
 	message.success('删除成功')
 	onSearch()
-	return
  })
 }
 
