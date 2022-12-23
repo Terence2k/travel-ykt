@@ -185,15 +185,17 @@
     auditInfoNum.value = 0;
 		travelStore.auditList.administrativeSendGroup.params.status = AuditStaus.AdministrativeSendGroup;
 		const res = await travelStore.getAuditList(travelStore.auditList.administrativeSendGroup.params);
-    res.content.forEach( async (item: any) => {
+    let result = res.content.map( async (item: any) => {
       item.auditInfo = await getAuditButton(item.auditUuid);
       if (item.auditInfo) {
         auditInfoNum.value += 1;
       }
+      return item;
     })
-		travelStore.setAuditList(res, 'administrativeSendGroup');
+    res.content = await Promise.all(result);
+    travelStore.setAuditList(res, 'administrativeSendGroup');
 	}
-  const cancel = (): any => {
+  const cancel = () => {
     changeAuditVisible.value = false;
     rejectAuditVisible.value = false;
     onSearch();

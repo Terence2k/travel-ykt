@@ -7,14 +7,24 @@
 						<a-col :span="4"> <i v-if="index === 0" style="color: red">*</i>{{ index === 0 ? '下架时间：' : '' }}</a-col>
 						<a-col :span="19">
 							<a-form-item :name="['dateList', index, 'time']" :rules="formRules.time">
-								<a-range-picker
+								<!-- <a-range-picker
 									@change="(e) => getData(e, index)"
 									class="data-item"
 									v-model:value="formValidate.data.dateList[index].time"
 									format="YYYY-MM-DD "
 									valueFormat="YYYY-MM-DD "
 									:disabled-Date="(e) => disabledDate(e, index)"
-								/>
+								/> -->
+								<picker
+									v-model="formValidate.data.dateList[index].time"
+									@change="(e) => getData(e, index)"
+									type="daterange"
+									value-format="YYYY-MM-DD"
+									format="YYYY-MM-DD"
+									:disabled-date="(e) => disabledDate(e, index)"
+									start-placeholder="开始日期"
+									end-placeholder="结束日期"
+								></picker>
 							</a-form-item>
 							<div class="btn-wrapper inner">
 								<a-button
@@ -62,6 +72,8 @@ import { message } from 'ant-design-vue';
 
 import dayjs, { Dayjs } from 'dayjs';
 import type { Rule } from 'ant-design-vue/es/form';
+import picker from '@/components/common/datePicker.vue';
+
 const modelValue = ref(false);
 const route = useRouter();
 
