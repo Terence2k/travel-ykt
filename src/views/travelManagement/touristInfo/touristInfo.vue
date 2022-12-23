@@ -3,7 +3,7 @@
 		<div class="action-btn">
 			<a-button type="primary">模板下载</a-button>
 			<a-button type="primary" v-if="travelStore.teamStatus">批量导入</a-button>
-			<a-button type="primary">中高风险地区一键检查</a-button>
+			<!-- <a-button type="primary">中高风险地区一键检查</a-button> -->
 			<a-button type="primary" @click="getHealthCode">健康码一键检查</a-button>
 		</div>
 		<a-form ref="formRef" :rules="rulesRef" :model="editableData" autocomplete="off" labelAlign="left">
@@ -76,7 +76,7 @@
 					<template v-if="column.key === 'specialCertificatePicture'">
 						<!-- <Upload class="upload-img"></Upload> -->
 						<div>
-							<div v-if="!editableData[record.key ? record.key : record.oid]">
+							<div class="d-flex" v-if="!editableData[record.key ? record.key : record.oid]">
 								<!-- <a-image
 									v-for="url in record.specialCertificatePicture"
 									:key="url"
