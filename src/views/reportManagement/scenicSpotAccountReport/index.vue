@@ -28,8 +28,17 @@
 				</a-select-option>
 			</a-select>
 		</search-item>
-		<search-item label="结算时间" style="width: 280px">
-			<a-range-picker v-model:value="state.times" @change="timeChange" style="width: 180px" />
+		<search-item label="结算时间" style="width: 350px">
+			<picker
+				v-model="state.tableData.settlementStartTimeList"
+				type="daterange"
+				value-format="YYYY-MM-DD HH:mm:ss"
+				start-placeholder="开始日期"
+				end-placeholder="结束日期"
+				@change="timeChange"
+				style="width: 180px"
+			>
+			</picker>
 		</search-item>
 		<template #button>
 			<a-button @click="initList">查询</a-button>
@@ -68,6 +77,7 @@ import SearchItem from '@/components/common/CommonSearchItem.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import { settlementOptions } from '@/stores/modules/settlement';
 import type { TableColumnsType } from 'ant-design-vue';
+import picker from '@/components/common/datePicker.vue';
 import api from '@/api';
 interface StateType {
 	tableData: TableDataType;
@@ -363,13 +373,24 @@ onMounted(() => {
 	initList();
 	getViewList();
 });
+// const timeChange = (arr: any) => {
+// 	if (arr && arr.length > 0) {
+// 		state.tableData.param.settlementStartTime = arr[0]['$d'];
+// 		state.tableData.param.settlementEndTime = arr[1]['$d'];
+// 	} else {
+// 		state.tableData.param.settlementStartTime = null;
+// 		state.tableData.param.settlementEndTime = null;
+// 	}
+// };
 const timeChange = (arr: any) => {
+	console.log(arr);
 	if (arr && arr.length > 0) {
-		state.tableData.param.settlementStartTime = arr[0]['$d'];
-		state.tableData.param.settlementEndTime = arr[1]['$d'];
+		// const timeList: any = [arr[0], arr[1]];
+		state.tableData.param.settlementEndTime = Date.parse(arr[0]);
+		state.tableData.param.settlementStartTime = Date.parse(arr[1]);
 	} else {
-		state.tableData.param.settlementStartTime = null;
 		state.tableData.param.settlementEndTime = null;
+		state.tableData.param.settlementStartTime = null;
 	}
 };
 const getSettlementRule = computed(() => (column: TableColumnsType, record: DataType) => {

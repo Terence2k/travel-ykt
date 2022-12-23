@@ -1,5 +1,5 @@
 <template>
-	<BaseModal :title="params.title" v-model="modelValue">
+	<BaseModal :title="params.title" v-model="dialogVisible">
 		<div class="content">
 			<img class="warning-icon" src="@/assets/svg/warning.svg" alt="" />
 			<div class="content-text">{{ params.content }}</div>
@@ -61,7 +61,7 @@ watch(dialogVisible, (nVal) => {
 	.warning-icon {
 		margin-right: 10px;
 	}
-	.content-text{
+	.content-text {
 		line-height: 24px;
 	}
 }

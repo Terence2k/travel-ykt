@@ -1,7 +1,16 @@
 <template>
 	<CommonSearch>
-		<search-item label="申请日期">
-			<a-range-picker v-model:value="state.times" @change="timeChange" />
+		<search-item label="结算时间" style="width: 350px">
+			<picker
+				v-model="state.times"
+				type="daterange"
+				value-format="YYYY-MM-DD HH:mm:ss"
+				start-placeholder="开始日期"
+				end-placeholder="结束日期"
+				@change="timeChange"
+				style="width: 180px"
+			>
+			</picker>
 		</search-item>
 		<search-item label="申请人">
 			<a-input v-model:value="state.tableData.param.createName" placeholder="请输入费用名称" allowClear style="width: 180px" />
@@ -57,6 +66,7 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
+import picker from '@/components/common/datePicker.vue';
 import Detail from './detail.vue';
 import api from '@/api';
 import { message } from 'ant-design-vue/es';
@@ -187,10 +197,21 @@ const rowSelection = computed(() => {
 		return false;
 	}
 });
+// const timeChange = (arr: any) => {
+// 	if (arr && arr.length > 0) {
+// 		state.tableData.param.startTime = arr[0]['$d'];
+// 		state.tableData.param.endTime = arr[1]['$d'];
+// 	} else {
+// 		state.tableData.param.startTime = null;
+// 		state.tableData.param.endTime = null;
+// 	}
+// };
 const timeChange = (arr: any) => {
+	console.log(arr);
 	if (arr && arr.length > 0) {
-		state.tableData.param.startTime = arr[0]['$d'];
-		state.tableData.param.endTime = arr[1]['$d'];
+		// const timeList: any = [arr[0], arr[1]];
+		state.tableData.param.startTime = Date.parse(arr[0]);
+		state.tableData.param.endTime = Date.parse(arr[1]);
 	} else {
 		state.tableData.param.startTime = null;
 		state.tableData.param.endTime = null;
