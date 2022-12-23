@@ -333,7 +333,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			if (columns === 'certificateNo' &&
 					state.editableData[key].certificateType === CODEVALUE.TRAVE_CODE.IDENTITY_CARD) {
 
-				if (state.editableData[key].certificateNo.length < 18) {
+				if (state.editableData[key].certificateNo?.length < 18) {
 					state.editableData[key].age = '';
 					return message.error('请输入正确的身份证')
 				}
