@@ -64,6 +64,14 @@ const keyNameList3 = {
 const keyNameList4 = {
   ...keyNameList1,
   unitStatus: '开业状态', //  0-开业 1-停业
+  rangeTime: '营业时间',
+  shopPhone: '店铺联系电话',
+  cateringDesc: '其他'
+}
+// 餐厅
+const editKeyNameList4 = {
+  ...keyNameList1,
+  unitStatus: '开业状态', //  0-开业 1-停业
   startTime: '开始营业时间', // '营业时间',
   endTime: '结束营业时间',
   shopPhone: '店铺联系电话',
@@ -152,7 +160,11 @@ function getKeylist(businessType: string, type?: string) {
       }
       break;
     case 'CATERING':
-      keys = keyNameList4
+      if (type === 'edit') {
+        keys = editKeyNameList4
+      } else {
+        keys = keyNameList4
+      }
       break;
     case 'ANCIENT_UYGUR':
     case 'SUPERVISE':

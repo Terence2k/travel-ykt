@@ -100,14 +100,16 @@ const reproduceOpetion = async () => {
     if (regionCode && regionCode.length > 0) {
         const provinceId = regionCode[0]// '省'
         const cityId = regionCode[1]// '市'
-        if (provinceId && cityId && props.isProvince) {
+        if (provinceId && cityId) {
             const data = await getAllAreaCity(provinceId)
-            for (let i = 0, l = data.length; i < l; i++) {
-                const element = data[i];
-                if (element.value === cityId) {
-                    const data = await getAllArea(cityId)
-                    element.children = [...data]
-                    break;
+            if (props.isProvince) {
+                for (let i = 0, l = data.length; i < l; i++) {
+                    const element = data[i];
+                    if (element.value === cityId) {
+                        const data = await getAllArea(cityId)
+                        element.children = [...data]
+                        break;
+                    }
                 }
             }
             for (let i = 0, l = list.value.length; i < l; i++) {
