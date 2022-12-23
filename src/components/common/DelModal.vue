@@ -1,5 +1,5 @@
 <template>
-	<BaseModal :title="params.title" v-model="getModelValue">
+	<BaseModal :title="params.title" v-model="dialogVisible">
 		<div class="content">
 			<img class="warning-icon" src="@/assets/svg/warning.svg" alt="" />
 			<div class="content-text">{{ params.content }}</div>
@@ -38,10 +38,6 @@ const cancel = () => {
 	emit('cancel');
 };
 const dialogVisible = ref(false);
-const getModelValue = computed({
-	get: () => props.modelValue,
-	set: (value) => emit('update:modelValue', value),
-});
 watch(
 	() => props.modelValue,
 	async (nVal) => {
