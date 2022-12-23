@@ -143,12 +143,6 @@ const pages = [
 	},
 ];
 const filterPages = pages.filter((item: any) => getTabPermission(item.label));
-if (!filterPages.length) {
-  	const tabArr = JSON.parse(<string>localStorage.getItem('tabArr') || '[]');
-	console.log('filterPages:', filterPages)
-  	console.log('tabArr:', tabArr? tabArr : '没有tabArr');
-	console.log(router.currentRoute.value.fullPath);
-}
 activeKey.value = filterPages.length ? filterPages[0].value : pages[0].value;
 
 const goToPath = (type: number) => {

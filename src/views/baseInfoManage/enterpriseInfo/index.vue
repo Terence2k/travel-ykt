@@ -679,7 +679,6 @@ const uploadData = () => {
   console.log('submitFunc', submitFunc.value)
   api[submitFunc.value](queryData).then((res: any) => {
     console.log('res:', res);
-    message.success('保存成功');
     successDialog.value = true;
     initOpeion();
   }).catch((err: any) => {
