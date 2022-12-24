@@ -22,7 +22,14 @@
 				<div class="item">
 					<span class="field-input item">核销日期</span>
 					<!-- <a-range-picker class="input-writeOff-date item" v-model:value="tableState.tableData.param.startTime" /> -->
-					<picker v-model="tableState.tableData.param.startTime" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"> </picker>
+					<picker
+						class="input-writeOff-date item"
+						v-model="tableState.tableData.param.startTime"
+						type="daterange"
+						start-placeholder="开始日期"
+						end-placeholder="结束日期"
+					>
+					</picker>
 				</div>
 
 				<div class="item">

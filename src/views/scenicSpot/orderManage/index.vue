@@ -374,6 +374,7 @@ const reset = () => {
 	state.tableData.param.verificationTime = '';
 	state.tableData.param.schoolDate = '';
 	state.tableData.param.pageNo = 1;
+	search();
 };
 //查看
 const route = useRouter();

@@ -190,6 +190,17 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
+					{
+						path: 'recording',
+						component: () => import('@/views/baseInfoManage/smsManagement/recording.vue'),
+						name: 'recording',
+						meta: {
+							title: '发送记录',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
 				],
 			},
 			{
