@@ -163,7 +163,7 @@ export default [
 			},
 			{
 				path: 'sms_Management',
-				redirect: '/baseInfo/sms_Management/index',				
+				redirect: '/baseInfo/sms_Management/index',
 				name: 'sms_Management',
 				meta: {
 					title: '短信群发配置',
@@ -174,7 +174,7 @@ export default [
 				children: [
 					{
 						path: 'index',
-						component: () => import('@/views/baseInfoManage/smsManagement/index.vue'),						meta: {
+						component: () => import('@/views/baseInfoManage/smsManagement/index.vue'), meta: {
 							title: '短信群发配置',
 							isDetail: true,
 						},
@@ -191,6 +191,17 @@ export default [
 						},
 					},
 				],
+			},
+			{
+				path: 'guideLibraryManagement',
+				component: () => import('@/views/baseInfoManage/guideLibraryManagement/index.vue'),
+				name: 'guideLibraryManagement',
+				meta: {
+					title: '导游库管理',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					isDetail: false, // 在左侧的导航栏不会展示
+				},
 			},
 		],
 	},
