@@ -16,7 +16,17 @@ interface DataItem {
 	edit: boolean;
 	oid: string;
 }
-
+interface FileItem {
+	uid: string;
+	name?: string;
+	status?: string;
+	response?: string;
+	url?: string;
+}
+interface FileInfo {
+	file: FileItem;
+	fileList: FileItem[];
+}
 const rules: { [k: string]: any } = {
 	name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
 	position: [{ required: true, message: '请输入职务', trigger: 'blur' }],
@@ -44,7 +54,6 @@ export function usesmsInfo(): Record<string, any> {
 		newList: [],
 		paramW: [],
 		total: 0,
-		isImport: false,
 		param: {
 			templateId: route?.query.templateId,
 			pageNo: 1,
@@ -58,6 +67,10 @@ export function usesmsInfo(): Record<string, any> {
 		// tableData: computed(() => smsStore.recipientList),
 		tableData: [],
 		pre: [],
+		excel: [] as any,
+		action: '/ykt/customer-service/public/api/smsTemplate/importSmsSendPerson',
+		hearders: { authorization: useinfo.authorization },
+
 		columns: [
 			{
 				title: '序号',
@@ -296,10 +309,6 @@ export function usesmsInfo(): Record<string, any> {
 		});
 	};
 
-	const ImportContact = () => {
-		state.isImport = true;
-	};
-
 	const downContact = () => {
 		api.downloadTemplate().then((res: any) => {
 			downloadFile(res, '短信收件人');
@@ -307,19 +316,18 @@ export function usesmsInfo(): Record<string, any> {
 		});
 	};
 
-	// watch(dialogVisible, (nVal) => {
-	// 	emits('update:modelValue', nVal);
-	// });
-	// watch(
-	// 	() => props.modelValue,
-	// 	async (nVal) => {
-	// 		dialogVisible.value = nVal;
-	// 		if (dialogVisible.value) {
-	// 			await install();
-	// 			// methods.save();
-	// 		}
-	// 	}
-	// );
+	//  导入
+	const handleChange = (info: FileInfo) => {
+		if (info.file.status !== 'uploading') {
+			console.log(info.file, info.fileList);
+		}
+		if (info.file.status === 'done') {
+			install();
+			message.success(`${info.file.name} 导入成功`);
+		} else if (info.file.status === 'error') {
+			message.error(`${info.file.name}  导入失败，请检查是否是excel文件`);
+		}
+	};
 
 	onMounted(() => {
 		install();
@@ -338,8 +346,8 @@ export function usesmsInfo(): Record<string, any> {
 		sendPreview,
 		goback,
 		smsMass,
-		ImportContact,
 		downContact,
 		install,
+		handleChange,
 	};
 }
