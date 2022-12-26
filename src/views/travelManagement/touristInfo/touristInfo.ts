@@ -165,6 +165,9 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			targetOption.loading = true;
 			const length = selectedOptions.length + 1
 			methods.getCityList(`${targetOption.value}/${length}`, length).then(res => {
+				if (!res.length) {
+					targetOption.isLeaf = true
+				}
 				targetOption.children = res
 				targetOption.loading = false;
 			})
@@ -339,7 +342,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 				}
 
 				const age: string = getAge(state.editableData[key].certificateNo) as any
-				state.editableData[key].age = age;
+				state.editableData[key].age = age || "";
 				
 			}
 			if (columns === 'certificateNo' || columns === 'name') {

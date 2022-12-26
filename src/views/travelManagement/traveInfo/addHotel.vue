@@ -52,7 +52,7 @@
 							placeholder="请选择入住日期"
 							popper-class="hidden-date-picker"
 							:default-time="travelStore.defaultStartTime"
-							:disabled-date="travelStore.setDisabled"
+							:disabled-date="travelStore.setDisabledDate()"
 							value-format="YYYY-MM-DD HH:mm:ss"
 							:disabled-hours="() => disabledHours(travelStore.teamTime[0], formState.arrivalDate, 'start')"
 							:disabled-minutes="() => disabledMinutes(travelStore.teamTime[0], formState.arrivalDate, 'start')"

@@ -128,11 +128,11 @@ const saveItinerary = (val: any) => {
 		if (!travelStore.guideList.length) return message.error('请选择带团导游');
 		if (!travelStore.touristList.length) return message.error('请添加游客');
 		if (!travelStore.trafficList.length) return message.error('请添加交通信息');
-		if (!travelStore.insuranceStatus) return message.error('请选择保险购买方');
+		// if (!travelStore.insuranceStatus) return message.error('请选择保险购买方');
 	}
-	if (travelStore.insuranceStatus && !travelStore.checkInsurance) {
-		return message.error('请同意《云南省团队旅游保险购买政策》、《一卡通平台免责声明》')
-	}
+	// if (travelStore.insuranceStatus && !travelStore.checkInsurance) {
+	// 	return message.error('请同意《云南省团队旅游保险购买政策》、《一卡通平台免责声明》')
+	// }
 	const guideTime = travelStore.guideList.some((it: any) => !it.startDate);
 	if (guideTime) {
 		activeKey.value = 1;
@@ -154,7 +154,7 @@ const saveItinerary = (val: any) => {
 			guideList: travelStore.guideList.filter((it: any) => it.edit),
 			insuranceStatus: travelStore.insuranceStatus,
 			itineraryInfoParam: {
-				compositeProducts: travelStore.curentProduct,
+				compositeProducts: !travelStore.isOptional ? travelStore.compositeProducts : travelStore.curentProduct,
 			},
 			touristList: travelStore.touristList.filter((it: any) => it.edit),
 			transportList: travelStore.trafficList.filter((it: any) => it.edit),

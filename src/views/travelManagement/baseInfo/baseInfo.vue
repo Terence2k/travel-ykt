@@ -512,6 +512,7 @@ const findByIdTeamType = async () => {
 			// 综费产品itemId为4
 			if (res.productVos[i].itemId === 4) {
 				if (!res.productVos[i].productId) {
+					travelStore.isOptional = true;
 					const res = await api.travelManagement.comprehensiveFeeProduct({
 						pageNo: 1,
 						pageSize: 99999,
@@ -523,6 +524,7 @@ const findByIdTeamType = async () => {
 						return it;
 					});
 				} else {
+					travelStore.isOptional = false;
 					const result = await api.travelManagement.findProductInfo(res.productVos[i].productId)
 					result.peopleCount = travelStore.touristList.length;
 					result.unPrice = result.feeNumber;
@@ -535,6 +537,7 @@ const findByIdTeamType = async () => {
 						result.feeModel
 					)
 					allFeesProducts.push(result)
+					
 				}
 			} else if (res.productVos[i].itemId === 2) {
 				

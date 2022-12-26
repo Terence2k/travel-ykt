@@ -64,6 +64,11 @@ const columns = [
 		key: 'itineraryStartDate',
 	},
 	{
+		title: '团队类型',
+		dataIndex: 'teamTypeName',
+		key: 'teamTypeName',
+	},
+	{
 		title: '行程人数',
 		dataIndex: 'touristNum',
 		key: 'touristNum',
