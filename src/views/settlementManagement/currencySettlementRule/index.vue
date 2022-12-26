@@ -69,7 +69,8 @@
 					<!-- 扣费模式 -->
 					<template v-if="column.key === 'deductionModel'">
 						<span v-if="record.deductionModel === 1">冻结金额</span>
-						<span v-if="record.deductionModel === 2">核销金额</span>
+						<span v-if="record.deductionModel === 2">已核销金额</span>
+						<span v-if="record.deductionModel === 0">未核销金额</span>
 						<span v-else></span>
 					</template>
 				</template>

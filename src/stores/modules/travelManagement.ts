@@ -116,6 +116,7 @@ export const useTravelStore = defineStore({
 			status: '',
 			itineraryNo: '',
 		},
+		isOptional: false, //是否任意选择综费
 		setStarEndHMS: {
 			start: {},
 			end: {},
@@ -281,6 +282,18 @@ export const useTravelStore = defineStore({
 		},
 	},
 	actions: {
+		setDisabledDate() {
+			return (current: Dayjs) => {
+				if (this.teamTime && this.teamTime[0]) {
+					return (dayjs(this.teamTime[0]) && dayjs(this.teamTime[0]).startOf('day') > current && current) ||
+							(dayjs(this.teamTime[1]) && dayjs(this.teamTime[1]).endOf('day') < current && current)
+				} else {
+					return current && current < dayjs().endOf('day') || 
+							current > dayjs().startOf('day');
+				}
+				
+			}
+		},
 		async getTravelList(params: object) {
 			const res = await api.travelManagement.getTravelList(params);
 			res.content = res.content.map((it: TraveDataItem) => {

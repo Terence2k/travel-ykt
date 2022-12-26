@@ -47,7 +47,7 @@
 				<datePicker style="width: 100%"
 							v-model="formState.startDate"
 							placeholder="入园日期"
-							:disabled-date="travelStore.setDisabled"
+							:disabled-date="travelStore.setDisabledDate()"
 							value-format="YYYY-MM-DD"
 							type="date" />
 			</a-form-item>
@@ -358,6 +358,7 @@
 				}
 			})
 			formState.scenicId = props.productRow.productId;
+			console.log(props.productRow.productId)
 			props.productRow.productId && handleChange(props.productRow.productId, {name: props.productRow.scenicName, ticketType: props.productRow.ticketType})
 			if (!props.productRow.productId && !props.ticketId) {
 				handleChange(props.productRow.scenicId, {name: props.productRow.scenicName, ticketType: props.productRow.ticketType})
