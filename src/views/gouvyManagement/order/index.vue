@@ -258,6 +258,11 @@ const columns = [
 		key: 'isReductionExistName',
 	},
 	{
+		title: '团队类型',
+		dataIndex: 'teamTypeName',
+		key: 'teamTypeName',
+	},
+	{
 		title: '出票状态',
 		dataIndex: 'issueStatusName',
 		key: 'issueStatusName',
