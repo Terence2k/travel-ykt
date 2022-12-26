@@ -38,7 +38,7 @@
       <a-tab-pane key="6" tab="已撤销"></a-tab-pane>
       <a-tab-pane key="7" tab="审核不通过"></a-tab-pane>
       <template #rightExtra>
-        <a-button type="primary" @click="addOrUpdate({ handle: 'add' })" style="margin-right: 20px">新增</a-button>
+        <a-button type="primary" @click="addOrUpdate({ handle: 'add' })" style="margin-right: 20px">新增拼团</a-button>
         <a-button type="primary" @click="" style="margin-right: 20px">导出</a-button>
         <a-button type="primary" @click="">打印行程单</a-button>
       </template>
@@ -163,7 +163,7 @@ interface addInterface {
 }
 const addOrUpdate = ({ row, handle }: addInterface) => {
   if (handle === 'add') {
-    goto('addTourists')
+    goto('newGroup')
   } else if (handle === 'update') {
   }
 }

@@ -264,7 +264,7 @@ export default [
 				path: 'tourists',
 				name: 'tourists',
 				component: () => import('@/views/individualTouristsGroup/index.vue'),
-				redirect: '/travel/tourists/newGroup',
+				redirect: '/travel/tourists/individualTouristsGroup',
 				meta: {
 					title: '散客拼团',
 					// icon: 'liulanqi',
@@ -294,7 +294,7 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
-					{
+					/* {
 						path: 'addTourists',
 						name: 'addTourists',
 						component: () => import('@/views/individualTouristsGroup/add.vue'),
@@ -304,7 +304,7 @@ export default [
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
-					},
+					}, */
 				],
 			},
 			// tourGuideManage

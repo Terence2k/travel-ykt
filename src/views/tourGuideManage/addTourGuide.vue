@@ -9,59 +9,102 @@
       </span>
     </div>
     <div class="form_body">
-      <a-form ref="formRef" :model="form" :rules="formRules" name="basic" autocomplete="off" labelAlign="left"
+      
+      <a-form ref="formRef" :model="form" rules="formRules" name="basic" autocomplete="off" labelAlign="left"
         :label-col="{ span: 4 }" :wrapper-col="{ span: 24 }">
-        <a-form-item label="姓名" name="auditResult" :colon="false">
-          <a-input v-model:value="form.name" placeholder="请输入导游姓名" />
+        <a-form-item label="姓名" name="guideName">
+          <a-auto-complete
+            v-model:value="state.tableData.guideName"
+            :options="state.tableData.options"
+            style="width: 300px"
+            @select="onSelect"
+            @search="onSearch"
+        />
         </a-form-item>
-        <a-form-item label="导游证号" name="roldId" :colon="false">
-          <a-input v-model:value="form.name" placeholder="请输入导游证号" />
+        <a-form-item label="导游证号" name="guideCertificateNo">
+          {{ state.tableData.data[0]?.guideCertificateNo }}
         </a-form-item>
-        <a-form-item label="身份证号" name="roldId" :colon="false">
-          <a-input v-model:value="form.name" placeholder="请输入身份证号" />
+        <a-form-item label="身份证号" name="certificateNo">
+          {{state.tableData.data[0]?.certificateNo}}
         </a-form-item>
-        <a-form-item label="导游电话" name="roldId" :colon="false">
-          <a-input v-model:value="form.name" placeholder="请输入导游电话" />
+        <a-form-item label="导游电话" name="phone">
+          {{state.tableData.data[0]?.phone}}
         </a-form-item>
-        <a-form-item label="导游星级" name="roldId" :colon="false">
-          <a-input v-model:value="form.name" placeholder="请输入导游星级" />
+        <a-form-item label="导游星级" name="guideLevelName">
+          {{state.tableData.data[0]?.guideLevelName}}
         </a-form-item>
-        <a-form-item label="导游等级" name="roldId" :colon="false">
-          <a-input v-model:value="form.name" placeholder="请输入导游等级" />
-        </a-form-item>
-        <a-form-item label="签约时间" name="roldId" :colon="false">
-          <a-input v-model:value="form.name" placeholder="请输入导游证号" />
-        </a-form-item>
-        <a-form-item label="签约附件" name="businessLicenseUrl" :colon="false">
-          <img-upload ref="imgUploadRef" v-model:uploadedFile="form.businessLicenseUrl" @done="uploadDown">
-          </img-upload>
+        <a-form-item label="签约附件" name="certificatePicture">
+          <Upload v-model="state.tableData.certificatePicture" disabled/>
         </a-form-item>
       </a-form>
     </div>
-    <div class="btn_box">
+    <!-- <div class="btn_box">
       <a-button type="primary" @click="submit" style="margin-right:20px" :loading="loading">发送委派邀请</a-button>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script setup lang="ts">
 import { useRouter, useRoute } from 'vue-router';
 import { CloseOutlined } from '@ant-design/icons-vue';
-import imgUpload from '@/views/baseInfoManage/businessManagement/components/imgUpload.vue';
+import api from '@/api';
+import Upload from '@/components/common/imageWrapper.vue';
 const router = useRouter();
 const route = useRoute();
+interface MockVal {
+  value: string;
+}
+const state = reactive({
+  tableData: {
+    options:[]as any,
+    data:[]as any,
+    guideName:'',
+    total: 0,
+    loading: false,
+    list:[]as any,
+    certificatePicture:'',
+    num:0
+  },
+ 
+});
+const handleChange=()=>{
+
+}
+const onSearch=()=>{
+  if(state.tableData.guideName)
+  {
+    api.queryNoSignGuideList({guideName:state.tableData.guideName}).then((res:any)=>{
+    state.tableData.list=res
+    state.tableData.options=res.map((res:any,index:number)=>{
+      return {
+        value:res.guideName +' , '+ res.guideCertificateNo,
+        row:res
+      }
+    })
+  })
+  }else{
+    state.tableData.options='';
+    state.tableData.data='';
+  }
+  
+}
+const onSelect=(value:any)=>{
+  let guideCertificateNo=value.split(',')
+  state.tableData.guideName=guideCertificateNo[0]
+  state.tableData.data=state.tableData.list.filter((i:any)=>i.guideCertificateNo=guideCertificateNo[1])
+  console.log(state.tableData.data[0].certificatePicture,'state.tableData.data')
+  state.tableData.certificatePicture=state.tableData.data[0].certificatePicture
+
+}
 const back = () => {
   router.push({
     name: 'tourGuideList'
   })
 }
-const formRules = []
 const form = reactive({})
 const loading = ref(false)
 const submit = () => { }
-const uploadDown = () => {
-  form.businessLicenseUrl = form.businessLicenseUrl ? form.businessLicenseUrl[0] : undefined
-}
+
 </script>
 
 <style scoped lang="scss">

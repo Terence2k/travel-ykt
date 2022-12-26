@@ -1,10 +1,13 @@
-import { cloneDeep } from 'lodash';
-import type { UnwrapRef } from 'vue';
+import { UnwrapRef, createVNode } from 'vue';
 import { validateRules, validateFields, generateGuid, validPhone } from '@/utils';
 import { useSmsStore } from '@/stores/modules/sms';
+import { message, Modal } from 'ant-design-vue';
 import api from '@/api/index';
-import { message } from 'ant-design-vue';
+import { cloneDeep, debounce } from 'lodash';
+import { CheckOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { Rule } from 'ant-design-vue/es/form';
+import { getUserInfo, downloadFile } from '@/utils/util';
+
 interface DataItem {
 	key: string;
 	name: string;
@@ -13,7 +16,17 @@ interface DataItem {
 	edit: boolean;
 	oid: string;
 }
-
+interface FileItem {
+	uid: string;
+	name?: string;
+	status?: string;
+	response?: string;
+	url?: string;
+}
+interface FileInfo {
+	file: FileItem;
+	fileList: FileItem[];
+}
 const rules: { [k: string]: any } = {
 	name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
 	position: [{ required: true, message: '请输入职务', trigger: 'blur' }],
@@ -23,17 +36,20 @@ const rules: { [k: string]: any } = {
 export function usesmsInfo(): Record<string, any> {
 	const router = useRouter();
 	const route = useRoute();
-	const labelCol = { span:6 };
+	const labelCol = { span: 6 };
 	const smsStore = useSmsStore();
+	const useinfo = getUserInfo();
 	const options = reactive({ title: '设置接收人' });
 	const dialogVisible = ref(false);
 	const state = reactive<{ editableData: UnwrapRef<Record<string, DataItem>>; [k: string]: any }>({
 		templateId: '',
+		temId: '',
 		formRef: null,
 		formtwoRef: null,
+		debounce: false,
 		editableData: {},
 		formValidate: {
-			preParam:[]
+			preParam: [],
 		},
 		newList: [],
 		paramW: [],
@@ -51,6 +67,10 @@ export function usesmsInfo(): Record<string, any> {
 		// tableData: computed(() => smsStore.recipientList),
 		tableData: [],
 		pre: [],
+		excel: [] as any,
+		action: '/ykt/customer-service/public/api/smsTemplate/importSmsSendPerson',
+		hearders: { authorization: useinfo.authorization },
+
 		columns: [
 			{
 				title: '序号',
@@ -131,6 +151,7 @@ export function usesmsInfo(): Record<string, any> {
 				api.handleSysSmsTemplateSendPerson(data).then((res: any) => {
 					message.success('删除成功');
 					state.tableData.splice(key, 1);
+					state.newList = [];
 					install();
 				});
 			} else {
@@ -144,12 +165,16 @@ export function usesmsInfo(): Record<string, any> {
 	};
 	const install = async () => {
 		state.templateId = route?.query.templateId;
+		state.formValidate.phone = useinfo.mobile;
 		api.getSysSmsTemplateSendPersons(state.param).then((res: any) => {
 			state.tableData = res.content;
 			state.total = res.total;
 		});
+	};
+	const installsmsContent = async () => {
 		api.getSysSmsTemplate(state.templateId).then((res: any) => {
 			state.formValidate.smsContent = res.smsContent;
+			state.temId = res.templateId;
 			if (state.formValidate.smsContent) {
 				let j = 0;
 				for (let i = 0; i < state.formValidate.smsContent.length; i++) {
@@ -161,7 +186,6 @@ export function usesmsInfo(): Record<string, any> {
 			}
 		});
 	};
-
 	const onHandleCurrentChange = (val: any) => {
 		state.param.pageNo = val;
 		install();
@@ -172,37 +196,13 @@ export function usesmsInfo(): Record<string, any> {
 	};
 
 	const onlook = () => {
-		
-		state.formtwoRef.validateFields().then((res:any)=>{
-			console.log(state.formValidate.preParam,'state.formValidate.preParam');
-			// for (let i = 0; i < state.formValidate.smsContent.length; i++) {
-			// 	for (let j = 0; j < state.formValidate.preParam.length; j++) {
-			// 		if (state.formValidate.smsContent[i] == j) {
-			// 			console.log(state.formValidate.smsContent[i]);
-						
-						// state.formValidate.smsContent[i] = state.formValidate.preParam[i].unice
-			// 		}
-			// 		console.log(state.formValidate.smsContent,'state.formValidate.smsContent');
-					
-			// 	}
-			// }
-			// for (let i = 0; i < state.formValidate.smsContent.length; i++) {
-				// console.log(state.formValidate.preParam[i].unice,'state.formValidate.preParam[i].unice');
-				// state.formValidate.smsContent.replace("Microsoft","Runoob")
-				// if (state.formValidate.smsContent.indexOf(`{${i}}`)) {
-					// console.log(state.formValidate.smsContent.match(i),'state.formValidate.smsContent.match(i)');
-				// 	state.formValidate.smsContent.indexOf(`{${i}}`)[0] = state.formValidate.preParam[i].unice
-				// 	console.log(state.formValidate.smsContent.indexOf(`{${i}}`)[0],'state.formValidate.smsContent.match(i)[0]');
-					
-				// }
-				//  state.formValidate.smsLook = state.formValidate.smsContent
-				
-			// }
-			state.formValidate.smsContent.replace('1','123')
-			console.log(state.formValidate.smsContent);
-			
-			
-		})
+		state.formtwoRef.validateFields().then((res: any) => {
+			let params = state.formValidate.smsContent;
+			for (let i = 0; i < state.formValidate.preParam.length; i++) {
+				params = params.replace(`{${i + 1}}`, state.formValidate.preParam[i].unice);
+				state.formValidate.smsLook = params;
+			}
+		});
 		// formRef.value.validate().then(() => {
 		// 	const data = {
 		// 		templateOid: props?.params?.oid, //短信模板oid
@@ -215,20 +215,124 @@ export function usesmsInfo(): Record<string, any> {
 		// 	});
 		// });
 	};
-	// watch(dialogVisible, (nVal) => {
-	// 	emits('update:modelValue', nVal);
-	// });
-	// watch(
-	// 	() => props.modelValue,
-	// 	async (nVal) => {
-	// 		dialogVisible.value = nVal;
-	// 		if (dialogVisible.value) {
-	// 			await install();
-	// 			// methods.save();
-	// 		}
-	// 	}
-	// );
-	install();
+
+	const goback = () => {
+		router.go(-1);
+	};
+
+	const sendPreview = () => {
+		state.formtwoRef.validateFields().then((res: any) => {
+			if (!state.formValidate.smsLook) {
+				message.error('请先生成预览内容');
+				return;
+			}
+			let Tparams = [] as any;
+			for (let i = 0; i < state.formValidate.preParam.length; i++) {
+				Tparams.push(state.formValidate.preParam[i].unice);
+			}
+			const data = {
+				templateOid: state.templateId,
+				templateId: state.temId,
+				params: Tparams,
+				phone: state.formValidate.phone,
+			};
+			api.sendSmsRead(data).then((res: any) => {
+				Modal.confirm({
+					title: '预览发送',
+					icon: createVNode(ExclamationCircleOutlined),
+					okText: '继续群发',
+					cancelText: '退出发送',
+					content: createVNode(
+						'div',
+						{ style: 'color: #333;' },
+						`已向手机号"${state.formValidate.phone}"发送预览短信成功，请注意查收，是否继续群发？`
+					),
+					async onOk() {
+						smsMass();
+					},
+					onCancel() {
+						return false;
+					},
+				});
+			});
+		});
+	};
+
+	const smsMass = () => {
+		state.formtwoRef.validateFields().then((res: any) => {
+			if (!state.formValidate.smsLook) {
+				message.error('请先生成预览内容');
+				return;
+			}
+			let Tparams = [] as any;
+			for (let i = 0; i < state.formValidate.preParam.length; i++) {
+				Tparams.push(state.formValidate.preParam[i].unice);
+			}
+			const data = {
+				templateOid: state.templateId,
+				templateId: state.temId,
+				params: Tparams,
+			};
+			api
+				.sendSmsByManual(data)
+				.then((res: any) => {
+					message.success('群发成功');
+					Modal.confirm({
+						title: '短信群发',
+						okText: '继续群发',
+						cancelText: '退出发送',
+						icon: createVNode(ExclamationCircleOutlined),
+						content: createVNode('div', { style: 'color: #333;' }, `短信群发成功，是否继续群发？`),
+						async onOk() {
+							smsMass();
+						},
+						onCancel() {
+							return false;
+						},
+					});
+				})
+				.catch((error: any) => {
+					Modal.confirm({
+						title: '短信群发',
+						okText: '重新发送',
+						cancelText: '退出发送',
+						icon: createVNode(ExclamationCircleOutlined),
+						content: createVNode('div', { style: 'color: #333;' }, `短信群发失败，是否继续群发？`),
+						async onOk() {
+							smsMass();
+						},
+						onCancel() {
+							return false;
+						},
+					});
+				});
+		});
+	};
+
+	const downContact = () => {
+		api.downloadTemplate().then((res: any) => {
+			downloadFile(res, '短信收件人');
+			message.success('下载成功');
+		});
+	};
+
+	//  导入
+	const handleChange = (info: FileInfo) => {
+		if (info.file.status !== 'uploading') {
+			console.log(info.file, info.fileList);
+		}
+		if (info.file.status === 'done') {
+			install();
+			message.success(`${info.file.name} 导入成功`);
+		} else if (info.file.status === 'error') {
+			message.error(`${info.file.name}  导入失败，请检查是否是excel文件`);
+		}
+	};
+
+	onMounted(() => {
+		install();
+		installsmsContent();
+	});
 	return {
 		...toRefs(state),
 		...methods,
@@ -238,6 +342,12 @@ export function usesmsInfo(): Record<string, any> {
 		onlook,
 		onHandleCurrentChange,
 		pageSideChange,
-		CheckNum
+		CheckNum,
+		sendPreview,
+		goback,
+		smsMass,
+		downContact,
+		install,
+		handleChange,
 	};
 }
