@@ -339,7 +339,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 				}
 
 				const age: string = getAge(state.editableData[key].certificateNo) as any
-				state.editableData[key].age = age;
+				state.editableData[key].age = age || "";
 				
 			}
 			if (columns === 'certificateNo' || columns === 'name') {
