@@ -1,6 +1,6 @@
 <template>
 	<div class="content_box">
-		<a-tabs v-model:activeKey="activeKey" @change="nextTep">
+		<a-tabs v-model:activeKey="activeKey" @change="nextTep" @tabClick="tabClick">
 			<a-tab-pane key="1" tab="填写基本信息">
 				<a-form ref="formRef" :model="form" :rules="formRules" name="addStore" autocomplete="off" :label-col="labelCol">
 					<div class="form_item_box">
@@ -32,13 +32,14 @@
 							<el-form ref="dateFormRef" :model="form" :rules="dateRules" :label-width="labelWidth"
 								label-position="right">
 								<el-form-item label="行程日期：" prop="travelData">
-									<picker v-model="form.travelData" @change="datePickerChange" type="daterange"
-										:value-format="dateFormat" start-placeholder="请选择开始时间" end-placeholder="请选择结束时间" style="width:100%">
+									<picker v-model="form.travelData" @change="datePickerChange" type="datetimerange"
+										:value-format="dateTimeFormat" start-placeholder="请选择开始时间" end-placeholder="请选择结束时间"
+										style="width:100%">
 									</picker>
 								</el-form-item>
 							</el-form>
-							<a-form-item name="touristPeopleNumber" label="散客组团类型">
-								<a-input v-model:value="form.touristPeopleNumber" placeholder="无需填写，选择行程日期后自动判断" disabled>
+							<a-form-item name="groupTypeName" label="散客组团类型">
+								<a-input v-model:value="form.groupTypeName" placeholder="无需填写，选择行程日期后自动判断" disabled>
 								</a-input>
 							</a-form-item>
 							<a-form-item name="travelOperatorPhone" label="联系人号码">
@@ -71,14 +72,14 @@
 							<template v-if="column.key === 'action'">
 								<div class="action-btns">
 									<a @click="checkDetails(record.oid)">查看</a>
-									<a @click="deleteContract(index)">删除</a>
+									<a @click="deleteContract(index, record)">删除</a>
 								</div>
 							</template>
 						</template>
 					</CommonTable>
 					<div class="cost_count">
 						<div class="cost_item">费用合计</div>
-						<div class="cost_item">{{ 0 }}</div>
+						<div class="cost_item">{{ form.totalExpenses }}</div>
 					</div>
 					<div class="add_box">
 						<a-button @click="addContract" type="primary">添加</a-button>
@@ -147,6 +148,10 @@ import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModa
 import traveInfo from './traveInfo.vue';
 import api from '@/api';
 import { message } from 'ant-design-vue/es';
+import { cloneDeep } from 'lodash';
+import { useTravelStore } from '@/stores/modules/travelManagement';
+import dayjs from 'dayjs';
+const travelStore = useTravelStore();
 const router = useRouter();
 const route = useRoute();
 const isRefresh = ref('0')
@@ -161,6 +166,8 @@ const back = () => {
 		} */
 	})
 }
+const isAdd = ref(true)
+const dataOid = ref()
 const scroll = { y: '60vh' }
 const labelWidth = '110px'
 const labelCol = { style: { width: labelWidth } }
@@ -190,9 +197,13 @@ const formRules = {
 	travelOperatorName: [{ required: true, trigger: 'blur', message: '请输入联系人姓名' }],
 	travelOperatorPhone: [{ required: true, trigger: 'blur', message: '请输入联系人手机号' }],
 	contractDays: [{ required: true, trigger: 'blur', message: '请输入合同天数' }],
+	groupTypeName: [{ required: true, trigger: 'blur', message: '散客组团类型不能为空' }],
+	touristPeopleNumber: [{ required: true, trigger: 'blur', message: '游客人数不能为空' }],
 }
 const dateFormat = 'YYYY-MM-DD';
+const dateTimeFormat = 'YYYY-MM-DD HH:mm:ss';
 const activeKey = ref('1')
+const CloneActiveKey = ref('1')
 const guideOption = ref([])
 const contractColumns1 = [
 	{
@@ -487,34 +498,151 @@ const datePickerChange = () => {
 	if (form.value.travelData) {
 		form.value.startDate = form.value.travelData[0];
 		form.value.endDate = form.value.travelData[1];
+		const diff = dayjs(form.value.endDate).diff(form.value.startDate, 'hour')
+		form.value.groupTypeName = diff <= 24 ? '一日游' : '多日游'
+		form.value.groupType = diff <= 24 ? 3 : 4
 	} else {
 		form.value.startDate = '';
 		form.value.endDate = '';
+		form.value.groupTypeName = '';
+		form.value.groupType = undefined;
 	}
 }
+
+const getTraveDetail = () => {
+	// const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
+	// console.log(traveListData, 'traveListData')
+	if (!route.query.id && !dataOid.value) {
+		travelStore.setBaseInfo({});
+		travelStore.setGuideList([]);
+		travelStore.setTouristList([]);
+		travelStore.setTrafficList([]);
+		return;
+	}
+	api.travelManagement
+		.getItineraryDetail(
+			{
+				oid: route.query.id || dataOid.value,
+				pageNo: 1,
+				pageSize: 100000,
+			},
+			true
+			// isSaveBtn.value
+		)
+		.then((res: any) => {
+			res.basic.teamId = res.basic.itineraryNo;
+			res.basic.time = [res.basic.startDate, res.basic.endDate];
+			res.basic.touristNum = res.basic.touristCount || 0;
+			travelStore.setBaseInfo(res.basic);
+			res.attachmentList.length && travelStore.setFileInfo(res.attachmentList);
+			travelStore.setGuideList(res.guideList);
+			travelStore.setTouristList(
+				res.touristList.content.map((it: any) => {
+					if (it.specialCertificatePicture instanceof String) {
+						it.specialCertificatePicture = it.specialCertificatePicture?.split(',');
+					}
+
+					return it;
+				})
+			);
+			res.transportList = res.transportList.map((it: any) => {
+				it.time = [it.startDate, it.endDate];
+				return it;
+			});
+			travelStore.setTrafficList(res.transportList);
+			res.waitBuyItem.waitBuyHotel = res.waitBuyItem.waitBuyHotel
+				? res.waitBuyItem.waitBuyHotel.map((it: any) => {
+					it.hotelId = it.productId;
+					it.hotelName = it.productName;
+					return it;
+				})
+				: [];
+			res.waitBuyItem.waitBuyTicket = res.waitBuyItem.waitBuyTicket
+				? res.waitBuyItem.waitBuyTicket.map((it: any) => {
+					it.scenicId = it.productId;
+					it.scenicName = it.productName;
+					return it;
+				})
+				: [];
+			const hotel = [
+				...res.waitBuyItem.waitBuyHotel,
+				...res.hotelList.map((it: any) => {
+					it.orderFee = it.orderFee / 100;
+					return it;
+				}),
+				...travelStore.templateHotel,
+			];
+			travelStore.hotels = [...hotel] as any;
+			travelStore.productList = res.productList;
+			travelStore.scenicTickets = [
+				...res.waitBuyItem.waitBuyTicket,
+				...res.ticketList.map((it: any) => {
+					it.unitPrice = it.unitPrice / 100;
+					return it;
+				}),
+				...travelStore.templateTicket,
+			] as any;
+			travelStore.insuranceStatus = res.insuranceStatus?.toString();
+			travelStore.checkInsurance = res.insuranceStatus ? true : false;
+			travelStore.teamTime = [res.basic.startDate, res.basic.endDate] as any;
+			// travelStore.setDisabled = disDate(res);
+			// const dateTime = disTime(res);
+			// travelStore.setStarEndHMS = dateTime
+			// travelStore.defaultStartTime = new Date(2022, 12, 1, dateTime.start.hour, dateTime.start.min, dateTime.start.second);
+			// travelStore.defaultEndTime = new Date(2022, 12, 1, dateTime.end.hour, dateTime.end.min, dateTime.end.second)
+			// console.log(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end, '-----');
+			// travelStore.setDisabledTime = disabledRangeTime(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end) as any;
+			// route.query.tab && setTimeout(() => (activeKey.value = Number(route.query.tab)));
+			// getHealthCode();
+		});
+};
+
 // 步骤跳转
 const nextTep = (val: string) => {
-	activeKey.value = val
-	if (val === '2') {
-
-	}
+	const a = Promise.all([
+		formRef.value?.validateFields(),
+		dateFormRef.value?.validate()
+	])
+	a.then(async () => {
+		activeKey.value = val
+		if (val === '2') {
+			await saveDraft()
+			getTraveDetail()
+		}
+	}).catch((error: Error) => {
+		activeKey.value = CloneActiveKey.value
+		console.log(error);
+	})
 }
-const deleteContract = (index: number) => {
+const tabClick = () => {
+	CloneActiveKey.value = cloneDeep(activeKey.value)
+}
+const deleteContract = (index: number, record: any) => {
 	selectedContract.value.splice(index, 1)
 	selectedRowKeys.value.splice(index, 1)
+	form.value.touristPeopleNumber -= record.touristPeopleNumber
+	form.value.touristPeopleNumber = form.value.touristPeopleNumber === 0 ? undefined : form.value.touristPeopleNumber
+	form.value.totalExpenses -= record.contractAmount
 }
-
 const onSelectChange = (Keys: Key[], selectedRows: any[]) => {
 	selectedRowKeys.value = Keys;
 	if (selectedRows.length) {
 		const select: any = []
+		let touristPeopleSum = 0
+		let totalExpenses = 0
 		selectedRows.forEach((item: any) => {
+			touristPeopleSum += item.touristPeopleNumber
+			totalExpenses += item.contractAmount
 			select.push({
 				contractId: item.oid,
 				contractType: item.contractType
 			})
 		})
+		form.value.totalExpenses = totalExpenses
+		form.value.touristPeopleNumber = touristPeopleSum
 		form.value.contracts = select
+	} else {
+		form.value.touristPeopleNumber = undefined
 	}
 	selectedContract.value = selectedRows
 };
@@ -535,19 +663,24 @@ const guideChange = (val: any) => {
 	}
 }
 const saveDraft = async () => {
-	const a = Promise.all([
-		formRef.value?.validateFields(),
-		dateFormRef.value?.validate()
-	])
-	a.then(async () => {
-		const res = await api.createIndividualItinerary(form.value)
-		if (res) {
-			message.success('保存草稿成功！')
-		}
-	}).catch((error: Error) => {
-		console.log(error);
+	return new Promise((resolve, reject) => {
+		const a = Promise.all([
+			formRef.value?.validateFields(),
+			dateFormRef.value?.validate()
+		])
+		a.then(async () => {
+			if (isAdd.value) {
+				const res = await api.createIndividualItinerary(form.value)
+				if (res) {
+					dataOid.value = res
+					resolve(dataOid.value)
+					message.success('保存草稿成功！')
+				}
+			}
+		}).catch((error: Error) => {
+			console.log(error);
+		})
 	})
-
 }
 
 const checkDetails = (id: number) => {
@@ -582,7 +715,7 @@ const edit = (obj: any) => {
 	obj.isEdit = true
 };
 const getGuideList = async () => {
-	const res = await api.travelManagement.getGuideList();
+	let res = await api.travelManagement.getGuideList();
 	guideOption.value = res;
 }
 onMounted(() => {
