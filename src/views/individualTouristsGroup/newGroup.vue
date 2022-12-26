@@ -51,7 +51,7 @@
 									<a-input v-model:value="form.touristPeopleNumber" placeholder="无需填写，选择合同后自动生成" disabled
 										style="flex:3">
 									</a-input>
-									<div class="append">查看全部游客</div>
+									<div @click="getTourist" class="append">查看全部游客</div>
 								</div>
 							</a-form-item>
 							<a-form-item name="licensePlate" label="用车车牌号">
@@ -86,14 +86,14 @@
 					</div>
 				</a-form>
 				<div class="operation">
-					<a-button @click="saveDraft" type="primary" style="margin-right:20px">保存草稿</a-button>
+					<a-button @click="saveDraft(true)" type="primary" style="margin-right:20px">保存草稿</a-button>
 					<a-button @click="nextTep('2')" type="primary">下一步</a-button>
 				</div>
 			</a-tab-pane>
 			<a-tab-pane key="2" tab="产品预订">
 				<traveInfo></traveInfo>
 				<div class="operation">
-					<a-button @click="saveDraft" type="primary" style="margin-right:20px">保存草稿</a-button>
+					<a-button @click="saveDraft(true)" type="primary" style="margin-right:20px">保存草稿</a-button>
 					<a-button @click="nextTep('1')" type="primary" style="margin-right:20px">上一步</a-button>
 					<a-button @click="" type="primary">提交审核</a-button>
 				</div>
@@ -134,6 +134,25 @@
 			</template>
 		</CommonTable>
 	</CommonModal>
+	<CommonModal :title="`全部游客（${touristTable.data.length}人）`" v-model:visible="touristVisible" @close="touristClose"
+		@cancel="touristClose" :is-cancel="false" :is-conform="false" width="65%">
+		<CommonTable :dataSource="touristTable.data" :columns="touristColumns" :scroll="scroll">
+			<template #bodyCell="{ column, record, text, index }">
+				<template v-if="column.key === 'index'">
+					{{ index + 1 }}
+				</template>
+				<template v-if="column.key === 'isHealthy'">
+					{{ cmpIsHealthy(record.isHealthy) }}
+				</template>
+				<template v-if="column.key === 'isAncientUygur'">
+					{{ cmpIsAncientUygur(record.isAncientUygur) }}
+				</template>
+				<template v-if="column.key === 'healthyCode'">
+					<span :class="cmpHealthyColor(text)">{{ text }}</span>
+				</template>
+			</template>
+		</CommonTable>
+	</CommonModal>
 </template>
 
 <script setup lang="ts">
@@ -166,6 +185,7 @@ const back = () => {
 		} */
 	})
 }
+const touristVisible = ref(false)
 const isAdd = ref(true)
 const dataOid = ref()
 const scroll = { y: '60vh' }
@@ -188,9 +208,12 @@ const state = reactive({
 			key: undefined,
 			contractNo: undefined
 		}
+	},
+	touristTable: {
+		data: [],
 	}
 })
-const { contractTable } = toRefs(state)
+const { contractTable, touristTable } = toRefs(state)
 const formRules = {
 	routeName: [{ required: true, trigger: 'blur', message: '给拼团线路取个名字' }],
 	guideOid: [{ required: true, trigger: 'blur', message: '请选择本社签约导游' }],
@@ -205,6 +228,63 @@ const dateTimeFormat = 'YYYY-MM-DD HH:mm:ss';
 const activeKey = ref('1')
 const CloneActiveKey = ref('1')
 const guideOption = ref([])
+const touristColumns = [
+	{
+		title: '序号',
+		dataIndex: 'index',
+		key: 'index',
+	},
+	{
+		title: '游客姓名',
+		dataIndex: 'touristName',
+		key: 'touristName',
+	},
+	{
+		title: '身份证件类型',
+		dataIndex: 'certificatesTypeName',
+		key: 'certificatesTypeName',
+	},
+	{
+		title: '身份证件号码',
+		dataIndex: 'certificatesNo',
+		key: 'certificatesNo',
+	},
+	{
+		title: '游客类型',
+		dataIndex: 'touristTypeName',
+		key: 'touristTypeName',
+	},
+	{
+		title: '性别',
+		dataIndex: 'gender',
+		key: 'gender',
+	},
+	{
+		title: '年龄',
+		dataIndex: 'age',
+		key: 'age',
+	},
+	{
+		title: '电话号码',
+		dataIndex: 'phone',
+		key: 'phone',
+	},
+	{
+		title: '是否健康',
+		dataIndex: 'isHealthy',
+		key: 'isHealthy',
+	},
+	{
+		title: '健康码',
+		dataIndex: 'healthyCode',
+		key: 'healthyCode',
+	},
+	{
+		title: '古维费购买状态',
+		dataIndex: 'isAncientUygur',
+		key: 'isAncientUygur',
+	},
+]
 const contractColumns1 = [
 	{
 		title: '序号',
@@ -447,6 +527,30 @@ const productsColumns = [
 		width: 208
 	}
 ]
+
+const cmpIsHealthy = computed(() => (code: number) => {
+	if (code === 1) {
+		return '是'
+	} else if (code === 0) {
+		return '否'
+	}
+})
+const cmpIsAncientUygur = computed(() => (code: number) => {
+	if (code === 1) {
+		return '已购'
+	} else if (code === 0) {
+		return '未购'
+	}
+})
+const cmpHealthyColor = computed(() => (text: string) => {
+	if (text === '绿码') {
+		return 'green_text'
+	} else if (text === '黄码') {
+		return 'yellow_text'
+	} else if (text === '红码') {
+		return 'red_text'
+	}
+})
 interface CostItem {
 	priceName: string;
 	adultPrice: string;
@@ -662,7 +766,7 @@ const guideChange = (val: any) => {
 		}
 	}
 }
-const saveDraft = async () => {
+const saveDraft = async (showMessage?: boolean) => {
 	return new Promise((resolve, reject) => {
 		const a = Promise.all([
 			formRef.value?.validateFields(),
@@ -673,8 +777,9 @@ const saveDraft = async () => {
 				const res = await api.createIndividualItinerary(form.value)
 				if (res) {
 					dataOid.value = res
+					isAdd.value = false
 					resolve(dataOid.value)
-					message.success('保存草稿成功！')
+					showMessage && message.success('保存草稿成功！')
 				}
 			}
 		}).catch((error: Error) => {
@@ -682,6 +787,74 @@ const saveDraft = async () => {
 		})
 	})
 }
+// 批量获取健康码
+const getHealthyCodes = async (ids: number[]) => {
+	let res = await api.getHealthyCode(ids)
+	if (res) {
+		res.forEach((item: any) => {
+			// 00:绿码，01：黄码，10：红码
+			switch (item.healthCodeStatus) {
+				case '00':
+					item.codeName = '绿码'
+					break;
+				case '01':
+					item.codeName = '黄码'
+					break;
+				case '10':
+					item.codeName = '红码'
+					break;
+				default:
+					item.codeName = '暂无健康码'
+			}
+		})
+	}
+	return res || []
+}
+const configCodeName = (certificateCodes: any, targetArr: any) => {
+	for (let i = 0, l = certificateCodes.length; i < l; i++) {
+		const item = certificateCodes[i];
+		for (let j = 0, l = targetArr.length; j < l; j++) {
+			const citem = targetArr[j];
+			if (item.certificateId === citem.certificatesNo) {
+				targetArr[j].healthyCode = item.codeName
+				break
+			}
+		}
+	}
+}
+const getTourist = async () => {
+	if (selectedContract.value.length > 0) {
+		let params = selectedContract.value.map((item: any) => {
+			return {
+				type: item.contractType,
+				oid: item.oid
+			}
+		})
+		const res = await api.findIndividualContractTourist(params)
+		if (res) {
+			// 获取身份证列表
+			const certificateIds = res.map((item: any) => {
+				return { certificateId: item.certificatesNo }
+			})
+			// 根据身份证列表查询健康码列表
+			const certificateCodes = await getHealthyCodes(certificateIds)
+			// 将健康码和游客列表数据关联
+			configCodeName(certificateCodes, res)
+
+			touristTable.value.data = res
+		} else {
+			touristTable.value.data = []
+		}
+		touristVisible.value = true
+	} else {
+		message.error('请先选择合同！')
+	}
+}
+
+const touristClose = () => {
+	touristVisible.value = false
+}
+
 
 const checkDetails = (id: number) => {
 
@@ -791,5 +964,17 @@ onMounted(() => {
 
 .mr40 {
 	margin-right: 40px;
+}
+
+.green_text {
+	color: #71b621;
+}
+
+.yellow_text {
+	color: #bfbe26;
+}
+
+.red_text {
+	color: #d70095;
 }
 </style>
