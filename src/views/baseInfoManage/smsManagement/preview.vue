@@ -5,7 +5,21 @@
 			<a-form ref="formRef" :rules="rulesRef" :model="editableData" autocomplete="off" labelAlign="left">
 				<CommonTable :dataSource="tableData" :columns="columns" style="padding: 0" :scrollY="false">
 					<template #button>
-						<a-button type="primary" style="margin-right: 20px;" @click="ImportContact" >导入名单</a-button>
+						<a-upload
+							v-model:file-list="excel"
+							name="file"
+							accept=".xlsx"
+							:maxCount="1"
+							:multiple="false"
+							:action="action"
+							:headers="hearders"
+							@change="handleChange"
+							:showUploadList="false"
+							:data="{ templateOid: templateId }"
+						>
+							<a-button type="primary" style="margin-right: 20px" > <upload-outlined></upload-outlined>导入名单</a-button>
+						</a-upload>
+
 						<a-button type="primary" @click="downContact">下载模板</a-button>
 					</template>
 					<template #bodyCell="{ column, text, index, record }">
@@ -80,7 +94,6 @@
 				</div>
 			</div>
 		</div>
-		<Import v-model="isImport" :params="templateId" @onSearch="install" />
 	</div>
 </template>
 
@@ -98,7 +111,6 @@ const {
 	columns,
 	onlook,
 	editableData,
-	isImport,
 	formValidate,
 	rulesRef,
 	formtwoRef,
@@ -120,7 +132,11 @@ const {
 	smsMass,
 	downContact,
 	templateId,
-	install
+	install,
+	action,
+	excel,
+	hearders,
+	handleChange
 } = usesmsInfo();
 </script>
 
@@ -161,5 +177,8 @@ const {
 
 .ant-form-item-explain-error {
 	width: 100px !important;
+}
+.ant-form-item {
+	margin-top: 24px;
 }
 </style>
