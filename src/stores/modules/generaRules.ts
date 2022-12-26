@@ -39,7 +39,8 @@ export const useGeneraRules = defineStore('generaRules', {
 		],
 		deductionModelList: [
 			{ value: 1, name: '冻结金额' },
-			{ value: 2, name: '核销金额' },
+			{ value: 2, name: '已核销金额' },
+			{ value: 0, name: '未核销金额' },
 		],
 		hotelRatedList: [], //酒店星级
 		getDictionaryList: [], // 报表费用归属数据
