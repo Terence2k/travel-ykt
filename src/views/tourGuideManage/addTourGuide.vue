@@ -63,7 +63,6 @@ const state = reactive({
     total: 0,
     loading: false,
     list:[]as any,
-    certificatePicture:'',
     num:0
   },
   signAttachmentList:''
@@ -94,8 +93,6 @@ const onSelect=(value:any)=>{
   let guideCertificateNo=value.split(',')
   state.tableData.guideName=guideCertificateNo[0]
   state.tableData.data=state.tableData.list.filter((i:any)=>i.guideCertificateNo=guideCertificateNo[1])
-  state.tableData.certificatePicture=state.tableData.data[0].certificatePicture
-
 }
 const back = () => {
   router.push({
@@ -112,19 +109,17 @@ const submit = () => {
   }
   let data={
     guideId:state.tableData.data[0]?.oid,
-    signStartDate:state.tableData.data[0]?.signStartDate,
-    signEndDate:state.tableData.data[0]?.signEndDate,
-    signAttachmentList:[state.signAttachmentList]
+    // signStartDate:state.tableData.data[0]?.signStartDate,
+    // signEndDate:state.tableData.data[0]?.signEndDate,
+    signStartDate:'2022-12-01 00:00:00',
+    signEndDate:'2022-12-12 00:00:00',
+    signAttachmentList:state.signAttachmentList.split(',')
   }
-  let pW = new FormData();
-		pW.append('guideId', state.tableData.data[0]?.oid);
-		// pW.append('signStartDate', state.tableData.data[0]?.signStartDate);
-		// pW.append('signEndDate', state.tableData.data[0]?.signEndDate);
-    pW.append('signStartDate','2022-12-01 00:00:00' );
-		pW.append('signEndDate', '2023-12-26 00:00:00');
-		pW.append('signAttachmentList',state.signAttachmentList);
-  api.sendSignInvitation(pW).then((res:any)=>{
+  let signAttachmentList=state.signAttachmentList.split(',')
+  console.log(signAttachmentList,'signAttachmentList')
+  api.sendSignInvitation(data).then((res:any)=>{
       message.success('发送委派成功')
+      router.push({ path: '/travel/tourGuideManage/tourGuideList' });
   })
 }
 

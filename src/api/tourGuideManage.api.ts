@@ -35,7 +35,7 @@ export async function sendSignInvitation(data: any) {
         url: `${commonPath}/travel-agency-service/public/api/guide/sendSignInvitation`,
         data,
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/json',
         },
         method: 'put',
         showLoading: false,
