@@ -29,3 +29,27 @@ export async function queryNoSignGuideList(data: any) {
 		showLoading: false,
     });
 }
+//发送委派邀请
+export async function sendSignInvitation(data: any) {
+	return request({
+        url: `${commonPath}/travel-agency-service/public/api/guide/sendSignInvitation`,
+        data,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        method: 'put',
+        showLoading: false,
+    });
+}
+//取消委派邀请
+export async function cancelSign(data: any) {
+	return request({
+        url: `${commonPath}/travel-agency-service/public/api/guide/cancelSign`,
+        data,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        method: 'put',
+        showLoading: false,
+    });
+}

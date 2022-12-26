@@ -33,14 +33,14 @@
         <a-form-item label="导游星级" name="guideLevelName">
           {{state.tableData.data[0]?.guideLevelName}}
         </a-form-item>
-        <a-form-item label="签约附件" name="certificatePicture">
-          <Upload v-model="state.tableData.certificatePicture" disabled/>
+        <a-form-item label="签约附件" name="signAttachmentList">
+          <Upload v-model="state.signAttachmentList" />
         </a-form-item>
       </a-form>
     </div>
-    <!-- <div class="btn_box">
+    <div class="btn_box">
       <a-button type="primary" @click="submit" style="margin-right:20px" :loading="loading">发送委派邀请</a-button>
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -49,6 +49,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { CloseOutlined } from '@ant-design/icons-vue';
 import api from '@/api';
 import Upload from '@/components/common/imageWrapper.vue';
+import { message } from 'ant-design-vue';
 const router = useRouter();
 const route = useRoute();
 interface MockVal {
@@ -65,6 +66,7 @@ const state = reactive({
     certificatePicture:'',
     num:0
   },
+  signAttachmentList:''
  
 });
 const handleChange=()=>{
@@ -92,7 +94,6 @@ const onSelect=(value:any)=>{
   let guideCertificateNo=value.split(',')
   state.tableData.guideName=guideCertificateNo[0]
   state.tableData.data=state.tableData.list.filter((i:any)=>i.guideCertificateNo=guideCertificateNo[1])
-  console.log(state.tableData.data[0].certificatePicture,'state.tableData.data')
   state.tableData.certificatePicture=state.tableData.data[0].certificatePicture
 
 }
@@ -103,7 +104,29 @@ const back = () => {
 }
 const form = reactive({})
 const loading = ref(false)
-const submit = () => { }
+const submit = () => {
+  if(!state.tableData.guideName)
+  {
+    message.error('请先选择导游')
+    return false
+  }
+  let data={
+    guideId:state.tableData.data[0]?.oid,
+    signStartDate:state.tableData.data[0]?.signStartDate,
+    signEndDate:state.tableData.data[0]?.signEndDate,
+    signAttachmentList:[state.signAttachmentList]
+  }
+  let pW = new FormData();
+		pW.append('guideId', state.tableData.data[0]?.oid);
+		// pW.append('signStartDate', state.tableData.data[0]?.signStartDate);
+		// pW.append('signEndDate', state.tableData.data[0]?.signEndDate);
+    pW.append('signStartDate','2022-12-01 00:00:00' );
+		pW.append('signEndDate', '2023-12-26 00:00:00');
+		pW.append('signAttachmentList',state.signAttachmentList);
+  api.sendSignInvitation(pW).then((res:any)=>{
+      message.success('发送委派成功')
+  })
+}
 
 </script>
 
