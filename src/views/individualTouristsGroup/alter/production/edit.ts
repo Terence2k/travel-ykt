@@ -274,68 +274,42 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			// 		(dayjs(state.timeformState.endTime) && dayjs(state.timeformState.endTime).add(1, 'day') <= current && current)
 			// 	);
 			// };
-		
+
 			// travelStore.setDisabled = dis as any;
 			travelStore.teamTime[0] = state.timeformState.startTime;
 			travelStore.teamTime[1] = state.timeformState.endTime;
 		}
 	};
 	const install = () => {
-		console.log('getNopassChangeProductDeatil', route.query.remark);
-		if (route.query.remark == '0') {
-			api.travelManagement
-				.changDetail({
-					oid: route.query.oid,
-					pageNo: 1,
-					pageSize: 100000,
-				})
-				.then((res: any) => {
-					state.startTime = res.basic?.startDate;
-					state.endTime = res.basic?.endDate;
-					travelStore.hotelList = res.hotelList;
-					travelStore.ticketsList = res.ticketList;
-					travelStore.touristList = res.touristList.content;
-					state.itineraryId = res.basic.oid;
-					// let dis = null;
-					// if (res) {
-					// 	dis = (current: Dayjs) => {
-					// 		return (
-					// 			(dayjs(res.basic.startDate) && dayjs(res.basic.startDate).subtract(1, 'day') >= current && current) ||
-					// 			(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).add(0, 'day') <= current && current)
-					// 		);
-					// 	};
-					// }
-					// travelStore.setDisabled = dis as any;
-					const time: any = [];
-					time.push(res.basic.startDate, res.basic.endDate);
-					travelStore.teamTime = time;
-				});
-		} else {
-			api.travelManagement.getProductChangeAuditDetail(route.query.oid).then((res: any) => {
-				res.startDate = dayjs(res.startDate).format('YYYY-MM-DD HH:mm:ss');
-				res.endDate = dayjs(res.endDate).format('YYYY-MM-DD HH:mm:ss');
-				state.startTime = res.startDate;
-				state.endTime = res.endDate;
-				travelStore.hotelList = res.newHotelList;
-				travelStore.ticketsList = res.newTicketList;
-				travelStore.touristList = res.newTicketList;
-				state.itineraryId = res.itineraryId;
-				let dis = null;
+		api.travelManagement
+			.getItineraryDetail({
+				oid: 8245801281314817,
+				pageNo: 1,
+				pageSize: 100000,
+			})
+			.then((res: any) => {
+				state.startTime = res.basic?.startDate;
+				state.endTime = res.basic?.endDate;
+				travelStore.hotelList = res.hotelList;
+				travelStore.ticketsList = res.ticketList;
+				travelStore.touristList = res.touristList.content;
+				state.itineraryId = res.basic.oid;
+				// let dis = null;
 				// if (res) {
 				// 	dis = (current: Dayjs) => {
 				// 		return (
-				// 			(dayjs(res.startDate) && dayjs(res.startDate).subtract(1, 'day') >= current && current) ||
-				// 			(dayjs(res.endDate) && dayjs(res.endDate).add(0, 'day') <= current && current)
+				// 			(dayjs(res.basic.startDate) && dayjs(res.basic.startDate).subtract(1, 'day') >= current && current) ||
+				// 			(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).add(0, 'day') <= current && current)
 				// 		);
 				// 	};
 				// }
 				// travelStore.setDisabled = dis as any;
 				const time: any = [];
-				time.push(res.startDate, res.endDate);
+				time.push(res.basic.startDate, res.basic.endDate);
 				travelStore.teamTime = time;
 			});
-		}
 	};
+
 	const submitReview = async (callback: Function) => {
 		const start = ref();
 		const end = ref();
@@ -437,7 +411,16 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			.travelChangeOrderProduct(data)
 			.then((res: any) => {
 				message.success('提交审核成功');
-				router.go(-1);
+				Modal.confirm({
+					title: '变更提交成功',
+					icon: createVNode(ExclamationCircleOutlined),
+					content: createVNode('div', { style: 'color: #333;' }, `当前行程单变更申请成功，请等待贵社财务审核。审核通过后，行程单信息会自动更新`),
+					async onOk() {
+						return false;
+					},
+				});
+				// router.go(-1);
+				return false;
 			})
 			.catch((error: any) => {
 				state.tiecketparams = state.tiecketparams.map((item: any) => {

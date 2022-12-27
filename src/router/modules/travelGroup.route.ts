@@ -305,6 +305,17 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					}, */
+					{
+						path: 'tourists_alter',
+						name: 'tourists_alter',
+						component: () => import('@/views/individualTouristsGroup/alter/index.vue'),
+						meta: {
+							title: '行程单变更填写',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
 				],
 			},
 			// tourGuideManage
