@@ -693,6 +693,15 @@ export const travelManagement = {
 			method: 'put',
 			showLoading: true,
 		});
-	}
+	},
 	
+	// 散客团变更基本信息
+	changeIndividualItineraryBasic(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/change/changeIndividualItineraryBasic`,
+			method: 'post',
+			showLoading: true,
+			data
+		});
+	}
 };

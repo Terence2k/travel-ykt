@@ -9,7 +9,11 @@
 							{{ index + 1 }}
 						</div>
 					</template>
-
+					<template v-if="column.key === 'unitPrice'">
+						<div>
+							{{ accDiv(record.unitPrice, 100) }}
+						</div>
+					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a
