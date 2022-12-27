@@ -24,6 +24,7 @@
             <template v-if="column.key === 'action'">
               <div class="action-btns">
                 <a @click="addOrUpdate({ row: record, handle: 'update' })">编辑</a>
+                <a @click="change(record)">变更</a>
                 <a @click="">删除</a>
                 <a @click="">提交审核</a>
               </div>
@@ -66,6 +67,7 @@
             <template v-if="column.key === 'action'">
               <div class="action-btns">
                 <a @click="addOrUpdate({ row: record, handle: 'update' })">编辑</a>
+                <a @click="change(record)">变更</a>
                 <a @click="">删除</a>
                 <a @click="">提交审核</a>
               </div>
@@ -562,6 +564,16 @@ const addOrUpdate = ({ row, handle }: addInterface) => {
     goto('newGroup', { id: row.oid })
   }
 }
+
+const change =(row:any) => {
+  router.push({
+		path: '/travel/tourists/tourists_alter',
+		query: {
+			oid: row.oid,
+		},
+	});
+}
+
 const tabsChange = (key: string) => {
   const currentList = menuList[parseInt(key) - 1]
   switch (activeKey.value) {
