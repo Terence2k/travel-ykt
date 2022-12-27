@@ -46,7 +46,7 @@
 </template>
 
 <script lang="ts" setup>
-import { SelectProps, TableColumnsType } from 'ant-design-vue';
+import { SelectProps, TableColumnsType, message } from 'ant-design-vue';
 import { ref } from 'vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 //import CommonPagination from '@/components/common/CommonPagination.vue';
@@ -213,7 +213,7 @@ const onSearch = () => {
 				getHotelStarList();
 			})
 			.catch((err: any) => {
-				console.log(err);
+				message.error(err?.message || err);
 			});
 	} else if (Array.isArray(sysRoles) && sysRoles.map((item) => item?.roleCode).includes('HOTEL_SUPER_ADMIN')) {
 		console.log('我是酒店超级管理员');
@@ -247,7 +247,7 @@ const getHotelStarList = () => {
 			}
 		})
 		.catch((err: any) => {
-			console.log(err);
+			message.error(err?.message || err);
 		});
 };
 
