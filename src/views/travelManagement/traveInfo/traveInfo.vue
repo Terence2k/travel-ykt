@@ -52,11 +52,12 @@
 		</div>
 		<div class="item-container">
 			<p class="title">综费产品</p>
+			<!-- 综费产品这边存的直接是元 -->
 			<CommonTable 
 				ref="tableRef"
 				rowKey="oid" 
 				:row-selection="{selectedRowKeys: selectedRowKeys,type: 'radio',onChange: onSelectChange}" 
-				v-if="allFeesProducts.length > 1" :columns="columns" 
+				v-if="travelStore.isOptional" :columns="columns" 
 				:dataSource="allFeesProducts" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
 					<template v-if="column.key === 'index'">
@@ -69,11 +70,11 @@
 					</template>
 
 					<template v-if="column.key === 'feeNumber'">
-						{{ text / 100 || 0 }}
+						{{ text }}
 					</template>
 
 					<template v-if="column.key === 'totalMoney'">
-						{{ text / 100 || 0 }}
+						{{ text }}
 					</template>
 				</template>
 			</CommonTable>
@@ -89,11 +90,11 @@
 					</template>
 					
 					<template v-if="column.key === 'feeNumber'">
-						{{ text / 100 || 0 }}
+						{{ text }}
 					</template>
 
 					<template v-if="column.key === 'totalMoney'">
-						{{ text / 100 || 0 }}
+						{{ text }}
 					</template>
 				</template>
 			</CommonTable>

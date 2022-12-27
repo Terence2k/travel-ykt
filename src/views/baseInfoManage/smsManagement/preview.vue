@@ -4,6 +4,24 @@
 			<header>群发人员名单</header>
 			<a-form ref="formRef" :rules="rulesRef" :model="editableData" autocomplete="off" labelAlign="left">
 				<CommonTable :dataSource="tableData" :columns="columns" style="padding: 0" :scrollY="false">
+					<template #button>
+						<a-upload
+							v-model:file-list="excel"
+							name="file"
+							accept=".xlsx"
+							:maxCount="1"
+							:multiple="false"
+							:action="action"
+							:headers="hearders"
+							@change="handleChange"
+							:showUploadList="false"
+							:data="{ templateOid: templateId }"
+						>
+							<a-button type="primary" style="margin-right: 20px" > <upload-outlined></upload-outlined>导入名单</a-button>
+						</a-upload>
+
+						<a-button type="primary" @click="downContact">下载模板</a-button>
+					</template>
 					<template #bodyCell="{ column, text, index, record }">
 						<template v-if="column.key === 'index'">
 							{{ index + 1 }}
@@ -62,16 +80,17 @@
 						</a-form-item>
 					</div>
 					<a-form-item label="短信预览">
-						<a-textarea :rows="4" v-model:value="formValidate.smsLook" />
+						<a-textarea disabled :rows="4" v-model:value="formValidate.smsLook" />
 						<a-button style="margin-top: 10px" @click="onlook">生成预览内容</a-button>
 					</a-form-item>
-					<a-form-item label="预览电话">
-						<a-input placeholder style="width: 300px"></a-input>
+					<a-form-item label="预览电话" :rules="[{ required: true, validator: validPhone }]">
+						<a-input placeholder style="width: 300px" v-model:value="formValidate.phone"></a-input>
 					</a-form-item>
 				</a-form>
 				<div>
-					<a-button style="margin-right: 20px" type="primary">发送预览</a-button>
-					<a-button type="primary">短信群发</a-button>
+					<a-button style="margin-right: 20px" type="primary" @click="sendPreview">发送预览</a-button>
+					<a-button style="margin-right: 20px" type="primary" @click="smsMass">短信群发</a-button>
+					<a-button type="primary" @click="goback">取消</a-button>
 				</div>
 			</div>
 		</div>
@@ -82,7 +101,9 @@
 import { ref, Ref, computed, watch, toRefs, reactive } from 'vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
-import { usesmsInfo } from './recipient';
+import { usesmsInfo } from './preview';
+import { validPhone } from '@/utils';
+import Import from './compinents/Import.vue';
 
 const emits = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
 
@@ -90,7 +111,6 @@ const {
 	columns,
 	onlook,
 	editableData,
-	labelCol,
 	formValidate,
 	rulesRef,
 	formtwoRef,
@@ -105,8 +125,18 @@ const {
 	save,
 	onHandleCurrentChange,
 	pageSideChange,
-	pre,
+	sendPreview,
 	CheckNum,
+	goback,
+	ImportContact,
+	smsMass,
+	downContact,
+	templateId,
+	install,
+	action,
+	excel,
+	hearders,
+	handleChange
 } = usesmsInfo();
 </script>
 
@@ -147,5 +177,8 @@ const {
 
 .ant-form-item-explain-error {
 	width: 100px !important;
+}
+.ant-form-item {
+	margin-top: 24px;
 }
 </style>

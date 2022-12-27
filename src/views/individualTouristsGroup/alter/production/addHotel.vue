@@ -219,8 +219,13 @@ const handleHotel = (e: any, option: any) => {
 };
 
 const handleChangCheckIn = () => {
-	disLeave.value = (current: Dayjs): any =>
-		(current && current < dayjs(formState.arrivalDate).add(1, 'day')) || (dayjs(travelStore.teamTime[1]).add(1, 'day') < current && current);
+	// disLeave.value = (current: Dayjs): any =>
+	// 	(current && current < dayjs(formState.arrivalDate).add(1, 'day')) || (dayjs(travelStore.teamTime[1]).add(1, 'day') < current && current);
+	// const isAfter = dayjs(dayjs(formState.arrivalDate)).isAfter(dayjs(formState.departureDate).subtract(1, 'day'));
+	// if (formState.departureDate && isAfter) {
+	// 	formState.departureDate = '';
+	// }
+	travelStore.disbledDate = false
 	const isAfter = dayjs(dayjs(formState.arrivalDate)).isAfter(dayjs(formState.departureDate).subtract(1, 'day'));
 	if (formState.departureDate && isAfter) {
 		formState.departureDate = '';
@@ -359,6 +364,7 @@ const getRoomType = async (hotelId: number | string, leaveTime: string, enterTim
 };
 const emits = defineEmits(['update:modelValue']);
 const dialogVisible = ref(false);
+
 watch(
 	() => props.modelValue,
 	(newVal) => {
@@ -378,9 +384,10 @@ watch(dialogVisible, (newVal) => {
 		}
 		if (data.startDate) {
 			formState.arrivalDate = data.startDate;
-		} else {
-			formState.arrivalDate = '';
+		}else{
+			formState.arrivalDate = ''
 		}
+		
 		formState.departureDate = data.endDate;
 		if (props.productRow.hotelId) {
 			let price = hotelData.hotelStart.filter((it: any) => it.oid == data.hotelStarId)[0].price;

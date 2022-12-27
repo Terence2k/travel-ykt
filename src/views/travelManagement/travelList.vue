@@ -178,6 +178,7 @@ const reset = () => {
 	travelStore.traveList[chartField].params = cloneDeep(traveListParams.params);
 	onSearch();
 };
+travelStore.teamTime = [];
 watch(
 	() => params.time,
 	(newVal) => {

@@ -21,196 +21,124 @@
         </a-form-item>
         <a-form-item name="name" label="企业名称">
           <div class="flex">
-            <a-input v-model:value="form.name" placeholder="请输入企业名称" :disabled="getStatus('name')" />
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('name')" v-if="showChangeBtns('name')">
-                {{ getStatus('name') ? '修改' : '确定' }}
-              </a-button>
+            <a-input v-model:value="form.name" placeholder="请输入企业名称"/>
           </div>
         </a-form-item>
         <a-form-item name="addressIds" label="企业所属地区">
           <div class="flex">
-            <address-selector placeholder="请选择所属地区" v-model:value="form.addressIds" :disabled="getStatus('addressIds')" />
-            <a-button type="primary" class="status-btn" @click="changeDisabledStatus('addressIds')" v-if="showChangeBtns('addressIds')">
-              {{ getStatus('addressIds') ? '修改' : '确定' }}
-            </a-button>
+            <address-selector placeholder="请选择所属地区" v-model:value="form.addressIds"/>
           </div>
         </a-form-item>
         <a-form-item name="addressDetail" label="企业详情地址">
           <div class="flex">
-            <a-input v-model:value="form.addressDetail" placeholder="请输入企业详情地址" :disabled="getStatus('addressDetail')"/>
-            <a-button type="primary" class="status-btn" @click="changeDisabledStatus('addressDetail')" v-if="showChangeBtns('addressDetail')">
-              {{ getStatus('addressDetail') ? '修改' : '确定' }}
-            </a-button>
+            <a-input v-model:value="form.addressDetail" placeholder="请输入企业详情地址"/>
           </div>
         </a-form-item>
         <a-form-item name="legalPersonUrl" label="法人身份证附件">
           <div class="flex">
-            <Upload v-model="form.legalPersonUrl" :disabled="getStatus('legalPersonUrl')" :maxCount="1" @remove="getImage"/>
-            <a-button type="primary" class="status-btn" @click="changeDisabledStatus('legalPersonUrl')" v-if="showChangeBtns('legalPersonUrl')">
-              {{ getStatus('legalPersonUrl') ? '修改' : '确定' }}
-            </a-button>
+            <Upload v-model="form.legalPersonUrl" :maxCount="1" @remove="getImage"/>
           </div>
         </a-form-item>
         <a-form-item name="companyUserEmail" label="企业对公邮箱">
           <div class="flex">
-            <a-input v-model:value="form.companyUserEmail" placeholder="请输入企业对公邮箱" :disabled="getStatus('companyUserEmail')" />
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('companyUserEmail')" v-if="showChangeBtns('companyUserEmail')">
-                {{ getStatus('companyUserEmail') ? '修改' : '确定' }}
-              </a-button>
+            <a-input v-model:value="form.companyUserEmail" placeholder="请输入企业对公邮箱"/>
           </div>
         </a-form-item>
         <a-form-item name="postalCode" label="企业所在地邮编">
           <div class="flex">
-            <a-input v-model:value="form.postalCode" placeholder="请输入企业所在地邮编" :disabled="getStatus('postalCode')" />
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('postalCode')" v-if="showChangeBtns('postalCode')">
-                {{ getStatus('postalCode') ? '修改' : '确定' }}
-              </a-button>
+            <a-input v-model:value="form.postalCode" placeholder="请输入企业所在地邮编"/>
           </div>
         </a-form-item>
         <a-form-item name="businessLicenseNo" label="企业营业执照证件号码">
           <div class="flex">
-            <a-input v-model:value="form.businessLicenseNo" placeholder="请输入企业营业执照证件号码" :disabled="getStatus('businessLicenseNo')" />
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('businessLicenseNo')" v-if="showChangeBtns('businessLicenseNo')">
-                {{ getStatus('businessLicenseNo') ? '修改' : '确定' }}
-              </a-button>
+            <a-input v-model:value="form.businessLicenseNo" placeholder="请输入企业营业执照证件号码"/>
           </div>
         </a-form-item>
         <a-form-item name="contactEmail" label="企业联系人邮箱">
           <div class="flex">
-            <a-input v-model:value="form.contactEmail" placeholder="请输入企业联系人邮箱" :disabled="getStatus('contactEmail')" />
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('contactEmail')" v-if="showChangeBtns('contactEmail')">
-                {{ getStatus('contactEmail') ? '修改' : '确定' }}
-              </a-button>
+            <a-input v-model:value="form.contactEmail" placeholder="请输入企业联系人邮箱"/>
           </div>
         </a-form-item>
         <a-form-item name="contactIdNumber" label="企业联系人身份证号码">
           <div class="flex">
-            <a-input v-model:value="form.contactIdNumber" placeholder="请输入企业联系人身份证号码" :disabled="getStatus('contactIdNumber')" />
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('contactIdNumber')" v-if="showChangeBtns('contactIdNumber')">
-                {{ getStatus('contactIdNumber') ? '修改' : '确定' }}
-              </a-button>
+            <a-input v-model:value="form.contactIdNumber" placeholder="请输入企业联系人身份证号码"/>
           </div>
         </a-form-item>
         <a-form-item name="legalPersonPhone" label="企业法人/负责人手机号">
           <div class="flex">
-            <a-input v-model:value="form.legalPersonPhone" placeholder="请输入企业法人/负责人手机号" :disabled="getStatus('legalPersonPhone')" />
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('legalPersonPhone')" v-if="showChangeBtns('legalPersonPhone')">
-                {{ getStatus('legalPersonPhone') ? '修改' : '确定' }}
-              </a-button>
+            <a-input v-model:value="form.legalPersonPhone" placeholder="请输入企业法人/负责人手机号"/>
           </div>
         </a-form-item>
         <a-form-item name="legalPersonIdNumber" label="企业法人/负责人身份证号">
           <div class="flex">
-            <a-input v-model:value="form.legalPersonIdNumber" placeholder="请输入企业法人/负责人身份证号" :disabled="getStatus('legalPersonIdNumber')" />
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('legalPersonIdNumber')" v-if="showChangeBtns('legalPersonIdNumber')">
-                {{ getStatus('legalPersonIdNumber') ? '修改' : '确定' }}
-              </a-button>
+            <a-input v-model:value="form.legalPersonIdNumber" placeholder="请输入企业法人/负责人身份证号"/>
           </div>
         </a-form-item>
         <a-form-item name="bankAddressIds" label="企业开户行所在地">
           <div class="flex">
-            <address-selector placeholder="请选择所属地区" v-model:value="form.bankAddressIds" :disabled="getStatus('bankAddressIds')" :isProvince="false"/>
-            <a-button type="primary" class="status-btn" @click="changeDisabledStatus('bankAddressIds')" v-if="showChangeBtns('bankAddressIds')">
-              {{ getStatus('bankAddressIds') ? '修改' : '确定' }}
-            </a-button>
+            <address-selector placeholder="请选择所属地区" v-model:value="form.bankAddressIds" :isProvince="false"/>
           </div>
         </a-form-item>
         <a-form-item name="bankNo" label="企业开户行行号">
           <div class="flex">
-            <a-input v-model:value="form.bankNo" placeholder="请输入企业开户行行号" :disabled="getStatus('bankNo')" />
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('bankNo')" v-if="showChangeBtns('bankNo')">
-                {{ getStatus('bankNo') ? '修改' : '确定' }}
-              </a-button>
+            <a-input v-model:value="form.bankNo" placeholder="请输入企业开户行行号"/>
           </div>
         </a-form-item>
         <a-form-item name="bankReservePhone" label="企业开户行预留手机号">
           <div class="flex">
-            <a-input v-model:value="form.bankReservePhone" placeholder="请输入企业开户行预留手机号" :disabled="getStatus('bankReservePhone')" />
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('bankReservePhone')" v-if="showChangeBtns('bankReservePhone')">
-                {{ getStatus('bankReservePhone') ? '修改' : '确定' }}
-              </a-button>
+            <a-input v-model:value="form.bankReservePhone" placeholder="请输入企业开户行预留手机号"/>
           </div>
         </a-form-item>
         <a-form-item name="memberRegistrationPhone" label="企业会员注册手机号">
           <div class="flex">
-            <a-input v-model:value="form.memberRegistrationPhone" placeholder="请输入企业会员注册手机号" :disabled="getStatus('memberRegistrationPhone')" />
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('memberRegistrationPhone')" v-if="showChangeBtns('memberRegistrationPhone')">
-                {{ getStatus('memberRegistrationPhone') ? '修改' : '确定' }}
-              </a-button>
+            <a-input v-model:value="form.memberRegistrationPhone" placeholder="请输入企业会员注册手机号"/>
           </div>
         </a-form-item>
         <!-- 旅行社、旅游集团、酒店、景区、餐饮 -->
         <template v-if="['TRAVEL', 'GROUP', 'HOTEL', 'TICKET', 'CATERING'].includes(userInfo.sysCompany.businessType)">
           <a-form-item name="legalPerson" label="法定代表人">
             <div class="flex">
-              <a-input v-model:value="form.legalPerson" placeholder="请输入法定代表人" :disabled="getStatus('legalPerson')"/>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('legalPerson')" v-if="showChangeBtns('legalPerson')">
-                {{ getStatus('legalPerson') ? '修改' : '确定' }}
-              </a-button>
+              <a-input v-model:value="form.legalPerson" placeholder="请输入法定代表人"/>
             </div>
           </a-form-item>
           <a-form-item name="managementRange" label="经营范围">
             <div class="flex">
-              <a-textarea v-model:value="form.managementRange" placeholder="请输入经营范围" :rows="2" :disabled="getStatus('managementRange')" />
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('managementRange')" v-if="showChangeBtns('managementRange')">
-                {{ getStatus('managementRange') ? '修改' : '确定' }}
-              </a-button>
+              <a-textarea v-model:value="form.managementRange" placeholder="请输入经营范围" :rows="2"/>
             </div>
           </a-form-item>
           <a-form-item name="registeredCapital" label="注册资本">
             <div class="flex">
-              <a-input v-model:value="form.registeredCapital" placeholder="请输入注册资本" suffix="万元"  :disabled="getStatus('registeredCapital')"/>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('registeredCapital')" v-if="showChangeBtns('registeredCapital')">
-                {{ getStatus('registeredCapital') ? '修改' : '确定' }}
-              </a-button>
+              <a-input v-model:value="form.registeredCapital" placeholder="请输入注册资本" suffix="万元"/>
             </div>
           </a-form-item>
           <a-form-item name="establishTime" label="成立日期">
             <div class="flex">
-              <picker v-model="form.establishTime" type="date" value-format="YYYY-MM-DD" placeholder="请选择成立日期" style="width:100%" :disabled="getStatus('establishTime')"/>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('establishTime')" v-if="showChangeBtns('establishTime')">
-                {{ getStatus('establishTime') ? '修改' : '确定' }}
-              </a-button>
+              <picker v-model="form.establishTime" type="date" value-format="YYYY-MM-DD" placeholder="请选择成立日期" style="width:100%"/>
             </div>
           </a-form-item>
           <a-form-item name="businessTerm" label="营业期限">
             <div class="flex">
-              <picker v-model="form.businessTerm" type="date" value-format="YYYY-MM-DD" placeholder="请选择营业期限" style="width:100%" :disabled="getStatus('businessTerm')"/>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('businessTerm')" v-if="showChangeBtns('businessTerm')">
-                {{ getStatus('businessTerm') ? '修改' : '确定' }}
-              </a-button>
+              <picker v-model="form.businessTerm" type="date" value-format="YYYY-MM-DD" placeholder="请选择营业期限" style="width:100%"/>
             </div>
           </a-form-item>
           <a-form-item name="contactName" label="联系人">
             <div class="flex">
-              <a-input v-model:value="form.contactName" placeholder="请输入联系人" :disabled="getStatus('contactName')" />
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('contactName')" v-if="showChangeBtns('contactName')">
-                {{ getStatus('contactName') ? '修改' : '确定' }}
-              </a-button>
+              <a-input v-model:value="form.contactName" placeholder="请输入联系人"/>
             </div>
           </a-form-item>
           <a-form-item name="phone" label="联系电话">
             <div class="flex">
-              <a-input v-model:value="form.phone" placeholder="请输入联系电话" :disabled="getStatus('phone')"/>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('phone')" v-if="showChangeBtns('phone')">
-                {{ getStatus('phone') ? '修改' : '确定' }}
-              </a-button>
+              <a-input v-model:value="form.phone" placeholder="请输入联系电话"/>
             </div>
           </a-form-item>
           <a-form-item name="creditCode" label="统一社会信用代码">
             <div class="flex">
-              <a-input v-model:value="form.creditCode" placeholder="请输入统一社会信用代码" :disabled="getStatus('creditCode')"/>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('creditCode')" v-if="showChangeBtns('creditCode')">
-                {{ getStatus('creditCode') ? '修改' : '确定' }}
-              </a-button>
+              <a-input v-model:value="form.creditCode" placeholder="请输入统一社会信用代码"/>
             </div>
           </a-form-item>
           <a-form-item name="businessLicenseUrl" label="营业执照">
             <div class="flex">
-              <Upload v-model="form.businessLicenseUrl" :disabled="getStatus('businessLicenseUrl')" :maxCount="1"/>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('businessLicenseUrl')" v-if="showChangeBtns('businessLicenseUrl')">
-                {{ getStatus('businessLicenseUrl') ? '修改' : '确定' }}
-              </a-button>
+              <Upload v-model="form.businessLicenseUrl" :maxCount="1"/>
             </div>
           </a-form-item>
         </template>
@@ -218,37 +146,25 @@
         <template v-if="['TRAVEL', 'HOTEL', 'TICKET', 'SUPERVISE', 'ANCIENT_UYGUR'].includes(userInfo.sysCompany.businessType)">
           <a-form-item name="accountType" label="公司账户类型">
             <div class="flex">
-              <a-radio-group v-model:value="form.accountType" :disabled="getStatus('accountType')">
+              <a-radio-group v-model:value="form.accountType">
                 <a-radio :value="1">对公账户</a-radio>
                 <a-radio :value="2">对私账户</a-radio>
               </a-radio-group>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('accountType')" v-if="showChangeBtns('accountType')">
-                {{ getStatus('accountType') ? '修改' : '确定' }}
-              </a-button>
             </div>
           </a-form-item>
           <a-form-item name="bankAccountName" label="公司账户名称">
             <div class="flex">
-              <a-input v-model:value="form.bankAccountName" placeholder="请输入公司账户名称" :disabled="getStatus('bankAccountName')"/>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('bankAccountName')" v-if="showChangeBtns('bankAccountName')">
-                {{ getStatus('bankAccountName') ? '修改' : '确定' }}
-              </a-button>
+              <a-input v-model:value="form.bankAccountName" placeholder="请输入公司账户名称"/>
             </div>
           </a-form-item>
           <a-form-item name="bank" label="开户行">
             <div class="flex">
-              <a-input v-model:value="form.bank" placeholder="请输入开户行" :disabled="getStatus('bank')"/>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('bank')" v-if="showChangeBtns('bank')">
-                {{ getStatus('bank') ? '修改' : '确定' }}
-              </a-button>
+              <a-input v-model:value="form.bank" placeholder="请输入开户行"/>
             </div>
           </a-form-item>
           <a-form-item name="bankAccount" label="公司账号">
             <div class="flex">
-              <a-input v-model:value="form.bankAccount" placeholder="请输入公司账号" :disabled="getStatus('bankAccount')"/>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('bankAccount')" v-if="showChangeBtns('bankAccount')">
-                {{ getStatus('bankAccount') ? '修改' : '确定' }}
-              </a-button>
+              <a-input v-model:value="form.bankAccount" placeholder="请输入公司账号"/>
             </div>
           </a-form-item>
         </template>
@@ -256,45 +172,30 @@
         <template v-if="userInfo.sysCompany.businessType == 'TRAVEL'">
           <a-form-item name="businessLicenseUrl1" label="经营许可证">
             <div class="flex">
-              <Upload v-model="form.businessLicenseUrl1" :disabled="getStatus('businessLicenseUrl1')" :maxCount="1"/>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('businessLicenseUrl1')" v-if="showChangeBtns('businessLicenseUrl1')">
-                {{ getStatus('businessLicenseUrl1') ? '修改' : '确定' }}
-              </a-button>
+              <Upload v-model="form.businessLicenseUrl1" :maxCount="1"/>
             </div>
           </a-form-item>
           <a-form-item name="licenseNo" label="12301旅行社许可证号">
             <div class="flex">
-              <a-input v-model:value="form.licenseNo" placeholder="请输入法定代表人" :disabled="getStatus('licenseNo')"/>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('licenseNo')" v-if="showChangeBtns('licenseNo')">
-                {{ getStatus('licenseNo') ? '修改' : '确定' }}
-              </a-button>
+              <a-input v-model:value="form.licenseNo" placeholder="请输入法定代表人"/>
             </div>
           </a-form-item>
           <a-form-item name="isIndividual" label="是否为散客中心">
             <div class="flex">
-              <a-radio-group v-model:value="form.isIndividual" :disabled="getStatus('isIndividual')">
+              <a-radio-group v-model:value="form.isIndividual">
                 <a-radio :value="1">是</a-radio>
                 <a-radio :value="0">否</a-radio>
               </a-radio-group>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('isIndividual')" v-if="showChangeBtns('isIndividual')">
-                {{ getStatus('isIndividual') ? '修改' : '确定' }}
-              </a-button>
             </div>
           </a-form-item>
           <a-form-item name="individualDeparturePlace" label="散客常用出发地">
             <div class="flex">
-              <a-input v-model:value="form.individualDeparturePlace" placeholder="请输入散客常用出发地" :disabled="getStatus('individualDeparturePlace')"/>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('individualDeparturePlace')" v-if="showChangeBtns('individualDeparturePlace')">
-                {{ getStatus('individualDeparturePlace') ? '修改' : '确定' }}
-              </a-button>
+              <a-input v-model:value="form.individualDeparturePlace" placeholder="请输入散客常用出发地"/>
             </div>
           </a-form-item>
           <a-form-item name="individualReturnPlace" label="散客常用返回地">
             <div class="flex">
-              <a-input v-model:value="form.individualReturnPlace" placeholder="请输入散客常用返回地" :disabled="getStatus('individualReturnPlace')"/>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('individualReturnPlace')" v-if="showChangeBtns('individualReturnPlace')">
-                {{ getStatus('individualReturnPlace') ? '修改' : '确定' }}
-              </a-button>
+              <a-input v-model:value="form.individualReturnPlace" placeholder="请输入散客常用返回地"/>
             </div>
           </a-form-item>
         </template>
@@ -302,36 +203,27 @@
         <template v-if="userInfo.sysCompany.businessType == 'HOTEL'">
           <a-form-item name="unitStatus" label="开业状态">
             <div class="flex">
-              <a-radio-group v-model:value="form.unitStatus" :disabled="getStatus('unitStatus')">
+              <a-radio-group v-model:value="form.unitStatus">
                 <a-radio :value="0">开业</a-radio>
                 <a-radio :value="1">停业</a-radio>
               </a-radio-group>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('unitStatus')" v-if="showChangeBtns('unitStatus')">
-                {{ getStatus('unitStatus') ? '修改' : '确定' }}
-              </a-button>
             </div>
           </a-form-item>
           <a-form-item name="hotelStarId" label="星级">
             <div class="flex">
-              <a-select v-model:value="form.hotelStarId" placeholder="请选择酒店星级" :disabled="getStatus('hotelStarId')">
+              <a-select v-model:value="form.hotelStarId" placeholder="请选择酒店星级">
                 <a-select-option v-for="item in hotelStarList" :value="item.oid" :key="item.oid">
                 {{ item.starCode }}
                 </a-select-option>
               </a-select>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('hotelStarId')" v-if="showChangeBtns('hotelStarId')">
-                {{ getStatus('hotelStarId') ? '修改' : '确定' }}
-              </a-button>
             </div>
           </a-form-item>
           <a-form-item name="derate" label="是否支持减免">
             <div class="flex">
-              <a-radio-group v-model:value="form.derate" :disabled="getStatus('derate')">
+              <a-radio-group v-model:value="form.derate">
                 <a-radio :value="true">是</a-radio>
                 <a-radio :value="false">否</a-radio>
               </a-radio-group>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('derate')" v-if="showChangeBtns('derate')">
-                {{ getStatus('derate') ? '修改' : '确定' }}
-              </a-button>
             </div>
           </a-form-item>
         </template>
@@ -339,36 +231,27 @@
         <template v-if="userInfo.sysCompany.businessType == 'TICKET'">
           <a-form-item name="unitStatus" label="开业状态">
             <div class="flex">
-              <a-radio-group v-model:value="form.unitStatus" :disabled="getStatus('unitStatus')">
+              <a-radio-group v-model:value="form.unitStatus">
                 <a-radio :value="true">开业</a-radio>
                 <a-radio :value="false">停业</a-radio>
               </a-radio-group>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('unitStatus')" v-if="showChangeBtns('unitStatus')">
-                {{ getStatus('unitStatus') ? '修改' : '确定' }}
-              </a-button>
             </div>
           </a-form-item>
           <a-form-item name="scenicLevel" label="等级">
             <div class="flex">
-              <a-select v-model:value="form.scenicLevel" placeholder="请选择景区等级" :disabled="getStatus('scenicLevel')">
+              <a-select v-model:value="form.scenicLevel" placeholder="请选择景区等级">
                 <a-select-option v-for="item in scenicLevelList" :value="item.levelId">
                 {{ item.levelName }}
                 </a-select-option>
               </a-select>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('scenicLevel')" v-if="showChangeBtns('scenicLevel')">
-                {{ getStatus('scenicLevel') ? '修改' : '确定' }}
-              </a-button>
             </div>
           </a-form-item>
           <a-form-item name="derate" label="是否支持减免">
             <div class="flex">
-              <a-radio-group v-model:value="form.derate" :disabled="getStatus('derate')">
+              <a-radio-group v-model:value="form.derate">
                 <a-radio :value="true">是</a-radio>
                 <a-radio :value="false">否</a-radio>
               </a-radio-group>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('derate')" v-if="showChangeBtns('derate')">
-                {{ getStatus('derate') ? '修改' : '确定' }}
-              </a-button>
             </div>
           </a-form-item>
         </template>
@@ -376,37 +259,25 @@
         <template v-if="userInfo.sysCompany.businessType == 'CATERING'">
           <a-form-item name="unitStatus" label="开业状态">
             <div class="flex">
-              <a-radio-group v-model:value="form.unitStatus" :disabled="getStatus('unitStatus')">
+              <a-radio-group v-model:value="form.unitStatus">
                 <a-radio :value="1">开业</a-radio>
                 <a-radio :value="0">停业</a-radio>
               </a-radio-group>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('unitStatus')" v-if="showChangeBtns('unitStatus')">
-                {{ getStatus('unitStatus') ? '修改' : '确定' }}
-              </a-button>
             </div>
           </a-form-item>
           <a-form-item name="rangeTime" label="营业时间">
             <div class="flex" style="width:300px">
-              <picker v-model="form.rangeTime" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" @change="changeTime" value-format="YYYY-MM-DD" :disabled="getStatus('rangeTime')"/>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('rangeTime')" v-if="showChangeBtns('rangeTime')">
-                {{ getStatus('rangeTime') ? '修改' : '确定' }}
-              </a-button>
+              <picker v-model="form.rangeTime" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" @change="changeTime" value-format="YYYY-MM-DD"/>
             </div>
           </a-form-item>
           <a-form-item name="shopPhone" label="店铺联系电话">
             <div class="flex">
-              <a-input v-model:value="form.shopPhone" placeholder="请输入店铺联系电话" :disabled="getStatus('shopPhone')"/>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('shopPhone')" v-if="showChangeBtns('shopPhone')">
-                {{ getStatus('shopPhone') ? '修改' : '确定' }}
-              </a-button>
+              <a-input v-model:value="form.shopPhone" placeholder="请输入店铺联系电话"/>
             </div>
           </a-form-item>
           <a-form-item name="cateringDesc" label="其他">
             <div class="flex">
-              <a-input v-model:value="form.cateringDesc" placeholder="其他描述" :disabled="getStatus('cateringDesc')"/>
-              <a-button type="primary" class="status-btn" @click="changeDisabledStatus('cateringDesc')" v-if="showChangeBtns('cateringDesc')">
-                {{ getStatus('cateringDesc') ? '修改' : '确定' }}
-              </a-button>
+              <a-input v-model:value="form.cateringDesc" placeholder="其他描述"/>
             </div>
           </a-form-item>
         </template>
@@ -420,10 +291,7 @@
                   placeholder="请配置数字" 
                   style="width: 150px;"
                   v-model:value="form.fullRule"
-                  oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')" :disabled="getStatus('fullRule')"/>
-                  <a-button type="primary" class="status-btn" @click="changeDisabledStatus('fullRule')" v-if="showChangeBtns('fullRule')">
-                    {{ getStatus('fullRule') ? '修改' : '确定' }}
-                  </a-button>
+                  oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')"/>
               </div>
               <a-form-item name="reduceRule">
                 <div style="display: flex;align-items: center;">
@@ -432,10 +300,7 @@
                     placeholder="请配置数字" 
                     style="width: 150px;"
                     v-model:value="form.reduceRule"
-                    oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')" :disabled="getStatus('reduceRule')"/>
-                    <a-button type="primary" class="status-btn" @click="changeDisabledStatus('reduceRule')" v-if="showChangeBtns('reduceRule')">
-                      {{ getStatus('reduceRule') ? '修改' : '确定' }}
-                    </a-button>
+                    oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')"/>
                 </div>
               </a-form-item>
             </div>
@@ -630,28 +495,14 @@ const initOpeion = async () => {
   });
 };
 
-// 更改字段修改确定状态
-const changeDisabledStatus = (name: string) => {
-  validateArray.value.forEach((item: any) => {
-    if (item.name === name) {
-      item.disabled = !item.disabled;
-    }
-  })
-}
-
-// 获取字段是否禁用状态
-const getStatus = (name: string) => {
-  return validateArray.value?.find((it: any) => it.name === name)?.disabled && ![0].includes(form.value.informationAuditStatus);
-}
-
 // 0未提交 1待审核 2审核通过 3审核未通过
 // 是否隐藏修改确定按钮
-const showChangeBtns = (name: string) => {
-  let resValue = validateArray.value.find((it: any) => it.name === name)?.value;
-  if (!resValue && [0].includes(form.value.informationAuditStatus)) enterpriseState.value = '信息不完善，待补充。';
-  // 如果有值 && 需要判断的字段是否有包括 && 当前审核状态不为未提交和待审核
-  return resValue && validateArray.value.map((it:any) => it.name).find((it: any) => it === name) && ![0, 1].includes(form.value.informationAuditStatus);
-}
+// const showChangeBtns = (name: string) => {
+//   let resValue = validateArray.value.find((it: any) => it.name === name)?.value;
+//   if (!resValue && [0].includes(form.value.informationAuditStatus)) enterpriseState.value = '信息不完善，待补充。';
+//   // 如果有值 && 需要判断的字段是否有包括 && 当前审核状态不为未提交和待审核
+//   return resValue && validateArray.value.map((it:any) => it.name).find((it: any) => it === name) && ![0, 1].includes(form.value.informationAuditStatus);
+// }
 
 // 餐饮营业时间
 const changeTime = (date: string, dateString: string) => {

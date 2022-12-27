@@ -15,11 +15,6 @@
 						{{(travelStore.takeGroupList.waitingChange.params.pageNo - 1) * (travelStore.takeGroupList.waitingChange.params.pageSize) + (index + 1)}}
 					</div>
 				</template>
-
-				<template v-if="column.key === 'groupTypeStr'">
-					{{text}}
-				</template>
-
         <template v-if="column.key === 'action'">
           <div class="action-btns">
             <a v-permission="'待变更_催促审核'">催促审核</a>
@@ -89,8 +84,8 @@
 			},
 			{
 				title: '团队类型',
-				dataIndex: 'groupTypeStr',
-				key: 'groupTypeStr',
+				dataIndex: 'teamTypeName',
+				key: 'teamTypeName',
 			},
 			{
 				title: '带队导游',

@@ -61,7 +61,7 @@
 				<td class="key">关联行程单</td>
 				<td class="value">{{ state.basicData.itineraryNo }}</td>
 				<td class="key">保险购买方</td>
-				<td class="value">{{}}</td>
+				<td class="value">{{ state.basicData.insuranceStatusName }}</td>
 			</tr>
 		</table>
 		<p class="top-p">导游信息<span></span></p>
@@ -94,13 +94,29 @@
 			古维管理费
 			<!-- <span>(共30人,古维待缴人数:25,应缴费用:￥1250.00 订单状态：待出票)</span> -->
 		</p>
-		<CommonTable :columns="gouvy" :dataSource="state.productList" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
+		<CommonTable :columns="gouvy" :dataSource="state.guWeiDetail" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
 		</CommonTable>
 		<p class="top-p">
 			综费产品
 			<!-- <span>(费用总计:800.guWeiDetail)</span> -->
 		</p>
 		<CommonTable :columns="comprehensive" :dataSource="state.productList" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
+			<template #bodyCell="{ column, record, index }">
+				<template v-if="column.key === 'isDaily'">
+					{{ record.isDaily ? '是' : '否' }}
+				</template>
+
+				<template v-if="column.key === 'unitPrice'">
+					<span v-if="typeof record.unitPrice === 'number'">
+						{{ record.unitPrice / 100 }}
+					</span>
+				</template>
+				<template v-if="column.key === 'totalFee'">
+					<span v-if="typeof record.totalFee === 'number'">
+						{{ record.totalFee / 100 }}
+					</span>
+				</template>
+			</template>
 		</CommonTable>
 		<p class="top-p">
 			酒店费用<span>
@@ -119,7 +135,9 @@
 					{{ record.roomTypeList[0].roomCount }}
 				</template>
 				<template v-if="column.key === 'orderFee'">
-					{{ record.orderFee / 100 }}
+					<span v-if="typeof record.orderFee === 'number'">
+						{{ record.orderFee / 100 }}
+					</span>
 				</template>
 			</template>
 		</CommonTable>
@@ -131,7 +149,9 @@
 		<CommonTable :columns="scenic" :dataSource="state.ticketList" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
 			<template #bodyCell="{ column, record, index }">
 				<template v-if="column.key === 'unitPrice'">
-					{{ record.unitPrice / 100 }}
+					<span v-if="typeof record.unitPrice === 'number'">
+						{{ record.unitPrice / 100 }}
+					</span>
 				</template>
 			</template>
 		</CommonTable>
@@ -241,8 +261,8 @@ const guide = [
 	},
 	{
 		title: '导游星级',
-		dataIndex: 'certificateTypeName',
-		key: 'certificateTypeName',
+		dataIndex: 'guideLevel',
+		key: 'guideLevel',
 	},
 	{
 		title: '导游证编号',
@@ -398,43 +418,43 @@ const gouvy = [
 const comprehensive = [
 	{
 		title: '费用名称',
-		dataIndex: 'touristName',
-		key: 'touristName',
+		dataIndex: 'comprehensiveFeeProductName',
+		key: 'comprehensiveFeeProductName',
 	},
 	{
 		title: '结算归属',
-		dataIndex: 'certificateTypeName',
-		key: 'certificateTypeName',
+		dataIndex: 'belongCompanyName',
+		key: 'belongCompanyName',
 	},
 	{
 		title: '收费模式',
-		dataIndex: 'certificateNo',
-		key: 'certificateNo',
+		dataIndex: 'feeModelName',
+		key: 'feeModelName',
 	},
 	{
 		title: '是否按天收取',
-		dataIndex: 'genderName',
-		key: 'genderName',
+		dataIndex: 'isDaily',
+		key: 'isDaily',
 	},
 	{
 		title: '单价（元）',
-		dataIndex: 'sourceAddressName',
-		key: 'sourceAddressName',
+		dataIndex: 'unitPrice',
+		key: 'unitPrice',
 	},
 	{
 		title: '人数',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
+		dataIndex: 'peopleCount',
+		key: 'peopleCount',
 	},
 	{
 		title: '行程天数',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
+		dataIndex: 'dayCount',
+		key: 'dayCount',
 	},
 	{
 		title: '总金额（元）',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
+		dataIndex: 'totalFee',
+		key: 'totalFee',
 	},
 	{
 		title: '操作',

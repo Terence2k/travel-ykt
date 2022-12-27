@@ -35,7 +35,8 @@
 			<a-form-item label="扣费模式" name="deductionModel">
 				<div>
 					<span v-if="formState.deductionModel === 1">冻结金额</span>
-					<span v-if="formState.deductionModel === 2">核销金额</span>
+					<span v-if="formState.deductionModel === 2">已核销金额</span>
+					<span v-if="formState.deductionModel === 0">未核销金额</span>
 				</div>
 			</a-form-item>
 			<a-form-item label="状态" name="state">
@@ -200,7 +201,7 @@ const productRuleDetail = async (id: number) => {
 	const result = await api.productRuleDetail(id);
 	oid.value = result.oid;
 	for (let key in formState) {
-		if (result[key]) {
+		if (result[key] || result[key] === 0) {
 			formState[key] = result[key];
 		}
 	}

@@ -16,10 +16,6 @@
 					</div>
 				</template>
 
-				<template v-if="column.key === 'groupTypeStr'">
-					{{ text }}
-				</template>
-
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a v-if="dateTime > dayjs(record.startDate).unix()" @click="outGroup(record)" v-permission="'待出团_手动出团'">手动出团</a>
@@ -92,8 +88,8 @@ const state = reactive({
 		},
 		{
 			title: '团队类型',
-			dataIndex: 'groupTypeStr',
-			key: 'groupTypeStr',
+			dataIndex: 'teamTypeName',
+			key: 'teamTypeName',
 		},
 		{
 			title: '带队导游',

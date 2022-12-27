@@ -45,7 +45,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 	const IDCard = computed(() => travelStore.IDCard)
 	const specialId = computed(() => travelStore.specialId)
 	const state = reactive<{editableData: UnwrapRef<Record<string, DataItem>>, [k:string]: any}>({
-		fileUrl: '',
+		fileUrl: {},
 		isWarring: false,//健康码异常
 		checkCode: false, //健康码点击
 		highRish: false, //高风险
@@ -165,6 +165,9 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			targetOption.loading = true;
 			const length = selectedOptions.length + 1
 			methods.getCityList(`${targetOption.value}/${length}`, length).then(res => {
+				if (!res.length) {
+					targetOption.isLeaf = true
+				}
 				targetOption.children = res
 				targetOption.loading = false;
 			})
@@ -261,7 +264,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			state.editableData[key] = cloneDeep(
 				state.tableData.filter((item:any, index: number) => key == (item.key ? item.key : item.oid))[0]
 			)
-			state.fileUrl = state.editableData[key].specialCertificatePicture?.join(',')
+			state.fileUrl[key] = state.editableData[key].specialCertificatePicture?.join(',')
 			state.editableData[key].edit = true
 		},
 		async del(record: any, index: number) {
@@ -339,7 +342,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 				}
 
 				const age: string = getAge(state.editableData[key].certificateNo) as any
-				state.editableData[key].age = age;
+				state.editableData[key].age = age || "";
 				
 			}
 			if (columns === 'certificateNo' || columns === 'name') {
