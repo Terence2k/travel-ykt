@@ -14,7 +14,7 @@ export function createIndividualItinerary(data: any) {
 // 提交财务审核
 export function individualSubmitFinanceAudit(itineraryId: number) {
   return request({
-    url: `${commonPart}/travel-agency-service/public/api/itinerary/audit/individualSubmitFinanceAudit?itineraryId=${itineraryId}`,
+    url: `${commonPath}/travel-agency-service/public/api/itinerary/audit/individualSubmitFinanceAudit?itineraryId=${itineraryId}`,
     method: 'put',
     showLoading: true
   });
@@ -36,6 +36,25 @@ export function individualTouristsGroupList(data: any) {
     url: `${commonPart}list`,
     method: 'post',
     data,
+    showLoading: true
+  });
+}
+
+// 编辑
+export function editIndividualTouristsGroup(data: any) {
+  return request({
+    url: `${commonPart}edit`,
+    method: 'post',
+    data,
+    showLoading: true
+  });
+}
+
+// 查询合同配置回显
+export function getContractDetails(oid: number) {
+  return request({
+    url: `${commonPart}getContractDetails?oid=${oid}`,
+    method: 'post',
     showLoading: true
   });
 }
