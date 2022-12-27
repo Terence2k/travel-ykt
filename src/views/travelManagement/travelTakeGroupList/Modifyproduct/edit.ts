@@ -437,7 +437,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			.travelChangeOrderProduct(data)
 			.then((res: any) => {
 				message.success('提交审核成功');
-				router.go(-1);
+				router.go(-2);
 			})
 			.catch((error: any) => {
 				state.tiecketparams = state.tiecketparams.map((item: any) => {

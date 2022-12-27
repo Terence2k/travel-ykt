@@ -39,3 +39,13 @@ export function individualTouristsGroupList(data: any) {
     showLoading: true
   });
 }
+
+// 根据散客团id查询游客分页(变更)
+export function findIndividualContractTouristById(oid: any,data:any) {
+  return request({
+    url: `${commonPart}findIndividualContractTouristById?oid=${oid}`,
+    method: 'post',
+    data,
+    showLoading: true
+  });
+}

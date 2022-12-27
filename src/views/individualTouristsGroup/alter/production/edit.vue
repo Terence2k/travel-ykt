@@ -56,7 +56,7 @@
 			</CommonTable>
 			<div class="cost_count">
 				<div class="cost_item">费用合计</div>
-				<div class="cost_item">{{ 0 }}</div>
+				<div class="cost_item">{{ hotelmoney(hotelData) + '元' }}</div>
 			</div>
 			<div class="footer-btn">
 				<a-button type="primary" @click="add('addHotelPop', 'addHotelPop')">添加</a-button>
@@ -91,7 +91,7 @@
 			</CommonTable>
 			<div class="cost_count">
 				<div class="cost_item">费用合计</div>
-				<div class="cost_item">{{ 0 }}</div>
+				<div class="cost_item">{{ ticketmoney(ticketData) + '元' }}</div>
 			</div>
 			<div class="footer-btn">
 				<a-button type="primary" @click="add('addTicketPop', 'addTicketPop')">添加</a-button>
@@ -150,6 +150,8 @@ const {
 	delticket,
 	changTiemshow,
 	travelStore,
+	ticketmoney,
+	hotelmoney,
 } = useTraveInfo(props, emits);
 onMounted(() => {
 	onSearch();
