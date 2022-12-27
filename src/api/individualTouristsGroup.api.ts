@@ -29,3 +29,13 @@ export function getContractList(data: any) {
     showLoading: true
   });
 }
+
+// 散客团列表
+export function list(data: any) {
+  return request({
+    url: `${commonPart}list`,
+    method: 'post',
+    data,
+    showLoading: true
+  });
+}

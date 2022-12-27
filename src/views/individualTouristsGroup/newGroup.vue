@@ -1,6 +1,6 @@
 <template>
 	<div class="content_box">
-		<a-tabs v-model:activeKey="activeKey" @change="nextTep">
+		<a-tabs v-model:activeKey="activeKey" @change="nextTep" @tabClick="tabClick">
 			<a-tab-pane key="1" tab="填写基本信息">
 				<a-form ref="formRef" :model="form" :rules="formRules" name="addStore" autocomplete="off" :label-col="labelCol">
 					<div class="form_item_box">
@@ -32,13 +32,14 @@
 							<el-form ref="dateFormRef" :model="form" :rules="dateRules" :label-width="labelWidth"
 								label-position="right">
 								<el-form-item label="行程日期：" prop="travelData">
-									<picker v-model="form.travelData" @change="datePickerChange" type="daterange"
-										:value-format="dateFormat" start-placeholder="请选择开始时间" end-placeholder="请选择结束时间" style="width:100%">
+									<picker v-model="form.travelData" @change="datePickerChange" type="datetimerange"
+										:value-format="dateTimeFormat" start-placeholder="请选择开始时间" end-placeholder="请选择结束时间"
+										style="width:100%">
 									</picker>
 								</el-form-item>
 							</el-form>
-							<a-form-item name="touristPeopleNumber" label="散客组团类型">
-								<a-input v-model:value="form.touristPeopleNumber" placeholder="无需填写，选择行程日期后自动判断" disabled>
+							<a-form-item name="groupTypeName" label="散客组团类型">
+								<a-input v-model:value="form.groupTypeName" placeholder="无需填写，选择行程日期后自动判断" disabled>
 								</a-input>
 							</a-form-item>
 							<a-form-item name="travelOperatorPhone" label="联系人号码">
@@ -50,7 +51,7 @@
 									<a-input v-model:value="form.touristPeopleNumber" placeholder="无需填写，选择合同后自动生成" disabled
 										style="flex:3">
 									</a-input>
-									<div class="append">查看全部游客</div>
+									<div @click="getTourist" class="append">查看全部游客</div>
 								</div>
 							</a-form-item>
 							<a-form-item name="licensePlate" label="用车车牌号">
@@ -71,28 +72,28 @@
 							<template v-if="column.key === 'action'">
 								<div class="action-btns">
 									<a @click="checkDetails(record.oid)">查看</a>
-									<a @click="deleteContract(index)">删除</a>
+									<a @click="deleteContract(index, record)">删除</a>
 								</div>
 							</template>
 						</template>
 					</CommonTable>
 					<div class="cost_count">
 						<div class="cost_item">费用合计</div>
-						<div class="cost_item">{{ 0 }}</div>
+						<div class="cost_item">{{ form.totalExpenses }}</div>
 					</div>
 					<div class="add_box">
 						<a-button @click="addContract" type="primary">添加</a-button>
 					</div>
 				</a-form>
 				<div class="operation">
-					<a-button @click="saveDraft" type="primary" style="margin-right:20px">保存草稿</a-button>
+					<a-button @click="saveDraft(true)" type="primary" style="margin-right:20px">保存草稿</a-button>
 					<a-button @click="nextTep('2')" type="primary">下一步</a-button>
 				</div>
 			</a-tab-pane>
 			<a-tab-pane key="2" tab="产品预订">
 				<traveInfo></traveInfo>
 				<div class="operation">
-					<a-button @click="saveDraft" type="primary" style="margin-right:20px">保存草稿</a-button>
+					<a-button @click="saveDraft(true)" type="primary" style="margin-right:20px">保存草稿</a-button>
 					<a-button @click="nextTep('1')" type="primary" style="margin-right:20px">上一步</a-button>
 					<a-button @click="" type="primary">提交审核</a-button>
 				</div>
@@ -133,6 +134,25 @@
 			</template>
 		</CommonTable>
 	</CommonModal>
+	<CommonModal :title="`全部游客（${touristTable.data.length}人）`" v-model:visible="touristVisible" @close="touristClose"
+		@cancel="touristClose" :is-cancel="false" :is-conform="false" width="65%">
+		<CommonTable :dataSource="touristTable.data" :columns="touristColumns" :scroll="scroll">
+			<template #bodyCell="{ column, record, text, index }">
+				<template v-if="column.key === 'index'">
+					{{ index + 1 }}
+				</template>
+				<template v-if="column.key === 'isHealthy'">
+					{{ cmpIsHealthy(record.isHealthy) }}
+				</template>
+				<template v-if="column.key === 'isAncientUygur'">
+					{{ cmpIsAncientUygur(record.isAncientUygur) }}
+				</template>
+				<template v-if="column.key === 'healthyCode'">
+					<span :class="cmpHealthyColor(text)">{{ text }}</span>
+				</template>
+			</template>
+		</CommonTable>
+	</CommonModal>
 </template>
 
 <script setup lang="ts">
@@ -147,6 +167,10 @@ import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModa
 import traveInfo from './traveInfo.vue';
 import api from '@/api';
 import { message } from 'ant-design-vue/es';
+import { cloneDeep } from 'lodash';
+import { useTravelStore } from '@/stores/modules/travelManagement';
+import dayjs from 'dayjs';
+const travelStore = useTravelStore();
 const router = useRouter();
 const route = useRoute();
 const isRefresh = ref('0')
@@ -161,6 +185,9 @@ const back = () => {
 		} */
 	})
 }
+const touristVisible = ref(false)
+const isAdd = ref(true)
+const dataOid = ref()
 const scroll = { y: '60vh' }
 const labelWidth = '110px'
 const labelCol = { style: { width: labelWidth } }
@@ -181,19 +208,83 @@ const state = reactive({
 			key: undefined,
 			contractNo: undefined
 		}
+	},
+	touristTable: {
+		data: [],
 	}
 })
-const { contractTable } = toRefs(state)
+const { contractTable, touristTable } = toRefs(state)
 const formRules = {
 	routeName: [{ required: true, trigger: 'blur', message: '给拼团线路取个名字' }],
 	guideOid: [{ required: true, trigger: 'blur', message: '请选择本社签约导游' }],
 	travelOperatorName: [{ required: true, trigger: 'blur', message: '请输入联系人姓名' }],
 	travelOperatorPhone: [{ required: true, trigger: 'blur', message: '请输入联系人手机号' }],
 	contractDays: [{ required: true, trigger: 'blur', message: '请输入合同天数' }],
+	groupTypeName: [{ required: true, trigger: 'blur', message: '散客组团类型不能为空' }],
+	touristPeopleNumber: [{ required: true, trigger: 'blur', message: '游客人数不能为空' }],
 }
 const dateFormat = 'YYYY-MM-DD';
+const dateTimeFormat = 'YYYY-MM-DD HH:mm:ss';
 const activeKey = ref('1')
+const CloneActiveKey = ref('1')
 const guideOption = ref([])
+const touristColumns = [
+	{
+		title: '序号',
+		dataIndex: 'index',
+		key: 'index',
+	},
+	{
+		title: '游客姓名',
+		dataIndex: 'touristName',
+		key: 'touristName',
+	},
+	{
+		title: '身份证件类型',
+		dataIndex: 'certificatesTypeName',
+		key: 'certificatesTypeName',
+	},
+	{
+		title: '身份证件号码',
+		dataIndex: 'certificatesNo',
+		key: 'certificatesNo',
+	},
+	{
+		title: '游客类型',
+		dataIndex: 'touristTypeName',
+		key: 'touristTypeName',
+	},
+	{
+		title: '性别',
+		dataIndex: 'gender',
+		key: 'gender',
+	},
+	{
+		title: '年龄',
+		dataIndex: 'age',
+		key: 'age',
+	},
+	{
+		title: '电话号码',
+		dataIndex: 'phone',
+		key: 'phone',
+	},
+	{
+		title: '是否健康',
+		dataIndex: 'isHealthy',
+		key: 'isHealthy',
+	},
+	{
+		title: '健康码',
+		dataIndex: 'healthyCode',
+		key: 'healthyCode',
+	},
+	{
+		title: '古维费购买状态',
+		dataIndex: 'isAncientUygur',
+		key: 'isAncientUygur',
+	},
+]
 const contractColumns1 = [
 	{
 		title: '序号',
@@ -436,6 +527,30 @@ const productsColumns = [
 		width: 208
 	}
 ]
+
+const cmpIsHealthy = computed(() => (code: number) => {
+	if (code === 1) {
+		return '是'
+	} else if (code === 0) {
+		return '否'
+	}
+})
+const cmpIsAncientUygur = computed(() => (code: number) => {
+	if (code === 1) {
+		return '已购'
+	} else if (code === 0) {
+		return '未购'
+	}
+})
+const cmpHealthyColor = computed(() => (text: string) => {
+	if (text === '绿码') {
+		return 'green_text'
+	} else if (text === '黄码') {
+		return 'yellow_text'
+	} else if (text === '红码') {
+		return 'red_text'
+	}
+})
 interface CostItem {
 	priceName: string;
 	adultPrice: string;
@@ -487,34 +602,151 @@ const datePickerChange = () => {
 	if (form.value.travelData) {
 		form.value.startDate = form.value.travelData[0];
 		form.value.endDate = form.value.travelData[1];
+		const diff = dayjs(form.value.endDate).diff(form.value.startDate, 'hour')
+		form.value.groupTypeName = diff <= 24 ? '一日游' : '多日游'
+		form.value.groupType = diff <= 24 ? 3 : 4
 	} else {
 		form.value.startDate = '';
 		form.value.endDate = '';
+		form.value.groupTypeName = '';
+		form.value.groupType = undefined;
 	}
 }
+
+const getTraveDetail = () => {
+	// const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
+	// console.log(traveListData, 'traveListData')
+	if (!route.query.id && !dataOid.value) {
+		travelStore.setBaseInfo({});
+		travelStore.setGuideList([]);
+		travelStore.setTouristList([]);
+		travelStore.setTrafficList([]);
+		return;
+	}
+	api.travelManagement
+		.getItineraryDetail(
+			{
+				oid: route.query.id || dataOid.value,
+				pageNo: 1,
+				pageSize: 100000,
+			},
+			true
+			// isSaveBtn.value
+		)
+		.then((res: any) => {
+			res.basic.teamId = res.basic.itineraryNo;
+			res.basic.time = [res.basic.startDate, res.basic.endDate];
+			res.basic.touristNum = res.basic.touristCount || 0;
+			travelStore.setBaseInfo(res.basic);
+			res.attachmentList.length && travelStore.setFileInfo(res.attachmentList);
+			travelStore.setGuideList(res.guideList);
+			travelStore.setTouristList(
+				res.touristList.content.map((it: any) => {
+					if (it.specialCertificatePicture instanceof String) {
+						it.specialCertificatePicture = it.specialCertificatePicture?.split(',');
+					}
+
+					return it;
+				})
+			);
+			res.transportList = res.transportList.map((it: any) => {
+				it.time = [it.startDate, it.endDate];
+				return it;
+			});
+			travelStore.setTrafficList(res.transportList);
+			res.waitBuyItem.waitBuyHotel = res.waitBuyItem.waitBuyHotel
+				? res.waitBuyItem.waitBuyHotel.map((it: any) => {
+					it.hotelId = it.productId;
+					it.hotelName = it.productName;
+					return it;
+				})
+				: [];
+			res.waitBuyItem.waitBuyTicket = res.waitBuyItem.waitBuyTicket
+				? res.waitBuyItem.waitBuyTicket.map((it: any) => {
+					it.scenicId = it.productId;
+					it.scenicName = it.productName;
+					return it;
+				})
+				: [];
+			const hotel = [
+				...res.waitBuyItem.waitBuyHotel,
+				...res.hotelList.map((it: any) => {
+					it.orderFee = it.orderFee / 100;
+					return it;
+				}),
+				...travelStore.templateHotel,
+			];
+			travelStore.hotels = [...hotel] as any;
+			travelStore.productList = res.productList;
+			travelStore.scenicTickets = [
+				...res.waitBuyItem.waitBuyTicket,
+				...res.ticketList.map((it: any) => {
+					it.unitPrice = it.unitPrice / 100;
+					return it;
+				}),
+				...travelStore.templateTicket,
+			] as any;
+			travelStore.insuranceStatus = res.insuranceStatus?.toString();
+			travelStore.checkInsurance = res.insuranceStatus ? true : false;
+			travelStore.teamTime = [res.basic.startDate, res.basic.endDate] as any;
+			// travelStore.setDisabled = disDate(res);
+			// const dateTime = disTime(res);
+			// travelStore.setStarEndHMS = dateTime
+			// travelStore.defaultStartTime = new Date(2022, 12, 1, dateTime.start.hour, dateTime.start.min, dateTime.start.second);
+			// travelStore.defaultEndTime = new Date(2022, 12, 1, dateTime.end.hour, dateTime.end.min, dateTime.end.second)
+			// console.log(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end, '-----');
+			// travelStore.setDisabledTime = disabledRangeTime(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end) as any;
+			// route.query.tab && setTimeout(() => (activeKey.value = Number(route.query.tab)));
+			// getHealthCode();
+		});
+};
+
 // 步骤跳转
 const nextTep = (val: string) => {
-	activeKey.value = val
-	if (val === '2') {
-
-	}
+	const a = Promise.all([
+		formRef.value?.validateFields(),
+		dateFormRef.value?.validate()
+	])
+	a.then(async () => {
+		activeKey.value = val
+		if (val === '2') {
+			await saveDraft()
+			getTraveDetail()
+		}
+	}).catch((error: Error) => {
+		activeKey.value = CloneActiveKey.value
+		console.log(error);
+	})
 }
-const deleteContract = (index: number) => {
+const tabClick = () => {
+	CloneActiveKey.value = cloneDeep(activeKey.value)
+}
+const deleteContract = (index: number, record: any) => {
 	selectedContract.value.splice(index, 1)
 	selectedRowKeys.value.splice(index, 1)
+	form.value.touristPeopleNumber -= record.touristPeopleNumber
+	form.value.touristPeopleNumber = form.value.touristPeopleNumber === 0 ? undefined : form.value.touristPeopleNumber
+	form.value.totalExpenses -= record.contractAmount
 }
-
 const onSelectChange = (Keys: Key[], selectedRows: any[]) => {
 	selectedRowKeys.value = Keys;
 	if (selectedRows.length) {
 		const select: any = []
+		let touristPeopleSum = 0
+		let totalExpenses = 0
 		selectedRows.forEach((item: any) => {
+			touristPeopleSum += item.touristPeopleNumber
+			totalExpenses += item.contractAmount
 			select.push({
 				contractId: item.oid,
 				contractType: item.contractType
 			})
 		})
+		form.value.totalExpenses = totalExpenses
+		form.value.touristPeopleNumber = touristPeopleSum
 		form.value.contracts = select
+	} else {
+		form.value.touristPeopleNumber = undefined
 	}
 	selectedContract.value = selectedRows
 };
@@ -534,21 +766,95 @@ const guideChange = (val: any) => {
 		}
 	}
 }
-const saveDraft = async () => {
-	const a = Promise.all([
-		formRef.value?.validateFields(),
-		dateFormRef.value?.validate()
-	])
-	a.then(async () => {
-		const res = await api.createIndividualItinerary(form.value)
-		if (res) {
-			message.success('保存草稿成功！')
-		}
-	}).catch((error: Error) => {
-		console.log(error);
+const saveDraft = async (showMessage?: boolean) => {
+	return new Promise((resolve, reject) => {
+		const a = Promise.all([
+			formRef.value?.validateFields(),
+			dateFormRef.value?.validate()
+		])
+		a.then(async () => {
+			if (isAdd.value) {
+				const res = await api.createIndividualItinerary(form.value)
+				if (res) {
+					dataOid.value = res
+					isAdd.value = false
+					resolve(dataOid.value)
+					showMessage && message.success('保存草稿成功！')
+				}
+			}
+		}).catch((error: Error) => {
+			console.log(error);
+		})
 	})
-
 }
+// 批量获取健康码
+const getHealthyCodes = async (ids: number[]) => {
+	let res = await api.getHealthyCode(ids)
+	if (res) {
+		res.forEach((item: any) => {
+			// 00:绿码，01：黄码，10：红码
+			switch (item.healthCodeStatus) {
+				case '00':
+					item.codeName = '绿码'
+					break;
+				case '01':
+					item.codeName = '黄码'
+					break;
+				case '10':
+					item.codeName = '红码'
+					break;
+				default:
+					item.codeName = '暂无健康码'
+			}
+		})
+	}
+	return res || []
+}
+const configCodeName = (certificateCodes: any, targetArr: any) => {
+	for (let i = 0, l = certificateCodes.length; i < l; i++) {
+		const item = certificateCodes[i];
+		for (let j = 0, l = targetArr.length; j < l; j++) {
+			const citem = targetArr[j];
+			if (item.certificateId === citem.certificatesNo) {
+				targetArr[j].healthyCode = item.codeName
+				break
+			}
+		}
+	}
+}
+const getTourist = async () => {
+	if (selectedContract.value.length > 0) {
+		let params = selectedContract.value.map((item: any) => {
+			return {
+				type: item.contractType,
+				oid: item.oid
+			}
+		})
+		const res = await api.findIndividualContractTourist(params)
+		if (res) {
+			// 获取身份证列表
+			const certificateIds = res.map((item: any) => {
+				return { certificateId: item.certificatesNo }
+			})
+			// 根据身份证列表查询健康码列表
+			const certificateCodes = await getHealthyCodes(certificateIds)
+			// 将健康码和游客列表数据关联
+			configCodeName(certificateCodes, res)
+
+			touristTable.value.data = res
+		} else {
+			touristTable.value.data = []
+		}
+		touristVisible.value = true
+	} else {
+		message.error('请先选择合同！')
+	}
+}
+
+const touristClose = () => {
+	touristVisible.value = false
+}
+
 
 const checkDetails = (id: number) => {
 
@@ -582,7 +888,7 @@ const edit = (obj: any) => {
 	obj.isEdit = true
 };
 const getGuideList = async () => {
-	const res = await api.travelManagement.getGuideList();
+	let res = await api.travelManagement.getGuideList();
 	guideOption.value = res;
 }
 onMounted(() => {
@@ -658,5 +964,17 @@ onMounted(() => {
 
 .mr40 {
 	margin-right: 40px;
+}
+
+.green_text {
+	color: #71b621;
+}
+
+.yellow_text {
+	color: #bfbe26;
+}
+
+.red_text {
+	color: #d70095;
 }
 </style>

@@ -14,10 +14,6 @@
 					</div>
 				</template>
 
-				<template v-if="column.key === 'groupTypeStr'">
-					{{ text }}
-				</template>
-
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a @click="goToDetail(record)" v-permission="'待处理_行程详情'">行程详情</a>
@@ -112,8 +108,8 @@ const state = reactive({
 		},
 		{
 			title: '团队类型',
-			dataIndex: 'groupTypeStr',
-			key: 'groupTypeStr',
+			dataIndex: 'teamTypeName',
+			key: 'teamTypeName',
 		},
 		{
 			title: '带队导游',

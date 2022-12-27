@@ -159,7 +159,7 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 		},
 		add: () => {
 			let key = generateGuid();
-			state.tableData.push({key, edit: true, oid: null});
+			state.tableData.push({key, edit: true, oid: null, time: cloneDeep(travelStore.teamTime)});
 			methods.edit(key);
 			console.log(state.tableData)
 		},

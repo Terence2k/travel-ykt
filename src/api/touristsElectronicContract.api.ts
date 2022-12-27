@@ -76,3 +76,12 @@ export function releaseContract(oid: number) {
     showLoading: true
   });
 }
+// 查询游客列表
+export function findIndividualContractTourist(data: any) {
+  return request({
+    url: `${commonPart}findIndividualContractTourist`,
+    method: 'post',
+    data,
+    showLoading: true
+  });
+}

@@ -16,10 +16,6 @@
 					</div>
 				</template>
 
-				<template v-if="column.key === 'groupTypeStr'">
-					{{text}}
-				</template>
-
         <template v-if="column.key === 'action'">
           <div class="action-btns">
             <a @click="goToPath(record)" v-permission="'草稿_编辑填报'">编辑填报</a>
@@ -89,8 +85,8 @@
 			},
 			{
 				title: '团队类型',
-				dataIndex: 'groupTypeStr',
-				key: 'groupTypeStr',
+				dataIndex: 'teamTypeName',
+				key: 'teamTypeName',
 			},
 			{
 				title: '带队导游',

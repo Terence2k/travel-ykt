@@ -17,8 +17,8 @@
       <a-input placeholder="请输入导游证号" style="width: 200px" v-model:value="state.tableData.param.guideCertificateNo"/>
     </SearchItem>
 		<template #button>
-			<a-button  v-permission="'重置'">重置</a-button>
-			<a-button class="btn"  v-permission="'查询'">查询</a-button>
+			<a-button @click="reset"  v-permission="'重置'">重置</a-button>
+			<a-button style="margin-left:50px" v-permission="'查询'" @click="onSearch">查询</a-button>
 		</template>
 	</CommonSearch>
   <CommonTable :dataSource="tableData.data" :columns="columns">
@@ -31,17 +31,8 @@
       <template v-if="column.key === 'action'">
         <div class="action-btns">
 						<a href="javascript:;" @click="viewProfile(record)" v-permission="'查看资料'">查看资料</a>
-						<a href="javascript:;" @click="cancelSigning"  v-permission="'取消签约'" v-if="record.signStatus ==1">取消签约</a>
+						<a href="javascript:;" @click="cancelSigning(record)"  v-permission="'取消签约'" v-if="record.signStatus ==1">取消签约</a>
 				</div>
-        <!-- <div class="action-btns">
-          <a @click="viewProfile" v-permission="'查看资料'">查看资料</a>
-          <a-popconfirm title="确认取消签约吗?" ok-text="确认" cancel-text="取消" @confirm="cancelDelegate(record.oid)">
-            <a v-permission="'取消签约'">取消签约</a>
-          </a-popconfirm>
-          <a-popconfirm title="确认重新签约吗?" ok-text="确认" cancel-text="取消" @confirm="cancelInvitation(record.oid)">
-            <a v-permission="'重新签约'">重新签约</a>
-          </a-popconfirm>
-        </div> -->
       </template>
     </template>
   </CommonTable>
@@ -144,7 +135,7 @@
 		<p>确认取消该导游的委派关系吗？取消后，无法再给其派发带团任务。</p>
 		<template v-slot:footer>
       <a-button type="primary" style="margin-right:20px" @click="cancelVisible=false">取消</a-button>
-      <a-button type="primary" @click="add">确认取消</a-button>
+      <a-button type="primary" @click="cancelSubmit">确认取消</a-button>
     </template>
 	</BaseModal>
 </template>
@@ -178,7 +169,8 @@ const state = reactive({
     },
   },
   detailsData:[] as any,
-  modalVisible: false
+  modalVisible: false,
+  cancelGuideId:''
 });
 const form = reactive({})
 const tourGuideTypeOption = []
@@ -243,10 +235,29 @@ const onSearch = () => {
     state.tableData.data=res.content
   })
 }
+const reset=()=>{
+  state.tableData.param.guideCertificateNo=''
+  state.tableData.param.guideName=''
+  state.tableData.param.phone=''
+  state.tableData.param.signStatus=''
+}
 const add=()=>{
   api.travelSynchronizeGuide().then((res:any)=>{
     message.success(res.message)
     synchronizationVisible.value=false
+    onSearch()
+  })
+}
+const cancelSigning=(row:any)=>{
+  state.cancelGuideId=row.oid
+  cancelVisible.value=true
+}
+const cancelSubmit=()=>{
+  let pW = new FormData();
+	pW.append('guideId', state.cancelGuideId);
+  api.cancelSign(pW).then((res:any)=>{
+    message.success('取消成功')
+    cancelVisible.value=false
     onSearch()
   })
 }
@@ -263,9 +274,7 @@ const viewProfile = (row:any) => {
   state.detailsData=row
   console.log(row,'信息')
 }
-const cancelSigning=()=>{
-  cancelVisible.value=true
-}
+
 const cancelDelegate = (id: string) => { }
 const cancelInvitation = (id: string) => { }
 onMounted(() => {
