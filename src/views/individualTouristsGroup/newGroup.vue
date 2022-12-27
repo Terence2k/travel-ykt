@@ -95,7 +95,7 @@
 				<div class="operation">
 					<a-button @click="saveDraft(true)" type="primary" style="margin-right:20px">保存草稿</a-button>
 					<a-button @click="nextTep('1')" type="primary" style="margin-right:20px">上一步</a-button>
-					<a-button @click="" type="primary">提交审核</a-button>
+					<a-button @click="submitAudit" type="primary">提交审核</a-button>
 				</div>
 			</a-tab-pane>
 			<template #rightExtra>
@@ -153,6 +153,9 @@
 			</template>
 		</CommonTable>
 	</CommonModal>
+	<CommonModal title="提交发团审核" v-model:visible="auditVisible" @close="auditVisible = false"
+		@cancel="auditVisible = false" conform-text="确认" @conform="auditConform">
+	</CommonModal>
 </template>
 
 <script setup lang="ts">
@@ -185,9 +188,9 @@ const back = () => {
 		} */
 	})
 }
+const auditVisible = ref(false)
 const touristVisible = ref(false)
 const isAdd = ref(true)
-const dataOid = ref()
 const scroll = { y: '60vh' }
 const labelWidth = '110px'
 const labelCol = { style: { width: labelWidth } }
@@ -341,193 +344,6 @@ const contractColumns = [
 		width: 208
 	}
 ]
-const feeColumns = [
-	{
-		title: '序号',
-		dataIndex: 'index',
-		key: 'index',
-	},
-	{
-		title: '费用类型',
-		dataIndex: 'contractNo',
-		key: 'contractNo',
-	},
-	{
-		title: '费用生效时间',
-		dataIndex: 'lineNames',
-		key: 'lineNames',
-	},
-	{
-		title: '单价(元/人）',
-		dataIndex: 'touristPeopleNumber',
-		key: 'touristPeopleNumber',
-	},
-	{
-		title: '人数（成人）',
-		dataIndex: 'itineraryNo',
-		key: 'itineraryNo',
-	},
-	{
-		title: '人数（儿童）',
-		dataIndex: 'contractEstablish',
-		key: 'contractEstablish',
-	},
-	{
-		title: '费用（元）',
-		dataIndex: 'creatorName',
-		key: 'creatorName',
-	},
-]
-const hotelColumns = [
-	{
-		title: '序号',
-		dataIndex: 'index',
-		key: 'index',
-	},
-	{
-		title: '酒店类型',
-		dataIndex: 'contractNo',
-		key: 'contractNo',
-	},
-	{
-		title: '酒店名称',
-		dataIndex: 'lineNames',
-		key: 'lineNames',
-	},
-	{
-		title: '房间数量',
-		dataIndex: 'touristPeopleNumber',
-		key: 'touristPeopleNumber',
-	},
-	{
-		title: '入住时间',
-		dataIndex: 'itineraryNo',
-		key: 'itineraryNo',
-	},
-	{
-		title: '入住时间',
-		dataIndex: 'contractEstablish',
-		key: 'contractEstablish',
-	},
-	{
-		title: '单价（元）',
-		dataIndex: 'creatorName',
-		key: 'creatorName',
-	},
-	{
-		title: '最大可入住人数',
-		dataIndex: 'creatorName',
-		key: 'creatorName',
-	},
-	{
-		title: '金额（元）',
-		dataIndex: 'creatorName',
-		key: 'creatorName',
-	},
-	{
-		title: '操作',
-		key: 'action',
-		fixed: 'right',
-		width: 208
-	}
-]
-const ticketColumns = [
-	{
-		title: '序号',
-		dataIndex: 'index',
-		key: 'index',
-	},
-	{
-		title: '景区名称',
-		dataIndex: 'contractNo',
-		key: 'contractNo',
-	},
-	{
-		title: '日期',
-		dataIndex: 'lineNames',
-		key: 'lineNames',
-	},
-	{
-		title: '门票名称',
-		dataIndex: 'touristPeopleNumber',
-		key: 'touristPeopleNumber',
-	},
-	{
-		title: '单价（元）',
-		dataIndex: 'itineraryNo',
-		key: 'itineraryNo',
-	},
-	{
-		title: '团队游客人数',
-		dataIndex: 'contractEstablish',
-		key: 'contractEstablish',
-	},
-	{
-		title: '购票人数',
-		dataIndex: 'creatorName',
-		key: 'creatorName',
-	},
-	{
-		title: '金额（元）',
-		dataIndex: 'creatorName',
-		key: 'creatorName',
-	},
-	{
-		title: '操作',
-		key: 'action',
-		fixed: 'right',
-		width: 208
-	}
-]
-const productsColumns = [
-	{
-		title: '序号',
-		dataIndex: 'index',
-		key: 'index',
-	},
-	{
-		title: '产品名称',
-		dataIndex: 'priceName',
-		key: 'priceName',
-	},
-	{
-		title: '费用生效时间',
-		dataIndex: 'time',
-		key: 'time',
-	},
-	{
-		title: '人数（成人）',
-		dataIndex: 'adultNumber',
-		key: 'adultNumber',
-	},
-	{
-		title: '成人价',
-		dataIndex: 'adultPrice',
-		key: 'adultPrice',
-	},
-	{
-		title: '人数（儿童）',
-		dataIndex: 'childNumber',
-		key: 'childNumber',
-	},
-	{
-		title: '儿童价',
-		dataIndex: 'childPrice',
-		key: 'childPrice',
-	},
-	{
-		title: '总费用（元）',
-		dataIndex: 'individualSubtotal',
-		key: 'individualSubtotal',
-	},
-	{
-		title: '操作',
-		key: 'action',
-		fixed: 'right',
-		width: 208
-	}
-]
-
 const cmpIsHealthy = computed(() => (code: number) => {
 	if (code === 1) {
 		return '是'
@@ -616,7 +432,7 @@ const datePickerChange = () => {
 const getTraveDetail = () => {
 	// const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 	// console.log(traveListData, 'traveListData')
-	if (!route.query.id && !dataOid.value) {
+	if (!route.query.id && !form.value.itineraryNo) {
 		travelStore.setBaseInfo({});
 		travelStore.setGuideList([]);
 		travelStore.setTouristList([]);
@@ -626,7 +442,7 @@ const getTraveDetail = () => {
 	api.travelManagement
 		.getItineraryDetail(
 			{
-				oid: route.query.id || dataOid.value,
+				oid: route.query.id || form.value.itineraryNo,
 				pageNo: 1,
 				pageSize: 100000,
 			},
@@ -776,9 +592,9 @@ const saveDraft = async (showMessage?: boolean) => {
 			if (isAdd.value) {
 				const res = await api.createIndividualItinerary(form.value)
 				if (res) {
-					dataOid.value = res
+					form.value.itineraryNo = res
 					isAdd.value = false
-					resolve(dataOid.value)
+					resolve(res)
 					showMessage && message.success('保存草稿成功！')
 				}
 			}
@@ -850,11 +666,15 @@ const getTourist = async () => {
 		message.error('请先选择合同！')
 	}
 }
-
 const touristClose = () => {
 	touristVisible.value = false
 }
-
+const auditConform = async() => {
+	const res = await api.individualSubmitFinanceAudit(form.value.itineraryNo)
+}
+const submitAudit = () => {
+	auditVisible.value = true
+}
 
 const checkDetails = (id: number) => {
 

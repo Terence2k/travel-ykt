@@ -14,7 +14,7 @@ export function createIndividualItinerary(data: any) {
 // 提交财务审核
 export function individualSubmitFinanceAudit(itineraryId: number) {
   return request({
-    url: `${commonPart}audit/individualSubmitFinanceAudit?itineraryId=${itineraryId}`,
+    url: `${commonPart}/travel-agency-service/public/api/itinerary/audit/individualSubmitFinanceAudit?itineraryId=${itineraryId}`,
     method: 'put',
     showLoading: true
   });
@@ -31,9 +31,19 @@ export function getContractList(data: any) {
 }
 
 // 散客团列表
-export function list(data: any) {
+export function individualTouristsGroupList(data: any) {
   return request({
     url: `${commonPart}list`,
+    method: 'post',
+    data,
+    showLoading: true
+  });
+}
+
+// 根据散客团id查询游客分页(变更)
+export function findIndividualContractTouristById(oid: any,data:any) {
+  return request({
+    url: `${commonPart}findIndividualContractTouristById?oid=${oid}`,
     method: 'post',
     data,
     showLoading: true

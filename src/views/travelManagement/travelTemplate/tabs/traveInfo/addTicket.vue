@@ -23,7 +23,7 @@
 			</a-form-item>
 
 			<a-form-item label="门票价格" name="travelName">
-				<span>{{ ticketPrice }}元</span>
+				<span>{{ accDiv(ticketPrice,100) }}元</span>
 			</a-form-item>
 		</a-form>
 	</BaseModal>
@@ -34,7 +34,7 @@ import BaseModal from '@/components/common/BaseModal.vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import api from '@/api';
 import { cloneDeep, debounce } from 'lodash';
-
+import { accDiv,accMul} from '@/utils/compute';
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 const route = useRoute();
 const travelStore = useTravelStore();

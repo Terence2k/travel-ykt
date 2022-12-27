@@ -267,75 +267,76 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		if (state.timeformState.startTime && state.timeformState.endTime) {
 			state.startTime = state.timeformState.startTime;
 			state.endTime = state.timeformState.endTime;
-			// let dis = null;
-			// dis = (current: Dayjs) => {
-			// 	return (
-			// 		(dayjs(state.timeformState.startTime) && dayjs(state.timeformState.startTime).subtract(1, 'day') >= current && current) ||
-			// 		(dayjs(state.timeformState.endTime) && dayjs(state.timeformState.endTime).add(1, 'day') <= current && current)
-			// 	);
-			// };
-		
-			// travelStore.setDisabled = dis as any;
 			travelStore.teamTime[0] = state.timeformState.startTime;
 			travelStore.teamTime[1] = state.timeformState.endTime;
 		}
 	};
+
+	const ticketmoney = computed(() => (params: any) => {
+		console.log(params, 'params');
+		let money = 0 as number;
+		if (params) {
+			for (let index = 0; index < params.length; index++) {
+				console.log(money, 'money');
+
+				money = params[index].unitPrice + money;
+			}
+			return accDiv(money, 100);
+		}
+	});
+	const hotelmoney = computed(() => (params: any) => {
+		console.log(params, 'params');
+		let money = 0 as number;
+		if (params) {
+			for (let index = 0; index < params.length; index++) {
+				console.log(money, 'money');
+
+				money = params[index].orderFee + money;
+			}
+			return accDiv(money, 100);
+		}
+	});
+
 	const install = () => {
-		console.log('getNopassChangeProductDeatil', route.query.remark);
-		if (route.query.remark == '0') {
-			api.travelManagement
-				.changDetail({
-					oid: route.query.oid,
-					pageNo: 1,
-					pageSize: 100000,
-				})
-				.then((res: any) => {
-					state.startTime = res.basic?.startDate;
-					state.endTime = res.basic?.endDate;
-					travelStore.hotelList = res.hotelList;
-					travelStore.ticketsList = res.ticketList;
+		api.travelManagement.getProductChangeAudit(route.query.oid).then((res: any) => {
+			if (res.auditRemark) {
+				//有驳回
+				api.travelManagement.getProductChangeAuditDetail(route.query.oid).then((res: any) => {
+					res.startDate = dayjs(res.startDate).format('YYYY-MM-DD HH:mm:ss');
+					res.endDate = dayjs(res.endDate).format('YYYY-MM-DD HH:mm:ss');
+					state.startTime = res.startDate;
+					state.endTime = res.endDate;
+					travelStore.hotelList = res.newHotelList;
+					travelStore.ticketsList = res.newTicketList;
 					travelStore.touristList = res.touristList.content;
-					state.itineraryId = res.basic.oid;
-					// let dis = null;
-					// if (res) {
-					// 	dis = (current: Dayjs) => {
-					// 		return (
-					// 			(dayjs(res.basic.startDate) && dayjs(res.basic.startDate).subtract(1, 'day') >= current && current) ||
-					// 			(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).add(0, 'day') <= current && current)
-					// 		);
-					// 	};
-					// }
-					// travelStore.setDisabled = dis as any;
+					state.itineraryId = res.itineraryId;
 					const time: any = [];
-					time.push(res.basic.startDate, res.basic.endDate);
+					time.push(res.startDate, res.endDate);
 					travelStore.teamTime = time;
 				});
-		} else {
-			api.travelManagement.getProductChangeAuditDetail(route.query.oid).then((res: any) => {
-				res.startDate = dayjs(res.startDate).format('YYYY-MM-DD HH:mm:ss');
-				res.endDate = dayjs(res.endDate).format('YYYY-MM-DD HH:mm:ss');
-				state.startTime = res.startDate;
-				state.endTime = res.endDate;
-				travelStore.hotelList = res.newHotelList;
-				travelStore.ticketsList = res.newTicketList;
-				travelStore.touristList = res.newTicketList;
-				state.itineraryId = res.itineraryId;
-				let dis = null;
-				// if (res) {
-				// 	dis = (current: Dayjs) => {
-				// 		return (
-				// 			(dayjs(res.startDate) && dayjs(res.startDate).subtract(1, 'day') >= current && current) ||
-				// 			(dayjs(res.endDate) && dayjs(res.endDate).add(0, 'day') <= current && current)
-				// 		);
-				// 	};
-				// }
-				// travelStore.setDisabled = dis as any;
-				const time: any = [];
-				time.push(res.startDate, res.endDate);
-				travelStore.teamTime = time;
-			});
-		}
+			} else {
+				// 无驳回
+				api.travelManagement
+					.getItineraryDetail({
+						oid: route.query.oid,
+						pageNo: 1,
+						pageSize: 100000,
+					})
+					.then((res: any) => {
+						state.startTime = res.basic?.startDate;
+						state.endTime = res.basic?.endDate;
+						travelStore.hotelList = res.hotelList;
+						travelStore.ticketsList = res.ticketList;
+						travelStore.touristList = res.touristList.content;
+						state.itineraryId = res.basic.oid;
+						const time: any = [];
+						time.push(res.basic.startDate, res.basic.endDate);
+						travelStore.teamTime = time;
+					});
+			}
+		});
 	};
+
 	const submitReview = async (callback: Function) => {
 		const start = ref();
 		const end = ref();
@@ -437,7 +438,17 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			.travelChangeOrderProduct(data)
 			.then((res: any) => {
 				message.success('提交审核成功');
-				router.go(-2);
+				Modal.confirm({
+					title: '变更提交成功',
+					icon: createVNode(ExclamationCircleOutlined),
+					content: createVNode('div', { style: 'color: #333;' }, `当前行程单变更申请成功，请等待贵社财务审核。审核通过后，行程单信息会自动更新`),
+					cancelText: createVNode('', { style: 'display: none' }),
+					async onOk() {
+						router.go(-1);
+						return false;
+					},
+				});
+				return false;
 			})
 			.catch((error: any) => {
 				state.tiecketparams = state.tiecketparams.map((item: any) => {
@@ -464,5 +475,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		submitReview,
 		disabledDate,
 		changTiemshow,
+		ticketmoney,
+		hotelmoney,
 	};
 }

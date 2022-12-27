@@ -45,7 +45,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 	const IDCard = computed(() => travelStore.IDCard)
 	const specialId = computed(() => travelStore.specialId)
 	const state = reactive<{editableData: UnwrapRef<Record<string, DataItem>>, [k:string]: any}>({
-		fileUrl: '',
+		fileUrl: {},
 		isWarring: false,//健康码异常
 		checkCode: false, //健康码点击
 		highRish: false, //高风险
@@ -264,7 +264,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			state.editableData[key] = cloneDeep(
 				state.tableData.filter((item:any, index: number) => key == (item.key ? item.key : item.oid))[0]
 			)
-			state.fileUrl = state.editableData[key].specialCertificatePicture?.join(',')
+			state.fileUrl[key] = state.editableData[key].specialCertificatePicture?.join(',')
 			state.editableData[key].edit = true
 		},
 		async del(record: any, index: number) {
