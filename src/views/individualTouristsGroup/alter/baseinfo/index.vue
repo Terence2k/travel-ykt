@@ -336,26 +336,33 @@ const configCodeName = (certificateCodes: any, targetArr: any) => {
 };
 
 const install = () => {
-	api.travelManagement
-		.getItineraryDetail({
-			oid: route.query.oid,
-			pageNo: 1,
-			pageSize: 100000,
-		})
-		.then((res: any) => {
-			form.value = res.basic;
-			form.value.teamTypeName = res.basic.teamTypeName;
-			form.value.licensePlate = res.transportList[0].licencePlateNumber;
-			guideChange(res.guideList[0].guideOid, {
-				guideCertificateNo: res.guideList[0].guideCertificateNo,
-				name: res.guideList[0].guideName,
-				phone: res.guideList[0].guidePhone,
-				oid: res.guideList[0].guideOid,
+	if (route.query.oid) {
+		api.travelManagement
+			.getItineraryDetail({
+				oid: route.query.oid,
+				pageNo: 1,
+				pageSize: 100000,
+			})
+			.then((res: any) => {
+				form.value = res.basic;
+				form.value.teamTypeName = res.basic.teamTypeName;
+				form.value.licensePlate = res.transportList[0].licencePlateNumber;
+				guideChange(res.guideList[0].guideOid, {
+					guideCertificateNo: res.guideList[0].guideCertificateNo,
+					name: res.guideList[0].guideName,
+					phone: res.guideList[0].guidePhone,
+					oid: res.guideList[0].guideOid,
+				});
+				state.guideOid = res.guideList[0].guideOid;
+				state.licensePlate = res.transportList[0].licencePlateNumber;
 			});
-			state.guideOid = res.guideList[0].guideOid;
-			state.licensePlate = res.transportList[0].licencePlateNumber;
-		});
+	}
 };
+watch(route, () => {
+	if (route.query.oid) {
+		install();
+	}
+});
 onMounted(() => {
 	install();
 	getGuideList();
