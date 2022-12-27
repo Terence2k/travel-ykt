@@ -192,7 +192,7 @@
 <script setup lang="ts">
 import { toRaw } from 'vue';
 import { cloneDeep } from 'lodash';
-import { message } from 'ant-design-vue/es';
+import { message } from 'ant-design-vue';
 import api from '@/api';
 import CommonTable from '@/components/common/CommonTable.vue';
 import { accDiv } from '@/utils/compute';
@@ -341,53 +341,68 @@ const initPage = () => {
 	const companyId = userInfo?.sysCompany?.oid;
 
 	if (companyId || companyId === 0) {
-		api.getHotelInfoByCompanyId(companyId).then((res) => {
-			console.log('根据企业id获得的酒店信息为：', res);
-			state.hotelId = res?.oid;
+		api
+			.getHotelInfoByCompanyId(companyId)
+			.then((res) => {
+				console.log('根据企业id获得的酒店信息为：', res);
+				state.hotelId = res?.oid;
 
-			api.getPriceByHotelId(state.hotelId).then((res) => {
-				console.log('诚信指导价：', res?.price);
-				state.price = accDiv(res?.price, 100) || '';
+				api
+					.getPriceByHotelId(state.hotelId)
+					.then((res) => {
+						console.log('诚信指导价：', res?.price);
+						state.price = accDiv(res?.price, 100) || '';
+					})
+					.catch((err: any) => {
+						message.error(err?.message || err);
+					});
+				api
+					.getHotelListInEdit()
+					.then((res) => {
+						// state.hotelId = res?.
+						console.info(`id${state.hotelId}房型信息:`, res);
+
+						if (Array.isArray(res) && res.length > 0) {
+							state.roomInfoResponse.value = res;
+							dataSource.value = res.map((item) => {
+								if (item.auditStatus === 1) {
+									state.isAuditStatus = true;
+								}
+								return {
+									...item,
+									price: accDiv(item.price, 100),
+									key: item?.oid,
+								};
+							});
+						} else {
+							state.roomInfoResponse.value = [];
+							dataSource.value = [];
+						}
+					})
+					.catch((err: any) => {
+						message.error(err?.message || err);
+					});
+			})
+			.catch((err: any) => {
+				message.error(err?.message || err);
 			});
-			api
-				.getHotelListInEdit()
-				.then((res) => {
-					// state.hotelId = res?.
-					console.info(`id${state.hotelId}房型信息:`, res);
-
-					if (Array.isArray(res) && res.length > 0) {
-						state.roomInfoResponse.value = res;
-						dataSource.value = res.map((item) => {
-							if (item.auditStatus === 1) {
-								state.isAuditStatus = true;
-							}
-							return {
-								...item,
-								price: accDiv(item.price, 100),
-								key: item?.oid,
-							};
-						});
-					} else {
-						state.roomInfoResponse.value = [];
-						dataSource.value = [];
-					}
-				})
-				.catch((err) => {
-					console.error(err);
-				});
-		});
 	}
 
-	api.getEnableSystemRoomType().then((res) => {
-		state.systemRoomAllData = res;
-		systemRoomData.value = res.map((item) => {
-			return {
-				value: item.oid,
-				label: item.sysRoomTypeName,
-			};
+	api
+		.getEnableSystemRoomType()
+		.then((res) => {
+			state.systemRoomAllData = res;
+			systemRoomData.value = res.map((item) => {
+				return {
+					value: item.oid,
+					label: item.sysRoomTypeName,
+				};
+			});
+			console.log('systemRoomData', systemRoomData);
+		})
+		.catch((err: any) => {
+			message.error(err?.message || err);
 		});
-		console.log('systemRoomData', systemRoomData);
-	});
 };
 
 const saveRoomInfo = () => {
@@ -440,16 +455,15 @@ const saveRoomInfo = () => {
 						initPage();
 						message.success('保存成功');
 					})
-					.catch((err) => {
-						message.error(err);
-						console.error(err);
+					.catch((err: any) => {
+						message.error(err?.message || err);
 					});
 			} else {
 				message.error('当前缺少可提交审核的数据');
 			}
 		})
-		.catch((err) => {
-			console.log('提交数据验证失败', err);
+		.catch((err: any) => {
+			message.error(err?.message || err);
 		});
 };
 
@@ -560,7 +574,7 @@ const getMaxMinusCount = (target: string) => {
 
 					return result;
 				})();
-				message.error(err || '获取最大可减少房间数失败');
+				message.error(err?.message || err || '获取最大可减少房间数失败');
 			});
 	}
 };

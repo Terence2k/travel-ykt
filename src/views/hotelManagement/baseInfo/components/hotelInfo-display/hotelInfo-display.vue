@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { message } from 'ant-design-vue/es';
+import { message } from 'ant-design-vue';
 import api from '@/api';
 
 const route = useRoute();
