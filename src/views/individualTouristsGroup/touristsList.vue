@@ -24,7 +24,6 @@
             <template v-if="column.key === 'action'">
               <div class="action-btns">
                 <a @click="addOrUpdate({ row: record, handle: 'update' })">编辑</a>
-                <a @click="change(record)">变更</a>
                 <a @click="">删除</a>
                 <a @click="">提交审核</a>
               </div>

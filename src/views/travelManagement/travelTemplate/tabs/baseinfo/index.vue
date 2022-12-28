@@ -190,11 +190,11 @@ const handleChange = (event: any, option: any) => {
 };
 onMounted(() => {
 	if (route.query?.oid && route.query?.Cedit) {
-		navigatorBar.setNavigator(['行程模板管理', '编辑']);
+		navigatorBar.setNavigator(['旅行社管理','行程模板管理', '编辑']);
 	} else if (route.query?.oid && route.query?.Cinfo) {
-		navigatorBar.setNavigator(['行程模板管理', '查看']);
+		navigatorBar.setNavigator(['旅行社管理','行程模板管理', '查看']);
 	} else {
-		navigatorBar.setNavigator(['行程模板管理', '新增']);
+		navigatorBar.setNavigator(['旅行社管理','行程模板管理', '新增']);
 	}
 	initPage();
 	getSubtravelList();

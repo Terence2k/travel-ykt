@@ -8,6 +8,7 @@ import { message, Modal } from 'ant-design-vue';
 import dayjs, { Dayjs } from 'dayjs';
 import { CheckOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { accDiv, accMul } from '@/utils/compute';
+import { toNumber } from '@vue/shared';
 interface DataItem {
 	name: string;
 	name1: string;
@@ -201,7 +202,6 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			delete state.editableData[key];
 		},
 		add(key: string, popup: string, oid: string, record?: any) {
-			console.log(record);
 			if (record) {
 				if (record.roomTypeList == null) {
 					record.roomTypeList = [
@@ -216,7 +216,6 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 					];
 				}
 				editId.productRow = record;
-				console.log(editId.productRow);
 			} else {
 				editId.productRow = {};
 				editId[key] = '';
@@ -230,8 +229,6 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			if (state.hotelData[key].oid) {
 				state.newhotel.push({ ...state.hotelData[key], ...{ deleted: true, edit: true } });
 			}
-			console.log(state.newhotel);
-
 			state.hotelData.splice(key, 1);
 		},
 		delticket(key: string) {
@@ -254,7 +251,6 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		},
 		seeReject(key: string) {
 			state[key] = true;
-			console.log(key);
 		},
 		onSearch() {
 			api.getBasicInfo().then((res: any) => {
@@ -273,24 +269,19 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 	};
 
 	const ticketmoney = computed(() => (params: any) => {
-		console.log(params, 'params');
 		let money = 0 as number;
 		if (params) {
 			for (let index = 0; index < params.length; index++) {
-				console.log(money, 'money');
-
-				money = params[index].unitPrice + money;
+				money = accMul(params[index].reservePeopleCount, params[index].unitPrice) + money;
 			}
 			return accDiv(money, 100);
 		}
 	});
+	
 	const hotelmoney = computed(() => (params: any) => {
-		console.log(params, 'params');
 		let money = 0 as number;
 		if (params) {
 			for (let index = 0; index < params.length; index++) {
-				console.log(money, 'money');
-
 				money = params[index].orderFee + money;
 			}
 			return accDiv(money, 100);
@@ -382,6 +373,38 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				return false;
 			}
 		}
+		// let travelerSum = toNumber(Math.ceil(accMul(travelStore.touristList.length, 0.8)));
+		// let data = [] as any;
+		// let roomCount = 0;
+		// let roomNum = 0;
+		// let staySum = 0;
+		// let Sum = 0;
+		// for (let index = 0; index < state.hotelData.length; index++) {
+		// 	data = [...data, ...state.hotelData[index].roomTypeList];
+		// }
+		// for (let index = 0; index < data.length; index++) {
+		// 	roomCount = toNumber(data[index].roomCount);
+		// 	roomNum = toNumber(data[index].limitPeople);
+		// 	staySum = accMul(roomCount, roomNum);
+		// 	Sum = staySum + Sum;
+		// }
+		// if (!(Sum >= travelerSum)) {
+		// 	Modal.confirm({
+		// 		title: '提交审核失败',
+		// 		icon: createVNode(ExclamationCircleOutlined),
+		// 		cancelText: createVNode('', { style: 'display: none' }),
+		// 		content: createVNode(
+		// 			'div',
+		// 			{ style: 'color: #333;' },
+		// 			`系统检测到您当前行程中共有${travelStore.touristList.length}名游客，按照一卡通平台规定，您预订的房间总数量至少要满足${travelerSum}人同时入住。当前预订数量不够，您必须追订足够数量的房间，才可以继续提交发团`
+		// 		),
+		// 		async onOk() {
+		// 			return false;
+		// 		},
+		// 	});
+		// 	return false;
+		// }
+
 		if (state.hotelData) {
 			state.hotelparams = [].concat.call(state.hotelData, state.newhotel);
 			state.hotelparams = state.hotelparams.filter((item: any) => item.edit == true, state.hotelparams);
@@ -399,7 +422,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 					delete state.tiecketparams[index].edit;
 				}
 			}
-		}
+		}		
 		refund();
 	};
 	const refund = () => {
