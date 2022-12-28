@@ -197,10 +197,10 @@
 </template>
 
 <script setup lang="ts">
-import CommonTable from '@/components/common/CommonTable.vue'
-import CommonPagination from '@/components/common/CommonPagination.vue'
-import CommonSearch from '@/components/common/CommonSearch.vue'
-import SearchItem from '@/components/common/CommonSearchItem.vue'
+import CommonTable from '@/components/common/CommonTable.vue';
+import CommonPagination from '@/components/common/CommonPagination.vue';
+import CommonSearch from '@/components/common/CommonSearch.vue';
+import SearchItem from '@/components/common/CommonSearchItem.vue';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import api from '@/api';
 import { useRouter, useRoute } from 'vue-router';
@@ -210,13 +210,13 @@ import dayjs from 'dayjs';
 import BaseModal from '@/components/common/BaseModal.vue';
 import AllRevoke from '@/views/travelManagement/travelTakeGroupList/revoke/components/allRevoke.vue';
 const router = useRouter();
-const route = useRoute()
+const route = useRoute();
 const goto = (name: string, val?: any) => {
   router.push({
     name,
-    query: val
-  })
-}
+    query: val,
+  });
+};
 
 const state = reactive({
   // 草稿
@@ -229,7 +229,7 @@ const state = reactive({
       pageSize: 10,
       status: 1,
       travelId: undefined,
-      itineraryNo: undefined
+      itineraryNo: undefined,
     },
   },
   // 待审核
@@ -242,7 +242,7 @@ const state = reactive({
       pageSize: 10,
       status: 5,
       travelId: undefined,
-      itineraryNo: undefined
+      itineraryNo: undefined,
     },
   },
   // 待出团
@@ -255,7 +255,7 @@ const state = reactive({
       pageSize: 10,
       status: 11,
       travelId: undefined,
-      itineraryNo: undefined
+      itineraryNo: undefined,
     },
   },
   // 已出团
@@ -268,7 +268,7 @@ const state = reactive({
       pageSize: 10,
       status: 12,
       travelId: undefined,
-      itineraryNo: undefined
+      itineraryNo: undefined,
     },
   },
   // 已散团
@@ -281,7 +281,7 @@ const state = reactive({
       pageSize: 10,
       status: 13,
       travelId: undefined,
-      itineraryNo: undefined
+      itineraryNo: undefined,
     },
   },
   // 待变更
@@ -294,7 +294,7 @@ const state = reactive({
       pageSize: 10,
       status: 0,
       travelId: undefined,
-      itineraryNo: undefined
+      itineraryNo: undefined,
     },
   },
   // 已过期
@@ -307,7 +307,7 @@ const state = reactive({
       pageSize: 10,
       status: 8,
       travelId: undefined,
-      itineraryNo: undefined
+      itineraryNo: undefined,
     },
   },
   // 待处理
@@ -320,89 +320,89 @@ const state = reactive({
       pageSize: 10,
       status: 21,
       travelId: undefined,
-      itineraryNo: undefined
+      itineraryNo: undefined,
     },
   },
 });
-const form = reactive({})
-const teamRef = ref()
-const formRules = {}
-const activeKey = ref('1')
-const { tableData1, tableData2, tableData3, tableData4, tableData5, tableData6, tableData7, tableData8 } = toRefs(state)
+const form = reactive({});
+const teamRef = ref();
+const formRules = {};
+const activeKey = ref('1');
+const { tableData1, tableData2, tableData3, tableData4, tableData5, tableData6, tableData7, tableData8 } = toRefs(state);
 const menuList = [
   {
     dataObj: state.tableData1,
     key: '1',
     onQuery() {
-      tableData1.value.param.pageNo = 1
-      onSearch1()
+      tableData1.value.param.pageNo = 1;
+      onSearch1();
     },
-    loaded: true
+    loaded: true,
   },
   {
     dataObj: state.tableData2,
     key: '2',
     onQuery() {
-      tableData2.value.param.pageNo = 1
-      onSearch2()
+      tableData2.value.param.pageNo = 1;
+      onSearch2();
     },
-    loaded: false
+    loaded: false,
   },
   {
     dataObj: state.tableData3,
     key: '3',
     onQuery() {
-      tableData3.value.param.pageNo = 1
-      onSearch3()
+      tableData3.value.param.pageNo = 1;
+      onSearch3();
     },
-    loaded: false
+    loaded: false,
   },
   {
     dataObj: state.tableData4,
     key: '4',
     onQuery() {
-      tableData4.value.param.pageNo = 1
-      onSearch4()
+      tableData4.value.param.pageNo = 1;
+      onSearch4();
     },
-    loaded: false
+    loaded: false,
   },
   {
     dataObj: state.tableData5,
     key: '5',
     onQuery() {
-      tableData5.value.param.pageNo = 1
-      onSearch5()
+      tableData5.value.param.pageNo = 1;
+      onSearch5();
     },
-    loaded: false
+    loaded: false,
   },
   {
     dataObj: state.tableData6,
     key: '6',
     onQuery() {
-      tableData6.value.param.pageNo = 1
-      onSearch6()
+      tableData6.value.param.pageNo = 1;
+      onSearch6();
     },
-    loaded: false
+    loaded: false,
   },
   {
     dataObj: state.tableData7,
     key: '7',
     onQuery() {
-      tableData7.value.param.pageNo = 1
-      onSearch7()
+      tableData7.value.param.pageNo = 1;
+      onSearch7();
     },
-    loaded: false
+    loaded: false,
   },
   {
     dataObj: state.tableData8,
     key: '8',
     onQuery() {
-      tableData8.value.param.pageNo = 1
-      onSearch8()
+      tableData8.value.param.pageNo = 1;
+      onSearch8();
     },
-    loaded: false
-  }
-]
+    loaded: false,
+  },
+];
 const columns = [
   {
     title: '序号',
@@ -453,125 +453,125 @@ const columns = [
     title: '操作',
     key: 'action',
     fixed: 'right',
-    width: 180
+    width: 180,
   },
-]
+];
 const onHandleCurrentChange1 = (val: number) => {
   state.tableData1.param.pageNo = val;
   onSearch1();
-}
+};
 const pageSideChange1 = (current: number, size: number) => {
   state.tableData1.param.pageSize = size;
   onSearch1();
-}
+};
 const onHandleCurrentChange2 = (val: number) => {
   state.tableData2.param.pageNo = val;
   onSearch2();
-}
+};
 const pageSideChange2 = (current: number, size: number) => {
   state.tableData2.param.pageSize = size;
   onSearch2();
-}
+};
 const onHandleCurrentChange3 = (val: number) => {
   state.tableData3.param.pageNo = val;
   onSearch3();
-}
+};
 const pageSideChange3 = (current: number, size: number) => {
   state.tableData3.param.pageSize = size;
   onSearch3();
-}
+};
 const onHandleCurrentChange4 = (val: number) => {
   state.tableData4.param.pageNo = val;
   onSearch4();
-}
+};
 const pageSideChange4 = (current: number, size: number) => {
   state.tableData4.param.pageSize = size;
   onSearch4();
-}
+};
 const onHandleCurrentChange5 = (val: number) => {
   state.tableData5.param.pageNo = val;
   onSearch5();
-}
+};
 const pageSideChange5 = (current: number, size: number) => {
   state.tableData5.param.pageSize = size;
   onSearch5();
-}
+};
 const onHandleCurrentChange6 = (val: number) => {
   state.tableData6.param.pageNo = val;
   onSearch6();
-}
+};
 const pageSideChange6 = (current: number, size: number) => {
   state.tableData6.param.pageSize = size;
   onSearch6();
-}
+};
 const onHandleCurrentChange7 = (val: number) => {
   state.tableData7.param.pageNo = val;
   onSearch7();
-}
+};
 const pageSideChange7 = (current: number, size: number) => {
   state.tableData7.param.pageSize = size;
   onSearch7();
-}
+};
 const onHandleCurrentChange8 = (val: number) => {
   state.tableData8.param.pageNo = val;
   onSearch8();
-}
+};
 const pageSideChange8 = (current: number, size: number) => {
   state.tableData8.param.pageSize = size;
   onSearch8();
-}
+};
 const onSearch1 = async () => {
-  let res = await api.individualTouristsGroupList(tableData1.value.param)
-  tableData1.value.data = res?.content
-  tableData1.value.total = res?.total
-}
+  let res = await api.individualTouristsGroupList(tableData1.value.param);
+  tableData1.value.data = res?.content;
+  tableData1.value.total = res?.total;
+};
 const onSearch2 = async () => {
-  let res = await api.individualTouristsGroupList(tableData2.value.param)
-  tableData2.value.data = res?.content
-  tableData2.value.total = res?.total
-}
+  let res = await api.individualTouristsGroupList(tableData2.value.param);
+  tableData2.value.data = res?.content;
+  tableData2.value.total = res?.total;
+};
 const onSearch3 = async () => {
-  let res = await api.individualTouristsGroupList(tableData3.value.param)
-  tableData3.value.data = res?.content
-  tableData3.value.total = res?.total
-}
+  let res = await api.individualTouristsGroupList(tableData3.value.param);
+  tableData3.value.data = res?.content;
+  tableData3.value.total = res?.total;
+};
 const onSearch4 = async () => {
-  let res = await api.individualTouristsGroupList(tableData4.value.param)
-  tableData4.value.data = res?.content
-  tableData4.value.total = res?.total
-}
+  let res = await api.individualTouristsGroupList(tableData4.value.param);
+  tableData4.value.data = res?.content;
+  tableData4.value.total = res?.total;
+};
 const onSearch5 = async () => {
-  let res = await api.individualTouristsGroupList(tableData5.value.param)
-  tableData5.value.data = res?.content
-  tableData5.value.total = res?.total
-}
+  let res = await api.individualTouristsGroupList(tableData5.value.param);
+  tableData5.value.data = res?.content;
+  tableData5.value.total = res?.total;
+};
 const onSearch6 = async () => {
-  let res = await api.individualTouristsGroupList(tableData6.value.param)
-  tableData6.value.data = res?.content
-  tableData6.value.total = res?.total
-}
+  let res = await api.individualTouristsGroupList(tableData6.value.param);
+  tableData6.value.data = res?.content;
+  tableData6.value.total = res?.total;
+};
 const onSearch7 = async () => {
-  let res = await api.individualTouristsGroupList(tableData7.value.param)
-  tableData7.value.data = res?.content
-  tableData7.value.total = res?.total
-}
+  let res = await api.individualTouristsGroupList(tableData7.value.param);
+  tableData7.value.data = res?.content;
+  tableData7.value.total = res?.total;
+};
 const onSearch8 = async () => {
-  let res = await api.individualTouristsGroupList(tableData8.value.param)
-  tableData8.value.data = res?.content
-  tableData8.value.total = res?.total
-}
+  let res = await api.individualTouristsGroupList(tableData8.value.param);
+  tableData8.value.data = res?.content;
+  tableData8.value.total = res?.total;
+};
 
 interface addInterface {
-  row?: any
-  handle: 'update' | 'add'
+  row?: any;
+  handle: 'update' | 'add';
 }
 const addOrUpdate = ({ row, handle }: addInterface) => {
   if (handle === 'add') {
-    goto('newGroup')
+    goto('newGroup');
   } else if (handle === 'update') {
-    goto('newGroup', { id: row.oid })
+    goto('newGroup', { id: row.oid });
   }
-}
+};
 
 const change = (row: any) => {
   router.push({
@@ -580,78 +580,78 @@ const change = (row: any) => {
       oid: row.oid,
     },
   });
-}
+};
 
 const tabsChange = (key: string) => {
-  const currentList = menuList[parseInt(key) - 1]
+  const currentList = menuList[parseInt(key) - 1];
   switch (activeKey.value) {
     case '1':
       if (!currentList.loaded) {
-        currentList.loaded = true
-        onSearch1()
+        currentList.loaded = true;
+        onSearch1();
       }
-      break
+      break;
     case '2':
       if (!currentList.loaded) {
-        currentList.loaded = true
-        onSearch2()
+        currentList.loaded = true;
+        onSearch2();
       }
-      break
+      break;
     case '3':
       if (!currentList.loaded) {
-        currentList.loaded = true
-        onSearch3()
+        currentList.loaded = true;
+        onSearch3();
       }
-      break
+      break;
     case '4':
       if (!currentList.loaded) {
-        currentList.loaded = true
-        onSearch4()
+        currentList.loaded = true;
+        onSearch4();
       }
-      break
+      break;
     case '5':
       if (!currentList.loaded) {
-        currentList.loaded = true
-        onSearch5()
+        currentList.loaded = true;
+        onSearch5();
       }
-      break
+      break;
     case '6':
       if (!currentList.loaded) {
-        currentList.loaded = true
-        onSearch6()
+        currentList.loaded = true;
+        onSearch6();
       }
-      break
+      break;
     case '7':
       if (!currentList.loaded) {
-        currentList.loaded = true
-        onSearch7()
+        currentList.loaded = true;
+        onSearch7();
       }
-      break
+      break;
     case '8':
       if (!currentList.loaded) {
-        currentList.loaded = true
-        onSearch8()
+        currentList.loaded = true;
+        onSearch8();
       }
-      break
+      break;
   }
-}
+};
 const businessManageOptions = useBusinessManageOption();
 const initOpeion = async () => {
   await businessManageOptions.getCompanyByBusinessType('TRAVEL');
 };
 const companyOptions = computed(() => businessManageOptions.companyOptions);
-const isTravelVisible = ref(false)
+const isTravelVisible = ref(false);
 const getIsTravelVisible = () => {
   let userInfo: any = window.localStorage.getItem('userInfo');
   userInfo = JSON.parse(userInfo);
-  const { sysRoles } = userInfo
+  const { sysRoles } = userInfo;
   isTravelVisible.value = sysRoles?.some((item: any) => {
-    return ['CULTURE_BUREAU_SUPER_ADMIN', 'PLATFORM_SUPER_ADMIN'].includes(item.roleCode)
-  })
+    return ['CULTURE_BUREAU_SUPER_ADMIN', 'PLATFORM_SUPER_ADMIN'].includes(item.roleCode);
+  });
   if (isTravelVisible.value) {
-    initOpeion()
+    initOpeion();
   }
-}
+};
 const goToChange = (row: any) => {
   state.changeParams.id = row.oid;
   state.changeParams.itineraryNo = row.itineraryNo;
@@ -667,8 +667,23 @@ const goToPath = (row: any) => {
   goto('newGroup', {
     id: row.oid,
     itineraryNo: row.itineraryNo,
-    tab: '2'
-  })
+    tab: '2',
+  });
+};
+const toRevoke = (row: any) => {
+  // goto('tourists-revoke', {
+  // 	id: row.oid,
+  // 	itineraryNo: row.itineraryNo,
+  // 	tab: '2',
+  // });
+
+  router.push({
+    path: '/travel/tourists/tourists-revoke',
+    query: {
+      id: row.oid,
+      itineraryNo: row.itineraryNo,
+    },
+  });
 };
 const revokeGroupToDraft = async (id: number) => {
   await api.travelManagement.revokeGroupToDraft(id);
@@ -730,9 +745,9 @@ const revoke = async (row: any) => {
   }
 };
 onMounted(() => {
-  getIsTravelVisible()
-  onSearch1()
-})
+  getIsTravelVisible();
+  onSearch1();
+});
 </script>
 
 <style scoped lang="scss">
