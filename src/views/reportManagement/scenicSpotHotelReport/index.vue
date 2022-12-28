@@ -18,16 +18,16 @@
 				</a-select-option>
 			</a-select>
 		</search-item>
-		<search-item label="结算时间">
+		<search-item label="结算时间" style="width: 350px">
 			<!-- <a-range-picker v-model:value="state.settlementTimeList" @change="settlementTimeChange" /> -->
-			<picker v-model="state.settlementTimeList" @change="settlementTimeChange" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"> </picker>
+			<picker v-model="state.settlementTimeList" style="width: 180px" @change="settlementTimeChange" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"> </picker>
 		</search-item>
 		<search-item label="酒店名称" style="width: 280px">
 			<a-input v-model:value="state.tableData.param.hotelName" placeholder="请输入酒店名称" allowClear style="width: 180px" />
 		</search-item>
-		<search-item label="核销时间">
+		<search-item label="核销时间" style="width: 350px">
 			<!-- <a-range-picker v-model:value="state.verificationTimeList" @change="verificationTimeChange" /> -->
-			<picker v-model="state.verificationTimeList" @change="verificationTimeChange" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"> </picker>
+			<picker v-model="state.verificationTimeList" style="width: 180px" @change="verificationTimeChange" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"> </picker>
 		</search-item>
 		<template #button>
 			<a-button @click="initList" v-permission="'查询'">查询</a-button>
