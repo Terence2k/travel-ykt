@@ -94,7 +94,7 @@
   });
   const print = ref({
     id: 'printBox',//这里的id就是上面我们的打印区域id，实现指哪打哪
-    popTitle: '配置页眉标题', // 打印配置页上方的标题
+    popTitle: '', // 打印配置页上方的标题
     extraHead: '', // 最上方的头部文字，附加在head标签上的额外标签，使用逗号分割
     preview: false, // 是否启动预览模式，默认是false
     previewTitle: '预览的标题', // 打印预览的标题
