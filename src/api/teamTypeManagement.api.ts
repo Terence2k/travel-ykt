@@ -44,3 +44,12 @@ export function findEditTeamTypeById(id: number) {
 		showLoading: true
 	});
 }
+// 查询散客团综费
+export function findIndividualTeamType() {
+	return request({
+		url: `${commonPart}findIndividualTeamType`,
+		method: 'post',
+		showLoading: true
+	});
+}
+

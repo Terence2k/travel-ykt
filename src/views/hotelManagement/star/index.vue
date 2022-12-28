@@ -141,7 +141,7 @@ const onSearch = () => {
 			tableState.tableData.total = res?.total || 0;
 		})
 		.catch((err: any) => {
-			message.error(err || err?.message || '获取酒店星级表格信息失败');
+			message.error(err?.message || err || '获取酒店星级表格信息失败');
 		});
 };
 
@@ -169,7 +169,7 @@ const toggleHotelStarStatus = (param: any) => {
 				onSearch();
 			})
 			.catch((err: any) => {
-				message.error(err || err?.message || '启用该酒店星级失败');
+				message.error(err?.message || err || '启用该酒店星级失败');
 			});
 	} else {
 		api
@@ -178,7 +178,7 @@ const toggleHotelStarStatus = (param: any) => {
 				onSearch();
 			})
 			.catch((err: any) => {
-				message.error(err || err?.message || '禁用该酒店星级失败');
+				message.error(err?.message || err || '禁用该酒店星级失败');
 			});
 	}
 };

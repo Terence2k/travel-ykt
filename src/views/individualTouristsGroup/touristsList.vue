@@ -7,7 +7,7 @@
       </a-select>
     </search-item>
     <search-item label="行程编号">
-      <a-input v-model:value="item.dataObj.param.itineraryNo" placeholder="请输入行程单号" allowClears/>
+      <a-input v-model:value="item.dataObj.param.itineraryNo" placeholder="请输入行程单号" allowClears />
     </search-item>
     <template #button>
       <a-button @click="item.onQuery">查询</a-button>
@@ -205,8 +205,8 @@ const router = useRouter();
 const route = useRoute()
 const goto = (name: string, val?: any) => {
   router.push({
-    name // 'addTourists',
-    // params: 
+    name,
+    query: val
   })
 }
 
@@ -561,6 +561,7 @@ const addOrUpdate = ({ row, handle }: addInterface) => {
   if (handle === 'add') {
     goto('newGroup')
   } else if (handle === 'update') {
+    goto('newGroup', { id: row.oid })
   }
 }
 

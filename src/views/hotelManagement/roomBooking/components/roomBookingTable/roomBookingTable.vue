@@ -116,6 +116,7 @@
 import { PlusSquareOutlined, MinusSquareOutlined } from '@ant-design/icons-vue';
 import { cloneDeep } from 'lodash';
 import dayjs from 'dayjs';
+import { message } from 'ant-design-vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 //import CommonPagination from '@/components/common/CommonPagination.vue';
 import BaseModal from '@/components/common/BaseModal.vue';
@@ -537,6 +538,9 @@ const getHotelRoomTypeStockTableInfo = (hotelId) => {
 			.then((result) => {
 				tableState.tableData.data = result;
 				console.info('酒店房间库存信息', result);
+			})
+			.catch((err: any) => {
+				message.error(err?.message || err);
 			});
 	} else {
 		tableState.tableData.data = [];
@@ -581,16 +585,21 @@ const openRoomStatusDetailsModal = (data: any) => {
 	tableState.roleId = undefined;
 	tableState.auditBusinessType = '';
 	if (data?.auditStatus === 0 && data?.uuid) {
-		api.getRoleId({ uuid: data?.uuid }).then((res) => {
-			console.log('sssss', res);
-			if (Array.isArray(res)) {
-				tableState.roleId = res[0]?.roleId;
-				tableState.auditBusinessType = res[0].auditBusinessType;
-			}
-			modalState.visible = true;
-			modalState.baseInfo = cloneDeep(data);
-			modalState.cacheInfo = cloneDeep(data);
-		});
+		api
+			.getRoleId({ uuid: data?.uuid })
+			.then((res) => {
+				console.log('sssss', res);
+				if (Array.isArray(res)) {
+					tableState.roleId = res[0]?.roleId;
+					tableState.auditBusinessType = res[0].auditBusinessType;
+				}
+				modalState.visible = true;
+				modalState.baseInfo = cloneDeep(data);
+				modalState.cacheInfo = cloneDeep(data);
+			})
+			.catch((err: any) => {
+				message.error(err?.message || err);
+			});
 	} else {
 		modalState.visible = true;
 		modalState.baseInfo = cloneDeep(data);
@@ -622,6 +631,9 @@ const saveModalInfo = () => {
 			modalState.visible = false;
 			console.log('提交审核 返回：', response);
 			getHotelRoomTypeStockTableInfo(props?.hotelId);
+		})
+		.catch((err: any) => {
+			message.error(err?.message || err);
 		});
 };
 
@@ -645,6 +657,9 @@ const passModalInfo = () => {
 				// 	getHotelRoomTypeStockTableInfo(props?.hotelId);
 				// }, 1000);
 				getHotelRoomTypeStockTableInfo(props?.hotelId);
+			})
+			.catch((err: any) => {
+				message.error(err?.message || err);
 			});
 	}
 };
@@ -664,6 +679,9 @@ const failModalInfo = () => {
 				// 	getHotelRoomTypeStockTableInfo(props?.hotelId);
 				// }, 1000);
 				getHotelRoomTypeStockTableInfo(props?.hotelId);
+			})
+			.catch((err: any) => {
+				message.error(err?.message || err);
 			});
 	}
 };

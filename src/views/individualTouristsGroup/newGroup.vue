@@ -195,7 +195,10 @@ const scroll = { y: '60vh' }
 const labelWidth = '110px'
 const labelCol = { style: { width: labelWidth } }
 const addContractVisible = ref(false)
-const form = ref({})
+type formType = {
+	totalExpenses?: number
+}
+const form = ref<formType>({})
 const formRef = ref()
 const dateFormRef = ref()
 type Key = string | number;
@@ -428,11 +431,38 @@ const datePickerChange = () => {
 		form.value.groupType = undefined;
 	}
 }
-
+const setBaseInfo = (res: any) => {
+	if (res) {
+		const {
+			routeName,
+			groupType,
+			groupTypeName,
+			travelOperatorName,
+			travelOperatorPhone,
+			selfTeamNo,
+			time,
+			touristCount,
+			itineraryNo,
+		} = res.basic
+		const guideOid = res.guideList[0].guideOid
+		const licensePlate = res.transportList[0]?.licencePlateNumber
+		form.value.routeName = routeName
+		form.value.groupType = groupType
+		form.value.groupTypeName = groupTypeName
+		form.value.travelOperatorName = travelOperatorName
+		form.value.travelOperatorPhone = travelOperatorPhone
+		form.value.selfTeamNo = selfTeamNo
+		form.value.travelData = time
+		form.value.touristPeopleNumber = touristCount
+		form.value.itineraryNo = itineraryNo
+		form.value.guideOid = guideOid
+		form.value.licensePlate = licensePlate
+	}
+}
 const getTraveDetail = () => {
 	// const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 	// console.log(traveListData, 'traveListData')
-	if (!route.query.id && !form.value.itineraryNo) {
+	if (!form.value.oid) {
 		travelStore.setBaseInfo({});
 		travelStore.setGuideList([]);
 		travelStore.setTouristList([]);
@@ -442,7 +472,7 @@ const getTraveDetail = () => {
 	api.travelManagement
 		.getItineraryDetail(
 			{
-				oid: route.query.id || form.value.itineraryNo,
+				oid: form.value.oid,
 				pageNo: 1,
 				pageSize: 100000,
 			},
@@ -453,6 +483,7 @@ const getTraveDetail = () => {
 			res.basic.teamId = res.basic.itineraryNo;
 			res.basic.time = [res.basic.startDate, res.basic.endDate];
 			res.basic.touristNum = res.basic.touristCount || 0;
+			setBaseInfo(res)
 			travelStore.setBaseInfo(res.basic);
 			res.attachmentList.length && travelStore.setFileInfo(res.attachmentList);
 			travelStore.setGuideList(res.guideList);
@@ -592,7 +623,8 @@ const saveDraft = async (showMessage?: boolean) => {
 			if (isAdd.value) {
 				const res = await api.createIndividualItinerary(form.value)
 				if (res) {
-					form.value.itineraryNo = res
+					res && sessionStorage.setItem('traveList', JSON.stringify({ oid: res }));
+					form.value.oid = res
 					isAdd.value = false
 					resolve(res)
 					showMessage && message.success('保存草稿成功！')
@@ -669,8 +701,8 @@ const getTourist = async () => {
 const touristClose = () => {
 	touristVisible.value = false
 }
-const auditConform = async() => {
-	const res = await api.individualSubmitFinanceAudit(form.value.itineraryNo)
+const auditConform = async () => {
+	const res = await api.individualSubmitFinanceAudit(form.value.oid)
 }
 const submitAudit = () => {
 	auditVisible.value = true
@@ -711,8 +743,36 @@ const getGuideList = async () => {
 	let res = await api.travelManagement.getGuideList();
 	guideOption.value = res;
 }
+const getContractDetails = async () => {
+	const res = await api.getContractDetails(form.value.oid)
+	if (res) {
+		selectedContract.value = res
+		let keys: number[] = []
+		selectedContract.value.forEach((item: any) => {
+			keys.push(item.oid)
+			item.contractAmount = item.contractAmount && item.contractAmount / 100
+		})
+		onSelectChange(keys, selectedContract.value)
+	}
+}
+const findIndividualTeamType = async () => {
+	const res = await api.findIndividualTeamType()
+}
+watch(
+	() => route.query.id,
+	(newVal) => {
+		if (newVal) {
+			form.value.oid = newVal
+			isAdd.value = false
+			getGuideList()
+			getContractDetails()
+			getTraveDetail()
+		}
+	},
+	{ immediate: true })
 onMounted(() => {
 	getGuideList()
+	findIndividualTeamType()
 })
 </script>
 

@@ -298,43 +298,45 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 	});
 
 	const install = () => {
-		api.travelManagement.getProductChangeAudit(route.query.oid).then((res: any) => {
-			if (res.auditRemark) {
-				//有驳回
-				api.travelManagement.getProductChangeAuditDetail(route.query.oid).then((res: any) => {
-					res.startDate = dayjs(res.startDate).format('YYYY-MM-DD HH:mm:ss');
-					res.endDate = dayjs(res.endDate).format('YYYY-MM-DD HH:mm:ss');
-					state.startTime = res.startDate;
-					state.endTime = res.endDate;
-					travelStore.hotelList = res.newHotelList;
-					travelStore.ticketsList = res.newTicketList;
-					travelStore.touristList = res.touristList.content;
-					state.itineraryId = res.itineraryId;
-					const time: any = [];
-					time.push(res.startDate, res.endDate);
-					travelStore.teamTime = time;
-				});
-			} else {
-				// 无驳回
-				api.travelManagement
-					.getItineraryDetail({
-						oid: route.query.oid,
-						pageNo: 1,
-						pageSize: 100000,
-					})
-					.then((res: any) => {
-						state.startTime = res.basic?.startDate;
-						state.endTime = res.basic?.endDate;
-						travelStore.hotelList = res.hotelList;
-						travelStore.ticketsList = res.ticketList;
+		if (route.query.oid) {
+			api.travelManagement.getProductChangeAudit(route.query.oid).then((res: any) => {
+				if (res.auditRemark) {
+					//有驳回
+					api.travelManagement.getProductChangeAuditDetail(route.query.oid).then((res: any) => {
+						res.startDate = dayjs(res.startDate).format('YYYY-MM-DD HH:mm:ss');
+						res.endDate = dayjs(res.endDate).format('YYYY-MM-DD HH:mm:ss');
+						state.startTime = res.startDate;
+						state.endTime = res.endDate;
+						travelStore.hotelList = res.newHotelList;
+						travelStore.ticketsList = res.newTicketList;
 						travelStore.touristList = res.touristList.content;
-						state.itineraryId = res.basic.oid;
+						state.itineraryId = res.itineraryId;
 						const time: any = [];
-						time.push(res.basic.startDate, res.basic.endDate);
+						time.push(res.startDate, res.endDate);
 						travelStore.teamTime = time;
 					});
-			}
-		});
+				} else {
+					// 无驳回
+					api.travelManagement
+						.getItineraryDetail({
+							oid: route.query.oid,
+							pageNo: 1,
+							pageSize: 100000,
+						})
+						.then((res: any) => {
+							state.startTime = res.basic?.startDate;
+							state.endTime = res.basic?.endDate;
+							travelStore.hotelList = res.hotelList;
+							travelStore.ticketsList = res.ticketList;
+							travelStore.touristList = res.touristList.content;
+							state.itineraryId = res.basic.oid;
+							const time: any = [];
+							time.push(res.basic.startDate, res.basic.endDate);
+							travelStore.teamTime = time;
+						});
+				}
+			});
+		}
 	};
 
 	const submitReview = async (callback: Function) => {
@@ -463,6 +465,11 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 	};
 	onMounted(() => {
 		install();
+	});
+	watch(route, () => {
+		if (route.query.oid) {
+			install();
+		}
 	});
 	return {
 		...toRefs(state),

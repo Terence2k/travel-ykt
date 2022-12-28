@@ -37,6 +37,7 @@
 </template>
 
 <script setup lang="ts">
+import { message } from 'ant-design-vue';
 import api from '@/api';
 import RoomBookingTable from './components/roomBookingTable/roomBookingTable.vue';
 
@@ -71,18 +72,23 @@ const clearSearchFilter = () => {
 watch(
 	() => auditStatus.value,
 	(val) => {
-		api.getHotelList(val).then((result) => {
-			if (Array.isArray(result)) {
-				hotelOptionsData.value = result?.map((item) => {
-					return {
-						value: item?.hotelId,
-						label: item?.hotelName,
-					};
-				});
-				//console.log('eeeeeeeeeeeeeeeeeeeee', hotelOptionsData.value[0]?.value);
-				hotel.value = hotelOptionsData.value[0]?.value || '';
-			}
-		});
+		api
+			.getHotelList(val)
+			.then((result) => {
+				if (Array.isArray(result)) {
+					hotelOptionsData.value = result?.map((item) => {
+						return {
+							value: item?.hotelId,
+							label: item?.hotelName,
+						};
+					});
+					//console.log('eeeeeeeeeeeeeeeeeeeee', hotelOptionsData.value[0]?.value);
+					hotel.value = hotelOptionsData.value[0]?.value || '';
+				}
+			})
+			.catch((err: any) => {
+				message.error(err?.message || err);
+			});
 	},
 	{
 		immediate: true,
