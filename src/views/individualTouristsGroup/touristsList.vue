@@ -66,10 +66,12 @@
             </template>
             <template v-if="column.key === 'action'">
               <div class="action-btns">
-                <a @click="addOrUpdate({ row: record, handle: 'update' })">编辑</a>
-                <a @click="change(record)">变更</a>
-                <a @click="">删除</a>
-                <a @click="">提交审核</a>
+                <!-- <a @click="goToChange(record)" v-permission="'待出团_行程变更'">行程变更</a>
+                <a v-permission="'待出团_查看日志'">查看日志</a>
+                <a @click="goToPath(record)" v-permission="'待出团_进入预订'">进入预订</a> -->
+                <a @click="goToChange(record)">行程变更</a>
+                <a>查看日志</a>
+                <a @click="goToPath(record)">进入预订</a>
               </div>
             </template>
             <template v-if="column.key === 'tripDate'">
@@ -565,13 +567,13 @@ const addOrUpdate = ({ row, handle }: addInterface) => {
   }
 }
 
-const change =(row:any) => {
+const change = (row: any) => {
   router.push({
-		path: '/travel/tourists/tourists_alter',
-		query: {
-			oid: row.oid,
-		},
-	});
+    path: '/travel/tourists/tourists_alter',
+    query: {
+      oid: row.oid,
+    },
+  });
 }
 
 const tabsChange = (key: string) => {
@@ -644,6 +646,24 @@ const getIsTravelVisible = () => {
     initOpeion()
   }
 }
+const goToChange = (row: any) => {
+  state.changeParams.id = row.oid;
+  state.changeParams.itineraryNo = row.itineraryNo;
+  api.travelManagement.checkVerifyByItineraryId(row.itineraryNo).then((res) => {
+    /* if (res) {
+      modelValue.value = true;
+    } else {
+      message.error('该行程单发生过核销不可变更');
+    } */
+  });
+};
+const goToPath = (row: any) => {
+  goto('newGroup', {
+    id: row.oid,
+    itineraryNo: row.itineraryNo,
+    tab: '2'
+  })
+};
 onMounted(() => {
   getIsTravelVisible()
   onSearch1()

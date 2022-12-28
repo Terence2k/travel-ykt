@@ -413,6 +413,7 @@ export const useTravelStore = defineStore({
 			this.takeGroupList[key].total = data.total;
 		},
 		async getItineraryStatus() {
+			console.log(this.itineraryStatusList,'FFFFFFFFFFFFFF');
 			if (this.itineraryStatusList.length) return;
 			const res = await api.travelManagement.getItineraryStatus();
 			this.itineraryStatusList = res;
