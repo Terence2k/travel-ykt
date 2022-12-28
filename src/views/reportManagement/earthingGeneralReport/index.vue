@@ -22,9 +22,9 @@
 				<a-select-option v-for="(item, index) in options.teamTypesLists" :value="item.oid" :key="index">{{ item.name }} </a-select-option>
 			</a-select>
 		</search-item>
-		<search-item label="结算时间">
+		<search-item label="结算时间" style="width: 350px">
 			<!-- <a-range-picker v-model:value="state.times" @change="timeChange" /> -->
-			<picker v-model="state.times" @change="timeChange" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"> </picker>
+			<picker v-model="state.times" @change="timeChange" style="width: 180px" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"> </picker>
 		</search-item>
 		<template #button>
 			<a-button @click="initList" v-permission="'查询'">查询</a-button>
