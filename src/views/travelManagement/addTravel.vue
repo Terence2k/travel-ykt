@@ -7,7 +7,7 @@
 				</a-tab-pane>
 			</a-tabs>
 		</div>
-		<div class="footer d-flex justify-content-between" v-if="travelStore.teamStatus && !isRevoke">
+		<div class="footer d-flex justify-content-between" v-if="travelStore.teamStatus">
 			<div class="footer-btn">
 				<a-button
 					type="primary"
