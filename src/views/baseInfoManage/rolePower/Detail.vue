@@ -86,7 +86,6 @@
     </a-form>
 		<template v-slot:footer>
 			<a-button @click="dialogVisible = false">取消</a-button>
-			<!-- <a-button @click="getCheckedKeys">确定</a-button> -->
 		</template>
 	</BaseModal>
 </template>
@@ -236,14 +235,6 @@
     }).catch((err: any) => {
       console.error(err);
     })
-  }
-
-  const getCheckedKeys = () => {
-    console.log('pcMenutree.getCheckedKeys:', pcMenutree.value.getCheckedKeys());
-    console.log('pcMenutree.getHalfCheckedKeys:', pcMenutree.value.getHalfCheckedKeys());
-    
-    console.log('appMenutree.getCheckedKeys:', appMenutree.value.getCheckedKeys());
-    console.log('appMenutree.getHalfCheckedKeys:', appMenutree.value.getHalfCheckedKeys());
   }
 
   const init = async () => {
