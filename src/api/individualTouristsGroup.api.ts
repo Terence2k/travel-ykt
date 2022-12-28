@@ -77,3 +77,12 @@ export function queryIndividualTotalFee(itineraryId: number) {
     showLoading: true
   });
 }
+
+// 删除散客团
+export function deleteIndividualTouristsGroup(oid: number) {
+  return request({
+    url: `${commonPart}delete?oid=${oid}`,
+    method: 'post',
+    showLoading: true
+  });
+}
