@@ -87,7 +87,8 @@
       <CommonPagination
         :current="state.param.pageNo"
         :page-size="state.param.pageSize"
-        :total="item.dataSource?.length"
+        :total="item.total"
+			  @change="onHandleCurrentChange"
         v-if="item.pagination"
       />
     </div>
@@ -146,6 +147,11 @@
     };
   });
 
+	const onHandleCurrentChange = (e: any) => {
+    state.param.pageNo = e;
+    getItineraryDetail(route.currentRoute.value.query.oid);
+	}
+
   const getItineraryDetail = (orderId: any) => {
     let queryData = {
       oid: orderId,
@@ -159,7 +165,7 @@
 			console.log(err);
 		});
   }
-    getItineraryDetail(route.currentRoute.value.query.oid);
+  getItineraryDetail(route.currentRoute.value.query.oid);
 </script>
 <style lang="less" scoped>
 .container {
