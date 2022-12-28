@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { message } from 'ant-design-vue/es';
+import { message } from 'ant-design-vue';
 import api from '@/api';
 import CommonTable from '@/components/common/CommonTable.vue';
 import { accDiv } from '@/utils/compute';
@@ -150,8 +150,8 @@ const initPage = () => {
 				dataSource.value = [];
 			}
 		})
-		.catch((err) => {
-			console.error(err);
+		.catch((err: any) => {
+			message.error(err?.message || err);
 		});
 };
 
@@ -172,65 +172,85 @@ watch(
 );
 
 const auditPass = () => {
-	api.getRoleId({ uuid: state.auditOrderId }).then((res) => {
-		console.log('getRoleInfo：', res);
-		if (Array.isArray(res) && res[0]?.roleId === null && res[0]?.auditBusinessType) {
-			const roleId = userInfo.sysRoles[0].oid;
-			console.log('任选当前一个用户身份,当前roleId为：', roleId);
-			api
-				.auditRoomDetailInfo(state.auditOrderId, roleId, res[0]?.auditBusinessType, true)
-				.then((res) => {
-					console.log('房型审核通过返回：', res);
-					message.success('审核成功');
-					initPage();
-					router.go(-1);
-				})
-				.catch((err: any) => {
-					message.error(err || '审核失败');
-				});
-		} else if (Array.isArray(res) && res[0]?.roleId && res[0]?.auditBusinessType) {
-			console.log('当前roleId为：', res[0]?.roleId);
-			api
-				.auditRoomDetailInfo(state.auditOrderId, res[0]?.roleId, res[0]?.auditBusinessType, true)
-				.then((res) => {
-					console.log('房型审核通过返回：', res);
-					message.success('审核成功');
-					initPage();
-					router.go(-1);
-				})
-				.catch((err: any) => {
-					message.error(err || '审核失败');
-				});
-		} else {
-			message.error('当前用户无此权限');
-		}
-	});
+	api
+		.getRoleId({ uuid: state.auditOrderId })
+		.then((res) => {
+			console.log('getRoleInfo：', res);
+			if (Array.isArray(res) && res[0]?.roleId === null && res[0]?.auditBusinessType) {
+				const roleId = userInfo.sysRoles[0].oid;
+				console.log('任选当前一个用户身份,当前roleId为：', roleId);
+				api
+					.auditRoomDetailInfo(state.auditOrderId, roleId, res[0]?.auditBusinessType, true)
+					.then((res) => {
+						console.log('房型审核通过返回：', res);
+						message.success('审核成功');
+						initPage();
+						router.go(-1);
+					})
+					.catch((err: any) => {
+						message.error(err?.message || err || '审核失败');
+					});
+			} else if (Array.isArray(res) && res[0]?.roleId && res[0]?.auditBusinessType) {
+				console.log('当前roleId为：', res[0]?.roleId);
+				api
+					.auditRoomDetailInfo(state.auditOrderId, res[0]?.roleId, res[0]?.auditBusinessType, true)
+					.then((res) => {
+						console.log('房型审核通过返回：', res);
+						message.success('审核成功');
+						initPage();
+						router.go(-1);
+					})
+					.catch((err: any) => {
+						message.error(err?.message || err || '审核失败');
+					});
+			} else {
+				message.error('当前用户无此权限');
+			}
+		})
+		.catch((err: any) => {
+			message.error(err?.message || err);
+		});
 };
 
 const auditFail = () => {
-	api.getRoleId({ uuid: state.auditOrderId }).then((res) => {
-		console.log('getRoleInfo：', res);
-		if (res[0]?.roleId === null && res[0]?.auditBusinessType) {
-			const roleId = userInfo.sysRoles[0].oid;
-			console.log('任选当前一个用户身份,当前roleId为：', roleId);
-			api.auditRoomDetailInfo(state.auditOrderId, roleId, res[0].auditBusinessType, false).then((res) => {
-				console.log('房型审核通过返回：', res);
-				message.success('审核成功');
-				initPage();
-				router.go(-1);
-			});
-		} else if (res[0]?.roleId && res[0]?.auditBusinessType) {
-			console.log('当前roleId为：', res[0]?.roleId);
-			api.auditRoomDetailInfo(state.auditOrderId, res[0].roleId, res[0].auditBusinessType, false).then((res) => {
-				console.log('房型审核通过返回：', res);
-				message.success('审核成功');
-				router.go(-1);
-				initPage();
-			});
-		} else {
-			message.error('当前用户无此权限');
-		}
-	});
+	api
+		.getRoleId({ uuid: state.auditOrderId })
+		.then((res) => {
+			console.log('getRoleInfo：', res);
+			if (res[0]?.roleId === null && res[0]?.auditBusinessType) {
+				const roleId = userInfo.sysRoles[0].oid;
+				console.log('任选当前一个用户身份,当前roleId为：', roleId);
+				api
+					.auditRoomDetailInfo(state.auditOrderId, roleId, res[0].auditBusinessType, false)
+					.then((res) => {
+						console.log('房型审核通过返回：', res);
+						message.success('审核成功');
+						initPage();
+						router.go(-1);
+					})
+					.catch((err: any) => {
+						message.error(err?.message || err);
+					});
+			} else if (res[0]?.roleId && res[0]?.auditBusinessType) {
+				console.log('当前roleId为：', res[0]?.roleId);
+				api
+					.auditRoomDetailInfo(state.auditOrderId, res[0].roleId, res[0].auditBusinessType, false)
+					.then((res) => {
+						console.log('房型审核通过返回：', res);
+						message.success('审核成功');
+						router.go(-1);
+						initPage();
+					})
+					.catch((err: any) => {
+						message.error(err?.message || err);
+					});
+			} else {
+				message.error('当前用户无此权限');
+			}
+		})
+		.catch((err: any) => {
+			message.error(err?.message || err);
+		});
 };
 
 const getActionText = (code) => {

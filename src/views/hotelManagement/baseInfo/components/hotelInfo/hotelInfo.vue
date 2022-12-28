@@ -122,7 +122,7 @@
 <script setup lang="ts">
 import { toRaw } from '@vue/reactivity';
 import api from '@/api';
-import { message } from 'ant-design-vue/es';
+import { message } from 'ant-design-vue';
 
 interface FileItem {
 	uid: string;

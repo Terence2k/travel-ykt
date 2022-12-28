@@ -75,7 +75,7 @@ const save = () => {
 						props.methods?.success();
 					})
 					.catch((err: any) => {
-						message.error(err || err?.message || '编辑该酒店星级失败');
+						message.error(err?.message || err || '编辑该酒店星级失败');
 					});
 			} else {
 				api
@@ -90,7 +90,7 @@ const save = () => {
 						props.methods?.success();
 					})
 					.catch((err: any) => {
-						message.error(err || err?.message || '新增酒店星级失败');
+						message.error(err?.message || err || '新增酒店星级失败');
 					});
 			}
 		})
