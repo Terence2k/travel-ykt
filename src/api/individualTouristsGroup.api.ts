@@ -41,7 +41,7 @@ export function individualTouristsGroupList(data: any) {
 }
 
 // 根据散客团id查询游客分页(变更)
-export function findIndividualContractTouristById(oid: any,data:any) {
+export function findIndividualContractTouristById(oid: any, data: any) {
   return request({
     url: `${commonPart}findIndividualContractTouristById?oid=${oid}`,
     method: 'post',
@@ -65,6 +65,15 @@ export function getContractDetails(oid: number) {
   return request({
     url: `${commonPart}getContractDetails?oid=${oid}`,
     method: 'post',
+    showLoading: true
+  });
+}
+
+// 查询散客团金额
+export function queryIndividualTotalFee(itineraryId: number) {
+  return request({
+    url: `${commonPart}queryIndividualTotalFee?itineraryId=${itineraryId}`,
+    method: 'get',
     showLoading: true
   });
 }

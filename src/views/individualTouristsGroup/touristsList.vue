@@ -23,10 +23,10 @@
             </template>
             <template v-if="column.key === 'action'">
               <div class="action-btns">
-                <a @click="addOrUpdate({ row: record, handle: 'update' })">编辑</a>
+                <a @click="addOrUpdate({ row: record, handle: 'update' })" v-permission="'草稿_编辑'">编辑</a>
                 <a @click="change(record)">变更</a>
-                <a @click="">删除</a>
-                <a @click="">提交审核</a>
+                <a @click="" v-permission="'草稿_删除'">删除</a>
+                <a @click="" v-permission="'草稿_提交审核'">提交审核</a>
               </div>
             </template>
             <template v-if="column.key === 'tripDate'">
@@ -45,9 +45,8 @@
             </template>
             <template v-if="column.key === 'action'">
               <div class="action-btns">
-                <a @click="addOrUpdate({ row: record, handle: 'update' })">编辑</a>
-                <a @click="">删除</a>
-                <a @click="">提交审核</a>
+                <a @click="revokeGroupToDraft(record.oid)" v-permission="'待审核_撤回任务'">撤回任务</a>
+                <a v-permission="'待审核_催办'">催办</a>
               </div>
             </template>
             <template v-if="column.key === 'tripDate'">
@@ -66,12 +65,11 @@
             </template>
             <template v-if="column.key === 'action'">
               <div class="action-btns">
-                <!-- <a @click="goToChange(record)" v-permission="'待出团_行程变更'">行程变更</a>
+                <a v-if="dateTime > dayjs(record.startDate).unix()" @click="outGroup(record)"
+                  v-permission="'待出团_手动出团'">手动出团</a>
+                <a @click="goToChange(record)" v-permission="'待出团_行程变更'">行程变更</a>
                 <a v-permission="'待出团_查看日志'">查看日志</a>
-                <a @click="goToPath(record)" v-permission="'待出团_进入预订'">进入预订</a> -->
-                <a @click="goToChange(record)">行程变更</a>
-                <a>查看日志</a>
-                <a @click="goToPath(record)">进入预订</a>
+                <a @click="goToPath(record)" v-permission="'待出团_进入预订'">进入预订</a>
               </div>
             </template>
             <template v-if="column.key === 'tripDate'">
@@ -90,9 +88,9 @@
             </template>
             <template v-if="column.key === 'action'">
               <div class="action-btns">
-                <a @click="addOrUpdate({ row: record, handle: 'update' })">编辑</a>
-                <a @click="">删除</a>
-                <a @click="">提交审核</a>
+                <a @click="goToDetail(record)" v-permission="'已出团_查看'">查看</a>
+                <a @click="goToChange(record)" v-permission="'已出团_行程变更'">行程变更</a>
+                <a @click="goToPath(record, 4)" v-permission="'已出团_进入预订'">进入预订</a>
               </div>
             </template>
             <template v-if="column.key === 'tripDate'">
@@ -111,9 +109,7 @@
             </template>
             <template v-if="column.key === 'action'">
               <div class="action-btns">
-                <a @click="addOrUpdate({ row: record, handle: 'update' })">编辑</a>
-                <a @click="">删除</a>
-                <a @click="">提交审核</a>
+                <a @click="goToPath(record)" v-permission="'已散团_查看行程单'">查看行程单</a>
               </div>
             </template>
             <template v-if="column.key === 'tripDate'">
@@ -153,9 +149,7 @@
             </template>
             <template v-if="column.key === 'action'">
               <div class="action-btns">
-                <a @click="addOrUpdate({ row: record, handle: 'update' })">编辑</a>
-                <a @click="">删除</a>
-                <a @click="">提交审核</a>
+                <a @click="goToPath(record)" v-permission="'已过期_查看行程单'">查看行程单</a>
               </div>
             </template>
             <template v-if="column.key === 'tripDate'">
@@ -174,9 +168,9 @@
             </template>
             <template v-if="column.key === 'action'">
               <div class="action-btns">
-                <a @click="addOrUpdate({ row: record, handle: 'update' })">编辑</a>
-                <a @click="">删除</a>
-                <a @click="">提交审核</a>
+                <a @click="goToDetail(record)" v-permission="'待处理_行程详情'">行程详情</a>
+                <a @click="revoke(record)" v-permission="'待处理_申请撤销'">申请撤销</a>
+                <a v-permission="'待处理_查看日志'">查看日志</a>
               </div>
             </template>
             <template v-if="column.key === 'tripDate'">
@@ -192,6 +186,14 @@
       </template>
     </a-tabs>
   </div>
+  <BaseModal title="整团撤销提醒" v-model="reRecokeAuditAllsVisible">
+    <p>是否直接整团撤销？整团撤销需要组团社计调 、古维管理员审核。审核通过后系统会自动为 您撤销该行程，已冻结金额将返回给组团社。</p>
+    <template v-slot:footer>
+      <a-button @click="reRecokeAuditAllsVisible = false">取消</a-button>
+      <a-button @click="openAllReapply" type="primary">继续撤销</a-button>
+    </template>
+  </BaseModal>
+  <AllRevoke ref="allRevokeRef" />
 </template>
 
 <script setup lang="ts">
@@ -203,6 +205,10 @@ import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModa
 import api from '@/api';
 import { useRouter, useRoute } from 'vue-router';
 import { useBusinessManageOption } from '@/stores/modules/businessManage';
+import { message } from 'ant-design-vue/es';
+import dayjs from 'dayjs';
+import BaseModal from '@/components/common/BaseModal.vue';
+import AllRevoke from '@/views/travelManagement/travelTakeGroupList/revoke/components/allRevoke.vue';
 const router = useRouter();
 const route = useRoute()
 const goto = (name: string, val?: any) => {
@@ -663,6 +669,65 @@ const goToPath = (row: any) => {
     itineraryNo: row.itineraryNo,
     tab: '2'
   })
+};
+const revokeGroupToDraft = async (id: number) => {
+  await api.travelManagement.revokeGroupToDraft(id);
+  message.success('撤回成功')
+  onSearch1()
+  onSearch2()
+}
+const outGroup = async (row: any) => {
+  await api.travelManagement.handGoOut(row.oid)
+  message.success('操作成功')
+  onSearch3()
+  onSearch4()
+};
+const dateTime = ref(dayjs().unix());
+const goToDetail = (row: any) => {
+  router.push({
+    path: '/travel/travel_manage/travel_detail',
+    query: { oid: encodeURIComponent(row.oid) },
+  });
+};
+const checkPower = async (id: any) => {
+  let pW = new FormData();
+
+  pW.append('itineraryId', id);
+
+  await api.travelManagement.repealNreapplyPage(pW);
+  return true;
+};
+
+const checkOutSideTicketIsRefund = async (id: any) => {
+  let pW = new FormData();
+
+  pW.append('itineraryId', id);
+
+  await api.travelManagement.checkOutSideTicketIsRefund(pW);
+
+  return true;
+};
+const reRecokeAuditAllsVisible = ref(false);
+const reRecokeAuditCheckVisible = ref(false);
+const reRecokeAuditCheckText = ref('');
+//打开弹窗
+const allRevokeRef = ref();
+const openAllReapply = () => {
+  reRecokeAuditAllsVisible.value = false;
+  allRevokeRef.value.open();
+};
+const revoke = async (row: any) => {
+  let valid, validTikcer;
+  try {
+    valid = await checkPower(row.oid);
+    validTikcer = await checkOutSideTicketIsRefund(row.oid);
+    if (valid && validTikcer) {
+      reRecokeAuditAllsVisible.value = true;
+    }
+  } catch (error: any) {
+    reRecokeAuditCheckText.value = error?.msg;
+    reRecokeAuditCheckVisible.value = true;
+  }
 };
 onMounted(() => {
   getIsTravelVisible()
