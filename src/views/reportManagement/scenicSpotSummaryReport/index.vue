@@ -1,11 +1,12 @@
 <template>
 	<CommonSearch>
-		<search-item label="景区名称" style="width: 280px">
+		<search-item label="景区名称">
 			<a-select
 				v-model:value="state.tableData.param.scenicId"
 				placeholder="请选择景区名称"
 				allowClear
 				:options="state.viewList.map((item) => ({ value: item.ticketId, label: item.ticketName }))"
+				style="width: 200px"
 			>
 			</a-select>
 		</search-item>

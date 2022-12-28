@@ -11,11 +11,13 @@ import router from './router';
 import 'ant-design-vue/dist/antd.less';
 import './router/permission';
 import { useDirectives } from './permission';
+import print from 'vue3-print-nb';
 
 const app = createApp(App);
 
 app.use(createPinia());
 app.use(Antd);
+app.use(print)
 
 // app.use(Ant3uI, {
 //   uploadUrl: "https://s.youdi.net/router/upload/save/file", // 初始化上传路径
