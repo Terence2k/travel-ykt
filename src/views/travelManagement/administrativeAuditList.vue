@@ -22,7 +22,7 @@
 		</CommonSearch>
 
 		<a-tabs v-model:activeKey="activeKey">
-			<a-tab-pane v-for="item in pages" :key="item.value" :tab="item.label">
+			<a-tab-pane v-for="item in filterPages" :key="item.value" :tab="item.label">
 				<component :onCheck="check" :is="item.name"></component>
 			</a-tab-pane>
 		</a-tabs>
@@ -36,7 +36,7 @@ import administrativeChange from './itineraryAuditList/administrativeChange.vue'
 
 import { traveListParams, useTravelStore } from '@/stores/modules/travelManagement';
 import { AuditStaus, GroupType } from '@/enum';
-import { getUserInfo } from '@/utils/util';
+import { getUserInfo, getTabPermission } from '@/utils/util';
 import { ROLE } from '@/constant';
 import { AuditField } from '@/type';
 import { cloneDeep } from 'lodash';
@@ -69,6 +69,10 @@ const pages = [
 		chart: 'administrativeChange',
 	},
 ];
+
+const filterPages = pages.filter((item: any) => getTabPermission(item.label));
+console.log('filterPages:', filterPages)
+activeKey.value = filterPages.length ? filterPages[0].value : pages[0].value;
 
 const goToPath = (type: number) => {
 	router.push({

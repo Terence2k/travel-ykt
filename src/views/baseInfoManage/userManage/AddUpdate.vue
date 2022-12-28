@@ -106,6 +106,7 @@
   import { getUserInfo } from '@/utils/util';
   import { useBusinessManageOption } from '@/stores/modules/businessManage';
   import type { Rule } from 'ant-design-vue/es/form';
+  import { validPhone } from '@/utils';
 
   const props = defineProps({
       modelValue: {
@@ -132,7 +133,7 @@
   };
   const rules: any = {
     username: [{ required: true, trigger: 'blur', message: '请输入管理员姓名' }],
-    mobile: [{ required: true, trigger: 'blur', message: '请输入管理员手机号' }],
+	  mobile: [{ required: true, validator: validPhone, trigger: 'blur' }],
     account: [{ validator: validateAccount, required: true, trigger: 'blur'}],
     password: [{ required: true, trigger: 'blur', message: '请输入登录密码' }],
     roleIds: [{ required: true, trigger: 'blur', message: '请选择管理员角色' }],

@@ -7,7 +7,7 @@
 				</a-tab-pane>
 			</a-tabs>
 		</div>
-		<div class="footer d-flex justify-content-between" v-if="travelStore.teamStatus && !isRevoke">
+		<div class="footer d-flex justify-content-between" v-if="travelStore.teamStatus">
 			<div class="footer-btn">
 				<a-button
 					type="primary"
@@ -161,14 +161,14 @@ const saveItinerary = (val: any) => {
 		},
 		isSaveBtn.value
 	).then((res: any) => {
-		res && sessionStorage.setItem('traveList', JSON.stringify(res));
+		res.oid && sessionStorage.setItem('traveList', JSON.stringify(res));
 		getTraveDetail();
 		if (sendTeam.value) {
-			sendGroup(itineraryId);
+			sendGroup(itineraryId || res.oid);
 		}
 		if (isSaveBtn.value) {
 			// router.push('/travel/travel_manage/travel_list')
-			let msg = route.query.id ? '编辑成功' : '新增成功';
+			let msg = !res.oid ? '编辑成功' : '新增成功';
 			message.success(msg);
 		}
 	});

@@ -23,8 +23,9 @@
 				</a-select-option>
 			</a-select>
 		</search-item>
-		<search-item label="结算时间">
-			<a-range-picker v-model:value="state.tableData.settlementStartTimeList" @change="timeChange" style="width: 180px" />
+		<search-item label="结算时间" style="width: 350px">
+			<!-- <a-range-picker v-model:value="state.tableData.settlementStartTimeList" @change="timeChange" style="width: 180px" /> -->
+			<picker v-model="state.tableData.settlementStartTimeList" style="width: 180px" @change="timeChange" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"> </picker>
 		</search-item>
 		<template #button>
 			<a-button @click="initList" v-permission="`查询`">查询</a-button>
@@ -67,6 +68,7 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import api from '@/api';
 import { settlementOptions } from '@/stores/modules/settlement';
+import picker from '@/components/common/datePicker.vue';
 import { StateType, DataType, fixedColumn, ruleListType, getRuleMap, getAllPrice } from '.';
 const options = settlementOptions();
 const columns = computed(() => {
@@ -184,8 +186,8 @@ onMounted(() => {
 });
 const timeChange = (arr: any) => {
 	if (arr && arr.length > 0) {
-		state.tableData.param.settlementStartTime = arr[0]['$d'];
-		state.tableData.param.settlementEndTime = arr[1]['$d'];
+		state.tableData.param.settlementStartTime = arr[0];
+		state.tableData.param.settlementEndTime = arr[1];
 	} else {
 		state.tableData.param.settlementStartTime = null;
 		state.tableData.param.settlementEndTime = null;

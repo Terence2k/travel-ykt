@@ -77,6 +77,7 @@
 				title: '行程单号',
 				dataIndex: 'itineraryNo',
 				key: 'itineraryNo',
+				width: 200
 			},
 			{
 				title: '线路名称',
