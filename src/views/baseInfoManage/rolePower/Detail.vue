@@ -98,15 +98,15 @@
   import { convertTree } from '@/utils/util';
 
   const props = defineProps({
-      modelValue: {
-        type: Boolean,
-        default: false
-      },
-      params: Object,
+    modelValue: {
+      type: Boolean,
+      default: false
+    },
+    params: Object,
   })
   const defaultProps = {
-      label: 'label',
-      children: 'children'
+    label: 'label',
+    children: 'children'
   }
   const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
   const dialogVisible = ref(false);
@@ -269,7 +269,6 @@
   
   watch(collapseVisible, nVal => {
     if (nVal) {
-      console.log('collapseVisible:', nVal);
       setTimeout(() => {
         // 如父节点的子节点不是全选则设置父节点为半选中
         pcMenutree.value.getCheckedNodes().forEach((item: any) => {
@@ -291,15 +290,15 @@
 </script>
 
 <style lang="less" scoped>
-::v-deep .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+:deep(.el-checkbox__input.is-indeterminate .el-checkbox__inner) {
   background-color: #36B374;
   border-color: #36B374;
 }
-::v-deep .el-checkbox__input.is-checked .el-checkbox__inner {
+:deep(.el-checkbox__input.is-checked .el-checkbox__inner) {
   background-color: #36B374;
   border-color: #36B374;
 }
-::v-deep .el-checkbox__inner:hover {
+:deep(.el-checkbox__inner:hover) {
   border-color: #36B374;
 }
 </style>
