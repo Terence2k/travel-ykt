@@ -164,7 +164,7 @@ const saveItinerary = (val: any) => {
 		res.oid && sessionStorage.setItem('traveList', JSON.stringify(res));
 		getTraveDetail();
 		if (sendTeam.value) {
-			sendGroup(itineraryId);
+			sendGroup(itineraryId || res.oid);
 		}
 		if (isSaveBtn.value) {
 			// router.push('/travel/travel_manage/travel_list')
