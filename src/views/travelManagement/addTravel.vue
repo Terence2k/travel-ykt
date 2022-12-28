@@ -161,14 +161,14 @@ const saveItinerary = (val: any) => {
 		},
 		isSaveBtn.value
 	).then((res: any) => {
-		res && sessionStorage.setItem('traveList', JSON.stringify(res));
+		res.oid && sessionStorage.setItem('traveList', JSON.stringify(res));
 		getTraveDetail();
 		if (sendTeam.value) {
 			sendGroup(itineraryId);
 		}
 		if (isSaveBtn.value) {
 			// router.push('/travel/travel_manage/travel_list')
-			let msg = route.query.id ? '编辑成功' : '新增成功';
+			let msg = !res.oid ? '编辑成功' : '新增成功';
 			message.success(msg);
 		}
 	});
