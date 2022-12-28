@@ -50,6 +50,7 @@
 import { ref } from 'vue';
 import type { SelectProps } from 'ant-design-vue';
 import type { TableColumnsType } from 'ant-design-vue';
+import { message } from 'ant-design-vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import SystemRoomTypeAddUpdate from './components/systemRoomType-add-update/systemRoomType-add-update.vue';
@@ -142,7 +143,7 @@ const onSearch = () => {
 			tableState.tableData.total = res?.total || 0;
 		})
 		.catch((err: any) => {
-			message.error(err || err?.message || '获取系统房型表格数据失败');
+			message.error(err?.message || err || '获取系统房型表格数据失败');
 		});
 };
 
@@ -172,7 +173,7 @@ const toggleSysRoomTypeStatus = (param: any) => {
 				onSearch();
 			})
 			.catch((err: any) => {
-				message.error(err || err?.message || '启用该系统房型失败');
+				message.error(err?.message || err || '启用该系统房型失败');
 			});
 	} else {
 		api
@@ -181,7 +182,7 @@ const toggleSysRoomTypeStatus = (param: any) => {
 				onSearch();
 			})
 			.catch((err: any) => {
-				message.error(err || err?.message || '禁用该系统房型失败');
+				message.error(err?.message || err || '禁用该系统房型失败');
 			});
 	}
 };

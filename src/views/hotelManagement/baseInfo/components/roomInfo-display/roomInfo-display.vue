@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { message } from 'ant-design-vue/es';
+import { message } from 'ant-design-vue';
 import api from '@/api';
 import CommonTable from '@/components/common/CommonTable.vue';
 const route = useRoute();
