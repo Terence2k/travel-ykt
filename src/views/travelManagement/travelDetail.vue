@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" id="printBox">
     <div class="page-title">
       行程详情预览和打印
     </div>
@@ -8,7 +8,7 @@
         当前状态：{{state.basicData.statusName}}
       </div>
       <div class="btns">
-        <a-button type="primary">打印行程单</a-button>
+        <a-button type="primary" v-print="print">打印行程单</a-button>
       </div>
     </div>
     <a-row>
@@ -92,7 +92,22 @@
     },
     itineraryDetail: {}
   });
-  const orderId = ref();
+  const print = ref({
+    id: 'printBox',//这里的id就是上面我们的打印区域id，实现指哪打哪
+    popTitle: '配置页眉标题', // 打印配置页上方的标题
+    extraHead: '', // 最上方的头部文字，附加在head标签上的额外标签，使用逗号分割
+    preview: false, // 是否启动预览模式，默认是false
+    previewTitle: '预览的标题', // 打印预览的标题
+    previewPrintBtnLabel: '预览结束，开始打印', // 打印预览的标题下方的按钮文本，点击可进入打印
+    zIndex: 20002, // 预览窗口的z-index，默认是20002，最好比默认值更高
+    previewBeforeOpenCallback() {}, // 预览窗口打开之前的callback
+    previewOpenCallback() {}, // 预览窗口打开时的callback
+    beforeOpenCallback() {}, // 开始打印之前的callback
+    openCallback() {}, // 调用打印时的callback
+    closeCallback() {}, // 关闭打印的callback(无法区分确认or取消)
+    clickMounted() {},
+
+  })
   const route = useRouter();
   // 行程单二维码标签样式
   const labelStyle = computed((): CSSProperties => {
