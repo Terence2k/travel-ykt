@@ -198,7 +198,7 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
-				]
+				],
 			},
 			{
 				path: 'singleEntrustmentContract',
@@ -245,7 +245,7 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
-				]
+				],
 			},
 			// lineManagement
 			{
@@ -289,6 +289,18 @@ export default [
 						component: () => import('@/views/individualTouristsGroup/touristsList.vue'),
 						meta: {
 							title: '',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
+					{
+						path: 'tourists-revoke',
+						name: 'tourists-revoke',
+						component: () => import('@/views/individualTouristsGroup/tour-revoke.vue'),
+						// component: () => import('@/views/individualTouristsGroup/newGroup.vue'),
+						meta: {
+							title: '撤销',
 							// icon: 'liulanqi',
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
