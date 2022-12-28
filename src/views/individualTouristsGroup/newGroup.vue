@@ -72,7 +72,7 @@
 							<template v-if="column.key === 'action'">
 								<div class="action-btns">
 									<a @click="checkDetails(record.oid)">查看</a>
-									<a @click="deleteContract(index, record)">删除</a>
+									<a @click="deleteContract(index, record)" :class="{ 'disabled': !travelStore.teamStatus }">删除</a>
 								</div>
 							</template>
 						</template>
@@ -81,18 +81,18 @@
 						<div class="cost_item">费用合计</div>
 						<div class="cost_item">{{ form.totalExpenses }}</div>
 					</div>
-					<div class="add_box">
+					<div class="add_box" v-if="travelStore.teamStatus">
 						<a-button @click="addContract" type="primary">添加</a-button>
 					</div>
 				</a-form>
-				<div class="operation">
+				<div class="operation" v-if="travelStore.teamStatus">
 					<a-button @click="saveDraft(true)" type="primary" style="margin-right:20px">保存草稿</a-button>
 					<a-button @click="nextTep('2')" type="primary">下一步</a-button>
 				</div>
 			</a-tab-pane>
 			<a-tab-pane key="2" tab="产品预订">
 				<traveInfo></traveInfo>
-				<div class="operation">
+				<div class="operation" v-if="travelStore.teamStatus">
 					<a-button @click="saveDraft(true)" type="primary" style="margin-right:20px">保存草稿</a-button>
 					<a-button @click="nextTep('1')" type="primary" style="margin-right:20px">上一步</a-button>
 					<a-button @click="submitAudit" type="primary">提交审核</a-button>
@@ -155,6 +155,7 @@
 	</CommonModal>
 	<CommonModal title="提交发团审核" v-model:visible="auditVisible" @close="auditVisible = false"
 		@cancel="auditVisible = false" conform-text="确认" @conform="auditConform">
+		{{ submitAuditInfo }}
 	</CommonModal>
 </template>
 
@@ -447,8 +448,8 @@ const setBaseInfo = (res: any) => {
 			startDate,
 			endDate
 		} = res.basic
-		const guideOid = res.guideList[0].guideOid
-		const guideName = res.guideList[0].guideName
+		const guideOid = res.guideList[0]?.guideOid
+		const guideName = res.guideList[0]?.guideName
 		const licensePlate = res.transportList[0]?.licencePlateNumber
 		form.value.routeName = routeName
 		form.value.groupType = groupType
@@ -464,6 +465,10 @@ const setBaseInfo = (res: any) => {
 		form.value.guideName = guideName
 		form.value.startDate = startDate
 		form.value.endDate = endDate
+		form.value.guide = {
+			guideOid,
+			guideName
+		}
 	}
 }
 const getTraveDetail = () => {
@@ -734,10 +739,18 @@ const touristClose = () => {
 	touristVisible.value = false
 }
 const auditConform = async () => {
-	const res = await api.individualSubmitFinanceAudit(form.value.oid)
+	api.individualSubmitFinanceAudit(form.value.oid).then((res: any) => {
+		auditVisible.value = false
+		message.success('提交审核成功！')
+	})
 }
-const submitAudit = () => {
-	auditVisible.value = true
+const submitAuditInfo = ref('')
+const submitAudit = async () => {
+	const res = await api.queryIndividualTotalFee(form.value.oid)
+	if (res) {
+		submitAuditInfo.value = res
+		auditVisible.value = true
+	}
 }
 
 const checkDetails = (id: number) => {
