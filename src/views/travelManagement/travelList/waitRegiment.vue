@@ -1,26 +1,24 @@
 <template>
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
-		<template #button>
-		</template>
-		<template #bodyCell="{ column, text, index, record }">
-			<template v-if="column.key === 'index'">
-				<div>
-						{{(state.params.pageNo - 1) * (state.params.pageSize) + (index + 1)}}
-				</div>
-		</template>
-
-		<template v-if="column.key === 'groupTypeStr'">
-				{{text}}
-		</template>
-
-		<template v-if="column.key === 'action'">
-			<div class="action-btns">
-				<a @click="revokeGroupToDraft(record.oid)" v-permission="'待审核_撤回任务'">撤回任务</a>
-				<a v-permission="'待审核_催办'">催办</a>
-			</div>
-		</template>
+			<template #bodyCell="{ column, text, index, record }">
+				<template v-if="column.key === 'index'">
+					<div>
+							{{(state.params.pageNo - 1) * (state.params.pageSize) + (index + 1)}}
+					</div>
 				</template>
+
+				<template v-if="column.key === 'groupTypeStr'">
+						{{text}}
+				</template>
+
+				<template v-if="column.key === 'action'">
+					<div class="action-btns">
+						<a @click="revokeGroupToDraft(record.oid)" v-permission="'待审核_撤回任务'">撤回任务</a>
+						<a v-permission="'待审核_催办'">催办</a>
+					</div>
+				</template>
+			</template>
 		</CommonTable>
 		<CommonPagination
 			:current="travelStore.traveList.waitRegiment.params.pageNo"
@@ -126,6 +124,7 @@
 	const revokeGroupToDraft = async (id:number) => {
 		console.log(id)
 		await api.travelManagement.revokeGroupToDraft(id);
+		onSearch()
 		message.success('撤回成功')
 	}
 

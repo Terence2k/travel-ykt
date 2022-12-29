@@ -1,42 +1,41 @@
 <template>
   <div>
 	
-		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
-      <template #button>
-      </template>
-      <template #bodyCell="{ column, text, index,record }">
-        <!-- <template v-if="column.key === 'itineraryNo'">
-          <div>
-            <a @click="goToDetail(record)">{{text}}</a>
-          </div>
-        </template> -->
-        <template v-if="column.key === 'index'">
-					<div>
-						{{(state.params.pageNo - 1) * (state.params.pageSize) + (index + 1)}}
-					</div>
-				</template>
+	<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
 
-				<template v-if="column.key === 'groupTypeStr'">
-					{{text}}
-				</template>
-
-        <template v-if="column.key === 'action'">
-          <div class="action-btns">
-            <a @click="goToPath(record)" v-permission="'草稿_编辑'">编辑</a>
-            <a v-if="record.groupType == GroupMode.TeamGroup" v-permission="'草稿_邀请地接社编辑'">邀请地接社编辑</a>
-            <a @click="sendGroup(record.oid)" v-permission="'草稿_发团'">发团</a>
-			<a-popconfirm
-				title="确定删除该行程单？"
-				ok-text="是"
-				cancel-text="否"
-				@confirm="deleteTrave(record.oid)"
-			>
-				<a v-permission="'草稿_删除'">删除</a>
-			</a-popconfirm>
-			
-          </div>
-        </template>
+		<template #bodyCell="{ column, text, index,record }">
+			<!-- <template v-if="column.key === 'itineraryNo'">
+			<div>
+				<a @click="goToDetail(record)">{{text}}</a>
+			</div>
+			</template> -->
+			<template v-if="column.key === 'index'">
+				<div>
+					{{(state.params.pageNo - 1) * (state.params.pageSize) + (index + 1)}}
+				</div>
 			</template>
+
+			<template v-if="column.key === 'groupTypeStr'">
+				{{text}}
+			</template>
+
+			<template v-if="column.key === 'action'">
+				<div class="action-btns">
+					<a @click="goToPath(record)" v-permission="'草稿_编辑'">编辑</a>
+					<a v-if="record.groupType == GroupMode.TeamGroup" v-permission="'草稿_邀请地接社编辑'">邀请地接社编辑</a>
+					<a @click="sendGroup(record.oid)" v-permission="'草稿_发团'">发团</a>
+					<a-popconfirm
+						title="确定删除该行程单？"
+						ok-text="是"
+						cancel-text="否"
+						@confirm="deleteTrave(record.oid)"
+					>
+						<a v-permission="'草稿_删除'">删除</a>
+					</a-popconfirm>
+					
+				</div>
+			</template>
+		</template>
 		</CommonTable>
 		<CommonPagination
 			:current="travelStore.traveList.drafts.params.pageNo"
