@@ -155,10 +155,17 @@ const setCalendar = (val: any) => {
 	console.log(formData.data, 'save');
 };
 
+const enCluNumList = ref<number[]>([]);
+
 const settlementModelList = ref<any>([]);
 const changeOption = (arr: any) => {
 	settlementModelList.value = [];
+	console.log(arr, '22');
+	let delId = enCluNumList.value.filter((speId) => !arr.includes(speId));
+	console.log(delId, 'delId');
 	let list = childrenTicketOption.value.filter((item: any) => arr.includes(item.ticketId));
+
+	console.log(list, 'asda');
 	formData.data.scenicTicketList = list.map((i: any, index: number) => {
 		let isHad = settlementModelList.value?.filter((item: any) => item.value == i.scenicId);
 		if (isHad.length === 0) {
@@ -174,6 +181,13 @@ const changeOption = (arr: any) => {
 			settlementModel: i.settlementModel || null,
 		};
 	});
+
+	childrenTicketOption.value = childrenTicketOption.value.filter((item) => {
+		if (!delId.includes(item.value)) {
+			return item;
+		}
+	});
+	// console.log(res, 'oList');
 };
 
 const childrenTicketOption = ref<any>([]);
@@ -223,6 +237,7 @@ const dealEditData = (value: any) => {
 				settlementModel: item.settlementModel || null,
 			};
 		});
+
 	newOption = childrenTicketOption.value.map((option: any) => {
 		let index = formData.scenicTicketListId?.indexOf(option.ticketId);
 		if (Number(index) > -1) {
@@ -232,12 +247,34 @@ const dealEditData = (value: any) => {
 		}
 	});
 
-	changeOption(formData.scenicTicketListId);
+	let cIdArr = childrenTicketOption.value.map((o: any) => o.ticketId);
+
+	let enCluArr = formData.scenicTicketListId?.filter((id) => cIdArr.indexOf(id) === -1);
+
+	console.log(enCluArr, 'enCluArr');
+	console.log(arr, 'arr');
+
+	arr.map((option: any) => {
+		if (enCluArr?.includes(option.ticketId)) {
+			enCluNumList.value.push(option.ticketId);
+
+			console.log(option.ticketId, 'had enClu');
+
+			[].push.call(newOption, {
+				// disabled: true,
+				value: option.ticketId,
+				label: option.ticketName,
+				isCreate: true,
+				...option,
+			});
+		}
+	});
 	console.log(newOption, 'newOption');
 
 	childrenTicketOption.value = newOption;
 	formData.data = value;
 	formData.data.scenicTicketList = arr;
+	changeOption(formData.scenicTicketListId);
 };
 // 重置
 const reset = (): void => {
