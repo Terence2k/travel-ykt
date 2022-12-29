@@ -66,6 +66,8 @@ const useOptions = settlementOptions();
 const initOption = async () => {
 	await useOptions.getBusinessTypeOptionList();
 };
+import { accDiv } from '@/utils/compute';
+
 // 计算属性 匹配费用归属企业类型
 const getBelongCompanyName = computed(() => (value: any) => {
 	if (useOptions.businessTypeOptionList) {
@@ -263,7 +265,7 @@ const dealData = (params: [any]) => {
 	params.map((i: any) => {
 		// feeModel 收费模式: 0-人数 1-价格
 		// feeNumber 收费数量
-		i.feeText = i.feeModel == 0 ? `${i.feeNumber} 元/人` : `${i.feeNumber} 元`;	
+		i.feeText = i.feeModel == 0 ? `${accDiv(i.feeNumber, 100)} 元/人` : `${accDiv(i.feeNumber, 100)} 元`;	
 		return i;
 	});
 

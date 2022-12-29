@@ -1,4 +1,4 @@
-import { ConfirmDailyCharge, FeeModel } from "@/enum";
+import { ConfirmDailyCharge, FeeModel, Gender } from "@/enum";
 import router from "@/router/index";
 import { useTravelStore } from "@/stores/modules/travelManagement";
 import { message } from "ant-design-vue";
@@ -120,7 +120,28 @@ export function generateGuid() {
   }
   return guid;
 }
-
+/**
+ * 按身份证号码获取性别
+ * @idNumber 身份证号码
+ * @return 男：male；女：female；异常（身份证号码为空或长度、格式错误）：undefined
+ */
+export function getGenderByIdNumber(idNumber: any) {
+  if (idNumber) {
+      let genderCode; // 性别代码
+      if (idNumber.length == 18) { // 二代身份证号码长度为18位（第17位为性别代码）
+          genderCode = idNumber.charAt(16);
+      } else if (idNumber.length == 15) { // 一代身份证号码长度为15位（第15位为性别代码）
+          genderCode = idNumber.charAt(14);
+      }
+      if (genderCode && !isNaN(genderCode)) {
+          // 两代身份证号码的性别代码都为男奇女偶
+          if (parseInt(genderCode) % 2 == 0) {
+              return Gender.Madam;
+          }
+          return Gender.Male;
+      }
+  }
+}
 //根据身份证号获取年龄
 export function getAge(identityCard: any) {
   var len = (identityCard + "").length;

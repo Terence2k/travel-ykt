@@ -440,7 +440,6 @@ const configCodeName = (certificateCodes: any, targetArr: any) => {
       const citem = targetArr[j];
       if (item.certificateId === citem.certificatesNo) {
         targetArr[j].healthyCode = item.codeName
-        break
       }
     }
   }

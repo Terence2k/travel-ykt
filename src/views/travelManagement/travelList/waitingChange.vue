@@ -1,26 +1,24 @@
 <template>
 	<div>
-		<CommonTable :row-selection="{onSelect}" :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
-		<template #button>
-		</template>
-		<template #bodyCell="{ column, text, index }">
-			<template v-if="column.key === 'index'">
-				<div>
-						{{(state.params.pageNo - 1) * (state.params.pageSize) + (index + 1)}}
-				</div>
-		</template>
-
-		<template v-if="column.key === 'groupTypeStr'">
-				{{text}}
-		</template>
-
-		<template v-if="column.key === 'action'">
-			<div class="action-btns">
-				<a v-permission="'待变更_去审核'">去审核</a>
-				<a v-permission="'待变更_查看日志'">查看日志</a>
-			</div>
-		</template>
+		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
+			<template #bodyCell="{ column, text, index }">
+				<template v-if="column.key === 'index'">
+					<div>
+							{{(state.params.pageNo - 1) * (state.params.pageSize) + (index + 1)}}
+					</div>
 				</template>
+
+				<template v-if="column.key === 'groupTypeStr'">
+						{{text}}
+				</template>
+
+				<template v-if="column.key === 'action'">
+					<div class="action-btns">
+						<a v-permission="'待变更_去审核'">去审核</a>
+						<a v-permission="'待变更_查看日志'">查看日志</a>
+					</div>
+				</template>
+			</template>
 		</CommonTable>
 		<CommonPagination
 			:current="travelStore.traveList.waitingChange.params.pageNo"

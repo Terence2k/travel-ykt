@@ -122,8 +122,8 @@
           <a-form-item name="unitStatus" label="开业状态"
             v-show="formKeys?.unitStatus && queryParams.businessType === 'HOTEL'">
             <a-radio-group v-model:value="form.unitStatus">
-              <a-radio :value="1">开业</a-radio>
-              <a-radio :value="0">停业</a-radio>
+              <a-radio :value="0">开业</a-radio>
+              <a-radio :value="1">停业</a-radio>
             </a-radio-group>
           </a-form-item>
           <a-form-item name="unitStatus" label="开业状态"

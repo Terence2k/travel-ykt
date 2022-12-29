@@ -1,26 +1,24 @@
 <template>
 	<div>
-		<CommonTable :row-selection="{onSelect}" :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
-		<template #button>
-		</template>
-		<template #bodyCell="{ column, text, index, record }">
-			<template v-if="column.key === 'index'">
-				<div>
-						{{(state.params.pageNo - 1) * (state.params.pageSize) + (index + 1)}}
-				</div>
-		</template>
-
-		<template v-if="column.key === 'groupTypeStr'">
-				{{text}}
-		</template>
-
-		<template v-if="column.key === 'action'">
-			<div class="action-btns">
-				<a @click="goToPath(record)" v-permission="'待接团_查看行程单'">查看行程单</a>
-				<a v-permission="'待接团_催促地接社'">催促地接社</a>
-			</div>
-		</template>
+		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
+			<template #bodyCell="{ column, text, index, record }">
+				<template v-if="column.key === 'index'">
+					<div>
+							{{(state.params.pageNo - 1) * (state.params.pageSize) + (index + 1)}}
+					</div>
 				</template>
+
+				<template v-if="column.key === 'groupTypeStr'">
+						{{text}}
+				</template>
+
+				<template v-if="column.key === 'action'">
+					<div class="action-btns">
+						<a @click="goToPath(record)" v-permission="'待接团_查看行程单'">查看行程单</a>
+						<a v-permission="'待接团_催促地接社'">催促地接社</a>
+					</div>
+				</template>
+			</template>
 		</CommonTable>
 		<CommonPagination
 			:current="travelStore.traveList.waitingGroup.params.pageNo"
