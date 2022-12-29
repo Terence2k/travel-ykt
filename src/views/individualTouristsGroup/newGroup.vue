@@ -67,7 +67,7 @@
 								{{ index + 1 }}
 							</template>
 							<template v-if="column.key === 'tripDate'">
-								{{ record.tripStartTime + '-' + record.tripEndTime }}
+								{{ record.tripStartTime + ' - ' + record.tripEndTime }}
 							</template>
 							<template v-if="column.key === 'action'">
 								<div class="action-btns">
@@ -702,7 +702,6 @@ const configCodeName = (certificateCodes: any, targetArr: any) => {
 			const citem = targetArr[j];
 			if (item.certificateId === citem.certificatesNo) {
 				targetArr[j].healthyCode = item.codeName
-				break
 			}
 		}
 	}

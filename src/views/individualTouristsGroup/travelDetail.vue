@@ -80,11 +80,39 @@
               {{ accDiv(record.totalFee, 100) || '' }}
             </div>
           </template>
+          <!-- 合同费用 -->
+          <template v-if="column.key === 'contractAmount'">
+            <div>
+              {{ accDiv(record.contractAmount, 100) || '' }}
+            </div>
+          </template>
+          <!-- 景区费用 -->
+          <template v-if="column.key === 'ticketTotalFee'">
+            <div>
+              {{ cmpRowValue(record, 'ticketTotalFee') }}
+            </div>
+          </template>
           <!-- 证件类型 -->
           <template v-if="column.key === 'certificateType'">
             <div>
               {{ cmpRowValue(record.certificateType, 'certificateType') }}
             </div>
+          </template>
+          <!-- 健康码 -->
+          <template v-if="column.key === 'healthyCode'">
+            <span :class="cmpHealthyColor(text)">{{ text }}</span>
+          </template>
+          <!-- 是否按天收费 -->
+          <template v-if="column.key === 'isDaily'">
+            {{ cmpRowValue(record.isDaily, 'isDaily') }}
+          </template>
+          <!-- 入住天数 -->
+          <template v-if="column.key === 'stayDays'">
+            {{ cmpRowValue(record, 'stayDays') }}
+          </template>
+          <!-- 合同行程日期 -->
+          <template v-if="column.key === 'tripDate'">
+            {{ record.tripStartTime + ' - ' + record.tripEndTime }}
           </template>
           <template v-if="column.key === 'action'">
             <div class="action-btns">
@@ -108,7 +136,7 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import { getOptions } from '@/views/individualTouristsGroup/travelDetail/travelDetail';
 import { accDiv } from '@/utils/compute';
-
+import dayjs from 'dayjs';
 const state = reactive({
   basicData: {
     travelOperator: {},
@@ -176,6 +204,22 @@ const cmpRowValue = computed(() => (val: any, type: string) => {
           res = '/'
       }
       break;
+    case 'isDaily':
+      if (val) {
+        res = '是'
+      } else {
+        res = '否'
+      }
+      break;
+    case 'stayDays':
+      res = dayjs(val.endDate).diff(val.startDate, 'day')
+      break;
+    case 'ticketTotalFee':
+      const x = val.reservePeopleCount || 0
+      const y = val.unitPrice || 0
+      res = accDiv(x * y, 100) || 0
+      val.ticketTotalFee = res
+      break;
     default:
       break;
   }
@@ -190,21 +234,76 @@ const contentStyle = computed((): CSSProperties => {
     color: '#9DA0A4',
   };
 });
-
+const cmpHealthyColor = computed(() => (text: string) => {
+  if (text === '绿码') {
+    return 'green_text'
+  } else if (text === '黄码') {
+    return 'yellow_text'
+  } else if (text === '红码') {
+    return 'red_text'
+  }
+})
 const onHandleCurrentChange = (e: any) => {
   state.param.pageNo = e;
   getItineraryDetail(route.currentRoute.value.query.oid);
 }
-
+// 批量获取健康码
+const getHealthyCodes = async (ids: number[]) => {
+  let res = await api.getHealthyCode(ids)
+  if (res) {
+    res.forEach((item: any) => {
+      // 00:绿码，01：黄码，10：红码
+      switch (item.healthCodeStatus) {
+        case '00':
+          item.codeName = '绿码'
+          break;
+        case '01':
+          item.codeName = '黄码'
+          break;
+        case '10':
+          item.codeName = '红码'
+          break;
+        default:
+          item.codeName = '暂无健康码'
+      }
+    })
+  }
+  return res || []
+}
+const configCodeName = (certificateCodes: any, targetArr: any) => {
+  for (let i = 0, l = certificateCodes.length; i < l; i++) {
+    const item = certificateCodes[i];
+    for (let j = 0, l = targetArr.length; j < l; j++) {
+      const citem = targetArr[j];
+      if (item.certificateId === citem.certificateNo) {
+        targetArr[j].healthyCode = item.codeName
+      }
+    }
+  }
+}
 const getItineraryDetail = (orderId: any, isPrint?: any) => {
   let queryData = {
     oid: orderId,
     ...state.param
   }
-  api.travelManagement.getItineraryDetail(queryData).then((res: any) => {
+  api.travelManagement.getItineraryDetail(queryData).then(async (res: any) => {
     state.basicData = res.basic;
     state.guideList = res.guideList;
     state.transportList = res.transportList;
+    // 获取身份证列表
+    const certificateIds = res.touristList?.content.map((item: any) => {
+      return { certificateId: item.certificateNo }
+    })
+    // 根据身份证列表查询健康码列表
+    const certificateCodes = await getHealthyCodes(certificateIds)
+    // 将健康码和游客列表数据关联
+    configCodeName(certificateCodes, res.touristList.content)
+    // 获取合同信息
+    const { content } = await api.getContractList({
+      pageNo: 1,
+      pageSize: 10000,
+    })
+    res.contractList = content
     state.itineraryDetail = res;
     nextTick(() => {
       if (isPrint) {
@@ -253,6 +352,18 @@ getItineraryDetail(route.currentRoute.value.query.oid);
     height: 384px;
     text-align: center;
     color: #9DA0A4;
+  }
+
+  .green_text {
+    color: #71b621;
+  }
+
+  .yellow_text {
+    color: #bfbe26;
+  }
+
+  .red_text {
+    color: #d70095;
   }
 }
 </style>

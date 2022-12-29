@@ -64,6 +64,7 @@ const navigatorBar = useNavigatorBar();
 const tstyle = { 'font-weight': '700' };
 const route = useRouter();
 const formref = ref();
+import { accDiv } from '@/utils/compute';
 
 const rulesRef = {
 	comprehensiveFeeProductName: [{ required: true, message: '请填写产品名称' }],
@@ -88,6 +89,7 @@ const initPage = async (): Promise<void> => {
 		navigatorBar.setNavigator(['结算管理', '综费产品', '编辑']);
 		api.getcomprehensiveFeeDetail(route.currentRoute.value?.query?.oid).then((res: any) => {
 			formData.data = res;
+			formData.data.feeNumber = accDiv(formData.data.feeNumber, 100)
 		});
 	} else {
 		navigatorBar.setNavigator(['结算管理', '综费产品', '新增']);
@@ -108,7 +110,7 @@ const onSubmit = () => {
 				feeExplanation: formData.data.feeExplanation,
 				status: formData.data.status,
 				feeModel: formData.data.feeModel,
-				feeNumber: formData.data.feeNumber,
+				feeNumber: formData.data.feeNumber * 100,
 				belongCompany: formData.data.belongCompany,
 			};
 			save(toRaw(Data));
