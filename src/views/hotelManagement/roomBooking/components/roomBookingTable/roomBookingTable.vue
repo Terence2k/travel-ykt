@@ -484,7 +484,8 @@ const dataSource = computed(() => {
 						};
 					}
 				});
-				columns.value = columns.value.filter((item, index) => index < 1 || item?.appointedTime);
+				const len = item.appointedStockList?.length || 31;
+				columns.value = columns.value.filter((item, index) => index < 1 || (item?.appointedTime && index <= len));
 				if (columns.value.length < 7 && columns.value.length > 1) {
 					columns.value[0] = {
 						...columns.value[0],
