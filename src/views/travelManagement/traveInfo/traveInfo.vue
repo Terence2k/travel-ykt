@@ -52,7 +52,6 @@
 		</div>
 		<div class="item-container">
 			<p class="title">综费产品</p>
-			<!-- 综费产品这边存的直接是元 -->
 			<CommonTable 
 				ref="tableRef"
 				rowKey="oid" 
@@ -70,11 +69,11 @@
 					</template>
 
 					<template v-if="column.key === 'feeNumber'">
-						{{ text }}
+						{{ text / 100 || 0 }}
 					</template>
 
 					<template v-if="column.key === 'totalMoney'">
-						{{ text }}
+						{{ text / 100 || 0 }}
 					</template>
 				</template>
 			</CommonTable>
@@ -90,11 +89,11 @@
 					</template>
 					
 					<template v-if="column.key === 'feeNumber'">
-						{{ text }}
+						{{ text / 100 || 0 }}
 					</template>
 
 					<template v-if="column.key === 'totalMoney'">
-						{{ text }}
+						{{ text / 100 || 0 }}
 					</template>
 				</template>
 			</CommonTable>

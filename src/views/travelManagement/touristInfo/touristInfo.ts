@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import type { UnwrapRef } from 'vue';
 
 import { useTravelStore } from '@/stores/modules/travelManagement';
-import { validateRules, validateFields, generateGuid, getAge, phoneReg, isPositiveInteger } from '@/utils';
+import { validateRules, validateFields, generateGuid, getAge, phoneReg, isPositiveInteger, getGenderByIdNumber } from '@/utils';
 import api from '@/api/index';
 import { CODEVALUE } from '@/constant'
 import { message } from 'ant-design-vue';
@@ -28,6 +28,7 @@ interface DataItem {
 	age: string;
 	oid: number;
 	key: string;
+	oldIdCard: string
 }
 
 const rules:{[k:string]: any} = {
@@ -56,6 +57,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 		cityOptions: [],
 		delOid: [],
 		delKey: [],
+		mustFillIn: ['certificateType', 'certificateNo', 'name', 'gender', 'age', 'sourceAddressName'],
 		selectKey: ['certificateType', 'gender', 'specialCertificateType'],
 		inputKey: ['certificateNo', 'name', 'emergencyContactName', 'emergencyContactPhone', 'age'],
 		rulesRef: {},
@@ -251,6 +253,13 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			};
 			
 		},
+		// 根据身份证获取客源地
+		async getAreaByIdCardNo(idCardNo: string) {
+			console.log(idCardNo)
+			const formData = new FormData();
+			formData.append('idCardNo', idCardNo)
+			return await api.travelManagement.getAreaByIdCardNo({ idCardNo })
+		},
 		addRules(key?: any) {
 			state.rulesRef = {}
 			
@@ -331,8 +340,8 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			state.editableData[key].sourceAddress = val[val.length - 1];
 			state.editableData[key].sourceAddressName = option.map((it:any) => it.label).join('/')
 		},
-		async changeIDCard(key: string, columns: string) {
-
+		async changeIDCard(val: any, key: string, columns: string) {
+			
 			if (columns === 'certificateNo' &&
 					state.editableData[key].certificateType === CODEVALUE.TRAVE_CODE.IDENTITY_CARD) {
 
@@ -340,9 +349,21 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 					state.editableData[key].age = '';
 					return message.error('请输入正确的身份证')
 				}
-
+				if (state.editableData[key].oldIdCard !== state.editableData[key].certificateNo) {
+					const res: any = await methods.getAreaByIdCardNo(state.editableData[key].certificateNo);
+					state.editableData[key].sourceAddressName = `${res.provinceName}/${res.cityName}/${res.areaName}`;
+					state.editableData[key].sourceAddress = res.areaId;
+					state.editableData[key].cityId = res.cityId;
+					state.editableData[key].provinceId = res.provinceId;
+				}
+				
+				
 				const age: string = getAge(state.editableData[key].certificateNo) as any
+				const gender: string = getGenderByIdNumber(state.editableData[key].certificateNo) as any
+				console.log(gender)
 				state.editableData[key].age = age || "";
+				state.editableData[key].gender = gender;
+				state.editableData[key].oldIdCard = state.editableData[key].certificateNo
 				
 			}
 			if (columns === 'certificateNo' || columns === 'name') {

@@ -739,7 +739,7 @@ const outGroup = async (row: any) => {
 const dateTime = ref(dayjs().unix());
 const goToDetail = (row: any) => {
 	router.push({
-		path: '/travel/travel_manage/travel_detail',
+		name: 'individualTouristsGroupDetail',
 		query: { oid: encodeURIComponent(row.oid) },
 	});
 };

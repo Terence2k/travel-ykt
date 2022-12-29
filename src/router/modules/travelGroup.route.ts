@@ -306,17 +306,17 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
-					/* {
-						path: 'addTourists',
-						name: 'addTourists',
-						component: () => import('@/views/individualTouristsGroup/add.vue'),
+					{
+						path: 'individualTouristsGroupDetail',
+						name: 'individualTouristsGroupDetail',
+						component: () => import('@/views/individualTouristsGroup/travelDetail.vue'),
 						meta: {
-							title: '新增',
+							title: '行程详情',
 							// icon: 'liulanqi',
 							// auth: ["admin"],
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
-					}, */
+					},
 					{
 						path: 'tourists_alter',
 						name: 'tourists_alter',
