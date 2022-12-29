@@ -215,7 +215,7 @@ const aduitStatus = ({ row, handle }: any) => {
 	}
 };
 onMounted(() => {
-	navigatorBar.setNavigator(['行程模板管理']);
+	navigatorBar.setNavigator(['旅行社管理','行程模板管理']);
 	getList();
 	options.getTeamTypeList();
 });

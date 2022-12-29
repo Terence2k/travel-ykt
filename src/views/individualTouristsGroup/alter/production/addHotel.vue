@@ -82,6 +82,7 @@
 							:key="item.oid"
 							:stockNum="item.stockNum"
 							:num="item.roomOccupancyNum"
+							:limitPeople="item.roomOccupancyNum"
 							>{{ item.roomTypeName }}</a-select-option
 						>
 					</a-select>
@@ -238,6 +239,7 @@ const changeRoomType = (e: any, option: any, index: number) => {
 	formState.roomTypeList[index].stockNum = option.stockNum;
 	formState.roomTypeList[index].roomTypeName = option.name;
 	formState.roomTypeList[index].roomTypeId = option.key;
+	formState.roomTypeList[index].limitPeople = option.num;
 };
 
 const getHotelStarList = async () => {
@@ -298,7 +300,6 @@ const getOrderAmount = (data: Array<{ [k: string]: any }>, startDate: string, en
 const submit = async () => {
 	try {
 		let traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
-		console.log('formState.roomTypeList:', formState.roomTypeList);
 		formState.roomTypeList = formState.roomTypeList.map((it: any) => {
 			it.unitPrice = it.unitPrice * 100;
 			it.orderAmount = it.orderAmount * 100;
@@ -335,8 +336,6 @@ const submit = async () => {
 			.map((it: any) => Number(it.checkInNumber))
 			.reduce((prev: number, next: number) => prev + next);
 		newFormState.roomCount = newFormState.roomTypeList.map((it: any) => Number(it.roomCount)).reduce((prev: number, next: number) => prev + next);
-		console.log('newFormState.roomTypeList:', newFormState.roomTypeList);
-
 		travelStore.SetHotels(newFormState, formState.oid || null, props.productRow.key);
 	} catch (errorInfo) {}
 };
@@ -373,8 +372,6 @@ watch(
 );
 watch(dialogVisible, (newVal) => {
 	if (newVal) {
-		console.log(props.productRow);
-
 		const data = cloneDeep(props.productRow);
 		for (let k in data) {
 			formState[k] = data[k];

@@ -14,7 +14,7 @@
 	</CommonSearch>
 	<div class="tabs_box">
 		<a-tabs v-model:activeKey="activeKey" @change="tabsChange">
-			<a-tab-pane key="1" tab="草稿">
+			<a-tab-pane key="1" tab="草稿" v-if="getTabPermission('草稿')">
 				<CommonTable :dataSource="tableData1.data" :columns="columns">
 					<template #bodyCell="{ column, record, index }">
 						<template v-if="column.key === 'index'">
@@ -22,10 +22,11 @@
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a @click="addOrUpdate({ row: record, handle: 'update' })">编辑</a>
-								<a @click="change(record)">变更</a>
-								<a @click="">删除</a>
-								<a @click="">提交审核</a>
+								<a @click="addOrUpdate({ row: record, handle: 'update' })" v-permission="'草稿_编辑'">编辑</a>
+								<a-popconfirm title="确定删除该行程单？" ok-text="是" cancel-text="否" @confirm="deleteTrave(record.oid)">
+									<a v-permission="'草稿_删除'">删除</a>
+								</a-popconfirm>
+								<a @click="sendGroup(record.oid)" v-permission="'草稿_提交审核'">提交审核</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -41,7 +42,7 @@
 					@showSizeChange="pageSideChange1"
 				/>
 			</a-tab-pane>
-			<a-tab-pane key="2" tab="待审核">
+			<a-tab-pane key="2" tab="待审核" v-if="getTabPermission('待审核')">
 				<CommonTable :dataSource="tableData2.data" :columns="columns">
 					<template #bodyCell="{ column, record, index }">
 						<template v-if="column.key === 'index'">
@@ -49,9 +50,8 @@
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a @click="addOrUpdate({ row: record, handle: 'update' })">编辑</a>
-								<a @click="">删除</a>
-								<a @click="">提交审核</a>
+								<a @click="revokeGroupToDraft(record.oid)" v-permission="'待审核_撤回任务'">撤回任务</a>
+								<a v-permission="'待审核_催办'">催办</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -67,7 +67,7 @@
 					@showSizeChange="pageSideChange2"
 				/>
 			</a-tab-pane>
-			<a-tab-pane key="3" tab="待出团">
+			<a-tab-pane key="3" tab="待出团" v-if="getTabPermission('待出团')">
 				<CommonTable :dataSource="tableData3.data" :columns="columns">
 					<template #bodyCell="{ column, record, index }">
 						<template v-if="column.key === 'index'">
@@ -75,13 +75,10 @@
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<!-- <a @click="goToChange(record)" v-permission="'待出团_行程变更'">行程变更</a>
-                <a v-permission="'待出团_查看日志'">查看日志</a>
-                <a @click="goToPath(record)" v-permission="'待出团_进入预订'">进入预订</a> -->
-								<a @click="goToChange(record)">行程变更</a>
-								<a>查看日志</a>
-								<a @click="goToPath(record)">进入预订</a>
-								<a @click="toRevoke(record)">撤销</a>
+								<a v-if="dateTime > dayjs(record.startDate).unix()" @click="outGroup(record)" v-permission="'待出团_手动出团'">手动出团</a>
+								<a @click="change(record)" v-permission="'待出团_行程变更'">行程变更</a>
+								<a v-permission="'待出团_查看日志'">查看日志</a>
+								<a @click="goToPath(record)" v-permission="'待出团_进入预订'">进入预订</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -97,7 +94,7 @@
 					@showSizeChange="pageSideChange3"
 				/>
 			</a-tab-pane>
-			<a-tab-pane key="4" tab="已出团">
+			<a-tab-pane key="4" tab="已出团" v-if="getTabPermission('已出团')">
 				<CommonTable :dataSource="tableData4.data" :columns="columns">
 					<template #bodyCell="{ column, record, index }">
 						<template v-if="column.key === 'index'">
@@ -105,9 +102,8 @@
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a @click="addOrUpdate({ row: record, handle: 'update' })">编辑</a>
-								<a @click="">删除</a>
-								<a @click="">提交审核</a>
+								<a @click="goToDetail(record)" v-permission="'已出团_查看'">查看</a>
+								<a @click="goToPath(record)" v-permission="'已出团_进入预订'">进入预订</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -123,7 +119,7 @@
 					@showSizeChange="pageSideChange4"
 				/>
 			</a-tab-pane>
-			<a-tab-pane key="5" tab="已散团">
+			<a-tab-pane key="5" tab="已散团" v-if="getTabPermission('已散团')">
 				<CommonTable :dataSource="tableData5.data" :columns="columns">
 					<template #bodyCell="{ column, record, index }">
 						<template v-if="column.key === 'index'">
@@ -131,9 +127,7 @@
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a @click="addOrUpdate({ row: record, handle: 'update' })">编辑</a>
-								<a @click="">删除</a>
-								<a @click="">提交审核</a>
+								<a @click="goToPath(record)" v-permission="'已散团_查看行程单'">查看行程单</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -149,7 +143,7 @@
 					@showSizeChange="pageSideChange5"
 				/>
 			</a-tab-pane>
-			<a-tab-pane key="6" tab="待变更">
+			<a-tab-pane key="6" tab="待变更" v-if="getTabPermission('待变更')">
 				<CommonTable :dataSource="tableData6.data" :columns="columns">
 					<template #bodyCell="{ column, record, index }">
 						<template v-if="column.key === 'index'">
@@ -175,7 +169,7 @@
 					@showSizeChange="pageSideChange6"
 				/>
 			</a-tab-pane>
-			<a-tab-pane key="7" tab="已过期">
+			<a-tab-pane key="7" tab="已过期" v-if="getTabPermission('已过期')">
 				<CommonTable :dataSource="tableData7.data" :columns="columns">
 					<template #bodyCell="{ column, record, index }">
 						<template v-if="column.key === 'index'">
@@ -183,9 +177,7 @@
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a @click="addOrUpdate({ row: record, handle: 'update' })">编辑</a>
-								<a @click="">删除</a>
-								<a @click="">提交审核</a>
+								<a @click="goToPath(record)" v-permission="'已过期_查看行程单'">查看行程单</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -201,7 +193,7 @@
 					@showSizeChange="pageSideChange7"
 				/>
 			</a-tab-pane>
-			<a-tab-pane key="8" tab="待处理">
+			<a-tab-pane key="8" tab="待处理" v-if="getTabPermission('待处理')">
 				<CommonTable :dataSource="tableData8.data" :columns="columns">
 					<template #bodyCell="{ column, record, index }">
 						<template v-if="column.key === 'index'">
@@ -209,9 +201,9 @@
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a @click="addOrUpdate({ row: record, handle: 'update' })">编辑</a>
-								<a @click="">删除</a>
-								<a @click="">提交审核</a>
+								<a @click="goToDetail(record)" v-permission="'待处理_行程详情'">行程详情</a>
+								<a @click="revoke(record)" v-permission="'待处理_申请撤销'">申请撤销</a>
+								<a v-permission="'待处理_查看日志'">查看日志</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -232,6 +224,14 @@
 			</template>
 		</a-tabs>
 	</div>
+	<BaseModal title="整团撤销提醒" v-model="reRecokeAuditAllsVisible">
+		<p>是否直接整团撤销？整团撤销需要组团社计调 、古维管理员审核。审核通过后系统会自动为 您撤销该行程，已冻结金额将返回给组团社。</p>
+		<template v-slot:footer>
+			<a-button @click="reRecokeAuditAllsVisible = false">取消</a-button>
+			<a-button @click="openAllReapply" type="primary">继续撤销</a-button>
+		</template>
+	</BaseModal>
+	<AllRevoke ref="allRevokeRef" />
 </template>
 
 <script setup lang="ts">
@@ -243,6 +243,11 @@ import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModa
 import api from '@/api';
 import { useRouter, useRoute } from 'vue-router';
 import { useBusinessManageOption } from '@/stores/modules/businessManage';
+import { message } from 'ant-design-vue/es';
+import dayjs from 'dayjs';
+import BaseModal from '@/components/common/BaseModal.vue';
+import AllRevoke from '@/views/travelManagement/travelTakeGroupList/revoke/components/allRevoke.vue';
+import { getTabPermission } from '@/utils/util';
 const router = useRouter();
 const route = useRoute();
 const goto = (name: string, val?: any) => {
@@ -717,6 +722,78 @@ const toRevoke = (row: any) => {
 			id: row.oid,
 			itineraryNo: row.itineraryNo,
 		},
+	});
+};
+const revokeGroupToDraft = async (id: number) => {
+	await api.travelManagement.revokeGroupToDraft(id);
+	message.success('撤回成功');
+	onSearch1();
+	onSearch2();
+};
+const outGroup = async (row: any) => {
+	await api.travelManagement.handGoOut(row.oid);
+	message.success('操作成功');
+	onSearch3();
+	onSearch4();
+};
+const dateTime = ref(dayjs().unix());
+const goToDetail = (row: any) => {
+	router.push({
+		name: 'individualTouristsGroupDetail',
+		query: { oid: encodeURIComponent(row.oid) },
+	});
+};
+const checkPower = async (id: any) => {
+	let pW = new FormData();
+
+	pW.append('itineraryId', id);
+
+	await api.travelManagement.repealNreapplyPage(pW);
+	return true;
+};
+
+const checkOutSideTicketIsRefund = async (id: any) => {
+	let pW = new FormData();
+
+	pW.append('itineraryId', id);
+
+	await api.travelManagement.checkOutSideTicketIsRefund(pW);
+
+	return true;
+};
+const reRecokeAuditAllsVisible = ref(false);
+const reRecokeAuditCheckVisible = ref(false);
+const reRecokeAuditCheckText = ref('');
+//打开弹窗
+const allRevokeRef = ref();
+const openAllReapply = () => {
+	reRecokeAuditAllsVisible.value = false;
+	allRevokeRef.value.open();
+};
+const revoke = async (row: any) => {
+	let valid, validTikcer;
+	try {
+		valid = await checkPower(row.oid);
+		validTikcer = await checkOutSideTicketIsRefund(row.oid);
+		if (valid && validTikcer) {
+			reRecokeAuditAllsVisible.value = true;
+		}
+	} catch (error: any) {
+		reRecokeAuditCheckText.value = error?.msg;
+		reRecokeAuditCheckVisible.value = true;
+	}
+};
+const deleteTrave = (id: number) => {
+	api.deleteIndividualTouristsGroup(id).then((res: any) => {
+		onSearch1();
+		message.success('删除成功');
+	});
+};
+const sendGroup = (id: string) => {
+	api.individualSubmitFinanceAudit(id).then((res: any) => {
+		onSearch1();
+		onSearch2();
+		message.success('提交审核成功！');
 	});
 };
 onMounted(() => {

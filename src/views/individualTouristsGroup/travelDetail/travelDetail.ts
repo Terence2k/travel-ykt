@@ -1,7 +1,7 @@
 const sharedOnCell = (_, index) => {
   console.log('_:', _);
   console.log('index:', index);
-  
+
 };
 
 export const getOptions = (props: any) => {
@@ -18,8 +18,8 @@ export const getOptions = (props: any) => {
       },
       {
         title: '导游星级',
-        dataIndex: 'guideTypeName',
-        key: 'guideTypeName',
+        dataIndex: 'guideLevelName',
+        key: 'guideLevelName',
       },
       {
         title: '导游证编号',
@@ -43,7 +43,7 @@ export const getOptions = (props: any) => {
       },
     ],
     title: '导游信息',
-    descriptions: 
+    descriptions:
       `（共<span style="color: red;">${props.guideList?.length}</span>人）`,
     dataSource: props.guideList,
     pagination: false
@@ -61,8 +61,8 @@ export const getOptions = (props: any) => {
       },
       {
         title: '证件类型',
-        dataIndex: 'certificateTypeName',
-        key: 'certificateTypeName',
+        dataIndex: 'certificateType',
+        key: 'certificateType',
       },
       {
         title: '证件号码',
@@ -101,7 +101,7 @@ export const getOptions = (props: any) => {
       },
     ],
     title: '游客信息',
-    descriptions: 
+    descriptions:
       `（共<span style="color: red;">${props.touristList?.total}</span>人）`,
     dataSource: props.touristList?.content,
     total: props.touristList?.total,
@@ -150,7 +150,7 @@ export const getOptions = (props: any) => {
       },
     ],
     title: '交通信息',
-    descriptions: 
+    descriptions:
       `（共<span style="color: red;">${props.transportList?.length}</span>条）`,
     dataSource: props.transportList,
     pagination: false
@@ -199,7 +199,7 @@ export const getOptions = (props: any) => {
       },
     ],
     title: '古维管理费',
-    descriptions: 
+    descriptions:
       `共<span style="color: red;">${0}</span>人`,
     dataSource: [],
   }
@@ -212,13 +212,13 @@ export const getOptions = (props: any) => {
       },
       {
         title: '费用名称',
-        dataIndex: 'insuranceName',
-        key: 'insuranceName',
+        dataIndex: 'productName',
+        key: 'productName',
       },
       {
         title: '结算归属',
-        dataIndex: 'peopleCount',
-        key: 'peopleCount',
+        dataIndex: 'belongCompanyTypeName',
+        key: 'belongCompanyTypeName',
       },
       {
         title: '收费模式',
@@ -257,9 +257,9 @@ export const getOptions = (props: any) => {
       },
     ],
     title: '综费产品',
-    descriptions: 
-      `费用总计<span style="color: red;">${0}</span>元，订单状态：`,
-    dataSource: [],
+    descriptions:
+      `费用总计<span style="color: red;">${props.hotelList?.reduce((prev: any, curr: any) => prev + curr.totalFee ? curr.totalFee : 0, 0) / 100}</span>元，订单状态：`,
+    dataSource: props.productList,
   }
   let hotelListOption = {
     columns: [
@@ -310,10 +310,10 @@ export const getOptions = (props: any) => {
       },
     ],
     title: '酒店费用',
-    descriptions: 
+    descriptions:
       `已预订<span style="color: red;">${props.hotelList?.length}</span>个酒店，
       房间数量：<span style="color: red;">${props.hotelList?.reduce((prev: any, curr: any) => prev + curr.roomCount, 0)}</span>;
-      费用总计：<span style="color: red;">${props.hotelList?.reduce((prev: any, curr: any) => prev + curr.orderFee, 0)}</span>元`,
+      费用总计：<span style="color: red;">${props.hotelList?.reduce((prev: any, curr: any) => prev + curr.orderFee, 0) / 100}</span>元`,
     dataSource: props.hotelList,
   }
   let ticketListOption = {
@@ -371,7 +371,7 @@ export const getOptions = (props: any) => {
       },
     ],
     title: '景区费用',
-    descriptions: 
+    descriptions:
       `已预订<span style="color: red;">${props.ticketList?.length}</span>个景区，
       游玩人数：<span style="color: red;">${props.ticketList?.reduce((prev: any, curr: any) => prev + curr.peopleCount, 0)}</span>；
       费用总计：<span style="color: red;">${props.ticketList?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0) || 0}</span>元`,
@@ -406,6 +406,6 @@ export const getOptions = (props: any) => {
     productOption,
     hotelListOption,
     ticketListOption,
-    attachmentOption
+    // attachmentOption
   }
 }

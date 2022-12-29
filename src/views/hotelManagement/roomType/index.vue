@@ -109,7 +109,7 @@ const columns: TableColumnsType = [
 		title: '联系电话',
 		dataIndex: 'phone',
 		key: 'phone',
-		width: '14%',
+		width: '12%',
 	},
 	{
 		title: '所在地址',
@@ -121,7 +121,7 @@ const columns: TableColumnsType = [
 		title: '审核任务状态',
 		dataIndex: 'unitTaskStatus',
 		key: 'unitTaskStatus',
-		width: '7%',
+		width: '9%',
 	},
 	{
 		title: '提交审核时间',

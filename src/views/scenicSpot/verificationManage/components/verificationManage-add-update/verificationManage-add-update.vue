@@ -1,7 +1,7 @@
 <template>
 	<div class="verificationManage-modal-wrapper">
 		<BaseModal :title="options.title" v-model="dialogVisible" @close="handleOk">
-			<a-form :model="formValidate" :rules="rules" :label-col="{ span: 5 }" :wrapper-col="{ span: 16, offset: 1 }" labelAlign="left">
+			<a-form ref="formRef" :model="formValidate" :rules="rules" :label-col="{ span: 5 }" :wrapper-col="{ span: 16, offset: 1 }" labelAlign="left">
 				<a-form-item label="归属景区" name="scenicId">
 					<a-select
 						v-model:value="formValidate.scenicId"
@@ -56,9 +56,11 @@ const formValidate: Ref<Record<string, any>> = ref({});
 const options = reactive({
 	title: '新增核销项目',
 });
+
+const formRef = ref();
 const rules: any = {
-	scenicId: [{ required: true, trigger: 'change', message: '请输入酒店星级' }],
-	oid: [{ required: true, trigger: 'blur', message: '请输入核销项目ID' }],
+	scenicId: [{ required: true, trigger: 'change', message: '请输入归属景区' }],
+	oid: [{ trigger: 'blur', message: '请输入核销项目ID' }],
 	itemName: [{ required: true, trigger: 'change', message: '请输入核销项目名称' }],
 };
 
@@ -70,22 +72,24 @@ const save = () => {
 			oid: null,
 		};
 	}
-	api
-		.editWriteOffItem(formValidate.value)
-		.then((res: any) => {
-			console.log('res:', res);
-			dialogVisible.value = false;
-			if (formValidate.value?.oid) {
-				message.success('编辑成功');
-			} else {
-				message.success('新增成功');
-			}
+	formRef.value.validateFields().then((res) => {
+		api
+			.editWriteOffItem(formValidate.value)
+			.then((res: any) => {
+				console.log('res:', res);
+				dialogVisible.value = false;
+				if (formValidate.value?.oid) {
+					message.success('编辑成功');
+				} else {
+					message.success('新增成功');
+				}
 
-			props.methods?.success();
-		})
-		.catch((err: any) => {
-			console.log(err);
-		});
+				props.methods?.success();
+			})
+			.catch((err: any) => {
+				console.log(err);
+			});
+	});
 };
 
 const init = async () => {
@@ -124,6 +128,11 @@ watch(
 						label: targetName,
 					});
 				}
+			}
+
+			//当只有一个景区时，默认选择该景区
+			if (scenicSpotOptionsData?.value?.length === 1) {
+				formValidate.value.scenicId = scenicSpotOptionsData.value[0]?.value;
 			}
 		});
 		dialogVisible.value = nVal;
