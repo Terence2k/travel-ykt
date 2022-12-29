@@ -92,7 +92,7 @@
               <div class="action-btns">
                 <a @click="goToDetail(record)" v-permission="'已出团_查看'">查看</a>
                 <a @click="goToChange(record)" v-permission="'已出团_行程变更'">行程变更</a>
-                <a @click="goToPath(record, 4)" v-permission="'已出团_进入预订'">进入预订</a>
+                <a @click="goToPath(record)" v-permission="'已出团_进入预订'">进入预订</a>
               </div>
             </template>
             <template v-if="column.key === 'tripDate'">
