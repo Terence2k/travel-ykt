@@ -72,7 +72,7 @@
 							<template v-if="column.key === 'action'">
 								<div class="action-btns">
 									<a @click="checkDetails(record.oid)">查看</a>
-									<a @click="deleteContract(index, record)">删除</a>
+									<a @click="deleteContract(index, record)" :class="{ 'disabled': !travelStore.teamStatus }">删除</a>
 								</div>
 							</template>
 						</template>
@@ -81,18 +81,18 @@
 						<div class="cost_item">费用合计</div>
 						<div class="cost_item">{{ form.totalExpenses }}</div>
 					</div>
-					<div class="add_box">
+					<div class="add_box" v-if="travelStore.teamStatus">
 						<a-button @click="addContract" type="primary">添加</a-button>
 					</div>
 				</a-form>
-				<div class="operation">
+				<div class="operation" v-if="travelStore.teamStatus">
 					<a-button @click="saveDraft(true)" type="primary" style="margin-right:20px">保存草稿</a-button>
 					<a-button @click="nextTep('2')" type="primary">下一步</a-button>
 				</div>
 			</a-tab-pane>
 			<a-tab-pane key="2" tab="产品预订">
 				<traveInfo></traveInfo>
-				<div class="operation">
+				<div class="operation" v-if="travelStore.teamStatus">
 					<a-button @click="saveDraft(true)" type="primary" style="margin-right:20px">保存草稿</a-button>
 					<a-button @click="nextTep('1')" type="primary" style="margin-right:20px">上一步</a-button>
 					<a-button @click="submitAudit" type="primary">提交审核</a-button>
@@ -155,6 +155,7 @@
 	</CommonModal>
 	<CommonModal title="提交发团审核" v-model:visible="auditVisible" @close="auditVisible = false"
 		@cancel="auditVisible = false" conform-text="确认" @conform="auditConform">
+		{{ submitAuditInfo }}
 	</CommonModal>
 </template>
 
@@ -173,6 +174,7 @@ import { message } from 'ant-design-vue/es';
 import { cloneDeep } from 'lodash';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import dayjs from 'dayjs';
+import { disabledRangeTime, getAmount } from '@/utils';
 const travelStore = useTravelStore();
 const router = useRouter();
 const route = useRoute();
@@ -443,8 +445,11 @@ const setBaseInfo = (res: any) => {
 			time,
 			touristCount,
 			itineraryNo,
+			startDate,
+			endDate
 		} = res.basic
-		const guideOid = res.guideList[0].guideOid
+		const guideOid = res.guideList[0]?.guideOid
+		const guideName = res.guideList[0]?.guideName
 		const licensePlate = res.transportList[0]?.licencePlateNumber
 		form.value.routeName = routeName
 		form.value.groupType = groupType
@@ -457,9 +462,17 @@ const setBaseInfo = (res: any) => {
 		form.value.itineraryNo = itineraryNo
 		form.value.guideOid = guideOid
 		form.value.licensePlate = licensePlate
+		form.value.guideName = guideName
+		form.value.startDate = startDate
+		form.value.endDate = endDate
+		form.value.guide = {
+			guideOid,
+			guideName
+		}
 	}
 }
 const getTraveDetail = () => {
+	travelStore.getItineraryStatus();
 	// const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 	// console.log(traveListData, 'traveListData')
 	if (!form.value.oid) {
@@ -543,7 +556,19 @@ const getTraveDetail = () => {
 			// travelStore.defaultEndTime = new Date(2022, 12, 1, dateTime.end.hour, dateTime.end.min, dateTime.end.second)
 			// console.log(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end, '-----');
 			// travelStore.setDisabledTime = disabledRangeTime(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end) as any;
-			// route.query.tab && setTimeout(() => (activeKey.value = Number(route.query.tab)));
+			route.query.tab && setTimeout(() => (activeKey.value = route.query.tab));
+			if (route.query.tab === '2') {
+				const allFeesProducts = travelStore.compositeProducts.map((it: any) => {
+					it.peopleCount = travelStore.touristList.length;
+					it.unPrice = it.feeNumber;
+					it.dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day');
+					it.totalMoney = getAmount(it.confirmDailyCharge, it.feeNumber, it.feeModel);
+					return it;
+				});
+				travelStore.setCompositeProducts(allFeesProducts);
+				/* isSaveBtn.value = false;
+				check.value = !check.value; */
+			}
 			// getHealthCode();
 		});
 };
@@ -613,6 +638,12 @@ const guideChange = (val: any) => {
 		}
 	}
 }
+const editDraft = async (callBack?: any) => {
+	form.value.compositeProducts = travelStore.curentProduct
+	api.editIndividualTouristsGroup(form.value).then((res: any) => {
+		callBack && callBack(res)
+	})
+}
 const saveDraft = async (showMessage?: boolean) => {
 	return new Promise((resolve, reject) => {
 		const a = Promise.all([
@@ -626,9 +657,15 @@ const saveDraft = async (showMessage?: boolean) => {
 					res && sessionStorage.setItem('traveList', JSON.stringify({ oid: res }));
 					form.value.oid = res
 					isAdd.value = false
+					editDraft()
 					resolve(res)
 					showMessage && message.success('保存草稿成功！')
 				}
+			} else {
+				editDraft((editRes: any) => {
+					resolve(editRes)
+					showMessage && message.success('保存草稿成功！')
+				})
 			}
 		}).catch((error: Error) => {
 			console.log(error);
@@ -702,10 +739,18 @@ const touristClose = () => {
 	touristVisible.value = false
 }
 const auditConform = async () => {
-	const res = await api.individualSubmitFinanceAudit(form.value.oid)
+	api.individualSubmitFinanceAudit(form.value.oid).then((res: any) => {
+		auditVisible.value = false
+		message.success('提交审核成功！')
+	})
 }
-const submitAudit = () => {
-	auditVisible.value = true
+const submitAuditInfo = ref('')
+const submitAudit = async () => {
+	const res = await api.queryIndividualTotalFee(form.value.oid)
+	if (res) {
+		submitAuditInfo.value = res
+		auditVisible.value = true
+	}
 }
 
 const checkDetails = (id: number) => {
@@ -755,8 +800,57 @@ const getContractDetails = async () => {
 		onSelectChange(keys, selectedContract.value)
 	}
 }
-const findIndividualTeamType = async () => {
-	const res = await api.findIndividualTeamType()
+const findByIdTeamType = async () => {
+	let allFeesProducts = []
+	const res = await api.findIndividualTeamType();
+
+	for (let i = 0; i < res.productVos.length; i++) {
+		// 综费产品itemId为4
+		if (res.productVos[i].itemId === 4) {
+			if (!res.productVos[i].productId) {
+				travelStore.isOptional = true;
+				const res = await api.travelManagement.comprehensiveFeeProduct({
+					pageNo: 1,
+					pageSize: 99999,
+					status: 1
+				});
+				allFeesProducts = res.content.map((it: any) => {
+					it.isDaily = it.confirmDailyCharge ? true : false;
+					it.productName = it.comprehensiveFeeProductName;
+					return it;
+				});
+			} else {
+				travelStore.isOptional = false;
+				const result = await api.travelManagement.findProductInfo(res.productVos[i].productId)
+				result.peopleCount = travelStore.touristList.length;
+				result.unPrice = result.feeNumber;
+				result.isDaily = result.confirmDailyCharge ? true : false;
+				result.productName = result.comprehensiveFeeProductName;
+				result.dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day')
+				result.totalMoney = getAmount(
+					result.confirmDailyCharge,
+					result.feeNumber,
+					result.feeModel
+				)
+				allFeesProducts.push(result)
+
+			}
+		} else if (res.productVos[i].itemId === 2) {
+
+		} else if (res.productVos[i].itemId === 1) {
+
+		}
+
+	}
+	if (travelStore.productList[0]?.productId) {
+		travelStore.curentProduct = allFeesProducts.filter((it: any) => it.oid === travelStore.productList[0].productId);
+	} else if (allFeesProducts.length >= 1) {
+		console.log(allFeesProducts)
+		travelStore.curentProduct = cloneDeep([allFeesProducts[0]]);
+	} else {
+		travelStore.curentProduct = [];
+	}
+	travelStore.setCompositeProducts(allFeesProducts);
 }
 watch(
 	() => route.query.id,
@@ -765,6 +859,7 @@ watch(
 			form.value.oid = newVal
 			isAdd.value = false
 			getGuideList()
+			findByIdTeamType()
 			getContractDetails()
 			getTraveDetail()
 		}
@@ -772,7 +867,7 @@ watch(
 	{ immediate: true })
 onMounted(() => {
 	getGuideList()
-	findIndividualTeamType()
+	findByIdTeamType()
 })
 </script>
 

@@ -104,6 +104,7 @@ export const getOptions = (props: any) => {
     descriptions: 
       `（共<span style="color: red;">${props.touristList?.total}</span>人）`,
     dataSource: props.touristList?.content,
+    total: props.touristList?.total,
     pagination: true
   }
   let trafficOption = {
