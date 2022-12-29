@@ -4,7 +4,7 @@
 			<div class="search-bar">
 				<div class="item">
 					<span class="field-input item">输入搜索</span>
-					<a-input class="input-search item" v-model:value="tableState.tableData.param.itemName" placeholder="门票名称/关键词" />
+					<a-input class="input-search item" v-model:value="tableState.tableData.param.itemName" placeholder="核销项目名称" />
 				</div>
 				<div class="item">
 					<span class="field-select item">归属景区</span>
@@ -92,7 +92,7 @@ const columns: TableColumnsType = [
 		width: 100,
 	},
 	{
-		title: '演出票名称',
+		title: '核销项目名称',
 		dataIndex: 'itemName',
 		key: 'itemName',
 		width: 300,

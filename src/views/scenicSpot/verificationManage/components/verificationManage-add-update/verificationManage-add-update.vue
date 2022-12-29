@@ -125,6 +125,11 @@ watch(
 					});
 				}
 			}
+
+			//当只有一个景区时，默认选择该景区
+			if (scenicSpotOptionsData?.value?.length === 1) {
+				formValidate.value.scenicId = scenicSpotOptionsData.value[0]?.value;
+			}
 		});
 		dialogVisible.value = nVal;
 		if (dialogVisible.value) {
