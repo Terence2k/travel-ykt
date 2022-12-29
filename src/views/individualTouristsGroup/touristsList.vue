@@ -30,7 +30,7 @@
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
-							{{ `${record.startDate}~${record.endDate}` }}
+							{{ record.startDate + ' - ' + record.endDate }}
 						</template>
 					</template>
 				</CommonTable>
@@ -55,7 +55,7 @@
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
-							{{ `${record.startDate}~${record.endDate}` }}
+							{{ record.startDate + ' - ' + record.endDate }}
 						</template>
 					</template>
 				</CommonTable>
@@ -82,7 +82,7 @@
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
-							{{ `${record.startDate}~${record.endDate}` }}
+							{{ record.startDate + ' - ' + record.endDate }}
 						</template>
 					</template>
 				</CommonTable>
@@ -107,7 +107,7 @@
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
-							{{ `${record.startDate}~${record.endDate}` }}
+							{{ record.startDate + ' - ' + record.endDate }}
 						</template>
 					</template>
 				</CommonTable>
@@ -131,7 +131,7 @@
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
-							{{ `${record.startDate}~${record.endDate}` }}
+							{{ record.startDate + ' - ' + record.endDate }}
 						</template>
 					</template>
 				</CommonTable>
@@ -157,7 +157,7 @@
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
-							{{ `${record.startDate}~${record.endDate}` }}
+							{{ record.startDate + ' - ' + record.endDate }}
 						</template>
 					</template>
 				</CommonTable>
@@ -181,7 +181,7 @@
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
-							{{ `${record.startDate}~${record.endDate}` }}
+							{{ record.startDate + ' - ' + record.endDate }}
 						</template>
 					</template>
 				</CommonTable>
@@ -207,7 +207,7 @@
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
-							{{ `${record.startDate}~${record.endDate}` }}
+							{{ record.startDate + ' - ' + record.endDate }}
 						</template>
 					</template>
 				</CommonTable>
@@ -690,17 +690,6 @@ const getIsTravelVisible = () => {
 	if (isTravelVisible.value) {
 		initOpeion();
 	}
-};
-const goToChange = (row: any) => {
-	state.changeParams.id = row.oid;
-	state.changeParams.itineraryNo = row.itineraryNo;
-	api.travelManagement.checkVerifyByItineraryId(row.itineraryNo).then((res) => {
-		/* if (res) {
-      modelValue.value = true;
-    } else {
-      message.error('该行程单发生过核销不可变更');
-    } */
-	});
 };
 const goToPath = (row: any) => {
 	goto('newGroup', {
