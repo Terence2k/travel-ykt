@@ -8,7 +8,9 @@
         当前状态：{{state.basicData.statusName}}
       </div>
       <div class="btns">
-        <a-button type="primary" v-print="print">打印行程单</a-button>
+        
+        <button ref="printBtn" v-print="print" style="opacity: 0;">点击打开打印预览</button>	
+        <a-button type="primary" @click="getPrint">打印行程单</a-button>
       </div>
     </div>
     <a-row>
@@ -113,6 +115,14 @@
     },
     itineraryDetail: {}
   });
+  const printBtn = ref();
+
+  const getPrint = () => {
+    state.param.pageNo = 1;
+    state.param.pageSize = 999999;
+    getItineraryDetail(route.currentRoute.value.query.oid, true);
+  }
+
   const print = ref({
     id: 'printBox',//这里的id就是上面我们的打印区域id，实现指哪打哪
     popTitle: '', // 打印配置页上方的标题
@@ -125,7 +135,11 @@
     previewOpenCallback() {}, // 预览窗口打开时的callback
     beforeOpenCallback() {}, // 开始打印之前的callback
     openCallback() {}, // 调用打印时的callback
-    closeCallback() {}, // 关闭打印的callback(无法区分确认or取消)
+    closeCallback() {
+      state.param.pageNo = 1;
+      state.param.pageSize = 10;
+      getItineraryDetail(route.currentRoute.value.query.oid);
+    }, // 关闭打印的callback(无法区分确认or取消)
     clickMounted() {},
 
   })
@@ -152,7 +166,7 @@
     getItineraryDetail(route.currentRoute.value.query.oid);
 	}
 
-  const getItineraryDetail = (orderId: any) => {
+  const getItineraryDetail = (orderId: any, isPrint?: any) => {
     let queryData = {
       oid: orderId,
       ...state.param
@@ -160,6 +174,11 @@
 	  api.travelManagement.getItineraryDetail(queryData).then((res: any) => {
       state.basicData = res.basic;
       state.itineraryDetail = res;
+      nextTick(() => {
+        if (isPrint) {
+          printBtn.value.click();
+        }
+      })
 		})
 		.catch((err: any) => {
 			console.log(err);
