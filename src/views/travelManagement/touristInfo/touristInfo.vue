@@ -8,6 +8,16 @@
 		</div>
 		<a-form ref="formRef" :rules="rulesRef" :model="editableData" autocomplete="off" labelAlign="left">
 			<CommonTable :row-selection="{ onSelect }" :columns="columns" :dataSource="tableData" :scrollY="false">
+				
+				<template #headerCell="{ column }">
+					<template v-if="mustFillIn.includes(column.key)">
+						<span style="font-weight: bold">
+							<span class="red-code">*</span>
+							{{column.title}}
+						</span>
+					</template>
+				</template>
+				
 				<template #bodyCell="{ column, text, index, record }">
 					<!-- formRef -->
 
@@ -37,7 +47,7 @@
 					<template v-if="inputKey.includes(column.key)">
 						<div>
 							<a-form-item v-if="editableData[record.key ? record.key : record.oid]" :name="[record.key ? record.key : record.oid, column.key]">
-								<a-input @blur="changeIDCard(record.key ? record.key : record.oid, column.key)" v-model:value="editableData[record.key ? record.key : record.oid][column.key]" placeholder="请输入" />
+								<a-input @blur="(val) => changeIDCard(val, record.key ? record.key : record.oid, column.key)" v-model:value="editableData[record.key ? record.key : record.oid][column.key]" placeholder="请输入" />
 							</a-form-item>
 
 							<template v-else>
@@ -168,7 +178,8 @@ const {
 	isWarring,
 	checkCode,
 	checkHighRish,
-	highRish
+	highRish,
+	mustFillIn
 } = useTouristInfo(props, emits);
 </script>
 <style lang="less" scoped>
