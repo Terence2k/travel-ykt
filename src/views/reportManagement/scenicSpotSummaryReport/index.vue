@@ -405,15 +405,6 @@ const getViewList = async () => {
 	state.viewList = result;
 	console.log(state.viewList, `state.viewList`);
 };
-// const timeChange = (arr: any) => {
-// 	if (arr && arr.length > 0) {
-// 		state.tableData.param.settlementStartTime = arr[0]['$d'];
-// 		state.tableData.param.settlementEndTime = arr[1]['$d'];
-// 	} else {
-// 		state.tableData.param.settlementStartTime = null;
-// 		state.tableData.param.settlementEndTime = null;
-// 	}
-// };
 const timeChange = (arr: any) => {
 	console.log(arr);
 	if (arr && arr.length > 0) {
