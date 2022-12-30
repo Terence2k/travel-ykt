@@ -46,6 +46,7 @@
 										end-placeholder="带团结束日期"
 										@calendar-change="handelChange"
 										value-format="YYYY-MM-DD HH:mm:ss"
+										@change="(event) => handleTime(event, record.key ? record.key : record.oid)"
 										:disabled-hours="(type: string) => disabledRangeHours(currentDate, type)"
 										:disabled-minutes="(_: any, type: string) => disabledRangeMinutes(currentDate, type)"
 										:disabled-seconds="(_: any, m: any , type: string) => disabledRangeSeconds(currentDate, type)"
@@ -134,6 +135,7 @@ const {
 	formRef,
 	getGuideList, 
 	add,
+	handleTime,
 	del, guideData, guideChange, travelStore } = useGuideInfo(props, emits)
 	getGuideList()
 </script>
