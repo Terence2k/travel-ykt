@@ -182,6 +182,7 @@ const isRefresh = ref('0')
 const back = () => {
 	dateFormRef.value?.resetFields()
 	formRef.value?.resetFields()
+	isAdd.value = true
 	router.push({
 		name: 'individualTouristsGroup',
 		/* name: 'electronicContratList',
@@ -198,7 +199,31 @@ const labelWidth = '110px'
 const labelCol = { style: { width: labelWidth } }
 const addContractVisible = ref(false)
 type formType = {
+	routeName?: string
+	guideOid?: number
+	travelOperatorName?: string
+	itineraryNo?: number
+	selfTeamNo?: string
+	travelData?: string[]
+	groupTypeName?: string
+	travelOperatorPhone?: string
+	touristPeopleNumber?: number
+	licensePlate?: string
+	startDate?: string
+	endDate?: string
+	groupType?: number
+	guideName?: string
+	guide?: {
+		guideOid?: number
+		guideName?: string
+	}
 	totalExpenses?: number
+	oid?: string
+	contracts?: {
+		contractId: number,
+		contractType: string
+	}[]
+	compositeProducts?: any[]
 }
 const form = ref<formType>({})
 const formRef = ref()
@@ -235,7 +260,10 @@ const dateFormat = 'YYYY-MM-DD';
 const dateTimeFormat = 'YYYY-MM-DD HH:mm:ss';
 const activeKey = ref('1')
 const CloneActiveKey = ref('1')
-const guideOption = ref([])
+const guideOption = ref<{
+	oid: number
+	guideName: string
+}[]>([])
 const touristColumns = [
 	{
 		title: '序号',
@@ -372,18 +400,6 @@ const cmpHealthyColor = computed(() => (text: string) => {
 		return 'red_text'
 	}
 })
-interface CostItem {
-	priceName: string;
-	adultPrice: string;
-	childPrice: string;
-	adultNumber: number;
-	childNumber: number;
-	individualSubtotal: string;
-	time: [];
-	isEdit: boolean,
-	isOperate?: boolean
-}
-const dataCostSource = ref<CostItem[]>([])
 const dateRules = {
 	travelData: [
 		{
@@ -556,7 +572,7 @@ const getTraveDetail = () => {
 			// travelStore.defaultEndTime = new Date(2022, 12, 1, dateTime.end.hour, dateTime.end.min, dateTime.end.second)
 			// console.log(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end, '-----');
 			// travelStore.setDisabledTime = disabledRangeTime(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end) as any;
-			route.query.tab && setTimeout(() => (activeKey.value = route.query.tab));
+			route.query.tab && setTimeout(() => (activeKey.value = route.query.tab as string));
 			if (route.query.tab === '2') {
 				const allFeesProducts = travelStore.compositeProducts.map((it: any) => {
 					it.peopleCount = travelStore.touristList.length;
@@ -593,7 +609,7 @@ const nextTep = (val: string) => {
 const tabClick = () => {
 	CloneActiveKey.value = cloneDeep(activeKey.value)
 }
-const deleteContract = (index: number, record: any) => {
+const deleteContract = (index: number, record: { touristPeopleNumber: number, contractAmount: number }) => {
 	selectedContract.value.splice(index, 1)
 	selectedRowKeys.value.splice(index, 1)
 	form.value.touristPeopleNumber -= record.touristPeopleNumber
@@ -636,6 +652,11 @@ const guideChange = (val: any) => {
 			guideOid: form.value.guideOid,
 			guideName
 		}
+	} else {
+		form.value.guide = {
+			guideOid: undefined,
+			guideName: undefined
+		}
 	}
 }
 const editDraft = async (callBack?: any) => {
@@ -654,7 +675,7 @@ const saveDraft = async (showMessage?: boolean) => {
 			if (isAdd.value) {
 				const res = await api.createIndividualItinerary(form.value)
 				if (res) {
-					res && sessionStorage.setItem('traveList', JSON.stringify({ oid: res }));
+					sessionStorage.setItem('traveList', JSON.stringify({ oid: res }));
 					form.value.oid = res
 					isAdd.value = false
 					editDraft()
@@ -745,44 +766,14 @@ const auditConform = async () => {
 }
 const submitAuditInfo = ref('')
 const submitAudit = async () => {
+	await saveDraft()
 	const res = await api.queryIndividualTotalFee(form.value.oid)
 	if (res) {
 		submitAuditInfo.value = res
 		auditVisible.value = true
 	}
 }
-
-const checkDetails = (id: number) => {
-
-}
-// 添加行程费用
-const handleCostAdd = () => {
-	const newData = {
-		isEdit: true,
-		isOperate: true,
-		priceName: "",
-		adultPrice: "",
-		childPrice: "",
-		adultNumber: 0,
-		childNumber: 0,
-		individualSubtotal: "",
-		time: []
-	};
-	dataCostSource.value.push(newData);
-};
-// 删除行程费用
-const onCostDelete = (index: number) => {
-	dataCostSource.value.splice(index, 1)
-};
-const save = (obj: any) => {
-	obj.isEdit = false
-};
-const cancel = (obj: any) => {
-	obj.isEdit = false
-};
-const edit = (obj: any) => {
-	obj.isEdit = true
-};
+const checkDetails = (id: number) => { }
 const getGuideList = async () => {
 	let res = await api.travelManagement.getGuideList();
 	guideOption.value = res;
@@ -855,7 +846,7 @@ watch(
 	() => route.query.id,
 	(newVal) => {
 		if (newVal) {
-			form.value.oid = newVal
+			form.value.oid = newVal as string
 			isAdd.value = false
 			getGuideList()
 			findByIdTeamType()

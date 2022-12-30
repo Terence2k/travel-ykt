@@ -8,7 +8,7 @@
 				<a-input placeholder="请输入移动云平台短信ID" v-model:value="state.formState.templateId" />
 			</a-form-item>
 			<a-form-item label="短信模板" name="smsContent">
-				<a-textarea style="height: 100px;" placeholder="请输入短信模板" v-model:value="state.formState.smsContent" />
+				<a-textarea style="height: 100px" placeholder="请输入短信模板" v-model:value="state.formState.smsContent" />
 			</a-form-item>
 			<a-form-item label="状态" name="isEnable">
 				<a-radio-group :options="options" v-model:value="state.formState.isEnable" />
@@ -45,10 +45,10 @@ const state = reactive({
 	},
 });
 const rules = {
-	taskName: [{ required: true, message: 'Please input Activity name', trigger: 'blur' }],
-	templateId: [{ required: true, message: 'Please input Activity name', trigger: 'blur' }],
-	smsContent: [{ required: true, message: 'Please input Activity name', trigger: 'blur' }],
-	isEnable: [{ required: true, message: 'Please input Activity name', trigger: 'blur' }],
+	taskName: [{ required: true, message: '请输入短信名称', trigger: 'blur' }],
+	templateId: [{ required: true, message: '请输入移动云平台短信ID', trigger: 'blur' }],
+	smsContent: [{ required: true, message: '请输入短信模板', trigger: 'blur' }],
+	isEnable: [{ required: true, message: '请选择状态', trigger: 'blur' }],
 };
 const options = [
 	{ label: '禁用', value: 1 },
@@ -59,31 +59,33 @@ const dialogVisible = ref(false);
 
 const cancel = () => {
 	formRef.value.resetFields();
-	emit('cancel')
-}
+	emit('cancel');
+};
 
 const onSumbit = () => {
-	api.addSmsTemplate(state.formState).then((res:any)=>{
-		message.success('新增成功');
-		emit('onSearch')
-		cancel()
-		return
-	})
+	formRef.value.validateFields().then(() => {
+		api.addSmsTemplate(state.formState).then((res: any) => {
+			message.success('新增成功');
+			emit('onSearch');
+			cancel();
+			return;
+		});
+	});
 };
 
 watch(
 	() => props.modelValue,
 	async (nVal) => {
 		dialogVisible.value = nVal;
-		if(dialogVisible.value){
-			state.formState.taskName = props.params.taskName
-			state.formState.templateId = props.params.templateId
-			state.formState.smsContent = props.params.smsContent
-			state.formState.isEnable = props.params.isEnable
-			state.formState.oid =  props.params.oid
-			state.formState.sendModel =  props.params.sendModel
-			state.formState.sendTime =  props.params.sendTime
-			state.formState.taskCode =  props.params.taskCode
+		if (dialogVisible.value) {
+			state.formState.taskName = props.params.taskName;
+			state.formState.templateId = props.params.templateId;
+			state.formState.smsContent = props.params.smsContent;
+			state.formState.isEnable = props.params.isEnable;
+			state.formState.oid = props.params.oid;
+			state.formState.sendModel = props.params.sendModel;
+			state.formState.sendTime = props.params.sendTime;
+			state.formState.taskCode = props.params.taskCode;
 		}
 	}
 );
