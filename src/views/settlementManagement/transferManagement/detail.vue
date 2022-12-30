@@ -4,7 +4,7 @@
 		<CommonTable
 			:dataSource="state.tableData.data"
 			:columns="columns"
-			:scroll="{ x: '100%', y: '100%' }"
+			:scroll="{ x: '100%' }"
 			rowKey="oid"
 			:row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
 		>

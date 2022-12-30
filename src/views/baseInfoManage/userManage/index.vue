@@ -40,7 +40,7 @@
           <div class="action-btns">
             <a @click="addOrUpdate({  row: record,  handle: 'update'})" v-permission="'编辑'">编辑</a>
             <!-- <a @click="resetPassword(record.oid)">重置密码</a> -->
-            <a @click="addOrUpdate({  row: record,  handle: 'update'})" v-permission="'重置密码'">重置密码</a>
+            <a @click="resetPw({  row: record,  handle: 'update'})" v-permission="'重置密码'">重置密码</a>
             <template v-if="record.roleList.some((item: any) => item.roleCode != 'PLATFORM_SUPER_ADMIN')">
               <a @click="editStatus(record.oid, 0)" v-if="record.userStatus === 1" v-permission="'禁用'">禁用</a>
               <a @click="editStatus(record.oid, 1)" v-if="record.userStatus === 0" v-permission="'启用'">启用</a>
@@ -61,6 +61,11 @@
     :params="state.params"
     @onSearch="onSearch"
     @cancel="cancel"/>
+  <ResetPassword 
+    v-model="state.operationModal.isResetPw"
+    :params="state.params"
+    @onSearch="onSearch"
+    @cancel="cancel"/>
 </template>
 
 <script setup lang="ts">
@@ -69,6 +74,7 @@
   import CommonSearch from '@/components/common/CommonSearch.vue'
   import SearchItem from '@/components/common/CommonSearchItem.vue'
   import AddUpdate from './AddUpdate.vue';
+  import ResetPassword from './ResetPassword.vue';
   import api from '@/api';
   import { message } from 'ant-design-vue';
   import { getUserInfo } from '@/utils/util';
@@ -96,6 +102,7 @@
     params: {},
     operationModal: {
       isAddOrUpdate: false,
+      isResetPw: false
     },
     optionRoleList: [] as any
   });
@@ -125,6 +132,7 @@
 
   const cancel = (): any => {
     state.operationModal.isAddOrUpdate = false;
+    state.operationModal.isResetPw = false;
   };
 
   const addOrUpdate = (param: any) => {
@@ -139,13 +147,24 @@
     state.operationModal.isAddOrUpdate = true;
   };
 
+  const resetPw = (param: any) => {
+    const { row, handle } = param;
+    console.log(row);
+    console.log(handle);
+
+    state.params = {};
+    if (handle === 'update') {
+      state.params = row;
+    }
+    state.operationModal.isResetPw = true;
+  };
+
   const editStatus = (id: any, status: any) => {
     let formData = new FormData();
     formData.append('oid', id);
     formData.append('status', status);
     api.editStatus(formData).then((res: any) => {
       message.success('操作成功');
-      state.operationModal.isAddOrUpdate = false;
       onSearch();
     })
   }

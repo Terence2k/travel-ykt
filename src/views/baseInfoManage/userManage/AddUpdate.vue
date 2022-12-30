@@ -98,7 +98,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, Ref, computed, watch, toRefs, reactive } from 'vue';
+  import { ref, Ref, computed, watch, reactive } from 'vue';
 	import BaseModal from '@/components/common/BaseModal.vue';
   import type { FormInstance } from 'ant-design-vue';
   import api from '@/api';
@@ -115,7 +115,7 @@
       },
       params: Object
   })
-  const emit = defineEmits(['update:modelValue', 'onSearch']);
+  const emit = defineEmits(['update:modelValue', 'onSearch', 'cancel']);
   const dialogVisible = ref(false);
   const formRef = ref<FormInstance>();
   const formValidate: Ref<Record<string, any>> = ref({});

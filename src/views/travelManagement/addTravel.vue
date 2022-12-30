@@ -265,6 +265,12 @@ const getTraveDetail = () => {
 			res.basic.touristNum = res.basic.touristCount || 0;
 			travelStore.setBaseInfo(res.basic);
 			res.attachmentList.length && travelStore.setFileInfo(res.attachmentList);
+
+			res.guideList = res.guideList.map((it: any) => {
+				it.time = [it.startDate, it.endDate];
+				return it;
+			});
+
 			travelStore.setGuideList(res.guideList);
 			travelStore.setTouristList(
 				res.touristList.content.map((it: any) => {
@@ -279,6 +285,7 @@ const getTraveDetail = () => {
 				it.time = [it.startDate, it.endDate];
 				return it;
 			});
+			
 			travelStore.setTrafficList(res.transportList);
 			res.waitBuyItem.waitBuyHotel = res.waitBuyItem.waitBuyHotel
 				? res.waitBuyItem.waitBuyHotel.map((it: any) => {

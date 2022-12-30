@@ -226,7 +226,7 @@
 	<CommonModal title="审核企业变更信息" v-model:visible="changeAuditVisible" @close="auditClose" @cancel="changeAuditCancel"
 		@conform="auditConform" :conform-text="'同意变更'" :cancel-text="'驳回变更'" width="50%">
 		<div class="table_box">
-			<table class="change_table" cellpadding="16px" border="1">
+			<table class="change_table" cellpadding="16px" border="1" v-if="isInfoChange">
 				<tr class="row">
 					<th class="key_hd">变更项目</th>
 					<th class="key_hd">变更前内容</th>
@@ -258,6 +258,9 @@
 					<td class="value" v-else>{{ getComputedVal(item, newArrList[item]) }}</td>
 				</tr>
 			</table>
+			<div class="no_info_change" v-else>
+				无信息变更
+			</div>
 		</div>
 	</CommonModal>
 </template>
@@ -295,6 +298,7 @@ const props = defineProps<{
 	type?: string,
 	groupId?: number
 }>()
+const isInfoChange = ref(true)
 const activeKey = ref('1')
 const modalVisible = ref(false)
 const disableVisible = ref(false)
@@ -774,6 +778,11 @@ const auditEnterprise = async (record: any) => {
 			oldArrList.value['reduceRules'] = oldList?.fullRule && oldList?.reduceRule && `满${oldList?.fullRule}减${oldList?.reduceRule}`
 			changeKeys.value.push('reduceRules')
 		}
+		if (JSON.stringify(newArrList.value) == "{}") {
+			isInfoChange.value = false
+		} else {
+			isInfoChange.value = true
+		}
 		changeAuditVisible.value = true
 		isRegiste.value = false
 	}
@@ -974,5 +983,12 @@ onMounted(() => {
 			background: rgba(245, 247, 250, 0.39);
 		}
 	}
+}
+.no_info_change {
+	padding: 20px 0;
+	text-align: center;
+	color: #d7d7d7;
+	font-size: 40px;
+	font-weight: 500;
 }
 </style>
