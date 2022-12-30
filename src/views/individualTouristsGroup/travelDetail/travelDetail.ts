@@ -1,3 +1,4 @@
+import { accDiv } from '@/utils/compute';
 const sharedOnCell = (_, index) => {
   console.log('_:', _);
   console.log('index:', index);
@@ -86,8 +87,8 @@ export const getOptions = (props: any) => {
       },
       {
         title: '健康码',
-        dataIndex: 'healthCodeName',
-        key: 'healthCodeName',
+        dataIndex: 'healthyCode',
+        key: 'healthyCode',
       },
       {
         title: '中高风险',
@@ -222,28 +223,28 @@ export const getOptions = (props: any) => {
       },
       {
         title: '收费模式',
-        dataIndex: 'insuranceType',
-        key: 'insuranceType',
+        dataIndex: 'feeModelName',
+        key: 'feeModelName',
       },
       {
         title: '是否按天收取',
-        dataIndex: 'protectDays',
-        key: 'protectDays',
+        dataIndex: 'isDaily',
+        key: 'isDaily',
       },
       {
         title: '单价（元）',
-        dataIndex: 'startDate',
-        key: 'startDate',
+        dataIndex: 'unitPrice',
+        key: 'unitPrice',
       },
       {
         title: '人数',
-        dataIndex: 'endDate',
-        key: 'endDate',
+        dataIndex: 'peopleCount',
+        key: 'peopleCount',
       },
       {
         title: '行程天数',
-        dataIndex: 'totalFee',
-        key: 'totalFee',
+        dataIndex: 'dayCount',
+        key: 'dayCount',
       },
       {
         title: '总金额（元）',
@@ -258,7 +259,7 @@ export const getOptions = (props: any) => {
     ],
     title: '综费产品',
     descriptions:
-      `费用总计<span style="color: red;">${props.hotelList?.reduce((prev: any, curr: any) => prev + curr.totalFee ? curr.totalFee : 0, 0) / 100}</span>元，订单状态：`,
+      `费用总计<span style="color: red;">${props.hotelList?.reduce((prev: any, curr: any) => prev + accDiv(curr.totalFee ? curr.totalFee : 0, 100), 0) / 100}</span>元`,
     dataSource: props.productList,
   }
   let hotelListOption = {
@@ -270,13 +271,13 @@ export const getOptions = (props: any) => {
       },
       {
         title: '可入住人数',
-        dataIndex: '',
-        key: '',
+        dataIndex: 'limitPeopleCount',
+        key: 'limitPeopleCount',
       },
       {
         title: '房型',
-        dataIndex: 'roomTypeName',
-        key: 'roomTypeName',
+        dataIndex: 'roomDetail',
+        key: 'roomDetail',
       },
       {
         title: '房间数量',
@@ -313,7 +314,7 @@ export const getOptions = (props: any) => {
     descriptions:
       `已预订<span style="color: red;">${props.hotelList?.length}</span>个酒店，
       房间数量：<span style="color: red;">${props.hotelList?.reduce((prev: any, curr: any) => prev + curr.roomCount, 0)}</span>;
-      费用总计：<span style="color: red;">${props.hotelList?.reduce((prev: any, curr: any) => prev + curr.orderFee, 0) / 100}</span>元`,
+      费用总计：<span style="color: red;">${props.hotelList?.reduce((prev: any, curr: any) => prev + accDiv(curr.orderFee, 100), 0)}</span>元`,
     dataSource: props.hotelList,
   }
   let ticketListOption = {
@@ -345,18 +346,18 @@ export const getOptions = (props: any) => {
       },
       {
         title: '团队游客人数',
-        dataIndex: '',
-        key: '',
-      },
-      {
-        title: '购票人数',
         dataIndex: 'peopleCount',
         key: 'peopleCount',
       },
       {
+        title: '购票人数',
+        dataIndex: 'reservePeopleCount',
+        key: 'reservePeopleCount',
+      },
+      {
         title: '费用（元）',
-        dataIndex: 'totalFee',
-        key: 'totalFee',
+        dataIndex: 'ticketTotalFee',
+        key: 'ticketTotalFee',
       },
       {
         title: '订单状态',
@@ -373,8 +374,8 @@ export const getOptions = (props: any) => {
     title: '景区费用',
     descriptions:
       `已预订<span style="color: red;">${props.ticketList?.length}</span>个景区，
-      游玩人数：<span style="color: red;">${props.ticketList?.reduce((prev: any, curr: any) => prev + curr.peopleCount, 0)}</span>；
-      费用总计：<span style="color: red;">${props.ticketList?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0) || 0}</span>元`,
+      游玩人数：<span style="color: red;">${props.ticketList?.reduce((prev: any, curr: any) => prev + parseInt(curr.peopleCount), 0)}</span>；
+      费用总计：<span style="color: red;">${props.ticketList?.reduce((prev: any, curr: any) => prev + curr.ticketTotalFee, 0) || 0}</span>元`,
     dataSource: props.ticketList,
   }
   let attachmentOption = {
@@ -398,6 +399,64 @@ export const getOptions = (props: any) => {
     title: '已上传的附件',
     dataSource: props.attachmentList,
   }
+  const contractOption = {
+    columns: [
+      {
+        title: '序号',
+        dataIndex: 'index',
+        key: 'index',
+      },
+      {
+        title: '合同编号',
+        dataIndex: 'contractNo',
+        key: 'contractNo',
+      },
+      {
+        title: '合同类型',
+        dataIndex: 'contractTypeName',
+        key: 'contractTypeName',
+      },
+      {
+        title: '内含线路/委托项目',
+        dataIndex: 'lineNames',
+        key: 'lineNames',
+      },
+      {
+        title: '人数',
+        dataIndex: 'touristPeopleNumber',
+        key: 'touristPeopleNumber',
+      },
+      {
+        title: '行程日期',
+        dataIndex: 'tripDate',
+        key: 'tripDate',
+      },
+      {
+        title: '合同签约旅行社',
+        dataIndex: 'companyName',
+        key: 'companyName',
+      },
+      {
+        title: '签署网点',
+        dataIndex: 'storeName',
+        key: 'storeName',
+      },
+      {
+        title: '合同费用（元）',
+        dataIndex: 'contractAmount',
+        key: 'contractAmount',
+      },
+      {
+        title: '操作',
+        dataIndex: '',
+        key: '',
+      },
+    ],
+    title: '已选择的合同',
+    descriptions:
+      `（${props.contractList?.length}）`,
+    dataSource: props.contractList,
+  }
   return {
     guideOption,
     touristOption,
@@ -406,6 +465,7 @@ export const getOptions = (props: any) => {
     productOption,
     hotelListOption,
     ticketListOption,
-    // attachmentOption
+    // attachmentOption,
+    contractOption
   }
 }

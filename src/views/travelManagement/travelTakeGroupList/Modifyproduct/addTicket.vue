@@ -78,7 +78,7 @@
 <script lang="ts" setup>
 import BaseModal from '@/components/common/BaseModal.vue';
 import { useTravelStore } from '@/stores/modules/travelManagementDetail';
-// import selectTicket from './selectTicket.vue';
+import selectTicket from './selectTicket.vue';
 import api from '@/api';
 import { cloneDeep, debounce } from 'lodash';
 import { validateRules, validateFields, generateGuid } from '@/utils';
