@@ -69,7 +69,11 @@
 				<CommonTable :dataSource="tableData.data" :columns="columns">
 					<template #bodyCell="{ column, record }">
 						<template v-if="column.key === 'businessLicenseUrl'">
-							<a-image width="100%" :src="record?.businessLicenseUrl" />
+							<a-image width="100%" :src="record?.businessLicenseUrl" v-if="record?.businessLicenseUrl" />
+							<span v-else>/</span>
+						</template>
+						<template v-if="column.key === 'creditCode'">
+							{{ record?.creditCode || '/' }}
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
@@ -93,7 +97,11 @@
 				<CommonTable :dataSource="auditTableData.data" :columns="auditColumns">
 					<template #bodyCell="{ column, record }">
 						<template v-if="column.key === 'businessLicenseUrl'">
-							<a-image width="100%" :src="record?.businessLicenseUrl" />
+							<a-image width="100%" :src="record?.businessLicenseUrl" v-if="record?.businessLicenseUrl" />
+							<span v-else>/</span>
+						</template>
+						<template v-if="column.key === 'creditCode'">
+							{{ record?.creditCode || '/' }}
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
@@ -115,7 +123,11 @@
 				<CommonTable :dataSource="failTableData.data" :columns="failColumns">
 					<template #bodyCell="{ column, record }">
 						<template v-if="column.key === 'businessLicenseUrl'">
-							<a-image width="100%" :src="record.businessLicenseUrl" />
+							<a-image width="100%" :src="record?.businessLicenseUrl" v-if="record?.businessLicenseUrl" />
+							<span v-else>/</span>
+						</template>
+						<template v-if="column.key === 'creditCode'">
+							{{ record?.creditCode || '/' }}
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
@@ -629,18 +641,15 @@ const failPageSideChange = (current: number, size: number) => {
 	state.failTableData.param.pageSize = size;
 	onFailSearch();
 }
-const getData = (res: any) => {
-	let newArr = res.map(async (item: any) => {
+const getData = (res: any): [] => {
+	return res.map(async (item: any) => {
 		if (item.businessLicenseUrl) {
 			if (item.businessLicenseUrl.indexOf('http:') === -1) {
 				item.businessLicenseUrl = await awsGetPreSignedUrl(item.businessLicenseUrl)
-				return item
 			}
-		} else {
-			return item
 		}
+		return item
 	})
-	return newArr
 }
 const onSearch = async () => {
 	let { content, total } = await api.findCompanyList(state.tableData.param)
