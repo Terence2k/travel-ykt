@@ -278,7 +278,7 @@ export const useTravelStore = defineStore({
 		// 预定
 		reserveStatus(): boolean {
 			const res: any = this.itineraryStatusList.filter((it: any) => it.status == this.baseInfo.status)[0];
-			return res && (res.codeName === CODEVALUE.TRAVE_CODE.WAIT_RESERVE_HOTEL || res.codeName === CODEVALUE.TRAVE_CODE.WAIT_GO_OUT);
+			return res && (res.codeName === CODEVALUE.TRAVE_CODE.WAIT_RESERVE_HOTEL || res.codeName === CODEVALUE.TRAVE_CODE.WAIT_GO_OUT || res.codeName === CODEVALUE.TRAVE_CODE.AT_OUT);
 		},
 	},
 	actions: {

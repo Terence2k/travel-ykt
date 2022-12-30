@@ -18,8 +18,8 @@ export const getOptions = (props: any) => {
       },
       {
         title: '导游星级',
-        dataIndex: 'guideTypeName',
-        key: 'guideTypeName',
+        dataIndex: 'guideLevelName',
+        key: 'guideLevelName',
       },
       {
         title: '导游证编号',

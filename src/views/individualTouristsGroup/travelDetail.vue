@@ -1,7 +1,12 @@
 <template>
   <div class="container" id="printBox">
-    <div class="page-title">
-      行程详情预览和打印
+    <div class="header">
+      <div class="page-title">
+        行程详情预览和打印
+      </div>
+      <span class="close_btn" @click="back">
+        <close-outlined />
+      </span>
     </div>
     <div class="status-btns">
       <div class="status">
@@ -137,6 +142,15 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import { getOptions } from '@/views/individualTouristsGroup/travelDetail/travelDetail';
 import { accDiv } from '@/utils/compute';
 import dayjs from 'dayjs';
+import { CloseOutlined } from '@ant-design/icons-vue';
+import { useRouter, useRoute } from 'vue-router';
+const router = useRouter();
+const route = useRoute();
+const back = () => {
+  router.push({
+    name: 'individualTouristsGroup',
+  })
+}
 const state = reactive({
   basicData: {
     travelOperator: {},
@@ -155,7 +169,7 @@ const printBtn = ref();
 const getPrint = () => {
   state.param.pageNo = 1;
   state.param.pageSize = 999999;
-  getItineraryDetail(route.currentRoute.value.query.oid, true);
+  getItineraryDetail(router.currentRoute.value.query.oid, true);
 }
 
 const print = ref({
@@ -173,12 +187,12 @@ const print = ref({
   closeCallback() {
     state.param.pageNo = 1;
     state.param.pageSize = 10;
-    getItineraryDetail(route.currentRoute.value.query.oid);
+    getItineraryDetail(router.currentRoute.value.query.oid);
   }, // 关闭打印的callback(无法区分确认or取消)
   clickMounted() { },
 
 })
-const route = useRouter();
+
 // 行程单二维码标签样式
 const labelStyle = computed((): CSSProperties => {
   return {
@@ -245,7 +259,7 @@ const cmpHealthyColor = computed(() => (text: string) => {
 })
 const onHandleCurrentChange = (e: any) => {
   state.param.pageNo = e;
-  getItineraryDetail(route.currentRoute.value.query.oid);
+  getItineraryDetail(router.currentRoute.value.query.oid);
 }
 // 批量获取健康码
 const getHealthyCodes = async (ids: number[]) => {
@@ -310,16 +324,32 @@ const getItineraryDetail = (orderId: any, isPrint?: any) => {
         printBtn.value.click();
       }
     })
-  })
-    .catch((err: any) => {
-      console.log(err);
-    });
+  }).catch((err: any) => {
+    console.log(err);
+  });
 }
-getItineraryDetail(route.currentRoute.value.query.oid);
+watch(
+  () => route,
+  (newVal) => {
+    if (newVal.name === "individualTouristsGroupDetail" && newVal.query.oid) {
+      getItineraryDetail(router.currentRoute.value.query.oid);
+    }
+  },
+  { immediate: true, deep: true })
 </script>
 <style lang="less" scoped>
 .container {
   padding: 0 20px;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .close_btn {
+      cursor: pointer;
+    }
+  }
 
   .page-title {
     line-height: 44px;
