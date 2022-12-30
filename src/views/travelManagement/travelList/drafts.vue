@@ -22,7 +22,7 @@
 			<template v-if="column.key === 'action'">
 				<div class="action-btns">
 					<a @click="goToPath(record)" v-permission="'草稿_编辑'">编辑</a>
-					<a v-if="record.groupType == GroupMode.TeamGroup" v-permission="'草稿_邀请地接社编辑'">邀请地接社编辑</a>
+					<!-- <a v-if="record.groupType == GroupMode.TeamGroup" v-permission="'草稿_邀请地接社编辑'">邀请地接社编辑</a> -->
 					<a @click="sendGroup(record.oid)" v-permission="'草稿_发团'">发团</a>
 					<a-popconfirm
 						title="确定删除该行程单？"

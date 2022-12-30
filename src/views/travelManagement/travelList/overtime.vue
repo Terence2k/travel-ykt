@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
-			<template #bodyCell="{ column, text, index }">
+			<template #bodyCell="{ column, text, index, record }">
 				<template v-if="column.key === 'index'">
 					<div>
 							{{(travelStore.traveList.overtime.params.pageNo - 1) * (travelStore.traveList.overtime.params.pageSize) + (index + 1)}}
@@ -14,8 +14,8 @@
 
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a v-permission="'已过期_置为草稿'">置为草稿</a>
-						<a v-permission="'已过期_查看日志'">查看日志</a>
+						<a @click="revokeGroupToDraft(record.oid)" v-permission="'已过期_置为草稿'">置为草稿</a>
+						<!-- <a v-permission="'已过期_查看日志'">查看日志</a> -->
 					</div>
 				</template>
 			</template>
@@ -37,6 +37,7 @@
 
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, GroupStatus } from '@/enum'
+	import { message } from 'ant-design-vue';
 
 	const travelStore = useTravelStore();
 	const state = reactive({
@@ -105,6 +106,11 @@
 		const res = await travelStore.getTravelList(travelStore.traveList.overtime.params);
 		
 		travelStore.setTraveList(res, 'overtime')
+	}
+	const revokeGroupToDraft = async (id:number) => {
+		await api.travelManagement.revokeGroupToDraft(id);
+		onSearch()
+		message.success('操作成功')
 	}
 	const onHandleCurrentChange = (e:any) => {
 		travelStore.traveList.overtime.params.pageNo = e
