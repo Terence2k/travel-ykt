@@ -169,7 +169,6 @@ const getList = async (): Promise<void> => {
 	api.travelManagement.getTravelTemplateList(state.tableData.param).then((res: any) => {
 		state.tableData.total = res.total;
 		state.tableData.data = res.content;
-		state.tableData.param.pageNo = 1
 	});
 };
 const react = () => {

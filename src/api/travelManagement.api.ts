@@ -703,5 +703,14 @@ export const travelManagement = {
 			showLoading: true,
 			data
 		});
-	}
+	},
+	getAreaByIdCardNo(data: any) {
+		return request({
+			url: `${commonPath}/customer-service/public/api/area/getAreaByIdCardNo`,
+			method: 'get',
+			showLoading: false,
+			data
+		});
+	},
+	
 };

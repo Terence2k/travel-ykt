@@ -1,11 +1,10 @@
 <template>
 	<div>
-		<CommonTable :row-selection="{ onSelect }" :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
-			<template #button> </template>
+		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
 			<template #bodyCell="{ column, text, index, record }">
 				<template v-if="column.key === 'index'">
 					<div>
-						{{ (state.params.pageNo - 1) * state.params.pageSize + (index + 1) }}
+						{{ (travelStore.traveList.haveABall.params.pageNo - 1) * travelStore.traveList.haveABall.params.pageSize + (index + 1) }}
 					</div>
 				</template>
 

@@ -182,7 +182,6 @@ const toggleHotelStarStatus = (param: any) => {
 			});
 	}
 };
-
 const methods = reactive({
 	success: searchByFilter,
 });

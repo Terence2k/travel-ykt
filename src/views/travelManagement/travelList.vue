@@ -37,7 +37,7 @@
 		<a-tabs v-model:activeKey="activeKey">
 			<a-tab-pane v-for="item in filterPages" :key="item.value" :tab="item.label">
 				<!--  v-if="showAddBtn" -->
-				<div class="d-flex justify-content-end" v-if="showAddBtn">
+				<div class="btn d-flex justify-content-end" v-if="showAddBtn">
 					<a-button @click="goToPath(GroupType.Cooperation)" type="primary" style="margin-right: 20px" v-permission="'协作填报'">+协作填报</a-button>
 					<a-button @click="goToPath(GroupType.NonCooperation)" type="primary" style="margin-right: 20px" v-permission="'非协作填报'">+非协作填报</a-button>
 				</div>
@@ -212,5 +212,8 @@ sessionStorage.removeItem('traveList');
 	// ::v-deep(.ant-tabs-content-holder) {
 	//   padding: 0 20px;
 	// }
+	.btn {
+		margin-bottom: 20px;
+	}
 }
 </style>

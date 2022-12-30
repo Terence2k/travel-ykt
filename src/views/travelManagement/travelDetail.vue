@@ -9,7 +9,7 @@
       </div>
       <div class="btns">
         
-        <button ref="printBtn" v-print="print" style="opacity: 0;">点击打开打印预览</button>	
+        <button ref="printBtn" v-print="print" style="opacity: 0;"></button>	
         <a-button type="primary" @click="getPrint">打印行程单</a-button>
       </div>
     </div>
@@ -30,7 +30,7 @@
           <a-descriptions-item label="已添加景区" :span="2">{{state.basicData.ticketCount}}</a-descriptions-item>
           <a-descriptions-item label="已添加餐饮">{{state.basicData.cateringCount}}</a-descriptions-item>
           <a-descriptions-item label="已添加酒店" :span="2">{{state.basicData.hotelCount}}</a-descriptions-item>
-          <a-descriptions-item label="预估应缴费（元）">{{state.basicData.totalFee}}</a-descriptions-item>
+          <a-descriptions-item label="预估应缴费（元）">{{accDiv(state.basicData.totalFee, 100)}}</a-descriptions-item>
         </a-descriptions>
       </a-col>
       <a-col :span="7">
@@ -118,6 +118,7 @@
   const printBtn = ref();
 
   const getPrint = () => {
+    console.log('getOptions(state.itineraryDetail):', getOptions(state.itineraryDetail))
     state.param.pageNo = 1;
     state.param.pageSize = 999999;
     getItineraryDetail(route.currentRoute.value.query.oid, true);

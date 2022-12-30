@@ -21,7 +21,7 @@
 				<span>{{ formData.data.feeModel == 0 ? '人数' : '价格' }}</span>
 			</a-form-item>
 			<a-form-item label="收费金额">
-				<span>{{ (formData.data.feeNumber || '') + (formData.data.feeModel == 0 ? ' 元/人' : ' 元') }}</span>
+				<span>{{ (accDiv(formData.data.feeNumber, 100) || '') + (formData.data.feeModel == 0 ? ' 元/人' : ' 元') }}</span>
 			</a-form-item>
 			<a-form-item label="是否按天收费">
 				<span>{{ formData.data.confirmDailyChargeName }}</span>
@@ -41,6 +41,7 @@ const tstyle = { 'font-weight': '700' };
 import api from '@/api';
 import { useBusinessManageOption } from '@/stores/modules/businessManage';
 import { settlementOptions } from '@/stores/modules/settlement';
+import { accDiv } from '@/utils/compute';
 
 const useOptions = settlementOptions();
 const initOption = async () => {

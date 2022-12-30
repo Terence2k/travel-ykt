@@ -30,7 +30,7 @@
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
-							{{ `${record.startDate}~${record.endDate}` }}
+							{{ record.startDate + ' - ' + record.endDate }}
 						</template>
 					</template>
 				</CommonTable>
@@ -55,7 +55,7 @@
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
-							{{ `${record.startDate}~${record.endDate}` }}
+							{{ record.startDate + ' - ' + record.endDate }}
 						</template>
 					</template>
 				</CommonTable>
@@ -79,10 +79,11 @@
 								<a @click="change(record)" v-permission="'待出团_行程变更'">行程变更</a>
 								<a v-permission="'待出团_查看日志'">查看日志</a>
 								<a @click="goToPath(record)" v-permission="'待出团_进入预订'">进入预订</a>
+								<a @click="toRevoke(record)" v-permission="'待出团_撤回'">撤回</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
-							{{ `${record.startDate}~${record.endDate}` }}
+							{{ record.startDate + ' - ' + record.endDate }}
 						</template>
 					</template>
 				</CommonTable>
@@ -103,11 +104,12 @@
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
 								<a @click="goToDetail(record)" v-permission="'已出团_查看'">查看</a>
-								<a @click="goToPath(record, 4)" v-permission="'已出团_进入预订'">进入预订</a>
+								<a @click="change(record)" v-permission="'已出团_行程变更'">行程变更</a>
+								<a @click="goToPath(record)" v-permission="'已出团_进入预订'">进入预订</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
-							{{ `${record.startDate}~${record.endDate}` }}
+							{{ record.startDate + ' - ' + record.endDate }}
 						</template>
 					</template>
 				</CommonTable>
@@ -127,11 +129,11 @@
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a @click="goToPath(record)" v-permission="'已散团_查看行程单'">查看行程单</a>
+								<a @click="goToDetail(record)" v-permission="'已散团_查看行程单'">查看行程单</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
-							{{ `${record.startDate}~${record.endDate}` }}
+							{{ record.startDate + ' - ' + record.endDate }}
 						</template>
 					</template>
 				</CommonTable>
@@ -157,7 +159,7 @@
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
-							{{ `${record.startDate}~${record.endDate}` }}
+							{{ record.startDate + ' - ' + record.endDate }}
 						</template>
 					</template>
 				</CommonTable>
@@ -177,11 +179,11 @@
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a @click="goToPath(record)" v-permission="'已过期_查看行程单'">查看行程单</a>
+								<a @click="goToDetail(record)" v-permission="'已过期_查看行程单'">查看行程单</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
-							{{ `${record.startDate}~${record.endDate}` }}
+							{{ record.startDate + ' - ' + record.endDate }}
 						</template>
 					</template>
 				</CommonTable>
@@ -207,7 +209,7 @@
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
-							{{ `${record.startDate}~${record.endDate}` }}
+							{{ record.startDate + ' - ' + record.endDate }}
 						</template>
 					</template>
 				</CommonTable>
@@ -691,17 +693,6 @@ const getIsTravelVisible = () => {
 		initOpeion();
 	}
 };
-const goToChange = (row: any) => {
-	state.changeParams.id = row.oid;
-	state.changeParams.itineraryNo = row.itineraryNo;
-	api.travelManagement.checkVerifyByItineraryId(row.itineraryNo).then((res) => {
-		/* if (res) {
-      modelValue.value = true;
-    } else {
-      message.error('该行程单发生过核销不可变更');
-    } */
-	});
-};
 const goToPath = (row: any) => {
 	goto('newGroup', {
 		id: row.oid,
@@ -739,7 +730,7 @@ const outGroup = async (row: any) => {
 const dateTime = ref(dayjs().unix());
 const goToDetail = (row: any) => {
 	router.push({
-		path: '/travel/travel_manage/travel_detail',
+		name: 'individualTouristsGroupDetail',
 		query: { oid: encodeURIComponent(row.oid) },
 	});
 };

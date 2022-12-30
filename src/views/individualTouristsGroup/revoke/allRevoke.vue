@@ -1,12 +1,12 @@
 <template>
 	<BaseModal :modelValue="modelValue" title="整团撤销选择" width="600px" @cancel="cancel">
 		<a-form layout="vertical" :model="formValidate" :label-col="{ span: 14 }" :wrapper-col="{ span: 28, offset: 0 }" labelAlign="left">
-			<a-form-item layout="vertical" label="是否新增行程" class="fz14" v-bind="validateInfos[`data.haveNew`]">
+			<!-- <a-form-item layout="vertical" label="是否新增行程" class="fz14" v-bind="validateInfos[`data.haveNew`]">
 				<a-radio-group v-model:value="formValidate.data.haveNew" :options="options" />
 			</a-form-item>
 			<a-form-item v-if="formValidate.data.haveNew" label="填写一个关联行程单" class="fz14" v-bind="validateInfos[`data.relatedItineraryNo`]">
 				<a-input v-model:value="formValidate.data.relatedItineraryNo" placeholder="输入关联行程单" />
-			</a-form-item>
+			</a-form-item> -->
 			<a-form-item label="撤销原因（200字）" class="fz14" v-bind="validateInfos[`data.revokeReason`]">
 				<a-textarea :maxlength="200" v-model:value="formValidate.data.revokeReason" placeholder="请输入其他说明" :rows="4" max="200" />
 			</a-form-item>

@@ -1362,7 +1362,6 @@ const configCodeName = (certificateCodes: any) => {
       const citem = dataTouristSource.value[j];
       if (item.certificateId === citem.certificatesNo) {
         dataTouristSource.value[j].healthyCode = item.codeName
-        break
       }
     }
   }
