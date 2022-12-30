@@ -129,7 +129,7 @@
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a @click="goToPath(record)" v-permission="'已散团_查看行程单'">查看行程单</a>
+								<a @click="goToDetail(record)" v-permission="'已散团_查看行程单'">查看行程单</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -179,7 +179,7 @@
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a @click="goToPath(record)" v-permission="'已过期_查看行程单'">查看行程单</a>
+								<a @click="goToDetail(record)" v-permission="'已过期_查看行程单'">查看行程单</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
