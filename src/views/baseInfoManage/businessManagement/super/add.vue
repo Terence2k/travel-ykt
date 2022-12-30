@@ -234,7 +234,7 @@ type detailsType = {
   accountPhone?: string
 }
 const form = reactive<detailsType>({
-  regionCode: [],
+  regionCode: [34102, 34747, 34749],
   businessType: undefined,
   password: '',
   checkPass: '',
