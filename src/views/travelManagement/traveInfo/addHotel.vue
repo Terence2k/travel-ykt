@@ -97,10 +97,10 @@
 						placeholder="请选择预定房型">
 						<a-select-option 
 							:value="item.oid" v-for="item in hotelData.roomType" 
-							:name="item.roomTypeName" 
+							:name="item.roomTypeName + '-' + item.sysRoomTypeName" 
 							:key="item.oid"
 							:stockNum="item.stockNum"
-							:num="item.roomOccupancyNum">{{ item.roomTypeName }}</a-select-option>
+							:num="item.roomOccupancyNum">{{ item.roomTypeName + '-' + item.sysRoomTypeName }}</a-select-option>
 					</a-select>
 				</a-form-item>
 				<a-form-item 
