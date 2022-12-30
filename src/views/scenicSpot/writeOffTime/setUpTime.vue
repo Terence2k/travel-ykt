@@ -27,9 +27,12 @@
 					<template #bodyCell="{ column, index, record }">
 						<template v-if="column.key === 'time'">
 							<div class="table-div">
-								<a-time-picker format="HH:mm" valueFormat="HH:mm" v-model:value="record.startTime" style="width: 100px" />
+								<span style="margin-right: 10px; line-height: 30px">有效核销时间段为当天</span>
+								<timePicker style="width: 120px" v-model="record.startTime"  :placeholder="record.startTime" valueFormat="HH:mm" format="HH:mm"></timePicker>
+								<!-- <a-time-picker format="HH:mm" valueFormat="HH:mm" v-model:value="record.startTime" style="width: 100px" /> -->
 								<a-span class="span">至</a-span>
-								<a-time-picker format="HH:mm" valueFormat="HH:mm" v-model:value="record.endTime" style="width: 100px" />
+								<timePicker style="width: 120px" v-model="record.endTime" :disabled-hours="disabledHours" :disabled-minutes="disabledMinutes" :placeholder="record.endTime" valueFormat="HH:mm" format="HH:mm"></timePicker>
+								<!-- <a-time-picker format="HH:mm" valueFormat="HH:mm" v-model:value="record.endTime" style="width: 100px" /> -->
 							</div>
 						</template>
 					</template>
@@ -37,9 +40,11 @@
 			</p>
 			<a-form-item label=" 有效核销时间段为当天" name="account" v-if="formValidate.row.ticketType == '2'">
 				<div class="table-div">
-					<a-time-picker format="HH:mm" valueFormat="HH:mm" v-model:value="state.tableData.startTime" style="width: 150px" />
+					<timePicker style="width: 120px" v-model="state.tableData.startTime" valueFormat="HH:mm" format="HH:mm"></timePicker>
+					<!-- <a-time-picker format="HH:mm" valueFormat="HH:mm" v-model:value="state.tableData.startTime" style="width: 150px" /> -->
 					<a-span class="span">至</a-span>
-					<a-time-picker format="HH:mm" valueFormat="HH:mm" v-model:value="state.tableData.endTime" style="width: 150px" />
+					<timePicker style="width: 120px" v-model="state.tableData.endTime" valueFormat="HH:mm" format="HH:mm"></timePicker>
+					<!-- <a-time-picker format="HH:mm" valueFormat="HH:mm" v-model:value="state.tableData.endTime" style="width: 150px" /> -->
 				</div>
 			</a-form-item>
 		</a-form>
@@ -57,6 +62,8 @@ import type { FormInstance } from 'ant-design-vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import api from '@/api';
 import { message } from 'ant-design-vue';
+import dayjs, { Dayjs } from 'dayjs';
+import timePicker from '@/components/common/timePicker.vue';
 const props = defineProps({
 	modelValue: {
 		type: Boolean,
@@ -112,12 +119,33 @@ const state = reactive({
 		Time: [],
 		startTime: '',
 		endTime: '',
-		data: [],
+		data: [] as any,
 		ticketName: '',
 		ticketDataType: '',
 	},
 	ticketId: '',
 });
+const makeRange = (start: number, end: number) => {
+  const result: number[] = []
+  for (let i = start; i <= end; i++) {
+    result.push(i)
+  }
+  return result
+}
+const disabledHours=()=>{
+	let data= state.tableData.data.map((item:any)=>{
+		let num=item.startTime.split(':')
+		return num[0]
+	})
+	return makeRange(0, data[0]-1)
+}
+const disabledMinutes=()=>{
+	let data= state.tableData.data.map((item:any)=>{
+		let num=item.startTime.split(':')
+		return num[1]
+	})
+	return makeRange(0, data[0])
+}
 const init = async () => {
 	console.log('params', props.params);
 	formValidate.value = {};
@@ -147,6 +175,16 @@ const save = () => {
 			};
 		}),
 	};
+	// state.tableData.data.map((item: any) => {
+	// 	// console.log(item.startTime.getTime(), 'startTime');
+	// 	// if(dayjs(item.startTime).valueOf()<dayjs(item.endTime).valueOf())
+	// 	// {
+	// 	// 	console.log(item.startTime)
+	// 	// }else{
+	// 	// 	console.log(item.startTime)
+	// 	// }
+	// });
+	console.log(data, 'datadatadatadata');
 	api.getScenicSave(data).then((res: any) => {
 		message.success('设置成功');
 		cancel();
