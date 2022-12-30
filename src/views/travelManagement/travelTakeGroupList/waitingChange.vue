@@ -17,7 +17,7 @@
 				</template>
         <template v-if="column.key === 'action'">
           <div class="action-btns">
-            <a v-permission="'待变更_催促审核'">催促审核</a>
+            <!-- <a v-permission="'待变更_催促审核'">催促审核</a> -->
           </div>
         </template>
 			</template>
