@@ -108,13 +108,21 @@
 						</div>
 					</template>
 
+					<template v-if="column.key === 'totalFee'">
+						<div>
+							{{ record.unitPrice * record.reservePeopleCount || 0 }}
+						</div>
+					</template>
+
+					
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<!--  v-if="travelStore.reserveStatus && record.orderStatus == 0" -->
 							<a v-if="travelStore.reserveStatus" @click="reserveTicketPeple(record)">预定</a>
-							<a v-if="travelStore.teamStatus" class="item" @click="add('TICKET', record.oid ? 'addTicketPop' : 'productRow', 'addTicketPop', index, record.oid || record)">编辑</a>
-							<a v-if="travelStore.teamStatus" class="item" @click="delTicket(record, index)">删除</a>
-							<a class="item" v-if="record.oid" @click="show('showTicketPop', record.oid)">查看</a>
+							<!--  v-if="travelStore.teamStatus" -->
+							<a :class="{'disabled': !travelStore.teamStatus}" class="item" @click="add('TICKET', record.oid ? 'addTicketPop' : 'productRow', 'addTicketPop', index, record.oid || record)">编辑</a>
+							<a :class="{'disabled': !travelStore.teamStatus}" class="item" @click="delTicket(record, index)">删除</a>
+							<!-- <a class="item" v-if="record.oid" @click="show('showTicketPop', record.oid)">查看</a> -->
 						</div>
 					</template>
 				</template>
@@ -135,9 +143,9 @@
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a v-if="travelStore.reserveStatus && record.orderStatus == 0" class="item" @click="reserveHotel(record)">预定</a>
-							<a v-if="travelStore.teamStatus" class="item" @click="add('HOTEL', record.oid ? 'addHotelPop' : 'productRow', 'addHotelPop', index, record.oid || record)">编辑</a>
-							<a v-if="travelStore.teamStatus" class="item" @click="delHotel(record, index)">删除</a>
-							<a class="item" v-if="record.oid" @click="show('showHotelPop', record.oid)">查看</a>
+							<a :class="{'disabled': !travelStore.teamStatus}" class="item" @click="add('HOTEL', record.oid ? 'addHotelPop' : 'productRow', 'addHotelPop', index, record.oid || record)">编辑</a>
+							<a :class="{'disabled': !travelStore.teamStatus}" class="item" @click="delHotel(record, index)">删除</a>
+							<!-- <a class="item" v-if="record.oid" @click="show('showHotelPop', record.oid)">查看</a> -->
 						</div>
 					</template>
 				</template>

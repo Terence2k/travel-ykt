@@ -142,6 +142,7 @@ const columns = [
 	},
 ];
 const cancel = () => {
+	state.refuesedReason=''
 	dialogVisible.value = false;
 };
 const Fail = () => {
