@@ -25,11 +25,11 @@
           <a-descriptions-item label="地接社计调">{{state.basicData.subTravelOperatorName}} {{state.basicData.subTravelOperatorPhone}}</a-descriptions-item>
           <a-descriptions-item label="游客人数" :span="2">{{state.basicData.touristCount}}</a-descriptions-item>
           <a-descriptions-item label="古维费应缴人数">{{state.basicData.guWeiCount}}</a-descriptions-item>
-          <a-descriptions-item label="行程开始时间" :span="2">{{state.basicData.startDate}}</a-descriptions-item>
-          <a-descriptions-item label="行程结束时间">{{state.basicData.endDate}}</a-descriptions-item>
+          <a-descriptions-item label="行程时间" :span="2">{{state.basicData.startDate}} - {{ state.basicData.endDate }}</a-descriptions-item>
+          <a-descriptions-item label="综费应缴人数" :span="2">{{state.basicData.productPeopleCount }}</a-descriptions-item>
           <a-descriptions-item label="已添加景区" :span="2">{{state.basicData.ticketCount}}</a-descriptions-item>
-          <a-descriptions-item label="已添加餐饮">{{state.basicData.cateringCount}}</a-descriptions-item>
-          <a-descriptions-item label="已添加酒店" :span="2">{{state.basicData.hotelCount}}</a-descriptions-item>
+          <a-descriptions-item label="已添加酒店">{{state.basicData.hotelCount}}</a-descriptions-item>
+          <a-descriptions-item label="已添加餐饮" :span="2">{{state.basicData.cateringCount}}</a-descriptions-item>
           <a-descriptions-item label="预估应缴费（元）">{{accDiv(state.basicData.totalFee, 100)}}</a-descriptions-item>
         </a-descriptions>
       </a-col>

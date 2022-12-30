@@ -115,8 +115,8 @@ const submit = () => {
     signEndDate:'2022-12-12 00:00:00',
     signAttachmentList:state.signAttachmentList.split(',')
   }
-  let signAttachmentList=state.signAttachmentList.split(',')
-  console.log(signAttachmentList,'signAttachmentList')
+  // let signAttachmentList=state.signAttachmentList.split(',')
+  // console.log(signAttachmentList,'signAttachmentList')
   api.sendSignInvitation(data).then((res:any)=>{
       message.success('发送委派成功')
       router.push({ path: '/travel/tourGuideManage/tourGuideList' });
