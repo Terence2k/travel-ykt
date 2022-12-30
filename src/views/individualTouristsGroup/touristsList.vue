@@ -787,6 +787,16 @@ const sendGroup = (id: string) => {
 		message.success('提交审核成功！');
 	});
 };
+watch(
+	()=>route.params.isRefresh,
+	(newVal)=>{
+		if (newVal === '1') {
+			onSearch1();
+		}	else if (newVal === '2') {
+			onSearch1();
+			onSearch2();
+		}
+	})
 onMounted(() => {
 	getIsTravelVisible();
 	onSearch1();
