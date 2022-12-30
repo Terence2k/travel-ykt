@@ -14,8 +14,8 @@
 
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a v-permission="'待变更_去审核'">去审核</a>
-						<a v-permission="'待变更_查看日志'">查看日志</a>
+						<!-- <a v-permission="'待变更_去审核'">去审核</a> -->
+						<!-- <a v-permission="'待变更_查看日志'">查看日志</a> -->
 					</div>
 				</template>
 			</template>

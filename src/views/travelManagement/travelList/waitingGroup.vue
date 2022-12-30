@@ -15,7 +15,7 @@
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a @click="goToPath(record)" v-permission="'待接团_查看行程单'">查看行程单</a>
-						<a v-permission="'待接团_催促地接社'">催促地接社</a>
+						<!-- <a v-permission="'待接团_催促地接社'">催促地接社</a> -->
 					</div>
 				</template>
 			</template>
