@@ -9,6 +9,9 @@
 			:row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
 		>
 			<template #bodyCell="{ column, record }">
+				<template v-if="column.key === 'transferAccountsMoney'">
+					<span>{{ (record.transferAccountsMoney / 100).toFixed(2) }}元</span>
+				</template>
 				<template v-if="column.key === 'settlementCost'">
 					<span>{{ (record.settlementCost / 100).toFixed(2) }}元</span>
 				</template>
