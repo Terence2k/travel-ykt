@@ -49,6 +49,7 @@
       >
         <a-select
           ref="select"
+          mode="multiple"
           v-model:value="formValidate.roleIds"
           placeholder="请选择管理员角色"
           :disabled="formValidate.oid ? true : false"
