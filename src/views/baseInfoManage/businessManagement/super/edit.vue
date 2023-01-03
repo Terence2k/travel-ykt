@@ -222,6 +222,18 @@
           <a-form-item name="legalPersonUrl" label="法人身份证附件" v-show="formKeys?.legalPersonUrl">
             <Upload v-model="form.legalPersonUrl" :maxCount="2" />
           </a-form-item>
+          <a-form-item name="legalPersonUrl" label="法人身份证附件" v-show="formKeys?.legalPersonUrl">
+            <Upload v-model="form.legalPersonUrl" :maxCount="2" />
+          </a-form-item>
+          <div class="tag">
+            信息变更佐证依据（可上传最多5张图片，或者1个pdf文件，非必填项）
+          </div>
+          <a-form-item>
+            <Upload v-model="form.testUrl" :maxCount="5"/>
+          </a-form-item>
+          <a-form-item>
+            <pdfUpload v-model="form.pdfFileUrl" :maxCount="1" />
+          </a-form-item>
           <a-form-item>
             <a-button type="primary" @click="submit" style="margin-right:20px" :loading="loading">保存</a-button>
           </a-form-item>
@@ -257,6 +269,7 @@ import api from '@/api';
 import picker from '@/components/common/datePicker.vue'
 import tPicker from '@/components/common/timePicker.vue'
 import Upload from '@/components/common/imageWrapper.vue';
+import pdfUpload from '@/components/common/pdfWrapper.vue';
 const router = useRouter();
 const route = useRoute();
 const isRefresh = ref('0')

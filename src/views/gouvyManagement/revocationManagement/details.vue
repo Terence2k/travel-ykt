@@ -67,11 +67,7 @@
 			<tr class="row">
 				<td class="key">附件</td>
 				<td class="value">
-					<div style="margin-bottom: 20px">
-						<p v-for="(item, index) in state.detail.itinerarySubmitRevokeBasicVo.revokeAttachment" :key="index">
-							<a-image width="20%" :src="item" />
-						</p>
-					</div>
+					<Upload v-model="state.detail.itinerarySubmitRevokeBasicVo.revokeAttachment" :maxCount="state.maxnum" disabled />
 				</td>
 			</tr>
 			<FormItem
@@ -149,6 +145,7 @@ import FormItem from '@/components/common/formItem.vue';
 // import Compare from './components/compare.vue';
 import { accDiv, accMul } from '@/utils/compute';
 import CommonTable from '@/components/common/CommonTable.vue';
+import Upload from '@/components/common/imageWrapper.vue';
 import dayjs, { Dayjs } from 'dayjs';
 import { string } from 'vue-types';
 const dialogVisible = ref(false);
@@ -173,7 +170,8 @@ const state = reactive({
 	title: '',
 	refuesedReason: '',
 	data:[],
-	num:''
+	num:'',
+	maxnum:0
 });
 const columns = [
 	{
@@ -274,6 +272,11 @@ const toHistoryPage = () => {
 const init = async () => {
 	let res = await api.itineraryRevoke(props.oid);
 	state.detail.itinerarySubmitRevokeBasicVo = res;
+	if(res.revokeAttachment)
+	{
+		state.detail.itinerarySubmitRevokeBasicVo.revokeAttachment=res.revokeAttachment.toString()
+    state.maxnum=res.revokeAttachment.split(',').length
+	}
 	if (res.itineraryRevokeAuditStatus == 0) {
 		state.title = '行程单整团撤销审核';
 	}
