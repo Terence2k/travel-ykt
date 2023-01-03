@@ -23,6 +23,7 @@ const generateFilename = (fileName: any) => {
  */
 const newAwsObj = () => {
   if (awsObject.bucket) return awsObject;
+  
   return new Promise<{
     aws: any;
     bucket: string;
