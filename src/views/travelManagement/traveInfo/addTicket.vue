@@ -116,7 +116,7 @@
 			</a-form-item> -->
 
             <a-form-item label="订单金额">
-				<a-input v-model:value="formState.price" disabled placeholder="无需填写，勾选人员名单后自动计算" />
+				<a-input v-model:value="formState.unitPrice" disabled placeholder="无需填写，勾选人员名单后自动计算" />
 			</a-form-item>
 
             <a-form-item label="订单编号">
