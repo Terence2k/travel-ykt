@@ -149,7 +149,7 @@ const saveItinerary = (val: any) => {
 	return ajax(
 		{
 			oid: itineraryId ? itineraryId.toString() : null,
-			attachmentList: travelStore.attachmentList,
+			attachmentList: travelStore.attachmentList.filter((it: any) => it.edit),
 			basicParam: val.basicParam || {},
 			guideList: travelStore.guideList.filter((it: any) => it.edit),
 			insuranceStatus: travelStore.insuranceStatus,
