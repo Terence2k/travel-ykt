@@ -115,17 +115,17 @@
 				<a-input v-model:value="formState.startDate" disabled placeholder="无需填写，勾选人员名单后自动计算（如符合满16减1政策）" />
 			</a-form-item> -->
 
-            <a-form-item label="订单金额">
+            <!-- <a-form-item label="订单金额">
 				<a-input v-model:value="formState.unitPrice" disabled placeholder="无需填写，勾选人员名单后自动计算" />
-			</a-form-item>
+			</a-form-item> -->
 
             <a-form-item label="订单编号">
 				<a-input v-model:value="formState.ticketOrderNo" disabled placeholder="无需填写，订单提交后自动生成" />
 			</a-form-item>
 
-            <a-form-item label="订单生成时间">
+            <!-- <a-form-item label="订单生成时间">
 				<a-input v-model:value="formState.createTime" disabled placeholder="无需填写，订单提交后自动生成" />
-			</a-form-item>
+			</a-form-item> -->
 			
 		</a-form>
 	</BaseModal>
