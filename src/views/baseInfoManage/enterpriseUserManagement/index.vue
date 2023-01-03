@@ -33,8 +33,8 @@
       <a-form-item name="roleIds" label="管理员角色">
         <a-select v-model:value="form.roleIds" placeholder="请选择管理员角色" mode="multiple">
           <a-select-option v-for="item in roleOption" :value="item.roleId" :key="item.roleId">{{
-              item.roleName
-          }}
+    item.roleName
+}}
           </a-select-option>
         </a-select>
       </a-form-item>
@@ -55,9 +55,9 @@
   <CommonModal title="强制重置密码" v-model:visible="resetPasswordVisible" @cancel="resetPasswordCancel"
     @close="resetPasswordCancel" @conform="resetPasswordConform" :conform-text="'确认'">
     <a-form ref="formRef" name="reset-password" :model="formState" :rules="rules" v-bind="layout">
-      <a-form-item has-feedback label="输入原始密码" name="oldPass">
+      <!-- <a-form-item has-feedback label="输入原始密码" name="oldPass">
         <a-input v-model:value="formState.oldPass" type="password" autocomplete="off" />
-      </a-form-item>
+      </a-form-item> -->
       <a-form-item has-feedback label="输入新密码" name="pass">
         <a-input v-model:value="formState.pass" type="password" autocomplete="off" />
       </a-form-item>
@@ -284,7 +284,7 @@ const resetPasswordCancel = () => {
 }
 const resetPasswordConform = () => {
   formRef.value.validateFields().then(() => {
-    api.editPassWord({ oid: formState.oid, newPassword: formState.pass, oldPassword: formState.oldPass }).then((res) => {
+    api.adminResetPassword({ userId: formState.oid, newPassword: formState.pass }).then((res: any) => {
       message.success('重置密码成功！');
       resetPasswordCancel();
     })
