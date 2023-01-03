@@ -98,12 +98,12 @@
   <CommonModal :title="submitTitle" v-model:visible="modalVisible" @cancel="modalCancel" @close="modalCancel"
     :conform-text="'提交'" @conform="submitStore" width="50%">
     <a-form ref="addStoreRef" :model="form" :rules="formRules" name="addStore" autocomplete="off"
-      :label-col="{ span: 7 }" :wrapper-col="{ span: 17 }">
+      :label-col="labelCol">
       <a-form-item name="companyId" label="所属旅行社">
         <a-select placeholder="请选择所属旅行社" v-model:value="form.companyId" allowClear :disabled="!isSuper">
           <a-select-option v-for="item in companyOptions" :value="item.oid">{{
-              item.name
-          }}
+    item.name
+}}
           </a-select-option>
         </a-select>
       </a-form-item>
@@ -130,8 +130,8 @@
       <a-form-item name="contractPurview" label="门店合同权限">
         <a-select placeholder="请选择门店合同权限" v-model:value="form.contractPurview" allowClear>
           <a-select-option v-for="item in contractOptions" :value="item.oid">{{
-              item.name
-          }}
+    item.name
+}}
           </a-select-option>
         </a-select>
       </a-form-item>
@@ -298,6 +298,8 @@ const state = reactive({
   isAdd: true,
   isSuper: false,
 });
+const labelWidth = '200px'
+const labelCol = { style: { width: labelWidth } }
 const activeKey = ref('1')
 const form = ref({
   companyId: undefined,
@@ -319,7 +321,18 @@ const changeKeys = ref<string[]>([])
 const detailsForm = ref({})
 const auditForm = ref()
 const addStoreRef = ref()
-const formRules = {}
+const rules = {
+  storeName: [{ required: true, trigger: 'blur', message: '请输入门店名称' }],
+  storeAddress: [{ required: true, trigger: 'blur', message: '请输入门店地址' }],
+  storePhone: [{ required: true, trigger: 'blur', message: '请输入门店联系电话' }],
+  personLiableName: [{ required: true, trigger: 'blur', message: '请输入门店负责人' }],
+  personLiablePhone: [{ required: true, trigger: 'blur', message: '请输入负责人电话' }],
+  contractPurview: [{ required: true, trigger: 'blur', message: '请选择门店合同权限' }],
+}
+const rules1 = {
+  basisUrl: [{ required: true, trigger: 'blur', message: '请上传创建依据' }],
+}
+const formRules = ref({})
 const failForm = reactive({
   auditTypeCode: 18, // 18: 创建散客门店.,19:修改散客门店信息
   auditRemark: '',
@@ -738,11 +751,13 @@ const getUserInfo = () => {
     state.tableData1.param.companyId = undefined
     state.tableData.param.companyId = undefined
     state.isSuper = true
+    formRules.value = rules
   } else if (roleCode.includes('TRAVEL_SUPER_ADMIN')) {
     state.tableData1.param.companyId = oid
     state.tableData.param.companyId = oid
     form.value.companyId = oid
     state.isSuper = false
+    formRules.value = { ...rules, ...rules1 }
   }
 }
 

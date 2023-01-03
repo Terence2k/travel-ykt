@@ -6,11 +6,14 @@
 			list-type="picture-card"
 			:beforeUpload="beforeUpload"
       :customRequest="uploadFile"
-			accept=".jpg,.png,.pdf"
+			accept=".jpg,.png"
 			@preview="handlePreview"
       @remove="removeImg"
       :disabled="disabled"
 		>
+      <template #[props.dynamicSlotName]="{ file, actions }">
+        <slot name="customUpload" :file="file" :actions="actions"></slot>
+      </template>
 			<div>
         <slot></slot>
         <div v-if="!slotDefault">上传图片</div>
@@ -22,11 +25,14 @@
 			list-type="picture-card"
 			:beforeUpload="beforeUpload"
       :customRequest="uploadFile"
-			accept=".jpg,.png,.pdf"
+			accept=".jpg,.png"
 			@preview="handlePreview"
       @remove="removeImg"
       :disabled="disabled"
-		>
+		> 
+      <template #[props.dynamicSlotName]="{ file, actions }">
+        <slot name="customUpload" :file="file" :actions="actions"></slot>
+      </template>
 			<div v-if="fileList!.length < maxCount">
         <slot></slot>
         <div>上传图片</div>
@@ -61,7 +67,11 @@ const props = defineProps({
   isDragger: {
     type: Boolean,
     default: false
-  }
+  },
+  dynamicSlotName: {
+    type: String,
+    default: ''
+  },
 });
 const emit = defineEmits(['update:modelValue', 'result', 'remove']);
 const userInfo = getUserInfo();

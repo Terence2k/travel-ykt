@@ -6,21 +6,23 @@
 					<a-input v-model:value="formValidate.ruleName" placeholder="请输入规则名称" />
 				</a-form-item>
 				<a-form-item label=" 减免模式" name="discountType">
-					<a-select ref="select" placeholder="请选择特殊证件类型" v-model:value="formValidate.discountType" @change="changeDiscountType" >
+					<a-select ref="select" placeholder="请选择特殊证件类型" v-model:value="formValidate.discountType" @change="changeDiscountType">
 						<a-select-option :value="0">游客年龄</a-select-option>
 						<a-select-option :value="1">特殊证件</a-select-option>
 					</a-select>
 				</a-form-item>
-				<a-form-item label=" 减免模式内容" name="age1" v-if="formValidate.discountType == '0'">
+				<a-form-item label=" 减免模式内容" v-if="formValidate.discountType == '0'">
 					<a-row>
 						<a-col :span="6">
-							<a-input
-								class="input"
-								placeholder="请输入年龄"
-								v-model:value="formValidate.age1"
-								oninput="value=value.replace(/^(0+)|[^\d]+/g,'')"
-								style="height:30px"
-							></a-input>
+							<a-form-item name="age1">
+								<a-input
+									class="input"
+									placeholder="请输入年龄"
+									v-model:value="formValidate.age1"
+									oninput="value=value.replace(/^(0+)|[^\d]+/g,'')"
+									style="height: 30px"
+								></a-input>
+							</a-form-item>
 						</a-col>
 						<a-col :span="4">
 							<a-span class="d-span">至</a-span>
@@ -130,7 +132,7 @@ const init = async () => {
 			state.tableData.age = formValidate.value.discountCondition.split('~');
 			formValidate.value.age1 = state.tableData.age[0];
 			formValidate.value.age2 = state.tableData.age[1];
-		} 
+		}
 		formValidate.value.discount = formValidate.value.discount;
 		console.log(formValidate.value, 'formValidate.value');
 	} else {
@@ -141,7 +143,7 @@ const init = async () => {
 };
 //查询证件列表
 const dropDownQueryList = () => {
-	api.dropDownQueryList('SPECIAL_CERTIFICATE_TYPE').then((res:any) => {
+	api.dropDownQueryList('SPECIAL_CERTIFICATE_TYPE').then((res: any) => {
 		state.tableData.list = res;
 	});
 };
@@ -152,7 +154,7 @@ const cancel = () => {
 const updateRule = () => {
 	formRef.value
 		.validateFields()
-		.then((i :any) => {
+		.then((i: any) => {
 			let data = {
 				oid: formValidate.value.oid,
 				ruleName: formValidate.value.ruleName,
@@ -162,10 +164,9 @@ const updateRule = () => {
 				discountRuleStatus: formValidate.value.discountRuleStatus,
 			};
 			if (formValidate.value.discountType == 0) {
-				if(Number(formValidate.value.age1)>Number(formValidate.value.age2))
-				{
+				if (Number(formValidate.value.age1) > Number(formValidate.value.age2)) {
 					message.error('年龄错误请重新填写');
-					return false
+					return false;
 				}
 				data.discountCondition = formValidate.value.age1 + '~' + formValidate.value.age2;
 			} else {
@@ -193,10 +194,9 @@ const addRule = () => {
 				discountRuleStatus: formValidate.value.discountRuleStatus,
 			};
 			if (formValidate.value.discountType == 0) {
-				if(Number(formValidate.value.age1)>Number(formValidate.value.age2))
-				{
+				if (Number(formValidate.value.age1) > Number(formValidate.value.age2)) {
 					message.error('年龄错误请重新填写');
-					return false
+					return false;
 				}
 				data.discountCondition = formValidate.value.age1 + '~' + formValidate.value.age2;
 			} else {
@@ -219,12 +219,11 @@ const save = () => {
 		addRule();
 	}
 };
-const changeDiscountType=()=>{
-	if(formValidate.value.discountType==1)
-	{
-		formValidate.value.discountConditionName=''
+const changeDiscountType = () => {
+	if (formValidate.value.discountType == 1) {
+		formValidate.value.discountConditionName = '';
 	}
-}
+};
 const check = () => {
 	if (Number(formValidate.value.discount) >= 100) {
 		formValidate.value.discount = 99;

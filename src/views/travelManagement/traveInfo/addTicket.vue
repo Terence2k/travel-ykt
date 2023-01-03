@@ -211,10 +211,10 @@
         // },
 	]
 	const dataSource = ref<any>([{startDate: '123'}]);
-	const ticketPrice = computed(() => {
-        return ticketData.ticketList.filter((it:any) => it.oid === formState.ticketId)[0]?.price
-    })
-
+	const ticketPrice = ref();
+	// computed(() => {
+    //     return ticketData.ticketList.filter((it:any) => it.oid === formState.ticketId)[0]?.price
+    // })
     const getScenicList = async () => {
         ticketData.scenicList = await api.travelManagement.getScenicList()
     }
@@ -371,12 +371,13 @@
 		emits('update:modelValue', newVal)
 	})
 
-	const getStock = (ticketId: number | string, endTime: string, startTime: string) => {
-		api.travelManagement.getStock({
+	const getStock = async (ticketId: number | string, endTime: string, startTime: string) => {
+		const res = await api.travelManagement.getStock({
 			ticketId,
 			endTime,
 			startTime
-		})
+		});
+		ticketPrice.value = res[0].ticketPrice
 	}
 	const debounceFun = debounce((ticketId: number | string, endTime: string, startTime: string) => {
 		getStock(ticketId, endTime, startTime);
