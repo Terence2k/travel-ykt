@@ -1,5 +1,5 @@
 import api from '@/api';
-
+let awsObject: any = {};
 /**
  * @description 获取文件后缀
  */
@@ -22,6 +22,8 @@ const generateFilename = (fileName: any) => {
  * @description 构造aws对象
  */
 const newAwsObj = () => {
+  if (awsObject.bucket) return awsObject;
+  
   return new Promise<{
     aws: any;
     bucket: string;
@@ -33,7 +35,7 @@ const newAwsObj = () => {
     if (!awsTempKey) {
       handleUploadErr(reject, '获取 aws 配置信息错误~');
     } else {
-      resolve({
+      const result = {
         // @ts-ignore
         aws: new AWS.S3({
           apiVersion: awsTempKey.apiVersion,
@@ -48,11 +50,13 @@ const newAwsObj = () => {
         bucket: awsTempKey.bucket,
         filePath: awsTempKey.hostName,
         prefix: awsTempKey.prefix
-      });
+      };
+      awsObject = result;
+      resolve(result);
     }
   });
 };
-const { aws, bucket, filePath, prefix } = await newAwsObj();
+newAwsObj();
 
 export const awsUploadFile = (options: any) => {
   return new Promise<{
@@ -60,6 +64,7 @@ export const awsUploadFile = (options: any) => {
   }>(async (resolve, reject) => {
     // businessType业态
     const { files, onProgress, businessType } = options;
+    const { aws, bucket, filePath, prefix } = await newAwsObj();
     if (!aws) {
       handleUploadErr(reject, '生成 aws 实例失败');
     } else {
@@ -107,6 +112,7 @@ export const awsUploadFile = (options: any) => {
 
 export const awsGetPreSignedUrl = (fileUrl: string) => {
   return new Promise(async (resolve, reject) => {
+    const { aws, bucket, filePath, prefix } = await newAwsObj();
     if (!aws) {
       handleUploadErr(reject, '生成 aws 实例失败');
     } else {
