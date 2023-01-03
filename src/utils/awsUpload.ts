@@ -1,5 +1,5 @@
 import api from '@/api';
-
+let awsObject: any = {};
 /**
  * @description 获取文件后缀
  */
@@ -22,6 +22,7 @@ const generateFilename = (fileName: any) => {
  * @description 构造aws对象
  */
 const newAwsObj = () => {
+  if (awsObject.bucket) return awsObject;
   return new Promise<{
     aws: any;
     bucket: string;
@@ -33,8 +34,7 @@ const newAwsObj = () => {
     if (!awsTempKey) {
       handleUploadErr(reject, '获取 aws 配置信息错误~');
     } else {
-      console.log('awsTempKey:', awsTempKey);
-      resolve({
+      const result = {
         // @ts-ignore
         aws: new AWS.S3({
           apiVersion: awsTempKey.apiVersion,
@@ -49,10 +49,13 @@ const newAwsObj = () => {
         bucket: awsTempKey.bucket,
         filePath: awsTempKey.hostName,
         prefix: awsTempKey.prefix
-      });
+      };
+      awsObject = result;
+      resolve(result);
     }
   });
 };
+newAwsObj();
 
 export const awsUploadFile = (options: any) => {
   return new Promise<{
@@ -68,7 +71,6 @@ export const awsUploadFile = (options: any) => {
         const downloadFiles:string[] = [];
         const filesLength = files.length - 1;
         files.forEach((item: any, index: number) => {
-          console.log(item);
           const filename = generateFilename(item.name);
           aws.putObject({
             Key: `${businessType.toLowerCase()}Pic/${filename}`,
@@ -76,10 +78,7 @@ export const awsUploadFile = (options: any) => {
             ContentType: item.type,
             Body: item,
           }, async (err: any, data: any) => {
-            console.log(err);
-            console.log(data);
             if (data) {
-              console.log(err);
               // const fileUrl = `http://${filePath}/${bucket}${prefix}/${businessType.toLowerCase()}Pic/${filename}`;
               const fileUrl = `${businessType.toLowerCase()}Pic/${filename}`;
               downloadFiles.push(fileUrl);
@@ -117,13 +116,10 @@ export const awsGetPreSignedUrl = (fileUrl: string) => {
       handleUploadErr(reject, '生成 aws 实例失败');
     } else {
       try {
-        console.log('fileUrl:', fileUrl)
         aws.getSignedUrl('getObject', {
           Bucket: `${bucket}${prefix}`,
           Key: fileUrl,
         }, async (err: any, data: any) => {
-          console.log(err);
-          console.log(data);
           if (!data) {
             handleUploadErr(reject, 'aws获取访问链接错误');
           }
