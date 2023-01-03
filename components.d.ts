@@ -22,6 +22,7 @@ declare module '@vue/runtime-core' {
 		ElForm: typeof import('element-plus/es')['ElForm'];
 		ElFormItem: typeof import('element-plus/es')['ElFormItem'];
 		ElTimePicker: typeof import('element-plus/es')['ElTimePicker'];
+    ElTree: typeof import('element-plus/es')['ElTree'];
 		FormItem: typeof import('./src/components/common/formItem.vue')['default'];
 		FormWrap: typeof import('./src/components/common/formWrap.vue')['default'];
 		Icon: typeof import('./src/components/Icon/index.vue')['default'];
