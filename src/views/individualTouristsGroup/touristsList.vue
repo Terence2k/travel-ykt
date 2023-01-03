@@ -77,7 +77,7 @@
 							<div class="action-btns">
 								<a v-if="dateTime > dayjs(record.startDate).unix()" @click="outGroup(record)" v-permission="'待出团_手动出团'">手动出团</a>
 								<a @click="change(record)" v-permission="'待出团_行程变更'">行程变更</a>
-								<a v-permission="'待出团_查看日志'">查看日志</a>
+								<!-- <a v-permission="'待出团_查看日志'">查看日志</a> -->
 								<a @click="goToPath(record)" v-permission="'待出团_进入预订'">进入预订</a>
 								<a @click="toRevoke(record)" v-permission="'待出团_撤回'">撤回</a>
 							</div>
@@ -205,7 +205,7 @@
 							<div class="action-btns">
 								<a @click="goToDetail(record)" v-permission="'待处理_行程详情'">行程详情</a>
 								<a @click="revoke(record)" v-permission="'待处理_申请撤销'">申请撤销</a>
-								<a v-permission="'待处理_查看日志'">查看日志</a>
+								<!-- <a v-permission="'待处理_查看日志'">查看日志</a> -->
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -787,6 +787,16 @@ const sendGroup = (id: string) => {
 		message.success('提交审核成功！');
 	});
 };
+watch(
+	()=>route.params.isRefresh,
+	(newVal)=>{
+		if (newVal === '1') {
+			onSearch1();
+		}	else if (newVal === '2') {
+			onSearch1();
+			onSearch2();
+		}
+	})
 onMounted(() => {
 	getIsTravelVisible();
 	onSearch1();

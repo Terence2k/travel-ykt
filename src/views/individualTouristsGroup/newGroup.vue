@@ -180,15 +180,11 @@ const router = useRouter();
 const route = useRoute();
 const isRefresh = ref('0')
 const back = () => {
-	dateFormRef.value?.resetFields()
-	formRef.value?.resetFields()
-	isAdd.value = true
 	router.push({
 		name: 'individualTouristsGroup',
-		/* name: 'electronicContratList',
 		params: {
 			isRefresh: isRefresh.value
-		} */
+		}
 	})
 }
 const auditVisible = ref(false)
@@ -442,6 +438,7 @@ const datePickerChange = () => {
 		const diff = dayjs(form.value.endDate).diff(form.value.startDate, 'hour')
 		form.value.groupTypeName = diff <= 24 ? '一日游' : '多日游'
 		form.value.groupType = diff <= 24 ? 3 : 4
+		formRef.value.clearValidate('groupTypeName')
 	} else {
 		form.value.startDate = '';
 		form.value.endDate = '';
@@ -633,6 +630,7 @@ const onSelectChange = (Keys: Key[], selectedRows: any[]) => {
 		form.value.totalExpenses = totalExpenses
 		form.value.touristPeopleNumber = touristPeopleSum
 		form.value.contracts = select
+		formRef.value.clearValidate('touristPeopleNumber')
 	} else {
 		form.value.touristPeopleNumber = undefined
 	}
@@ -662,6 +660,7 @@ const guideChange = (val: any) => {
 const editDraft = async (callBack?: any) => {
 	form.value.compositeProducts = travelStore.curentProduct
 	api.editIndividualTouristsGroup(form.value).then((res: any) => {
+		isRefresh.value = '1'
 		callBack && callBack(res)
 	})
 }
@@ -762,6 +761,8 @@ const auditConform = async () => {
 	api.individualSubmitFinanceAudit(form.value.oid).then((res: any) => {
 		auditVisible.value = false
 		message.success('提交审核成功！')
+		isRefresh.value = '2'
+		back()
 	})
 }
 const submitAuditInfo = ref('')
@@ -842,6 +843,27 @@ const findByIdTeamType = async () => {
 	}
 	travelStore.setCompositeProducts(allFeesProducts);
 }
+const resetFormFields = () => {
+	dateFormRef.value?.resetFields()
+	dateFormRef.value?.clearValidate()
+	formRef.value?.resetFields()
+	isAdd.value = true
+	activeKey.value = '1'
+	isRefresh.value = '0'
+	form.value = {}
+	state.contractTable.data = []
+	state.contractTable.param.startTime = undefined;
+	state.contractTable.param.key = undefined;
+	state.contractTable.param.contractNo = undefined;
+	state.touristTable.data = []
+	selectedRowKeys.value = []
+	selectedContract.value = []
+	travelStore.hotels = []
+	travelStore.productList = []
+	travelStore.scenicTickets = []
+	travelStore.curentProduct = []
+	travelStore.compositeProducts = []
+}
 watch(
 	() => route.query.id,
 	(newVal) => {
@@ -855,6 +877,15 @@ watch(
 		}
 	},
 	{ immediate: true })
+
+watch(
+	() => route.name,
+	(newVal) => {
+		if (newVal === 'individualTouristsGroup') {
+			resetFormFields()
+		}
+	},
+)
 onMounted(() => {
 	getGuideList()
 	findByIdTeamType()

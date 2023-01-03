@@ -227,8 +227,11 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		},
 		delhotel(key: string) {
 			if (state.hotelData[key].oid) {
-				state.newhotel.push({ ...state.hotelData[key], ...{ deleted: true, edit: true } });
-			}
+				state.newhotel.push({
+					...state.hotelData[key],
+					...{ deleted: true, edit: true, arrivalDate: state.hotelData[key].startDate, departureDate: state.hotelData[key].endDate },
+				});
+			}			
 			state.hotelData.splice(key, 1);
 		},
 		delticket(key: string) {
@@ -277,7 +280,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			return accDiv(money, 100);
 		}
 	});
-	
+
 	const hotelmoney = computed(() => (params: any) => {
 		let money = 0 as number;
 		if (params) {
@@ -422,7 +425,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 					delete state.tiecketparams[index].edit;
 				}
 			}
-		}		
+		}
 		refund();
 	};
 	const refund = () => {
@@ -437,6 +440,8 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			data.startDate = state.timeformState.startTime;
 			data.endDate = state.timeformState.endTime;
 		}
+		console.log(data, 'data');
+
 		api.travelManagement.travelChangeCheckTicketRefund(data).then((res: any) => {
 			if (res.checkStatus == true) {
 				Modal.confirm({

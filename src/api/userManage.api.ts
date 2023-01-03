@@ -97,14 +97,13 @@ export async function checkAccount(data: any) {
 }
 
 // 管理员重置用户密码
-export async function adminResetPassword(data: any) {
+export async function adminResetPassword({userId, newPassword}:{userId: string, newPassword: string}) {
   return request({
-    url: `${commonPath}/customer-service/public/api/sys-user/adminResetPassword`,
+    url: `${commonPath}/customer-service/public/api/sys-user/adminResetPassword?userId=${userId}&newPassword=${newPassword}`,
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
     method: 'put',
-    data,
     showLoading: true
   });
 }

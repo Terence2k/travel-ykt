@@ -228,10 +228,11 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		},
 		delhotel(key: string) {
 			if (state.hotelData[key].oid) {
-				state.newhotel.push({ ...state.hotelData[key], ...{ deleted: true, edit: true } });
+				state.newhotel.push({
+					...state.hotelData[key],
+					...{ deleted: true, edit: true, arrivalDate: state.hotelData[key].startDate, departureDate: state.hotelData[key].endDate },
+				});
 			}
-			console.log(state.newhotel);
-
 			state.hotelData.splice(key, 1);
 		},
 		delticket(key: string) {
@@ -274,7 +275,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			// 		(dayjs(state.timeformState.endTime) && dayjs(state.timeformState.endTime).add(1, 'day') <= current && current)
 			// 	);
 			// };
-		
+
 			// travelStore.setDisabled = dis as any;
 			travelStore.teamTime[0] = state.timeformState.startTime;
 			travelStore.teamTime[1] = state.timeformState.endTime;

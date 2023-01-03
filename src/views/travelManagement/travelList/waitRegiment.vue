@@ -15,7 +15,7 @@
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a @click="revokeGroupToDraft(record.oid)" v-permission="'待审核_撤回任务'">撤回任务</a>
-						<a v-permission="'待审核_催办'">催办</a>
+						<!-- <a v-permission="'待审核_催办'">催办</a> -->
 					</div>
 				</template>
 			</template>
@@ -122,7 +122,7 @@
 	}
 
 	const revokeGroupToDraft = async (id:number) => {
-		console.log(id)
+		// console.log(id)
 		await api.travelManagement.revokeGroupToDraft(id);
 		onSearch()
 		message.success('撤回成功')

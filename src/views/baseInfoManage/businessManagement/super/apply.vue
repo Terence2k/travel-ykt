@@ -80,7 +80,7 @@
 								<a @click="disable(record)" v-if="record?.onOff" v-permission="'已审核_禁用'">禁用</a>
 								<a v-else @click="enable(record)" v-permission="'已审核_启用'">启用</a>
 								<a @click="goTo(record, 'details')" v-permission="'已审核_查看'">查看</a>
-								<a @click="resetPassword(record.oid)" v-permission="'已审核_重置密码'">重置密码</a>
+								<!-- <a @click="resetPassword(record.oid)" v-permission="'已审核_重置密码'">重置密码</a> -->
 								<!-- <a @click="edit(record)" v-show="editVisible(record?.businessType)" v-permission="'已审核_编辑'">编辑</a> -->
 								<a @click="edit(record)" v-permission="'已审核_编辑'">编辑</a>
 							</div>
@@ -465,7 +465,7 @@ const columns = [
 		title: '操作',
 		key: 'action',
 		fixed: 'right',
-		width: 208
+		width: 150
 	},
 ]
 const auditColumns = [
