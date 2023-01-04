@@ -1,8 +1,4 @@
-const sharedOnCell = (_, index) => {
-  console.log('_:', _);
-  console.log('index:', index);
-  
-};
+import { accDiv } from '@/utils/compute';
 
 export const getOptions = (props: any) => {
   let touristOption = {
@@ -107,7 +103,7 @@ export const getOptions = (props: any) => {
     descriptions: 
       `共<span style="color: red;">${props.touristInsurance?.length}</span>人，
       保险购买状态：${props.touristInsurance?.length? props.touristInsurance[0].isBuy : ''}，
-      预估保费：<span style="color: red;">${props.touristInsurance?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0)}</span>元`,
+      预估保费：<span style="color: red;">${accDiv(props.touristInsurance?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0), 100)}</span>元`,
     dataSource: props.touristInsurance,
   }
   let hotelListOption = {
@@ -163,7 +159,7 @@ export const getOptions = (props: any) => {
       `已预订<span style="color: red;">${props.hotelList?.length}</span>个酒店，
       入住人数：<span style="color: red;">${props.hotelList?.reduce((prev: any, curr: any) => prev + curr.peopleCount, 0)}</span>人；
       房间数量：<span style="color: red;">${props.hotelList?.reduce((prev: any, curr: any) => prev + curr.roomCount, 0)}</span>;
-      预估费用：<span style="color: red;">${props.hotelList?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0)}</span>元`,
+      预估费用：<span style="color: red;">${accDiv(props.hotelList?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0), 100)}</span>元`,
     dataSource: props.hotelList,
   }
   let ticketListOption = {
@@ -219,7 +215,7 @@ export const getOptions = (props: any) => {
     descriptions: 
       `已预订<span style="color: red;">${props.ticketList?.length}</span>个景区，
       门票数量：<span style="color: red;">${props.ticketList?.reduce((prev: any, curr: any) => prev + curr.ticketCount, 0)}</span>；
-      预估费用：<span style="color: red;">${props.ticketList?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0)}</span>元`,
+      预估费用：<span style="color: red;">${accDiv(props.ticketList?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0), 100)}</span>元`,
     dataSource: props.ticketList,
   }
   let cateringListOption = {
@@ -280,7 +276,7 @@ export const getOptions = (props: any) => {
     descriptions: 
       `已预订<span style="color: red;">${props.cateringList?.length}</span>个餐厅，
       就餐人数：<span style="color: red;">${props.cateringList?.reduce((prev: any, curr: any) => prev + curr.peopleCount, 0)}</span>；
-      预估费用：<span style="color: red;">${props.cateringList?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0)}</span>元`,
+      预估费用：<span style="color: red;">${accDiv(props.cateringList?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0), 100)}</span>元`,
     dataSource: props.cateringList,
   }
   return {

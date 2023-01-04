@@ -302,6 +302,8 @@ const init = async () => {
 		formState.chargeModel = 1;
 		// // 默认为景区
 		formState.productType = Number(query.productType);
+		// 默认等于TRAVEL
+		formState.lastCostBelongCompany = 'TRAVEL';
 		// 从父元素带过来 --- 当为景区时 productSonType 等于父元素的 productSonType
 		if (Number(query.productType) === 1) {
 			formState.productSonType = Number(query.productSonType);
