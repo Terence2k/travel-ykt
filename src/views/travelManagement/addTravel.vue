@@ -48,7 +48,7 @@ import insurance from './insurance/insurance.vue';
 import { cloneDeep, debounce } from 'lodash';
 import api from '@/api';
 import { message } from 'ant-design-vue';
-import { useTravelStore } from '@/stores/modules/travelManagement';
+import { fileOne, fileThree, fileTwo, useTravelStore } from '@/stores/modules/travelManagement';
 import dayjs, { Dayjs } from 'dayjs';
 import { disabledRangeTime, getAmount } from '@/utils';
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
@@ -248,6 +248,7 @@ const getTraveDetail = () => {
 		travelStore.setGuideList([]);
 		travelStore.setTouristList([]);
 		travelStore.setTrafficList([]);
+		travelStore.setFileInfo([fileOne, fileTwo, fileThree]);
 		return;
 	}
 	api.travelManagement
@@ -267,39 +268,21 @@ const getTraveDetail = () => {
 			const fileList = res.attachmentList.map(it => it.attachmentType)
 			let allFIleList = []
 			if (!fileList.includes(1)) {
-					allFIleList.push({
-						attachmentName: '',
-						attachmentTypeName: '旅行合同上传：',
-						attachmentType: 1,
-						attachmentUrl: '',
-						oid: null,
-					})
+				allFIleList.push(fileOne)
 			} else {
 				allFIleList.push(...res.attachmentList.filter(it => it.attachmentType === 1))
 			}
 			if (!fileList.includes(2)) {
-				allFIleList.push({
-					attachmentName: '',
-					attachmentTypeName: '委托接待协议上传：',
-					attachmentType: 2,
-					attachmentUrl: '',
-					oid: null,
-				})
+				allFIleList.push(fileTwo)
 			} else {
 				allFIleList.push(...res.attachmentList.filter(it => it.attachmentType === 2))
 			}
 			if (!fileList.includes(3)) {
-				allFIleList.push({
-					attachmentName: '',
-					attachmentTypeName: '包车合同上传：',
-					attachmentType: 3,
-					attachmentUrl: '',
-					oid: null,
-				})
+				allFIleList.push(fileThree)
 			} else {
 				allFIleList.push(...res.attachmentList.filter(it => it.attachmentType === 3))
 			}
-			
+
 			travelStore.setFileInfo(allFIleList);
 
 			res.guideList = res.guideList.map((it: any) => {

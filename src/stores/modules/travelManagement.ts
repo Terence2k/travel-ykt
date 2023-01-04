@@ -56,6 +56,29 @@ export const auditListParams = {
 		groupType: '',
 	},
 };
+export const fileOne = {
+	attachmentName: '',
+	attachmentTypeName: '旅行合同上传：',
+	attachmentType: 1,
+	attachmentUrl: '',
+	oid: null,
+}
+
+export const fileTwo = {
+	attachmentName: '',
+	attachmentTypeName: '委托接待协议上传：',
+	attachmentType: 2,
+	attachmentUrl: '',
+	oid: null,
+}
+
+export const fileThree = {
+	attachmentName: '',
+	attachmentTypeName: '包车合同上传：',
+	attachmentType: 3,
+	attachmentUrl: '',
+	oid: null,
+}
 export const useTravelStore = defineStore({
 	id: 'travel',
 	state: () => ({
@@ -134,29 +157,7 @@ export const useTravelStore = defineStore({
 		traveInfo: {},
 		sendTabList: [], //发团tab
 		takeTabList: [], //接团tab
-		attachmentList: [
-			{
-				attachmentName: '',
-				attachmentTypeName: '旅行合同上传：',
-				attachmentType: 1,
-				attachmentUrl: '',
-				oid: null,
-			},
-			{
-				attachmentName: '',
-				attachmentTypeName: '委托接待协议上传：',
-				attachmentType: 2,
-				attachmentUrl: '',
-				oid: null,
-			},
-			{
-				attachmentName: '',
-				attachmentTypeName: '包车合同上传：',
-				attachmentType: 3,
-				attachmentUrl: '',
-				oid: null,
-			},
-		],
+		attachmentList: [fileOne, fileTwo, fileThree],
 		compositeProducts: [],
 		curentProduct: [] as any,
 		hotels: [],
