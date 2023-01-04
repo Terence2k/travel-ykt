@@ -143,7 +143,7 @@ const openInfoPage = (orderNo: any) => {
 };
 
 onMounted(() => {
-	navigatorBar.setNavigator(['订单管理']);
+	// navigatorBar.setNavigator(['订单管理']);
 	hotelOrderPage();
 });
 onBeforeUnmount(() => {
