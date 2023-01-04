@@ -18,7 +18,7 @@
 					<div class="action-btns">
 						<a @click="goToDetail(record)" v-permission="'待处理_行程详情'">行程详情</a>
 						<a @click="revoke(record)" v-permission="'待处理_申请撤销'">申请撤销</a>
-						<a v-permission="'待处理_查看日志'">查看日志</a>
+						<!-- <a v-permission="'待处理_查看日志'">查看日志</a> -->
 					</div>
 				</template>
 			</template>

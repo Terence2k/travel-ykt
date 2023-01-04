@@ -25,18 +25,18 @@
           <a-descriptions-item label="地接社计调">{{state.basicData.subTravelOperatorName}} {{state.basicData.subTravelOperatorPhone}}</a-descriptions-item>
           <a-descriptions-item label="游客人数" :span="2">{{state.basicData.touristCount}}</a-descriptions-item>
           <a-descriptions-item label="古维费应缴人数">{{state.basicData.guWeiCount}}</a-descriptions-item>
-          <a-descriptions-item label="行程开始时间" :span="2">{{state.basicData.startDate}}</a-descriptions-item>
-          <a-descriptions-item label="行程结束时间">{{state.basicData.endDate}}</a-descriptions-item>
+          <a-descriptions-item label="行程时间" :span="2">{{state.basicData.startDate}} - {{ state.basicData.endDate }}</a-descriptions-item>
+          <a-descriptions-item label="综费应缴人数">{{state.basicData.productPeopleCount }}</a-descriptions-item>
           <a-descriptions-item label="已添加景区" :span="2">{{state.basicData.ticketCount}}</a-descriptions-item>
-          <a-descriptions-item label="已添加餐饮">{{state.basicData.cateringCount}}</a-descriptions-item>
-          <a-descriptions-item label="已添加酒店" :span="2">{{state.basicData.hotelCount}}</a-descriptions-item>
+          <a-descriptions-item label="已添加酒店">{{state.basicData.hotelCount}}</a-descriptions-item>
+          <a-descriptions-item label="已添加餐饮" :span="2">{{state.basicData.cateringCount}}</a-descriptions-item>
           <a-descriptions-item label="预估应缴费（元）">{{accDiv(state.basicData.totalFee, 100)}}</a-descriptions-item>
         </a-descriptions>
       </a-col>
       <a-col :span="7">
         <a-descriptions title="&nbsp;" bordered layout="vertical">
           <a-descriptions-item label="行程单二维码" :labelStyle="labelStyle" :contentStyle="contentStyle">
-            待提交后生成
+            <qrcode-vue :value="codeUrl" :size="200" level="H" />
           </a-descriptions-item>
         </a-descriptions>
       </a-col>
@@ -103,6 +103,10 @@
   import CommonPagination from '@/components/common/CommonPagination.vue';
   import { getOptions } from './travelDetail/travelDetail';
   import { accDiv } from '@/utils/compute';
+  import { getStyles } from '@/utils/util';
+  import QrcodeVue from 'qrcode.vue'
+
+  const codeUrl = ref();
 
   const state = reactive({
 		basicData: {
@@ -118,14 +122,13 @@
   const printBtn = ref();
 
   const getPrint = () => {
-    console.log('getOptions(state.itineraryDetail):', getOptions(state.itineraryDetail))
     state.param.pageNo = 1;
     state.param.pageSize = 999999;
     getItineraryDetail(route.currentRoute.value.query.oid, true);
   }
 
   const print = ref({
-    id: 'printBox',//这里的id就是上面我们的打印区域id，实现指哪打哪
+    id: 'printBox',//这里的id就是上面我们的打印区域id
     popTitle: '', // 打印配置页上方的标题
     extraHead: '', // 最上方的头部文字，附加在head标签上的额外标签，使用逗号分割
     preview: false, // 是否启动预览模式，默认是false
@@ -153,13 +156,12 @@
     };
   });
   // 行程单二维码内容样式
-  const contentStyle = computed((): CSSProperties => {
-    return {
-      lineHeight: '352px',
-      display: 'flex',
-      justifyContent: 'center',
-      color: '#9DA0A4',
-    };
+  const contentStyle = computed((): any => {
+      return {
+        display: 'flex',
+        justifyContent: 'center',
+        color: '#9DA0A4',
+      };
   });
 
 	const onHandleCurrentChange = (e: any) => {
@@ -175,6 +177,10 @@
 	  api.travelManagement.getItineraryDetail(queryData).then((res: any) => {
       state.basicData = res.basic;
       state.itineraryDetail = res;
+      codeUrl.value = JSON.stringify({
+        itineraryNo: state.basicData.itineraryNo,
+        oid: state.basicData.oid
+      })
       nextTick(() => {
         if (isPrint) {
           printBtn.value.click();
@@ -186,6 +192,9 @@
 		});
   }
   getItineraryDetail(route.currentRoute.value.query.oid);
+  onMounted(() => {
+    document.getElementsByClassName('ant-descriptions-view')[1].style.height = `${getStyles(document.getElementsByClassName('ant-descriptions-view')[0], 'height')}px`;
+  })
 </script>
 <style lang="less" scoped>
 .container {

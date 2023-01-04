@@ -30,7 +30,7 @@
         <template v-if="column.key === 'action'">
           <div class="action-btns">
             <a @click="checkDetails(record)" v-permission="'查看'">查看</a>
-            <a @click="changGuideStatus(record.guideStatus, record)">{{ record.guideStatus === 1 ? '禁用' : '启用'
+            <a @click="changGuideStatus(record.guideStatus, record)" v-permission="record.guideStatus === 1 ? '禁用' : '启用'">{{ record.guideStatus === 1 ? '禁用' : '启用'
             }}</a>
           </div>
         </template>

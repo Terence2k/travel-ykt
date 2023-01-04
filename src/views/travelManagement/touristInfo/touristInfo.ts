@@ -351,10 +351,22 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 				}
 				if (state.editableData[key].oldIdCard !== state.editableData[key].certificateNo) {
 					const res: any = await methods.getAreaByIdCardNo(state.editableData[key].certificateNo);
-					state.editableData[key].sourceAddressName = `${res.provinceName}/${res.cityName}/${res.areaName}`;
-					state.editableData[key].sourceAddress = res.areaId;
-					state.editableData[key].cityId = res.cityId;
-					state.editableData[key].provinceId = res.provinceId;
+					if (res.provinceName) {
+						state.editableData[key].sourceAddressName = res.provinceName;
+						state.editableData[key].provinceId = res.provinceId;
+					}
+					if (res.cityName) {
+						state.editableData[key].sourceAddressName += `/${res.cityName}`
+						state.editableData[key].cityId = res.cityId;
+					}
+					if (res.areaName) {
+						state.editableData[key].sourceAddressName += `/${res.areaName}`
+						state.editableData[key].sourceAddress = res.areaId;
+					}
+					
+					
+					
+					
 				}
 				
 				

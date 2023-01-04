@@ -4,16 +4,14 @@
 			<template #bodyCell="{ column, record }">
 				<template v-if="column.dataIndex === 'actions'">
 					<div class="action-btns">
-						<a @click="visible = true">申请改刷</a>
-						<a @click="Vdetail = true">详情</a>
+						<a @click="openbrushup(record.orderNo)">申请改刷</a>
+						<a @click="openbrushupdetail(record.orderNo)">详情</a>
 					</div>
 				</template>
 				<template v-if="column.key == 'reduceAfterAmount'">
 					{{ accDiv(record.reduceAfterAmount, 100) }}
 				</template>
-				<template v-if="column.key == 'fullRule'">
-					满{{ record.fullRule }} 减 {{ record.reduceRule }}
-				</template>
+				<template v-if="column.key == 'fullRule'"> 满{{ record.fullRule }} 减 {{ record.reduceRule }} </template>
 			</template>
 		</CommonTable>
 		<CommonPagination
@@ -24,39 +22,7 @@
 			@showSizeChange="pageSideChange"
 		>
 		</CommonPagination>
-		<BaseModal :title="'申请改刷'" v-model="visible">
-			<a-form>
-				<a-form-item label="当前房数">
-					<span>222</span>
-				</a-form-item>
-				<a-form-item label="申请改刷房数">
-					<a-input placeholder="请输入正确的数量" />
-				</a-form-item>
-				<a-form-item label="改刷凭证">
-					<pic></pic>
-				</a-form-item>
-			</a-form>
-			<template v-slot:footer>
-				<a-button type="primary" @click="visible = false" style="width: 88px">提交申请</a-button>
-				<a-button style="width: 76px" @click="visible = false">取消</a-button>
-			</template>
-		</BaseModal>
-		<BaseModal :title="'审核'" v-model="Vdetail">
-			<a-form>
-				<a-form-item label="状态" >
-					<a-radio-group v-model:value="type">
-						<a-radio value="1">通过</a-radio>
-						<a-radio value="2">不通过</a-radio>
-					</a-radio-group>
-				</a-form-item>
-				<a-form-item label="">
-					<a-textarea placeholder="审核不通过原因" :rows="4" disabled />
-				</a-form-item>
-			</a-form>
-			<template v-slot:footer>
-				<a-button style="width: 76px" @click="Vdetail = false">关闭</a-button>
-			</template>
-		</BaseModal>
+	
 	</div>
 </template>
 
@@ -76,13 +42,9 @@ import { HotelStatus } from '@/enum';
 import { useHotelStore } from '@/stores/modules/hotelManage';
 import { accDiv } from '@/utils/compute.js';
 
-const visible = ref(false);
-const Vdetail = ref(false);
-
 const hotelStore = useHotelStore();
 const router = useRouter();
 const navigatorBar = useNavigatorBar();
-const type = ref('2');
 const columns = [
 	{
 		title: '订单编号',
@@ -154,38 +116,39 @@ const state = reactive({
 			scheduledTime: null,
 			arrivalDate: null,
 			status: null,
-			itineraryNo:null
+			itineraryNo: null,
 		},
 	},
 });
 
 const onHandleCurrentChange = (val: any) => {
-	hotelStore.HotelList.finish.params.pageNo = val
-	// state.tableData.param.pageNo = val;
+	hotelStore.HotelList.finish.params.pageNo = val;
 	hotelOrderPage();
 };
 
 const pageSideChange = (current: number, size: number) => {
-	// console.log('changePageSize:', size);
-	// state.tableData.param.pageSize = size;
-	// // onSearch();
+	hotelStore.HotelList.finish.params.pageSize = size;
+	hotelOrderPage();
+
 };
 
 const hotelOrderPage = async () => {
-	hotelStore.HotelList.finish.params.status = HotelStatus.finish
+	hotelStore.HotelList.finish.params.Status = HotelStatus.finish;
 	const res = await api.hotelOrderPage(hotelStore.HotelList.finish.params);
-	hotelStore.setOrderList(res, 'finish')
+	hotelStore.setOrderList(res, 'finish');
 };
 
-const openInfoPage = (record: any) => {
-	router.push({ path: '/catering/basic_Information/basic_info', query: { oid: record.oid } });
+const openbrushup = (orderNo: any) => {
+	router.push({ path: '/hotelManagement/hotelOrder/orderBrushUp', query: { orderNo: orderNo, brush: 1 } });
 };
-const openEditPage = (record: any) => {
-	router.push({ path: '/catering/basic_Information/basic_edit', query: { oid: record.oid } });
+
+const openbrushupdetail = (orderNo: any) => {
+	router.push({ path: '/hotelManagement/hotelOrder/orderBrushUp', query: { orderNo: orderNo, detail: 1 } });
 };
+
 
 onMounted(() => {
-	navigatorBar.setNavigator(['订单管理']);
+	// navigatorBar.setNavigator(['订单管理']);
 	hotelOrderPage();
 });
 onBeforeUnmount(() => {

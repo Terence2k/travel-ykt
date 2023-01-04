@@ -16,7 +16,7 @@
 		</template>
 	</CommonSearch>
 	<div class="table-area">
-		<CommonTable :dataSource="state.tableData.data" :columns="columns">
+		<CommonTable :dataSource="state.tableData.data" :columns="columns" :scrollY="false" style="padding: 0 ;">
 			<template #bodyCell="{ column, index, record }">
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
@@ -24,8 +24,8 @@
 					</div>
 				</template>
 				<template v-if="column.key === 'verificationType'">
-					<a-span v-if="record.verificationType == 0">单点</a-span>
-					<a-span v-else>多点</a-span>
+					<a-span v-if="record.verificationType == 0">单点核销</a-span>
+					<a-span v-else>多点核销</a-span>
 				</template>
 				<template v-if="column.key === 'ticketType'">
 					<a-span v-if="record.ticketType == 0">联票</a-span>
@@ -61,27 +61,30 @@ const columns = [
 		title: '门票名称',
 		dataIndex: 'ticketName',
 		key: 'ticketName',
+		width:150
 	},
 	{
 		title: '票种',
 		dataIndex: 'verificationType',
 		key: 'verificationType',
+		width:150
 	},
 	{
 		title: '归属景区',
 		dataIndex: 'scenicName',
 		key: 'scenicName',
+		width:150
 	},
 	{
 		title: '门票分类',
 		dataIndex: 'ticketType',
 		key: 'ticketType',
+		width:150
 	},
 	{
 		title: '操作',
 		key: 'action',
-		fixed: 'right',
-		width: 150,
+		width:150,
 	},
 ];
 

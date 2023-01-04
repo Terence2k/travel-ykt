@@ -23,7 +23,7 @@
 	</CommonSearch>
   <CommonTable :dataSource="tableData.data" :columns="columns">
     <template #button>
-      <a-button type="primary" style="margin-right:20px" v-permission="'导出'">导出</a-button>
+      <!-- <a-button type="primary" style="margin-right:20px" v-permission="'导出'">导出</a-button> -->
       <a-button type="primary" style="margin-right:20px" v-permission="'一机管同步'" @click="synchronization">一机管同步</a-button>
       <a-button type="primary" @click="addTourGuide" v-permission="'手动签约'">手动签约</a-button>
     </template>
@@ -38,8 +38,7 @@
   </CommonTable>
   <CommonPagination v-model:current="tableData.param.pageNo" v-model:page-size="tableData.param.pageSize"
     :total="tableData.total" @change="onHandleCurrentChange" @showSizeChange="pageSideChange" />
-  <CommonModal title="导游信息" v-model:visible="modalVisible" @cancel="cancel" @close="cancel" :is-conform="false"
-    :cancel-text="'关闭'">
+  <BaseModal title="导游信息" v-model="modalVisible" :width="800">
     <div class="guide_state">{{ state.detailsData.signStatusName }}</div>
     <div class="check_info">
       <div class="row_info">
@@ -87,7 +86,7 @@
           导游星级：
         </div>
         <div>
-          {{ state.detailsData.guideLevelName }}
+          {{ state.detailsData.guideLevelName}}
         </div>
       </div>
       <div class="row_info">
@@ -118,12 +117,15 @@
         <div>
           签约附件：
         </div>
-        <div>
-          {{ state.detailsData.signAttachmentList }}
+        <div v-if="state.num>0">
+          <Upload v-model="state.detailsData.signAttachmentList" :maxCount="state.num" disabled />
         </div>
       </div>
     </div>
-  </CommonModal>
+    <template v-slot:footer>
+      <a-button type="primary" @click="cancel">取消</a-button>
+    </template>
+  </BaseModal>
   <BaseModal title="一键同步确认" v-model="synchronizationVisible" :width="400">
 		<p>您即将发起委派导游数据同步，开始同步后系统将自动从【一部手机管旅游】平台获取贵社最新最全的合作导游增量数据。</p>
 		<template v-slot:footer>
@@ -150,6 +152,8 @@ import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModa
 import api from '@/api';
 import { message } from 'ant-design-vue';
 import { useRouter, useRoute } from 'vue-router';
+import Upload from '@/components/common/imageWrapper.vue';
+
 const router = useRouter();
 const route = useRoute()
 const synchronizationVisible=ref(false)
@@ -170,7 +174,8 @@ const state = reactive({
   },
   detailsData:[] as any,
   modalVisible: false,
-  cancelGuideId:''
+  cancelGuideId:'',
+  num:0
 });
 const form = reactive({})
 const tourGuideTypeOption = []
@@ -243,7 +248,7 @@ const reset=()=>{
 }
 const add=()=>{
   api.travelSynchronizeGuide().then((res:any)=>{
-    message.success(res.message)
+    message.success(res)
     synchronizationVisible.value=false
     onSearch()
   })
@@ -263,6 +268,7 @@ const cancelSubmit=()=>{
 }
 const cancel = () => {
   state.modalVisible = false
+  state.num=0
 }
 const addTourGuide = () => {
   router.push({
@@ -272,7 +278,11 @@ const addTourGuide = () => {
 const viewProfile = (row:any) => {
   state.modalVisible = true
   state.detailsData=row
-  console.log(row,'信息')
+  if(row.signAttachmentList)
+  {
+    state.detailsData.signAttachmentList=row.signAttachmentList.toString()
+    state.num=row.signAttachmentList.split(',').length
+  }
 }
 
 const cancelDelegate = (id: string) => { }

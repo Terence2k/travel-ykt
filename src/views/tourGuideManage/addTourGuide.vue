@@ -109,14 +109,14 @@ const submit = () => {
   }
   let data={
     guideId:state.tableData.data[0]?.oid,
-    // signStartDate:state.tableData.data[0]?.signStartDate,
-    // signEndDate:state.tableData.data[0]?.signEndDate,
-    signStartDate:'2022-12-01 00:00:00',
-    signEndDate:'2022-12-12 00:00:00',
+    signStartDate:state.tableData.data[0]?.signStartDate,
+    signEndDate:state.tableData.data[0]?.signEndDate,
+    // signStartDate:'2022-12-01 00:00:00',
+    // signEndDate:'2022-12-12 00:00:00',
     signAttachmentList:state.signAttachmentList.split(',')
   }
-  let signAttachmentList=state.signAttachmentList.split(',')
-  console.log(signAttachmentList,'signAttachmentList')
+  // let signAttachmentList=state.signAttachmentList.split(',')
+  // console.log(signAttachmentList,'signAttachmentList')
   api.sendSignInvitation(data).then((res:any)=>{
       message.success('发送委派成功')
       router.push({ path: '/travel/tourGuideManage/tourGuideList' });

@@ -4,7 +4,7 @@
 			<template #bodyCell="{ column, text, index, record }">
 				<template v-if="column.key === 'index'">
 					<div>
-						{{ (state.params.pageNo - 1) * state.params.pageSize + (index + 1) }}
+						{{ (travelStore.traveList.haveABall.params.pageNo - 1) * travelStore.traveList.haveABall.params.pageSize + (index + 1) }}
 					</div>
 				</template>
 
@@ -16,7 +16,7 @@
 					<div class="action-btns">
 						<a @click="goToPath(record)" v-permission="'已接团_行程详情'">行程详情</a>
 						<a @click="goToChange(record)" v-permission="'已接团_行程变更'">行程变更</a>
-						<a v-permission="'已接团_查看日志'">查看日志</a>
+						<!-- <a v-permission="'已接团_查看日志'">查看日志</a> -->
 					</div>
 				</template>
 			</template>

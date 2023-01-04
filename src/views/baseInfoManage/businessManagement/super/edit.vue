@@ -15,8 +15,8 @@
           <a-form-item name="businessType" label="企业类型">
             <a-select v-model:value="form.businessType" placeholder="请选择企业类型" disabled>
               <a-select-option v-for="item in businessTypeOption" :value="item.codeValue" :key="item.codeValue">{{
-                  item.name
-              }}
+    item.name
+}}
               </a-select-option>
             </a-select>
           </a-form-item>
@@ -222,6 +222,36 @@
           <a-form-item name="legalPersonUrl" label="法人身份证附件" v-show="formKeys?.legalPersonUrl">
             <Upload v-model="form.legalPersonUrl" :maxCount="2" />
           </a-form-item>
+          <a-form-item name="legalPersonUrl" label="法人身份证附件" v-show="formKeys?.legalPersonUrl">
+            <Upload v-model="form.legalPersonUrl" :maxCount="2" />
+          </a-form-item>
+          <div class="tag">
+            信息变更佐证依据（可上传最多5张图片，或者1个pdf文件，非必填项）
+          </div>
+          <a-form-item>
+            <Upload v-model="form.imagesUrl" :maxCount="5" dynamicSlotName="itemRender">
+              <template #customUpload="{ file, actions }">
+                <div class="image_box">
+                  <a-image width="104px" :src="file.url" />
+                  <a-popconfirm title="是否要删除当前佐证依据文件？" ok-text="确认" cancel-text="取消" @confirm="actions.remove">
+                    <a>删除</a>
+                  </a-popconfirm>
+                </div>
+              </template>
+            </Upload>
+          </a-form-item>
+          <a-form-item>
+            <pdfUpload v-model="form.pdfFileUrl" :maxCount="1" dynamicSlotName="itemRender">
+              <template #customUpload="{ file, actions }">
+                <div class="image_box">
+                  <a :href="file.url" :title="file.name" target="_blank">{{ cmpFileName(file.name) }}</a>
+                  <a-popconfirm title="是否要删除当前佐证依据文件？" ok-text="确认" cancel-text="取消" @confirm="actions.remove">
+                    <a>删除</a>
+                  </a-popconfirm>
+                </div>
+              </template>
+            </pdfUpload>
+          </a-form-item>
           <a-form-item>
             <a-button type="primary" @click="submit" style="margin-right:20px" :loading="loading">保存</a-button>
           </a-form-item>
@@ -257,6 +287,7 @@ import api from '@/api';
 import picker from '@/components/common/datePicker.vue'
 import tPicker from '@/components/common/timePicker.vue'
 import Upload from '@/components/common/imageWrapper.vue';
+import pdfUpload from '@/components/common/pdfWrapper.vue';
 const router = useRouter();
 const route = useRoute();
 const isRefresh = ref('0')
@@ -269,7 +300,7 @@ const back = () => {
   })
 }
 type detailsType = {
-  oid?: number,
+  oid?: number | string,
   businessType?: string,
   name?: string,
   regionCode?: (string | number)[],
@@ -323,6 +354,9 @@ type detailsType = {
   rangeTime?: string[],
   startTime?: string,
   endTime?: string,
+  imagesUrl?: string,
+  pdfFileUrl?: string,
+  informationChangeUrl?: string
 }
 const form = ref<detailsType>({
   regionCode: [],
@@ -366,6 +400,15 @@ const formRules = ref<Record<string, Rule[]>>({})
 const formKeys = ref();
 const hotelStarList = ref();
 const scenicLevelList = ref();
+const cmpFileName = computed(() => (name: string) => {
+  if (typeof name === 'string') {
+    const arr = name.split('?')
+    const str = arr[0].split('/')
+    return str[str.length - 1] || '信息变更佐证依据.pdf'
+  } else {
+    return '信息变更佐证依据.pdf'
+  }
+})
 
 // 获取酒店星级下拉数据
 const getHotelStarList = async () => {
@@ -395,6 +438,13 @@ const timePickerChange = () => {
 }
 const getParams = () => {
   form.value.oid = queryParams.oid
+  if (form.value.imagesUrl && form.value.pdfFileUrl) {
+    form.value.informationChangeUrl = form.value.imagesUrl + ',' + form.value.pdfFileUrl
+  } else if (!form.value.imagesUrl && form.value.pdfFileUrl) {
+    form.value.informationChangeUrl = form.value.pdfFileUrl
+  } else if (form.value.imagesUrl && !form.value.pdfFileUrl) {
+    form.value.informationChangeUrl = form.value.imagesUrl
+  }
   if (queryParams.businessType === 'TRAVEL') {
     // 旅行社
     const {
@@ -473,6 +523,20 @@ const getData = async () => {
       form.value.rangeTime = [res.startTime, res.endTime]
     } else {
       form.value.rangeTime = []
+    }
+    if (res.informationChangeUrl) {
+      const arr = res.informationChangeUrl.split(',')
+      let pdfArr: string[] = []
+      let imgArr: string[] = []
+      arr.forEach((item: any) => {
+        if (item.indexOf('.pdf') !== -1) {
+          pdfArr.push(item)
+        } else {
+          imgArr.push(item)
+        }
+      })
+      form.value.imagesUrl = imgArr.toString()
+      form.value.pdfFileUrl = pdfArr.toString()
     }
   }
 }
@@ -553,5 +617,13 @@ onDeactivated(() => {
       }
     }
   }
+}
+
+.image_box {
+  text-align: center;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 </style>
