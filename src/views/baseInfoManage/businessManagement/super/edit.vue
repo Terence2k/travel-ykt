@@ -15,8 +15,8 @@
           <a-form-item name="businessType" label="企业类型">
             <a-select v-model:value="form.businessType" placeholder="请选择企业类型" disabled>
               <a-select-option v-for="item in businessTypeOption" :value="item.codeValue" :key="item.codeValue">{{
-    item.name
-}}
+                item.name
+              }}
               </a-select-option>
             </a-select>
           </a-form-item>
@@ -225,11 +225,39 @@
           <a-form-item name="legalPersonUrl" label="法人身份证附件" v-show="formKeys?.legalPersonUrl">
             <Upload v-model="form.legalPersonUrl" :maxCount="2" />
           </a-form-item>
+          <template v-if="queryParams.businessType === 'TRAVEL'">
+            <div class="tag">
+              绑定一家【一机管旅行社】（可以自动获取其在一机管的全部签约+委派导游）
+            </div>
+            <a-form-item name="yjgTravelId" label="一机管旅行社名称">
+              <a-select v-model:value="form.yjgTravelId" placeholder="请输入并查找该旅行社在一机管系统的准确企业名称" showSearch allowClear
+                :filter-option="filterOption" @change="yjgSelect">
+                <a-select-option v-for="item in YJGList" :value="item.id" :key="item.name">{{
+                  item.name
+                }}
+                </a-select-option>
+              </a-select>
+            </a-form-item>
+          </template>
+          <template v-if="queryParams.businessType === 'TICKET'">
+            <div class="tag">
+              绑定一家【一机管景区】（可以自动获取该景区在一机管的？？？）
+            </div>
+            <a-form-item name="yjgScenicId" label="一机管景区名称">
+              <a-select v-model:value="form.yjgScenicId" placeholder="请输入并查找该景区在一机管系统的准确企业名称" showSearch allowClear
+                :filter-option="filterOption">
+                <a-select-option v-for="item in YJGList" :value="item.id" :key="item.id">{{
+                  item.name
+                }}
+                </a-select-option>
+              </a-select>
+            </a-form-item>
+          </template>
           <div class="tag">
             信息变更佐证依据（可上传最多5张图片，或者1个pdf文件，非必填项）
           </div>
           <a-form-item>
-            <Upload v-model="form.imagesUrl" :maxCount="5" dynamicSlotName="itemRender">
+            <Upload v-model="form.imagesUrl" :maxCount="5" dynamicSlotName="itemRender" ref="imgUploadRef">
               <template #customUpload="{ file, actions }">
                 <div class="image_box">
                   <a-image width="104px" :src="file.url" />
@@ -241,7 +269,7 @@
             </Upload>
           </a-form-item>
           <a-form-item>
-            <pdfUpload v-model="form.pdfFileUrl" :maxCount="1" dynamicSlotName="itemRender">
+            <pdfUpload v-model="form.pdfFileUrl" :maxCount="1" dynamicSlotName="itemRender" ref="pdfUploadRef">
               <template #customUpload="{ file, actions }">
                 <div class="image_box">
                   <a :href="file.url" :title="file.name" target="_blank">{{ cmpFileName(file.name) }}</a>
@@ -291,7 +319,15 @@ import pdfUpload from '@/components/common/pdfWrapper.vue';
 const router = useRouter();
 const route = useRoute();
 const isRefresh = ref('0')
+const resetForm = () => {
+  formRef.value.resetFields()
+  dateFormRef.value?.resetFields()
+  form.value = {}
+  imgUploadRef.value.clearFileList()
+  pdfUploadRef.value.clearFileList()
+}
 const back = () => {
+  resetForm()
   router.push({
     name: 'apply',
     params: {
@@ -299,6 +335,8 @@ const back = () => {
     }
   })
 }
+const pdfUploadRef = ref()
+const imgUploadRef = ref()
 type detailsType = {
   oid?: number | string,
   businessType?: string,
@@ -356,7 +394,11 @@ type detailsType = {
   endTime?: string,
   imagesUrl?: string,
   pdfFileUrl?: string,
-  informationChangeUrl?: string
+  informationChangeUrl?: string,
+  yjgTravelId?: number,
+  yjgTravelName?: string,
+  yjgScenicId?: number,
+  yjgScenicName?: string,
 }
 const form = ref<detailsType>({
   regionCode: [],
@@ -448,12 +490,16 @@ const getParams = () => {
   if (queryParams.businessType === 'TRAVEL') {
     // 旅行社
     const {
+      yjgTravelId,
+      yjgTravelName,
       licenseNo,
       isIndividual,
       individualDeparturePlace,
       individualReturnPlace
     } = form.value
     const travelAgencyInformationBo = {
+      yjgTravelId,
+      yjgTravelName,
       licenseNo,
       isIndividual,
       individualDeparturePlace,
@@ -482,6 +528,50 @@ const getParams = () => {
     return {
       ...toRaw(form.value),
       cateringInfoBO
+    }
+  } else if (queryParams.businessType === 'TICKET') {
+    // 景区
+    const {
+      yjgScenicId,
+      yjgScenicName,
+      unitStatus,
+      scenicLevel,
+      derate,
+      fullRule,
+      reduceRule,
+    } = form.value
+    const scenicCompanyBo = {
+      yjgScenicId,
+      yjgScenicName,
+      unitStatus,
+      scenicLevel,
+      derate,
+      fullRule,
+      reduceRule,
+    }
+    return {
+      ...toRaw(form.value),
+      scenicCompanyBo
+    }
+  } else if (queryParams.businessType === 'HOTEL') {
+    // 酒店
+    const {
+      hotelStarId,
+      unitStatus,
+      derate,
+      fullRule,
+      reduceRule,
+    } = form.value
+    const hotelInfoB0 = {
+      hotelStarId,
+      unitStatus,
+      derate,
+      fullRule,
+      reduceRule,
+    }
+    return {
+      ...toRaw(form.value),
+      hotelInfoB0
     }
   } else {
     return toRaw(form.value)
@@ -555,6 +645,11 @@ const getFormRules = (type: string) => {
   } */
   formKeys.value = getKeylist(type, 'edit')
 }
+const YJGList = ref<{ id: number, name: string }[]>([])
+const getYJGList = async (type: string) => {
+  const res = await api.getYJGList(type)
+  YJGList.value = res
+}
 const initOpeion = () => {
   isRefresh.value = '0'
   if (props.oid) {
@@ -568,19 +663,22 @@ const initOpeion = () => {
     getData()
     queryParams.businessType === 'HOTEL' && getHotelStarList();
     queryParams.businessType === 'TICKET' && getScenicLevels();
+    queryParams.businessType === 'TICKET' && getYJGList('TICKET');
+    queryParams.businessType === 'TRAVEL' && getYJGList('TRAVEL');
   }
 }
-
+const filterOption = (input: string, option: any) => {
+  return option.children()[0].children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+};
+const yjgSelect = (value: any, option: any) => {
+  queryParams.businessType === 'TRAVEL' && (form.value.yjgTravelName = option?.key)
+  queryParams.businessType === 'TICKET' && (form.value.yjgScenicName = option?.key)
+};
 watch(() => props.oid, (newVal) => {
   if (newVal) {
     initOpeion()
   }
 }, { immediate: true })
-onDeactivated(() => {
-  formRef.value.resetFields()
-  dateFormRef.value?.resetFields()
-  form.value = {}
-})
 </script>
 
 <style scoped lang="scss">

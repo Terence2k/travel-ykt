@@ -180,6 +180,12 @@ onMounted(() => {
     handleImage(props.modelValue)
   };
 })
+const clearFileList = () => {
+  fileList.value = []
+}
+defineExpose({
+  clearFileList
+})
 </script>
 <style lang="less" scoped>
 /* you can make up upload button and sample style by using stylesheets */

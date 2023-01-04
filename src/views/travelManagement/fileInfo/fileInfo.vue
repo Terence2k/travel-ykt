@@ -9,7 +9,7 @@
 				<!-- <p v-if="item.oid">{{item.attachmentName}}</p> -->
 				<a-input style="margin: 10px 0; width: 316px;" v-model:value="item.attachmentName" placeholder="请输入合同名称" />
 			</div>
-			<Upload isDragger v-model="item.attachmentUrl" :max-count="1" @result="getResult($event, index)">
+			<Upload isDragger v-model="item.attachmentUrl" :max-count="1" @remove="remove($event, index)" @result="getResult($event, index)">
 				<img src="@/assets/svg/upload.svg" alt="" />
 				<div class="tips">点击或将文件拖拽到这里上传</div>
 				<div class="extension">支持扩展名：.png .jpg</div>
@@ -44,6 +44,9 @@ const addMore = () => {
 }
 const getResult = (e: any, index: number) => {
 	fileUrl.value[index].edit = true;
+}
+const remove = ({index}: any, i: number) => {
+	fileUrl.value[i].edit = true;
 }
 console.log(fileUrl.value, 'fileUrl--------------')
 watch(() => props.onCheck, (newVal) => {
