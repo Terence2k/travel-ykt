@@ -264,7 +264,43 @@ const getTraveDetail = () => {
 			res.basic.time = [res.basic.startDate, res.basic.endDate];
 			res.basic.touristNum = res.basic.touristCount || 0;
 			travelStore.setBaseInfo(res.basic);
-			res.attachmentList.length && travelStore.setFileInfo(res.attachmentList);
+			const fileList = res.attachmentList.map(it => it.attachmentType)
+			let allFIleList = []
+			if (!fileList.includes(1)) {
+					allFIleList.push({
+						attachmentName: '',
+						attachmentTypeName: '旅行合同上传：',
+						attachmentType: 1,
+						attachmentUrl: '',
+						oid: null,
+					})
+			} else {
+				allFIleList.push(...res.attachmentList.filter(it => it.attachmentType === 1))
+			}
+			if (!fileList.includes(2)) {
+				allFIleList.push({
+					attachmentName: '',
+					attachmentTypeName: '委托接待协议上传：',
+					attachmentType: 2,
+					attachmentUrl: '',
+					oid: null,
+				})
+			} else {
+				allFIleList.push(...res.attachmentList.filter(it => it.attachmentType === 2))
+			}
+			if (!fileList.includes(3)) {
+				allFIleList.push({
+					attachmentName: '',
+					attachmentTypeName: '包车合同上传：',
+					attachmentType: 3,
+					attachmentUrl: '',
+					oid: null,
+				})
+			} else {
+				allFIleList.push(...res.attachmentList.filter(it => it.attachmentType === 3))
+			}
+			
+			travelStore.setFileInfo(allFIleList);
 
 			res.guideList = res.guideList.map((it: any) => {
 				it.time = [it.startDate, it.endDate];

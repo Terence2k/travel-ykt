@@ -109,10 +109,10 @@ const submit = () => {
   }
   let data={
     guideId:state.tableData.data[0]?.oid,
-    // signStartDate:state.tableData.data[0]?.signStartDate,
-    // signEndDate:state.tableData.data[0]?.signEndDate,
-    signStartDate:'2022-12-01 00:00:00',
-    signEndDate:'2022-12-12 00:00:00',
+    signStartDate:state.tableData.data[0]?.signStartDate,
+    signEndDate:state.tableData.data[0]?.signEndDate,
+    // signStartDate:'2022-12-01 00:00:00',
+    // signEndDate:'2022-12-12 00:00:00',
     signAttachmentList:state.signAttachmentList.split(',')
   }
   // let signAttachmentList=state.signAttachmentList.split(',')
