@@ -12,7 +12,8 @@ export const hotelListParams = {
 		scheduledTime: '',
 		arrivalDate: '',
 		itineraryNo: '',
-		status: 1,
+		status: '' as any,
+		Status:7
 	},
 };
 export const useHotelStore = defineStore({
@@ -24,7 +25,7 @@ export const useHotelStore = defineStore({
 			[HotelStatus.success]: '审核通过',
 			[HotelStatus.refuse]: '审核不通过',
 			[HotelStatus.cancal]: '未提交',
-			[HotelStatus.finish]: '已完成',
+			[HotelStatus.finish]: '已核销',
 		},
 		HotelList: {
 			waits: cloneDeep(hotelListParams),
@@ -33,6 +34,7 @@ export const useHotelStore = defineStore({
 			cancal: cloneDeep(hotelListParams),
 			finish: cloneDeep(hotelListParams),
 		},
+		List: [],
 	}),
 	getters: {
 		// count(): string {
@@ -43,6 +45,9 @@ export const useHotelStore = defineStore({
 		setOrderList(data: any, key: Field) {
 			this.HotelList[key].list = data.content;
 			this.HotelList[key].total = data.total;
+		},
+		setList(list: any) {
+			this.List = list;
 		},
 	},
 });

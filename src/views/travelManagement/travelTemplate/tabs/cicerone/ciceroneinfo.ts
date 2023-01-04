@@ -172,7 +172,7 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 
 		async getGuideList() {
 			const res = await api.travelManagement.getGuideList(state.guideParams);
-			state.guideData = res.content;
+			state.guideData = res
 		},
 		guideChange(value:any, { item }: any, key:any) {
 			state.editableData[key] = {
@@ -188,6 +188,7 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 		}
 		
 	}
+	
 	watch(onCheck, (newVal) => {
 		// console.log(newVal)
 		methods.addRules()

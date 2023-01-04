@@ -159,7 +159,7 @@ const initPage = async (): Promise<void> => {
 
 onMounted(() => {
 	initPage();
-	navigatorBar.setNavigator(['订单管理', '查看']);
+	navigatorBar.setNavigator(['酒店管理','订单管理', '查看']);
 });
 
 onBeforeUnmount(() => {

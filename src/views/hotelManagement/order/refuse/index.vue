@@ -163,7 +163,7 @@ const openEditPage = (record: any) => {
 };
 
 onMounted(() => {
-	navigatorBar.setNavigator(['订单管理']);
+	// navigatorBar.setNavigator(['订单管理']);
 	hotelOrderPage();
 });
 onBeforeUnmount(() => {
