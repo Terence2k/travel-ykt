@@ -417,3 +417,13 @@ export async function HotelOrderRejectReason(orderNo: any) {
 		showLoading: true,
 	});
 }
+// (App) 根据订单号改刷酒店房间
+export async function changeRefreshRoom(data: any) {
+	return request({
+		url: `${commonPath}/hotel-service/public/api/hotel-order/changeRefreshRoom`,
+		method: 'post',
+		showLoading: true,
+		data
+	});
+}
+

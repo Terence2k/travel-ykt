@@ -116,7 +116,7 @@
 			</a-form-item> -->
 
             <a-form-item label="订单金额">
-				<a-input v-model:value="formState.price" disabled placeholder="无需填写，勾选人员名单后自动计算" />
+				<a-input v-model:value="countMoney" disabled placeholder="无需填写，勾选人员名单后自动计算" />
 			</a-form-item>
 
             <a-form-item label="订单编号">
@@ -163,7 +163,7 @@
 			default: {}
 		}
 	})
-	
+	const countMoney = computed(()=> (formState.unitPrice / 100 * travelStore.touristList.length) || 0)
     const tableData = ref([])
     const ticketData = reactive<{[k:string]: any}>({
         scenicList: [],

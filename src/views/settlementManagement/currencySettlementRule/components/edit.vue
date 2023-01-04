@@ -272,6 +272,8 @@ const init = () => {
 		formState.isPrepaid = 0;
 		// 默认为百分比
 		formState.chargeModel = 1;
+		// 默认等于TRAVEL
+		formState.lastCostBelongCompany = 'TRAVEL';
 	}
 };
 const currencySettlementRuleDetail = async (id: number) => {

@@ -86,7 +86,7 @@
           导游星级：
         </div>
         <div>
-          {{ state.detailsData.guideLevelName }}
+          {{ state.detailsData.guideLevelName}}
         </div>
       </div>
       <div class="row_info">
@@ -248,7 +248,7 @@ const reset=()=>{
 }
 const add=()=>{
   api.travelSynchronizeGuide().then((res:any)=>{
-    message.success(res.message)
+    message.success(res)
     synchronizationVisible.value=false
     onSearch()
   })

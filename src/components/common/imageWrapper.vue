@@ -144,7 +144,7 @@ const handlePreview = async (file: UploadProps['fileList'][number]) => {
 	previewVisible.value = true;
 };
 const removeImg = (file: any) => {
-  emit('remove', {url: file.url, index: file.index});
+  emit('remove', {url: file.url, index: file.uid});
   tempData.value.splice(Number(file.uid), 1);
   unHandleImage.value.splice(Number(file.uid), 1);
   setTimeout(() => {
