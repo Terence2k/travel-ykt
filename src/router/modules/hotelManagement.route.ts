@@ -130,7 +130,7 @@ export default [
 						path: 'index',
 						component: () => import('@/views/hotelManagement/order/index.vue'),
 						meta: {
-							title: '订单管理',
+							title: '订单查看',
 							isDetail: true,
 						},
 					},
@@ -141,6 +141,16 @@ export default [
 						meta: {
 							activeMeun: 'hotelOrder',
 							title: '编辑',
+							isDetail: true,
+						},
+					},
+					{
+						path: 'orderBrushUp',
+						name: 'orderBrushUp',
+						component: () => import('@/views/hotelManagement/order/brushup/index.vue'),
+						meta: {
+							activeMeun: 'hotelOrder',
+							title: '改刷',
 							isDetail: true,
 						},
 					},

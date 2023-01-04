@@ -78,12 +78,6 @@ const columns = [
 		width: '140px',
 	},
 	{
-		title: '发送时间',
-		dataIndex: 'sendTime',
-		key: 'sendTime',
-		width: '140px',
-	},
-	{
 		title: '启用状态',
 		dataIndex: 'isEnable',
 		key: 'isEnable',

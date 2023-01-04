@@ -79,12 +79,12 @@ const pages = [
 		value: HotelStatus.cancal,
 		chart: 'cancal',
 	},
-	// {
-	// 	name: finish,
-	// 	label: hotelStore.HotelOrderStatus[HotelStatus.finish],
-	// 	value: HotelStatus.finish,
-	// 	chart: 'finish',
-	// },
+	{
+		name: finish,
+		label: hotelStore.HotelOrderStatus[HotelStatus.finish],
+		value: HotelStatus.finish,
+		chart: 'finish',
+	},
 ];
 
 const filterPages = pages.filter((item: any) => getTabPermission(item.label));

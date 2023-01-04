@@ -176,6 +176,7 @@
 				v-permission="'提交审核'"
 				>提交审核</a-button
 			>
+			<span v-if="state.isAuditStatus" class="tip_not_submit">房型信息正在审核中，暂时不可继续提交</span>
 		</div>
 		<!-- <CommonPagination
 			class="pagination-custom"
@@ -459,7 +460,7 @@ const saveRoomInfo = () => {
 						message.error(err?.message || err);
 					});
 			} else {
-				message.error('当前缺少可提交审核的数据');
+				message.warn('当前缺少可提交审核的数据');
 			}
 		})
 		.catch((err: any) => {
@@ -468,6 +469,10 @@ const saveRoomInfo = () => {
 };
 
 const add = () => {
+	if (state?.isAuditStatus) {
+		message.warn('房型信息正在审核中，暂时不可添加新房型');
+		return;
+	}
 	const newData = {
 		key: `NEW_${Date.now().toString()}`,
 		auditOrderId: '',

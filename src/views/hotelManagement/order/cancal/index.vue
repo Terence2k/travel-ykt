@@ -138,8 +138,10 @@ const openInfoPage = (orderNo: any) => {
 	router.push({ path: '/hotelManagement/hotelOrder/orderEdit', query: { orderNo: orderNo } });
 };
 
+
+
 onMounted(() => {
-	navigatorBar.setNavigator(['订单管理']);
+	// navigatorBar.setNavigator(['订单管理']);
 	hotelOrderPage();
 });
 onBeforeUnmount(() => {

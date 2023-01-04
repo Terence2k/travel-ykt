@@ -197,6 +197,7 @@
 
   const getRoleList = (businessType: string) => {
     formValidate.value.roleIds = [];
+    formValidate.value.companyId = null;
     api.getRoleListByType(businessType).then((res: any) => {
       roleList.value = res.map((item: any) => {
         return {
