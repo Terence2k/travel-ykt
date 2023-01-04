@@ -248,7 +248,7 @@ const reset=()=>{
 }
 const add=()=>{
   api.travelSynchronizeGuide().then((res:any)=>{
-    message.success(res.message)
+    message.success(res)
     synchronizationVisible.value=false
     onSearch()
   })
