@@ -1,8 +1,4 @@
-const sharedOnCell = (_, index) => {
-  console.log('_:', _);
-  console.log('index:', index);
-  
-};
+import { accDiv } from '@/utils/compute';
 
 export const getOptions = (props: any) => {
   let guideOption = {
@@ -313,7 +309,7 @@ export const getOptions = (props: any) => {
     descriptions: 
       `已预订<span style="color: red;">${props.hotelList?.length}</span>个酒店，
       房间数量：<span style="color: red;">${props.hotelList?.reduce((prev: any, curr: any) => prev + curr.roomCount, 0)}</span>;
-      费用总计：<span style="color: red;">${props.hotelList?.reduce((prev: any, curr: any) => prev + curr.orderFee, 0)}</span>元`,
+      费用总计：<span style="color: red;">${accDiv(props.hotelList?.reduce((prev: any, curr: any) => prev + curr.orderFee, 0), 100)}</span>元`,
     dataSource: props.hotelList,
   }
   let ticketListOption = {
@@ -373,8 +369,8 @@ export const getOptions = (props: any) => {
     title: '景区费用',
     descriptions: 
       `已预订<span style="color: red;">${props.ticketList?.length}</span>个景区，
-      游玩人数：<span style="color: red;">${props.ticketList?.reduce((prev: any, curr: any) => prev + curr.peopleCount, 0)}</span>；
-      费用总计：<span style="color: red;">${props.ticketList?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0) || 0}</span>元`,
+      游玩人数：<span style="color: red;">${props.ticketList?.reduce((prev: any, curr: any) => Number(prev) + Number(curr.peopleCount), 0)}</span>；
+      费用总计：<span style="color: red;">${accDiv(props.ticketList?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0), 100)}</span>元`,
     dataSource: props.ticketList,
   }
   let attachmentOption = {
