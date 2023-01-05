@@ -87,6 +87,7 @@ const keyNameList5 = {
   bankAccountName: '公司账户名称',
   bank: '开户行',
   bankAccount: '公司账号',
+  accountName: '超级管理员',
   ...bankAccountKeys
 }
 // 文旅局、保险公司
@@ -97,6 +98,7 @@ const keyNameList6 = {
   addressDetail: '企业详情地址',
   contactName: '联系人',
   phone: '联系电话',
+  accountName: '超级管理员',
 }
 // 旅行社
 const keyNameList7 = {
@@ -130,6 +132,7 @@ const keyNameList8 = {
   name: '企业名称',
   regionCode: '企业所属地区',
   addressDetail: '企业详情地址',
+  accountName: '超级管理员',
   ...bankAccountKeys
 }
 const fullRuleKeyNames = {

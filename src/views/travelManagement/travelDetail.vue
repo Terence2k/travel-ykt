@@ -102,10 +102,7 @@
               </div>
             </template>
             <template v-if="column.key === 'attachmentUrl'">
-              <a-tooltip>
-                <template #title>{{ record.attachmentUrl }}</template>
-                <a :href="record.attachmentUrl" target="_blank" class="table-url">{{ record.attachmentUrl }}</a>
-              </a-tooltip>
+              <a-image v-for="item in record.attachmentUrl" width="200px" :src="item"/>
             </template>
         </template>
       </CommonTable>
@@ -201,11 +198,12 @@
 	  api.travelManagement.getItineraryDetail(queryData).then(async (res: any) => {
       state.basicData = res.basic;
       state.itineraryDetail = res;
-      state.itineraryDetail.guWeiDetail = await api.getManagementExpenses(orderId);
       state.itineraryDetail.attachmentList.forEach(async(item: any) => {
-        if (item.attachmentUrl) {
-          item.attachmentUrl = await awsGetPreSignedUrl(item.attachmentUrl);
-        }
+        let result = item.attachmentUrl.split(',').map(async(item: any) => {
+          if (item) item = await awsGetPreSignedUrl(item);
+          return item;
+        });
+        item.attachmentUrl = await Promise.all(result);
       })
       codeUrl.value = JSON.stringify({
         itineraryNo: state.basicData.itineraryNo,
@@ -216,6 +214,7 @@
           printBtn.value.click();
         }
       })
+      state.itineraryDetail.guWeiDetail = await api.getManagementExpenses(orderId);
 		})
 		.catch((err: any) => {
 			console.log(err);
