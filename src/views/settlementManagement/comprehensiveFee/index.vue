@@ -151,9 +151,6 @@ const tipSubmit = async () => {
 				message.success(`${statusText}成功`);
 				initList();
 			})
-			.catch((err: any) => {
-				message.error(err || `${statusText}失败`);
-			});
 		tipCancel();
 	}
 };
