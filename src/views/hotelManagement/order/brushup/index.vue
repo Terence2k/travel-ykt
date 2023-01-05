@@ -17,6 +17,7 @@
 							<a-form-item label="行程单号"> {{ state.formdata.itineraryNo }} </a-form-item>
 							<a-form-item label="行程类型"> {{ state.formdata.teamType }} </a-form-item>
 							<a-form-item label="行程时间"> {{ state.formdata.arrivalDate }} - {{ state.formdata.departureDate }} </a-form-item>
+							<a-form-item label="预定时间"> {{ state.formdata.arrivalDate }} - {{ state.formdata.departureDate }} </a-form-item>
 							<a-form-item label="发团旅行社"> {{ state.formdata.travelName }} </a-form-item>
 							<!-- <a-form-item label="地接社计调电话"> {{ state.formdata.travelName }} </a-form-item> -->
 						</div>

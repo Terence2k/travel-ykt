@@ -76,13 +76,33 @@
                 {{ accDiv(record.totalFee, 100) || '' }}
               </div>
             </template>
+            <!-- 费用（元） -->
+            <template v-if="column.key === 'orderFee'">
+              <div>
+                {{ accDiv(record.totalFee, 100) || '' }}
+              </div>
+            </template>
+            <!-- 应缴总金额 -->
+            <template v-if="column.key === 'payablePrice'">
+              <div>
+                {{ accDiv(record.payablePrice, 100) || '' }}
+              </div>
+            </template>
+            <!-- 入住天数 -->
+            <template v-if="column.key === 'stayDays'">
+              {{ getDiffDay(record.startDate, record.endDate) }}
+            </template>
+            <!-- 是否按天收取 -->
+            <template v-if="column.key === 'isDaily'">
+              {{ record.isDaily ? '是' : '否' }}
+            </template>
             <template v-if="column.key === 'action'">
               <div class="action-btns">
                 <a>查看订单</a>
               </div>
             </template>
             <template v-if="column.key === 'attachmentUrl'">
-              <a-image width="100%" :src="record.attachmentUrl" />
+              <a-image v-for="item in record.attachmentUrl" width="200px" :src="item"/>
             </template>
         </template>
       </CommonTable>
@@ -103,8 +123,9 @@
   import CommonPagination from '@/components/common/CommonPagination.vue';
   import { getOptions } from './travelDetail/travelDetail';
   import { accDiv } from '@/utils/compute';
-  import { getStyles } from '@/utils/util';
+  import { getStyles, getDiffDay } from '@/utils/util';
   import QrcodeVue from 'qrcode.vue'
+  import { awsGetPreSignedUrl } from '@/utils/awsUpload';
 
   const codeUrl = ref();
 
@@ -117,7 +138,7 @@
       pageNo: 1,
       pageSize: 10,
     },
-    itineraryDetail: {}
+    itineraryDetail: {} as any
   });
   const printBtn = ref();
 
@@ -174,9 +195,16 @@
       oid: orderId,
       ...state.param
     }
-	  api.travelManagement.getItineraryDetail(queryData).then((res: any) => {
+	  api.travelManagement.getItineraryDetail(queryData).then(async (res: any) => {
       state.basicData = res.basic;
       state.itineraryDetail = res;
+      state.itineraryDetail.attachmentList.forEach(async(item: any) => {
+        let result = item.attachmentUrl.split(',').map(async(item: any) => {
+          if (item) item = await awsGetPreSignedUrl(item);
+          return item;
+        });
+        item.attachmentUrl = await Promise.all(result);
+      })
       codeUrl.value = JSON.stringify({
         itineraryNo: state.basicData.itineraryNo,
         oid: state.basicData.oid
@@ -186,6 +214,7 @@
           printBtn.value.click();
         }
       })
+      state.itineraryDetail.guWeiDetail = await api.getManagementExpenses(orderId);
 		})
 		.catch((err: any) => {
 			console.log(err);
@@ -225,6 +254,14 @@
     height: 384px;
     text-align: center;
     color: #9DA0A4;
+  }
+  
+  .table-url {
+    display: block;
+    white-space: nowrap;
+    max-width: 600px;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 }
 </style>

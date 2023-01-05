@@ -23,7 +23,7 @@
 			</a-form-item>
 
 			<a-form-item label="门票价格" name="travelName">
-				<span>{{ accDiv(ticketPrice,100) }}元</span>
+				<span>{{ accDiv(ticketPrice, 100) || 0 }}元</span>
 			</a-form-item>
 		</a-form>
 	</BaseModal>
@@ -34,7 +34,7 @@ import BaseModal from '@/components/common/BaseModal.vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import api from '@/api';
 import { cloneDeep, debounce } from 'lodash';
-import { accDiv,accMul} from '@/utils/compute';
+import { accDiv, accMul } from '@/utils/compute';
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 const route = useRoute();
 const travelStore = useTravelStore();
@@ -76,7 +76,7 @@ const submit = async () => {
 		let traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 		await formRef.value.validateFields();
 		formState.unitPrice = ticketPrice.value;
-		formState.itineraryId = route.query.oid || traveListData.oid;
+		formState.itineraryId = route.query.oid || travelStore.templateOid;
 		const newFormState = cloneDeep(formState);
 		console.log(newFormState);
 
@@ -96,7 +96,7 @@ const handleOk = async (callback: Function) => {
 		return callback(false);
 	}
 	await submit();
-	api.travelManagement.saveChangeTraveldetail(route.query.oid).then((res: any) => {
+	api.travelManagement.saveChangeTraveldetail(route.query.oid ? route.query.oid : travelStore.templateOid).then((res: any) => {
 		travelStore.scenicTickets = res.ticketList;
 	});
 	callback();

@@ -268,6 +268,7 @@ export const useTravelStore = defineStore({
 			[TakeGroupStatus.WaitingHandle]: '待处理',
 		},
 		revokeParams: {},
+		templateOid:'' as any
 	}),
 	getters: {
 		// 草稿

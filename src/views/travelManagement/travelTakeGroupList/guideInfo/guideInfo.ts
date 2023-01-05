@@ -6,6 +6,7 @@ import { validateRules, validateFields, generateGuid } from '@/utils';
 
 import api from '@/api/index';
 import { useTravelStore } from '@/stores/modules/travelManagementDetail';
+import { Item } from 'ant-design-vue/es/menu';
 interface DataItem {
 	time: string;
 	endDate: string,
@@ -27,6 +28,7 @@ const rules = {
 export function useGuideInfo(props: any, emits: any): Record<string, any> {
 	const { onCheck } = toRefs(props);
 	const travelStore = useTravelStore();
+	const list=[] as any;
 	const route = useRoute();
 	const state = reactive<{editableData: UnwrapRef<Record<string, DataItem>>, [k:string]: any}>({
 		editableData: {},
@@ -114,8 +116,9 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 			state.editableData[key] = cur;
 		},
 		del(key: string) {
-			console.log(key)
+			list.push({...state.tableData[key],...{deleted:true,edit:true}})
 			state.tableData.splice(key, 1);
+			travelStore.setdelGuideList(list)
 			// state.tableData = state.tableData.filter((item: any) => key !== (item.key ? item.key : item.oid));
 		},
 
@@ -153,8 +156,10 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 		},
 
 		async getGuideList() {
-			const res = await api.travelManagement.getGuideList(state.guideParams);
-			state.guideData = res.content;
+			// const res = await api.travelManagement.getGuideList(state.guideParams);
+			// state.guideData = res.content;
+			const res = await api.travelManagement.getGuideList();
+			state.guideData = res;
 		},
 		aa:()=>{
 			console.log(state.tableData,'12313')

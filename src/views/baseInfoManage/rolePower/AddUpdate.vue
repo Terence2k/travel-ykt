@@ -128,7 +128,6 @@
   const options = reactive({ title: '新增角色' });
   const rules: any = {
     roleName: [{ required: true, trigger: 'blur', message: '请输入角色名称' }],
-    mobile: [{ required: true, trigger: 'blur', message: '请输入可用范围' }],
     roleStatus: [{ required: true, trigger: 'change', message: '请选择角色状态' }],
     availableRange: [{ required: true, trigger: 'change', message: '请选择可用范围' }],
     menuIds: [{ required: true, trigger: 'change', message: '请选择角色权限' }],
