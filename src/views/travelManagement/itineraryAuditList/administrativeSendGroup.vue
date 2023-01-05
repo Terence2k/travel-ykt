@@ -166,11 +166,6 @@
 					key: 'touristCount',
 			},
 			{
-					title: '预冻结金额',
-					dataIndex: 'totalFee',
-					key: 'totalFee',
-			},
-			{
 					title: '操作',
 					fixed: 'right',
 					key: 'action',

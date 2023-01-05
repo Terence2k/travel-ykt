@@ -63,11 +63,15 @@ let obj = reactive({
 });
 
 const saveOrder = () => {
+	let guideData=[].concat.call(travelStore.delGuideList, travelStore.guideList);
+	guideData = guideData.filter((item: any) => item.edit == true);
+	let transportData=[].concat.call(travelStore.delTrafficList, travelStore.trafficList)
+	transportData = transportData.filter((item: any) => item.edit == true);
   let queryData = {
     oid: travelStore.baseInfo.oid,
     attachmentList: travelStore.attachmentList,
-    guideList: travelStore.guideList,
-    transportList: travelStore.trafficList
+    guideList: guideData,
+    transportList: transportData
    };
 	api.travelManagement.changeItineraryBasic(queryData)
 		.then((res: any) => {
