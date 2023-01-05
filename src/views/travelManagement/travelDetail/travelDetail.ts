@@ -155,49 +155,52 @@ export const getOptions = (props: any) => {
     columns: [
       {
         title: '费用名称',
-        dataIndex: 'insuranceName',
-        key: 'insuranceName',
+        dataIndex: 'feeName',
+        key: 'feeName',
       },
       {
         title: '团队游客人数',
-        dataIndex: 'peopleCount',
-        key: 'peopleCount',
+        dataIndex: 'touristNum',
+        key: 'touristNum',
       },
       {
         title: '应缴人数',
-        dataIndex: 'insuranceType',
-        key: 'insuranceType',
+        dataIndex: 'payableNum',
+        key: 'payableNum',
       },
       {
         title: '应缴总金额（元）',
-        dataIndex: 'protectDays',
-        key: 'protectDays',
+        dataIndex: 'payablePrice',
+        key: 'payablePrice',
       },
       {
         title: '是否发起过减免申请',
-        dataIndex: 'startDate',
-        key: 'startDate',
+        dataIndex: 'isInitiateReductionName',
+        key: 'isInitiateReductionName',
       },
       {
         title: '减免申请是否通过',
-        dataIndex: 'endDate',
-        key: 'endDate',
+        dataIndex: 'isReductionPassedName',
+        key: 'isReductionPassedName',
       },
       {
         title: '出票状态',
-        dataIndex: 'totalFee',
-        key: 'totalFee',
+        dataIndex: 'issueStatusName',
+        key: 'issueStatusName',
       },
       {
         title: '操作',
-        dataIndex: 'buyChannel',
-        key: 'buyChannel',
+        key: 'action',
+        fixed: 'right',
+        width: 208
       },
     ],
     title: '古维管理费',
     descriptions: 
-      `共<span style="color: red;">${0}</span>人`,
-    dataSource: [],
+      `共<span style="color: red;">${props.guWeiDetail?.reduce((prev: any, curr: any) => prev + curr.touristNum, 0)}</span>人，
+      古维待缴人数：<span style="color: red;">${props.guWeiDetail?.reduce((prev: any, curr: any) => prev + curr.payableNum, 0)}</span>，
+      应缴费用：<span style="color: red;">￥${accDiv(props.guWeiDetail?.reduce((prev: any, curr: any) => prev + curr.payablePrice, 0), 100)}</span>`,
+    dataSource: props.guWeiDetail,
   }
   let productOption = {
     columns: [
@@ -208,38 +211,38 @@ export const getOptions = (props: any) => {
       },
       {
         title: '费用名称',
-        dataIndex: 'insuranceName',
-        key: 'insuranceName',
+        dataIndex: 'productName',
+        key: 'productName',
       },
       {
         title: '结算归属',
+        dataIndex: 'belongCompanyTypeName',
+        key: 'belongCompanyTypeName',
+      },
+      {
+        title: '收费模式',
+        dataIndex: 'feeModelName',
+        key: 'feeModelName',
+      },
+      {
+        title: '是否按天收取',
+        dataIndex: 'isDaily',
+        key: 'isDaily',
+      },
+      {
+        title: '单价（元）',
+        dataIndex: 'unitPrice',
+        key: 'unitPrice',
+      },
+      {
+        title: '人数',
         dataIndex: 'peopleCount',
         key: 'peopleCount',
       },
       {
-        title: '收费模式',
-        dataIndex: 'insuranceType',
-        key: 'insuranceType',
-      },
-      {
-        title: '是否按天收取',
-        dataIndex: 'protectDays',
-        key: 'protectDays',
-      },
-      {
-        title: '单价（元）',
-        dataIndex: 'startDate',
-        key: 'startDate',
-      },
-      {
-        title: '人数',
-        dataIndex: 'endDate',
-        key: 'endDate',
-      },
-      {
         title: '行程天数',
-        dataIndex: 'totalFee',
-        key: 'totalFee',
+        dataIndex: 'dayCount',
+        key: 'dayCount',
       },
       {
         title: '总金额（元）',
@@ -248,14 +251,15 @@ export const getOptions = (props: any) => {
       },
       {
         title: '操作',
-        dataIndex: 'buyChannel',
-        key: 'buyChannel',
+        key: 'action',
+        fixed: 'right',
+        width: 208
       },
     ],
     title: '综费产品',
     descriptions: 
-      `费用总计<span style="color: red;">${0}</span>元，订单状态：`,
-    dataSource: [],
+      `费用总计<span style="color: red;">${accDiv(props.productList?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0), 100)}</span>元`,
+    dataSource: props.productList,
   }
   let hotelListOption = {
     columns: [
@@ -266,13 +270,13 @@ export const getOptions = (props: any) => {
       },
       {
         title: '可入住人数',
-        dataIndex: '',
-        key: '',
+        dataIndex: 'limitPeopleCount',
+        key: 'limitPeopleCount',
       },
       {
         title: '房型',
-        dataIndex: 'roomTypeName',
-        key: 'roomTypeName',
+        dataIndex: 'roomDetail',
+        key: 'roomDetail',
       },
       {
         title: '房间数量',
@@ -341,18 +345,18 @@ export const getOptions = (props: any) => {
       },
       {
         title: '团队游客人数',
-        dataIndex: '',
-        key: '',
-      },
-      {
-        title: '购票人数',
         dataIndex: 'peopleCount',
         key: 'peopleCount',
       },
       {
+        title: '购票人数',
+        dataIndex: 'reservePeopleCount',
+        key: 'reservePeopleCount',
+      },
+      {
         title: '费用（元）',
-        dataIndex: 'totalFee',
-        key: 'totalFee',
+        dataIndex: 'orderFee',
+        key: 'orderFee',
       },
       {
         title: '订单状态',
@@ -368,9 +372,9 @@ export const getOptions = (props: any) => {
     ],
     title: '景区费用',
     descriptions: 
-      `已预订<span style="color: red;">${props.ticketList?.length}</span>个景区，
-      游玩人数：<span style="color: red;">${props.ticketList?.reduce((prev: any, curr: any) => Number(prev) + Number(curr.peopleCount), 0)}</span>；
-      费用总计：<span style="color: red;">${accDiv(props.ticketList?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0), 100)}</span>元`,
+      `已预订<span style="color: red;">${[...new Set(props.ticketList?.map((item: any) => item.oid))].length}</span>个景区，
+      游玩人数：<span style="color: red;">${props.ticketList?.reduce((prev: any, curr: any) => Number(prev) + Number(curr.reservePeopleCount), 0)}</span>；
+      费用总计：<span style="color: red;">${accDiv(props.ticketList?.reduce((prev: any, curr: any) => prev + curr.orderFee, 0), 100)}</span>元`,
     dataSource: props.ticketList,
   }
   let attachmentOption = {

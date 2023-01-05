@@ -76,6 +76,26 @@
                 {{ accDiv(record.totalFee, 100) || '' }}
               </div>
             </template>
+            <!-- 费用（元） -->
+            <template v-if="column.key === 'orderFee'">
+              <div>
+                {{ accDiv(record.totalFee, 100) || '' }}
+              </div>
+            </template>
+            <!-- 应缴总金额 -->
+            <template v-if="column.key === 'payablePrice'">
+              <div>
+                {{ accDiv(record.payablePrice, 100) || '' }}
+              </div>
+            </template>
+            <!-- 入住天数 -->
+            <template v-if="column.key === 'stayDays'">
+              {{ getDiffDay(record.startDate, record.endDate) }}
+            </template>
+            <!-- 是否按天收取 -->
+            <template v-if="column.key === 'isDaily'">
+              {{ record.isDaily ? '是' : '否' }}
+            </template>
             <template v-if="column.key === 'action'">
               <div class="action-btns">
                 <a>查看订单</a>
@@ -103,7 +123,7 @@
   import CommonPagination from '@/components/common/CommonPagination.vue';
   import { getOptions } from './travelDetail/travelDetail';
   import { accDiv } from '@/utils/compute';
-  import { getStyles } from '@/utils/util';
+  import { getStyles, getDiffDay } from '@/utils/util';
   import QrcodeVue from 'qrcode.vue'
 
   const codeUrl = ref();
@@ -117,7 +137,7 @@
       pageNo: 1,
       pageSize: 10,
     },
-    itineraryDetail: {}
+    itineraryDetail: {} as any
   });
   const printBtn = ref();
 
@@ -174,9 +194,10 @@
       oid: orderId,
       ...state.param
     }
-	  api.travelManagement.getItineraryDetail(queryData).then((res: any) => {
+	  api.travelManagement.getItineraryDetail(queryData).then(async (res: any) => {
       state.basicData = res.basic;
       state.itineraryDetail = res;
+      state.itineraryDetail.guWeiDetail = await api.getManagementExpenses(orderId);
       codeUrl.value = JSON.stringify({
         itineraryNo: state.basicData.itineraryNo,
         oid: state.basicData.oid
