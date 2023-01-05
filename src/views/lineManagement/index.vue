@@ -13,9 +13,10 @@
             <template v-if="column.key === 'price'">
               <div v-if="record.individualLinePriceVos?.length > 0">
                 <span v-for="(item, index) in record.individualLinePriceVos" :key="index">{{
-    `${item.priceTypeName}价${item.priceAmount}元${(record.individualLinePriceVos.length - 1) === index ? ''
-      : '、'}`
-}}</span>
+                `${item.priceTypeName}价${item.priceAmount / 100}元${(record.individualLinePriceVos.length - 1) ===
+                    index ? ''
+                    : '、'}`
+                }}</span>
               </div>
               <div v-else>无</div>
             </template>
@@ -23,18 +24,18 @@
               <div v-if="record.individualLineTicketVos?.length > 0">
                 <span v-for="(item, index) in cmpIndividualLineTicketVos(record.individualLineTicketVos)"
                   :key="index">{{
-    `${item}${(cmpIndividualLineTicketVos(record.individualLineTicketVos).length - 1) === index ? ''
-      : '、'}`
-}}</span>
+                  `${item}${(cmpIndividualLineTicketVos(record.individualLineTicketVos).length - 1) === index ? '' :
+    '、'}`
+                  }}</span>
               </div>
               <div v-else>无</div>
             </template>
             <template v-if="column.key === 'hotelCompany'">
               <div v-if="record.individualLineHotelVos?.length > 0">
                 <span v-for="(item, index) in cmpIndividualLineHotelVos(record.individualLineHotelVos)" :key="index">{{
-    `${item}${(cmpIndividualLineHotelVos(record.individualLineHotelVos).length - 1) === index ? ''
-      : '、'}`
-}}</span>
+                `${item}${(cmpIndividualLineHotelVos(record.individualLineHotelVos).length - 1) === index ? ''
+                    : '、'}`
+                }}</span>
               </div>
               <div v-else>无</div>
             </template>
@@ -42,9 +43,9 @@
               <div v-if="record.individualLineCateringVos?.length > 0">
                 <span v-for="(item, index) in cmpIndividualLineCateringVos(record.individualLineCateringVos)"
                   :key="index">{{
-    `${item}${(cmpIndividualLineCateringVos(record.individualLineCateringVos).length - 1) === index ? ''
-      : '、'}`
-}}</span>
+                  `${item}${(cmpIndividualLineCateringVos(record.individualLineCateringVos).length - 1) === index ? ''
+    : '、'}`
+                  }}</span>
               </div>
               <div v-else>无</div>
             </template>
@@ -80,9 +81,9 @@
             <template v-if="column.key === 'price'">
               <div v-if="record.individualLinePriceVos?.length > 0">
                 <span v-for="(item, index) in record.individualLinePriceVos" :key="index">{{
-    `${item.priceTypeName}价${item.priceAmount}元${(record.individualLinePriceVos.length - 1) === index ? ''
-      : '、'}`
-}}</span>
+                `${item.priceTypeName}价${item.priceAmount / 100}元${(record.individualLinePriceVos.length - 1) === index ? ''
+                    : '、'}`
+                }}</span>
               </div>
               <div v-else>无</div>
             </template>
@@ -90,18 +91,18 @@
               <div v-if="record.individualLineTicketVos?.length > 0">
                 <span v-for="(item, index) in cmpIndividualLineTicketVos(record.individualLineTicketVos)"
                   :key="index">{{
-    `${item}${(cmpIndividualLineTicketVos(record.individualLineTicketVos).length - 1) === index ? ''
-      : '、'}`
-}}</span>
+                  `${item}${(cmpIndividualLineTicketVos(record.individualLineTicketVos).length - 1) === index ? ''
+    : '、'}`
+                  }}</span>
               </div>
               <div v-else>无</div>
             </template>
             <template v-if="column.key === 'hotelCompany'">
               <div v-if="record.individualLineHotelVos?.length > 0">
                 <span v-for="(item, index) in cmpIndividualLineHotelVos(record.individualLineHotelVos)" :key="index">{{
-    `${item}${(cmpIndividualLineHotelVos(record.individualLineHotelVos).length - 1) === index ? ''
-      : '、'}`
-}}</span>
+                `${item}${(cmpIndividualLineHotelVos(record.individualLineHotelVos).length - 1) === index ? ''
+                    : '、'}`
+                }}</span>
               </div>
               <div v-else>无</div>
             </template>
@@ -109,9 +110,9 @@
               <div v-if="record.individualLineCateringVos?.length > 0">
                 <span v-for="(item, index) in cmpIndividualLineCateringVos(record.individualLineCateringVos)"
                   :key="index">{{
-    `${item}${(cmpIndividualLineCateringVos(record.individualLineCateringVos).length - 1) === index ? ''
-      : '、'}`
-}}</span>
+                  `${item}${(cmpIndividualLineCateringVos(record.individualLineCateringVos).length - 1) === index ? ''
+    : '、'}`
+                  }}</span>
               </div>
               <div v-else>无</div>
             </template>
@@ -171,16 +172,16 @@
         <a-form-item name="suitableRangeTravelId" v-show="travelVisible">
           <a-select placeholder="选择旅行社" v-model:value="form.suitableRangeTravelId" allowClear @change="getStoreList">
             <a-select-option v-for="item in TRAVELOptions" :value="item.oid" :key="item.oid">{{
-    item.name
-}}
+              item.name
+            }}
             </a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item name="suitableRangeStoreId" v-show="storeVisible">
           <a-select placeholder="选择门店" v-model:value="form.suitableRangeStoreId" allowClear>
             <a-select-option v-for="item in storeOptions" :value="item.oid" :key="item.oid">{{
-    item.name
-}}
+              item.name
+            }}
             </a-select-option>
           </a-select>
         </a-form-item>
@@ -1122,7 +1123,7 @@ const getParams = () => {
   }
   if (state.YKJList.length > 0) {
     individualLinePriceBos = state.YKJList.map((item: any) => {
-      return { priceTypeCode: item.codeValue, priceAmount: form[item.codeValue], priceTypeName: item.name }
+      return { priceTypeCode: item.codeValue, priceAmount: form[item.codeValue] * 100, priceTypeName: item.name }
     })
   }
   if (state.rolesLevel === 3) {
@@ -1336,7 +1337,7 @@ const setValue = (res: any) => {
   if (res.individualLinePriceBos) {
     let strArr = ''
     res.individualLinePriceBos.forEach((item: any, index: number) => {
-      strArr += `${item.priceTypeName}价：${item.priceAmount}元${(res.individualLinePriceBos.length - 1) === index ? '' : '、'}`
+      strArr += `${item.priceTypeName}价：${item.priceAmount / 100}元${(res.individualLinePriceBos.length - 1) === index ? '' : '、'}`
     })
     res.priceTypesName = strArr
   } else {

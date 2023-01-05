@@ -157,6 +157,7 @@ const gettravelOperatorList = async (travelId: number, option: any) => {
 const onSubmit = async () => {
 	try {
 		const values = await formRef.value.validateFields();
+		// travelStore.baseParams = formState.value
 		emits('onSuccess', { basicParam: formState.value });
 	} catch (errorInfo) {
 		emits('onSuccess');

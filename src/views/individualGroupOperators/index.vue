@@ -14,6 +14,9 @@
               <span v-if="record.operatorRole === '中心操作员'">/</span>
               <span v-else>{{ record.storeName }}</span>
             </template>
+            <template v-if="column.key === 'auditState'">
+              {{ cmpAuditState(record) }}
+            </template>
             <template v-if="column.key === 'action'">
               <div class="action-btns">
                 <a @click="checkDetails(record)" v-permission="'已审核_查看'">查看</a>
@@ -46,6 +49,9 @@
               <span v-if="record.operatorRole === '中心操作员'">/</span>
               <span v-else>{{ record.storeName }}</span>
             </template>
+            <template v-if="column.key === 'auditState'">
+              {{ cmpAuditState(record) }}
+            </template>
             <template v-if="column.key === 'action'">
               <div class="action-btns">
                 <template v-if="isSuper">
@@ -75,7 +81,7 @@
       <a-form-item name="companyId" label="所属旅行社">
         <a-select placeholder="请选择所属旅行社" v-model:value="form.companyId" allowClear :disabled="!isSuper || !isAdd">
           <a-select-option v-for="item in companyOptions" :value="item.oid">{{
-              item.name
+            item.name
           }}
           </a-select-option>
         </a-select>
@@ -84,7 +90,7 @@
         <a-select placeholder="请选择操作员角色" v-model:value="form.operatorRoleId" allowClear :disabled="!isAdd"
           @change="(val: any, option: any) => { operatorChange(option) }">
           <a-select-option v-for="item in operatorRoleOptions" :value="item.oid" :key="item.roleName">{{
-              item.roleName
+            item.roleName
           }}
           </a-select-option>
         </a-select>
@@ -92,7 +98,7 @@
       <a-form-item name="storeId" label="选择门店" v-show="form.operatorRoleId === 33">
         <a-select placeholder="请选择门店" v-model:value="form.storeId" allowClear :disabled="!isAdd">
           <a-select-option v-for="item in storeOptions" :value="item.oid">{{
-              item.name
+            item.name
           }}
           </a-select-option>
         </a-select>
@@ -111,6 +117,10 @@
       </a-form-item>
       <a-form-item name="account" label="设置登录账号">
         <a-input v-model:value="form.account" placeholder="请创建登录账号" :disabled="!isAdd">
+        </a-input>
+      </a-form-item>
+      <a-form-item name="password" label="设置登录密码" v-if="isAdd">
+        <a-input v-model:value="form.password" placeholder="请输入密码">
         </a-input>
       </a-form-item>
       <a-form-item name="enableSatus" label="启用状态" v-if="!isAdd">
@@ -258,7 +268,8 @@ const form = ref({
   certificateNo: '',
   account: '',
   operatorRole: '',
-  enableSatus: undefined
+  enableSatus: undefined,
+  password: undefined
 })
 type detailsKeysType = {
   companyName?: string,
@@ -269,7 +280,7 @@ type detailsKeysType = {
   certificateNo?: string,
   account?: string,
   createTime?: string,
-  auditType?: string,
+  auditState?: string,
   /* auditStatusName?: string,
   enableSatusName?: string, */
   lastUpdateTime?: string
@@ -402,6 +413,11 @@ const columns = [
     key: 'certificateNo',
   },
   {
+    title: '审核状态',
+    dataIndex: 'auditState',
+    key: 'auditState',
+  },
+  {
     title: '启用状态',
     dataIndex: 'enableSatusName',
     key: 'enableSatusName',
@@ -465,9 +481,9 @@ const columns1 = [
     key: 'informationAuditStatusName',
   }, */
   {
-    title: '审核类型',
-    dataIndex: 'auditType',
-    key: 'auditType',
+    title: '审核状态',
+    dataIndex: 'auditState',
+    key: 'auditState',
   },
   {
     title: '启用状态',
@@ -490,7 +506,7 @@ const detailsKeys = {
   certificateNo: '证件号',
   account: '登录账号',
   createTime: '创建时间',
-  auditType: '审核类型',
+  auditState: '审核状态',
   /* auditStatusName: '审核状态',
   informationAuditStatusName: '信息审核状态', */
   enableSatusName: '启用状态',
@@ -512,6 +528,24 @@ const initOpeion = async () => {
 };
 const companyOptions: any = computed(() => businessManageOptions.companyOptions);
 const operatorRoleOptions: any = computed(() => businessManageOptions.operatorRoleOptions);
+const cmpAuditState = (record: any) => {
+  const state1 = '审核未通过'
+  const state2 = '审核通过'
+  const state3 = '待审核'
+  if (record.auditStatus === 2) {
+    return state1
+  } else if (record.auditStatus === 1 && record.informationAuditStatus === 2) {
+    return state2
+  } else if (record.auditStatus === 1 && record.informationAuditStatus === 0) {
+    return state2
+  } else if (record.auditStatus === 1 && record.informationAuditStatus === 3) {
+    return state1
+  } else if (record.auditStatus === 1 && record.informationAuditStatus === 1) {
+    return state3
+  } else if (record.auditStatus === 0) {
+    return state3
+  }
+}
 const getStoreList = async () => {
   const res = await api.individualStoreListByCompanyId(form.value.companyId)
   storeOptions.value = res?.map((item: { oid: string | number, storeName: string }) => {
@@ -637,6 +671,7 @@ const auditStore = async (record: any) => {
   failForm.oid = record.oid
   failForm.userId = record.userId
   detailsForm.value = await getDetails(record.oid)
+  detailsForm.value.auditState = cmpAuditState(detailsForm.value)
   if (record.auditStatus === 0) {
     isRegiste.value = true
     state.auditVisible = true
@@ -741,6 +776,7 @@ const getChangeInfo = async (oid: string | number) => {
 }
 const checkDetails = async (record: any) => {
   detailsForm.value = await getDetails(record.oid)
+  detailsForm.value.auditState = cmpAuditState(detailsForm.value)
   detailsVisible.value = true
 }
 const detailsClose = () => {

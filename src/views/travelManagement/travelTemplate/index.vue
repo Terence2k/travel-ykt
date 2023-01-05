@@ -186,10 +186,9 @@ const openInfoPage = (record: any) => {
 	router.push({ path: '/travel/travelTtemplate/info', query: { oid: record.oid, Cinfo: Cinfo } });
 };
 const AddPage = (id: any) => {
-	const Cedit = 0;
 	travelStore.hotels = [];
 	travelStore.scenicTickets = [];
-	router.push({ path: '/travel/travelTtemplate/info', query: { Cedit: Cedit } });
+	router.push({ path: '/travel/travelTtemplate/info', query: { Cedit: 1 } });
 };
 const aduitStatus = ({ row, handle }: any) => {
 	if (handle == 'enable') {
