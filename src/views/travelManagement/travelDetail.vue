@@ -102,7 +102,10 @@
               </div>
             </template>
             <template v-if="column.key === 'attachmentUrl'">
-              <a-image width="100%" :src="record.attachmentUrl" />
+              <a-tooltip>
+                <template #title>{{ record.attachmentUrl }}</template>
+                <a :href="record.attachmentUrl" target="_blank" class="table-url">{{ record.attachmentUrl }}</a>
+              </a-tooltip>
             </template>
         </template>
       </CommonTable>
@@ -125,6 +128,7 @@
   import { accDiv } from '@/utils/compute';
   import { getStyles, getDiffDay } from '@/utils/util';
   import QrcodeVue from 'qrcode.vue'
+  import { awsGetPreSignedUrl } from '@/utils/awsUpload';
 
   const codeUrl = ref();
 
@@ -198,6 +202,11 @@
       state.basicData = res.basic;
       state.itineraryDetail = res;
       state.itineraryDetail.guWeiDetail = await api.getManagementExpenses(orderId);
+      state.itineraryDetail.attachmentList.forEach(async(item: any) => {
+        if (item.attachmentUrl) {
+          item.attachmentUrl = await awsGetPreSignedUrl(item.attachmentUrl);
+        }
+      })
       codeUrl.value = JSON.stringify({
         itineraryNo: state.basicData.itineraryNo,
         oid: state.basicData.oid
@@ -246,6 +255,14 @@
     height: 384px;
     text-align: center;
     color: #9DA0A4;
+  }
+  
+  .table-url {
+    display: block;
+    white-space: nowrap;
+    max-width: 600px;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 }
 </style>

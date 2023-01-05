@@ -388,6 +388,8 @@ export const getOptions = (props: any) => {
         title: '附件名称',
         dataIndex: 'attachmentTypeName',
         key: 'attachmentTypeName',
+        width: 500,
+        align: 'center'
       },
       {
         title: '附件url',
