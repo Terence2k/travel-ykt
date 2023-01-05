@@ -553,3 +553,13 @@ export const getTabPermission = (tabName: any) => {
   let currentUrl = window.location.href.split('/#')[1];
   return tabArr?.some((item: any) => item.menuName === tabName && currentUrl.indexOf(item.pUrl) !== -1 );
 }
+
+// 日期时长计算
+export const getDiffDay = (startDate: any, endDate: any) => {
+  let aDate: any = new Date(startDate);
+  let bDate: any = new Date(endDate); // 包含时间的日期字符串
+  let aDay = 24 * 60 * 60 * 1000;
+  let diffDay = (bDate - aDate) / aDay;
+  // 向上取整
+  return Math.ceil(diffDay);
+}

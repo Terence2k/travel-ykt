@@ -8,10 +8,10 @@
 			</a-tabs>
 			<div class="footer" v-if="route.query.Cedit">
 				<div class="footer-btn">
-					<a-button type="primary" v-if="route?.query?.oid && activeKey == 2" @click="activeKey = activeKey - 1">上一步</a-button>
+					<a-button type="primary" v-if="activeKey > 1" @click="activeKey = activeKey - 1">上一步</a-button>
 					<a-button
 						type="primary"
-						v-if="route?.query?.oid?activeKey == 2:activeKey == 1"
+						v-if="activeKey == 2"
 						@click="
 							() => {
 								check = !check;
@@ -21,7 +21,7 @@
 						"
 						>保存</a-button
 					>
-					<a-button type="primary" v-if="route?.query?.oid?activeKey < 2:activeKey < 1" @click="activeKey = activeKey + 1">下一步</a-button>
+					<a-button type="primary" v-if="activeKey < 2" @click="activeKey = activeKey + 1">下一步</a-button>
 				</div>
 			</div>
 		</div>
@@ -52,9 +52,14 @@ let pages = [
 		name: cicerone,
 		label: '导游信息',
 	},
+	{
+		name: travelled,
+		label: '行程信息',
+	},
 ];
 const typei = ref();
-
+const Acstatus = ref(0);
+const resdata = ref('');
 let rulesPass = reactive<{ [k: string]: any }>([]);
 let obj = reactive({
 	data: {},
@@ -70,36 +75,58 @@ const save = (e: any) => {
 };
 // 保存接口
 const saveItinerary = (val: any) => {
-	if (!val.basicParam) return message.error('请填写基本信息')
-	if (!travelStore.guideList.length) return message.error('请选择带团导游')
+	if (!val.basicParam) {
+		activeKey.value = activeKey.value - 2;
+		return message.error('请填写基本信息');
+	}
+	if (!travelStore.guideList.length) {
+		activeKey.value = activeKey.value - 1;
+		return message.error('请选择带团导游');
+	}
+
+	if (Acstatus.value === 1) {
+		aduit(val);
+		Acstatus.value = 2;
+		console.log('第一次');
+	} else if (route.query.oid) {
+		aduit(val);
+		router.push('/travel/travelTtemplate/list');
+		let msg = route.query.oid ? '编辑成功' : '新增成功';
+		message.success(msg);
+		console.log('第2次');
+	} else {
+		aduit(val, resdata.value);
+		router.push('/travel/travelTtemplate/list');
+		let msg = route.query.oid ? '编辑成功' : '新增成功';
+		message.success(msg);
+		console.log('第3次');
+	}
+};
+
+const aduit = (val: any, oid?: any) => {
 	let ajax = api.travelManagement.saveChangeTravel;
+	let queryData = cloneDeep(val);
+	queryData.basicParam.oid = oid;
 	return ajax(
 		{
-			basicParam: val.basicParam || {},
+			basicParam: queryData.basicParam || {},
 			guideList: travelStore.guideList.filter((it: any) => it.edit),
 		},
 		isSaveBtn.value
-	).then((res: any) => {
-		if (isSaveBtn.value) {
-			router.push('/travel/travelTtemplate/list');
-			let msg = route.query.oid ? '编辑成功' : '新增成功';
-			message.success(msg);
-		}
-	}).catch((error:any)=>{
-	})
-	// message.success('保存成功');
-	// router.push('/travel/travelTtemplate/list');
+	)
+		.then((res: any) => {
+			if (isSaveBtn.value) {
+				resdata.value = res.oid;
+			}
+		})
+		.catch((error: any) => {});
 };
+
 const getTraveDetail = () => {
 	if (!route.query.oid) {
 		travelStore.setBaseInfo({});
 		travelStore.setGuideList([]);
 		return;
-	} else {
-		pages.push({
-			name: travelled,
-			label: '行程信息',
-		});
 	}
 	api.travelManagement.saveChangeTraveldetail(route.query.oid).then((res: any) => {
 		res.basic.teamId = res.basic.itineraryNo;
@@ -114,7 +141,7 @@ const getTraveDetail = () => {
 getTraveDetail();
 // 防抖debounce，只执行一次saveItinerary
 const debounceFun = debounce((val) => {
-	console.log(val);
+	console.log(val, 'val');
 	for (let k in val) {
 		if (!val[k]) return;
 	}
@@ -125,9 +152,16 @@ watch(obj, (newVal) => {
 	debounceFun(newVal.data);
 });
 
+watch(activeKey, (newVal) => {
+	if (newVal == 2 && !route.query.oid && Acstatus.value === 0) {
+		Acstatus.value = 1;
+		check.value = !check.value;
+		isSaveBtn.value = !isSaveBtn.value;
+	}
+});
+
 // 初始化
 const initPage = async (): Promise<void> => {
-	console.log(route.query?.typei);
 	typei.value = route.query?.typei;
 };
 

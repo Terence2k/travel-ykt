@@ -35,11 +35,7 @@
 						}}</a-select-option>
 					</a-select>
 				</a-form-item>
-				<a-form-item
-					label=""
-					:name="['roomTypeList', index]"
-					:wrapper-col="{ span: 16 }"
-				>
+				<a-form-item label="" :name="['roomTypeList', index]" :wrapper-col="{ span: 16 }">
 					<div class="d-flex align-item-center">
 						<div class="d-flex" style="margin-left: 32px">
 							<a-button @click="delRoom(index)" :class="{ visable: formState.roomTypeList.length === 1 }">删除</a-button>
@@ -112,7 +108,7 @@ let formState = reactive<{ [k: string]: any }>({
 	hotelName: '',
 	hotelStarId: '',
 	itineraryId: '',
-	orderFee:0,
+	orderFee: 0,
 	roomTypeList: [{ ...roomList }],
 });
 const honestyGuidePrice = computed(() => formState.honestyGuidePrice / 100);
@@ -159,18 +155,14 @@ const handleChange = async (id: number, option: any) => {
 
 const submit = async () => {
 	try {
-		formState.itineraryId = route.query.oid || traveListData.oid;
+		formState.itineraryId = route.query.oid || travelStore.templateOid;
 		const newFormState = cloneDeep(formState);
 		for (var index = 0; index < newFormState.roomTypeList.length; index++) {
-			newFormState.orderFee = newFormState.roomTypeList[index].unitPrice + newFormState.orderFee
-		}		
+			newFormState.orderFee = newFormState.roomTypeList[index].unitPrice + newFormState.orderFee;
+		}
 		const res = await api.travelManagement.templateaddHotel(newFormState);
 		travelStore.tempeletSetHotels(newFormState, res, props.productRow.productId);
-		// travelStore.setHotels(newFormState, res, props.productRow.productId);
-		// callback()
-	} catch (errorInfo) {
-		// callback(false);
-	}
+	} catch (errorInfo) {}
 };
 
 const handleOk = async (callback: Function) => {
@@ -180,9 +172,9 @@ const handleOk = async (callback: Function) => {
 		return callback(false);
 	}
 	await submit();
-	api.travelManagement.saveChangeTraveldetail(route.query.oid).then((res: any) => {
+	api.travelManagement.saveChangeTraveldetail(route.query.oid ? route.query.oid : travelStore.templateOid).then((res: any) => {
 		travelStore.hotels = res.hotelList;
-	})
+	});
 	callback();
 	return;
 };
@@ -219,11 +211,11 @@ watch(dialogVisible, (newVal) => {
 
 				let price = hotelData.hotelStart.filter((it: any) => it.oid == res.hotelStarId)[0].price;
 				handleChange(res.hotelStarId, { name: res.hotelStar, price: price });
-				formState.roomTypeList = formState.roomTypeList
-				formState.hotelStarId = res.hotelStarId
+				formState.roomTypeList = formState.roomTypeList;
+				formState.hotelStarId = res.hotelStarId;
 			});
-			formState.hotelId = props.productRow.productId;
-			formState.hotelName = props.productRow.hotelName;
+		formState.hotelId = props.productRow.productId;
+		formState.hotelName = props.productRow.hotelName;
 
 		// props.productRow.productId &&
 		// 	api.travelManagement.getGuidePriceStarCodeByHotelId(props.productRow.productId).then((res: any) => {
