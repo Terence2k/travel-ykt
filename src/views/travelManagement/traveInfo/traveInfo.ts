@@ -242,8 +242,8 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			},
 			{
 				title: '团队游客人数',
-				dataIndex: 'reservePeopleCount',
-				key: 'reservePeopleCount',
+				dataIndex: 'peopleCount',
+				key: 'peopleCount',
 			},
 			{
 				title: '购票人数',
@@ -442,8 +442,6 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 	{
 		travelStore.getManagementExpenses(route.query.id)
 	}
-	travelStore.getManagementExpenses(route.query.id)
-
 	// watch (travelStore.templateHotel, newVal => {
 	// 	travelStore.hotels = [...travelStore.hotels, ...newVal] as any
 	// },{immediate: true, deep: true})

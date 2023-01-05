@@ -153,8 +153,10 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 		},
 
 		async getGuideList() {
-			const res = await api.travelManagement.getGuideList(state.guideParams);
-			state.guideData = res.content;
+			// const res = await api.travelManagement.getGuideList(state.guideParams);
+			// state.guideData = res.content;
+			const res = await api.travelManagement.getGuideList();
+			state.guideData = res;
 		},
 		aa:()=>{
 			console.log(state.tableData,'12313')

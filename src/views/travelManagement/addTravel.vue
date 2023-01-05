@@ -48,7 +48,7 @@ import insurance from './insurance/insurance.vue';
 import { cloneDeep, debounce } from 'lodash';
 import api from '@/api';
 import { message } from 'ant-design-vue';
-import { useTravelStore } from '@/stores/modules/travelManagement';
+import { fileOne, fileThree, fileTwo, useTravelStore } from '@/stores/modules/travelManagement';
 import dayjs, { Dayjs } from 'dayjs';
 import { disabledRangeTime, getAmount } from '@/utils';
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
@@ -149,7 +149,7 @@ const saveItinerary = (val: any) => {
 	return ajax(
 		{
 			oid: itineraryId ? itineraryId.toString() : null,
-			attachmentList: travelStore.attachmentList,
+			attachmentList: travelStore.attachmentList.filter((it: any) => it.edit),
 			basicParam: val.basicParam || {},
 			guideList: travelStore.guideList.filter((it: any) => it.edit),
 			insuranceStatus: travelStore.insuranceStatus,
@@ -248,6 +248,7 @@ const getTraveDetail = () => {
 		travelStore.setGuideList([]);
 		travelStore.setTouristList([]);
 		travelStore.setTrafficList([]);
+		travelStore.setFileInfo([fileOne, fileTwo, fileThree]);
 		return;
 	}
 	api.travelManagement
@@ -264,7 +265,25 @@ const getTraveDetail = () => {
 			res.basic.time = [res.basic.startDate, res.basic.endDate];
 			res.basic.touristNum = res.basic.touristCount || 0;
 			travelStore.setBaseInfo(res.basic);
-			res.attachmentList.length && travelStore.setFileInfo(res.attachmentList);
+			const fileList = res.attachmentList.map(it => it.attachmentType)
+			let allFIleList = []
+			if (!fileList.includes(1)) {
+				allFIleList.push(fileOne)
+			} else {
+				allFIleList.push(...res.attachmentList.filter(it => it.attachmentType === 1))
+			}
+			if (!fileList.includes(2)) {
+				allFIleList.push(fileTwo)
+			} else {
+				allFIleList.push(...res.attachmentList.filter(it => it.attachmentType === 2))
+			}
+			if (!fileList.includes(3)) {
+				allFIleList.push(fileThree)
+			} else {
+				allFIleList.push(...res.attachmentList.filter(it => it.attachmentType === 3))
+			}
+
+			travelStore.setFileInfo(allFIleList);
 
 			res.guideList = res.guideList.map((it: any) => {
 				it.time = [it.startDate, it.endDate];

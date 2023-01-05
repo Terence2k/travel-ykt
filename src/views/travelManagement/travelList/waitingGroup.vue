@@ -120,10 +120,9 @@
 
 	const goToPath = (row: any) => {
 		router.push({
-			path: '/travel/travel_manage/add_travel',
+			path: '/travel/travel_manage/travel_detail',
 			query: {
-				id: row.oid,
-				itineraryNo: row.itineraryNo
+				oid: row.oid
 			}
 		})
 	}

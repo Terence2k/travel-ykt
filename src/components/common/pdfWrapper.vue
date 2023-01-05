@@ -11,6 +11,9 @@
       @remove="removeImg"
       :disabled="disabled"
 		>
+      <template #[props.dynamicSlotName]="{ file, actions }">
+        <slot name="customUpload" :file="file" :actions="actions"></slot>
+      </template>
 			<div>
         <slot></slot>
         <div v-if="!slotDefault">上传pdf</div>
@@ -27,6 +30,9 @@
       @remove="removeImg"
       :disabled="disabled"
 		>
+      <template #[props.dynamicSlotName]="{ file, actions }"> 
+        <slot name="customUpload" :file="file" :actions="actions"></slot>
+      </template>
 			<div v-if="fileList!.length < maxCount">
         <slot></slot>
         <div>上传pdf</div>
@@ -61,7 +67,11 @@ const props = defineProps({
   isDragger: {
     type: Boolean,
     default: false
-  }
+  },
+  dynamicSlotName: {
+    type: String,
+    default: ''
+  },
 });
 const pdfName = ref('合同附件')
 const emit = defineEmits(['update:modelValue', 'result', 'remove']);
@@ -169,6 +179,12 @@ onMounted(() => {
     tempData.value = props.modelValue?.split(',');
     handleImage(props.modelValue)
   };
+})
+const clearFileList = () => {
+  fileList.value = []
+}
+defineExpose({
+  clearFileList
 })
 </script>
 <style lang="less" scoped>
