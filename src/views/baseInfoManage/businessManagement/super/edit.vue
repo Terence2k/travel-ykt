@@ -155,15 +155,15 @@
           </a-form-item>
           <a-form-item name="fullRule" label="减免规则" v-show="formKeys?.fullRule && formKeys?.reduceRule">
             <div style="display: flex;align-items: start;">
-              <div style="display: flex;align-items: center;">
+              <div style="display: flex;align-items: center; flex:1">
                 <span style="margin: 0 5px;">满</span>
-                <a-input placeholder="请配置数字" style="width: 150px;" v-model:value="form.fullRule"
+                <a-input placeholder="请配置数字" v-model:value="form.fullRule"
                   oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')" />
               </div>
-              <a-form-item name="reduceRule">
+              <a-form-item name="reduceRule" style="flex:1">
                 <div style="display: flex;align-items: center;">
                   <span style="margin: 0 5px;">减</span>
-                  <a-input placeholder="请配置数字" style="width: 150px;" v-model:value="form.reduceRule"
+                  <a-input placeholder="请配置数字" v-model:value="form.reduceRule"
                     oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')" />
                 </div>
               </a-form-item>
@@ -562,7 +562,7 @@ const getParams = () => {
       fullRule,
       reduceRule,
     } = form.value
-    const hotelInfoB0 = {
+    const hotelInfoBO = {
       hotelStarId,
       unitStatus,
       derate,
@@ -571,7 +571,7 @@ const getParams = () => {
     }
     return {
       ...toRaw(form.value),
-      hotelInfoB0
+      hotelInfoBO
     }
   } else {
     return toRaw(form.value)
@@ -605,7 +605,7 @@ const getData = async () => {
       form.value.regionCode = []
     }
     if (res.bankAccountProvince && res.bankAccountCity) {
-      form.value.bankAddressIds = [res.bankAccountProvince, res.bankAccountCity]
+      form.value.bankAddressIds = [parseInt(res.bankAccountProvince), parseInt(res.bankAccountCity)]
     } else {
       form.value.bankAddressIds = []
     }
