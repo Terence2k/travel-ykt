@@ -23,7 +23,7 @@
 			<a-form-item label="可预定时间" name="data.orderTimeRule" v-bind="errorInfos" style="margin-bottom: 10px">
 				<a-radio-group v-model:value="formData.data.orderTimeRule">
 					<a-radio :value="false">当日可定</a-radio>
-					<a-radio :value="true">次日可定</a-radio>
+					<a-radio :value="true">次日不可定</a-radio>
 				</a-radio-group>
 				<br />
 				<br />
