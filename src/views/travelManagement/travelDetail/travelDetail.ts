@@ -92,8 +92,8 @@ export const getOptions = (props: any) => {
       },
       {
         title: '特殊证件',
-        dataIndex: 'specialCertificateType',
-        key: 'specialCertificateType',
+        dataIndex: 'specialCertificateTypeName',
+        key: 'specialCertificateTypeName',
       },
     ],
     title: '游客信息',
