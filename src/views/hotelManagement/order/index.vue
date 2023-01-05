@@ -3,19 +3,29 @@
 		<CommonSearch>
 			<search-item label="预定时间">
 				<a-space direction="vertical">
-					<picker style="width:200px" placeholder="请输入预定时间" v-model="hotelStore.HotelList[chart].params.scheduledTime"  value-format="YYYY-MM-DD" />
+					<picker
+						style="width: 200px"
+						placeholder="请输入预定时间"
+						v-model="hotelStore.HotelList[chart].params.scheduledTime"
+						value-format="YYYY-MM-DD"
+					/>
 				</a-space>
 			</search-item>
 			<search-item label="入住时间">
 				<a-space direction="vertical">
-					<picker style="width:200px" placeholder="请输入入住时间" v-model="hotelStore.HotelList[chart].params.arrivalDate"  value-format="YYYY-MM-DD" />
+					<picker
+						style="width: 200px"
+						placeholder="请输入入住时间"
+						v-model="hotelStore.HotelList[chart].params.arrivalDate"
+						value-format="YYYY-MM-DD"
+					/>
 				</a-space>
 			</search-item>
 			<search-item label="行程单号">
 				<a-input placeholder="请输入行程单号" v-model:value="hotelStore.HotelList[chart].params.itineraryNo" />
 			</search-item>
 			<template #button>
-				<a-button style="margin-right: 30px"  @click="reset" v-permission="'重置'">重置</a-button>
+				<a-button style="margin-right: 30px" @click="reset" v-permission="'重置'">重置</a-button>
 				<a-button @click="onSearch" v-permission="'查询'">查询</a-button>
 			</template>
 		</CommonSearch>
@@ -31,13 +41,14 @@
 <script lang="ts" setup>
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
-import { useHotelStore,hotelListParams } from '@/stores/modules/hotelManage';
+import { useHotelStore, hotelListParams } from '@/stores/modules/hotelManage';
 import api from '@/api';
-import picker from '@/components/common/datePicker.vue'
+import picker from '@/components/common/datePicker.vue';
 import { HotelStatus } from '@/enum';
 import waits from './wait/index.vue';
 import success from './success/index.vue';
 import refuse from './refuse/index.vue';
+import brushingup from './brushingup/index.vue';
 import finish from './finish/index.vue';
 import cancal from './cancal/index.vue';
 import { cloneDeep } from 'lodash';
@@ -85,6 +96,12 @@ const pages = [
 		value: HotelStatus.finish,
 		chart: 'finish',
 	},
+	{
+		name: brushingup,
+		label: hotelStore.HotelOrderStatus[HotelStatus.brushingup],
+		value: HotelStatus.brushingup,
+		chart: 'brushingup',
+	},
 ];
 
 const filterPages = pages.filter((item: any) => getTabPermission(item.label));
@@ -96,18 +113,32 @@ const onSearch = async () => {
 	let chartField: Field = chart.value;
 	let storeParams = hotelStore.HotelList[chartField].params;
 	hotelStore.HotelList[chartField].params.status = activeKey.value;
+	if (activeKey.value == 3) {
+		hotelStore.HotelList[chartField].params.status = null;
+		hotelStore.HotelList[chartField].params.orderStatus = 2;
+	}
+	if (activeKey.value == 4) {
+		hotelStore.HotelList[chartField].params.status = null;
+		hotelStore.HotelList[chartField].params.orderStatus = 5;
+	}
 	hotelStore.HotelList[chartField].params.scheduledTime = storeParams.scheduledTime;
 	hotelStore.HotelList[chartField].params.arrivalDate = storeParams.arrivalDate;
 	hotelStore.HotelList[chartField].params.itineraryNo = storeParams.itineraryNo;
-	// travelStore.traveList[chartField].params.endDate = storeParams.time[1];
 	let params = cloneDeep(hotelStore.HotelList[chartField].params);
-	// params.groupType = params.groupType === '0' ? '' : params.groupType;
 	const res = await api.hotelOrderPage(params);
 	hotelStore.setOrderList(res, chartField);
 };
 const reset = () => {
 	let chartField: Field = chart.value;
 	hotelStore.HotelList[chartField].params = cloneDeep(hotelListParams.params);
+	if (activeKey.value == 3) {
+		hotelStore.HotelList[chartField].params.status = null;
+		hotelStore.HotelList[chartField].params.orderStatus = 2;
+	}
+	if (activeKey.value == 4) {
+		hotelStore.HotelList[chartField].params.status = null;
+		hotelStore.HotelList[chartField].params.orderStatus = 5;
+	}
 	onSearch();
 };
 </script>

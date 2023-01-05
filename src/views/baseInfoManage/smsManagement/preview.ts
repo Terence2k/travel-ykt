@@ -234,7 +234,7 @@ export function usesmsInfo(): Record<string, any> {
 				templateOid: state.templateId,
 				templateId: state.temId,
 				params: Tparams,
-				phone: state.formValidate.phone,
+				phones: state.formValidate.phone,
 			};
 			api.sendSmsRead(data).then((res: any) => {
 				Modal.confirm({
