@@ -5,6 +5,7 @@ const commonPart2 = `${commonPath}/customer-service/public/api/sys-user/`
 const commonPart3 = `${commonPath}/customer-service/public/api/dictionary/`
 const commonPart4 = `${commonPath}/customer-service/public/api/sys/audit/flow/`
 const commonPart5 = `${commonPath}/hotel-service/public/api/hotel-information/`
+const commonPart6 = `${commonPath}/travel-agency-service/public/api/travel/`
 // 企业注册
 export function companyRegister(data: any) {
 	return request({
@@ -156,6 +157,24 @@ export function getBusinessDetails({ oid, businessType }: paramsType) {
 		// 景区根据id获取企业详情
 		return request({
 			url: `${commonPath}/ticket-service/public/api/scenic/${oid}`,
+			method: 'get',
+			showLoading: true
+		});
+	}
+}
+// 获取旅行社、景区一机管列表
+export function getYJGList(businessType: string) {
+	if (businessType === 'TRAVEL') {
+		// 旅行社
+		return request({
+			url: `${commonPart6}getYjgTravelList`,
+			method: 'get',
+			showLoading: true
+		});
+	} else if (businessType === 'TICKET') {
+		// 景区
+		return request({
+			url: `${commonPart6}getYjgScenicList`,
 			method: 'get',
 			showLoading: true
 		});

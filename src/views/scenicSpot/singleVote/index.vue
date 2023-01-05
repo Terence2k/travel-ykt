@@ -31,6 +31,7 @@
 								<a href="javascript:;" v-permission="'下架'" v-if="record.putaway === '上架'" @click="open(record)"> 下架</a>
 								<a href="javascript:;" v-permission="'下架'" v-if="record.putaway === '下架'" @click="register(record)"> 上架</a>
 								<a href="javascript:;" v-permission="'下架'" v-if="record.putaway === '下架'" @click="changeDownTicket(record)"> 下架修改</a>
+								<a href="javascript:;" v-permission="'下架'" @click="toHistory(record)"> 下架历史</a>
 							</div>
 						</template>
 					</template>
@@ -117,6 +118,10 @@ const open = (value: any) => {
 
 const changeDownTicket = (value: any) => {
 	auditRef.value.open(value.oid, 'edit', value.ticketName);
+};
+
+const toHistory = (value: any) => {
+	route.push({ path: '/scenic-spot/sold-out-history', query: { name: value.ticketName } });
 };
 const done = () => {
 	state.tableData.loading = true;

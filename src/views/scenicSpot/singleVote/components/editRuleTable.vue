@@ -33,7 +33,7 @@
 				</a-form-item> -->
 
 				<a-radio-group v-model:value="typeCheck" :wrapper-col="{ span: 12, offset: 1 }">
-					<a-radio :style="radioStyle" :value="1">折扣减免</a-radio>
+					<a-radio :style="radioStyle" :value="1">折扣（按百分比计算）</a-radio>
 
 					<a-radio :style="radioStyle" :value="2">折扣后价格</a-radio>
 				</a-radio-group>
