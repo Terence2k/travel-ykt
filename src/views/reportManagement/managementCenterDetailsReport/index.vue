@@ -277,29 +277,6 @@ const initList = async () => {
 	state.tableData.total = total;
 	state.tableData.data = content;
 	state.tableData.loading = false;
-	// state.tableData.data = [
-	// 	{
-	// 		travelId: 1, //组团社id
-	// 		travelName: '组团社', //组团社名称
-	// 		subTravelId: 1, //地接社id
-	// 		subTravelName: '地接社', //地接社名称
-	// 		travelTypeId: 1, //团队类型id
-	// 		travelTypeName: '888', //团队类型名称
-	// 		peopleNum: 200, //人数
-	// 		frozenPrice: '888', //团款
-	// 		settlementPrice: '888', //核销总费用
-	// 		unSettlementPrice: '88008', //未消费费用
-	// 		hmVo: {
-	// 			frozenPrice: '888', //冻结金额
-	// 			settlementPrice: '888', //已核销金额
-	// 			actualPrice: '654', //实收
-	// 			ruleList: [
-	// 				{
-	// 					ruleName: '结算规则-001', //规则名称
-	// 					rulePrice: '100', //结算费用
-	// 				},
-	// 				{
-	// 					ruleName: '结算规则-002', //规则名称
 };
 
 //搜索
