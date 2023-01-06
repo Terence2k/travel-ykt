@@ -67,6 +67,8 @@ export interface ParamType {
 	subTravelId?: number | string | null; //地接社id
 	startDate?: number | string | null; // 开始时间
 	endDate?: number | string | null; // 结束时间
+	startSendGroupTime?: number | string | null; // 发团开始时间
+	endSendGroupTime?: number | string | null; // 发团结束时间
 	status?: number | string | null; // 状态
 }
 export interface DataType {
