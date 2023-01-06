@@ -215,7 +215,7 @@ const pageSideChange = (current: number, size: number) => {
 const onSearch = async () => {
   const res = await api.selectSingleContractList(state.tableData.param)
   state.tableData.data = res.content.map((item: any) => {
-    item.tripTime = item.tripStartTime + '~' + item.tripEndTime
+    item.tripTime = item.tripStartTime + '-' + item.tripEndTime
     return item
   })
   state.tableData.total = res.total
