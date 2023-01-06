@@ -1,7 +1,13 @@
 import { HealthCode, Insurance } from "@/enum"
 
 export const ROLE = {
-    TRAVE_CODE: 'TRAVEL_OPERATOR' //计调
+    TRAVE_CODE: 'TRAVEL_OPERATOR', //计调
+    CULTURE_BUREAU: 'CULTURE_BUREAU', //旅游局
+    ANCIENT_UYGUR: 'ANCIENT_UYGUR', //古维
+    SUPERVISE: 'SUPERVISE', //监理公司
+    ASSOCIATION: 'ASSOCIATION', //旅游协会
+    YKT: 'YKT', //一卡通
+    GROUP: 'GROUP', //集团
 }
 
 export const CODEVALUE= {

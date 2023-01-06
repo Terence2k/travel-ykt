@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { GroupMode, GroupStatus, Gender, GuideType, FeeModel, insuranceType, AuditStaus, TakeGroupStatus } from '@/enum';
+import { GroupMode, GroupStatus, Gender, GuideType, FeeModel, insuranceType, AuditStaus, TakeGroupStatus, TravelCheckOne, TravelCheckTwo, TravelCheckThree } from '@/enum';
 import api from '@/api/index';
 import { cloneDeep, toArray } from 'lodash';
 import { AuditField, Field, TakeGroupField } from '@/type';
@@ -267,6 +267,34 @@ export const useTravelStore = defineStore({
 			[TakeGroupStatus.WaitingOutGroup]: '待出团',
 			[TakeGroupStatus.WaitingHandle]: '待处理',
 		},
+		travelCheckOne: {
+			[TravelCheckOne.JoinedGroup]: '已接团',
+			[TravelCheckOne.OutGroup]: '出团中',
+			[TravelCheckOne.ToBeChanged]: '待变更',
+			[TravelCheckOne.Disaggregated]: '已散团',
+			[TravelCheckOne.Complete]: '已完成结算',
+			[TravelCheckOne.Pending]: '待处理'
+		},
+		travelCheckTwo: {
+			[TravelCheckTwo.PendingFinancialReview]: '待财务审核',
+			[TravelCheckTwo.WaitingGroup]: '待接团',
+			[TravelCheckTwo.JoinedGroup]: '已接团',
+			[TravelCheckTwo.ToBeChanged]: '待变更',
+			[TravelCheckTwo.Overtime]: '已过期',
+			[TravelCheckTwo.ToBeBooked]: '待预定',
+			[TravelCheckTwo.LeaveTheGroup]: '待出团',
+			[TravelCheckTwo.OutOfGroup]: '已出团',
+			[TravelCheckTwo.Disaggregated]: '已散团',
+			[TravelCheckTwo.Pending]: '待处理'
+		},
+		travelCheckThree: {
+			[TravelCheckThree.JoinedGroup]: '已接团',
+			[TravelCheckThree.OutGroup]: '出团中',
+			[TravelCheckThree.ToBeChanged]: '待变更',
+			[TravelCheckThree.Disaggregated]: '已散团',
+			[TravelCheckThree.Complete]: '已完成结算',
+			[TravelCheckThree.Pending]: '待处理',
+		},
 		revokeParams: {},
 		templateOid:'' as any
 	}),
@@ -299,7 +327,9 @@ export const useTravelStore = defineStore({
 		async getTravelList(params: object) {
 			const res = await api.travelManagement.getTravelList(params);
 			res.content = res.content.map((it: TraveDataItem) => {
-				it.time = it.startDate + '-' + it.endDate;
+				if (it.startDate) {
+					it.time = it.startDate + '-' + it.endDate;
+				}
 				it.groupTypeStr = this.groupMode[it.groupType];
 				return it;
 			});
@@ -350,6 +380,9 @@ export const useTravelStore = defineStore({
 		},
 		setTrafficList(list: any) {
 			this.trafficList = list;
+		},
+		setGouvyList(list: any) {
+			this.gouvyList = list;
 		},
 		setTraveInfo(data: any) {
 			this.traveInfo = data;
