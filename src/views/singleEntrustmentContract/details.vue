@@ -205,6 +205,7 @@ import { CloseOutlined } from '@ant-design/icons-vue';
 import api from '@/api';
 import { useRouter, useRoute } from 'vue-router';
 import { awsGetPreSignedUrl } from '@/utils/awsUpload';
+import { accDiv, accMul } from '@/utils/compute';
 const router = useRouter();
 const route = useRoute();
 const back = () => {
@@ -227,7 +228,6 @@ const form = ref({
   contractFileUrlList: '',
   contractFileUrl: '',
   contractStatusName: '',
-
   deposit: '',
   liquidatedDamages: '',
   bond: '',
@@ -242,7 +242,6 @@ const form = ref({
   nonStandardFine: '',
   entrustFine: '',
   disputeResolutionName: '',
-
   itineraryNo: '尚未成团',
   contractEstablish: '',
   creatorName: '',
@@ -469,7 +468,6 @@ const getDetails = async (id: number) => {
       contractType,
       contractFileUrl,
       contractStatusName,
-
       deposit,
       liquidatedDamages,
       bond,
@@ -484,10 +482,8 @@ const getDetails = async (id: number) => {
       nonStandardFine,
       entrustFine,
       disputeResolutionName,
-
       entrustedProject,
       entrustedProjectAmount,
-
       itineraryNo,
       contractEstablish,
       creatorName,
@@ -525,6 +521,9 @@ const getDetails = async (id: number) => {
         case 3:
           res = '委托旅行社购买'
           break
+        default:
+          res = ''
+          break
       }
       return res
     })()
@@ -536,6 +535,9 @@ const getDetails = async (id: number) => {
           break
         case 2:
           res = '线下合同'
+          break
+        default:
+          res = ''
           break
       }
       return res
@@ -576,10 +578,9 @@ const getDetails = async (id: number) => {
       contractFileUrlList,
       contractFileUrl,
       contractStatusName: contractStatusName || '/',
-
       deposit,
       liquidatedDamages,
-      bond,
+      bond: accDiv(bond, 100) || '/',
       emergencyContact,
       emergencyContactPhone,
       electronicContractNo: electronicContractNo || '/',
@@ -591,17 +592,14 @@ const getDetails = async (id: number) => {
       nonStandardFine,
       entrustFine,
       disputeResolutionName,
-
       dataEntrustedProjectSource: [{
         entrustedProject,
         entrustedProjectAmount,
       }],
-
-
       itineraryNo: itineraryNo || '尚未成团',
       contractEstablish: contractEstablish || '/',
       creatorName: creatorName || '/',
-      contractAmount: contractAmount || '/',
+      contractAmount: accDiv(contractAmount, 100) || '/',
       createTime,
       takeEffectTime: takeEffectTime || '/',
       otherAgreements: otherAgreements || '/',

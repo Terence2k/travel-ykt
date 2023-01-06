@@ -95,6 +95,11 @@ const columns = [
 		dataIndex: 'timeText',
 		key: 'timeText',
 	},
+	{
+		title: '发团时间',
+		dataIndex: 'sendGroupTime',
+		key: 'sendGroupTime',
+	},
     {
 		title: '结算金额(元)',
 		dataIndex: 'accountingFee',
@@ -213,14 +218,15 @@ const onSearch = async() => {
 	state.tableData.param.subTravelId = props.params?.subTravelId
 	state.tableData.param.startDate = props.params?.time ? props.params?.time[0] :  null
 	state.tableData.param.endDate = props.params?.time ? props.params?.time[1] :  null
+	state.tableData.param.startSendGroupTime = props.params?.groupTime ? props.params?.groupTime[0] : null;
+	state.tableData.param.endSendGroupTime = props.params?.groupTime ? props.params?.groupTime[1] : null;
 	state.tableData.loading = true;
-	let res = await api.getItinerarySettlement(state.tableData.param);
+	let res = await api.settlementItineraryBasic(state.tableData.param);
 	const { total, content } = res;
 	state.tableData.total = total;
 	const list: [any] = dealData(content);
 	state.tableData.data = list;
 	state.tableData.loading = false;
-	console.log(state.tableData.param);
 };
 // 向父组件暴露方法
 defineExpose({ onSearch });
