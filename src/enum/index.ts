@@ -146,3 +146,35 @@ export enum Insurance {
 	SUBBUY = 2, //地接社购买
 	TEAMBUY = 3 //组团社购买
 }
+
+export enum TravelCheckOne {
+	JoinedGroup = 1, //已接团
+	OutGroup, //出团中
+	ToBeChanged, //待变更
+	Disaggregated, //已散团
+	Complete, //已完成结算
+	Pending //待处理
+}
+
+export enum TravelCheckTwo {
+	PendingFinancialReview = 1, //待财务审核
+	WaitingGroup, //待接团
+	JoinedGroup, //已接团
+	ToBeChanged, //待变更
+	Overtime, //已过期
+	ToBeBooked, //待预定
+	LeaveTheGroup, //待出团
+	OutOfGroup, //已出团
+	Disaggregated, //已散团
+	Pending //待处理
+}
+
+export enum TravelCheckThree {
+	JoinedGroup = 1, //已接团
+	OutGroup, //出团中
+	ToBeChanged, //待变更
+	Disaggregated, //已散团
+	Complete, //已完成结算
+	Pending //待处理
+}
+
