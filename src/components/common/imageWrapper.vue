@@ -155,9 +155,7 @@ const removeImg = (file: any) => {
 
 const handleImage = async (val: any) => {
 	fileList.value = val.split(',').map(async (item: any, index: any) => {
-    if (item.indexOf('http:') === -1) {
-      item = await awsGetPreSignedUrl(item);
-    }
+    item = await awsGetPreSignedUrl(item);
     return {
       uid: index.toString(),
       name: item,

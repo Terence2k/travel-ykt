@@ -20,8 +20,8 @@
 					<div v-else>-</div>
 				</template>
 				<!-- 冻结状态 -->
-				<template v-if="column.key === 'test'">
-					<div class="red" v-if="record.test == 0">已冻结</div>
+				<template v-if="column.key === 'isFrozen'">
+					<div class="red" v-if="record.isFrozen == 1">已冻结</div>
 					<div v-else>未冻结</div>
 				</template>
 				<!-- 行程费用 单位转成元-->
@@ -32,8 +32,8 @@
 					<div class="action-btns">
 						<a @click="examine('one', record)" v-permission="'预结算_审核'">审核</a>
 						<a @click="reclosing(record)" v-permission="'预结算_重新结算'">重新结算</a>
-						<!-- <a @click="thaw(record)" v-permission="'预结算_解冻'" v-if="record.test == 0">解冻</a>
-						<a @click="frozen(record)" v-permission="'预结算_冻结'" v-else>冻结</a> -->
+						<a @click="thaw(record)" v-permission="'预结算_解冻'" v-if="record.isFrozen == 1">解冻</a>
+						<a @click="frozen(record)" v-permission="'预结算_冻结'" v-else>冻结</a>
 						<a @click="toInfo(record)" v-permission="'预结算_查看'">查看</a>
 					</div>
 				</template>
@@ -106,15 +106,20 @@ const columns = [
 		key: 'timeText',
 	},
 	{
+		title: '发团时间',
+		dataIndex: 'sendGroupTime',
+		key: 'sendGroupTime',
+	},
+	{
 		title: '结算状态',
 		dataIndex: 'accountingIsNormal',
 		key: 'accountingIsNormal',
 	},
-	// {
-	// 	title: '冻结状态',
-	// 	dataIndex: 'test',
-	// 	key: 'test',
-	// },
+	{
+		title: '冻结状态',
+		dataIndex: 'isFrozen',
+		key: 'isFrozen',
+	},
 	{
 		title: '操作',
 		key: 'action',
@@ -147,10 +152,10 @@ const tipSubmit = async () => {
 	}
 	// 冻结&冻结
 	if (modalData.value.type == 'frozen' || modalData.value.type == 'thaw') {
-		// api.settlementUpdate(modalData.value.data).then((res: any) => {
-		// 	message.success('操作成功');
-		// 	onSearch();
-		// });
+		api.updateFrozen(modalData.value.data).then((res: any) => {
+			message.success('操作成功');
+			onSearch();
+		});
 		tipCancel();
 	}
 };
@@ -220,8 +225,10 @@ const onSearch = async () => {
 	state.tableData.param.subTravelId = props.params?.subTravelId;
 	state.tableData.param.startDate = props.params?.time ? props.params?.time[0] : null;
 	state.tableData.param.endDate = props.params?.time ? props.params?.time[1] : null;
+	state.tableData.param.startSendGroupTime = props.params?.groupTime ? props.params?.groupTime[0] : null;
+	state.tableData.param.endSendGroupTime = props.params?.groupTime ? props.params?.groupTime[1] : null;
 	state.tableData.loading = true;
-	let res = await api.getItinerarySettlement(state.tableData.param);
+	let res = await api.settlementItineraryBasic(state.tableData.param);
 	const { total, content } = res;
 	state.tableData.total = total;
 	const list: [any] = dealData(content);
@@ -245,8 +252,8 @@ const frozen = (record: any) => {
 	modalData.value.params = { title: '冻结', content: '是否确定冻结行程单' };
 	modalData.value.type = 'frozen';
 	modalData.value.data = {
-		status: 14,
-		itineraryNoList: [record.itineraryNo],
+		isFrozen: 1,
+		itineraryNo: record.itineraryNo,
 	};
 	modalData.value.show = true;
 };
@@ -255,8 +262,8 @@ const thaw = (record: any) => {
 	modalData.value.params = { title: '解冻', content: '是否确定解冻行程单' };
 	modalData.value.type = 'thaw';
 	modalData.value.data = {
-		status: 14,
-		itineraryNoList: [record.itineraryNo],
+		isFrozen: 0,
+		itineraryNo: record.itineraryNo,
 	};
 	modalData.value.show = true;
 };

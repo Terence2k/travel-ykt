@@ -24,13 +24,8 @@
                         </div>
                     </template>
                     <template v-if="column.key === 'specialCertificatePicture'">
-                        <div>
-                            <a-image
-                                v-for="url in record.specialCertificatePicture"
-                                :key="url"
-                                :width="50"
-                                :src="url"
-                            />
+                        <div class="d-flex">
+                            <CommonImg v-for="url in record.specialCertificatePicture" :key="url" :width="50" :src="url"></CommonImg>
                         </div>
                     </template>
                     <template v-if="column.key === 'healthCode'">
@@ -59,6 +54,8 @@ import { message, Modal } from 'ant-design-vue';
 import { createVNode } from 'vue';
 import { CheckOutlined } from '@ant-design/icons-vue';
 import { CODEVALUE } from '@/constant';
+import CommonImg from '@/components/common/CommonImg.vue';
+
     const props = defineProps({
 		modelValue: {
 			type: Boolean,
@@ -76,7 +73,7 @@ import { CODEVALUE } from '@/constant';
     const travelStore = useTravelStore()
     const touristList = ref([]);
     const selectedRowKeys = ref([])// 已预定游客
-    const emits = defineEmits(['update:modelValue'])
+    const emits = defineEmits(['update:modelValue', 'onSuccess'])
     const IDCard = computed(() => travelStore.IDCard)
     const specialId = computed(() => travelStore.specialId)
     const columns = [
@@ -182,7 +179,6 @@ import { CODEVALUE } from '@/constant';
             return message.error('请选择订票人员')
         }
         console.log(reserveParams)
-         
         Modal.confirm({
             title: '景区门票确认？',
             icon: createVNode(CheckOutlined),
@@ -195,7 +191,8 @@ import { CODEVALUE } from '@/constant';
             onOk() {
                 
                 api.travelManagement.reserveTicket(reserveParams).then((res:any) => {
-                    travelStore.setTicketStatus(props.ticketId);
+                    // travelStore.setTicketStatus(props.ticketId);
+                    travelStore.setTicketResvePeple(reserveParams.reservePeopleList.length);
                     message.success('预定成功');
                     callback()
                 }).catch((err:any) => {

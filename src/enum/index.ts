@@ -48,8 +48,10 @@ export enum HotelStatus{
 	success = 2,//审核通过2
 	refuse = -1, //审核不通过-1
 	cancal =0, //取消
-	finish = 7,   //完成
+	finish = 3,   //完成
+	brushingup = 4
 }
+
 // 古维减免状态
 export enum GouvyStatus{
 	waits = 0,   //待审核

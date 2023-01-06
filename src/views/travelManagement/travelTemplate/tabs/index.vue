@@ -43,6 +43,7 @@ const activeKey = ref(0);
 const check = ref(false); //触发保存
 const sendTeam = ref(false); //发团判断
 const isSaveBtn = ref(false); //是否点击保存按钮
+const detailstatus = ref(false); //触发查询
 let pages = [
 	{
 		name: baseinfo,
@@ -77,29 +78,27 @@ const save = (e: any) => {
 const saveItinerary = (val: any) => {
 	if (!val.basicParam) {
 		activeKey.value = activeKey.value - 2;
+		Acstatus.value = 0;
 		return message.error('请填写基本信息');
 	}
 	if (!travelStore.guideList.length) {
 		activeKey.value = activeKey.value - 1;
+		Acstatus.value = 0;
 		return message.error('请选择带团导游');
 	}
-
 	if (Acstatus.value === 1) {
 		aduit(val);
 		Acstatus.value = 2;
-		console.log('第一次');
 	} else if (route.query.oid) {
-		aduit(val);
+		aduit(val, route.query.oid);
 		router.push('/travel/travelTtemplate/list');
 		let msg = route.query.oid ? '编辑成功' : '新增成功';
 		message.success(msg);
-		console.log('第2次');
 	} else {
 		aduit(val, resdata.value);
 		router.push('/travel/travelTtemplate/list');
 		let msg = route.query.oid ? '编辑成功' : '新增成功';
 		message.success(msg);
-		console.log('第3次');
 	}
 };
 
@@ -115,8 +114,20 @@ const aduit = (val: any, oid?: any) => {
 		isSaveBtn.value
 	)
 		.then((res: any) => {
+			travelStore.templateOid = res.oid;
 			if (isSaveBtn.value) {
 				resdata.value = res.oid;
+			}
+			if (detailstatus.value) {
+				api.travelManagement.saveChangeTraveldetail(res.oid).then((res: any) => {
+					res.basic.teamId = res.basic.itineraryNo;
+					res.basic.time = [res.basic.startDate, res.basic.endDate];
+					res.basic.touristNum = res.basic.touristCount || 0;
+					travelStore.setBaseInfo(res.basic);
+					travelStore.setGuideList(res.guideList);
+					travelStore.hotels = res.hotelList;
+					travelStore.scenicTickets = res.ticketList;
+				});
 			}
 		})
 		.catch((error: any) => {});
@@ -129,6 +140,7 @@ const getTraveDetail = () => {
 		return;
 	}
 	api.travelManagement.saveChangeTraveldetail(route.query.oid).then((res: any) => {
+		res.basic.oid = res.basic.oid;
 		res.basic.teamId = res.basic.itineraryNo;
 		res.basic.time = [res.basic.startDate, res.basic.endDate];
 		res.basic.touristNum = res.basic.touristCount || 0;
@@ -141,7 +153,6 @@ const getTraveDetail = () => {
 getTraveDetail();
 // 防抖debounce，只执行一次saveItinerary
 const debounceFun = debounce((val) => {
-	console.log(val, 'val');
 	for (let k in val) {
 		if (!val[k]) return;
 	}
@@ -153,10 +164,11 @@ watch(obj, (newVal) => {
 });
 
 watch(activeKey, (newVal) => {
-	if (newVal == 2 && !route.query.oid && Acstatus.value === 0) {
+	if (newVal == 2 && !route.query.oid && Acstatus.value == 0) {
 		Acstatus.value = 1;
 		check.value = !check.value;
 		isSaveBtn.value = !isSaveBtn.value;
+		detailstatus.value = !detailstatus.value;
 	}
 });
 

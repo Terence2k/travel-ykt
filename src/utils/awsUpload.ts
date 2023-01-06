@@ -111,6 +111,8 @@ export const awsUploadFile = (options: any) => {
 }
 
 export const awsGetPreSignedUrl = (fileUrl: string) => {
+  if (fileUrl.includes('http')) return fileUrl;
+  
   return new Promise(async (resolve, reject) => {
     const { aws, bucket, filePath, prefix } = await newAwsObj();
     if (!aws) {

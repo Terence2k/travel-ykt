@@ -118,7 +118,7 @@
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<!--  v-if="travelStore.reserveStatus && record.orderStatus == 0" -->
-							<a v-if="travelStore.reserveStatus" @click="reserveTicketPeple(record)">预定</a>
+							<a v-if="travelStore.reserveStatus" @click="reserveTicketPeple(record, index)">预定</a>
 							<!--  v-if="travelStore.teamStatus" -->
 							<a :class="{'disabled': !travelStore.teamStatus}" class="item" @click="add('TICKET', record.oid ? 'addTicketPop' : 'productRow', 'addTicketPop', index, record.oid || record)">编辑</a>
 							<a :class="{'disabled': !travelStore.teamStatus}" class="item" @click="delTicket(record, index)">删除</a>
@@ -228,7 +228,7 @@ const {
 	selectedRowKeys,
 	onSelectChange,
 	reserveTicketPeple,
-	columnsIndex
+	columnsIndex,
 } = useTraveInfo(props, emits);
 onMounted(() => {
 	onSearch();

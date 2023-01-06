@@ -13,7 +13,7 @@ export const hotelListParams = {
 		arrivalDate: '',
 		itineraryNo: '',
 		status: '' as any,
-		Status:7
+		orderStatus:''as any
 	},
 };
 export const useHotelStore = defineStore({
@@ -26,6 +26,7 @@ export const useHotelStore = defineStore({
 			[HotelStatus.refuse]: '审核不通过',
 			[HotelStatus.cancal]: '未提交',
 			[HotelStatus.finish]: '已核销',
+			[HotelStatus.brushingup]: '改刷中',
 		},
 		HotelList: {
 			waits: cloneDeep(hotelListParams),
@@ -33,6 +34,7 @@ export const useHotelStore = defineStore({
 			refuse: cloneDeep(hotelListParams),
 			cancal: cloneDeep(hotelListParams),
 			finish: cloneDeep(hotelListParams),
+			brushingup: cloneDeep(hotelListParams),
 		},
 		List: [],
 	}),
