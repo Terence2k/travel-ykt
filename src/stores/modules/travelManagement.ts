@@ -351,6 +351,9 @@ export const useTravelStore = defineStore({
 		setTrafficList(list: any) {
 			this.trafficList = list;
 		},
+		setGouvyList(list: any) {
+			this.gouvyList = list;
+		},
 		setTraveInfo(data: any) {
 			this.traveInfo = data;
 		},
