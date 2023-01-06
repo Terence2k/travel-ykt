@@ -16,6 +16,9 @@
 			<template #summary="data">
 				<slot name="summary" v-bind="data || {}"></slot>
 			</template>
+			<template #expandedRowRender="data" v-if="$attrs.showExpandColumn">
+				<slot name="expandedRowRender" v-bind="data || {}"></slot>
+			</template>
 		</a-table>
 	</div>
 </template>

@@ -2,7 +2,8 @@
   <CommonSearch>
     <search-item label="合同状态">
       <a-select v-model:value="tableData.param.contractStatus" placeholder="请选择合同状态" allowClear>
-        <a-select-option v-for="item in contractStatusOption" :value="item.codeValue" :key="item.codeValue">{{ item.name
+        <a-select-option v-for="item in contractStatusOption" :value="item.codeValue" :key="item.codeValue">{{
+          item.name
         }}
         </a-select-option>
       </a-select>
@@ -29,7 +30,7 @@
         {{ index + 1 }}
       </template>
       <template v-if="column.key === 'contractAmount'">
-        {{ record.contractAmount / 100 }}
+        {{ accDivValue(record.contractAmount) }}
       </template>
       <template v-if="column.key === 'action'">
         <div class="action-btns">
@@ -45,10 +46,11 @@
     :total="tableData.total" @change="onHandleCurrentChange" @showSizeChange="pageSideChange" />
   <CommonModal title="散客合同撤销确认" v-model:visible="withdrawVisible" @cancel="withdrawVisible = false"
     @close="withdrawVisible = false" :conform-text="'确认撤销'" @conform="withdrawConfirm">
-    <p>您即将撤销编号为{{ form.contractNo }}的散客合同，合同总金额<span class="cred">{{ form.contractAmount }}</span>元。提交撤销后将由游客代表<span
-        class="cred">{{
-            form.representativeName
-        }}</span>通过短信完成确认，确认成功后12301平台也将同步撤销。是否确认要撤销？
+    <p>您即将撤销编号为{{ form.contractNo }}的散客合同，合同总金额<span class="cred">{{
+      accDivValue(form.contractAmount)
+    }}</span>元。提交撤销后将由游客代表<span class="cred">{{
+  form.representativeName
+}}</span>通过短信完成确认，确认成功后12301平台也将同步撤销。是否确认要撤销？
     </p>
   </CommonModal>
   <CommonModal title="提交成功" v-model:visible="withdrawresVisible" @cancel="withdrawresVisible = false"
@@ -66,6 +68,14 @@ import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModa
 import api from '@/api';
 import { useRouter, useRoute } from 'vue-router';
 import { message } from 'ant-design-vue/es';
+import { accDiv, accMul } from '@/utils/compute';
+const accDivValue = (value: any) => {
+  if (typeof value === 'number') {
+    return accDiv(value, 100)
+  } else {
+    return undefined
+  }
+}
 const router = useRouter();
 const route = useRoute()
 const goTo = (name: string, value?: any) => {

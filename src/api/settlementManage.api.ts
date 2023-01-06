@@ -215,10 +215,19 @@ export async function getTeamTypes() {
 		showLoading: false,
 	});
 }
-// 查询结算行程单列表
+// 查询结算行程单列表 -- 行程中 已散团
 export async function getItinerarySettlement(data: any) {
 	return request({
 		url: `${commonPath}/travel-agency-service/public/api/itinerary/getItinerarySettlement`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
+// 查询结算行程单列表 -- 预结算 已结算 已申请转账
+export async function settlementItineraryBasic(data: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/settlement-information/settlementItineraryBasic/list`,
 		method: 'post',
 		data,
 		showLoading: true,
@@ -292,10 +301,11 @@ export async function examineDetail(itineraryNo: any) {
 	});
 }
 // 结算管理--结算明细
-export async function settlementDetail(informationId: any) {
+export async function settlementDetail(data: any) {
 	return request({
-		url: `${commonPath}/settlement-service/public/api/settlement-information/information/details/${informationId}`,
-		method: 'get',
+		url: `${commonPath}/settlement-service/public/api/settlement-information/information/details`,
+		method: 'post',
+		data,
 		showLoading: false,
 	});
 }
@@ -338,6 +348,15 @@ export async function exportReconciliation(data: any) {
 export async function updateItineraryStatusEnd(data: any) {
 	return request({
 		url: `${commonPath}/travel-agency-service/public/api/itinerary/updateItineraryStatusEnd`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
+// 结算行程单修改冻结状态
+export async function updateFrozen(data: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/settlement-information/settlementItineraryBasic/updateFrozen`,
 		method: 'post',
 		data,
 		showLoading: true,

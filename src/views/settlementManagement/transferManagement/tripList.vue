@@ -136,11 +136,15 @@ const columns = computed(() => {
 const state = reactive({
 	tableData: {
 		param: {
-			applicationDate: null,
-			applicationName: null,
-			productType: 1,
-			pageSize: 10,
-			pageNo: 1,
+			// applicationDate: null,
+			// applicationName: null,
+			// productType: 1,
+			// pageSize: 10,
+			// pageNo: 1,
+			transferAccountsId: 1, //转账单id
+			pageNo: 1, //页号
+			pageSize: 10, //页大小
+			// itineraryNo: 'aaaaaa', //行程单号
 		},
 		data: [
 			{
@@ -162,74 +166,6 @@ const initList = async () => {
 	// const list: [any] = dealData(content);
 	// state.tableData.data = list;
 	// state.tableData.loading = false;
-	// state.tableData.data = [
-	// 	{
-	// 		itineraryNo: '001',
-	// 		subTravelName: '001',
-	// 		superviseVo: {
-	// 			ytk: '一卡通',
-	// 			bank: '建设银行',
-	// 		},
-	// 		associationVo: {
-	// 			ytk: '一卡通',
-	// 			bank: '建设银行',
-	// 		},
-	// 		qmTravelAgencyVo: {
-	// 			ytk: '一卡通',
-	// 			bank: '建设银行',
-	// 		},
-	// 		ljTravelAgencyVo: {
-	// 			ytk: '一卡通',
-	// 			bank: '建设银行',
-	// 		},
-	// 		state: '开启',
-	// 		totalFee: '888元',
-	// 	},
-	// 	{
-	// 		itineraryNo: '002',
-	// 		subTravelName: '002',
-	// 		superviseVo: {
-	// 			ytk: '一卡通1',
-	// 			bank: '建设银行2',
-	// 		},
-	// 		associationVo: {
-	// 			ytk: '一卡通1',
-	// 			bank: '建设银行2',
-	// 		},
-	// 		qmTravelAgencyVo: {
-	// 			ytk: '一卡通1',
-	// 			bank: '建设银行2',
-	// 		},
-	// 		ljTravelAgencyVo: {
-	// 			ytk: '一卡通2',
-	// 			bank: '建设银行1',
-	// 		},
-	// 		state: '关闭',
-	// 		totalFee: '888元',
-	// 	},
-	// 	{
-	// 		itineraryNo: '002',
-	// 		subTravelName: '002',
-	// 		superviseVo: {
-	// 			ytk: '一卡通1',
-	// 			bank: '建设银行2',
-	// 		},
-	// 		associationVo: {
-	// 			ytk: '一卡通1',
-	// 			bank: '建设银行2',
-	// 		},
-	// 		qmTravelAgencyVo: {
-	// 			ytk: '一卡通1',
-	// 			bank: '建设银行2',
-	// 		},
-	// 		ljTravelAgencyVo: {
-	// 			ytk: '一卡通2',
-	// 			bank: '建设银行1',
-	// 		},
-	// 		state: '关闭',
-	// 		totalFee: '888元',
-	// 	},
-	// ];
 };
 //搜索
 const onHandleCurrentChange = (val: number) => {

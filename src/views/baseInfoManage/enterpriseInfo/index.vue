@@ -358,10 +358,8 @@
 <script setup lang="ts">
 import { ref, Ref, computed, watch, toRefs, reactive } from 'vue';
 import api from '@/api';
-import imgUpload from '@/views/baseInfoManage/businessManagement/components/imgUpload.vue';
 import { useBusinessManageOption } from '@/stores/modules/businessManage';
 import type { Rule } from 'ant-design-vue/es/form';
-import { message } from 'ant-design-vue';
 import AddressSelector from '@/views/baseInfoManage/businessManagement/components/addressSelector.vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import { getUserInfo } from '@/utils/util';

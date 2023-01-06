@@ -18,7 +18,7 @@
       <a-input v-model:value="state.tableData.param.keyWord" placeholder="请输入用户姓名/手机号"/>
     </search-item>
     <template #button>
-      <a-button @click="onSearch"  v-permission="'查询'">查询</a-button>
+      <a-button @click="querySearch" v-permission="'查询'">查询</a-button>
     </template>
   </CommonSearch>
   <CommonTable :dataSource="state.tableData.data" :columns="columns">
@@ -111,20 +111,22 @@
   // const isGroupSuperAdmin = ref(false);
 
   const onHandleCurrentChange = (val: number) => {
-    console.log('change:', val);
     state.tableData.param.pageNo = val;
     onSearch();
   }
   
   const pageSideChange = (current: number, size: number) => {
-    console.log('changePageSize:', size);
     state.tableData.param.pageSize = size;
+    onSearch();
+  }
+
+  const querySearch = () => {
+    state.tableData.param.pageNo = 1;
     onSearch();
   }
 
   const onSearch = () => {
     api.userList(state.tableData.param).then((res: any) => {
-      console.log('res:', res);
       state.tableData.data = res.content;
       state.tableData.total = res.total;
     })
@@ -137,9 +139,6 @@
 
   const addOrUpdate = (param: any) => {
     const { row, handle } = param;
-    console.log(row);
-    console.log(handle);
-
     state.params = {};
     if (handle === 'update') {
       state.params = row;
@@ -149,9 +148,6 @@
 
   const resetPw = (param: any) => {
     const { row, handle } = param;
-    console.log(row);
-    console.log(handle);
-
     state.params = {};
     if (handle === 'update') {
       state.params = row;

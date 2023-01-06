@@ -49,7 +49,7 @@
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<!-- <a href="javascript:;" @click="editItem(record,index)">调整费用</a> -->
-							<a href="javascript:;" @click="itemDetail(record.oid)">分账明细</a>
+							<a href="javascript:;" @click="itemDetail(record.oid,record.itineraryNo)">分账明细</a>
 						</div>
 					</template>
 				</template>
@@ -204,9 +204,9 @@ const toPass = () => {
 	modalData.value.show = true;
 };
 // 结算明细
-const itemDetail = (oid: any) => {
+const itemDetail = (oid: any,itineraryNo: any) => {
 	adjustData.value.detailShow = true;
-	adjustData.value.modalParams = { oid };
+	adjustData.value.modalParams = { oid,itineraryNo };
 };
 //初始化页面
 const initPage = async (): Promise<void> => {

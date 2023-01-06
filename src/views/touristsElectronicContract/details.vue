@@ -184,6 +184,14 @@ import { CloseOutlined } from '@ant-design/icons-vue';
 import api from '@/api';
 import { useRouter, useRoute } from 'vue-router';
 import { awsGetPreSignedUrl } from '@/utils/awsUpload';
+import { accDiv, accMul } from '@/utils/compute';
+const accDivValue = (value: any) => {
+  if (typeof value === 'number') {
+    return accDiv(value, 100)
+  } else {
+    return undefined
+  }
+}
 const router = useRouter();
 const route = useRoute();
 const back = () => {
@@ -395,6 +403,9 @@ const getHealthyCodes = async (ids: number[]) => {
 }
 const setList = (list: any) => {
   list.forEach((item: any) => {
+    item.adultPrice = accDivValue(item.adultPrice)
+    item.childPrice = accDivValue(item.childPrice)
+    item.individualSubtotal = accDivValue(item.individualSubtotal)
     const keys = Object.keys(item)
     for (let i = 0; i < keys.length; i++) {
       const element = keys[i];
@@ -502,6 +513,9 @@ const getDetails = async (id: number) => {
         case 3:
           res = '委托旅行社购买'
           break
+        default:
+          res = ''
+          break
       }
       return res
     })()
@@ -513,6 +527,9 @@ const getDetails = async (id: number) => {
           break
         case 2:
           res = '线下合同'
+          break
+        default:
+          res = ''
           break
       }
       return res
@@ -557,7 +574,7 @@ const getDetails = async (id: number) => {
       itineraryNo: itineraryNo || '尚未成团',
       contractEstablish: contractEstablish || '/',
       creatorName: creatorName || '/',
-      contractAmount: contractAmount || '/',
+      contractAmount: accDivValue(contractAmount) || '/',
       createTime,
       takeEffectTime: takeEffectTime || '/',
       otherAgreements: otherAgreements || '/',

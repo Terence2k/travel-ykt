@@ -1,6 +1,6 @@
 <template>
 	<div class="top">
-		<p>当前行程单还未发生核销，可以撤销作废，并重新填报、提交发团。</p>
+		<p>当前行程单还未发生核销，可以整团撤销作废。</p>
 		<section>
 			<a-button class="btn" type="primary" @click="check('All')">整团撤销</a-button>
 			<!-- <a-button type="primary" @click="check('REVOKE')">撤销重提</a-button> -->
@@ -14,25 +14,37 @@
 				<td class="value" colspan="3">{{ state.basicData.routeName }}</td>
 			</tr>
 			<tr class="row">
-				<td class="key">填报模式</td>
-				<td class="value">{{ state.basicData.groupTypeName }}</td>
 				<td class="key">团队类型</td>
+				<td class="value">{{ state.basicData.groupTypeName }}</td>
+				<td class="key">散团团队类型</td>
 				<td class="value">{{ state.basicData.teamTypeName }}</td>
 			</tr>
-			<tr class="row">
+			<!-- <tr class="row">
 				<td class="key">组团社</td>
 				<td class="value">{{ state.basicData.travelName }}</td>
 				<td class="key">组团社计调</td>
 				<td class="value">{{ state.basicData.travelOperatorName + ' ' + state.basicData.travelOperatorPhone }}</td>
+			</tr> -->
+			<tr class="row">
+				<td class="key">行程时间</td>
+				<td class="value">{{ state.basicData.travelName }}</td>
+				<td class="key">导游</td>
+				<td class="value">{{ state.basicData.travelOperatorName + ' ' + state.basicData.travelOperatorPhone }}</td>
 			</tr>
 			<tr class="row">
-				<td class="key">地接社</td>
+				<td class="key">散客拼团社</td>
 				<td class="value">{{ state.basicData.subTravelName }}</td>
-				<td class="key">地接社计调</td>
+				<td class="key">中心操作员</td>
 				<td class="value">{{ state.basicData.subTravelOperatorName + ' ' + state.basicData.subTravelOperatorPhone }}</td>
 			</tr>
 			<tr class="row">
-				<td class="key">游客人数</td>
+				<td class="key">电子合同数量</td>
+				<td class="value">{{ state.basicData.touristCount }}</td>
+				<td class="key">游客总人数</td>
+				<td class="value">{{ state.basicData.touristCount }}</td>
+			</tr>
+			<tr class="row">
+				<td class="key">古维费代收人数</td>
 				<td class="value">{{ state.basicData.touristCount }}</td>
 				<td class="key">古维费应缴人数</td>
 				<td class="value">{{ state.basicData.guWeiCount }}</td>
@@ -58,19 +70,32 @@
 				<td class="value">{{ state.basicData.totalFee / 100 }}</td>
 			</tr>
 			<tr class="row">
+				<td class="key">联系人</td>
+				<td class="value">{{ state.basicData.subTravelOperatorName }}</td>
+				<td class="key">联系人电话</td>
+				<td class="value">{{ state.basicData.travelOperatorPhone }}</td>
+			</tr>
+			<tr class="row">
 				<td class="key">关联行程单</td>
 				<td class="value">{{ state.basicData.itineraryNo }}</td>
 				<td class="key">保险购买方</td>
 				<td class="value">{{ state.basicData.insuranceStatusName }}</td>
 			</tr>
+			<tr class="row">
+				<td class="key">用车车牌</td>
+				<td class="value">{{ state.basicData.itineraryNo }}</td>
+				<td class="key"></td>
+				<td class="value"></td>
+			</tr>
 		</table>
-		<p class="top-p">导游信息<span></span></p>
+		<!-- <p class="top-p">导游信息<span></span></p>
 		<CommonTable :columns="guide" :dataSource="state.guideList" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
 			<template #bodyCell="{ column, record, index }">
 				<template v-if="column.key === 'index'"> {{ index + 1 }} </template>
 				<template v-if="column.key === 'endDate'"> {{ record.startDate }} - {{ record.endDate }} </template>
 			</template>
-		</CommonTable>
+		</CommonTable> -->
+
 		<p class="top-p">游客信息<span></span></p>
 		<CommonTable :columns="tourist" :dataSource="state.touristList" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
 			<template #bodyCell="{ column, record, index }">
@@ -87,6 +112,14 @@
 		<p class="top-p">交通信息<span></span></p>
 		<CommonTable :columns="trafficInfo" :dataSource="state.transportList" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
 			<template #bodyCell="{ column, record, index }">
+				<template v-if="column.key === 'endDate'"> {{ record.startDate }} - {{ record.endDate }} </template>
+			</template>
+		</CommonTable>
+
+		<p class="top-p">已选择的合同<span></span></p>
+		<CommonTable :columns="contract" :dataSource="state.contract" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
+			<template #bodyCell="{ column, record, index }">
+				<template v-if="column.key === 'index'"> {{ index + 1 }} </template>
 				<template v-if="column.key === 'endDate'"> {{ record.startDate }} - {{ record.endDate }} </template>
 			</template>
 		</CommonTable>
@@ -155,7 +188,8 @@
 				</template>
 			</template>
 		</CommonTable>
-		<p class="top-p">已上传的附件</p>
+
+		<!-- <p class="top-p">已上传的附件</p>
 		<CommonTable :columns="enclosure" :dataSource="state.attachmentList" rowKey="oid" :scrollY="false">
 			<template #bodyCell="{ column, record, index }">
 				<template v-if="column.key === '1'">
@@ -171,7 +205,7 @@
 					<a-image :src="img.attachmentUrl" :key="img.attachmentUrl" v-for="img in record[4]"></a-image>
 				</template>
 			</template>
-		</CommonTable>
+		</CommonTable> -->
 	</div>
 
 	<BaseModal title="第三方门票退订提醒" v-model="reRecokeAuditCheckVisible">
@@ -511,6 +545,53 @@ const hotel = [
 		key: 'orderStatusName',
 	},
 ];
+const contract = [
+	{
+		title: '序号',
+		dataIndex: 'index',
+		key: 'index',
+	},
+	{
+		title: '合同编号',
+		dataIndex: 'No',
+		key: 'No',
+	},
+	{
+		title: '合同类型',
+		dataIndex: 'roomTypeName',
+		key: 'roomTypeName',
+	},
+	{
+		title: '内含线路/委托项目',
+		dataIndex: 'roomCount',
+		key: 'roomCount',
+	},
+	{
+		title: '人数',
+		dataIndex: 'sourceAddressName',
+		key: 'sourceAddressName',
+	},
+	{
+		title: '行程日期',
+		dataIndex: 'createTime',
+		key: 'createTime',
+	},
+	{
+		title: '合同签约旅行社',
+		dataIndex: 'endDate',
+		key: 'endDate',
+	},
+	{
+		title: '签署网点',
+		dataIndex: 'orderFee',
+		key: 'orderFee',
+	},
+	{
+		title: '合同费用（元)',
+		dataIndex: 'orderFee',
+		key: 'orderFee',
+	},
+];
 const scenic = [
 	{
 		title: '景区名称',
@@ -752,6 +833,9 @@ onBeforeUnmount(() => {
 		.key {
 			width: 150px;
 			background: rgba(245, 247, 250, 0.39);
+		}
+		.value {
+			min-width: 300px;
 		}
 		margin-bottom: 20px;
 	}

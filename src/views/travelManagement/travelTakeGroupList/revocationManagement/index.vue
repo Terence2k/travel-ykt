@@ -70,8 +70,8 @@
 					</template>
 
 					<template v-if="column.key === 'action'">
-						<a-button type="link" v-permission="'去审核'" v-if="!state.tableData.param.status" @click="toDetail(record)">去审核</a-button>
-						<a-button type="link" v-permission="'查看'" v-if="state.tableData.param.status" @click="check(record)">查看</a-button>
+						<a-button type="link" v-permission="'待审核_去审核'" v-if="!state.tableData.param.status" @click="toDetail(record)">去审核</a-button>
+						<a-button type="link" v-permission="'审核通过_查看'" v-if="state.tableData.param.status" @click="check(record)">查看</a-button>
 					</template>
 				</template>
 			</CommonTable>

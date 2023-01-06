@@ -27,7 +27,7 @@
       <a-input v-model:value="state.tableData.param.roleName" placeholder="请输入角色名称"/>
     </search-item>
     <template #button>
-      <a-button @click="onSearch" v-permission="'查询'">查询</a-button>
+      <a-button @click="querySearch" v-permission="'查询'">查询</a-button>
     </template>
   </CommonSearch>
   <CommonTable :dataSource="state.tableData.data" :columns="columns">
@@ -148,6 +148,11 @@
   const pageSideChange = (current: number, size: number) => {
     console.log('changePageSize:', size);
     state.tableData.param.pageSize = size;
+    onSearch();
+  }
+
+  const querySearch = () => {
+    state.tableData.param.pageNo = 1;
     onSearch();
   }
 

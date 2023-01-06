@@ -324,7 +324,7 @@ type detailsType = {
   manageUrl?: string,
 }
 const form = reactive<detailsType>({
-  regionCode: [34102, 34747, 34749],
+  regionCode: [2565, 2619, 2620],
   businessType: undefined,
   password: '',
   checkPass: '',

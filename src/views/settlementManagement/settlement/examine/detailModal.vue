@@ -76,8 +76,12 @@ const rules: any = {
 };
 
 const init = async () => {
+	const params = {
+		informationId: props.params.oid,
+		itineraryNo: props.params.itineraryNo
+	}
 	api
-		.settlementDetail(props.params.oid)
+		.settlementDetail(params)
 		.then((res: any) => {
 			formData.list = res
 		})

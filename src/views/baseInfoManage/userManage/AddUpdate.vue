@@ -18,7 +18,7 @@
           placeholder="请选择企业类型"
           allowClear
           v-model:value="formValidate.businessType"
-          :disabled="formValidate.oid ? true : false"
+          :disabled="isPlatformSuperAdmin && formValidate.oid ? true : false"
           @change="getRoleList"
         >
           <a-select-option v-for="item in businessTypeOption" :value="item.codeValue">
@@ -36,7 +36,7 @@
           placeholder="选择一个企业"
           allowClear
           v-model:value="formValidate.companyId"
-          :disabled="formValidate.oid ? true : false"
+          :disabled="isPlatformSuperAdmin && formValidate.oid ? true : false"
         >
           <a-select-option v-for="item in companyOptions" :value="item.oid">
             {{ item.name }}
@@ -52,7 +52,7 @@
           mode="multiple"
           v-model:value="formValidate.roleIds"
           placeholder="请选择管理员角色"
-          :disabled="formValidate.oid ? true : false"
+          :disabled="isPlatformSuperAdmin && formValidate.oid ? true : false"
         >
           <a-select-option v-for="item in roleList" :value="item.roleId">{{ item.roleName }}</a-select-option>
         </a-select>
@@ -73,7 +73,7 @@
         label="登录账号"
         name="account"
       >
-        <a-input v-model:value="formValidate.account" placeholder="请输入登录账号" :disabled="formValidate.oid ? true : false"/>
+        <a-input v-model:value="formValidate.account" placeholder="请输入登录账号" :disabled="isPlatformSuperAdmin && formValidate.oid ? true : false"/>
       </a-form-item>
       <a-form-item
         label="登录密码"
