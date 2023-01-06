@@ -490,9 +490,7 @@ const getDetails = async (id: number) => {
       } else if (['pdf'].indexOf(item.split('.')[1]) !== -1) {
         pdfCount.value += 1
       }
-      if (item.indexOf('http:') === -1) {
-        item = await awsGetPreSignedUrl(item);
-      }
+      item = await awsGetPreSignedUrl(item);
       return item
     })
     contractFileUrlList = await Promise.all(contractFileUrlList);

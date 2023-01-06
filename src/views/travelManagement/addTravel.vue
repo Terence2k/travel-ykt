@@ -127,7 +127,7 @@ const saveItinerary = (val: any) => {
 	if (sendTeam.value) {
 		if (!travelStore.guideList.length) return message.error('请选择带团导游');
 		if (!travelStore.touristList.length) return message.error('请添加游客');
-		if (!travelStore.trafficList.length) return message.error('请添加交通信息');
+		// if (!travelStore.trafficList.length) return message.error('请添加交通信息');
 		// if (!travelStore.insuranceStatus) return message.error('请选择保险购买方');
 	}
 	// if (travelStore.insuranceStatus && !travelStore.checkInsurance) {
