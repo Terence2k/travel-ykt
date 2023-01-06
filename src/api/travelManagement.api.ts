@@ -712,5 +712,30 @@ export const travelManagement = {
 			data
 		});
 	},
+	getTravelCheck(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryManage/manageList`,
+			method: 'post',
+			showLoading: true,
+			data
+		});
+	},
+	suspendItinerary(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/suspendItinerary`,
+			method: 'put',
+			showLoading: true,
+			data
+		});
+	},
+	startItinerary(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/startItinerary`,
+			method: 'put',
+			showLoading: true,
+			data
+		});
+	},
+	
 	
 };

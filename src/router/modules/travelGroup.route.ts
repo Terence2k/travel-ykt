@@ -562,6 +562,17 @@ export default [
 					// },
 				],
 			},
+			{
+				path: 'travel_check',
+				name: 'travel_check',
+				meta: {
+					title: '行程监管查看',
+					// icon: 'liulanqi',
+					// auth: ["admin"],
+					// isDetail: true, // 在左侧的导航栏不会展示
+				},
+				component: () =>  import('@/views/travelManagement/travelCheck/travelCheck.vue')
+			}
 		],
 	},
 ];
