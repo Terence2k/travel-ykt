@@ -26,6 +26,9 @@
 			<!-- <a-range-picker @change="timeChange" value-format="YYYY-MM-DD HH:mm:ss" /> -->
 			<picker v-model="state.tableData.param.time" style="width: 180px" type="daterange" value-format="YYYY-MM-DD HH:mm:ss" start-placeholder="开始日期" end-placeholder="结束日期"> </picker>
 		</search-item>
+		<search-item label="发团时间" style="width: 350px">
+			<picker v-model="state.tableData.param.groupTime" style="width: 180px" type="daterange" value-format="YYYY-MM-DD HH:mm:ss" start-placeholder="开始日期" end-placeholder="结束日期"> </picker>
+		</search-item>
 		<template #button>
 			<a-button @click="initList" v-permission="'查询'">查询</a-button>
 		</template>
@@ -126,6 +129,7 @@ const state = reactive({
 			travelId: null,
 			subTravelId: null,
 			time: '',
+			groupTime: '',
 		},
 	},
 });

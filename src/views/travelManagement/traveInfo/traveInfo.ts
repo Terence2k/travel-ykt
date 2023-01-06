@@ -351,7 +351,8 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			state[popup] = true;
 			
 		},
-		reserveTicketPeple(record: any) {
+		reserveTicketPeple(record: any, index: number) {
+			travelStore.columnsIndex = index;
 			editId.productRow = {}
 			editId.reserveTicketPop = record.oid
 			editId.orderNo = record.ticketOrderNo

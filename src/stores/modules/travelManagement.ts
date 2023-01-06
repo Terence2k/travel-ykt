@@ -387,6 +387,12 @@ export const useTravelStore = defineStore({
 				}
 			}) as any;
 		},
+		setTicketResvePeple(people: string) {
+			// @ts-ignore
+			const data: any = { ...this.scenicTickets[this.columnsIndex], reservePeopleCount: Number(people) + Number(this.scenicTickets[this.columnsIndex].reservePeopleCount) }
+			// @ts-ignore
+			this.scenicTickets.splice(this.columnsIndex, 1, data);
+		},
 		setTicketStatus(id: string) {
 			this.scenicTickets = this.scenicTickets.map((it: any) => {
 				if (it.oid == id) {
@@ -400,6 +406,7 @@ export const useTravelStore = defineStore({
 			}) as any;
 		},
 		setTicket(data: any) {
+			// @ts-ignore
 			this.scenicTickets.splice(this.columnsIndex, 1, data);
 		},
 		setTraveList(data: any, key: Field) {
