@@ -149,8 +149,9 @@ const handleFinish = async (values: any) => {
     window.localStorage.setItem('userInfo', JSON.stringify(res));
     getTabMenuList(res.sysMenuVos);
     if (res.sysMenuVos[0]) {
+      let firstMenu = res.sysMenuVos.find((item: any) => item.available)?.childMenuList?.find((item: any) => item.available);
       router.replace({
-        path: res.sysMenuVos[0].childMenuList[0].url || '/',
+        path: firstMenu.url || '/',
         query: state.otherQuery,
       });
     } else {
