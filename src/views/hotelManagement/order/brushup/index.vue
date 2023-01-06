@@ -23,7 +23,58 @@
 						</div>
 					</div>
 					<div class="title">订单房型信息</div>
-					<CommonTable :columns="route.query.brush ? brushcolumns : processcolumns" :dataSource="state.data" :scrollY="false">
+					<CommonTable 
+						v-if="route.query.brush || route.query.process"
+						:columns="route.query.brush ? brushcolumns : processcolumns"
+						:dataSource="state.data"
+						:scrollY="false"
+					>
+						<template #bodyCell="{ column, index, record, text }">
+							<template v-if="column.key === 'index'">
+								<div>
+									{{ index + 1 }}
+								</div>
+							</template>
+							<!-- <template v-if="column.key === 'orderAmount'">
+								<div>
+									{{ accDiv(record.orderAmount, 100) }}
+								</div>
+							</template> -->
+							<!-- 费用 -->
+							<template v-if="column.key === 'Subtotal'">
+								<div>
+									{{ accDiv(accMul(record.orderAmount, record.reserveNumber), 100) }}
+								</div>
+							</template>
+							<template v-if="column.key === 'expenses'">
+								<div>
+									{{ accDiv(accMul(record.orderAmount, record.verificationRoom), 100) }}
+								</div>
+							</template>
+							<template v-if="column.key === 'refreshNum'">
+								<div>
+									<a-form-item v-if="editableData[record.hotelRoomTypeId]" name="refreshNum">
+										<a-input style="width: 50px" v-model:value="editableData[record.hotelRoomTypeId]['refreshNum']"> </a-input>
+									</a-form-item>
+									<template v-else>
+										{{ text }}
+									</template>
+								</div>
+							</template>
+							<template v-if="column.key === 'action' && route.query?.brush">
+								<a class="item" v-if="!editableData[record.hotelRoomTypeId]" @click="edit(record.hotelRoomTypeId)">编辑</a>
+								<span v-else>
+									<a style="margin-right: 16px" class="item" @click="save(record.hotelRoomTypeId)">确定</a>
+									<a class="item" @click="cancle(record.hotelRoomTypeId)">取消</a>
+								</span>
+							</template>
+						</template>
+					</CommonTable>
+					<CommonTable v-else
+						:columns="route.query.detail == 1 ? brushcolumnsdet : processcolumns"
+						:dataSource="state.data"
+						:scrollY="false"
+					>
 						<template #bodyCell="{ column, index, record, text }">
 							<template v-if="column.key === 'index'">
 								<div>
@@ -161,6 +212,8 @@ interface DataItem {
 
 const formRef = ref();
 const VisibleFalseRef = ref();
+
+const col = []
 const brushcolumns = [
 	{
 		title: '序号',
@@ -217,6 +270,53 @@ const brushcolumns = [
 		dataIndex: 'action',
 		key: 'action',
 	},
+];
+const brushcolumnsdet = [
+	{
+		title: '序号',
+		dataIndex: 'index',
+		key: 'index',
+	},
+	{
+		title: '房型',
+		dataIndex: 'roomTypeName',
+		key: 'roomTypeName',
+	},
+	{
+		title: '入住时间',
+		dataIndex: 'arrivalDate',
+		key: 'arrivalDate',
+	},
+	{
+		title: '离店时间',
+		dataIndex: 'departureDate',
+		key: 'departureDate',
+	},
+	{
+		title: '预定房数',
+		dataIndex: 'reserveNumber',
+		key: 'reserveNumber',
+	},
+	{
+		title: '费用(元)',
+		dataIndex: 'Subtotal',
+		key: 'Subtotal',
+	},
+	{
+		title: '已核销房数',
+		dataIndex: 'verificationRoom',
+		key: 'verificationRoom',
+	},
+	{
+		title: '核销时间',
+		dataIndex: 'verificationTime',
+		key: 'verificationTime',
+	},
+	{
+		title: '实际核销费用',
+		dataIndex: 'expenses',
+		key: 'expenses',
+	}
 ];
 const processcolumns = [
 	{
@@ -286,6 +386,7 @@ const state = reactive({
 	VisibleFalseData: {
 		cause: '',
 	},
+	detail:route.query?.detail
 });
 
 const rulesRef = {
@@ -293,11 +394,9 @@ const rulesRef = {
 		{ required: true, trigger: 'blur', message: '请输入改刷原因' },
 		{ min: 1, max: 200, message: '只能输入200字', trigger: 'change' },
 	],
-	// refreshNum: [{ required: true, message: '请输入改刷数', trigger: 'blur' }],
 };
 
 const edit = (key: string) => {
-	console.log(key, 'key');
 	editableData[key] = cloneDeep(state.data.filter((item: any) => key === item.hotelRoomTypeId)[0]);
 	const cur = cloneDeep(state.data.filter((item: any) => key == item.hotelRoomTypeId)[0]);
 	cur.edit = true;
@@ -396,23 +495,27 @@ const modalCancel = () => {
 };
 
 const initPage = async (): Promise<void> => {
-	console.log(route?.query?.brush);
+
+	let hotelTypeList = [] as any;
 	api.HotelOrderInfo(route?.query?.orderNo).then((res: any) => {
-		state.data = res.hotelTypeList;
+		hotelTypeList = res.hotelTypeList;
 		state.formdata = res;
 		state.auditUuid = res.auditUuid;
-	});
-	if (route.query.process || route.query.detail === 2) {
-		api.getRefreshRoomData(route?.query?.orderNo).then((Res: any) => {
-			state.data.forEach((item: any) => {
-				// 多条重复
-				// let sss =Res.hotelOrderRefreshVOList.filter((el: any) => el.roomTypeName === item.roomTypeName).map((el:any) => el.refreshNum)
-				// 单挑
-				let Num = Res.hotelOrderRefreshVOList.find((el: any) => el.roomTypeName === item.roomTypeName);
-				item.refreshNum = item.verificationRoom + Num.refreshNum;
+		if (route.query.process || route.query.detail == 2) {
+			api.getRefreshRoomData(route?.query?.orderNo).then((Res: any) => {
+				hotelTypeList.forEach((item: any) => {
+					// 多条重复
+					// let sss =Res.hotelOrderRefreshVOList.filter((el: any) => el.roomTypeName === item.roomTypeName).map((el:any) => el.refreshNum)
+					// 单挑
+					let Num = Res.hotelOrderRefreshVOList.find((el: any) => el.roomTypeName === item.roomTypeName);
+					item.refreshNum = item.verificationRoom + Num.refreshNum;
+				});
+				state.data = hotelTypeList;
 			});
-		});
-	}
+		} else {
+			state.data = hotelTypeList;
+		}
+	});
 };
 
 const ScheduledMoney = computed(() => (params: any) => {
@@ -477,6 +580,8 @@ onMounted(() => {
 		navigatorBar.setNavigator(['酒店管理', '订单管理', `订单：${route.query.orderNo}`]);
 	}
 });
+
+
 
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
