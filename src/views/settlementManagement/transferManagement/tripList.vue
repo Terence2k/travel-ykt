@@ -136,11 +136,15 @@ const columns = computed(() => {
 const state = reactive({
 	tableData: {
 		param: {
-			applicationDate: null,
-			applicationName: null,
-			productType: 1,
-			pageSize: 10,
-			pageNo: 1,
+			// applicationDate: null,
+			// applicationName: null,
+			// productType: 1,
+			// pageSize: 10,
+			// pageNo: 1,
+			transferAccountsId: 1, //转账单id
+			pageNo: 1, //页号
+			pageSize: 10, //页大小
+			// itineraryNo: 'aaaaaa', //行程单号
 		},
 		data: [
 			{
