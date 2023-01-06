@@ -351,7 +351,8 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			state[popup] = true;
 			
 		},
-		reserveTicketPeple(record: any) {
+		reserveTicketPeple(record: any, index: number) {
+			travelStore.columnsIndex = index;
 			editId.productRow = {}
 			editId.reserveTicketPop = record.oid
 			editId.orderNo = record.ticketOrderNo
@@ -441,6 +442,18 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 	if(travelStore.reserveStatus)
 	{
 		travelStore.getManagementExpenses(route.query.id)
+	}else{
+		travelStore.setGouvyList([
+			{
+				feeName: '古维管理费',
+				touristNum: '',
+				payableNum: '',
+				payablePrice: '',
+				isInitiateReductionName: '待接团后由地接社申请',
+				isReductionPassedName: '',
+				issueStatusName: '',
+			},
+		]);
 	}
 	// watch (travelStore.templateHotel, newVal => {
 	// 	travelStore.hotels = [...travelStore.hotels, ...newVal] as any

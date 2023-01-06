@@ -197,9 +197,9 @@ export const getOptions = (props: any) => {
     ],
     title: '古维管理费',
     descriptions: 
-      `共<span style="color: red;">${props.guWeiDetail?.reduce((prev: any, curr: any) => prev + curr.touristNum, 0)}</span>人，
-      古维待缴人数：<span style="color: red;">${props.guWeiDetail?.reduce((prev: any, curr: any) => prev + curr.payableNum, 0)}</span>，
-      应缴费用：<span style="color: red;">￥${accDiv(props.guWeiDetail?.reduce((prev: any, curr: any) => prev + curr.payablePrice, 0), 100)}</span>`,
+      `共<span style="color: red;">${props.guWeiDetail?.reduce((prev: any, curr: any) => prev + curr.touristNum, 0) || 0}</span>人，
+      古维待缴人数：<span style="color: red;">${props.guWeiDetail?.reduce((prev: any, curr: any) => prev + curr.payableNum, 0) || 0}</span>，
+      应缴费用：<span style="color: red;">￥${accDiv(props.guWeiDetail?.reduce((prev: any, curr: any) => prev + curr.payablePrice, 0), 100) || 0}</span>`,
     dataSource: props.guWeiDetail,
   }
   let productOption = {
@@ -388,6 +388,8 @@ export const getOptions = (props: any) => {
         title: '附件名称',
         dataIndex: 'attachmentTypeName',
         key: 'attachmentTypeName',
+        width: 500,
+        align: 'center'
       },
       {
         title: '附件url',

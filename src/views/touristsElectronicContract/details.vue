@@ -184,6 +184,7 @@ import { CloseOutlined } from '@ant-design/icons-vue';
 import api from '@/api';
 import { useRouter, useRoute } from 'vue-router';
 import { awsGetPreSignedUrl } from '@/utils/awsUpload';
+import { accDiv, accMul } from '@/utils/compute';
 const router = useRouter();
 const route = useRoute();
 const back = () => {
@@ -395,6 +396,9 @@ const getHealthyCodes = async (ids: number[]) => {
 }
 const setList = (list: any) => {
   list.forEach((item: any) => {
+    item.adultPrice = accDiv(item.adultPrice, 100)
+    item.childPrice = accDiv(item.childPrice, 100)
+    item.individualSubtotal = accDiv(item.individualSubtotal, 100)
     const keys = Object.keys(item)
     for (let i = 0; i < keys.length; i++) {
       const element = keys[i];
@@ -486,9 +490,7 @@ const getDetails = async (id: number) => {
       } else if (['pdf'].indexOf(item.split('.')[1]) !== -1) {
         pdfCount.value += 1
       }
-      if (item.indexOf('http:') === -1) {
-        item = await awsGetPreSignedUrl(item);
-      }
+      item = await awsGetPreSignedUrl(item);
       return item
     })
     contractFileUrlList = await Promise.all(contractFileUrlList);
@@ -504,6 +506,9 @@ const getDetails = async (id: number) => {
         case 3:
           res = '委托旅行社购买'
           break
+        default:
+          res = ''
+          break
       }
       return res
     })()
@@ -515,6 +520,9 @@ const getDetails = async (id: number) => {
           break
         case 2:
           res = '线下合同'
+          break
+        default:
+          res = ''
           break
       }
       return res
@@ -559,7 +567,7 @@ const getDetails = async (id: number) => {
       itineraryNo: itineraryNo || '尚未成团',
       contractEstablish: contractEstablish || '/',
       creatorName: creatorName || '/',
-      contractAmount: contractAmount || '/',
+      contractAmount: accDiv(contractAmount, 100) || '/',
       createTime,
       takeEffectTime: takeEffectTime || '/',
       otherAgreements: otherAgreements || '/',

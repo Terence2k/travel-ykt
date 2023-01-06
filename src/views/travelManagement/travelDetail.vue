@@ -102,7 +102,7 @@
               </div>
             </template>
             <template v-if="column.key === 'attachmentUrl'">
-              <a-image width="100%" :src="record.attachmentUrl" />
+              <a-image v-for="item in record.attachmentUrl" width="200px" :src="item"/>
             </template>
         </template>
       </CommonTable>
@@ -125,6 +125,7 @@
   import { accDiv } from '@/utils/compute';
   import { getStyles, getDiffDay } from '@/utils/util';
   import QrcodeVue from 'qrcode.vue'
+  import { awsGetPreSignedUrl } from '@/utils/awsUpload';
 
   const codeUrl = ref();
 
@@ -197,7 +198,13 @@
 	  api.travelManagement.getItineraryDetail(queryData).then(async (res: any) => {
       state.basicData = res.basic;
       state.itineraryDetail = res;
-      state.itineraryDetail.guWeiDetail = await api.getManagementExpenses(orderId);
+      state.itineraryDetail.attachmentList.forEach(async(item: any) => {
+        let result = item.attachmentUrl.split(',').map(async(item: any) => {
+          if (item) item = await awsGetPreSignedUrl(item);
+          return item;
+        });
+        item.attachmentUrl = await Promise.all(result);
+      })
       codeUrl.value = JSON.stringify({
         itineraryNo: state.basicData.itineraryNo,
         oid: state.basicData.oid
@@ -207,6 +214,7 @@
           printBtn.value.click();
         }
       })
+      state.itineraryDetail.guWeiDetail = await api.getManagementExpenses(orderId);
 		})
 		.catch((err: any) => {
 			console.log(err);
@@ -246,6 +254,14 @@
     height: 384px;
     text-align: center;
     color: #9DA0A4;
+  }
+  
+  .table-url {
+    display: block;
+    white-space: nowrap;
+    max-width: 600px;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 }
 </style>

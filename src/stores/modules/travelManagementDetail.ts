@@ -52,7 +52,10 @@ export const useTravelStore = defineStore({
 		},
 		baseInfo: [] as any,
 		guideList: [],
+		delGuideList:[],
+		newGuideList:[],
 		trafficList: [],
+		delTrafficList: [],
 		touristList: [],
 		teamTime: [] as any,
 		IDCard: [],
@@ -131,8 +134,15 @@ export const useTravelStore = defineStore({
 		setGuideList(list: any) {
 			this.guideList = list;
 		},
+		setdelGuideList(list: any) {
+			this.delGuideList = list;
+		},
 		setTrafficList(list: any) {
 			this.trafficList = list;
+		},
+		setdelTrafficList(list: any) {
+			console.log(list,'交通大菠萝')
+			this.delTrafficList = list;
 		},
 		SetHotels(data: any, oid: any, key: string) {
 			if (key) {

@@ -31,7 +31,8 @@ const rules = {
 
 export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 	const { onCheck } = toRefs(props);
-	const route = useRoute()
+	const route = useRoute();
+	const list=[] as any;
 	const travelStore = useTravelStore();
 	const trafficType = computed(() => travelStore.trafficType);
 	const trafficColor = computed(() => travelStore.trafficColor);
@@ -129,6 +130,8 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 			state.editableData[key].edit = true
 		},
 		del(key: string) {
+			list.push({...state.tableData[key],...{deleted:true,edit:true}})
+			travelStore.setdelTrafficList(list)
 			state.tableData.splice(key, 1)
 		},
 		save: async (key?: string) => {
