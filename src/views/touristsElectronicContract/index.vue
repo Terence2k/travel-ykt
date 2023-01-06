@@ -30,7 +30,7 @@
         {{ index + 1 }}
       </template>
       <template v-if="column.key === 'contractAmount'">
-        {{ accDiv(record.contractAmount, 100) }}
+        {{ accDivValue(record.contractAmount) }}
       </template>
       <template v-if="column.key === 'action'">
         <div class="action-btns">
@@ -47,7 +47,7 @@
   <CommonModal title="散客合同撤销确认" v-model:visible="withdrawVisible" @cancel="withdrawVisible = false"
     @close="withdrawVisible = false" :conform-text="'确认撤销'" @conform="withdrawConfirm">
     <p>您即将撤销编号为{{ form.contractNo }}的散客合同，合同总金额<span class="cred">{{
-      accDiv(form.contractAmount, 100)
+      accDivValue(form.contractAmount)
     }}</span>元。提交撤销后将由游客代表<span class="cred">{{
   form.representativeName
 }}</span>通过短信完成确认，确认成功后12301平台也将同步撤销。是否确认要撤销？
@@ -69,6 +69,13 @@ import api from '@/api';
 import { useRouter, useRoute } from 'vue-router';
 import { message } from 'ant-design-vue/es';
 import { accDiv, accMul } from '@/utils/compute';
+const accDivValue = (value: any) => {
+  if (typeof value === 'number') {
+    return accDiv(value, 100)
+  } else {
+    return undefined
+  }
+}
 const router = useRouter();
 const route = useRoute()
 const goTo = (name: string, value?: any) => {
