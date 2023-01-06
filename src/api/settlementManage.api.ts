@@ -301,10 +301,11 @@ export async function examineDetail(itineraryNo: any) {
 	});
 }
 // 结算管理--结算明细
-export async function settlementDetail(informationId: any) {
+export async function settlementDetail(data: any) {
 	return request({
-		url: `${commonPath}/settlement-service/public/api/settlement-information/information/details/${informationId}`,
-		method: 'get',
+		url: `${commonPath}/settlement-service/public/api/settlement-information/information/details`,
+		method: 'post',
+		data,
 		showLoading: false,
 	});
 }
