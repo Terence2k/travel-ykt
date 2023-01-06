@@ -140,6 +140,7 @@ const chart = computed(() => pages.filter((it: any) => it.value === activeKey.va
 const onSearch = async () => {
 	let chartField: TakeGroupField = chart.value;
 	let storeParams = travelStore.takeGroupList[chartField].params;
+	travelStore.takeGroupList[chartField].params.pageNo = 1;
 	travelStore.takeGroupList[chartField].params.status = activeKey.value;
 	travelStore.takeGroupList[chartField].params.startDate = storeParams.time[0];
 	travelStore.takeGroupList[chartField].params.endDate = storeParams.time[1];

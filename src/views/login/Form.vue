@@ -142,47 +142,25 @@ const handleFinish = async (values: any) => {
 	// console.log(checked, values);
 	console.log(values);
 	loading.value = true;
-	if (formModel.code) {
-		api
-			.smsLogin(formModel)
-			.then((res: any) => {
-				console.log(res);
-				window.localStorage.setItem('authorization', `${res.authorization}`);
-				window.localStorage.setItem('userInfo', JSON.stringify(res));
-				getTabMenuList(res.sysMenuVos);
-				if (res.sysMenuVos[0]) {
-					router.replace({
-						path: res.sysMenuVos[0].childMenuList[0].url || '/',
-						query: state.otherQuery,
-					});
-				} else {
-					message.error('该用户没有菜单列表');
-				}
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	} else {
-		api
-			.login(formModel)
-			.then((res: any) => {
-				console.log(res);
-				window.localStorage.setItem('authorization', `${res.authorization}`);
-				window.localStorage.setItem('userInfo', JSON.stringify(res));
-				getTabMenuList(res.sysMenuVos);
-				if (res.sysMenuVos[0]) {
-					router.replace({
-						path: res.sysMenuVos[0].childMenuList[0].url || '/',
-						query: state.otherQuery,
-					});
-				} else {
-					message.error('该用户没有菜单列表');
-				}
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	}
+  let loginFunc = state.activeKey == 1 ? 'login' : 'smsLogin';
+  api[loginFunc](formModel).then((res: any) => {
+    console.log(res);
+    window.localStorage.setItem('authorization', `${res.authorization}`);
+    window.localStorage.setItem('userInfo', JSON.stringify(res));
+    getTabMenuList(res.sysMenuVos);
+    if (res.sysMenuVos[0]) {
+      let firstMenu = res.sysMenuVos.find((item: any) => item.available)?.childMenuList?.find((item: any) => item.available);
+      router.replace({
+        path: firstMenu.url || '/',
+        query: state.otherQuery,
+      });
+    } else {
+      message.error('该用户没有菜单列表');
+    }
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
 	loading.value = false;
 	// if (res) {

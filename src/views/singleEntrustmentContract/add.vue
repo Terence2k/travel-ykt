@@ -498,6 +498,7 @@ import api from '@/api';
 import { message } from 'ant-design-vue/es';
 import dayjs, { Dayjs } from 'dayjs';
 import picker from '@/components/common/datePicker.vue'
+import { accDiv, accMul } from '@/utils/compute';
 const router = useRouter();
 const route = useRoute();
 const isRefresh = ref('0')
@@ -1097,7 +1098,7 @@ const getParams = () => {
     tripEndTime, //合同行程结束时间
     touristPeopleNumber, //游客人数
     otherAgreements, //其他约定
-    contractAmount: contractAmount * 100,
+    contractAmount: accMul(contractAmount, 100),
     paymentMethod,
     departurePlace,
     destination,
@@ -1106,7 +1107,7 @@ const getParams = () => {
     emergencyContactPhone,
     deposit,
     liquidatedDamages,
-    bond,
+    bond: accMul(bond, 100),
     hotelFine,
     carRentalFine,
     totalPriceFine,

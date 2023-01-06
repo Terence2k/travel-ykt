@@ -11,7 +11,7 @@
 				<template v-if="column.key == 'reduceAfterAmount'">
 					{{ accDiv(record.reduceAfterAmount, 100) }}
 				</template>
-				<template v-if="column.key == 'fullRule'"> 满{{ record.fullRule }} 减 {{ record.reduceRule }} </template>
+				<template v-if="column.key == 'reduceRule'"> {{ record.reduceRule }} </template>
 			</template>
 		</CommonTable>
 		<CommonPagination
@@ -52,19 +52,9 @@ const columns = [
 		key: 'orderNo',
 	},
 	{
-		title: '酒店名称',
-		dataIndex: 'hotelName',
-		key: 'hotelName',
-	},
-	{
 		title: '行程单号',
 		dataIndex: 'itineraryNo',
 		key: 'itineraryNo',
-	},
-	{
-		title: '旅行社名称',
-		dataIndex: 'travelName',
-		key: 'travelName',
 	},
 	{
 		title: '预定时间',
@@ -82,14 +72,14 @@ const columns = [
 		key: 'departureDate',
 	},
 	{
-		title: '预定房数',
+		title: '预定总房数',
 		dataIndex: 'scheduledRooms',
 		key: 'scheduledRooms',
 	},
 	{
-		title: '减免规则',
-		dataIndex: 'fullRule',
-		key: 'fullRule',
+		title: '减免人数',
+		dataIndex: 'reduceRule',
+		key: 'reduceRule',
 	},
 	{
 		title: '费用（元）',
@@ -97,11 +87,16 @@ const columns = [
 		key: 'reduceAfterAmount',
 	},
 	{
+		title: '核销时间',
+		dataIndex: 'verificationTime',
+		key: 'verificationTime',
+	},
+	{
 		title: '操作',
 		dataIndex: 'actions',
 		key: 'actions',
 		fixed: 'right',
-		width: 120,
+		width: 140,
 	},
 ];
 
