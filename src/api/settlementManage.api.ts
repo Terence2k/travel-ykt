@@ -276,10 +276,11 @@ export async function getTransferAccountDetails(data: any) {
 	});
 }
 // 单条数据申请转账
-export async function transferAccountsDetail(oid: any) {
+export async function transferAccountsDetail(data: any) {
 	return request({
-		url: `${commonPath}/settlement-service/public/api/transfer-account/transferAccount/${oid}`,
-		method: 'get',
+		url: `${commonPath}/settlement-service/public/api/transfer-account/transferAccount`,
+		method: 'post',
+		data,
 		showLoading: true,
 	});
 }

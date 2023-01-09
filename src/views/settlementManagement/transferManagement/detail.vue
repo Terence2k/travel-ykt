@@ -17,7 +17,7 @@
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a href="javascript:;" @click="transferAccounts(record.oid)">申请转账</a>
+						<a href="javascript:;" @click="transferAccounts(record.oid, record.itineraryNo)">申请转账</a>
 					</div>
 				</template>
 			</template>
@@ -199,9 +199,9 @@ const transferAccountAudit = async () => {
 	}
 };
 // 发起单条数据的转账
-const transferAccounts = async (id: number) => {
+const transferAccounts = async (id: number, itineraryNo: string) => {
 	try {
-		await api.transferAccountsDetail(id);
+		await api.transferAccountsDetail({ transferAccountsDetailsId: id, itineraryNo });
 		message.success('操作成功');
 	} catch (error) {
 		console.log(error);
