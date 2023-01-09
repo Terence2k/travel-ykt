@@ -385,7 +385,7 @@
         </a-form>
         <div class="btn_box">
           <div>
-            <a-button type="primary" @click="saveDraft" class="mr20">保存草稿</a-button>
+            <a-button type="primary" @click="saveDraft('1')" class="mr20">保存草稿</a-button>
             <a-button type="primary" @click="nextTep('2')">下一步</a-button>
           </div>
         </div>
@@ -405,14 +405,14 @@
             </template>
             <template v-if="column.dataIndex === 'adultPrice'">
               <a-input @change="() => { priceChange(dataCostSource[index]) }" v-if="record.isEdit"
-                v-model:value="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="输入价格" />
+                v-model:value.number="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="输入价格" />
               <template v-else>
                 {{ text }}
               </template>
             </template>
             <template v-if="column.dataIndex === 'childPrice'">
               <a-input @change="() => { priceChange(dataCostSource[index]) }" v-if="record.isEdit"
-                v-model:value="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="输入价格" />
+                v-model:value.number="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="输入价格" />
               <template v-else>
                 {{ text }}
               </template>
@@ -462,7 +462,7 @@
           <div>
             <a-button type="primary" @click="nextTep('1')" class="mr20">上一步</a-button>
             <a-button type="primary" @click="saveDraft" class="mr20">保存草稿</a-button>
-            <a-button type="primary" @click="submitVisible = true" :disabled="!hasId">提交签署</a-button>
+            <a-button type="primary" @click="submitClick" :disabled="!hasId">{{ submiBtnName }}</a-button>
           </div>
         </div>
       </a-tab-pane>
@@ -482,10 +482,13 @@
   </CommonModal>
   <CommonModal title="散客合同签署结果" v-model:visible="submitResultVisible" @close="submitResultVisible = false"
     :conform-text="'确定'" :is-cancel="false" @conform="submitResultVisible = false">
-    <p v-if="true">您已发起散客合同签署。请等待游客代表<span class="cred">{{
+    <p>您已发起散客合同签署。请等待游客代表<span class="cred">{{
       form.touristName
     }}</span>通过网页完成签署，签署后可使用该电子合同发起拼团</p>
-    <p v-else>您已完成编号为ljc412211030906308的散客电子合同（来源：门店线下合同）补录，后续您和授权社均可使用该合同发起散客拼团</p>
+  </CommonModal>
+  <CommonModal title="散客线上合同签署成功" v-model:visible="submitResultVisible1" @close="submitResultVisible1 = false"
+    :conform-text="'确定'" :is-cancel="false" @conform="submitResultVisible1 = false">
+    <p>您已完成散客电子合同（来源：门店线下合同）补录，后续您和授权社均可使用该合同发起散客拼团</p>
   </CommonModal>
 </template>
 
@@ -501,6 +504,20 @@ import api from '@/api';
 import { message } from 'ant-design-vue/es';
 import picker from '@/components/common/datePicker.vue';
 import { accDiv, accMul } from '@/utils/compute';
+const accDivValue = (value: any) => {
+  if (typeof value === 'number') {
+    return accDiv(value, 100)
+  } else {
+    return undefined
+  }
+}
+const accMulValue = (value: any) => {
+  if (typeof value === 'number') {
+    return accMul(value, 100)
+  } else {
+    return null
+  }
+}
 const router = useRouter();
 const route = useRoute();
 const isRefresh = ref('0')
@@ -630,6 +647,7 @@ const formRules = {
 const activeKey = ref('1')
 const submitVisible = ref(false)
 const submitResultVisible = ref(false)
+const submitResultVisible1 = ref(false)
 const isShow = ref(true)
 const lineColumns = [
   {
@@ -862,6 +880,7 @@ const cmplineName = computed(() => (val: any) => {
   })
   return res
 })
+const submiBtnName = ref("发出签署")
 // 根据不同合同类型控制不同表单显示
 const contractOptionChange = (val: number) => {
   switch (val) {
@@ -869,6 +888,7 @@ const contractOptionChange = (val: number) => {
       isShow.value = true
       form.value.contractFileUrl = ''
       form.value.pdfFileUrl = ''
+      submiBtnName.value = '发出签署'
       break;
     case 1:
       isShow.value = false
@@ -877,6 +897,7 @@ const contractOptionChange = (val: number) => {
       form.value.certificatesAddress = ''
       form.value.certificatesNo = undefined
       touristChange()
+      submiBtnName.value = '提交发布'
       break;
     default:
       isShow.value = true
@@ -887,6 +908,7 @@ const contractOptionChange = (val: number) => {
       form.value.certificatesNo = undefined
       form.value.contractFileUrl = ''
       form.value.pdfFileUrl = ''
+      submiBtnName.value = '发出签署'
   }
 }
 // 行程日期改变事件
@@ -1057,54 +1079,57 @@ const getList = () => {
   }
   return arr
 }
+const calculateTripFee = () => {
+  dataCostSource.value = getList()
+  // 计算成人数、儿童数
+  let adult = 0
+  let child = 0
+  let adultNoGw = 0
+  let childNoGw = 0
+  dataTouristSource.value.forEach((item: TouristItem) => {
+    if (item.touristType === 1) {
+      // 成人数
+      adult += 1
+      if (item.isAncientUygur === 0) {
+        // 未购古维成人数
+        adultNoGw += 1
+      }
+    } else if (item.touristType === 2) {
+      // 儿童数
+      child += 1
+      if (item.isAncientUygur === 0) {
+        // 未购古维儿童数
+        childNoGw += 1
+      }
+    }
+  })
+  adultNumber.value = adult // 成人数
+  childNumber.value = child // 儿童数
+  const arr: CostItem[] = []
+  // 如果已有行程费用列表，又回到上一步添加游客，需重新计算人数和价格
+  // 计算费用
+  dataCostSource.value.forEach((item: CostItem) => {
+    if (item.priceName === "古维费用") {
+      item.adultNumber = adultNoGw
+      item.childNumber = childNoGw
+    } else {
+      item.adultNumber = adult
+      item.childNumber = child
+    }
+    rowPrice(item)
+    arr.push(item)
+  })
+  dataCostSource.value = [...arr]
+  allPrice()
+}
 // 步骤跳转
 const nextTep = (val: string) => {
   activeKey.value = val
   if (val === '2') {
-    dataCostSource.value = getList()
-    // 计算成人数、儿童数
-    let adult = 0
-    let child = 0
-    let adultNoGw = 0
-    let childNoGw = 0
-    dataTouristSource.value.forEach((item: TouristItem) => {
-      if (item.touristType === 1) {
-        // 成人数
-        adult += 1
-        if (item.isAncientUygur === 0) {
-          // 未购古维成人数
-          adultNoGw += 1
-        }
-      } else if (item.touristType === 2) {
-        // 儿童数
-        child += 1
-        if (item.isAncientUygur === 0) {
-          // 未购古维儿童数
-          childNoGw += 1
-        }
-      }
-    })
-    adultNumber.value = adult // 成人数
-    childNumber.value = child // 儿童数
-    const arr: CostItem[] = []
-    // 如果已有行程费用列表，又回到上一步添加游客，需重新计算人数和价格
-    // 计算费用
-    dataCostSource.value.forEach((item: CostItem) => {
-      if (item.priceName === "古维费用") {
-        item.adultNumber = adultNoGw
-        item.childNumber = childNoGw
-      } else {
-        item.adultNumber = adult
-        item.childNumber = child
-      }
-      rowPrice(item)
-      arr.push(item)
-    })
-    dataCostSource.value = [...arr]
-    allPrice()
+    calculateTripFee()
   }
 }
-const saveDraft = () => {
+const saveDraft = (tab: string) => {
   const a = Promise.all([
     formRef.value?.validateFields(),
     formRef1.value?.validateFields(),
@@ -1119,6 +1144,7 @@ const saveDraft = () => {
     dateFormRef.value?.validate()
   ])
   a.then(async () => {
+    tab === '1' && calculateTripFee()
     const params = getParams()
     if (isAdd.value) {
       let res = await api.createIndividualContract(params)
@@ -1149,12 +1175,16 @@ const submitCancel = () => {
   submitVisible.value = false
 }
 const accMulCost = (arr: CostItem[]) => {
-  return arr.map((item: CostItem) => {
-    item.adultPrice = accMul(item.adultPrice, 100)
-    item.childPrice = accMul(item.childPrice, 100)
-    item.individualSubtotal = accMul(item.individualSubtotal, 100)
-    return item
-  })
+  if (arr?.length > 0) {
+    return arr.map((item: CostItem) => {
+      item.adultPrice = accMulValue(item.adultPrice)
+      item.childPrice = accMulValue(item.childPrice)
+      item.individualSubtotal = accMulValue(item.individualSubtotal)
+      return item
+    })
+  } else {
+    return []
+  }
 }
 // 获取提交参数
 const getParams = () => {
@@ -1209,7 +1239,7 @@ const getParams = () => {
     contractType, //合同类型
     contractFileUrl: fileUrl, //附件
     otherAgreements, //其他约定
-    contractAmount: accMul(contractAmount, 100),
+    contractAmount: accMulValue(contractAmount),
     individualContractLineBos: dataLineSource.value, // 线路
     individualContractTouristBos: dataTouristSource.value, // 游客
     individualContractPriceBos: accMulCost(cloneDeep(dataCostSource.value)), // 费用
@@ -1222,7 +1252,7 @@ const saveDraftConfirm = async () => {
   if (res) {
     submitResultVisible.value = true
   } else {
-    message.error('合同签署失败！')
+    message.error('合同发出签署失败！')
   }
   submitVisible.value = false
 }
@@ -1307,7 +1337,7 @@ const priceChange = (obj: any) => {
   priceTimer = setTimeout(async () => {
     rowPrice(obj)
     allPrice()
-  }, 1000)
+  })
 }
 // 线路改变事件
 const lineSelectChange = (obj: any) => {
@@ -1315,8 +1345,8 @@ const lineSelectChange = (obj: any) => {
     for (let i = 0, l = lineOption.value.length; i < l; i++) {
       const element = lineOption.value[i];
       if (element.codeValue === obj.lineId) {
-        obj.adultPrice = accDiv(element.adultPrice, 100)
-        obj.childPrice = accDiv(element.childPrice, 100)
+        obj.adultPrice = accDivValue(element.adultPrice)
+        obj.childPrice = accDivValue(element.childPrice)
         obj.lineDescribe = element.lineDescribe
         obj.lineName = element.name
         break
@@ -1402,8 +1432,8 @@ const getEditDetails = async (oid: any) => {
     form.value.pdfFileUrl = pdfFileUrl.toString()
     form.value.travelData = [res.tripStartTime, res.tripEndTime]
     dataLineSource.value = res.individualContractLineBos.map((item: any) => {
-      item.adultPrice = accDiv(item.adultPrice, 100)
-      item.childPrice = accDiv(item.childPrice, 100)
+      item.adultPrice = accDivValue(item.adultPrice)
+      item.childPrice = accDivValue(item.childPrice)
       return {
         isEdit: false,
         ...item,
@@ -1434,8 +1464,8 @@ const getEditDetails = async (oid: any) => {
     dataCostSource.value = res.individualContractPriceBos.filter((item: any) => {
       // 只返回导游服务费和自定义费用
       if (item.isOperate) {
-        item.adultPrice = accDiv(item.adultPrice, 100)
-        item.childPrice = accDiv(item.childPrice, 100)
+        item.adultPrice = accDivValue(item.adultPrice)
+        item.childPrice = accDivValue(item.childPrice)
         if (item.priceName !== '导游服务费') {
           item.isEdit = false
           item.isDelete = true
@@ -1449,12 +1479,23 @@ const getEditDetails = async (oid: any) => {
     contractOptionChange(form.value.contractType)
   }
 }
-
+const submitClick = async () => {
+  if (isShow.value) {
+    submitVisible.value = true
+  } else {
+    const res = await api.releaseContract(form.value.oid)
+    if (res) {
+      submitResultVisible1.value = true
+    } else {
+      message.error('合同提交发布失败！')
+    }
+  }
+}
 const getComprehensiveProductsList = async () => {
   let gwPrice = 0
   const res = await api.getBasicInfo()
   if (typeof res.price === 'number') {
-    gwPrice = accDiv(res.price, 100);
+    gwPrice = accDivValue(res.price);
   }
   const newData = [{
     isEdit: false,
