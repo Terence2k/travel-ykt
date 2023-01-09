@@ -18,6 +18,7 @@
       <a-input v-model:value="state.tableData.param.keyWord" placeholder="请输入用户姓名/手机号"/>
     </search-item>
     <template #button>
+      <a-button style="margin-right: 30px" @click="reset" v-permission="'重置'">重置</a-button>
       <a-button type="primary" @click="querySearch" v-permission="'查询'">查询</a-button>
     </template>
   </CommonSearch>
@@ -131,6 +132,15 @@
       state.tableData.total = res.total;
     })
   }
+
+  //重置
+  const reset = () => {
+    state.tableData.param.keyWord = '';
+    state.tableData.param.roleName = '';
+    state.tableData.param.status = null;
+    state.tableData.param.pageNo = 1;
+    onSearch();
+  };
 
   const cancel = (): any => {
     state.operationModal.isAddOrUpdate = false;

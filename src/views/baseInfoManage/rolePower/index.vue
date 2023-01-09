@@ -27,6 +27,7 @@
       <a-input v-model:value="state.tableData.param.roleName" placeholder="请输入角色名称"/>
     </search-item>
     <template #button>
+      <a-button style="margin-right: 30px" @click="reset" v-permission="'重置'">重置</a-button>
       <a-button type="primary" @click="querySearch" v-permission="'查询'">查询</a-button>
     </template>
   </CommonSearch>
@@ -124,6 +125,7 @@
         pageSize: 10,
         roleName: '',
         status: null,
+        availableRange: null
       },
       roleParam: {
         pageNo: 1,
@@ -163,6 +165,15 @@
       state.tableData.total = res.total;
     })
   }
+
+  //重置
+  const reset = () => {
+    state.tableData.param.roleName = '';
+    state.tableData.param.availableRange = null;
+    state.tableData.param.status = null;
+    state.tableData.param.pageNo = 1;
+    onSearch();
+  };
 
   const cancel = (): any => {
     state.operationModal.isAddOrUpdate = false;
