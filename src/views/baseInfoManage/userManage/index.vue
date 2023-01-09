@@ -18,7 +18,7 @@
       <a-input v-model:value="state.tableData.param.keyWord" placeholder="请输入用户姓名/手机号"/>
     </search-item>
     <template #button>
-      <a-button @click="querySearch" v-permission="'查询'">查询</a-button>
+      <a-button type="primary" @click="querySearch" v-permission="'查询'">查询</a-button>
     </template>
   </CommonSearch>
   <CommonTable :dataSource="state.tableData.data" :columns="columns">
