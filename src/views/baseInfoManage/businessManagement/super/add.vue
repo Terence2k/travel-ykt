@@ -104,13 +104,13 @@
           </a-input>
         </a-form-item>
         <a-form-item name="businessLicenseUrl" label="营业执照" v-show="formKeys?.businessLicenseUrl">
-          <Upload v-model="form.businessLicenseUrl" :maxCount="1" />
+          <Upload v-model="form.businessLicenseUrl" :maxCount="1" ref="imgUploadRef"/>
         </a-form-item>
         <!-- 扩展信息 -->
         <a-form-item label="扩展信息" v-show="['TRAVEL', 'HOTEL', 'TICKET', 'CATERING'].includes(form.businessType || '')">
         </a-form-item>
         <a-form-item name="manageUrl" label="经营许可证" v-show="formKeys?.manageUrl">
-          <Upload v-model="form.manageUrl" :maxCount="1" />
+          <Upload v-model="form.manageUrl" :maxCount="1" ref="imgUploadRef1"/>
         </a-form-item>
         <a-form-item name="licenseNo" label="12301旅行社许可证号" v-show="formKeys?.licenseNo">
           <a-input v-model:value="form.licenseNo" placeholder="请输入12301旅行社许可证号" allowClear>
@@ -216,7 +216,7 @@
           </a-input>
         </a-form-item> -->
         <a-form-item name="legalPersonUrl" label="法人身份证附件" v-show="formKeys?.legalPersonUrl">
-          <Upload v-model="form.legalPersonUrl" :maxCount="2" />
+          <Upload v-model="form.legalPersonUrl" :maxCount="2" ref="imgUploadRef2"/>
         </a-form-item>
         <a-form-item>
           <a-button type="primary" @click="submit(dateFormRef)" style="margin-right:20px"
@@ -394,6 +394,9 @@ const formRules7 = { ...commonFormRules7, ...common }
 const formRules8 = { ...commonFormRules8, ...common }
 const formRules5 = { ...commonFormRules5, ...common }
 const formRules = ref<Record<string, Rule[]>>({})
+const imgUploadRef = ref()
+const imgUploadRef1 = ref()
+const imgUploadRef2 = ref()
 onActivated(() => {
   isRefresh.value = '0'
   formRef.value.clearValidate()
@@ -402,6 +405,9 @@ onActivated(() => {
 onDeactivated(() => {
   dateFormRef.value?.resetFields()
   formRef.value?.resetFields()
+  imgUploadRef.value.clearFileList()
+  imgUploadRef1.value.clearFileList()
+  imgUploadRef2.value.clearFileList()
 })
 
 /* const businessManageOptions = useBusinessManageOption();

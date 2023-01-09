@@ -81,8 +81,8 @@
               </a-input>
             </a-form-item>
             <a-form-item name="contractFileUrl" label="上传附件" v-if="!isShow">
-              <Upload v-model="form.contractFileUrl" :maxCount="9" />
-              <pdfUpload v-model="form.pdfFileUrl" :maxCount="1" />
+              <Upload v-model="form.contractFileUrl" :maxCount="9" ref="imgUploadRef" />
+              <pdfUpload v-model="form.pdfFileUrl" :maxCount="1" ref="pdfUploadRef" />
             </a-form-item>
           </div>
           <div class="tag">选择线路</div>
@@ -405,14 +405,16 @@
             </template>
             <template v-if="column.dataIndex === 'adultPrice'">
               <a-input @change="() => { priceChange(dataCostSource[index]) }" v-if="record.isEdit"
-                v-model:value.number="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="输入价格" />
+                v-model:value.number="dataCostSource[index][column.dataIndex]" style="margin: -5px 0"
+                placeholder="输入价格" />
               <template v-else>
                 {{ text }}
               </template>
             </template>
             <template v-if="column.dataIndex === 'childPrice'">
               <a-input @change="() => { priceChange(dataCostSource[index]) }" v-if="record.isEdit"
-                v-model:value.number="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="输入价格" />
+                v-model:value.number="dataCostSource[index][column.dataIndex]" style="margin: -5px 0"
+                placeholder="输入价格" />
               <template v-else>
                 {{ text }}
               </template>
@@ -521,7 +523,11 @@ const accMulValue = (value: any) => {
 const router = useRouter();
 const route = useRoute();
 const isRefresh = ref('0')
+const imgUploadRef = ref()
+const pdfUploadRef = ref()
 const back = () => {
+  imgUploadRef.value.clearFileList()
+  pdfUploadRef.value.clearFileList()
   router.push({
     name: 'electronicContratList',
     params: {

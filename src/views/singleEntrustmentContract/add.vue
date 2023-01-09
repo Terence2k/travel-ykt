@@ -484,8 +484,6 @@
 <script setup lang="ts">
 import { useRouter, useRoute } from 'vue-router';
 import { CloseOutlined } from '@ant-design/icons-vue';
-import Upload from '@/components/common/imageWrapper.vue';
-import pdfUpload from '@/components/common/pdfWrapper.vue';
 import { cloneDeep } from 'lodash';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import { useBusinessManageOption } from '@/stores/modules/businessManage';
