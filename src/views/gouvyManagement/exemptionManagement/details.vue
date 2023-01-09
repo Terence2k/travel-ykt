@@ -148,12 +148,13 @@ const cancel = () => {
 const Fail = () => {
 	let data = {
 		oid: state.tableData.data.oid,
+		itineraryId:state.tableData.data.itineraryId,
 		refuesedReason: state.refuesedReason,
-	};
+	};	
 	formRef.value
     .validateFields()
     .then((values: any) => {
-      api.noAuditFailed({ oid: state.tableData.data.oid, refuesedReason: state.refuesedReason }).then((res) => {
+      api.noAuditFailed(data).then((res) => {
 			message.error('审核未通过');
 			dialogVisible.value = false;
 			go();
@@ -167,7 +168,11 @@ const rules: any = {
 	refuesedReason: [{ required: true, trigger: 'blur', message: '请输入审核不通过原因' }],
 };
 const adopt = () => {
-	api.AuditFailed(state.tableData.data.oid).then((res) => {
+	let data={
+		oid:state.tableData.data.oid,
+		itineraryId:state.tableData.data.itineraryId
+	}
+	api.AuditFailed(data).then((res:any) => {
 		message.success('审核已通过');
 		go();
 	});
@@ -176,7 +181,12 @@ const download = () => {
 	message.success('下载成功');
 };
 const informationList = () => {
-	api.ExemptionManagementDetail(route?.query?.oid).then((res:any) => {
+	let data={
+		oid:route?.query?.oid,
+		itineraryId:route?.query?.itineraryId
+	}
+	console.log(data,'data1111111')
+	api.ExemptionManagementDetail(data).then((res:any) => {
 		state.tableData.data = res;
 		// 处理显示照片个数
 		res.applyReduceTouristList.map((i:any,index:number)=>{

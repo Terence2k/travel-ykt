@@ -140,14 +140,13 @@
                 <a-select placeholder="请选择争议解决办法" v-model:value="form.disputeResolution" allowClear>
                   <a-select-option v-for="item in disputeResolutionOptions" :value="item.codeValue"
                     :key="item.codeValue">{{
-                        item.name
+                      item.name
                     }}
                   </a-select-option>
                 </a-select>
               </a-form-item>
             </div>
           </div>
-
           <div class="tag">添加委托项目</div>
           <a-table :columns="entrustedProjectColumns" :data-source="dataEntrustedProjectSource" bordered
             :pagination="false">
@@ -228,7 +227,7 @@
                         allowClear>
                         <a-select-option v-for="item in touristTypeOption" :value="item.codeValue"
                           :key="item.codeValue">{{
-                              item.name
+                            item.name
                           }}
                         </a-select-option>
                       </a-select>
@@ -246,7 +245,7 @@
                       <a-select placeholder="请选择性别" v-model:value="dataTouristSource[index][column.dataIndex]"
                         allowClear style="width: 80px">
                         <a-select-option v-for="item in genderOption" :value="item.codeValue" :key="item.codeValue">{{
-                            item.name
+                          item.name
                         }}
                         </a-select-option>
                       </a-select>
@@ -291,7 +290,7 @@
                         allowClear style="width: 80px">
                         <a-select-option v-for="item in isHealthyOption" :value="item.codeValue"
                           :key="item.codeValue">{{
-                              item.name
+                            item.name
                           }}
                         </a-select-option>
                       </a-select>
@@ -323,7 +322,7 @@
                         allowClear style="width: 130px">
                         <a-select-option v-for="item in ancientUygurOption" :value="item.codeValue"
                           :key="item.codeValue">{{
-                              item.name
+                            item.name
                           }}
                         </a-select-option>
                       </a-select>
@@ -382,7 +381,7 @@
         </a-form>
         <div class="btn_box">
           <div>
-            <a-button type="primary" @click="saveDraft" class="mr20">保存草稿</a-button>
+            <a-button type="primary" @click="saveDraft('1')" class="mr20">保存草稿</a-button>
             <a-button type="primary" @click="nextTep('2')">下一步</a-button>
           </div>
         </div>
@@ -393,23 +392,23 @@
             <template v-if="column.key === 'index'">
               {{ index + 1 }}
             </template>
-            <!-- <template v-if="column.dataIndex === 'priceName'">
-              <a-input v-if="record.isEdit" v-model:value="dataCostSource[index][column.dataIndex]"
-                style="margin: -5px 0" placeholder="输入产品名称" />
+            <template v-if="column.dataIndex === 'priceName'">
+              <a-input v-if="record.isEdit && record.priceName !== '导游服务费'"
+                v-model:value="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="输入产品名称" />
               <template v-else>
                 {{ text }}
               </template>
             </template>
             <template v-if="column.dataIndex === 'adultPrice'">
               <a-input @change="() => { priceChange(dataCostSource[index]) }" v-if="record.isEdit"
-                v-model:value="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="输入价格" />
+                v-model:value.number="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="输入价格" />
               <template v-else>
                 {{ text }}
               </template>
             </template>
             <template v-if="column.dataIndex === 'childPrice'">
               <a-input @change="() => { priceChange(dataCostSource[index]) }" v-if="record.isEdit"
-                v-model:value="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="输入价格" />
+                v-model:value.number="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="输入价格" />
               <template v-else>
                 {{ text }}
               </template>
@@ -420,7 +419,7 @@
               <template v-else>
                 {{ text }}
               </template>
-            </template> -->
+            </template>
             <template v-if="(column.dataIndex === 'action' && record.isOperate)">
               <div class="editable-row-operations">
                 <span v-if="record.isEdit">
@@ -429,9 +428,6 @@
                 </span>
                 <span v-else>
                   <a @click="edit(dataCostSource[index])">编辑</a>
-                  <a-popconfirm title="确认删除数据？" @confirm="onCostDelete(index)">
-                    <a>删除</a>
-                  </a-popconfirm>
                 </span>
               </div>
             </template>
@@ -442,14 +438,13 @@
             <div class="cost_item">费用合计</div>
             <div class="cost_item">{{ form.contractAmount }}</div>
           </div>
-          <!-- <a-button @click="handleCostAdd" style="margin-left:20px">添加预订产品</a-button> -->
         </div>
         <a-form ref="formRef4" :model="form" :rules="formRules" autocomplete="off">
           <a-form-item name="paymentMethod" label="游客费用支付方式">
             <a-select @change="touristChange" placeholder="选择游客线下的实际支付方式" v-model:value="form.paymentMethod" allowClear
               style="width:20%">
               <a-select-option v-for="item in paymentOptions" :value="item.codeValue" :key="item.codeValue">{{
-                  item.name
+                item.name
               }}
               </a-select-option>
             </a-select>
@@ -473,14 +468,14 @@
   <CommonModal title="散客合同签署确认" v-model:visible="submitVisible" @cancel="submitCancel" @close="submitCancel"
     :conform-text="'确定签署'" @conform="saveDraftConfirm">
     <p>您即将发起散客合同签署，合同总金额<span class="cred">{{ form.contractAmount }}</span>元。发出后将由游客代表<span class="cred">{{
-        form.touristName
+      form.touristName
     }}</span>通过网页完成签署，签署成功后会同步至12301平台。请确保合同内容无误。
     </p>
   </CommonModal>
   <CommonModal title="散客合同签署结果" v-model:visible="submitResultVisible" @close="submitResultVisible = false"
     :conform-text="'确定'" :is-cancel="false" @conform="submitResultVisible = false">
     <p v-if="true">您已发起散客合同签署。请等待游客代表<span class="cred">{{
-        form.touristName
+      form.touristName
     }}</span>通过网页完成签署，签署后可使用该电子合同发起拼团</p>
     <p v-else>您已完成编号为ljc412211030906308的散客电子合同（来源：门店线下合同）补录，后续您和授权社均可使用该合同发起散客拼团</p>
   </CommonModal>
@@ -489,8 +484,6 @@
 <script setup lang="ts">
 import { useRouter, useRoute } from 'vue-router';
 import { CloseOutlined } from '@ant-design/icons-vue';
-import Upload from '@/components/common/imageWrapper.vue';
-import pdfUpload from '@/components/common/pdfWrapper.vue';
 import { cloneDeep } from 'lodash';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import { useBusinessManageOption } from '@/stores/modules/businessManage';
@@ -556,7 +549,6 @@ const form = ref({
   entrustedProject: '',
   entrustedProjectAmount: undefined
 })
-const comprehensiveProductsList = ref([]) //综费产品
 const adultNumber = ref(0)
 const childNumber = ref(0)
 const businessManageOptions = useBusinessManageOption();
@@ -842,13 +834,14 @@ const datePickerChange = () => {
 }
 interface CostItem {
   priceName: string;
-  adultPrice: string;
-  childPrice: string;
-  adultNumber: number;
-  childNumber: number;
-  individualSubtotal: string;
+  adultPrice: undefined | number;
+  childPrice: undefined | number;
+  adultNumber: undefined | number;
+  childNumber: undefined | number;
+  individualSubtotal: undefined | number;
   isEdit: boolean;
   isOperate?: boolean;
+  computable?: boolean;
 }
 interface TouristItem {
   certificatesType: undefined | string; //证件类型
@@ -871,6 +864,7 @@ interface EntrustedProjectItem {
   entrustedProject?: string;
   entrustedProjectAmount?: number | undefined;
 }
+const gwFee = ref<CostItem[]>([])
 const dataCostSource = ref<CostItem[]>([])
 const dataTouristSource = ref<TouristItem[]>([])
 const dataEntrustedProjectSource = ref<EntrustedProjectItem[]>([{
@@ -901,24 +895,6 @@ const handleTouristAdd = () => {
 const onTouristDelete = (index: number) => {
   dataTouristSource.value.splice(index, 1)
 };
-// 添加行程费用
-const handleCostAdd = () => {
-  const newData = {
-    isEdit: true,
-    isOperate: true,
-    priceName: "",
-    adultPrice: "",
-    childPrice: "",
-    adultNumber: adultNumber.value,
-    childNumber: childNumber.value,
-    individualSubtotal: "",
-  };
-  dataCostSource.value.push(newData);
-};
-// 删除行程费用
-const onCostDelete = (index: number) => {
-  dataCostSource.value.splice(index, 1)
-};
 const save = (obj: any) => {
   obj.isEdit = false
 };
@@ -928,87 +904,98 @@ const cancel = (obj: any) => {
 const edit = (obj: any) => {
   obj.isEdit = true
 };
+const getEntrustedFee = () => {
+  const entrustedProject = dataEntrustedProjectSource.value[0].entrustedProject
+  const entrustedProjectAmount = dataEntrustedProjectSource.value[0].entrustedProjectAmount
+  if (entrustedProject && typeof entrustedProjectAmount === 'number') {
+    return {
+      isEdit: false,
+      isOperate: false,
+      computable: true,
+      priceName: entrustedProject,
+      adultPrice: 0,
+      childPrice: 0,
+      adultNumber: 0,
+      childNumber: 0,
+      individualSubtotal: entrustedProjectAmount,
+    }
+  }
+}
+const guideFee = ref<CostItem>({
+  isEdit: true,
+  isOperate: true,
+  priceName: "导游服务费",
+  adultPrice: undefined,
+  childPrice: undefined,
+  adultNumber: 0,
+  childNumber: 0,
+  individualSubtotal: 0,
+})
+const getList = () => {
+  const arr: CostItem[] = []
+  const entrustedFee = getEntrustedFee()
+  if (gwFee.value.length > 0) {
+    arr.push(...gwFee.value)
+  }
+  arr.push(guideFee.value)
+  if (entrustedFee) {
+    arr.push(entrustedFee)
+  }
+  return arr
+}
+const calculateTripFee = () => {
+  dataCostSource.value = getList()
+  // 计算成人数、儿童数
+  let adult = 0
+  let child = 0
+  let adultNoGw = 0
+  let childNoGw = 0
+  dataTouristSource.value.forEach((item: TouristItem) => {
+    if (item.touristType === 1) {
+      // 成人数
+      adult += 1
+      if (item.isAncientUygur === 0) {
+        // 未购古维成人数
+        adultNoGw += 1
+      }
+    } else if (item.touristType === 2) {
+      // 儿童数
+      child += 1
+      if (item.isAncientUygur === 0) {
+        // 未购古维儿童数
+        childNoGw += 1
+      }
+    }
+  })
+  adultNumber.value = adult // 成人数
+  childNumber.value = child // 儿童数
+  const arr: CostItem[] = []
+  // 如果已有行程费用列表，又回到上一步添加游客，需重新计算人数和价格
+  // 计算费用
+  dataCostSource.value.forEach((item: CostItem) => {
+    if (item.priceName === "古维费用") {
+      item.adultNumber = adultNoGw
+      item.childNumber = childNoGw
+    } else {
+      item.adultNumber = adult
+      item.childNumber = child
+    }
+    if (!item.computable) {
+      rowPrice(item)
+    }
+    arr.push(item)
+  })
+  dataCostSource.value = [...arr]
+  allPrice()
+}
 // 步骤跳转
 const nextTep = (val: string) => {
   activeKey.value = val
   if (val === '2') {
-    // 计算成人数、儿童数
-    let adult = 0
-    let child = 0
-    dataTouristSource.value.forEach((item: any) => {
-      if (item.touristType === 1) {
-        adult += 1
-      } else if (item.touristType === 2) {
-        child += 1
-      }
-    })
-    adultNumber.value = adult // 成人数
-    childNumber.value = child // 儿童数
-    const arr: CostItem[] = []
-    // 计算费用
-    dataCostSource.value.forEach((item: any) => {
-      // 如果已有行程费用列表，又回到上一步添加游客，需重新计算人数和价格
-      // 自定义费用流程
-      if (item.isOperate) {
-        item.adultNumber = adult
-        item.childNumber = child
-        rowPrice(item)
-        arr.push(item)
-      }
-    })
-    dataCostSource.value = [...comprehensiveProductsFeeList(), ...arr]
-    allPrice()
+    calculateTripFee()
   }
 }
-/* 
-收费模式：人数，人数*收费数量
-收费模式：价格，直接用价格
-然后看是否按天数：是，上面算出的价格*天数；否，使用上面算出的价格 */
-const comprehensiveProductsFeeList = () => {
-  if (adultNumber.value || childNumber.value) {
-    const contractDays = form.value.contractDays !== undefined ? form.value.contractDays : 0
-    return comprehensiveProductsList.value.map((item: any) => {
-      let adultPrice: string | number = 0
-      let childPrice: string | number = 0
-      let individualSubtotal = 0
-      //feeModel 收费模式: 0-人数 1-价格
-      //confirmDailyCharge 是否按天收费: 0-否,1-是
-      if (item.feeModel === 1) {
-        adultPrice = '/'
-        childPrice = '/'
-        if (item.confirmDailyCharge === 1) {
-          // 如果按天收费要乘上天数
-          individualSubtotal = item.feeNumber * contractDays
-        } else {
-          individualSubtotal = item.feeNumber
-        }
-      } else if (item.feeModel === 0) {
-        // 按照人数收费
-        adultPrice = item.feeNumber
-        childPrice = item.feeNumber
-        if (item.confirmDailyCharge === 1) {
-          // 如果按天收费要乘上天数
-          individualSubtotal = (adultNumber.value + childNumber.value) * item.feeNumber * contractDays
-        } else {
-          individualSubtotal = (adultNumber.value + childNumber.value) * item.feeNumber
-        }
-      }
-      return {
-        priceName: item.comprehensiveFeeProductName,
-        adultNumber: adultNumber.value,
-        childNumber: childNumber.value,
-        adultPrice,
-        childPrice,
-        individualSubtotal,
-        isEdit: false,
-        isOperate: false
-      }
-    })
-  } else {
-    return []
-  }
-}
-const saveDraft = () => {
+const saveDraft = (tab?: string) => {
   const a = Promise.all([
     formRef.value?.validateFields(),
     formRef1.value?.validateFields(),
@@ -1018,6 +1005,7 @@ const saveDraft = () => {
     dateFormRef.value?.validate(),
   ])
   a.then(async () => {
+    tab === '1' && calculateTripFee()
     const params = getParams()
     if (isAdd.value) {
       let res = await api.createSingleContract(params)
@@ -1045,6 +1033,25 @@ const saveDraft = () => {
 }
 const submitCancel = () => {
   submitVisible.value = false
+}
+const accMulCost = (arr: CostItem[]) => {
+  if (arr?.length > 0) {
+    return arr.map((item: CostItem) => {
+      item.adultPrice = accMulValue(item.adultPrice)
+      item.childPrice = accMulValue(item.childPrice)
+      item.individualSubtotal = accMulValue(item.individualSubtotal)
+      return item
+    })
+  } else {
+    return []
+  }
+}
+const accMulValue = (value: any) => {
+  if (typeof value === 'number') {
+    return accMul(value, 100)
+  } else {
+    return null
+  }
 }
 // 获取提交参数
 const getParams = () => {
@@ -1080,14 +1087,6 @@ const getParams = () => {
     entrustFine,
     disputeResolution,
   } = form.value
-  /* const arr: CostItem[] = []
-  // 只上传自定义费用
-  dataCostSource.value.forEach((item: any) => {
-    if (item.isOperate) {
-      arr.push(item)
-    }
-  }) */
-
   return {
     oid,
     companyId, //合同创建旅行社id
@@ -1098,7 +1097,7 @@ const getParams = () => {
     tripEndTime, //合同行程结束时间
     touristPeopleNumber, //游客人数
     otherAgreements, //其他约定
-    contractAmount: accMul(contractAmount, 100),
+    contractAmount: accMulValue(contractAmount),
     paymentMethod,
     departurePlace,
     destination,
@@ -1107,7 +1106,7 @@ const getParams = () => {
     emergencyContactPhone,
     deposit,
     liquidatedDamages,
-    bond: accMul(bond, 100),
+    bond: accMulValue(bond),
     hotelFine,
     carRentalFine,
     totalPriceFine,
@@ -1116,9 +1115,9 @@ const getParams = () => {
     entrustFine,
     disputeResolution,
     entrustedProject: dataEntrustedProjectSource.value[0].entrustedProject,
-    entrustedProjectAmount: dataEntrustedProjectSource.value[0].entrustedProjectAmount,
+    entrustedProjectAmount: accMulValue(dataEntrustedProjectSource.value[0].entrustedProjectAmount),
     individualContractTouristBos: dataTouristSource.value, // 游客
-    individualContractPriceBos: dataCostSource.value, // 费用
+    individualContractPriceBos: accMulCost(cloneDeep(dataCostSource.value)), // 费用
   }
 }
 const saveDraftConfirm = async () => {
@@ -1211,26 +1210,7 @@ const priceChange = (obj: any) => {
   priceTimer = setTimeout(async () => {
     rowPrice(obj)
     allPrice()
-  }, 1000)
-}
-// 线路改变事件
-const lineSelectChange = (obj: any) => {
-  if (obj.lineId) {
-    for (let i = 0, l = lineOption.value.length; i < l; i++) {
-      const element = lineOption.value[i];
-      if (element.codeValue === obj.lineId) {
-        obj.adultPrice = element.adultPrice
-        obj.childPrice = element.childPrice
-        obj.lineDescribe = element.lineDescribe
-        obj.lineName = element.name
-        break
-      }
-    }
-  } else {
-    obj.adultPrice = undefined
-    obj.childPrice = undefined
-    obj.lineDescribe = undefined
-  }
+  })
 }
 const getHealthyCode = async (data: any) => {
   let res = await api.getHealthyCode(data)
@@ -1287,14 +1267,23 @@ const configCodeName = (certificateCodes: any) => {
     }
   }
 }
+const accDivValue = (value: any) => {
+  if (typeof value === 'number') {
+    return accDiv(value, 100)
+  } else {
+    return undefined
+  }
+}
 const getEditDetails = async (oid: any) => {
   const res = await api.getSingleContractDetails(oid)
   if (res) {
     hasId.value = true
     form.value = res
+    form.value.bond = accDivValue(form.value.bond)
+    form.value.contractAmount = accDivValue(form.value.contractAmount)
     form.value.travelData = [res.tripStartTime, res.tripEndTime]
     dataEntrustedProjectSource.value[0].entrustedProject = res.entrustedProject
-    dataEntrustedProjectSource.value[0].entrustedProjectAmount = res.entrustedProjectAmount
+    dataEntrustedProjectSource.value[0].entrustedProjectAmount = accDivValue(res.entrustedProjectAmount)
     dataTouristSource.value = res.individualContractTouristBos.map((item: any) => {
       // 获取游客代表
       if (item.isRepresentative === 1) {
@@ -1316,20 +1305,32 @@ const getEditDetails = async (oid: any) => {
     const certificateCodes = await getHealthyCodes(certificateIds)
     // 将健康码和游客列表数据关联
     configCodeName(certificateCodes)
-
-    dataCostSource.value = res.individualContractPriceBos.map((item: any) => {
-      return {
-        isEdit: false,
-        isOperate: true,
-        ...item,
+    dataCostSource.value = res.individualContractPriceBos.forEach((item: any) => {
+      // 只返回导游服务费
+      if (item.priceName === '导游服务费') {
+        guideFee.value.adultPrice = accDivValue(item.adultPrice)
+        guideFee.value.childPrice = accDivValue(item.childPrice)
       }
     })
-    allPrice()
   }
 }
 const getComprehensiveProductsList = async () => {
-  const res = await api.findComprehensiveProductsList()
-  comprehensiveProductsList.value = res || []
+  let gwPrice = 0
+  const res = await api.getBasicInfo()
+  if (typeof res.price === 'number') {
+    gwPrice = accDivValue(res.price);
+  }
+  const newData = [{
+    isEdit: false,
+    isOperate: false,
+    priceName: "古维费用",
+    adultPrice: gwPrice,
+    childPrice: gwPrice,
+    adultNumber: 0,
+    childNumber: 0,
+    individualSubtotal: 0,
+  }];
+  gwFee.value = newData;
 }
 onMounted(() => {
   initOpeion()

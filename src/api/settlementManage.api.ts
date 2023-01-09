@@ -276,10 +276,11 @@ export async function getTransferAccountDetails(data: any) {
 	});
 }
 // 单条数据申请转账
-export async function transferAccountsDetail(oid: any) {
+export async function transferAccountsDetail(data: any) {
 	return request({
-		url: `${commonPath}/settlement-service/public/api/transfer-account/transferAccount/${oid}`,
-		method: 'get',
+		url: `${commonPath}/settlement-service/public/api/transfer-account/transferAccount`,
+		method: 'post',
+		data,
 		showLoading: true,
 	});
 }
@@ -301,10 +302,11 @@ export async function examineDetail(itineraryNo: any) {
 	});
 }
 // 结算管理--结算明细
-export async function settlementDetail(informationId: any) {
+export async function settlementDetail(data: any) {
 	return request({
-		url: `${commonPath}/settlement-service/public/api/settlement-information/information/details/${informationId}`,
-		method: 'get',
+		url: `${commonPath}/settlement-service/public/api/settlement-information/information/details`,
+		method: 'post',
+		data,
 		showLoading: false,
 	});
 }

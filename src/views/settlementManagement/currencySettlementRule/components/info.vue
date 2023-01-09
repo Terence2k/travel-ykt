@@ -93,7 +93,7 @@
 			</a-form-item>
 		</a-form>
 		<CommonTable :dataSource="formState.splitList" :columns="columns" :scrollY="false" :scroll="{ y: '300px' }">
-			<template #bodyCell="{ column, record, index }">
+			<template #bodyCell="{ column, record }">
 				<template v-if="column.key === 'companyType'">
 					<span>{{ getCompanyTypeName(record.companyType) }}</span>
 				</template>

@@ -36,7 +36,13 @@
       <a-col :span="7">
         <a-descriptions title="&nbsp;" bordered layout="vertical">
           <a-descriptions-item label="行程单二维码" :labelStyle="labelStyle" :contentStyle="contentStyle">
-            <qrcode-vue :value="codeUrl" :size="200" level="H" />
+            <!-- 1-草稿 2-待协作 3-待管理部门审核(发团) 4-待管理部门审核(变更) 5-待财务审核(发团) 6-待财务审核(变更) 20-待财务审核（撤销重提） -->
+            <template v-if="[1, 2, 3, 4, 5, 6, 7, 20].includes(state.basicData.status)">
+              接团后生成
+            </template>
+            <template v-else>
+              <qrcode-vue :value="codeUrl" :size="200" level="H" />
+            </template>
           </a-descriptions-item>
         </a-descriptions>
       </a-col>

@@ -109,13 +109,11 @@ export async function exemptionManagementList(data: any) {
 	});
 }
 //行程减免信息详情
-export async function ExemptionManagementDetail(id: number) {
+export async function ExemptionManagementDetail(data: any) {
 	return request({
-		url: `${commonPath}/heritage-maintenance-service/public/api/hm-apply-record/detail/${id}`,
-		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded',
-		},
-		method: 'get',
+		url: `${commonPath}/heritage-maintenance-service/public/api/hm-apply-record/detail`,
+		method: 'POST',
+		data,
 		showLoading: false,
 	});
 }
@@ -147,14 +145,12 @@ export async function noAuditFailed(data: any) {
 	});
 }
 //古维订单提交减免审核通过
-export async function AuditFailed(id: number) {
+export async function AuditFailed(data: any) {
 	return request({
-		url: `${commonPath}/heritage-maintenance-service/public/api/hm-apply-record/auditAdopt/${id}`,
-		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded',
-		},
-		method: 'get',
-		showLoading: false,
+		url: `${commonPath}/heritage-maintenance-service/public/api/hm-apply-record/auditAdopt`,
+		method: 'post',
+		data,
+		showLoading: true,
 	});
 }
 // 古维订单导出

@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<CommonTable :columns="columns" :dataSource="state.tableData.data" :scrollY="false">
+		<CommonTable :columns="columns" :dataSource="state.tableData.data" :scrollY="false" :showExpandColumn="true" rowKey="itineraryId">
 			<template #bodyCell="{ column, record }">
 				<template v-if="column.dataIndex === 'itineraryStartDate'">
 					<span>{{ record.itineraryStartDate }}~{{ record.itineraryEndDate }}</span>
@@ -11,6 +11,17 @@
 					</div>
 				</template>
 			</template>
+			<template #expandedRowRender>
+				<a-table :columns="innerColumns" :data-source="state.tableData.data" :pagination="false">
+					<template #bodyCell="{ column, record }">
+						<template v-if="column.dataIndex === 'actions'">
+					<div class="action-btns">
+						<a @click="toSee(record.oid)" v-permission="'审核通过_查看'">查看</a>
+					</div>
+				</template>
+					</template>
+				</a-table>
+    		</template>
 		</CommonTable>
 		<CommonPagination
 			:current="gouvyStore.gouvyList.success.params.pageNo"
@@ -72,6 +83,40 @@ const columns = [
 		title: '行程人数',
 		dataIndex: 'touristNum',
 		key: 'touristNum',
+	},
+	// {
+	// 	title: '减免人数',
+	// 	dataIndex: 'reduceNum',
+	// 	key: 'reduceNum',
+	// },
+	// {
+	// 	title: '操作',
+	// 	dataIndex: 'actions',
+	// 	key: 'actions',
+	// 	fixed: 'right',
+	// 	width: 160,
+	// },
+];
+const innerColumns = [
+	{
+		title: '提交审核时间',
+		dataIndex: 'routeName',
+		key: 'routeName',
+	},
+	{
+		title: '提交审核人',
+		dataIndex: 'travelName',
+		key: 'travelName',
+	},
+	{
+		title: '审核完成时间',
+		dataIndex: 'subTravelName',
+		key: 'subTravelName',
+	},
+	{
+		title: '审核人',
+		dataIndex: 'subTravelName',
+		key: 'subTravelName',
 	},
 	{
 		title: '减免人数',
