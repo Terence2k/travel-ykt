@@ -7,7 +7,7 @@
 				</template>
 				<template v-if="column.dataIndex === 'actions'">
 					<div class="action-btns">
-						<a @click="toExamine(record.oid)" v-permission="'待审核_审核'">审核</a>
+						<a @click="toExamine(record.oid,record.itineraryId)" v-permission="'待审核_审核'">审核</a>
 					</div>
 				</template>
 			</template>
@@ -74,8 +74,8 @@ const columns = [
 	},
 	{
 		title: '减免人数',
-		dataIndex: 'reduceNum',
-		key: 'reduceNum',
+		dataIndex: 'waitAuditRecordReduceNum',
+		key: 'waitAuditRecordReduceNum',
 	},
 	{
 		title: '操作',
@@ -103,8 +103,9 @@ const onHandleCurrentChange = (val: number) => {
 	gouvyStore.gouvyList.waits.params.pageNo = val;
 	getWaitsList();
 };
-const toExamine=(oid:any)=>{
-	router.push({ path: '/gouvyManagement/exemptionManagement/exemption-management_edit',query:{oid:oid} });
+const toExamine=(oid:any,itineraryId:any)=>{
+	// console.log(oid,itineraryId,'itineraryIditineraryId')
+	router.push({ path: '/gouvyManagement/exemptionManagement/exemption-management_edit',query:{oid:oid,itineraryId:itineraryId} });
 }
 const pageSideChange = (current: number, size: number) => {
 	console.log('changePageSize:', size);

@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<CommonTable :columns="columns" :dataSource="state.tableData.data" :scrollY="false" :showExpandColumn="true" rowKey="oid">
+		<CommonTable :columns="columns" :dataSource="state.tableData.data" :scrollY="false" :showExpandColumn="true" rowKey="itineraryId">
 			<template #bodyCell="{ column, record }">
 				<template v-if="column.dataIndex === 'itineraryStartDate'">
 					<span>{{ record.itineraryStartDate }}~{{ record.itineraryEndDate }}</span>
