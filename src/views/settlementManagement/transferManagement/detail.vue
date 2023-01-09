@@ -118,7 +118,7 @@ const state = reactive({
 			transferAccountsId: 1, //转账单id
 			pageNo: 1, //页号
 			pageSize: 10, //页大小
-			// itineraryNo: 'aaaaaa', //行程单号
+			itineraryNo: '', //行程单号
 		},
 		total: 111,
 		loading: false,
@@ -147,9 +147,12 @@ const init = () => {
 // 查询
 const initList = async () => {
 	state.tableData.param.transferAccountsId = props.params.transferAccountsId;
+	state.tableData.param.itineraryNo = props.params.itineraryNo;
 	state.audit.oid = props.params.transferAccountsId;
 	state.status = props.params.status;
 	state.settlementCost = props.params.settlementCost;
+	console.log(state.tableData, `state.tableData`);
+
 	const result = await api.getTransferAccountDetails(state.tableData.param);
 	const { total, content } = result;
 	state.tableData.total = total;
