@@ -45,6 +45,9 @@
       <a-tab-pane key="1" tab="已审核" v-if="getTabPermission('已审核')">
         <CommonTable :dataSource="tableData.data" :columns="columns">
           <template #bodyCell="{ column, record, index }">
+            <template v-if="column.key === 'index'">
+              {{ index + 1 }}
+            </template>
             <template v-if="column.key === 'action'">
               <div class="action-btns">
                 <a @click="checkDetails(record.oid)" v-permission="'已审核_查看'">查看</a>
@@ -150,7 +153,7 @@
         </a-radio-group>
       </a-form-item>
       <a-form-item name="basisUrl" label="创建依据（可上传5张图片）">
-        <Upload v-model="form.basisUrl" :maxCount="5" />
+        <Upload v-model="form.basisUrl" :maxCount="5" ref="imgUploadRef"/>
       </a-form-item>
     </a-form>
   </CommonModal>
@@ -314,6 +317,7 @@ const form = ref({
   enableSatus: 0,
   basisUrl: ''
 })
+const imgUploadRef = ref()
 const newArrList = ref<any>({})
 const oldArrList = ref<any>({})
 const changeList = ref<any>({})
@@ -601,6 +605,7 @@ const onQuery = () => {
 const modalCancel = () => {
   state.modalVisible = false
   addStoreRef.value.resetFields()
+  imgUploadRef.value.clearFileList()
 }
 interface addInterface {
   row?: any
@@ -782,8 +787,6 @@ const getChangeInfo = async (oid: string | number) => {
       changeKeys.value.push(key)
     }
   })
-  console.log(changeList.value, '$$$$$$$$$$$');
-
 }
 const checkDetails = async (oid: string | number) => {
   detailsForm.value = await getDetails(oid)

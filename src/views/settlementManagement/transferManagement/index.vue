@@ -161,22 +161,26 @@ const pageSideChange = (current: number, size: number) => {
 };
 // 处理
 const toHandle = (record: any) => {
-	cacheData.value.showDetail = true;
-	cacheData.value.detailParams = {
-		handle: true,
-		transferAccountsId: record.oid,
-		settlementCost: record.settlementCost,
-		status: record.status,
-	};
-};
-const toDetails = (record: any) => {
-	cacheData.value.showDetail = true;
 	cacheData.value.detailParams = {
 		handle: false,
 		transferAccountsId: record.oid,
 		settlementCost: record.settlementCost,
+		itineraryNo: record.itineraryNo,
 		status: null,
 	};
+	cacheData.value.showDetail = true;
+};
+const toDetails = (record: any) => {
+	cacheData.value.detailParams = {
+		handle: false,
+		transferAccountsId: record.oid,
+		settlementCost: record.settlementCost,
+		itineraryNo: record.itineraryNo,
+		status: null,
+	};
+	console.log(cacheData.value, `cacheData.value`);
+
+	cacheData.value.showDetail = true;
 };
 const route = useRouter();
 const lookTrip = (record: any) => {

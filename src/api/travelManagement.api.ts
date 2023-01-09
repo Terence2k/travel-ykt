@@ -493,6 +493,7 @@ export const travelManagement = {
 			showLoading: false,
 		});
 	},
+
 	//撤销重提
 	repealNreapplyPage(data: any) {
 		return request({
@@ -563,6 +564,16 @@ export const travelManagement = {
 		return request({
 			url: `${commonPath}/travel-agency-service/public/api/itineraryRevoke/submitRevokeAndRecommit`,
 			data,
+			method: 'post',
+			showLoading: true,
+		});
+	},
+
+	//撤销重提确认
+	getContractDetails(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/individual/itinerary/getContractDetails?oid=` + data.oid,
+
 			method: 'post',
 			showLoading: true,
 		});
@@ -694,14 +705,14 @@ export const travelManagement = {
 			showLoading: true,
 		});
 	},
-	
+
 	// 散客团变更基本信息
 	changeIndividualItineraryBasic(data: any) {
 		return request({
 			url: `${commonPath}/travel-agency-service/public/api/itinerary/change/changeIndividualItineraryBasic`,
 			method: 'post',
 			showLoading: true,
-			data
+			data,
 		});
 	},
 	getAreaByIdCardNo(data: any) {
@@ -709,7 +720,7 @@ export const travelManagement = {
 			url: `${commonPath}/customer-service/public/api/area/getAreaByIdCardNo`,
 			method: 'get',
 			showLoading: false,
-			data
+			data,
 		});
 	},
 	getTravelCheck(data: any) {
@@ -717,7 +728,7 @@ export const travelManagement = {
 			url: `${commonPath}/travel-agency-service/public/api/itineraryManage/manageList`,
 			method: 'post',
 			showLoading: true,
-			data
+			data,
 		});
 	},
 	suspendItinerary(data: any) {
@@ -725,7 +736,7 @@ export const travelManagement = {
 			url: `${commonPath}/travel-agency-service/public/api/itinerary/suspendItinerary`,
 			method: 'put',
 			showLoading: true,
-			data
+			data,
 		});
 	},
 	startItinerary(data: any) {
@@ -733,9 +744,7 @@ export const travelManagement = {
 			url: `${commonPath}/travel-agency-service/public/api/itinerary/startItinerary`,
 			method: 'put',
 			showLoading: true,
-			data
+			data,
 		});
 	},
-	
-	
 };
