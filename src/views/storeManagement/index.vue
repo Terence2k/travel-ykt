@@ -100,13 +100,12 @@
 
   <CommonModal :title="submitTitle" v-model:visible="modalVisible" @cancel="modalCancel" @close="modalCancel"
     :conform-text="'提交'" @conform="submitStore" width="50%">
-    <a-form ref="addStoreRef" :model="form" :rules="formRules" name="addStore" autocomplete="off"
-      :label-col="labelCol">
+    <a-form ref="addStoreRef" :model="form" :rules="formRules" name="addStore" autocomplete="off" :label-col="labelCol">
       <a-form-item name="companyId" label="所属旅行社">
         <a-select placeholder="请选择所属旅行社" v-model:value="form.companyId" allowClear :disabled="!isSuper">
           <a-select-option v-for="item in companyOptions" :value="item.oid">{{
-    item.name
-}}
+            item.name
+          }}
           </a-select-option>
         </a-select>
       </a-form-item>
@@ -133,8 +132,8 @@
       <a-form-item name="contractPurview" label="门店合同权限">
         <a-select placeholder="请选择门店合同权限" v-model:value="form.contractPurview" allowClear>
           <a-select-option v-for="item in contractOptions" :value="item.oid">{{
-    item.name
-}}
+            item.name
+          }}
           </a-select-option>
         </a-select>
       </a-form-item>
@@ -153,7 +152,7 @@
         </a-radio-group>
       </a-form-item>
       <a-form-item name="basisUrl" label="创建依据（可上传5张图片）">
-        <Upload v-model="form.basisUrl" :maxCount="5" ref="imgUploadRef"/>
+        <Upload v-model="form.basisUrl" :maxCount="5" ref="imgUploadRef" />
       </a-form-item>
     </a-form>
   </CommonModal>
@@ -163,11 +162,11 @@
       <table class="info_table" cellpadding="16px" border="1">
         <tr class="row" v-for="(value, key) in detailsKeys">
           <td class="key">{{ value }}</td>
-          <td class="value" v-if="key === 'basisUrl'">
+          <td class="value" v-if="key === 'basisUrl' && detailsForm[key]">
             <a-image v-for="(item) in cmpBasisUrl(detailsForm[key])" style="width:90px;margin:0 5px 5px 0"
               :src="item" />
           </td>
-          <td class="value" v-else>{{ detailsForm[key] }}</td>
+          <td class="value" v-else>{{ [null, '', undefined].includes(detailsForm[key]) ? '/' : detailsForm[key] }}</td>
         </tr>
       </table>
     </div>
@@ -190,11 +189,11 @@
       <table class="info_table" cellpadding="16px" border="1">
         <tr class="row" v-for="(value, key) in detailsKeys">
           <td class="key">{{ value }}</td>
-          <td class="value" v-if="key === 'basisUrl'">
+          <td class="value" v-if="key === 'basisUrl' && detailsForm[key]">
             <a-image v-for="(item) in cmpBasisUrl(detailsForm[key])" style="width:90px;margin:0 5px 5px 0"
               :src="item" />
           </td>
-          <td class="value" v-else>{{ detailsForm[key] }}</td>
+          <td class="value" v-else>{{ [null, '', undefined].includes(detailsForm[key]) ? '/' : detailsForm[key] }}</td>
         </tr>
       </table>
     </div>
@@ -210,12 +209,17 @@
         </tr>
         <tr class="row" v-for="(key, index) in Object.keys(changeList)" :key="index">
           <td class="key">{{ detailsKeys[key] }}</td>
-          <td class="value" v-if="key === 'basisUrl'" v-for="(citem, inex) in changeList[key]">
-            <a-image v-for="(item) in cmpBasisUrl(citem)" style="width:90px;margin:0 5px 5px 0" :src="item" />
+          <td class="value" v-if="key === 'basisUrl'" v-for=" (citem, inex) in changeList[key]">
+            <a-image v-if="citem" v-for="(item) in cmpBasisUrl(citem)" style="width:90px;margin:0 5px 5px 0"
+              :src="item" />
+            <span v-else>/</span>
           </td>
           <td v-else class="value" v-for="(citem, inex) in changeList[key]"
-            :colspan="['companyName', 'updateTime'].includes(key) ? 2 : 0"
-            :class="{ tac: ['companyName', 'updateTime'].includes(key) }">{{ citem }}</td>
+            :colspan="['companyName', 'lastUpdateTime'].includes(key) ? 2 : 0"
+            :class="{ tac: ['companyName', 'lastUpdateTime'].includes(key) }">{{
+              [null, '', undefined].includes(citem) ?
+                '/' : citem
+            }}</td>
           <!-- <td class="value">{{ oldArrList[item] }}</td>
           <td class="value">{{ newArrList[item] }}</td> -->
         </tr>
@@ -262,6 +266,7 @@ import { message } from 'ant-design-vue';
 import { useRouter, useRoute } from 'vue-router';
 import type { Rule } from 'ant-design-vue/es/form';
 import { getTabPermission } from '@/utils/util';
+import { awsGetPreSignedUrl } from '@/utils/awsUpload';
 const router = useRouter();
 const route = useRoute()
 const state = reactive({
@@ -517,7 +522,7 @@ const columns1 = [
 ]
 const detailsKeys = {
   companyName: '所属旅行社',
-  updateTime: '修改提交时间',
+  lastUpdateTime: '修改提交时间',
   storeName: '门店名称',
   storeAddress: '门店地址',
   storePhone: '门店电话',
@@ -538,6 +543,19 @@ const contractOptions = [
   { oid: 2, name: '仅线上合同' },
   { oid: 3, name: '仅线下合同' },
 ]
+const getURL = async (url: string) => {
+  if (url) {
+    let res
+    if (url.indexOf('http:') === -1) {
+      res = await awsGetPreSignedUrl(url)
+    } else {
+      res = url
+    }
+    return res
+  } else {
+    return ''
+  }
+}
 const failFormRules: Record<string, Rule[]> = {
   auditRemark: [{ required: true, trigger: 'blur', message: '请输入驳回原因' }],
 }
@@ -676,6 +694,9 @@ const auditStore = async (record: any) => {
     isRegiste.value = true
     state.auditVisible = true
     detailsForm.value = await getDetails(record.oid)
+    const strList = detailsForm.value.basisUrl.split(',')
+    const imgUrlList = await getImgUrlList(strList)
+    detailsForm.value.basisUrl = imgUrlList.toString();
   } else if (record.auditStatus === 1 && record.informationAuditStatus === 1) {
     failForm.auditTypeCode = 19 // 18: 创建散客门店.,19:修改散客门店信息
     isRegiste.value = false
@@ -740,6 +761,7 @@ const changeCancel = () => {
   newArrList.value = {}
   oldArrList.value = {}
   changeKeys.value = []
+  detailsForm.value = {}
 }
 const changeConform = () => { }
 
@@ -775,12 +797,20 @@ const getChangeInfo = async (oid: string | number) => {
   const newList = res?.new
   const oldList = res?.old
   const companyName = res?.companyName
-  const updateTime = res?.updateTime
+  const updateTime = res?.lastUpdateTime
   changeList.value.companyName = [companyName]
-  changeList.value.updateTime = [updateTime]
+  changeList.value.lastUpdateTime = [updateTime]
   const keyList = Object.keys(detailsKeys)
-  keyList.forEach((key: string) => {
+  keyList.forEach(async (key: string) => {
     if (newList[key] != oldList[key]) {
+      if (key === 'basisUrl') {
+        const strList = oldList[key].split(',');
+        const imgUrlList = await getImgUrlList(strList);
+        oldList[key] = imgUrlList.toString();
+        const strList1 = newList[key].split(',');
+        const imgUrlList1 = await getImgUrlList(strList1);
+        newList[key] = imgUrlList1.toString();
+      }
       changeList.value[key] = [oldList[key], newList[key]]
       // newArrList.value[key] = newList[key]
       // oldArrList.value[key] = oldList[key]
@@ -788,8 +818,17 @@ const getChangeInfo = async (oid: string | number) => {
     }
   })
 }
+const getImgUrlList = async (strList: string[]) => {
+  const strListPromist = strList.map(async (item: string) => {
+    return await getURL(item)
+  })
+  return await Promise.all(strListPromist);
+}
 const checkDetails = async (oid: string | number) => {
   detailsForm.value = await getDetails(oid)
+  const strList = detailsForm.value.basisUrl.split(',')
+  const imgUrlList = await getImgUrlList(strList)
+  detailsForm.value.basisUrl = imgUrlList.toString();
   detailsVisible.value = true
 }
 const detailsClose = () => {
