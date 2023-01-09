@@ -45,6 +45,9 @@
       <a-tab-pane key="1" tab="已审核" v-if="getTabPermission('已审核')">
         <CommonTable :dataSource="tableData.data" :columns="columns">
           <template #bodyCell="{ column, record, index }">
+            <template v-if="column.key === 'index'">
+              {{ index + 1 }}
+            </template>
             <template v-if="column.key === 'action'">
               <div class="action-btns">
                 <a @click="checkDetails(record.oid)" v-permission="'已审核_查看'">查看</a>
