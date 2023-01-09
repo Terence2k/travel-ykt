@@ -101,12 +101,12 @@
 			<template #bodyCell="{ column, record, index }">
 				<template v-if="column.key === 'endDate'"> {{ record.startDate }} - {{ record.endDate }} </template>
 				<template v-if="column.key === 'certificateType'"> {{ certificateTypeList[record.certificateType] }} </template>
-				<template v-if="column.key === 'codeContent'">
+				<!-- <template v-if="column.key === 'codeContent'">
 					<a-image :src="record.codeContent"></a-image>
 				</template>
 				<template v-if="column.key === 'healthCodeStatus'">
 					{{ getCode[record.healthCodeStatus] }}
-				</template>
+				</template> -->
 			</template>
 		</CommonTable>
 		<p class="top-p">交通信息<span></span></p>
@@ -283,6 +283,7 @@ const state = reactive({
 	attachmentList: [],
 	productList: [],
 	guWeiDetail: [],
+	contract: [],
 });
 const guide = [
 	{
@@ -356,16 +357,16 @@ const tourist = [
 		dataIndex: 'sourceAddressName',
 		key: 'sourceAddressName',
 	},
-	{
-		title: '健康码',
-		dataIndex: 'codeContent',
-		key: 'codeContent',
-	},
-	{
-		title: '中高风险',
-		dataIndex: 'healthCodeStatus',
-		key: 'healthCodeStatus',
-	},
+	// {
+	// 	title: '健康码',
+	// 	dataIndex: 'codeContent',
+	// 	key: 'codeContent',
+	// },
+	// {
+	// 	title: '中高风险',
+	// 	dataIndex: 'healthCodeStatus',
+	// 	key: 'healthCodeStatus',
+	// },
 	{
 		title: '特殊证件',
 		dataIndex: 'discountRuleId',
@@ -782,8 +783,15 @@ const initInfo = () => {
 		});
 };
 
+const initContract = async () => {
+	let res = await api.travelManagement.getContractDetails({ oid: route.currentRoute.value?.query?.id });
+	state.contract = res.data;
+	console.log(res);
+};
+
 onMounted(() => {
 	initInfo();
+	initContract();
 	navigatorBar.setNavigator(['旅行社管理', '散客拼团', '行程详情：' + route.currentRoute.value?.query?.itineraryNo]);
 });
 
