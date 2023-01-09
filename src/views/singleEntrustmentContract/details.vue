@@ -370,6 +370,13 @@ const costColumns = [
     key: 'individualSubtotal',
   },
 ]
+const accDivValue = (value: any) => {
+  if (typeof value === 'number') {
+    return accDiv(value, 100)
+  } else {
+    return undefined
+  }
+}
 const cmpHealthyColor = computed(() => (text: string) => {
   if (text === '绿码') {
     return 'green_text'
@@ -404,6 +411,9 @@ const getHealthyCodes = async (ids: number[]) => {
 }
 const setList = (list: any) => {
   list.forEach((item: any) => {
+    item.adultPrice = accDivValue(item.adultPrice)
+    item.childPrice = accDivValue(item.childPrice)
+    item.individualSubtotal = accDivValue(item.individualSubtotal)
     const keys = Object.keys(item)
     for (let i = 0; i < keys.length; i++) {
       const element = keys[i];
@@ -580,7 +590,7 @@ const getDetails = async (id: number) => {
       contractStatusName: contractStatusName || '/',
       deposit,
       liquidatedDamages,
-      bond: accDiv(bond, 100) || '/',
+      bond: accDivValue(bond) || '/',
       emergencyContact,
       emergencyContactPhone,
       electronicContractNo: electronicContractNo || '/',
@@ -594,12 +604,12 @@ const getDetails = async (id: number) => {
       disputeResolutionName,
       dataEntrustedProjectSource: [{
         entrustedProject,
-        entrustedProjectAmount,
+        entrustedProjectAmount: accDivValue(entrustedProjectAmount),
       }],
       itineraryNo: itineraryNo || '尚未成团',
       contractEstablish: contractEstablish || '/',
       creatorName: creatorName || '/',
-      contractAmount: accDiv(contractAmount, 100) || '/',
+      contractAmount: accDivValue(contractAmount) || '/',
       createTime,
       takeEffectTime: takeEffectTime || '/',
       otherAgreements: otherAgreements || '/',

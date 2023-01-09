@@ -93,13 +93,13 @@
             </a-input>
           </a-form-item>
           <a-form-item name="businessLicenseUrl" label="营业执照" v-show="formKeys?.businessLicenseUrl">
-            <Upload v-model="form.businessLicenseUrl" :maxCount="1" />
+            <Upload v-model="form.businessLicenseUrl" :maxCount="1" ref="imgUploadRef" />
           </a-form-item>
           <div class="tag" v-show="['TRAVEL', 'HOTEL', 'TICKET', 'CATERING'].includes(queryParams.businessType || '')">
             扩展信息：
           </div>
           <a-form-item name="manageUrl" label="经营许可证" v-show="formKeys?.manageUrl">
-            <Upload v-model="form.manageUrl" :maxCount="1" />
+            <Upload v-model="form.manageUrl" :maxCount="1" ref="imgUploadRef1" />
           </a-form-item>
           <a-form-item name="licenseNo" label="12301旅行社许可证号" v-show="formKeys?.licenseNo">
             <a-input v-model:value="form.licenseNo" placeholder="请输入12301旅行社许可证号" allowClear>
@@ -220,10 +220,7 @@
             <a-input v-model:value="form.memberRegistrationPhone" placeholder="请输入企业会员注册手机号" />
           </a-form-item>
           <a-form-item name="legalPersonUrl" label="法人身份证附件" v-show="formKeys?.legalPersonUrl">
-            <Upload v-model="form.legalPersonUrl" :maxCount="2" />
-          </a-form-item>
-          <a-form-item name="legalPersonUrl" label="法人身份证附件" v-show="formKeys?.legalPersonUrl">
-            <Upload v-model="form.legalPersonUrl" :maxCount="2" />
+            <Upload v-model="form.legalPersonUrl" :maxCount="2" ref="imgUploadRef2" />
           </a-form-item>
           <template v-if="queryParams.businessType === 'TRAVEL'">
             <div class="tag">
@@ -257,7 +254,7 @@
             信息变更佐证依据（可上传最多5张图片，或者1个pdf文件，非必填项）
           </div>
           <a-form-item>
-            <Upload v-model="form.imagesUrl" :maxCount="5" dynamicSlotName="itemRender" ref="imgUploadRef">
+            <Upload v-model="form.imagesUrl" :maxCount="5" dynamicSlotName="itemRender" ref="imgUploadRef3">
               <template #customUpload="{ file, actions }">
                 <div class="image_box">
                   <a-image width="104px" :src="file.url" />
@@ -324,6 +321,9 @@ const resetForm = () => {
   dateFormRef.value?.resetFields()
   form.value = {}
   imgUploadRef.value.clearFileList()
+  imgUploadRef1.value.clearFileList()
+  imgUploadRef2.value.clearFileList()
+  imgUploadRef3.value.clearFileList()
   pdfUploadRef.value.clearFileList()
 }
 const back = () => {
@@ -337,6 +337,9 @@ const back = () => {
 }
 const pdfUploadRef = ref()
 const imgUploadRef = ref()
+const imgUploadRef1 = ref()
+const imgUploadRef2 = ref()
+const imgUploadRef3 = ref()
 type detailsType = {
   oid?: number | string,
   businessType?: string,
