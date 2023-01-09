@@ -81,8 +81,8 @@
               </a-input>
             </a-form-item>
             <a-form-item name="contractFileUrl" label="上传附件" v-if="!isShow">
-              <Upload v-model="form.contractFileUrl" :maxCount="9" />
-              <pdfUpload v-model="form.pdfFileUrl" :maxCount="1" />
+              <Upload v-model="form.contractFileUrl" :maxCount="9" ref="imgUploadRef" />
+              <pdfUpload v-model="form.pdfFileUrl" :maxCount="1" ref="pdfUploadRef" />
             </a-form-item>
           </div>
           <div class="tag">选择线路</div>
@@ -151,7 +151,7 @@
           <a-table :columns="touristColumns" :data-source="dataTouristSource" bordered :pagination="false">
             <template #headerCell="{ column }">
               <template
-                v-if="['certificatesType', 'certificatesNo', 'touristName', 'touristType', 'gender', 'age', 'isHealthy', 'healthyCode', 'isAncientUygur'].includes(column.key)">
+                v-if="['certificatesType', 'certificatesNo', 'touristName', 'touristType', 'gender', 'age', 'isHealthy', 'isAncientUygur'].includes(column.key)">
                 <span style="color:#ff4d4f">
                   *
                 </span>
@@ -287,7 +287,7 @@
                   {{ cmpIsHealthy(text) }}
                 </template>
               </template>
-              <template v-if="column.dataIndex === 'healthyCode'">
+              <!-- <template v-if="column.dataIndex === 'healthyCode'">
                 <template v-if="record.isEdit">
                   <a-form ref="formRef8" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
                     <a-form-item name="healthyCode">
@@ -299,7 +299,7 @@
                 <template v-else>
                   {{ text }}
                 </template>
-              </template>
+              </template> -->
               <template v-if="column.dataIndex === 'isAncientUygur'">
                 <template v-if="record.isEdit">
                   <a-form ref="formRef9" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
@@ -405,14 +405,16 @@
             </template>
             <template v-if="column.dataIndex === 'adultPrice'">
               <a-input @change="() => { priceChange(dataCostSource[index]) }" v-if="record.isEdit"
-                v-model:value.number="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="输入价格" />
+                v-model:value.number="dataCostSource[index][column.dataIndex]" style="margin: -5px 0"
+                placeholder="输入价格" />
               <template v-else>
                 {{ text }}
               </template>
             </template>
             <template v-if="column.dataIndex === 'childPrice'">
               <a-input @change="() => { priceChange(dataCostSource[index]) }" v-if="record.isEdit"
-                v-model:value.number="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="输入价格" />
+                v-model:value.number="dataCostSource[index][column.dataIndex]" style="margin: -5px 0"
+                placeholder="输入价格" />
               <template v-else>
                 {{ text }}
               </template>
@@ -521,7 +523,11 @@ const accMulValue = (value: any) => {
 const router = useRouter();
 const route = useRoute();
 const isRefresh = ref('0')
+const imgUploadRef = ref()
+const pdfUploadRef = ref()
 const back = () => {
+  imgUploadRef.value.clearFileList()
+  pdfUploadRef.value.clearFileList()
   router.push({
     name: 'electronicContratList',
     params: {
@@ -639,7 +645,7 @@ const formRules = {
   gender: [{ required: true, trigger: 'blur', message: '请选择性别' }],
   age: [{ required: true, trigger: 'blur', message: '请输入年龄' }],
   isHealthy: [{ required: true, trigger: 'blur', message: '请选健康状态' }],
-  healthyCode: [{ required: true, trigger: 'blur', message: '健康码不能为空' }],
+  // healthyCode: [{ required: true, trigger: 'blur', message: '健康码不能为空' }],
   isAncientUygur: [{ required: true, trigger: 'blur', message: '请选择古维费购买状态' }],
   emergencyContact: [{ required: true, trigger: 'blur', message: '请填写紧急联系人' }],
   emergencyContactPhone: [{ required: true, trigger: 'blur', message: '请填写紧急联系电话' }],
@@ -739,11 +745,11 @@ const touristColumns = [
     dataIndex: 'isHealthy',
     key: 'isHealthy',
   },
-  {
+  /* {
     title: '健康码',
     dataIndex: 'healthyCode',
     key: 'healthyCode',
-  },
+  }, */
   {
     title: '古维费购买状态',
     dataIndex: 'isAncientUygur',
@@ -946,7 +952,7 @@ interface TouristItem {
   gender: undefined | string; // 性别
   isHealthy: undefined | number; // 是否健康
   isAncientUygur: undefined | number; //是否代收古维
-  healthyCode?: string;
+  // healthyCode?: string;
   isEdit: boolean;
 }
 interface LineItem {
@@ -997,7 +1003,7 @@ const handleTouristAdd = () => {
     age: '',
     gender: '男',
     isHealthy: 1,
-    healthyCode: ''
+    // healthyCode: ''
   };
   dataTouristSource.value.push(newData);
 };
@@ -1305,7 +1311,7 @@ const addressChange = () => {
     })
   }, 1000)
 }
-// 根据游客身份证号获取健康码
+/* // 根据游客身份证号获取健康码
 let timer: NodeJS.Timeout
 const certificatesNoChange = (obj: any) => {
   if (obj.certificatesNo) {
@@ -1314,7 +1320,7 @@ const certificatesNoChange = (obj: any) => {
       obj.healthyCode = await getHealthyCode([{ certificateId: obj.certificatesNo }])
     }, 2000)
   }
-}
+} */
 const rowPrice = (obj: any) => {
   let adultPrice = obj.adultPrice || 0
   let childPrice = obj.childPrice || 0
@@ -1402,7 +1408,7 @@ const getHealthyCodes = async (ids: number[]) => {
   }
   return res || []
 }
-const configCodeName = (certificateCodes: any) => {
+/* const configCodeName = (certificateCodes: any) => {
   for (let i = 0, l = certificateCodes.length; i < l; i++) {
     const item = certificateCodes[i];
     for (let j = 0, l = dataTouristSource.value.length; j < l; j++) {
@@ -1412,7 +1418,7 @@ const configCodeName = (certificateCodes: any) => {
       }
     }
   }
-}
+} */
 const getEditDetails = async (oid: any) => {
   const res = await api.editFindIndividualContractById(oid)
   if (res) {
@@ -1452,14 +1458,14 @@ const getEditDetails = async (oid: any) => {
         ...item
       }
     })
-    // 获取身份证列表
+    /* // 获取身份证列表
     const certificateIds = res.individualContractTouristBos.map((item: any) => {
       return { certificateId: item.certificatesNo }
     })
     // 根据身份证列表查询健康码列表
     const certificateCodes = await getHealthyCodes(certificateIds)
     // 将健康码和游客列表数据关联
-    configCodeName(certificateCodes)
+    configCodeName(certificateCodes) */
 
     dataCostSource.value = res.individualContractPriceBos.filter((item: any) => {
       // 只返回导游服务费和自定义费用
