@@ -1,7 +1,7 @@
 <template>
   <div>
 	
-		<CommonTable :row-selection="{onSelect}" :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
+		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
       <template #button>
       </template>
       <template #bodyCell="{ column, text, index,record }">
@@ -132,8 +132,5 @@
 			}
 		})
 	}
-  const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
-    console.log(record, selected, selectedRows);
-  }
 	onSearch()
 </script>

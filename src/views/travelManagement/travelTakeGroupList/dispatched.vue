@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<CommonTable :row-selection="{ onSelect }" :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
+		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
 			<template #button> </template>
 			<template #bodyCell="{ column, text, index, record }">
 				<template v-if="column.key === 'itineraryNo'">
@@ -144,9 +144,6 @@ const goToChange = (row: any) => {
 			message.error('该行程单发生过核销不可变更');
 		}
 	});
-};
-const onSelect = (record: any, selected: boolean, selectedRows: any[]) => {
-	console.log(record, selected, selectedRows);
 };
 onSearch();
 </script>

@@ -12,10 +12,12 @@
 			</search-item>
 
 			<search-item label="行程时间">
-				<a-range-picker
-					v-model:value="travelStore.takeGroupList[chart].params.time"
-					show-time
-					format="YYYY-MM-DD HH:mm:ss"
+				<datePicker
+					v-model="travelStore.takeGroupList[chart].params.time"
+					type="datetimerange"
+					popper-class="hidden-date-picker"
+					start-placeholder="开始日期"
+					end-placeholder="结束日期"
 					value-format="YYYY-MM-DD HH:mm:ss"
 				/>
 			</search-item>
