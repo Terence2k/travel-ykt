@@ -39,7 +39,7 @@
               <span class="list_item_operate">
                 <a-select v-model:value="form.rechargeTime" style="width: 95px" @change="getBaseInfo">
                   <a-select-option v-for="item in tiemOptions" :value="item.value" :key="item.value">{{
-                      item.key
+                    item.key
                   }}
                   </a-select-option>
                 </a-select>
@@ -56,7 +56,7 @@
               <span class="list_item_operate">
                 <a-select v-model:value="form.expenditureTime" style="width: 95px" @change="getBaseInfo">
                   <a-select-option v-for="item in tiemOptions" :value="item.value" :key="item.value">{{
-                      item.key
+                    item.key
                   }}
                   </a-select-option>
                 </a-select>
@@ -180,6 +180,21 @@ import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router';
 import { getTabPermission } from '@/utils/util';
 import picker from '@/components/common/datePicker.vue'
+import { accDiv, accMul } from '@/utils/compute';
+const accDivValue = (value: any) => {
+  if (typeof value === 'number') {
+    return accDiv(value, 100)
+  } else {
+    return undefined
+  }
+}
+const accMulValue = (value: any) => {
+  if (typeof value === 'number') {
+    return accMul(value, 100)
+  } else {
+    return null
+  }
+}
 const router = useRouter();
 const activeKey = ref('1');
 const dateFormat = 'YYYY-MM-DD';
@@ -381,7 +396,7 @@ const inputChange = (type: number) => {
         } else {
           let val = Number(startAmount1.value)
           if (!isNaN(val)) {
-            state.tableData1.param.startAmount = val * 100
+            state.tableData1.param.startAmount = accMulValue(val)
           } else {
             message.warning('请输入正确金额！')
           }
@@ -395,7 +410,7 @@ const inputChange = (type: number) => {
         } else {
           let val = Number(endAmount1.value)
           if (!isNaN(val)) {
-            state.tableData1.param.endAmount = val * 100
+            state.tableData1.param.endAmount = accMulValue(val)
           } else {
             message.warning('请输入正确金额！')
           }
@@ -409,7 +424,7 @@ const inputChange = (type: number) => {
         } else {
           let val = Number(startAmount2.value)
           if (!isNaN(val)) {
-            state.tableData2.param.startAmount = val * 100
+            state.tableData2.param.startAmount = accMulValue(val)
           } else {
             message.warning('请输入正确金额！')
           }
@@ -423,7 +438,7 @@ const inputChange = (type: number) => {
         } else {
           let val = Number(endAmount2.value)
           if (!isNaN(val)) {
-            state.tableData2.param.endAmount = val * 100
+            state.tableData2.param.endAmount = accMulValue(val)
           } else {
             message.warning('请输入正确金额！')
           }
@@ -437,7 +452,7 @@ const inputChange = (type: number) => {
         } else {
           let val = Number(startAmount3.value)
           if (!isNaN(val)) {
-            state.tableData3.param.startAmount = val * 100
+            state.tableData3.param.startAmount = accMulValue(val)
           } else {
             message.warning('请输入正确金额！')
           }
@@ -451,7 +466,7 @@ const inputChange = (type: number) => {
         } else {
           let val = Number(endAmount3.value)
           if (!isNaN(val)) {
-            state.tableData3.param.endAmount = val * 100
+            state.tableData3.param.endAmount = accMulValue(val)
           } else {
             message.warning('请输入正确金额！')
           }
@@ -496,9 +511,9 @@ const onSearch = async () => {
     let res = await api.findCapitalDetailedList(state.tableData1.param)
     if (res?.content) {
       res.content.forEach((item: any) => {
-        item.runningAmount = item.runningAmount ? Number(item.runningAmount) / 100 : 0
-        item.amountBeforeRunning = item.amountBeforeRunning ? Number(item.amountBeforeRunning) / 100 : 0
-        item.amountAfterRunning = item.amountAfterRunning ? Number(item.amountAfterRunning) / 100 : 0
+        item.runningAmount = accDivValue(item.runningAmount)
+        item.amountBeforeRunning = accDivValue(item.amountBeforeRunning)
+        item.amountAfterRunning = accDivValue(item.amountAfterRunning)
       })
       state.tableData1.data = res.content
       state.tableData1.total = res.total
@@ -510,9 +525,9 @@ const onSearch = async () => {
     let res = await api.findCapitalDetailedList(state.tableData2.param)
     if (res?.content) {
       res.content.forEach((item: any) => {
-        item.runningAmount = item.runningAmount ? Number(item.runningAmount) / 100 : 0
-        item.amountBeforeRunning = item.amountBeforeRunning ? Number(item.amountBeforeRunning) / 100 : 0
-        item.amountAfterRunning = item.amountAfterRunning ? Number(item.amountAfterRunning) / 100 : 0
+        item.runningAmount = accDivValue(item.runningAmount)
+        item.amountBeforeRunning = accDivValue(item.amountBeforeRunning)
+        item.amountAfterRunning = accDivValue(item.amountAfterRunning)
       })
       state.tableData2.data = res.content
       state.tableData2.total = res.total
@@ -524,9 +539,9 @@ const onSearch = async () => {
     let res = await api.findCapitalDetailedList(state.tableData3.param)
     if (res?.content) {
       res.content.forEach((item: any) => {
-        item.runningAmount = item.runningAmount ? Number(item.runningAmount) / 100 : 0
-        item.amountBeforeRunning = item.amountBeforeRunning ? Number(item.amountBeforeRunning) / 100 : 0
-        item.amountAfterRunning = item.amountAfterRunning ? Number(item.amountAfterRunning) / 100 : 0
+        item.runningAmount = accDivValue(item.runningAmount)
+        item.amountBeforeRunning = accDivValue(item.amountBeforeRunning)
+        item.amountAfterRunning = accDivValue(item.amountAfterRunning)
       })
       state.tableData3.data = res.content
       state.tableData3.total = res.total
@@ -551,9 +566,9 @@ const pageSideChange = (current: number, size: number) => {
   onSearch();
 }
 const getUserInfo = () => {
-  let userInfo = window.localStorage.getItem('userInfo');
-  userInfo = JSON.parse(userInfo as string)
-  const { sysCompany: { oid } } = userInfo
+  let userInfo = window.localStorage.getItem('userInfo')!;
+  const userInfoObj = JSON.parse(userInfo)
+  const { sysCompany: { oid } } = userInfoObj
   form.companyId = oid
   state.tableData1.param.companyId = oid
   state.tableData2.param.companyId = oid
@@ -574,10 +589,10 @@ const getBaseInfo = async () => {
   fundInfo.bank = bank;
   fundInfo.bankAccountName = bankAccountName;
   fundInfo.bankAccount = bankAccount;
-  fundInfo.availableBalance = availableBalance ? Number(availableBalance) / 100 : 0;
-  fundInfo.accountFrozen = accountFrozen ? Number(accountFrozen) / 100 : 0;
-  fundInfo.rechargedMoney = rechargedMoney ? Number(rechargedMoney) / 100 : 0;
-  fundInfo.expenditureMoney = expenditureMoney ? Number(expenditureMoney) / 100 : 0;
+  fundInfo.availableBalance = accDivValue(availableBalance);
+  fundInfo.accountFrozen = accDivValue(accountFrozen);
+  fundInfo.rechargedMoney = accDivValue(rechargedMoney);
+  fundInfo.expenditureMoney = accDivValue(expenditureMoney);
   fundInfo.yktAccountName = yktAccountName;
   fundInfo.yktAccountNumber = yktAccountNumber;
 }
