@@ -95,6 +95,14 @@
 			<!-- <span>(共30人,古维待缴人数:25,应缴费用:￥1250.00 订单状态：待出票)</span> -->
 		</p>
 		<CommonTable :columns="gouvy" :dataSource="state.guWeiDetail" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
+			<template #bodyCell="{ column, record, index }">
+				<template v-if="column.key === 'unitPrice'">
+					{{ record.unitPrice / 100 }}
+				</template>
+				<template v-if="column.key === 'action'">
+					<a-button type="link" @click="gotoDetails(record.itineraryId)"> 查看订单</a-button>
+				</template>
+			</template>
 		</CommonTable>
 		<p class="top-p">
 			综费产品
@@ -115,6 +123,9 @@
 					<span v-if="typeof record.totalFee === 'number'">
 						{{ record.totalFee / 100 }}
 					</span>
+				</template>
+				<template v-if="column.key === 'action'">
+					<a-button type="link" @click="gotoDetails(record.itineraryId)"> 查看订单</a-button>
 				</template>
 			</template>
 		</CommonTable>
@@ -376,38 +387,38 @@ const trafficInfo = [
 const gouvy = [
 	{
 		title: '费用名称',
-		dataIndex: 'touristName',
-		key: 'touristName',
+		dataIndex: 'feeName',
+		key: 'feeName',
 	},
 	{
 		title: '团队游客人数',
-		dataIndex: 'certificateTypeName',
-		key: 'certificateTypeName',
+		dataIndex: 'touristNum',
+		key: 'touristNum',
 	},
 	{
 		title: '应缴人数',
-		dataIndex: 'certificateNo',
-		key: 'certificateNo',
+		dataIndex: 'payableNum',
+		key: 'payableNum',
 	},
 	{
 		title: '应缴总金额（元）',
-		dataIndex: 'genderName',
-		key: 'genderName',
+		dataIndex: 'unitPrice',
+		key: 'unitPrice',
 	},
 	{
 		title: '是否发起过减免申请',
-		dataIndex: 'sourceAddressName',
-		key: 'sourceAddressName',
+		dataIndex: 'isInitiateReductionName',
+		key: 'isInitiateReductionName',
 	},
 	{
 		title: '减免申请是否通过',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
+		dataIndex: 'isReductionPassedName',
+		key: 'isReductionPassedName',
 	},
 	{
 		title: '出票状态',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
+		dataIndex: 'issueStatusName',
+		key: 'issueStatusName',
 	},
 	{
 		title: '操作',
@@ -418,13 +429,13 @@ const gouvy = [
 const comprehensive = [
 	{
 		title: '费用名称',
-		dataIndex: 'comprehensiveFeeProductName',
-		key: 'comprehensiveFeeProductName',
+		dataIndex: 'productName',
+		key: 'productName',
 	},
 	{
 		title: '结算归属',
-		dataIndex: 'belongCompanyName',
-		key: 'belongCompanyName',
+		dataIndex: 'belongCompanyTypeName',
+		key: 'belongCompanyTypeName',
 	},
 	{
 		title: '收费模式',
@@ -453,14 +464,14 @@ const comprehensive = [
 	},
 	{
 		title: '总金额（元）',
-		dataIndex: 'totalFee',
-		key: 'totalFee',
+		dataIndex: 'payablePrice',
+		key: 'payablePrice',
 	},
-	{
-		title: '操作',
-		dataIndex: 'action',
-		key: 'action',
-	},
+	// {
+	// 	title: '操作',
+	// 	dataIndex: 'action',
+	// 	key: 'action',
+	// },
 ];
 const hotel = [
 	{
@@ -568,6 +579,15 @@ const enclosure = [
 		key: '4',
 	},
 ];
+
+const gotoDetails = (itineraryId: any) => {
+	route.push({
+		path: '/travel/travel_manage/travel_detail',
+		query: {
+			oid: itineraryId,
+		},
+	});
+};
 const reRecokeAuditVisible = ref(false);
 
 const reRecokeAuditTipsVisible = ref(false);
@@ -660,6 +680,11 @@ const getCode = {
 	10: '红码',
 };
 
+const getGouvyInfo = async () => {
+	let res = await api.getManagementExpenses(route.currentRoute.value?.query?.id);
+	state.guWeiDetail = res;
+};
+
 const initInfo = () => {
 	let queryData = {
 		oid: route.currentRoute.value?.query?.id,
@@ -676,7 +701,7 @@ const initInfo = () => {
 			state.touristList = res.touristList.content;
 			state.transportList = res.transportList;
 			state.productList = res.productList;
-			state.guWeiDetail = res.guWeiDetail;
+			// state.guWeiDetail = res.guWeiDetail;
 
 			let arr = [{ 1: [], 2: [], 3: [], 4: [] }];
 
@@ -699,8 +724,9 @@ const initInfo = () => {
 		});
 };
 
-onMounted(() => {
-	initInfo();
+onMounted(async () => {
+	await initInfo();
+	await getGouvyInfo();
 });
 </script>
 <style scoped lang="less">
@@ -747,6 +773,9 @@ onMounted(() => {
 			background: rgba(245, 247, 250, 0.39);
 		}
 		margin-bottom: 20px;
+		.value {
+			min-width: 300px;
+		}
 	}
 	.top-p {
 		font-weight: bold;
