@@ -111,12 +111,12 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 				key: 'sourceAddressName',
 				width: 200,
 			},
-			// {
-			// 	title: '健康状态',
-			// 	dataIndex: 'healthCode',
-			// 	key: 'healthCode',
-			// 	width: 200,
-			// },
+			{
+				title: '健康状态',
+				dataIndex: 'healthCode',
+				key: 'healthCode',
+				width: 200,
+			},
 			{
 				title: '紧急联系人',
 				dataIndex: 'emergencyContactName',

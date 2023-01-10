@@ -104,7 +104,7 @@
             </template>
             <template v-if="column.key === 'action'">
               <div class="action-btns">
-                <a>查看订单</a>
+                <a @click="toOrderDetail(record, item.title)">查看订单</a>
               </div>
             </template>
             <template v-if="column.key === 'attachmentUrl'">
@@ -226,6 +226,36 @@
 			console.log(err);
 		});
   }
+
+  const toOrderDetail = (row: any, title: any) => {
+    switch (title) {
+      case '古维管理费':
+        toGuweiOrder(row.oid);
+      break;
+      case '酒店费用':
+        toHotelOrder(row.hotelOrderNo);
+      break;
+      case '景区费用':
+        toScenicDetail(row.ticketOrderNo);
+      break;
+    }
+  }
+
+  // 跳转古维订单
+  const toGuweiOrder = (value: any) => {
+    route.push({ path: '/gouvyManagement/order/order_edit', query: { oid: value } });
+  };
+
+  // 跳转酒店订单
+  const toHotelOrder = (value: any) => {
+    route.push({ path: '/hotelManagement/hotelOrder/orderEdit', query: { orderNo: value } });
+  };
+
+  // 跳转景区订单
+  const toScenicDetail = (value: any) => {
+    route.push({ path: '/scenic-spot/order-manage/edit', query: { oid: value } });
+  };
+
   getItineraryDetail(route.currentRoute.value.query.oid);
   onMounted(() => {
     document.getElementsByClassName('ant-descriptions-view')[1].style.height = `${getStyles(document.getElementsByClassName('ant-descriptions-view')[0], 'height')}px`;

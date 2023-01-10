@@ -311,14 +311,14 @@ const getTraveDetail = () => {
 						it.hotelId = it.productId;
 						it.hotelName = it.productName;
 						return it;
-				  })
+				  }).filter((it: any) => it.hotelId)
 				: [];
 			res.waitBuyItem.waitBuyTicket = res.waitBuyItem.waitBuyTicket
 				? res.waitBuyItem.waitBuyTicket.map((it: any) => {
 						it.scenicId = it.productId;
 						it.scenicName = it.productName;
 						return it;
-				  })
+				  }).filter((it: any) => it.scenicId)
 				: [];
 			const hotel = [
 				...res.waitBuyItem.waitBuyHotel,
