@@ -144,6 +144,7 @@
 									popper-class="hidden-date-picker"
 									v-model="formState.endDate"
 									placeholder="选择行程结束日期"
+									:default-time="new Date(2022, 12, 1, 23, 59, 59)"
 									:disabled-date="disabledDate"
 									value-format="YYYY-MM-DD HH:mm:ss"
 									:disabled-hours="() => disabledHours(formState.startDate, formState.endDate, 'start')"
