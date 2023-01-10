@@ -122,6 +122,7 @@
 			<template #bodyCell="{ column, record, index }">
 				<template v-if="column.key === 'index'"> {{ index + 1 }} </template>
 				<template v-if="column.key === 'tripDate'"> {{ record.tripStartTime }} - {{ record.tripEndTime }} </template>
+				<template v-if="column.key === 'contractAmount'"> {{ record.contractAmount / 100 }} </template>
 			</template>
 		</CommonTable>
 		<p class="top-p">
