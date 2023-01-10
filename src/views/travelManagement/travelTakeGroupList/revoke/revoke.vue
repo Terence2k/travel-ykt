@@ -77,11 +77,11 @@
 				<template v-if="column.key === 'endDate'"> {{ record.startDate }} - {{ record.endDate }} </template>
 				<template v-if="column.key === 'certificateType'"> {{ certificateTypeList[record.certificateType] }} </template>
 				<template v-if="column.key === 'codeContent'">
-					<a-image :src="record.codeContent"></a-image>
-				</template>
-				<template v-if="column.key === 'healthCodeStatus'">
 					{{ getCode[record.healthCodeStatus] }}
 				</template>
+				<!-- <template v-if="column.key === 'healthCodeStatus'">
+					{{ getCode[record.healthCodeStatus] }}
+				</template> -->
 			</template>
 		</CommonTable>
 		<p class="top-p">交通信息<span></span></p>
@@ -336,15 +336,15 @@ const tourist = [
 		dataIndex: 'codeContent',
 		key: 'codeContent',
 	},
-	{
-		title: '中高风险',
-		dataIndex: 'healthCodeStatus',
-		key: 'healthCodeStatus',
-	},
+	// {
+	// 	title: '中高风险',
+	// 	dataIndex: 'healthCodeStatus',
+	// 	key: 'healthCodeStatus',
+	// },
 	{
 		title: '特殊证件',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
+		dataIndex: 'specialCertificateTypeName',
+		key: 'specialCertificateTypeName',
 	},
 ];
 const trafficInfo = [

@@ -101,10 +101,11 @@
 			<template #bodyCell="{ column, record, index }">
 				<template v-if="column.key === 'endDate'"> {{ record.startDate }} - {{ record.endDate }} </template>
 				<template v-if="column.key === 'certificateType'"> {{ certificateTypeList[record.certificateType] }} </template>
-				<!-- <template v-if="column.key === 'codeContent'">
-					<a-image :src="record.codeContent"></a-image>
+				<template v-if="column.key === 'codeContent'">
+					{{ getCode[record.healthCodeStatus] }}
+					<!-- <CommonImg :key="record.codeContent" :width="50" :src="record.codeContent"></CommonImg> -->
 				</template>
-				<template v-if="column.key === 'healthCodeStatus'">
+				<!-- <template v-if="column.key === 'healthCodeStatus'">
 					{{ getCode[record.healthCodeStatus] }}
 				</template> -->
 			</template>
@@ -368,11 +369,11 @@ const tourist = [
 		dataIndex: 'sourceAddressName',
 		key: 'sourceAddressName',
 	},
-	// {
-	// 	title: '健康码',
-	// 	dataIndex: 'codeContent',
-	// 	key: 'codeContent',
-	// },
+	{
+		title: '健康码',
+		dataIndex: 'codeContent',
+		key: 'codeContent',
+	},
 	// {
 	// 	title: '中高风险',
 	// 	dataIndex: 'healthCodeStatus',
@@ -380,8 +381,8 @@ const tourist = [
 	// },
 	{
 		title: '特殊证件',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
+		dataIndex: 'specialCertificateTypeName',
+		key: 'specialCertificateTypeName',
 	},
 ];
 const trafficInfo = [
