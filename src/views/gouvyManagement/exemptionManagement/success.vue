@@ -1,22 +1,17 @@
 <template>
 	<div>
-		<CommonTable :columns="columns" :dataSource="state.tableData.data" :scrollY="false" :showExpandColumn="true" rowKey="itineraryId">
+		<CommonTable :columns="columns" :dataSource="state.tableData.data" :scrollY="false" :showExpandColumn="true" rowKey="itineraryId" @expand="expand" >
 			<template #bodyCell="{ column, record }">
 				<template v-if="column.dataIndex === 'itineraryStartDate'">
 					<span>{{ record.itineraryStartDate }}~{{ record.itineraryEndDate }}</span>
 				</template>
-				<template v-if="column.dataIndex === 'actions'">
-					<div class="action-btns">
-						<a @click="toSee(record.oid)" v-permission="'审核通过_查看'">查看</a>
-					</div>
-				</template>
 			</template>
 			<template #expandedRowRender>
-				<a-table :columns="innerColumns" :data-source="state.tableData.data" :pagination="false">
+				<a-table :columns="innerColumns" :data-source="state.tableData.innerData" :pagination="false">
 					<template #bodyCell="{ column, record }">
 						<template v-if="column.dataIndex === 'actions'">
 					<div class="action-btns">
-						<a @click="toSee(record.oid)" v-permission="'审核通过_查看'">查看</a>
+						<a @click="toSee(record.oid,record.itineraryId)" v-permission="'审核通过_查看'">查看</a>
 					</div>
 				</template>
 					</template>
@@ -100,23 +95,23 @@ const columns = [
 const innerColumns = [
 	{
 		title: '提交审核时间',
-		dataIndex: 'routeName',
-		key: 'routeName',
+		dataIndex: 'createTime',
+		key: 'createTime',
 	},
 	{
 		title: '提交审核人',
-		dataIndex: 'travelName',
-		key: 'travelName',
+		dataIndex: 'creatorName',
+		key: 'creatorName',
 	},
 	{
 		title: '审核完成时间',
-		dataIndex: 'subTravelName',
-		key: 'subTravelName',
+		dataIndex: 'lastUpdateTime',
+		key: 'lastUpdateTime',
 	},
 	{
 		title: '审核人',
-		dataIndex: 'subTravelName',
-		key: 'subTravelName',
+		dataIndex: 'lastUpdaterName',
+		key: 'lastUpdaterName',
 	},
 	{
 		title: '减免人数',
@@ -135,6 +130,7 @@ const state = reactive({
 	tableData: {
 		data: computed(() => gouvyStore.gouvyList.success.list),
 		total: computed(() => gouvyStore.gouvyList.success.total),
+		innerData:[],
 		loading: false,
 		param: {
 			pageNo: 1,
@@ -154,15 +150,25 @@ const pageSideChange = (current: number, size: number) => {
 	// state.tableData.param.pageSize = size;
 	// onSearch();
 };
-
+const expand=(expanded:any,record:any)=>{
+	let data={
+		itineraryId:record.itineraryId,
+		auditStatus:1
+	}
+	// console.log(record,expanded);
+	
+	api.applyReductionList(data).then((res:any)=>{
+		state.tableData.innerData=res
+	})
+}
 const getSuccessList = async () => {
 	gouvyStore.gouvyList.success.params.auditStatus = GouvyStatus.success;
 	const res = await api.exemptionManagementList(gouvyStore.gouvyList.success.params);
 	gouvyStore.setOrderList(res, 'success');
 };
 
-const toSee = (oid :any) => {
-	router.push({ path: '/gouvyManagement/exemptionManagement/exemption-management_edit' , query: { oid:oid } });
+const toSee = (oid :any,itineraryId:any) => {
+	router.push({ path: '/gouvyManagement/exemptionManagement/exemption-management_edit' , query: { oid:oid,itineraryId:itineraryId} });
 };
 
 onMounted(() => {
