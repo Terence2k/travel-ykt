@@ -248,13 +248,7 @@ export const getOptions = (props: any) => {
         title: '总金额（元）',
         dataIndex: 'totalFee',
         key: 'totalFee',
-      },
-      {
-        title: '操作',
-        key: 'action',
-        fixed: 'right',
-        width: 208
-      },
+      }
     ],
     title: '综费产品',
     descriptions: 
@@ -308,6 +302,12 @@ export const getOptions = (props: any) => {
         dataIndex: 'orderStatusName',
         key: 'orderStatusName',
       },
+      {
+        title: '操作',
+        key: 'action',
+        fixed: 'right',
+        width: 208
+      }
     ],
     title: '酒店费用',
     descriptions: 

@@ -2,7 +2,7 @@
 	<div class="warp">
 		<div class="top-div">
 			<header>行程信息</header>
-			<a-button type="primary" style="margin-top: 15px" @click="go()">返回上一级</a-button>
+			<a-button type="primary" style="margin-top: 15px" @click="go()">返回上一页</a-button>
 		</div>
 		<a-form labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
 			<a-form-item label="行程类型">
@@ -154,7 +154,7 @@ const Fail = () => {
 	formRef.value
     .validateFields()
     .then((values: any) => {
-      api.noAuditFailed(data).then((res) => {
+      api.noAuditFailed(data).then((res:any) => {
 			message.error('审核未通过');
 			dialogVisible.value = false;
 			go();
@@ -196,7 +196,8 @@ const informationList = () => {
 	});
 };
 const go = () => {
-	router.push({ path: '/gouvyManagement/exemptionManagement/list' });
+	// router.push({ path: '/gouvyManagement/exemptionManagement/list' });
+	router.go(-1);
 };
 onMounted(() => {
 	informationList();

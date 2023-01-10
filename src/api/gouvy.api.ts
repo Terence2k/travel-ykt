@@ -135,6 +135,15 @@ export async function applyReduction(data: any) {
 		showLoading: true,
 	});
 }
+//古维订单提交减免申请二级菜单列表
+export async function applyReductionList(data: any) {
+	return request({
+		url: `${commonPath}/heritage-maintenance-service/public/api/hm-apply-record/list`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
 //古维订单提交减免审核不通过
 export async function noAuditFailed(data: any) {
 	return request({
