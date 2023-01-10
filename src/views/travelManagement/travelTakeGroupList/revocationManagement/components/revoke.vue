@@ -51,16 +51,16 @@
 					<td class="value">
 						<div style="margin-bottom: 20px">
 							<span v-if="state.detail.submitRevokeNewItineraryInfoVo.hotelList?.length">
-								<p v-for="(item, index) in state.detail.submitRevokeNewItineraryInfoVo.hotelList || []" :key="index">
+								<p v-for="(item, index) in state.detail.submitRevokeNewItineraryInfoVo?.hotelList || []" :key="index">
 									<span>{{ index + 1 }}.</span>
 									<span>{{ item.hotelName }}，</span>
-									<span v-for="(roomIten, i) in item.roomTypeList" :key="i"
+									<span v-for="(roomIten, i) in item?.roomTypeList" :key="i"
 										>{{ roomIten.roomTypeName }}
 										<span>{{ roomIten.roomCount }}间</span>
 									</span>
-									<span>{{ dayjs(item.endDate || '').diff(item.startDate, 'day') }}天，</span>
+									<span>{{ dayjs(item?.endDate || '').diff(item?.startDate, 'day') }}天，</span>
 									<span
-										>费用总计 <span style="color: red">{{ item.orderFee / 100 }}</span
+										>费用总计 <span style="color: red">{{ item?.orderFee ? item?.orderFee / 100 : '0' }}</span
 										>元；</span
 									>
 								</p>
@@ -71,16 +71,15 @@
 						<div style="margin-bottom: 20px">
 							<span v-if="state.detail.submitRevokeOldItineraryInfoVo.hotelList?.length">
 								<p v-for="(item, index) in state.detail.submitRevokeOldItineraryInfoVo.hotelList" :key="index">
-									{{ item }}
-									<span>{{ item[index].hotelName }}，</span>
-									<span v-for="(roomIten, i) in item[index].roomTypeList" :key="i"
-										>{{ roomIten.roomTypeName }}
-										<span>{{ roomIten.roomCount }}间</span>
+									<span>{{ item[index]?.hotelName }}，</span>
+									<span v-for="(roomIten, i) in item[index]?.roomTypeList" :key="i"
+										>{{ roomIten?.roomTypeName }}
+										<span>{{ roomIten?.roomCount }}间</span>
 									</span>
 
-									<span>{{ dayjs(item[index].endDate).diff(item[index].startDate, 'day') }}天，</span>
+									<span>{{ dayjs(item[index]?.endDate).diff(item[index]?.startDate, 'day') }}天，</span>
 									<span
-										>费用总计 <span style="color: red">{{ item[index].orderFee / 100 }}</span
+										>费用总计 <span style="color: red">{{ item[index]?.orderFee ? item[index].orderFee / 100 : '0' }}</span
 										>元；</span
 									>
 								</p>
@@ -94,13 +93,16 @@
 					<td class="value">
 						<div>
 							<span v-if="state.detail.submitRevokeNewItineraryInfoVo.ticketList?.length">
-								<p v-for="(itekcItem, index) in state.detail.submitRevokeNewItineraryInfoVo.ticketList || []" :key="index">
+								<p v-for="(itekcItem, index) in state.detail.submitRevokeNewItineraryInfoVo?.ticketList || []" :key="index">
 									<span>{{ index + 1 }}.</span>
-									<span>{{ itekcItem.scenicName }}，</span>
-									<span>{{ itekcItem.ticketName }}</span>
-									<span>{{ itekcItem.reservePeopleCount }}张，</span>
+									<span>{{ itekcItem?.scenicName }}，</span>
+									<span>{{ itekcItem?.ticketName }}</span>
+									<span>{{ itekcItem?.reservePeopleCount }}张，</span>
 									<span
-										>费用总计 <span style="color: red">{{ itekcItem.reservePeopleCount * (itekcItem.unitPrice / 100) }}</span
+										>费用总计
+										<span style="color: red">{{
+											itekcItem.reservePeopleCount && itekcItem.unitPrice ? itekcItem.reservePeopleCount * (itekcItem.unitPrice / 100) : '0'
+										}}</span
 										>元；</span
 									>
 								</p>
@@ -110,13 +112,16 @@
 					<td class="value">
 						<div>
 							<span v-if="state.detail.submitRevokeOldItineraryInfoVo.ticketList?.length">
-								<p v-for="(itekcItem, index) in state.detail.submitRevokeOldItineraryInfoVo.ticketList" :key="index">
+								<p v-for="(itekcItem, index) in state.detail.submitRevokeOldItineraryInfoVo?.ticketList" :key="index">
 									<span>{{ index + 1 }}.</span>
-									<span>{{ itekcItem.scenicName }}，</span>
-									<span>{{ itekcItem.ticketName }}</span>
-									<span>{{ itekcItem.reservePeopleCount }}张，</span>
+									<span>{{ itekcItem?.scenicName }}，</span>
+									<span>{{ itekcItem?.ticketName }}</span>
+									<span>{{ itekcItem?.reservePeopleCount }}张，</span>
 									<span
-										>费用总计 <span style="color: red">{{ itekcItem.reservePeopleCount * (itekcItem.unitPrice / 100) }}</span
+										>费用总计
+										<span style="color: red">{{
+											itekcItem.reservePeopleCount && itekcItem.unitPrice ? itekcItem.reservePeopleCount * (itekcItem.unitPrice / 100) : '0'
+										}}</span
 										>元；</span
 									>
 								</p>
@@ -335,7 +340,7 @@ const cancel = () => {
 	modelValue.value = false;
 	resetFields();
 	// formRef.value.resetFields();
-	formValidate.data.dateList = [{ startDateTime: '', endDateTime: '', time: [] }];
+	// formValidate.data.dateList = [{ startDateTime: '', endDateTime: '', time: [] }];
 	console.log(modelValue.value, 'modelValue');
 };
 

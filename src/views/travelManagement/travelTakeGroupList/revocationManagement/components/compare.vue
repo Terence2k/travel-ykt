@@ -127,7 +127,6 @@ const cancel = () => {
 
 defineExpose({
 	open,
-	close,
 });
 // const emit = defineEmits(['update:modelValue', 'cancel', 'onSearch']);
 </script>

@@ -1,26 +1,28 @@
 <template>
 	<BaseModal :modelValue="modelValue" title="行程单整团撤销审核" @cancel="cancel" width="1000px">
 		<FormWrap>
-			<FormItem title="团队类型" :iValue="state.detail.teamTypeName" />
-			<FormItem title="线路名称" :iValue="state.detail.routeName" />
-			<FormItem title="行程单编号" :iValue="state.detail.itineraryNo" />
-			<FormItem title="地接社" :iValue="state.detail.subTravelName" />
-			<FormItem title="出散团时间" :iValue="'' + state.detail.startDate + '-' + state.detail.endDate" />
-			<FormItem title="团客人数" :iValue="state.detail.originTouristCount + '人'" />
-			<FormItem title="古维管理费" :iValue="'' + state.detail.maintainFee / 100 + '元'" />
-			<FormItem title="综费产品" :iValue="state.detail.productFee" />
+			<FormItem title="团队类型" :iValue="state.detail?.teamTypeName" />
+			<FormItem title="线路名称" :iValue="state.detail?.routeName" />
+			<FormItem title="行程单编号" :iValue="state.detail?.itineraryNo" />
+			<FormItem title="地接社" :iValue="state.detail?.subTravelName" />
+			<FormItem title="出散团时间" :iValue="'' + state.detail?.startDate + '-' + state.detail?.endDate" />
+			<FormItem title="团客人数" :iValue="state.detail?.originTouristCount + '人'" />
+			<FormItem title="古维管理费" :iValue="'' + state.detail?.maintainFee / 100 + '元'" />
+			<FormItem title="综费产品" :iValue="state.detail?.productFee" />
 
 			<tr class="row">
 				<td class="key">景区预定</td>
 				<td class="value">
-					<p v-for="(item, index) in state.detail.ticketList" :key="index">
-						<span>{{ state.detail.ticketList[index].scenicName }}，</span>
-						<span>{{ state.detail.ticketList[index].ticketName }}</span>
-						<span>{{ state.detail.ticketList[index].reservePeopleCount }}张，</span>
+					<p v-for="(item, index) in state.detail?.ticketList" :key="index">
+						<span>{{ state.detail.ticketList[index]?.scenicName }}，</span>
+						<span>{{ state.detail.ticketList[index]?.ticketName }}</span>
+						<span>{{ state.detail.ticketList[index]?.reservePeopleCount }}张，</span>
 						<span
 							>费用总计
 							<span style="color: red">{{
-								state.detail.ticketList[index].reservePeopleCount * (state.detail.ticketList[index].unitPrice / 100)
+								state.detail.ticketList[index]?.reservePeopleCount && state.detail.ticketList[index]?.unitPrice
+									? state.detail.ticketList[index]?.reservePeopleCount * (state.detail.ticketList[index]?.unitPrice / 100)
+									: '0'
 							}}</span
 							>元；</span
 						>
@@ -31,15 +33,16 @@
 				<td class="key">酒店预定：</td>
 				<td class="value">
 					<div style="margin-bottom: 20px">
-						<p v-for="(item, index) in state.detail.hotelList" :key="index">
-							<span>{{ state.detail.hotelList[index].hotelName }}，</span>
-							<span v-for="(item, i) in state.detail.hotelList[index].roomTypeList" :key="i">{{
-								state.detail.hotelList[index].roomTypeList[i].roomTypeName
+						<p v-for="(item, index) in state.detail?.hotelList" :key="index">
+							<span>{{ state.detail.hotelList[index]?.hotelName }}，</span>
+							<span v-for="(item, i) in state.detail.hotelList[index]?.roomTypeList" :key="i">{{
+								state.detail.hotelList[index].roomTypeList[i]?.roomTypeName
 							}}</span>
-							<span>{{ state.detail.hotelList[index].roomCount }}间</span>
-							<span>{{ dayjs(state.detail.hotelList[index].endDate).diff(state.detail.hotelList[index].startDate, 'day') }}天，</span>
+							<span>{{ state.detail.hotelList[index]?.roomCount }}间</span>
+							<span>{{ dayjs(state.detail.hotelList[index]?.endDate).diff(state.detail.hotelList[index]?.startDate, 'day') }}天，</span>
 							<span
-								>费用总计 <span style="color: red">{{ state.detail.hotelList[index].orderFee / 100 }}</span
+								>费用总计
+								<span style="color: red">{{ state.detail.hotelList[index].orderFee ? state.detail.hotelList[index].orderFee / 100 : '0' }}</span
 								>元；</span
 							>
 						</p>
@@ -279,7 +282,7 @@ const cancel = () => {
 	resetFields();
 	modelValue.value = false;
 	// formRef.value.resetFields();
-	formValidate.data.dateList = [{ startDateTime: '', endDateTime: '', time: [] }];
+	// formValidate.data.dateList = [{ startDateTime: '', endDateTime: '', time: [] }];
 	console.log(modelValue.value, 'modelValue');
 };
 
