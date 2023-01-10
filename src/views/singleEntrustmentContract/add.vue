@@ -579,7 +579,7 @@ const ancientUygurReductionOption = [
 ]
 const ancientUygurOption = [
   { codeValue: 1, name: '已购' },
-  { codeValue: 0, name: '未够' }
+  { codeValue: 0, name: '未购' }
 ]
 const touristTypeOption = [
   { codeValue: 1, name: '成人' },
@@ -639,9 +639,8 @@ const formRules = {
   travelData: [{ required: true, trigger: 'blur', message: '请选择行程日期' }],
   touristPeopleNumber: [{ required: true, trigger: 'blur', message: '游客人数不能为空' }],
   certificatesType: [{ required: true, trigger: 'blur', message: '请选择身份证件类型' }],
-  // certificatesNo: [{ required: true, trigger: 'blur', message: '请输入证件号码' }],
   touristName: [{ required: true, trigger: 'blur', message: '请选择游客代表' }],
-  phone: [{ required: true, trigger: 'blur', message: '游客代表手机号不能为空' }],
+  // phone: [{ required: true, trigger: 'blur', message: '游客代表手机号不能为空' }],
   certificatesAddress: [{ required: true, trigger: 'blur', message: '游客代表地址不能为空' }],
   touristType: [{ required: true, trigger: 'blur', message: '请选择游客类型' }],
   gender: [{ required: true, trigger: 'blur', message: '请选择性别' }],
