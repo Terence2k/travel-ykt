@@ -88,13 +88,17 @@ const saveItinerary = (val: any) => {
 	}
 	if (Acstatus.value === 1) {
 		aduit(val);
+		console.log('第一次');
+		
 		Acstatus.value = 2;
 	} else if (route.query.oid) {
+		console.log('第2次');
 		aduit(val, route.query.oid);
 		router.push('/travel/travelTtemplate/list');
 		let msg = route.query.oid ? '编辑成功' : '新增成功';
 		message.success(msg);
 	} else {
+		console.log('第3次');
 		aduit(val, resdata.value);
 		router.push('/travel/travelTtemplate/list');
 		let msg = route.query.oid ? '编辑成功' : '新增成功';
@@ -119,14 +123,17 @@ const aduit = (val: any, oid?: any) => {
 				resdata.value = res.oid;
 			}
 			if (detailstatus.value) {
-				api.travelManagement.saveChangeTraveldetail(res.oid).then((res: any) => {
-					res.basic.teamId = res.basic.itineraryNo;
-					res.basic.time = [res.basic.startDate, res.basic.endDate];
-					res.basic.touristNum = res.basic.touristCount || 0;
-					travelStore.setBaseInfo(res.basic);
-					travelStore.setGuideList(res.guideList);
-					travelStore.hotels = res.hotelList;
-					travelStore.scenicTickets = res.ticketList;
+				console.log('第一次保存查询');
+				
+				api.travelManagement.saveChangeTraveldetail(res.oid).then((successRes: any) => {
+					successRes.basic.oid = successRes.basic.oid;
+					successRes.basic.teamId = successRes.basic.itineraryNo;
+					successRes.basic.time = [successRes.basic.startDate, successRes.basic.endDate];
+					successRes.basic.touristNum = successRes.basic.touristCount || 0;
+					travelStore.setBaseInfo(successRes.basic);
+					travelStore.setGuideList(successRes.guideList);
+					travelStore.hotels = successRes.hotelList;
+					travelStore.scenicTickets = successRes.ticketList;
 				});
 			}
 		})

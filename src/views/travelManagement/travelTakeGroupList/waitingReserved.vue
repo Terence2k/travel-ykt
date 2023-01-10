@@ -3,11 +3,6 @@
 		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
 			<template #button> </template>
 			<template #bodyCell="{ column, text, index, record }">
-        <template v-if="column.key === 'itineraryNo'">
-          <div>
-            <a @click="goToDetail(record)">{{text}}</a>
-          </div>
-        </template>
 				<template v-if="column.key === 'index'">
 					<div>
 						{{ (travelStore.takeGroupList.waitingReserved.params.pageNo - 1) * travelStore.takeGroupList.waitingReserved.params.pageSize + (index + 1) }}

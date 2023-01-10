@@ -81,7 +81,7 @@
                 <template v-if="record?.isAudit">
                   <a @click="auditStore(record)" v-permission="'待审核_去审核'">去审核</a>
                 </template>
-                <a @click="checkDetails(record.oid)" v-permission="'待审核_查看'">查看</a>
+                <!-- <a @click="checkDetails(record.oid)" v-permission="'待审核_查看'">查看</a> -->
               </div>
             </template>
           </template>
@@ -187,7 +187,7 @@
     当前有新创建的散客门店待您审核，审核同意后该门店可以正常发起散客电子合同：
     <div class="table_box">
       <table class="info_table" cellpadding="16px" border="1">
-        <tr class="row" v-for="(value, key) in detailsKeys">
+        <tr class="row" v-for="(value, key) in auditKeys">
           <td class="key">{{ value }}</td>
           <td class="value" v-if="key === 'basisUrl' && detailsForm[key]">
             <a-image v-for="(item) in cmpBasisUrl(detailsForm[key])" style="width:90px;margin:0 5px 5px 0"
@@ -208,7 +208,7 @@
           <th class="key_hd">修改后</th>
         </tr>
         <tr class="row" v-for="(key, index) in Object.keys(changeList)" :key="index">
-          <td class="key">{{ detailsKeys[key] }}</td>
+          <td class="key">{{ auditKeys[key] }}</td>
           <td class="value" v-if="key === 'basisUrl'" v-for=" (citem, inex) in changeList[key]">
             <a-image v-if="citem" v-for="(item) in cmpBasisUrl(citem)" style="width:90px;margin:0 5px 5px 0"
               :src="item" />
@@ -446,6 +446,11 @@ const columns = [
     key: 'personLiablePhone',
   },
   {
+    title: '审核状态',
+    dataIndex: 'auditStatusName',
+    key: 'auditStatusName',
+  },
+  {
     title: '启用状态',
     dataIndex: 'enableSatusName',
     key: 'enableSatusName',
@@ -498,16 +503,6 @@ const columns1 = [
     dataIndex: 'auditType',
     key: 'auditType',
   },
-  /* {
-    title: '门店审核状态',
-    dataIndex: 'auditStatusName',
-    key: 'auditStatusName',
-  },
-  {
-    title: '信息审核状态',
-    dataIndex: 'informationAuditStatusName',
-    key: 'informationAuditStatusName',
-  }, */
   {
     title: '启用状态',
     dataIndex: 'enableSatusName',
@@ -532,9 +527,23 @@ const detailsKeys = {
   filingNo: '备案号',
   authorizationCode: '授权码',
   enableSatusName: '启用状态',
-  auditType: '审核类型',
-  /* auditStatusName: '门店审核状态',
-  informationAuditStatusName: '信息审核状态', */
+  // auditType: '审核类型',
+  auditStatusName: '审核状态',
+  createTime: '创建提交时间',
+  basisUrl: '创建依据'
+}
+const auditKeys = {
+  companyName: '所属旅行社',
+  lastUpdateTime: '修改提交时间',
+  storeName: '门店名称',
+  storeAddress: '门店地址',
+  storePhone: '门店电话',
+  personLiableName: '门店负责人',
+  personLiablePhone: '负责人电话',
+  contractPurviewName: '门店合同权限',
+  filingNo: '备案号',
+  authorizationCode: '授权码',
+  enableSatusName: '启用状态',
   createTime: '创建提交时间',
   basisUrl: '创建依据'
 }
@@ -800,7 +809,7 @@ const getChangeInfo = async (oid: string | number) => {
   const updateTime = res?.lastUpdateTime
   changeList.value.companyName = [companyName]
   changeList.value.lastUpdateTime = [updateTime]
-  const keyList = Object.keys(detailsKeys)
+  const keyList = Object.keys(auditKeys)
   keyList.forEach(async (key: string) => {
     if (newList[key] != oldList[key]) {
       if (key === 'basisUrl') {

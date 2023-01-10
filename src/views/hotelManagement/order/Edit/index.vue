@@ -147,7 +147,7 @@ const success = () => {
 };
 
 const notAuditing = () => {
-	router.push({ path: '/hotelManagement/hotelOrder/index' });
+	router.go(-1)
 };
 
 const initPage = async (): Promise<void> => {

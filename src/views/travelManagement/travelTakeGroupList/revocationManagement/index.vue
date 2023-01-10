@@ -301,6 +301,7 @@ const check = async (record: any) => {
 const toDetail = async (record: any) => {
 	// let valid = await checkPower(record);
 	console.log(record.revokeType, 'record.revokeType');
+	// allRevoke(record.oid);
 	if (record.revokeType === 1) {
 		allRevoke(record.oid);
 		console.log('整团撤销', record.revokeType);
