@@ -122,7 +122,7 @@
             <template v-if="column.key === 'action'">
               <div class="action-btns">
                 <template v-if="record?.isAudit">
-                  <a @click="auditStore(record)" v-permission="'待审核_去审核'">去审核</a>
+                  <a @click="auditStore(record)" v-permission="'待审核_审核'">审核</a>
                 </template>
                 <a @click="checkDetails(record)" v-permission="'待审核_查看'">查看</a>
               </div>
