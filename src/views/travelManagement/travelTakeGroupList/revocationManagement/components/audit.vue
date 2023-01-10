@@ -55,9 +55,10 @@
 				<td class="key">附件</td>
 				<td class="value">
 					<div style="margin-bottom: 20px">
-						<p v-for="(item, index) in picList" :key="index">
+						<CommonImg v-for="url in picList" :key="url" :width="100" :src="url"></CommonImg>
+						<!-- <p v-for="(item, index) in picList" :key="index">
 							<a-image width="20%" :src="item" />
-						</p>
+						</p> -->
 					</div>
 				</td>
 			</tr>
@@ -125,6 +126,7 @@ import FormWrap from '@/components/common/formWrap.vue';
 import FormItem from '@/components/common/formItem.vue';
 import { Form } from 'ant-design-vue';
 import dayjs, { Dayjs } from 'dayjs';
+import CommonImg from '@/components/common/CommonImg.vue';
 
 const useForm = Form.useForm;
 const modelValue = ref(false);

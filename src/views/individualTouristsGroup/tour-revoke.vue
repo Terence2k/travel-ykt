@@ -101,10 +101,11 @@
 			<template #bodyCell="{ column, record, index }">
 				<template v-if="column.key === 'endDate'"> {{ record.startDate }} - {{ record.endDate }} </template>
 				<template v-if="column.key === 'certificateType'"> {{ certificateTypeList[record.certificateType] }} </template>
-				<!-- <template v-if="column.key === 'codeContent'">
-					<a-image :src="record.codeContent"></a-image>
+				<template v-if="column.key === 'codeContent'">
+					{{ getCode[record.healthCodeStatus] }}
+					<!-- <CommonImg :key="record.codeContent" :width="50" :src="record.codeContent"></CommonImg> -->
 				</template>
-				<template v-if="column.key === 'healthCodeStatus'">
+				<!-- <template v-if="column.key === 'healthCodeStatus'">
 					{{ getCode[record.healthCodeStatus] }}
 				</template> -->
 			</template>
@@ -120,7 +121,8 @@
 		<CommonTable :columns="contract" :dataSource="state.contract" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
 			<template #bodyCell="{ column, record, index }">
 				<template v-if="column.key === 'index'"> {{ index + 1 }} </template>
-				<template v-if="column.key === 'endDate'"> {{ record.startDate }} - {{ record.endDate }} </template>
+				<template v-if="column.key === 'tripDate'"> {{ record.tripStartTime }} - {{ record.tripEndTime }} </template>
+				<template v-if="column.key === 'contractAmount'"> {{ record.contractAmount / 100 }} </template>
 			</template>
 		</CommonTable>
 		<p class="top-p">
@@ -368,11 +370,11 @@ const tourist = [
 		dataIndex: 'sourceAddressName',
 		key: 'sourceAddressName',
 	},
-	// {
-	// 	title: '健康码',
-	// 	dataIndex: 'codeContent',
-	// 	key: 'codeContent',
-	// },
+	{
+		title: '健康码',
+		dataIndex: 'codeContent',
+		key: 'codeContent',
+	},
 	// {
 	// 	title: '中高风险',
 	// 	dataIndex: 'healthCodeStatus',
@@ -380,8 +382,8 @@ const tourist = [
 	// },
 	{
 		title: '特殊证件',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
+		dataIndex: 'specialCertificateTypeName',
+		key: 'specialCertificateTypeName',
 	},
 ];
 const trafficInfo = [
@@ -565,43 +567,43 @@ const contract = [
 	},
 	{
 		title: '合同编号',
-		dataIndex: 'No',
-		key: 'No',
+		dataIndex: 'contractNo',
+		key: 'contractNo',
 	},
 	{
 		title: '合同类型',
-		dataIndex: 'roomTypeName',
-		key: 'roomTypeName',
+		dataIndex: 'contractTypeName',
+		key: 'contractTypeName',
 	},
 	{
 		title: '内含线路/委托项目',
-		dataIndex: 'roomCount',
-		key: 'roomCount',
+		dataIndex: 'lineNames',
+		key: 'lineNames',
 	},
 	{
 		title: '人数',
-		dataIndex: 'sourceAddressName',
-		key: 'sourceAddressName',
+		dataIndex: 'touristPeopleNumber',
+		key: 'touristPeopleNumber',
 	},
 	{
 		title: '行程日期',
-		dataIndex: 'createTime',
-		key: 'createTime',
+		dataIndex: 'tripDate',
+		key: 'tripDate',
 	},
 	{
 		title: '合同签约旅行社',
-		dataIndex: 'endDate',
-		key: 'endDate',
+		dataIndex: 'companyName',
+		key: 'companyName',
 	},
 	{
 		title: '签署网点',
-		dataIndex: 'orderFee',
-		key: 'orderFee',
+		dataIndex: 'storeName',
+		key: 'storeName',
 	},
 	{
-		title: '合同费用（元)',
-		dataIndex: 'orderFee',
-		key: 'orderFee',
+		title: '合同费用（元）',
+		dataIndex: 'contractAmount',
+		key: 'contractAmount',
 	},
 ];
 const scenic = [
@@ -805,8 +807,8 @@ const initInfo = () => {
 
 const initContract = async () => {
 	let res = await api.travelManagement.getContractDetails({ oid: route.currentRoute.value?.query?.id });
-	state.contract = res.data;
-	console.log(res);
+	state.contract = res;
+	console.log(res, 'state.contract');
 };
 
 const getGouvyInfo = async () => {
