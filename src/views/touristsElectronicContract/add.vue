@@ -372,7 +372,7 @@
               </a-input>
             </a-form-item>
             <a-form-item name="phone" label="游客代表手机号">
-              <a-input v-model:value="form.phone" placeholder="无需填写，输入名单后自动生成" disabled>
+              <a-input v-model:value="form.phone" placeholder="无需填写，输入名单后自动生成">
               </a-input>
             </a-form-item>
             <a-form-item name="certificatesAddress" label="游客代表地址">
@@ -606,7 +606,7 @@ const ancientUygurReductionOption = [
 ]
 const ancientUygurOption = [
   { codeValue: 1, name: '已购' },
-  { codeValue: 0, name: '未够' }
+  { codeValue: 0, name: '未购' }
 ]
 const contractOption = [
   { codeValue: 1, name: '线上合同（需传附件）' },
@@ -667,9 +667,8 @@ const formRules = {
   insuranceBuyMode: [{ required: true, trigger: 'blur', message: '请选择保险购买方式' }],
   contractType: [{ required: true, trigger: 'blur', message: '请选择散客合同类型' }],
   certificatesType: [{ required: true, trigger: 'blur', message: '请选择身份证件类型' }],
-  // certificatesNo: [{ required: true, trigger: 'blur', validator: validateCertificatesNo, }],
   touristName: [{ required: true, trigger: 'blur', message: '请选择游客代表' }],
-  phone: [{ required: true, trigger: 'blur', message: '游客代表手机号不能为空' }],
+  // phone: [{ required: true, trigger: 'blur', message: '游客代表手机号不能为空' }],
   certificatesAddress: [{ required: true, trigger: 'blur', message: '游客代表地址不能为空' }],
   contractFileUrl: [{ required: true, trigger: 'blur', message: '请上传附件' }],
   touristType: [{ required: true, trigger: 'blur', message: '请选择游客类型' }],
