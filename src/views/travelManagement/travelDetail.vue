@@ -40,7 +40,7 @@
             <template v-if="[1, 2, 3, 4, 5, 6, 7, 20].includes(state.basicData.status)">
               接团后生成
             </template>
-            <template v-else>
+            <template v-else-if="codeUrl">
               <qrcode-vue :value="codeUrl" :size="200" level="H" />
             </template>
           </a-descriptions-item>
