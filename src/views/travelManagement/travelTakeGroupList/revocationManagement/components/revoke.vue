@@ -30,9 +30,11 @@
 				<td class="key">附件</td>
 				<td class="value">
 					<div style="margin-bottom: 20px">
-						<p v-for="(item, index) in picList" :key="index">
+						<CommonImg v-for="url in picList" :key="url" :width="100" :src="url"></CommonImg>
+						<!-- <p v-for="(item, index) in picList" :key="index">
 							<a-image width="20%" :src="item" />
-						</p>
+								<CommonImg v-for="url in record.specialCertificatePicture" :key="url" :width="50" :src="url"></CommonImg>
+						</p> -->
 					</div>
 				</td>
 			</tr>
@@ -71,7 +73,7 @@
 						<div style="margin-bottom: 20px">
 							<span v-if="state.detail.submitRevokeOldItineraryInfoVo.hotelList?.length">
 								<p v-for="(item, index) in state.detail.submitRevokeOldItineraryInfoVo.hotelList" :key="index">
-									<span>{{ item[index]?.hotelName }}，</span>
+									<span>{{ item[index]?.hotelName + ',' }}</span>
 									<span v-for="(roomIten, i) in item[index]?.roomTypeList" :key="i"
 										>{{ roomIten?.roomTypeName }}
 										<span>{{ roomIten?.roomCount }}间</span>
@@ -195,6 +197,7 @@ import FormWrap from '@/components/common/formWrap.vue';
 import FormItem from '@/components/common/formItem.vue';
 import Compare from './compare.vue';
 import { Form } from 'ant-design-vue';
+import CommonImg from '@/components/common/CommonImg.vue';
 
 import dayjs, { Dayjs } from 'dayjs';
 const useForm = Form.useForm;
