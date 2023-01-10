@@ -4,24 +4,19 @@
 		<template #button>
 		</template>
 		<template #bodyCell="{ column, text, index, record }">
-      <template v-if="column.key === 'itineraryNo'">
-        <div>
-          <a @click="goToDetail(record)">{{text}}</a>
-        </div>
-      </template>
 			<template v-if="column.key === 'index'">
 				<div>
 						{{(travelStore.takeGroupList.waitingGroup.params.pageNo - 1) * (travelStore.takeGroupList.waitingGroup.params.pageSize) + (index + 1)}}
 				</div>
-		</template>
+		  </template>
 
-		<template v-if="column.key === 'action'">
-			<div class="action-btns">
-				<a @click="takeGroup(record.oid)" v-permission="'待接团_同意接团'">同意接团</a>
-				<a @click="rejectGroup(record.oid)" v-permission="'待接团_拒绝接团'">拒绝接团</a>
-			</div>
-		</template>
-				</template>
+      <template v-if="column.key === 'action'">
+        <div class="action-btns">
+          <a @click="takeGroup(record.oid)" v-permission="'待接团_同意接团'">同意接团</a>
+          <a @click="rejectGroup(record.oid)" v-permission="'待接团_拒绝接团'">拒绝接团</a>
+        </div>
+      </template>
+    </template>
 		</CommonTable>
 		<CommonPagination
 			:current="travelStore.takeGroupList.waitingGroup.params.pageNo"
