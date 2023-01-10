@@ -196,7 +196,10 @@
               <template v-if="column.dataIndex === 'certificatesNo'">
                 <template v-if="record.isEdit">
                   <a-form ref="formRef2" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
-                    <a-form-item name="certificatesNo">
+                    <a-form-item name="certificatesNo"
+                      :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validateCertificatesNo(_rule, value, dataTouristSource[index])) }]">
+                      <!-- <a-input placeholder="请输入证件号码" @change="() => { certificatesNoChange(dataTouristSource[index]) }"
+                        v-model:value="dataTouristSource[index][column.dataIndex]" allowClear style="margin: -5px 0" /> -->
                       <a-input placeholder="请输入证件号码" v-model:value="dataTouristSource[index][column.dataIndex]"
                         allowClear style="margin: -5px 0" />
                     </a-form-item>
@@ -494,6 +497,8 @@ import { message } from 'ant-design-vue/es';
 import dayjs, { Dayjs } from 'dayjs';
 import picker from '@/components/common/datePicker.vue'
 import { accDiv, accMul } from '@/utils/compute';
+import { getAge, getGenderByIdNumber } from '@/utils';
+import type { Rule } from 'ant-design-vue/es/form';
 const router = useRouter();
 const route = useRoute();
 const isRefresh = ref('0')
@@ -598,6 +603,32 @@ const disputeResolutionOptions = [
   { codeValue: 2, name: '提交仲裁委员会仲裁' },
   { codeValue: 3, name: '提交人民法院诉讼' }
 ]
+const validateCertificatesNo = async (_rule: Rule, value: string, obj: any) => {
+  if (value === '') {
+    return Promise.reject('请输入证件号码');
+  } else {
+    if (obj.certificatesType === 'IDENTITY_CARD') {
+      if (obj.certificatesNo.length < 18) {
+        return Promise.reject('请输入正确的身份证');
+      } else {
+        obj.age = getAge(obj.certificatesNo)
+        const genderType = getGenderByIdNumber(obj.certificatesNo)
+        if (genderType === 1) {
+          obj.gender = '男'
+        } else if (genderType === 0) {
+          obj.gender = '女'
+        } else {
+          obj.gender = undefined
+        }
+        return Promise.resolve();
+      }
+    } else if (obj.certificatesType === 'PASSPORT') {
+      return Promise.resolve();
+    } else if (obj.certificatesType === 'COMPATRIOT_CARD') {
+      return Promise.resolve();
+    }
+  }
+};
 const formRules = {
   paymentMethod: [{ required: true, trigger: 'blur', message: '选择游客线下的实际支付方式' }],
   departurePlace: [{ required: true, trigger: 'blur', message: '请填写出发地' }],
@@ -608,7 +639,7 @@ const formRules = {
   travelData: [{ required: true, trigger: 'blur', message: '请选择行程日期' }],
   touristPeopleNumber: [{ required: true, trigger: 'blur', message: '游客人数不能为空' }],
   certificatesType: [{ required: true, trigger: 'blur', message: '请选择身份证件类型' }],
-  certificatesNo: [{ required: true, trigger: 'blur', message: '请输入证件号码' }],
+  // certificatesNo: [{ required: true, trigger: 'blur', message: '请输入证件号码' }],
   touristName: [{ required: true, trigger: 'blur', message: '请选择游客代表' }],
   phone: [{ required: true, trigger: 'blur', message: '游客代表手机号不能为空' }],
   certificatesAddress: [{ required: true, trigger: 'blur', message: '游客代表地址不能为空' }],
