@@ -183,8 +183,10 @@
                 <template v-if="record.isEdit">
                   <a-form ref="formRef2" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
                     <a-form-item name="certificatesNo">
-                      <a-input placeholder="请输入证件号码" @change="() => { certificatesNoChange(dataTouristSource[index]) }"
-                        v-model:value="dataTouristSource[index][column.dataIndex]" allowClear style="margin: -5px 0" />
+                      <!-- <a-input placeholder="请输入证件号码" @change="() => { certificatesNoChange(dataTouristSource[index]) }"
+                        v-model:value="dataTouristSource[index][column.dataIndex]" allowClear style="margin: -5px 0" /> -->
+                      <a-input placeholder="请输入证件号码" v-model:value="dataTouristSource[index][column.dataIndex]"
+                        allowClear style="margin: -5px 0" />
                     </a-form-item>
                   </a-form>
                 </template>
@@ -1364,7 +1366,7 @@ const lineSelectChange = (obj: any) => {
     obj.lineDescribe = undefined
   }
 }
-const getHealthyCode = async (data: any) => {
+/* const getHealthyCode = async (data: any) => {
   let res = await api.getHealthyCode(data)
   let code
   if (res) {
@@ -1384,8 +1386,8 @@ const getHealthyCode = async (data: any) => {
     }
   }
   return code
-}
-// 批量获取健康码
+} */
+/* // 批量获取健康码
 const getHealthyCodes = async (ids: number[]) => {
   let res = await api.getHealthyCode(ids)
   if (res) {
@@ -1407,7 +1409,7 @@ const getHealthyCodes = async (ids: number[]) => {
     })
   }
   return res || []
-}
+} */
 /* const configCodeName = (certificateCodes: any) => {
   for (let i = 0, l = certificateCodes.length; i < l; i++) {
     const item = certificateCodes[i];

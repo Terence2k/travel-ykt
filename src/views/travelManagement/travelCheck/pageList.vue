@@ -37,7 +37,7 @@
       </div>
   </template>
   <script lang="ts" setup>
-      import CommonTable from '@/components/common/CommonTable.vue';
+    import CommonTable from '@/components/common/CommonTable.vue';
     import CommonPagination from '@/components/common/CommonPagination.vue';
     import { message } from 'ant-design-vue';
   

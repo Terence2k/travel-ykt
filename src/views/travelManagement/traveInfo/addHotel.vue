@@ -166,7 +166,7 @@ import { useTravelStore } from '@/stores/modules/travelManagement';
 import { message } from 'ant-design-vue/es';
 import { Rule } from 'ant-design-vue/es/form';
 import dayjs, { Dayjs } from 'dayjs';
-import { disabledRangeTime, range, isPositiveInteger, selectSpecialDateRange, isOneHundred, disabledHours, disabledMinutes, disabledSeconds } from '@/utils';
+import { disabledRangeTime, range, isPositiveInteger, selectSpecialDateRange, isOneHundred, disabledHours, disabledMinutes, disabledSeconds, getDiffDay } from '@/utils';
 import { Modal } from 'ant-design-vue';
 import { createVNode } from 'vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
@@ -349,7 +349,9 @@ const validateCheckIn = async (_rule: Rule, value: string, index: number) => {
  * @return amount 总价
  */
 const getOrderAmount = (data: Array<{[k:string]:any}>, startDate: string, endDate: string) => {
-	const day = dayjs(endDate).diff(startDate, 'day')
+	
+	const day = getDiffDay(startDate, endDate);
+	console.log(day);
 	const amount = []
 	for (let k = 0; k < data.length; k++) {
 		amount[k] = data[k].orderAmount * data[k].reserveNumber * day

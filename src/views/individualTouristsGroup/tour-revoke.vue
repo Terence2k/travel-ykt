@@ -128,6 +128,14 @@
 			<!-- <span>(共30人,古维待缴人数:25,应缴费用:￥1250.00 订单状态：待出票)</span> -->
 		</p>
 		<CommonTable :columns="gouvy" :dataSource="state.guWeiDetail" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
+			<template #bodyCell="{ column, record, index }">
+				<template v-if="column.key === 'unitPrice'">
+					{{ record.unitPrice / 100 }}
+				</template>
+				<template v-if="column.key === 'action'">
+					<a-button type="link" @click="gotoDetails(record.itineraryId)"> 查看订单</a-button>
+				</template>
+			</template>
 		</CommonTable>
 		<p class="top-p">
 			综费产品
@@ -148,6 +156,9 @@
 					<span v-if="typeof record.totalFee === 'number'">
 						{{ record.totalFee / 100 }}
 					</span>
+				</template>
+				<template v-if="column.key === 'action'">
+					<a-button type="link" @click="gotoDetails(record.itineraryId)"> 查看订单</a-button>
 				</template>
 			</template>
 		</CommonTable>
@@ -413,38 +424,38 @@ const trafficInfo = [
 const gouvy = [
 	{
 		title: '费用名称',
-		dataIndex: 'touristName',
-		key: 'touristName',
+		dataIndex: 'feeName',
+		key: 'feeName',
 	},
 	{
 		title: '团队游客人数',
-		dataIndex: 'certificateTypeName',
-		key: 'certificateTypeName',
+		dataIndex: 'touristNum',
+		key: 'touristNum',
 	},
 	{
 		title: '应缴人数',
-		dataIndex: 'certificateNo',
-		key: 'certificateNo',
+		dataIndex: 'payableNum',
+		key: 'payableNum',
 	},
 	{
 		title: '应缴总金额（元）',
-		dataIndex: 'genderName',
-		key: 'genderName',
+		dataIndex: 'unitPrice',
+		key: 'unitPrice',
 	},
 	{
 		title: '是否发起过减免申请',
-		dataIndex: 'sourceAddressName',
-		key: 'sourceAddressName',
+		dataIndex: 'isInitiateReductionName',
+		key: 'isInitiateReductionName',
 	},
 	{
 		title: '减免申请是否通过',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
+		dataIndex: 'isReductionPassedName',
+		key: 'isReductionPassedName',
 	},
 	{
 		title: '出票状态',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
+		dataIndex: 'issueStatusName',
+		key: 'issueStatusName',
 	},
 	{
 		title: '操作',
@@ -455,13 +466,13 @@ const gouvy = [
 const comprehensive = [
 	{
 		title: '费用名称',
-		dataIndex: 'comprehensiveFeeProductName',
-		key: 'comprehensiveFeeProductName',
+		dataIndex: 'productName',
+		key: 'productName',
 	},
 	{
 		title: '结算归属',
-		dataIndex: 'belongCompanyName',
-		key: 'belongCompanyName',
+		dataIndex: 'belongCompanyTypeName',
+		key: 'belongCompanyTypeName',
 	},
 	{
 		title: '收费模式',
@@ -707,6 +718,15 @@ const checkOutSideTicketIsRefund = async () => {
 	return true;
 };
 
+const gotoDetails = (itineraryId: any) => {
+	route.push({
+		path: '/travel/travel_manage/travel_detail',
+		query: {
+			oid: itineraryId,
+		},
+	});
+};
+
 const btnStatus = ref('');
 
 const toSureRecoke = async () => {
@@ -760,7 +780,7 @@ const initInfo = () => {
 			state.touristList = res.touristList.content;
 			state.transportList = res.transportList;
 			state.productList = res.productList;
-			state.guWeiDetail = res.guWeiDetail;
+			// state.guWeiDetail = res.guWeiDetail;
 
 			let arr = [{ 1: [], 2: [], 3: [], 4: [] }];
 
@@ -789,9 +809,15 @@ const initContract = async () => {
 	console.log(res);
 };
 
-onMounted(() => {
-	initInfo();
-	initContract();
+const getGouvyInfo = async () => {
+	let res = await api.getManagementExpenses(route.currentRoute.value?.query?.id);
+	state.guWeiDetail = res;
+};
+
+onMounted(async () => {
+	await initInfo();
+	await initContract();
+	await getGouvyInfo();
 	navigatorBar.setNavigator(['旅行社管理', '散客拼团', '行程详情：' + route.currentRoute.value?.query?.itineraryNo]);
 });
 
