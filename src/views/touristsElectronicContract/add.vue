@@ -467,7 +467,7 @@
           <div>
             <a-button type="primary" @click="nextTep('1')" class="mr20">上一步</a-button>
             <a-button type="primary" @click="saveDraft" class="mr20">保存草稿</a-button>
-            <a-button type="primary" @click="submitClick" :disabled="!hasId">{{ submiBtnName }}</a-button>
+            <a-button type="primary" @click="submitClick">{{ submiBtnName }}</a-button>
           </div>
         </div>
       </a-tab-pane>
@@ -555,7 +555,6 @@ const formRef7 = ref()
 const formRef8 = ref()
 const formRef9 = ref()
 const isAdd = ref(true)
-const hasId = ref(false)
 const form = ref({
   oid: undefined,
   companyId: undefined, //合同创建旅行社id
@@ -1165,46 +1164,51 @@ const nextTep = (val: string) => {
     calculateTripFee()
   }
 }
-const saveDraft = (tab: string) => {
-  const a = Promise.all([
-    formRef.value?.validateFields(),
-    formRef1.value?.validateFields(),
-    formRef2.value?.validateFields(),
-    formRef3.value?.validateFields(),
-    formRef4.value?.validateFields(),
-    formRef5.value?.validateFields(),
-    formRef6.value?.validateFields(),
-    formRef7.value?.validateFields(),
-    formRef8.value?.validateFields(),
-    formRef9.value?.validateFields(),
-    dateFormRef.value?.validate()
-  ])
-  a.then(async () => {
-    tab === '1' && calculateTripFee()
-    const params = getParams()
-    if (isAdd.value) {
-      let res = await api.createIndividualContract(params)
-      if (res) {
-        message.success('保存草稿成功！')
-        isRefresh.value = '1'
-        hasId.value = true
-        isAdd.value = false
-        form.value.oid = res
+const saveDraft = (tab?: string, isTip: boolean = true) => {
+  return new Promise((resolve, reject) => {
+    const a = Promise.all([
+      formRef.value?.validateFields(),
+      formRef1.value?.validateFields(),
+      formRef2.value?.validateFields(),
+      formRef3.value?.validateFields(),
+      formRef4.value?.validateFields(),
+      formRef5.value?.validateFields(),
+      formRef6.value?.validateFields(),
+      formRef7.value?.validateFields(),
+      formRef8.value?.validateFields(),
+      formRef9.value?.validateFields(),
+      dateFormRef.value?.validate()
+    ])
+    a.then(async () => {
+      tab === '1' && calculateTripFee()
+      const params = getParams()
+      if (isAdd.value) {
+        let res = await api.createIndividualContract(params)
+        if (res) {
+          isTip && message.success('保存草稿成功！')
+          isRefresh.value = '1'
+          isAdd.value = false
+          form.value.oid = res
+          resolve('down')
+        } else {
+          isTip && message.error('保存草稿失败！')
+          reject('error')
+        }
       } else {
-        message.error('保存草稿失败！')
+        let res = await api.editFindIndividualContract(params)
+        if (res) {
+          isTip && message.success('编辑草稿成功！')
+          isRefresh.value = '1'
+          resolve('down')
+        } else {
+          isTip && message.error('编辑草稿失败！')
+          reject('error')
+        }
       }
-    } else {
-      let res = await api.editFindIndividualContract(params)
-      if (res) {
-        message.success('编辑草稿成功！')
-        isRefresh.value = '1'
-        hasId.value = true
-      } else {
-        message.error('编辑草稿失败！')
-      }
-    }
-  }).catch((error: Error) => {
-    console.log(error);
+    }).catch((error: Error) => {
+      console.log(error);
+      reject('error')
+    })
   })
 }
 const submitCancel = () => {
@@ -1284,6 +1288,7 @@ const getParams = () => {
   }
 }
 const saveDraftConfirm = async () => {
+  await saveDraft(undefined, false)
   const res = await api.releaseContract(form.value.oid)
   if (res) {
     submitResultVisible.value = true
@@ -1452,7 +1457,6 @@ const getHealthyCodes = async (ids: number[]) => {
 const getEditDetails = async (oid: any) => {
   const res = await api.editFindIndividualContractById(oid)
   if (res) {
-    hasId.value = true
     form.value = res
     const files = form.value.contractFileUrl?.split(',')
     const contractFileUrl: string[] = []
@@ -1519,6 +1523,7 @@ const submitClick = async () => {
   if (isShow.value) {
     submitVisible.value = true
   } else {
+    await saveDraft(undefined, false)
     const res = await api.releaseContract(form.value.oid)
     if (res) {
       submitResultVisible1.value = true
