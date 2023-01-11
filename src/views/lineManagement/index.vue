@@ -13,7 +13,8 @@
             <template v-if="column.key === 'price'">
               <div v-if="record.individualLinePriceVos?.length > 0">
                 <span v-for="(item, index) in record.individualLinePriceVos" :key="index">{{
-                `${item.priceTypeName}价${item.priceAmount / 100}元${(record.individualLinePriceVos.length - 1) ===
+                `${item.priceTypeName}价${accDivValue(item.priceAmount)}元${(record.individualLinePriceVos.length - 1)
+                    ===
                     index ? ''
                     : '、'}`
                 }}</span>
@@ -24,8 +25,8 @@
               <div v-if="record.individualLineTicketVos?.length > 0">
                 <span v-for="(item, index) in cmpIndividualLineTicketVos(record.individualLineTicketVos)"
                   :key="index">{{
-                  `${item}${(cmpIndividualLineTicketVos(record.individualLineTicketVos).length - 1) === index ? '' :
-    '、'}`
+                  `${item}${(cmpIndividualLineTicketVos(record.individualLineTicketVos).length - 1) === index ? ''
+    : '、'}`
                   }}</span>
               </div>
               <div v-else>无</div>
@@ -81,7 +82,9 @@
             <template v-if="column.key === 'price'">
               <div v-if="record.individualLinePriceVos?.length > 0">
                 <span v-for="(item, index) in record.individualLinePriceVos" :key="index">{{
-                `${item.priceTypeName}价${item.priceAmount / 100}元${(record.individualLinePriceVos.length - 1) === index ? ''
+                `${item.priceTypeName}价${accDivValue(item.priceAmount)}元${(record.individualLinePriceVos.length - 1)
+                    ===
+                    index ? ''
                     : '、'}`
                 }}</span>
               </div>
@@ -119,7 +122,7 @@
             <template v-if="column.key === 'action'">
               <div class="action-btns">
                 <template v-if="record?.isAudit">
-                  <a @click="auditStore(record)" v-permission="'待审核_去审核'">去审核</a>
+                  <a @click="auditStore(record)" v-permission="'待审核_审核'">审核</a>
                 </template>
                 <a @click="checkDetails(record)" v-permission="'待审核_查看'">查看</a>
               </div>
@@ -482,6 +485,21 @@ import type { Rule } from 'ant-design-vue/es/form';
 import { message } from 'ant-design-vue/es';
 import { getTabPermission } from '@/utils/util';
 import { forEach } from 'lodash';
+import { accDiv, accMul } from '@/utils/compute';
+const accDivValue = (value: any) => {
+  if (typeof value === 'number') {
+    return accDiv(value, 100)
+  } else {
+    return undefined
+  }
+}
+const accMulValue = (value: any) => {
+  if (typeof value === 'number') {
+    return accMul(value, 100)
+  } else {
+    return null
+  }
+}
 const router = useRouter();
 const route = useRoute();
 interface ticketType {
@@ -881,7 +899,7 @@ const columns = [
     key: 'index',
   },
   {
-    title: '线路名称',
+    title: '线路',
     dataIndex: 'lineName',
     key: 'lineName',
   },
@@ -1123,7 +1141,7 @@ const getParams = () => {
   }
   if (state.YKJList.length > 0) {
     individualLinePriceBos = state.YKJList.map((item: any) => {
-      return { priceTypeCode: item.codeValue, priceAmount: form[item.codeValue] * 100, priceTypeName: item.name }
+      return { priceTypeCode: item.codeValue, priceAmount: accMulValue(form[item.codeValue]), priceTypeName: item.name }
     })
   }
   if (state.rolesLevel === 3) {
@@ -1272,7 +1290,7 @@ const getEditDetails = async (oid: number) => {
     form.TICKETSelected = getData(groupBy(individualLineTicketBos, 'day'), 'ticketCompanyId')
     form.HOTELSelected = getData(groupBy(individualLineHotelBos, 'day'), 'hotelCompanyId')
     individualLinePriceBos?.forEach((item: any) => {
-      form[item.priceTypeCode] = item.priceAmount
+      form[item.priceTypeCode] = accDivValue(item.priceAmount)
     })
     form.oid = oid
     form.lineName = lineName
@@ -1337,7 +1355,7 @@ const setValue = (res: any) => {
   if (res.individualLinePriceBos) {
     let strArr = ''
     res.individualLinePriceBos.forEach((item: any, index: number) => {
-      strArr += `${item.priceTypeName}价：${item.priceAmount / 100}元${(res.individualLinePriceBos.length - 1) === index ? '' : '、'}`
+      strArr += `${item.priceTypeName}价：${accDivValue(item.priceAmount)}元${(res.individualLinePriceBos.length - 1) === index ? '' : '、'}`
     })
     res.priceTypesName = strArr
   } else {

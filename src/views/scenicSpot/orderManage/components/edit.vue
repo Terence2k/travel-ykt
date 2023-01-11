@@ -14,7 +14,7 @@
 					<a-form-item label="行程人数"> {{ formData.data.orderInfo.itineraryCount }} </a-form-item>
 					<a-form-item label="订票人数"> {{ formData.data.orderInfo.bookCount }} </a-form-item>
 					<a-form-item label="核销人数"> {{ formData.data.orderInfo.verificationCount }} </a-form-item>
-					<a-form-item label="订单金额"> {{ formData.data.orderInfo.orderAmount }} </a-form-item>
+					<a-form-item label="订单金额"> {{ formData.data.orderInfo.orderCountAmount / 100 }} </a-form-item>
 					<a-form-item label="订单编号"> {{ formData.data.orderInfo.orderNo }} </a-form-item>
 					<a-form-item label="门票"> {{ formData.data.orderInfo.ticketName }} </a-form-item>
 					<a-form-item label="门票分类"> {{ formData.data.orderInfo.ticketType }} </a-form-item>

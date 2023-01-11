@@ -10,7 +10,7 @@
 			/>
 			<FormItem
 				title="出散团时间"
-				:iValue="state.detail.itinerarySubmitRevokeBasicVo.startDate + '-' + state.detail.itinerarySubmitRevokeBasicVo.endDate"
+				:iValue="state.detail.itinerarySubmitRevokeBasicVo?.startDate + '-' + state.detail.itinerarySubmitRevokeBasicVo?.endDate"
 			/>
 			<FormItem title="团客人数" :iValue="state.detail.itinerarySubmitRevokeBasicVo.oldTouristCount" />
 
@@ -53,15 +53,15 @@
 							<span v-if="state.detail.submitRevokeNewItineraryInfoVo.hotelList?.length">
 								<p v-for="(item, index) in state.detail.submitRevokeNewItineraryInfoVo.hotelList || []" :key="index">
 									<span>{{ index + 1 }}.</span>
-									<span>{{ item.hotelName }}，</span>
-									<span v-for="(roomIten, i) in item.roomTypeList" :key="i"
+									<span>{{ item?.hotelName }}，</span>
+									<span v-for="(roomIten, i) in item?.roomTypeList" :key="i"
 										>{{ roomIten.roomTypeName }}
 										<span>{{ roomIten.roomCount }}间</span>
 									</span>
 
-									<span>{{ dayjs(item[index].endDate).diff(item[index].startDate, 'day') }}天，</span>
+									<span>{{ dayjs(item[index]?.endDate).diff(item[index]?.startDate, 'day') }}天，</span>
 									<span
-										>费用总计 <span style="color: red">{{ item[index].orderFee / 100 }}</span
+										>费用总计 <span style="color: red">{{ item[index]?.orderFee ? item[index]?.orderFee / 100 : '0' }}</span
 										>元；</span
 									>
 								</p>
@@ -72,16 +72,15 @@
 						<div style="margin-bottom: 20px">
 							<span v-if="state.detail.submitRevokeOldItineraryInfoVo.hotelList?.length">
 								<p v-for="(item, index) in state.detail.submitRevokeOldItineraryInfoVo.hotelList" :key="index">
-									{{ item }}
-									<span>{{ item[index].hotelName }}，</span>
-									<span v-for="(roomIten, i) in item[index].roomTypeList" :key="i"
+									<span>{{ item[index]?.hotelName }}，</span>
+									<span v-for="(roomIten, i) in item[index]?.roomTypeList" :key="i"
 										>{{ roomIten.roomTypeName }}
 										<span>{{ roomIten.roomCount }}间</span>
 									</span>
 
-									<span>{{ dayjs(item[index].endDate).diff(item[index].startDate, 'day') }}天，</span>
+									<span>{{ dayjs(item[index]?.endDate).diff(item[index]?.startDate, 'day') }}天，</span>
 									<span
-										>费用总计 <span style="color: red">{{ item[index].orderFee / 100 }}</span
+										>费用总计 <span style="color: red">{{ item[index]?.orderFee ? item[index]?.orderFee / 100 : 0 }}</span
 										>元；</span
 									>
 								</p>
@@ -101,7 +100,10 @@
 									<span>{{ itekcItem.ticketName }}</span>
 									<span>{{ itekcItem.reservePeopleCount }}张，</span>
 									<span
-										>费用总计 <span style="color: red">{{ itekcItem.reservePeopleCount * (itekcItem.unitPrice / 100) }}</span
+										>费用总计
+										<span style="color: red">{{
+											itekcItem.reservePeopleCount && itekcItem.unitPrice ? itekcItem.reservePeopleCount * (itekcItem.unitPrice / 100) : 0
+										}}</span
 										>元；</span
 									>
 								</p>
@@ -117,7 +119,10 @@
 									<span>{{ itekcItem.ticketName }}</span>
 									<span>{{ itekcItem.reservePeopleCount }}张，</span>
 									<span
-										>费用总计 <span style="color: red">{{ itekcItem.reservePeopleCount * (itekcItem.unitPrice / 100) }}</span
+										>费用总计
+										<span style="color: red">{{
+											itekcItem.reservePeopleCount && itekcItem.unitPrice ? itekcItem.reservePeopleCount * (itekcItem.unitPrice / 100) : 0
+										}}</span
 										>元；</span
 									>
 								</p>
@@ -175,8 +180,22 @@ const formValidate = reactive<formType>({
 });
 const state = reactive({
 	detail: {
-		itinerarySubmitRevokeBasicVo: {},
-		submitRevokeNewItineraryInfoVo: {},
+		itinerarySubmitRevokeBasicVo: {
+			routeName: '',
+			oldItineraryNo: '',
+			subTravelName: '',
+			subTravelOperatorName: '',
+			subTravelOperatorPhone: '',
+			startDate: '',
+			endDate: '',
+			oldTouristCount: '',
+			newTouristCount: '',
+			revokeReason: '',
+		},
+		submitRevokeNewItineraryInfoVo: {
+			hotelList: [],
+			ticketList: [],
+		},
 		submitRevokeOldItineraryInfoVo: {},
 	},
 });
@@ -258,6 +277,9 @@ const open = (id: number | null) => {
 const initInfo = async (id: number | null) => {
 	let res = await api.travelManagement.getSubmitRevokeDetail(id);
 	state.detail = res;
+	// state.detail.itinerarySubmitRevokeBasicVo = Object.assign(state.detail.itinerarySubmitRevokeBasicVo, res.itinerarySubmitRevokeBasicVo);
+	// state.detail.submitRevokeNewItineraryInfoVo = res.submitRevokeNewItineraryInfoVo || state.detail.submitRevokeNewItineraryInfoVo;
+	// state.detail.submitRevokeOldItineraryInfoVo = res.submitRevokeOldItineraryInfoVo;
 	console.log(res);
 };
 
@@ -265,7 +287,6 @@ const initInfo = async (id: number | null) => {
 const cancel = () => {
 	modelValue.value = false;
 	// formRef.value.resetFields();
-	formValidate.data.dateList = [{ startDateTime: '', endDateTime: '', time: [] }];
 	console.log(modelValue.value, 'modelValue');
 };
 

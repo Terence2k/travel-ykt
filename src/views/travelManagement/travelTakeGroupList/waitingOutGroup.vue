@@ -3,11 +3,6 @@
 		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
 			<template #button> </template>
 			<template #bodyCell="{ column, text, index, record }">
-				<template v-if="column.key === 'itineraryNo'">
-					<div>
-						<a @click="goToDetail(record)">{{ text }}</a>
-					</div>
-				</template>
 				<template v-if="column.key === 'index'">
 					<div>
 						{{
@@ -18,6 +13,7 @@
 
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
+						<a @click="goToDetail(record)" v-permission="'待出团_行程详情'">行程详情</a>
 						<a v-if="dateTime > dayjs(record.startDate).unix()" @click="outGroup(record)" v-permission="'待出团_手动出团'">手动出团</a>
 						<a @click="goToChange(record)" v-permission="'待出团_行程变更'">行程变更</a>
 						<!-- <a v-permission="'待出团_查看日志'">查看日志</a> -->

@@ -55,7 +55,7 @@
 				<td class="key">已添加餐厅</td>
 				<td class="value">{{ state.basicData.cateringCount }}</td>
 				<td class="key">行程冻结金额(元)</td>
-				<td class="value">{{ state.basicData.totalFee / 100 }}</td>
+				<td class="value">{{ accDiv(state.basicData.totalFee, 100) || '' }}</td>
 			</tr>
 			<tr class="row">
 				<td class="key">关联行程单</td>
@@ -77,11 +77,11 @@
 				<template v-if="column.key === 'endDate'"> {{ record.startDate }} - {{ record.endDate }} </template>
 				<template v-if="column.key === 'certificateType'"> {{ certificateTypeList[record.certificateType] }} </template>
 				<template v-if="column.key === 'codeContent'">
-					<a-image :src="record.codeContent"></a-image>
-				</template>
-				<template v-if="column.key === 'healthCodeStatus'">
 					{{ getCode[record.healthCodeStatus] }}
 				</template>
+				<!-- <template v-if="column.key === 'healthCodeStatus'">
+					{{ getCode[record.healthCodeStatus] }}
+				</template> -->
 			</template>
 		</CommonTable>
 		<p class="top-p">交通信息<span></span></p>
@@ -97,7 +97,10 @@
 		<CommonTable :columns="gouvy" :dataSource="state.guWeiDetail" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
 			<template #bodyCell="{ column, record, index }">
 				<template v-if="column.key === 'unitPrice'">
-					{{ record.unitPrice / 100 }}
+					{{ accDiv(record.unitPrice, 100) || '0' }}
+				</template>
+				<template v-if="column.key === 'add'">
+					{{ accDiv(record.unitPrice, 100) * record.payableNum }}
 				</template>
 				<template v-if="column.key === 'action'">
 					<a-button type="link" @click="gotoDetails(record.itineraryId)"> 查看订单</a-button>
@@ -115,14 +118,10 @@
 				</template>
 
 				<template v-if="column.key === 'unitPrice'">
-					<span v-if="typeof record.unitPrice === 'number'">
-						{{ record.unitPrice / 100 }}
-					</span>
+					{{ accDiv(record.unitPrice, 100) || '0' }}
 				</template>
 				<template v-if="column.key === 'totalFee'">
-					<span v-if="typeof record.totalFee === 'number'">
-						{{ record.totalFee / 100 }}
-					</span>
+					{{ accDiv(record.totalFee, 100) || '0' }}
 				</template>
 				<template v-if="column.key === 'action'">
 					<a-button type="link" @click="gotoDetails(record.itineraryId)"> 查看订单</a-button>
@@ -139,6 +138,9 @@
 				<template v-if="column.key === 'limitPeople'">
 					{{ record.roomTypeList[0].limitPeople }}
 				</template>
+				<template v-if="column.key === 'sourceAddressName'">
+					{{ record.sourceAddressName || 0 }}
+				</template>
 				<template v-if="column.key === 'roomTypeName'">
 					{{ record.roomTypeList[0].roomTypeName }}
 				</template>
@@ -147,7 +149,8 @@
 				</template>
 				<template v-if="column.key === 'orderFee'">
 					<span v-if="typeof record.orderFee === 'number'">
-						{{ record.orderFee / 100 }}
+						<!-- {{ record.orderFee / 100 }} -->
+						{{ accDiv(record.orderFee, 100) || '' }}
 					</span>
 				</template>
 			</template>
@@ -161,7 +164,12 @@
 			<template #bodyCell="{ column, record, index }">
 				<template v-if="column.key === 'unitPrice'">
 					<span v-if="typeof record.unitPrice === 'number'">
-						{{ record.unitPrice / 100 }}
+						{{ accDiv(record.unitPrice, 100) || '' }}
+					</span>
+				</template>
+				<template v-if="column.key === 'add'">
+					<span v-if="typeof record.unitPrice === 'number'">
+						{{ accDiv(record.unitPrice, 100) * record.reservePeopleCount }}
 					</span>
 				</template>
 			</template>
@@ -170,16 +178,22 @@
 		<CommonTable :columns="enclosure" :dataSource="state.attachmentList" rowKey="oid" :scrollY="false">
 			<template #bodyCell="{ column, record, index }">
 				<template v-if="column.key === '1'">
-					<a-image :src="img.attachmentUrl" :key="img.attachmentUrl" v-for="img in record[1]"></a-image>
+					<!-- <a-image :src="img.attachmentUrl" :key="img.attachmentUrl" v-for="img in record[1]"></a-image> -->
+					<CommonImg v-for="url in record[1]" :key="url.attachmentUrl" :width="100" :src="url.attachmentUrl"></CommonImg>
 				</template>
 				<template v-if="column.key === '2'">
-					<a-image :src="img.attachmentUrl" :key="img.attachmentUrl" v-for="img in record[2]"></a-image>
+					<CommonImg v-for="url in record[2]" :key="url.attachmentUrl" :width="100" :src="url.attachmentUrl"></CommonImg>
+					<!-- <a-image :src="img.attachmentUrl" :key="img.attachmentUrl" v-for="img in record[2]"></a-image> -->
 				</template>
 				<template v-if="column.key === '3'">
-					<a-image :src="img.attachmentUrl" :key="img.attachmentUrl" v-for="img in record[3]"></a-image>
+					<CommonImg v-for="url in record[3]" :key="url.attachmentUrl" :width="100" :src="url.attachmentUrl"></CommonImg>
+
+					<!-- <a-image :src="img.attachmentUrl" :key="img.attachmentUrl" v-for="img in record[3]"></a-image> -->
 				</template>
 				<template v-if="column.key === '4'">
-					<a-image :src="img.attachmentUrl" :key="img.attachmentUrl" v-for="img in record[4]"></a-image>
+					<CommonImg v-for="url in record[4]" :key="url.attachmentUrl" :width="100" :src="url.attachmentUrl"></CommonImg>
+
+					<!-- <a-image :src="img.attachmentUrl" :key="img.attachmentUrl" v-for="img in record[4]"></a-image> -->
 				</template>
 			</template>
 		</CommonTable>
@@ -240,7 +254,8 @@ import api from '@/api/index';
 import { AuditStaus } from '@/enum';
 import reapply from './components/reapply.vue';
 import AllRevoke from './components/allRevoke.vue';
-
+import { accDiv, accMul } from '@/utils/compute';
+import CommonImg from '@/components/common/CommonImg.vue';
 const route = useRouter();
 const state = reactive({
 	total: 0,
@@ -336,15 +351,15 @@ const tourist = [
 		dataIndex: 'codeContent',
 		key: 'codeContent',
 	},
-	{
-		title: '中高风险',
-		dataIndex: 'healthCodeStatus',
-		key: 'healthCodeStatus',
-	},
+	// {
+	// 	title: '中高风险',
+	// 	dataIndex: 'healthCodeStatus',
+	// 	key: 'healthCodeStatus',
+	// },
 	{
 		title: '特殊证件',
-		dataIndex: 'discountRuleId',
-		key: 'discountRuleId',
+		dataIndex: 'specialCertificateTypeName',
+		key: 'specialCertificateTypeName',
 	},
 ];
 const trafficInfo = [
@@ -401,9 +416,14 @@ const gouvy = [
 		key: 'payableNum',
 	},
 	{
-		title: '应缴总金额（元）',
+		title: '单价（元）',
 		dataIndex: 'unitPrice',
 		key: 'unitPrice',
+	},
+	{
+		title: '应缴总金额（元）',
+		dataIndex: 'add',
+		key: 'add',
 	},
 	{
 		title: '是否发起过减免申请',
@@ -548,8 +568,8 @@ const scenic = [
 	},
 	{
 		title: '费用（元）',
-		dataIndex: 'unitPrice',
-		key: 'unitPrice',
+		dataIndex: 'add',
+		key: 'add',
 	},
 	{
 		title: '订单状态',
