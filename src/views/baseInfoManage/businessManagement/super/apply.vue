@@ -83,6 +83,7 @@
 								<!-- <a @click="resetPassword(record.oid)" v-permission="'已审核_重置密码'">重置密码</a> -->
 								<!-- <a @click="edit(record)" v-show="editVisible(record?.businessType)" v-permission="'已审核_编辑'">编辑</a> -->
 								<a @click="edit(record)" v-permission="'已审核_编辑'">编辑</a>
+								<a @click="edit(record)" v-permission="'已审核_去认证'">去认证</a>
 							</div>
 						</template>
 					</template>

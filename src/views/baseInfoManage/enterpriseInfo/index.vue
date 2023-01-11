@@ -11,9 +11,9 @@
     </div>
     <div class="form_body">
       <a-form ref="formRef" :scrollToFirstError="true" :model="form" :rules="formRules" name="add-business" autocomplete="off" labelAlign="left"
-        :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }" hideRequiredMark @finish="submit">
+        :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }" @finish="submit">
         <a-form-item name="businessType" label="企业类型">
-          <a-select v-model:value="form.businessType" placeholder="请选择企业类型" disabled>
+          <a-select v-model:value="form.businessType" placeholder="请选择企业类型">
             <a-select-option v-for="item in businessTypeOption" :value="item.codeValue" :key="item.codeValue">{{
             item.name }}
             </a-select-option>
@@ -24,150 +24,46 @@
             <a-input v-model:value="form.name" placeholder="请输入企业名称"/>
           </div>
         </a-form-item>
-        <a-form-item name="addressIds" label="企业所属地区">
+        <a-form-item name="addressIds" label="所属地区">
           <div class="flex">
             <address-selector placeholder="请选择所属地区" v-model:value="form.addressIds"/>
           </div>
         </a-form-item>
-        <a-form-item name="addressDetail" label="企业详情地址">
+        <a-form-item name="addressDetail" label="详细地址">
           <div class="flex">
-            <a-input v-model:value="form.addressDetail" placeholder="请输入企业详情地址"/>
+            <a-input v-model:value="form.addressDetail" placeholder="请输入企业详细地址"/>
           </div>
         </a-form-item>
-        <a-form-item name="legalPersonUrl" label="法人身份证附件">
+        <a-form-item name="establishTime" label="成立日期">
           <div class="flex">
-            <Upload v-model="form.legalPersonUrl" :maxCount="1" @remove="getImage"/>
+            <picker v-model="form.establishTime" type="date" value-format="YYYY-MM-DD" placeholder="请选择成立日期" style="width:100%"/>
           </div>
         </a-form-item>
-        <a-form-item name="companyUserEmail" label="企业对公邮箱">
+        <a-form-item name="businessTerm" label="营业期限">
           <div class="flex">
-            <a-input v-model:value="form.companyUserEmail" placeholder="请输入企业对公邮箱"/>
+            <picker v-model="form.businessTerm" type="date" value-format="YYYY-MM-DD" placeholder="请选择营业期限" style="width:100%"/>
           </div>
         </a-form-item>
-        <a-form-item name="postalCode" label="企业所在地邮编">
+        <a-form-item name="contactName" label="联系人">
           <div class="flex">
-            <a-input v-model:value="form.postalCode" placeholder="请输入企业所在地邮编"/>
+            <a-input v-model:value="form.contactName" placeholder="请输入联系人"/>
           </div>
         </a-form-item>
-        <a-form-item name="businessLicenseNo" label="企业营业执照证件号码">
+        <a-form-item name="phone" label="联系电话">
           <div class="flex">
-            <a-input v-model:value="form.businessLicenseNo" placeholder="请输入企业营业执照证件号码"/>
+            <a-input v-model:value="form.phone" placeholder="请输入联系电话"/>
           </div>
         </a-form-item>
-        <a-form-item name="contactEmail" label="企业联系人邮箱">
+        <a-form-item name="creditCode" label="统一社会信用代码">
           <div class="flex">
-            <a-input v-model:value="form.contactEmail" placeholder="请输入企业联系人邮箱"/>
+            <a-input v-model:value="form.creditCode" placeholder="请输入统一社会信用代码"/>
           </div>
         </a-form-item>
-        <a-form-item name="contactIdNumber" label="企业联系人身份证号码">
+        <a-form-item name="businessLicenseUrl" label="营业执照">
           <div class="flex">
-            <a-input v-model:value="form.contactIdNumber" placeholder="请输入企业联系人身份证号码"/>
+            <Upload v-model="form.businessLicenseUrl" :maxCount="1"/>
           </div>
         </a-form-item>
-        <a-form-item name="legalPersonPhone" label="企业法人/负责人手机号">
-          <div class="flex">
-            <a-input v-model:value="form.legalPersonPhone" placeholder="请输入企业法人/负责人手机号"/>
-          </div>
-        </a-form-item>
-        <a-form-item name="legalPersonIdNumber" label="企业法人/负责人身份证号">
-          <div class="flex">
-            <a-input v-model:value="form.legalPersonIdNumber" placeholder="请输入企业法人/负责人身份证号"/>
-          </div>
-        </a-form-item>
-        <a-form-item name="bankAddressIds" label="企业开户行所在地">
-          <div class="flex">
-            <address-selector placeholder="请选择所属地区" v-model:value="form.bankAddressIds" :isProvince="false"/>
-          </div>
-        </a-form-item>
-        <a-form-item name="bankNo" label="企业开户行行号">
-          <div class="flex">
-            <a-input v-model:value="form.bankNo" placeholder="请输入企业开户行行号"/>
-          </div>
-        </a-form-item>
-        <a-form-item name="bankReservePhone" label="企业开户行预留手机号">
-          <div class="flex">
-            <a-input v-model:value="form.bankReservePhone" placeholder="请输入企业开户行预留手机号"/>
-          </div>
-        </a-form-item>
-        <a-form-item name="memberRegistrationPhone" label="企业会员注册手机号">
-          <div class="flex">
-            <a-input v-model:value="form.memberRegistrationPhone" placeholder="请输入企业会员注册手机号"/>
-          </div>
-        </a-form-item>
-        <!-- 旅行社、旅游集团、酒店、景区、餐饮 -->
-        <template v-if="['TRAVEL', 'GROUP', 'HOTEL', 'TICKET', 'CATERING'].includes(userInfo.sysCompany.businessType)">
-          <a-form-item name="legalPerson" label="法定代表人">
-            <div class="flex">
-              <a-input v-model:value="form.legalPerson" placeholder="请输入法定代表人"/>
-            </div>
-          </a-form-item>
-          <a-form-item name="managementRange" label="经营范围">
-            <div class="flex">
-              <a-textarea v-model:value="form.managementRange" placeholder="请输入经营范围" :rows="2"/>
-            </div>
-          </a-form-item>
-          <a-form-item name="registeredCapital" label="注册资本">
-            <div class="flex">
-              <a-input v-model:value="form.registeredCapital" placeholder="请输入注册资本" suffix="万元"/>
-            </div>
-          </a-form-item>
-          <a-form-item name="establishTime" label="成立日期">
-            <div class="flex">
-              <picker v-model="form.establishTime" type="date" value-format="YYYY-MM-DD" placeholder="请选择成立日期" style="width:100%"/>
-            </div>
-          </a-form-item>
-          <a-form-item name="businessTerm" label="营业期限">
-            <div class="flex">
-              <picker v-model="form.businessTerm" type="date" value-format="YYYY-MM-DD" placeholder="请选择营业期限" style="width:100%"/>
-            </div>
-          </a-form-item>
-          <a-form-item name="contactName" label="联系人">
-            <div class="flex">
-              <a-input v-model:value="form.contactName" placeholder="请输入联系人"/>
-            </div>
-          </a-form-item>
-          <a-form-item name="phone" label="联系电话">
-            <div class="flex">
-              <a-input v-model:value="form.phone" placeholder="请输入联系电话"/>
-            </div>
-          </a-form-item>
-          <a-form-item name="creditCode" label="统一社会信用代码">
-            <div class="flex">
-              <a-input v-model:value="form.creditCode" placeholder="请输入统一社会信用代码"/>
-            </div>
-          </a-form-item>
-          <a-form-item name="businessLicenseUrl" label="营业执照">
-            <div class="flex">
-              <Upload v-model="form.businessLicenseUrl" :maxCount="1"/>
-            </div>
-          </a-form-item>
-        </template>
-        <!-- 旅行社、酒店、景区、监理、古维 -->
-        <template v-if="['TRAVEL', 'HOTEL', 'TICKET', 'SUPERVISE', 'ANCIENT_UYGUR'].includes(userInfo.sysCompany.businessType)">
-          <a-form-item name="accountType" label="公司账户类型">
-            <div class="flex">
-              <a-radio-group v-model:value="form.accountType">
-                <a-radio :value="1">对公账户</a-radio>
-                <a-radio :value="2">对私账户</a-radio>
-              </a-radio-group>
-            </div>
-          </a-form-item>
-          <a-form-item name="bankAccountName" label="公司账户名称">
-            <div class="flex">
-              <a-input v-model:value="form.bankAccountName" placeholder="请输入公司账户名称"/>
-            </div>
-          </a-form-item>
-          <a-form-item name="bank" label="开户行">
-            <div class="flex">
-              <a-input v-model:value="form.bank" placeholder="请输入开户行"/>
-            </div>
-          </a-form-item>
-          <a-form-item name="bankAccount" label="公司账号">
-            <div class="flex">
-              <a-input v-model:value="form.bankAccount" placeholder="请输入公司账号"/>
-            </div>
-          </a-form-item>
-        </template>
         <!-- 旅行社特殊字段 -->
         <template v-if="userInfo.sysCompany.businessType == 'TRAVEL'">
           <a-form-item name="businessLicenseUrl1" label="经营许可证">
@@ -308,6 +204,76 @@
             </div>
           </a-form-item>
         </template>
+        <!-- 资质及账号信息（对公账号注册为法人类型，个人账号将被注册为自然人类型） -->
+        <div style="margin: 70px 0" v-if="true">
+          <!-- <span style="color: red;">资质及账号信息（对公账号注册为法人类型，个人账号将被注册为自然人类型）</span> -->
+          <a-form-item name="bankAccountType" label="账号类型">
+            <div class="flex">
+              <a-radio-group v-model:value="form.bankAccountType">
+                <a-radio :value="1">工行对公账号</a-radio>
+                <a-radio :value="2">他行对公账号</a-radio>
+                <a-radio :value="3">工行个人账号</a-radio>
+              </a-radio-group>
+            </div>
+          </a-form-item>
+          <a-form-item name="legalPerson" label="法人姓名">
+            <div class="flex">
+              <a-input v-model:value="form.legalPerson" placeholder="请输入法人姓名"/>
+            </div>
+          </a-form-item>
+          <a-form-item name="legalPersonIdNumber" label="法人身份证">
+            <div class="flex">
+              <a-input v-model:value="form.legalPersonIdNumber" placeholder="请输入法人身份证号码"/>
+            </div>
+          </a-form-item>
+          <a-form-item name="businessLicenseNo" label="营业执照号码" v-if="[1, 2].includes(form.bankAccountType)">
+            <div class="flex">
+              <a-input v-model:value="form.businessLicenseNo" placeholder="请输入营业执照号码"/>
+            </div>
+          </a-form-item>
+          <a-form-item name="bankNo" label="开户行行号">
+            <div class="flex">
+              <a-input v-model:value="form.bankNo" placeholder="请输入开户行行号"/>
+            </div>
+          </a-form-item>
+          <a-form-item name="bank" label="开户行名称">
+            <div class="flex">
+              <a-input v-model:value="form.bank" placeholder="请输入开户行名称"/>
+            </div>
+          </a-form-item>
+          <a-form-item name="bankAccount" label="银行卡号">
+            <div class="flex">
+              <a-input v-model:value="form.bankAccount" placeholder="请输入结算银行卡号"/>
+            </div>
+          </a-form-item>
+          <a-form-item name="bankAccountName" label="账号名称">
+            <div class="flex">
+              <a-input v-model:value="form.bankAccountName" placeholder="请输入结算银行卡号账号名称"/>
+            </div>
+          </a-form-item>
+          <template v-if="form.bankAccountType === 3">
+            <a-form-item name="companyEnglishName" label="英文名">
+              <div class="flex">
+                <a-input v-model:value="form.companyEnglishName" placeholder="请输入企业英文名"/>
+              </div>
+            </a-form-item>
+            <a-form-item name="contactEmail" label="联系人邮箱">
+              <div class="flex">
+                <a-input v-model:value="form.contactEmail" placeholder="请输入联系人邮箱"/>
+              </div>
+            </a-form-item>
+            <a-form-item name="postalCode" label="邮政编码">
+              <div class="flex">
+                <a-input v-model:value="form.postalCode" placeholder="请输入注册所在地邮政编码"/>
+              </div>
+            </a-form-item>
+            <a-form-item name="registeredCapital" label="注册资本">
+              <div class="flex">
+                <a-input v-model:value="form.registeredCapital" placeholder="请输入注册资本" suffix="万元"/>
+              </div>
+            </a-form-item>
+          </template>
+        </div>
         <!-- 驳回原因 -->
         <template v-if="form.informationAuditStatus === 3">
           <p style="color: red;">{{ enterpriseState }}</p>
@@ -399,22 +365,20 @@ const formRules: Record<string, Rule[]> = {
   addressIds: [{ required: true, trigger: 'change', message: '请选择所属地区' }],
   bankAddressIds: [{ required: true, trigger: 'change', message: '请选择开户行所在地' }],
   addressDetail: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
+  bankAccountType: [{ required: true, trigger: 'change', message: '请选择账号类型' }],
   legalPerson: [{ required: true, trigger: 'blur', message: '请输入法定代表人' }],
-  managementRange: [{ required: true, trigger: 'blur', message: '请输入经营范围' }],
+  legalPersonIdNumber: [{ required: true, trigger: 'blur', message: '请输入法人身份证号码' }],
+  businessLicenseNo: [{ required: true, trigger: 'blur', message: '请输入营业执照号码' }],
+  bankNo: [{ required: true, trigger: 'blur', message: '请输入开户行行号' }],
+  bank: [{ required: true, trigger: 'blur', message: '请输入开户行名称' }],
   registeredCapital: [{ required: true, trigger: 'blur', message: '请输入注册资本' }],
-  establishTime: [{ required: true, trigger: 'change', message: '请选择成立日期' }],
-  businessTerm: [{ required: true, trigger: 'change', message: '请选择营业期限' }],
-  contactName: [{ required: true, trigger: 'blur', message: '请输入联系人' }],
-  phone: [{ required: true, trigger: 'blur', message: '请输入联系电话' }],
   creditCode: [{ required: true, trigger: 'blur', message: '请输入统一社会信用代码' }],
-  // businessLicenseUrl: [{ required: true, trigger: 'change', message: '请上传营业执照' }],
-  accountType: [{ required: true, trigger: 'change', message: '请选择公司账户类型' }],
-  bankAccountName: [{ required: true, trigger: 'blur', message: '请输入公司账户名称' }],
-  bank: [{ required: true, trigger: 'blur', message: '请输入开户行' }],
-  bankAccount: [{ required: true, trigger: 'blur', message: '请输入公司账号' }],
-  // businessLicenseUrl1: [{ required: true, trigger: 'change', message: '请上传经营许可' }],
-  // licenseNo: [{ required: true, trigger: 'blur', message: '请输入12301旅行社许可证号' }],
-  // isIndividual: [{ required: true, trigger: 'change', message: '请选择是否为散客中心' }],
+  businessLicenseUrl: [{ required: true, trigger: 'change', message: '请上传营业执照' }],
+  bankAccountName: [{ required: true, trigger: 'blur', message: '请输入结算银行卡号账号名称' }],
+  companyEnglishName: [{ required: true, trigger: 'blur', message: '请输入企业英文名' }],
+  contactEmail: [{ required: true, trigger: 'blur', message: '请输入联系人邮箱' }],
+  postalCode: [{ required: true, trigger: 'blur', message: '请输入注册所在地邮政编码' }],
+  bankAccount: [{ required: true, trigger: 'blur', message: '请输入结算银行卡号' }],
   unitStatus: [{ required: true, trigger: 'change', message: '请选择开业状态' }],
   hotelStarId: [{ required: true, trigger: 'change', message: '请选择酒店星级' }],
   scenicLevel: [{ required: true, trigger: 'change', message: '请选择景区等级' }],
