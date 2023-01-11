@@ -5,11 +5,6 @@
       <template #button>
       </template>
       <template #bodyCell="{ column, text, index,record }">
-        <template v-if="column.key === 'itineraryNo'">
-          <div>
-            <a @click="goToDetail(record)">{{text}}</a>
-          </div>
-        </template>
         <template v-if="column.key === 'index'">
 					<div>
 						{{(travelStore.takeGroupList.overtime.params.pageNo - 1) * (travelStore.takeGroupList.overtime.params.pageSize) + (index + 1)}}
