@@ -139,7 +139,7 @@
 					{{ record.roomTypeList[0].limitPeople }}
 				</template>
 				<template v-if="column.key === 'sourceAddressName'">
-					{{ record.sourceAddressName || 0 }}
+					{{ getDiffDay(record.startDate, record.endDate) }}
 				</template>
 				<template v-if="column.key === 'roomTypeName'">
 					{{ record.roomTypeList[0].roomTypeName }}
@@ -256,6 +256,7 @@ import reapply from './components/reapply.vue';
 import AllRevoke from './components/allRevoke.vue';
 import { accDiv, accMul } from '@/utils/compute';
 import CommonImg from '@/components/common/CommonImg.vue';
+import { getStyles, getDiffDay } from '@/utils/util';
 const route = useRouter();
 const state = reactive({
 	total: 0,
