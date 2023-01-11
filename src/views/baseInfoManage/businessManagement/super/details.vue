@@ -60,9 +60,21 @@ const cmpImageURL = computed(() => async (url: string) => {
     return ''
   }
 })
-const getComputedVal = computed(() => (key: string, val: any) => {
-  if (key === 'accountType') {
-    return val == 1 ? '对公账户' : '对私账户'
+const getComputedVal = computed(() => (key: string | number, val: any) => {
+  if (key === 'bankAccountType') {
+    let res = undefined
+    switch (val) {
+      case 1:
+        res = '工行对公账号'
+        break
+      case 2:
+        res = '他行对公账号'
+        break
+      case 3:
+        res = '工行个人账号'
+        break
+    }
+    return res
   } else if (key === 'unitStatus') {
     return val === 1 || val === false ? '停业' : '开业'
   } else if (key === 'derate') {
@@ -110,7 +122,7 @@ const getComputedVal = computed(() => (key: string, val: any) => {
   } else if (key === 'isIndividual') {
     return val == 1 ? '是' : '否'
   } else {
-    return val
+    return [undefined, null, ''].includes(val) ? '/' : val
   }
 })
 const getURL = async (url: string) => {
