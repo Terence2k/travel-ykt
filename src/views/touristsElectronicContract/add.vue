@@ -499,7 +499,7 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter, useRoute } from 'vue-router';
+import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router';
 import { CloseOutlined } from '@ant-design/icons-vue';
 import Upload from '@/components/common/imageWrapper.vue';
 import pdfUpload from '@/components/common/pdfWrapper.vue';
@@ -512,6 +512,8 @@ import picker from '@/components/common/datePicker.vue';
 import { accDiv, accMul } from '@/utils/compute';
 import { getAge, getGenderByIdNumber } from '@/utils';
 import type { Rule } from 'ant-design-vue/es/form';
+import { useNavigatorBar } from '@/stores/modules/navigatorBar';
+const navigatorBar = useNavigatorBar();
 const accDivValue = (value: any) => {
   if (typeof value === 'number') {
     return accDiv(value, 100)
@@ -1580,8 +1582,10 @@ watch(
   (newVal) => {
     if (newVal.name === "addElectronicContrat") {
       if (newVal.query.operation === 'add') {
+        navigatorBar.setNavigator(['旅行社管理', '散客电子合同', '新增']);
         isAdd.value = true
       } else if (newVal.query.operation === 'update') {
+        navigatorBar.setNavigator(['旅行社管理', '散客电子合同', '编辑']);
         isAdd.value = false
         getEditDetails(newVal.query.oid)
       }
@@ -1592,7 +1596,6 @@ watch(
     deep: true
   }
 )
-
 onActivated(() => {
   isRefresh.value = '0'
 })
