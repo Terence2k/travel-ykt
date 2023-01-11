@@ -99,6 +99,9 @@
 				<template v-if="column.key === 'unitPrice'">
 					{{ accDiv(record.unitPrice, 100) || '0' }}
 				</template>
+				<template v-if="column.key === 'add'">
+					{{ accDiv(record.unitPrice, 100) * record.payableNum }}
+				</template>
 				<template v-if="column.key === 'action'">
 					<a-button type="link" @click="gotoDetails(record.itineraryId)"> 查看订单</a-button>
 				</template>
@@ -136,7 +139,7 @@
 					{{ record.roomTypeList[0].limitPeople }}
 				</template>
 				<template v-if="column.key === 'sourceAddressName'">
-					{{ record.sourceAddressName || 0 }}
+					{{ getDiffDay(record.startDate, record.endDate) }}
 				</template>
 				<template v-if="column.key === 'roomTypeName'">
 					{{ record.roomTypeList[0].roomTypeName }}
@@ -146,7 +149,8 @@
 				</template>
 				<template v-if="column.key === 'orderFee'">
 					<span v-if="typeof record.orderFee === 'number'">
-						{{ record.orderFee / 100 }}
+						<!-- {{ record.orderFee / 100 }} -->
+						{{ accDiv(record.orderFee, 100) || '' }}
 					</span>
 				</template>
 			</template>
@@ -174,16 +178,22 @@
 		<CommonTable :columns="enclosure" :dataSource="state.attachmentList" rowKey="oid" :scrollY="false">
 			<template #bodyCell="{ column, record, index }">
 				<template v-if="column.key === '1'">
-					<a-image :src="img.attachmentUrl" :key="img.attachmentUrl" v-for="img in record[1]"></a-image>
+					<!-- <a-image :src="img.attachmentUrl" :key="img.attachmentUrl" v-for="img in record[1]"></a-image> -->
+					<CommonImg v-for="url in record[1]" :key="url.attachmentUrl" :width="100" :src="url.attachmentUrl"></CommonImg>
 				</template>
 				<template v-if="column.key === '2'">
-					<a-image :src="img.attachmentUrl" :key="img.attachmentUrl" v-for="img in record[2]"></a-image>
+					<CommonImg v-for="url in record[2]" :key="url.attachmentUrl" :width="100" :src="url.attachmentUrl"></CommonImg>
+					<!-- <a-image :src="img.attachmentUrl" :key="img.attachmentUrl" v-for="img in record[2]"></a-image> -->
 				</template>
 				<template v-if="column.key === '3'">
-					<a-image :src="img.attachmentUrl" :key="img.attachmentUrl" v-for="img in record[3]"></a-image>
+					<CommonImg v-for="url in record[3]" :key="url.attachmentUrl" :width="100" :src="url.attachmentUrl"></CommonImg>
+
+					<!-- <a-image :src="img.attachmentUrl" :key="img.attachmentUrl" v-for="img in record[3]"></a-image> -->
 				</template>
 				<template v-if="column.key === '4'">
-					<a-image :src="img.attachmentUrl" :key="img.attachmentUrl" v-for="img in record[4]"></a-image>
+					<CommonImg v-for="url in record[4]" :key="url.attachmentUrl" :width="100" :src="url.attachmentUrl"></CommonImg>
+
+					<!-- <a-image :src="img.attachmentUrl" :key="img.attachmentUrl" v-for="img in record[4]"></a-image> -->
 				</template>
 			</template>
 		</CommonTable>
@@ -245,7 +255,8 @@ import { AuditStaus } from '@/enum';
 import reapply from './components/reapply.vue';
 import AllRevoke from './components/allRevoke.vue';
 import { accDiv, accMul } from '@/utils/compute';
-
+import CommonImg from '@/components/common/CommonImg.vue';
+import { getStyles, getDiffDay } from '@/utils/util';
 const route = useRouter();
 const state = reactive({
 	total: 0,
@@ -406,9 +417,14 @@ const gouvy = [
 		key: 'payableNum',
 	},
 	{
-		title: '应缴总金额（元）',
+		title: '单价（元）',
 		dataIndex: 'unitPrice',
 		key: 'unitPrice',
+	},
+	{
+		title: '应缴总金额（元）',
+		dataIndex: 'add',
+		key: 'add',
 	},
 	{
 		title: '是否发起过减免申请',
