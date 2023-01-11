@@ -532,8 +532,8 @@ const isRefresh = ref('0')
 const imgUploadRef = ref()
 const pdfUploadRef = ref()
 const back = () => {
-  imgUploadRef.value.clearFileList()
-  pdfUploadRef.value.clearFileList()
+  imgUploadRef.value?.clearFileList()
+  pdfUploadRef.value?.clearFileList()
   router.push({
     name: 'electronicContratList',
     params: {
