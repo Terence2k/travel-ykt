@@ -55,7 +55,7 @@
 				<td class="key">已添加餐厅</td>
 				<td class="value">{{ state.basicData.cateringCount }}</td>
 				<td class="key">行程冻结金额(元)</td>
-				<td class="value">{{ state.basicData.totalFee / 100 }}</td>
+				<td class="value">{{ accDiv(state.basicData.totalFee, 100) || '' }}</td>
 			</tr>
 			<tr class="row">
 				<td class="key">关联行程单</td>
@@ -97,7 +97,7 @@
 		<CommonTable :columns="gouvy" :dataSource="state.guWeiDetail" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
 			<template #bodyCell="{ column, record, index }">
 				<template v-if="column.key === 'unitPrice'">
-					{{ record.unitPrice / 100 }}
+					{{ accDiv(record.unitPrice, 100) || '0' }}
 				</template>
 				<template v-if="column.key === 'action'">
 					<a-button type="link" @click="gotoDetails(record.itineraryId)"> 查看订单</a-button>
@@ -115,14 +115,10 @@
 				</template>
 
 				<template v-if="column.key === 'unitPrice'">
-					<span v-if="typeof record.unitPrice === 'number'">
-						{{ record.unitPrice / 100 }}
-					</span>
+					{{ accDiv(record.unitPrice, 100) || '0' }}
 				</template>
 				<template v-if="column.key === 'totalFee'">
-					<span v-if="typeof record.totalFee === 'number'">
-						{{ record.totalFee / 100 }}
-					</span>
+					{{ accDiv(record.totalFee, 100) || '0' }}
 				</template>
 				<template v-if="column.key === 'action'">
 					<a-button type="link" @click="gotoDetails(record.itineraryId)"> 查看订单</a-button>
@@ -138,6 +134,9 @@
 			<template #bodyCell="{ column, record, index }">
 				<template v-if="column.key === 'limitPeople'">
 					{{ record.roomTypeList[0].limitPeople }}
+				</template>
+				<template v-if="column.key === 'sourceAddressName'">
+					{{ record.sourceAddressName || 0 }}
 				</template>
 				<template v-if="column.key === 'roomTypeName'">
 					{{ record.roomTypeList[0].roomTypeName }}
@@ -161,7 +160,12 @@
 			<template #bodyCell="{ column, record, index }">
 				<template v-if="column.key === 'unitPrice'">
 					<span v-if="typeof record.unitPrice === 'number'">
-						{{ record.unitPrice / 100 }}
+						{{ accDiv(record.unitPrice, 100) || '' }}
+					</span>
+				</template>
+				<template v-if="column.key === 'add'">
+					<span v-if="typeof record.unitPrice === 'number'">
+						{{ accDiv(record.unitPrice, 100) * record.reservePeopleCount }}
 					</span>
 				</template>
 			</template>
@@ -240,6 +244,7 @@ import api from '@/api/index';
 import { AuditStaus } from '@/enum';
 import reapply from './components/reapply.vue';
 import AllRevoke from './components/allRevoke.vue';
+import { accDiv, accMul } from '@/utils/compute';
 
 const route = useRouter();
 const state = reactive({
@@ -548,8 +553,8 @@ const scenic = [
 	},
 	{
 		title: '费用（元）',
-		dataIndex: 'unitPrice',
-		key: 'unitPrice',
+		dataIndex: 'add',
+		key: 'add',
 	},
 	{
 		title: '订单状态',
