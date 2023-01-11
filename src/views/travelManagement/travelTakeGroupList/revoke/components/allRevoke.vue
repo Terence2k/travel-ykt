@@ -1,16 +1,24 @@
 <template>
 	<BaseModal :modelValue="modelValue" title="整团撤销选择" width="600px" @cancel="cancel">
-		<a-form layout="vertical" :model="formValidate" :label-col="{ span: 14 }" :wrapper-col="{ span: 28, offset: 0 }" labelAlign="left">
-			<a-form-item layout="vertical" label="是否新增行程" class="fz14" v-bind="validateInfos[`data.haveNew`]">
+		<a-form
+			layout="vertical"
+			:rules="failFormRules"
+			:model="formValidate.data"
+			:label-col="{ span: 14 }"
+			:wrapper-col="{ span: 28, offset: 0 }"
+			labelAlign="left"
+			ref="formRef"
+		>
+			<a-form-item layout="vertical" label="是否关联新行程" class="fz14" name="haveNew">
 				<a-radio-group v-model:value="formValidate.data.haveNew" :options="options" />
 			</a-form-item>
-			<a-form-item v-if="formValidate.data.haveNew" label="填写一个关联行程单" class="fz14" v-bind="validateInfos[`data.relatedItineraryNo`]">
+			<a-form-item v-if="formValidate.data.haveNew" label="填写一个关联行程单" class="fz14" name="relatedItineraryNo">
 				<a-input v-model:value="formValidate.data.relatedItineraryNo" placeholder="输入关联行程单" />
 			</a-form-item>
-			<a-form-item label="撤销原因（200字）" class="fz14" v-bind="validateInfos[`data.revokeReason`]">
+			<a-form-item label="撤销原因（200字）" class="fz14" name="revokeReason">
 				<a-textarea :maxlength="200" v-model:value="formValidate.data.revokeReason" placeholder="请输入其他说明" :rows="4" max="200" />
 			</a-form-item>
-			<a-form-item label="上传附件（5张）" class="fz14" v-bind="validateInfos[`data.pic`]">
+			<a-form-item label="上传附件（5张）" class="fz14" name="pic">
 				<Upload v-model="formValidate.data.pic" :maxCount="5" />
 			</a-form-item>
 		</a-form>
@@ -25,7 +33,7 @@
 import BaseModal from '@/components/common/BaseModal.vue';
 import Upload from '@/components/common/imageWrapper.vue';
 import api from '@/api/index';
-
+import type { Rule } from 'ant-design-vue/es/form';
 import { Form } from 'ant-design-vue';
 const useForm = Form.useForm;
 const route = useRouter();
@@ -43,16 +51,23 @@ const options = [
 	{ label: '否', value: false },
 	{ label: '是', value: true },
 ];
-const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
-	formValidate,
-	reactive({
-		'data.revokeReason': [{ required: true, message: '请选择' }],
-		'data.pic': [{ required: true, message: '请选择' }],
-		'data.haveNew': [{ required: true, message: '请选择' }],
-		'data.relatedItineraryNo': [{ required: formValidate.data.haveNew ? true : false, message: '请选择' }],
-	})
-);
 
+const failFormRules: Record<string, Rule[]> = {
+	revokeReason: [{ required: true, message: '请填写', trigger: 'change' }],
+	pic: [{ required: true, message: '请选择照片', trigger: 'change' }],
+	haveNew: [{ required: true, message: '请选择是否新增', trigger: 'blur' }],
+	relatedItineraryNo: [{ required: true, message: '请填写', trigger: 'blur' }],
+};
+// const { resetFields, validate, validateInfos, mergeValidateInfo, scrollToField } = useForm(
+// 	formValidate,
+// 	reactive({
+// 		'data.revokeReason': [{ required: true, message: '请选择' }],
+// 		'data.pic': [{ required: true, message: '请选择' }],
+// 		'data.haveNew': [{ required: true, message: '请选择' }],
+// 		'data.relatedItineraryNo': [{ required: true, message: '请选择' }],
+// 	})
+// );
+const formRef = ref();
 const props = defineProps({
 	// modelValue: {
 	// 	type: Boolean,
@@ -61,18 +76,19 @@ const props = defineProps({
 	// params: Object,
 	// menuList: Array,
 	itineraryId: {
-		type: String
-	}
+		type: String,
+	},
 });
 const emit = defineEmits(['finish']);
 
 const apply = async () => {
-	validate()
+	formRef.value
+		.validate()
 		.then(async (res) => {
 			let parms: any = formValidate.data;
 			parms.attachmentList = parms.pic.split(',');
 			parms.itineraryId = route.currentRoute.value?.query?.id || props.itineraryId;
-			console.log(parms, 'parms');
+			console.log(parms, 'parms', res);
 			let resP = await api.travelManagement.submitAllRevoke(parms);
 			console.log(resP, 'resP');
 
@@ -94,7 +110,7 @@ const open = (status: string) => {
 // 关闭弹窗
 const cancel = () => {
 	modelValue.value = false;
-	resetFields();
+	formRef.value.resetFields();
 };
 
 defineExpose({

@@ -6,8 +6,8 @@
 					<span>{{ record.itineraryStartDate }}~{{ record.itineraryEndDate }}</span>
 				</template>
 			</template>
-			<template #expandedRowRender>
-				<a-table :columns="innerColumns" :data-source="state.tableData.innerData" :pagination="false">
+			<template #expandedRowRender="{index}">
+				<a-table :columns="innerColumns" :data-source="state.tableData.data[index]?.innerData" :pagination="false">
 					<template #bodyCell="{ column, record }">
 						<template v-if="column.dataIndex === 'actions'">
 					<div class="action-btns">
@@ -168,7 +168,14 @@ const expand=(expanded:any,record:any)=>{
 	// console.log(record.itineraryId,data,record,expanded);
 	
 	api.applyReductionList(data).then((res:any)=>{
-		state.tableData.innerData=res
+		// state.tableData.innerData=res
+		state.tableData.data.map((item)=>{
+			if(item.itineraryId==record.itineraryId)
+			{
+				item.innerData=res
+			}
+			return item
+		})
 	})
 }
 onMounted(() => {

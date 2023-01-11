@@ -67,7 +67,9 @@
 				<td class="key">已添加餐厅</td>
 				<td class="value">{{ state.basicData.cateringCount }}</td>
 				<td class="key">行程冻结金额(元)</td>
-				<td class="value">{{ state.basicData.totalFee / 100 }}</td>
+				<td class="value">
+					{{ accDiv(state.basicData.totalFee, 100) || '' }}
+				</td>
 			</tr>
 			<tr class="row">
 				<td class="key">联系人</td>
@@ -132,7 +134,7 @@
 		<CommonTable :columns="gouvy" :dataSource="state.guWeiDetail" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
 			<template #bodyCell="{ column, record, index }">
 				<template v-if="column.key === 'unitPrice'">
-					{{ record.unitPrice / 100 }}
+					{{ accDiv(record.unitPrice, 100) || '0' }}
 				</template>
 				<template v-if="column.key === 'action'">
 					<a-button type="link" @click="gotoDetails(record.itineraryId)"> 查看订单</a-button>
@@ -150,14 +152,10 @@
 				</template>
 
 				<template v-if="column.key === 'unitPrice'">
-					<span v-if="typeof record.unitPrice === 'number'">
-						{{ record.unitPrice / 100 }}
-					</span>
+					{{ accDiv(record.unitPrice, 100) || '0' }}
 				</template>
 				<template v-if="column.key === 'totalFee'">
-					<span v-if="typeof record.totalFee === 'number'">
-						{{ record.totalFee / 100 }}
-					</span>
+					{{ accDiv(record.totalFee, 100) || '0' }}
 				</template>
 				<template v-if="column.key === 'action'">
 					<a-button type="link" @click="gotoDetails(record.itineraryId)"> 查看订单</a-button>
@@ -171,6 +169,9 @@
 		</p>
 		<CommonTable :columns="hotel" :dataSource="state.hotelList" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
 			<template #bodyCell="{ column, record, index }">
+				<template v-if="column.key === 'sourceAddressName'">
+					{{ getDiffDay(record.startDate, record.endDate) }}
+				</template>
 				<template v-if="column.key === 'limitPeople'">
 					{{ record.roomTypeList[0].limitPeople }}
 				</template>
@@ -182,7 +183,8 @@
 				</template>
 				<template v-if="column.key === 'orderFee'">
 					<span v-if="typeof record.orderFee === 'number'">
-						{{ record.orderFee / 100 }}
+						<!-- {{ record.orderFee / 100 }} -->
+						{{ accDiv(record.orderFee, 100) || '0' }}
 					</span>
 				</template>
 			</template>
@@ -196,7 +198,12 @@
 			<template #bodyCell="{ column, record, index }">
 				<template v-if="column.key === 'unitPrice'">
 					<span v-if="typeof record.unitPrice === 'number'">
-						{{ record.unitPrice / 100 }}
+						{{ accDiv(record.unitPrice, 100) || '0' }}
+					</span>
+				</template>
+				<template v-if="column.key === 'add'">
+					<span v-if="typeof record.unitPrice === 'number'">
+						{{ accDiv(record.unitPrice, 100) * record.reservePeopleCount }}
 					</span>
 				</template>
 			</template>
@@ -277,6 +284,10 @@ import { AuditStaus } from '@/enum';
 import reapply from './revoke/reapply.vue';
 import AllRevoke from './revoke/allRevoke.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
+import { accDiv, accMul } from '@/utils/compute';
+import { getStyles, getDiffDay } from '@/utils/util';
+import CommonImg from '@/components/common/CommonImg.vue';
+
 const navigatorBar = useNavigatorBar();
 
 const route = useRouter();
