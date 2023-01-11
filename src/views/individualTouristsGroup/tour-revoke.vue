@@ -169,6 +169,9 @@
 		</p>
 		<CommonTable :columns="hotel" :dataSource="state.hotelList" rowKey="oid" :scrollY="false" style="margin-bottom: 40px; padding: 0px">
 			<template #bodyCell="{ column, record, index }">
+				<template v-if="column.key === 'sourceAddressName'">
+					{{ getDiffDay(record.startDate, record.endDate) }}
+				</template>
 				<template v-if="column.key === 'limitPeople'">
 					{{ record.roomTypeList[0].limitPeople }}
 				</template>
@@ -282,7 +285,7 @@ import reapply from './revoke/reapply.vue';
 import AllRevoke from './revoke/allRevoke.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import { accDiv, accMul } from '@/utils/compute';
-
+import { getStyles, getDiffDay } from '@/utils/util';
 import CommonImg from '@/components/common/CommonImg.vue';
 
 const navigatorBar = useNavigatorBar();
