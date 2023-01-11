@@ -34,16 +34,20 @@
             <a-input v-model:value="form.addressDetail" placeholder="请输入企业详细地址"/>
           </div>
         </a-form-item>
-        <a-form-item name="establishTime" label="成立日期">
-          <div class="flex">
-            <picker v-model="form.establishTime" type="date" value-format="YYYY-MM-DD" placeholder="请选择成立日期" style="width:100%"/>
-          </div>
-        </a-form-item>
-        <a-form-item name="businessTerm" label="营业期限">
-          <div class="flex">
-            <picker v-model="form.businessTerm" type="date" value-format="YYYY-MM-DD" placeholder="请选择营业期限" style="width:100%"/>
-          </div>
-        </a-form-item>
+
+        <template v-if="!['CULTURE_BUREAU'].includes(userInfo.sysCompany.businessType)">
+          <a-form-item name="establishTime" label="成立日期">
+            <div class="flex">
+              <picker v-model="form.establishTime" type="date" value-format="YYYY-MM-DD" placeholder="请选择成立日期" style="width:100%"/>
+            </div>
+          </a-form-item>
+          <a-form-item name="businessTerm" label="营业期限">
+            <div class="flex">
+              <picker v-model="form.businessTerm" type="date" value-format="YYYY-MM-DD" placeholder="请选择营业期限" style="width:100%"/>
+            </div>
+          </a-form-item>
+        </template>
+        
         <a-form-item name="contactName" label="联系人">
           <div class="flex">
             <a-input v-model:value="form.contactName" placeholder="请输入联系人"/>
@@ -54,16 +58,20 @@
             <a-input v-model:value="form.phone" placeholder="请输入联系电话"/>
           </div>
         </a-form-item>
-        <a-form-item name="creditCode" label="统一社会信用代码">
-          <div class="flex">
-            <a-input v-model:value="form.creditCode" placeholder="请输入统一社会信用代码"/>
-          </div>
-        </a-form-item>
-        <a-form-item name="businessLicenseUrl" label="营业执照">
-          <div class="flex">
-            <Upload v-model="form.businessLicenseUrl" :maxCount="1"/>
-          </div>
-        </a-form-item>
+
+        
+        <template v-if="!['CULTURE_BUREAU'].includes(userInfo.sysCompany.businessType)">
+          <a-form-item name="creditCode" label="统一社会信用代码">
+            <div class="flex">
+              <a-input v-model:value="form.creditCode" placeholder="请输入统一社会信用代码"/>
+            </div>
+          </a-form-item>
+          <a-form-item name="businessLicenseUrl" label="营业执照">
+            <div class="flex">
+              <Upload v-model="form.businessLicenseUrl" :maxCount="1"/>
+            </div>
+          </a-form-item>
+        </template>
         <!-- 旅行社特殊字段 -->
         <template v-if="userInfo.sysCompany.businessType == 'TRAVEL'">
           <a-form-item name="businessLicenseUrl1" label="经营许可证">
@@ -205,7 +213,7 @@
           </a-form-item>
         </template>
         <!-- 资质及账号信息（对公账号注册为法人类型，个人账号将被注册为自然人类型） -->
-        <div style="margin: 70px 0" v-if="true">
+        <div style="margin: 70px 0" v-if="!['CULTURE_BUREAU'].includes(userInfo.sysCompany.businessType)">
           <!-- <span style="color: red;">资质及账号信息（对公账号注册为法人类型，个人账号将被注册为自然人类型）</span> -->
           <a-form-item name="bankAccountType" label="账号类型">
             <div class="flex">
