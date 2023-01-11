@@ -116,9 +116,9 @@
           <template v-if="column.key === 'index'">
             {{ index + 1 }}
           </template>
-          <template v-if="column.key === 'healthyCode'">
+          <!-- <template v-if="column.key === 'healthyCode'">
             <span :class="cmpHealthyColor(text)">{{ text }}</span>
-          </template>
+          </template> -->
         </template>
       </CommonTable>
     </div>
@@ -321,11 +321,11 @@ const touristColumns = [
     dataIndex: 'isHealthy',
     key: 'isHealthy',
   },
-  {
+  /* {
     title: '健康码',
     dataIndex: 'healthyCode',
     key: 'healthyCode',
-  },
+  }, */
   {
     title: '古维费代收代缴',
     dataIndex: 'isAncientUygur',
@@ -369,7 +369,7 @@ const costColumns = [
     key: 'individualSubtotal',
   },
 ]
-const cmpHealthyColor = computed(() => (text: string) => {
+/* const cmpHealthyColor = computed(() => (text: string) => {
   if (text === '绿码') {
     return 'green_text'
   } else if (text === '黄码') {
@@ -400,7 +400,7 @@ const getHealthyCodes = async (ids: number[]) => {
     })
   }
   return res || []
-}
+} */
 const setList = (list: any) => {
   list.forEach((item: any) => {
     item.adultPrice = accDivValue(item.adultPrice)
@@ -444,7 +444,7 @@ const setList1 = (list: any) => {
     }
   })
 }
-const configCodeName = (certificateCodes: any, targetArr: any) => {
+/* const configCodeName = (certificateCodes: any, targetArr: any) => {
   for (let i = 0, l = certificateCodes.length; i < l; i++) {
     const item = certificateCodes[i];
     for (let j = 0, l = targetArr.length; j < l; j++) {
@@ -454,7 +454,7 @@ const configCodeName = (certificateCodes: any, targetArr: any) => {
       }
     }
   }
-}
+} */
 const getDetails = async (id: number) => {
   const res = await api.findIndividualContractById(id)
   if (res) {
@@ -534,14 +534,14 @@ const getDetails = async (id: number) => {
       }
       return res
     })()
-    // 获取身份证列表
+    /* // 获取身份证列表
     const certificateIds = individualContractTouristBos.map((item: any) => {
       return { certificateId: item.certificatesNo }
     })
     // 根据身份证列表查询健康码列表
     const certificateCodes = await getHealthyCodes(certificateIds)
     // 将健康码和游客列表数据关联
-    configCodeName(certificateCodes, individualContractTouristBos)
+    configCodeName(certificateCodes, individualContractTouristBos) */
 
     setList(individualContractLineBos)
     setList(individualContractPriceBos)
