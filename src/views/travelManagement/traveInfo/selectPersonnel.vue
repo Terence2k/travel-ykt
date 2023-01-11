@@ -233,14 +233,14 @@ const submit = () => {
 		message.error('请勾选减免游客');
 		return false;
 	}
-	let discountRuleId = state.tableData.submitList.some((item, index) => {
+	let discountRuleId = state.tableData.submitList.some((item:any, index:number) => {
 		return item.discountRuleId == null;
 	});
 	if (discountRuleId) {
 		message.error('请选择减免规则');
 		return false;
 	}
-	let specialCertificateType=state.tableData.submitList.some((item, index) => {
+	let specialCertificateType=state.tableData.submitList.some((item:any, index:number) => {
 		return item.discountRuleId == 1;
 	});
 	if(specialCertificateType)
@@ -254,12 +254,12 @@ const submit = () => {
 			return false;
 		}
 	}
-	let certificateType=state.tableData.submitList.some((item,index)=>{
+	let certificateType=state.tableData.submitList.some((item:any, index:number)=>{
 		return item.certificateType=='IDENTITY_CARD'
 	})
 	if(!certificateType)
 	{
-		let age=state.tableData.submitList.some((item,index)=>{
+		let age=state.tableData.submitList.some((item:any, index:number)=>{
 			return item.age==null
 		})
 		if(age)
