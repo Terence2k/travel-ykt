@@ -34,8 +34,9 @@
             <a-input v-model:value="form.addressDetail" placeholder="请输入企业详细地址"/>
           </div>
         </a-form-item>
-
-        <template v-if="!['CULTURE_BUREAU'].includes(userInfo.sysCompany.businessType)">
+        
+        <!-- 一卡通、监理公司、协会、集团、古维、文旅局 -->
+        <template v-if="!['YKT', 'SUPERVISE', 'ASSOCIATION', 'GROUP', 'ANCIENT_UYGUR', 'CULTURE_BUREAU'].includes(userInfo.sysCompany.businessType)">
           <a-form-item name="establishTime" label="成立日期">
             <div class="flex">
               <picker v-model="form.establishTime" type="date" value-format="YYYY-MM-DD" placeholder="请选择成立日期" style="width:100%"/>
@@ -58,9 +59,9 @@
             <a-input v-model:value="form.phone" placeholder="请输入联系电话"/>
           </div>
         </a-form-item>
-
         
-        <template v-if="!['CULTURE_BUREAU'].includes(userInfo.sysCompany.businessType)">
+        <!-- 一卡通、监理公司、协会、集团、古维、文旅局 -->
+        <template v-if="!['YKT', 'SUPERVISE', 'ASSOCIATION', 'GROUP', 'ANCIENT_UYGUR', 'CULTURE_BUREAU'].includes(userInfo.sysCompany.businessType)">
           <a-form-item name="creditCode" label="统一社会信用代码">
             <div class="flex">
               <a-input v-model:value="form.creditCode" placeholder="请输入统一社会信用代码"/>
@@ -72,6 +73,7 @@
             </div>
           </a-form-item>
         </template>
+
         <!-- 旅行社特殊字段 -->
         <template v-if="userInfo.sysCompany.businessType == 'TRAVEL'">
           <a-form-item name="businessLicenseUrl1" label="经营许可证">
