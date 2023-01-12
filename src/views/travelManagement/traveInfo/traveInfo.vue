@@ -164,7 +164,7 @@
 	<addTicket @getTravelDetail="$emit('getTravelDetail')" :productRow="editId.productRow" :ticketId="editId.addTicketPop" v-model="addTicketPop" />
 	<Personnel v-model="selectPersonnelPop" :routeId="gouvyId.id" :isReductionPassed="gouvyId.isReductionPassed" :isInitiateReduction="gouvyId.isInitiateReduction" />
 	<!-- <reserveTicket :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop" /> -->
-	<reserveTicket :orderNo="editId.orderNo" :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop"  />
+	<reserveTicket @getTravelDetail="$emit('getTravelDetail')" :orderNo="editId.orderNo" :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop"  />
 	<showTicket :ticketId="showId.showTicketPop" v-model="showTicketPop"/>
 	<showHotel :hotelId="showId.showHotelPop" v-model="showHotelPop" />
 </template>

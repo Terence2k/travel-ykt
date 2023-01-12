@@ -437,7 +437,8 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 					formData.append('oid', row.oid)
 					
 					api.travelManagement.reserveHotel(formData).then((res:any) => {
-						travelStore.setHotelsStatus(row.oid)
+						// travelStore.setHotelsStatus(row.oid)
+						emits('getTravelDetail')
 						message.success('预定成功')
 					})
 				},
