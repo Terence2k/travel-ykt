@@ -2,38 +2,31 @@ import type { Rule } from 'ant-design-vue/es/form';
 import dayjs, { Dayjs } from 'dayjs';
 // 银行二级账户开通信息（如果需要充值或收付款、提现，均需先开通银行二级账户）
 const bankAccountKeys = {
-  companyUserEmail: '企业对公邮箱',
-  postalCode: '企业所在地邮编',
-  businessLicenseNo: '企业营业执照证件号码',
-  contactEmail: '企业联系人邮箱',
-  contactIdNumber: '企业联系人身份证号码',
-  legalPersonPhone: '企业法人/负责人手机号',
-  legalPersonIdNumber: '企业法人/负责人身份证号',
-  bankAddressIds: '企业开户行所在地',
-  bankNo: '企业开户行行号',
-  bankReservePhone: '企业开户行预留手机号',
-  memberRegistrationPhone: '企业会员注册手机号',
-  legalPersonUrl: '法人身份证照片'
+  bankAccountType: '账号类型',
+  legalPerson: '法人姓名',
+  legalPersonIdNumber: '法人身份证',
+  businessLicenseNo: '营业执照号码',
+  bankNo: '开户行行号',
+  bank: '开户行名称',
+  bankAccount: '银行卡号',
+  bankAccountName: '账号名称',
+  companyEnglishName: '英文名',
+  contactEmail: '联系人邮箱',
+  postalCode: '邮政编码',
 }
 // 旅游集团
 const keyNameList1 = {
   businessType: '企业类型',
   name: '企业名称',
-  regionCode: '企业所属地区',
-  addressDetail: '企业详情地址',
-  legalPerson: '法定代表人',
-  managementRange: '经营范围',
-  registeredCapital: '注册资本',
+  regionCode: '所属地址',
+  addressDetail: '详情地址',
   establishTime: '成立日期',
   businessTerm: '营业期限',
   contactName: '联系人',
   phone: '联系电话',
-  accountType: '公司账户类型',
-  bankAccountName: '公司账户名称',
-  bank: '开户行',
-  bankAccount: '公司账号',
-  creditCode: '统一社会信用代码',
+  creditCode: '统一社会信息代码',
   businessLicenseUrl: '营业执照',
+  registeredCapital: '注册资本',
   ...bankAccountKeys
 }
 // 酒店
@@ -84,10 +77,6 @@ const keyNameList5 = {
   regionCode: '企业所属地区',
   addressDetail: '企业详情地址',
   accountType: '公司账户类型',
-  bankAccountName: '公司账户名称',
-  bank: '开户行',
-  bankAccount: '公司账号',
-  accountName: '超级管理员',
   ...bankAccountKeys
 }
 // 文旅局、保险公司
@@ -98,31 +87,14 @@ const keyNameList6 = {
   addressDetail: '企业详情地址',
   contactName: '联系人',
   phone: '联系电话',
-  accountName: '超级管理员',
 }
 // 旅行社
 const keyNameList7 = {
-  businessType: '企业类型',
-  name: '企业名称',
-  regionCode: '企业所属地区',
-  addressDetail: '企业详情地址',
-  legalPerson: '法定代表人',
-  managementRange: '经营范围',
-  registeredCapital: '注册资本',
-  establishTime: '成立日期',
-  businessTerm: '营业期限',
-  contactName: '联系人',
-  phone: '联系电话',
-  accountType: '公司账户类型',
-  bankAccountName: '公司账户名称',
-  bank: '开户行',
-  bankAccount: '公司账号',
-  creditCode: '统一社会信用代码',
+  ...keyNameList1,
   licenseNo: "12301旅行社许可证号",
   individualDeparturePlace: '散客常用出发地',
   individualReturnPlace: '散客常用返回地',
   isIndividual: "是否为散客中心",
-  businessLicenseUrl: '营业执照',
   manageUrl: '经营许可证',
   ...bankAccountKeys
 }
@@ -132,7 +104,6 @@ const keyNameList8 = {
   name: '企业名称',
   regionCode: '企业所属地区',
   addressDetail: '企业详情地址',
-  accountName: '超级管理员',
   ...bankAccountKeys
 }
 const fullRuleKeyNames = {
@@ -184,94 +155,77 @@ function getKeylist(businessType: string, type?: string) {
   }
   return keys
 }
-
-// 旅游集团、酒店、景区、餐厅
-const commonFormRules6: Record<string, Rule[]> = {
+const bankCommonFormRules: Record<string, Rule[]> = {
+  bankAccountType: [{ required: true, trigger: 'blur', message: '请选择账号类型' }],
+  legalPerson: [{ required: true, trigger: 'blur', message: '请输入法人姓名' }],
+  legalPersonIdNumber: [{ required: true, trigger: 'blur', message: '请输入法人身份证' }],
+  businessLicenseNo: [{ required: true, trigger: 'blur', message: '请输入营业执照号码' }],
+  bankNo: [{ required: true, trigger: 'blur', message: '请输入开户行行号' }],
+  bank: [{ required: true, trigger: 'blur', message: '请输入开户行名称' }],
+  bankAccount: [{ required: true, trigger: 'blur', message: '请输入银行卡号' }],
+  bankAccountName: [{ required: true, trigger: 'blur', message: '请输入账号名称' }],
+  companyEnglishName: [{ required: true, trigger: 'blur', message: '请输入英文名' }],
+  contactEmail: [{ required: true, trigger: 'blur', message: '请输入联系人邮箱' }],
+  postalCode: [{ required: true, trigger: 'blur', message: '请输入邮政编码' }],
+}
+const commonFormRules: Record<string, Rule[]> = {
   businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
   name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
-  regionCode: [{ required: true, trigger: 'blur', message: '请选择企业所属地区' }],
-  addressDetail: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
-  legalPerson: [{ required: true, trigger: 'blur', message: '请输入法定代表人' }],
-  managementRange: [{ required: true, trigger: 'blur', message: '请输入经营范围' }],
-  registeredCapital: [{ required: true, trigger: 'blur', message: '请输入注册资本' }],
-  establishTime: [{ required: true, trigger: 'blur', message: '请选择成立日期' }],
-  businessTerm: [{ required: true, trigger: 'blur', message: '请选择营业期限' }],
-  contactName: [{ required: true, trigger: 'blur', message: '请输入联系人姓名' }],
-  phone: [{ required: true, trigger: 'blur', message: '请输入联系电话' }],
-  accountType: [{ required: true, trigger: 'blur', message: '请选择公司账户类型' }],
-  bankAccountName: [{ required: true, trigger: 'blur', message: '请输入公司账户名称' }],
-  bank: [{ required: true, trigger: 'blur', message: '请输入开户行' }],
-  bankAccount: [{ required: true, trigger: 'blur', message: '请输入公司账号' }],
-  creditCode: [{ required: true, trigger: 'blur', message: '请输入统一社会信用代码' }],
+  regionCode: [{ required: true, trigger: 'blur', message: '请选择所属地址' }],
+  addressDetail: [{ required: true, trigger: 'blur', message: '请输入详情地址' }],
+  creditCode: [{ required: true, trigger: 'blur', message: '请输入统一社会信息代码' }],
   businessLicenseUrl: [{ required: true, trigger: 'blur', message: '请上传营业执照照片' }],
-}
-// 一卡通
-const commonFormRules9: Record<string, Rule[]> = {
-  businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
-  name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
-  regionCode: [{ required: true, trigger: 'blur', message: '请选择企业所属地区' }],
-  addressDetail: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
-  contactName: [{ required: true, trigger: 'blur', message: '请输入联系人姓名' }],
-  phone: [{ required: true, trigger: 'blur', message: '请输入联系电话' }],
-}
-// 监理、古维管理部门
-const commonFormRules7: Record<string, Rule[]> = {
-  businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
-  name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
-  regionCode: [{ required: true, trigger: 'blur', message: '请选择企业所属地区' }],
-  addressDetail: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
-  contactName: [{ required: true, trigger: 'blur', message: '请输入联系人姓名' }],
-  phone: [{ required: true, trigger: 'blur', message: '请输入联系电话' }],
-  accountType: [{ required: true, trigger: 'blur', message: '请选择公司账户类型' }],
-  bankAccountName: [{ required: true, trigger: 'blur', message: '请输入公司账户名称' }],
-  bank: [{ required: true, trigger: 'blur', message: '请输入开户行' }],
-  bankAccount: [{ required: true, trigger: 'blur', message: '请输入公司账号' }],
-}
-// 旅游协会、文旅局、保险公司
-const commonFormRules8: Record<string, Rule[]> = {
-  businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
-  name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
-  regionCode: [{ required: true, trigger: 'blur', message: '请选择企业所属地区' }],
-  addressDetail: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
-  contactName: [{ required: true, trigger: 'blur', message: '请输入联系人姓名' }],
-  phone: [{ required: true, trigger: 'blur', message: '请输入联系电话' }],
-}
-// 旅行社
-const commonFormRules5: Record<string, Rule[]> = {
-  businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
-  name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
-  regionCode: [{ required: true, trigger: 'blur', message: '请选择企业所属地区' }],
-  addressDetail: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
-  legalPerson: [{ required: true, trigger: 'blur', message: '请输入法定代表人' }],
-  managementRange: [{ required: true, trigger: 'blur', message: '请输入经营范围' }],
   registeredCapital: [{ required: true, trigger: 'blur', message: '请输入注册资本' }],
-  establishTime: [{ required: true, trigger: 'blur', message: '请选择成立日期' }],
-  businessTerm: [{ required: true, trigger: 'blur', message: '请选择营业期限' }],
-  contactName: [{ required: true, trigger: 'blur', message: '请输入联系人姓名' }],
-  phone: [{ required: true, trigger: 'blur', message: '请输入联系电话' }],
-  accountType: [{ required: true, trigger: 'blur', message: '请选择公司账户类型' }],
-  bankAccountName: [{ required: true, trigger: 'blur', message: '请输入公司账户名称' }],
-  bank: [{ required: true, trigger: 'blur', message: '请输入开户行' }],
-  bankAccount: [{ required: true, trigger: 'blur', message: '请输入公司账号' }],
-  creditCode: [{ required: true, trigger: 'blur', message: '请输入统一社会信用代码' }],
-  licenseNo: [{ required: true, trigger: 'blur', message: '请输入旅行社许可证号' }],
-  isIndividual: [{ required: true, trigger: 'blur', message: '选择是否为散客中心' }],
+  accountName: [{ required: true, trigger: 'blur', message: '请输入超级管理员姓名' }],
+  account: [{ required: true, trigger: 'blur', message: '请输入管理员账号' }],
+  accountPhone: [{ required: true, trigger: 'blur', message: '请输入管理员手机号' }],
+  password: [{ required: true, trigger: 'blur', message: '请输入管理员密码' }],
+  ...bankCommonFormRules
+}
+const hotelCommonFormRules: Record<string, Rule[]> = {
+  ...commonFormRules,
+  unitStatus: [{ required: true, trigger: 'blur', message: '请选择企业状态' }],
+  hotelStarId: [{ required: true, trigger: 'blur', message: '请选择酒店星级' }],
+  derate: [{ required: true, trigger: 'blur', message: '请选择是否支持减免' }],
+  fullRule: [{ required: true, trigger: 'blur', message: '请输入减免规则' }],
+  reduceRule: [{ required: true, trigger: 'blur', message: '请输入减免规则' }]
+}
+const cateringCommonFormRules: Record<string, Rule[]> = {
+  ...commonFormRules,
+  unitStatus: [{ required: true, trigger: 'blur', message: '请选择企业状态' }],
+  /* startTime: [{ required: true, trigger: 'blur', message: '请选择开始营业时间' }],
+  endTime: [{ required: true, trigger: 'blur', message: '请选择结束营业时间' }],
+  shopPhone: [{ required: true, trigger: 'blur', message: '请输入店铺联系电话' }]'', */
+}
+const ticketCommonFormRules: Record<string, Rule[]> = {
+  ...commonFormRules,
+  unitStatus: [{ required: true, trigger: 'blur', message: '请选择企业状态' }],
+  scenicLevel: [{ required: true, trigger: 'blur', message: '请选择景区等级' }],
+  derate: [{ required: true, trigger: 'blur', message: '请选择是否支持减免' }],
+  fullRule: [{ required: true, trigger: 'blur', message: '请输入减免规则' }],
+  reduceRule: [{ required: true, trigger: 'blur', message: '请输入减免规则' }]
+}
+const travelCommonFormRules: Record<string, Rule[]> = {
+  ...commonFormRules,
+  licenseNo: [{ required: true, trigger: 'blur', message: '请输入12301旅行社许可证号' }],
   individualDeparturePlace: [{ required: true, trigger: 'blur', message: '请输入散客常用出发地' }],
   individualReturnPlace: [{ required: true, trigger: 'blur', message: '请输入散客常用返回地' }],
-  legalPersonUrl: [{ required: true, trigger: 'blur', message: '请上传法人身份证附件' }],
-  businessLicenseUrl: [{ required: true, trigger: 'blur', message: '请上传营业执照照片' }],
+  isIndividual: [{ required: true, trigger: 'blur', message: '请选择是否为散客中心' }],
   manageUrl: [{ required: true, trigger: 'blur', message: '请上传经营许可证' }],
 }
-// 旅游集团、酒店、景区、餐厅
-const condition1 = ['GROUP', 'HOTEL', 'TICKET', 'CATERING']
-// 一卡通
-const condition2 = ['YKT']
-// 监理、古维管理部门
-const condition3 = ['SUPERVISE', 'ANCIENT_UYGUR']
-// 旅游协会、文旅局、保险公司
-const condition4 = ['ASSOCIATION', 'CULTURE_BUREAU', 'INSURANCE_COMPANY']
-// 旅行社
-const condition5 = ['TRAVEL']
+const getFormRules = (businessType: string) => {
+  if (businessType === 'HOTEL') {
+    return hotelCommonFormRules
+  } else if (businessType === 'CATERING') {
+    return cateringCommonFormRules
+  } else if (businessType === 'TICKET') {
+    return ticketCommonFormRules
+  } else if (businessType === 'TRAVEL') {
+    return travelCommonFormRules
+  } else {
+    return {}
+  }
+}
 const businessTypeOption = [
   { codeValue: 'HOTEL', name: '酒店' },
   { codeValue: 'CATERING', name: '餐饮' },
@@ -317,16 +271,7 @@ const disabledAfterDate = (current: Dayjs) => {
 };
 export {
   getKeylist,
-  commonFormRules5,
-  commonFormRules6,
-  commonFormRules9,
-  commonFormRules7,
-  commonFormRules8,
-  condition1,
-  condition2,
-  condition3,
-  condition4,
-  condition5,
+  getFormRules,
   flat,
   disabledBeforeDate,
   disabledAfterDate,

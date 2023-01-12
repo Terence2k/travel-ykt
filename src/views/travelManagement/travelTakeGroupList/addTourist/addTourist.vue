@@ -11,11 +11,11 @@
 		</div>
 		<CommonTable :row-selection="{}" :dataSource="state.tableData.data" :columns="columns" rowKey="oid" :scrollY="false">
 			<template #bodyCell="{ column, index, record }">
-				<!-- <template v-if="column.key === 'healthCodeStatus'">
+				<template v-if="column.key === 'healthCodeStatus'">
 					<span v-if="record.healthCodeStatus == '00'">绿码</span>
 					<span v-else-if="record.healthCodeStatus == '01'">黄码</span>
 					<span v-else-if="record.healthCodeStatus == '10'">红码</span>
-				</template> -->
+				</template>
 			</template>
 		</CommonTable>
 		<div class="add-div">
@@ -78,16 +78,16 @@ const columns = [
 		dataIndex: 'phone',
 		key: 'phone',
 	},
-	// {
-	// 	title: '中高风险地区判断',
-	// 	dataIndex: 'specialCertificateTypeName',
-	// 	key: 'specialCertificateTypeName',
-	// },
-	// {
-	// 	title: '健康码状态',
-	// 	dataIndex: 'healthCodeStatus',
-	// 	key: 'healthCodeStatus',
-	// },
+	{
+		title: '中高风险地区判断',
+		dataIndex: 'specialCertificateTypeName',
+		key: 'specialCertificateTypeName',
+	},
+	{
+		title: '健康码状态',
+		dataIndex: 'healthCodeStatus',
+		key: 'healthCodeStatus',
+	},
 	{
 		title: '特殊证件类型',
 		dataIndex: 'specialCertificateTypeName',

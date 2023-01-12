@@ -148,7 +148,8 @@
             <a-button @click="handleLineAdd">添加</a-button>
           </div>
           <div class="tag">添加游客</div>
-          <a-table :columns="touristColumns" :data-source="dataTouristSource" bordered :pagination="false">
+          <a-table :columns="touristColumns" :data-source="dataTouristSource" bordered :pagination="false"
+            :scroll="{ x: '100vw' }">
             <template #headerCell="{ column }">
               <template
                 v-if="['certificatesType', 'certificatesNo', 'touristName', 'touristType', 'gender', 'age', 'isHealthy', 'isAncientUygur'].includes(column.key)">
@@ -167,7 +168,7 @@
                   <a-form ref="formRef1" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
                     <a-form-item name="certificatesType">
                       <a-select placeholder="请选择身份证件类型" v-model:value="dataTouristSource[index][column.dataIndex]"
-                        allowClear style="width: 110px">
+                        allowClear style="width: 100%">
                         <a-select-option v-for="item in certificatesTypeOption" :value="item.codeValue"
                           :key="item.codeValue">{{ item.name }}
                         </a-select-option>
@@ -213,7 +214,7 @@
                   <a-form ref="formRef4" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
                     <a-form-item name="touristType">
                       <a-select placeholder="请选择游客类型" v-model:value="dataTouristSource[index][column.dataIndex]"
-                        allowClear>
+                        allowClear style="width: 100%">
                         <a-select-option v-for="item in touristTypeOption" :value="item.codeValue"
                           :key="item.codeValue">{{
                             item.name
@@ -232,7 +233,7 @@
                   <a-form ref="formRef5" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
                     <a-form-item name="gender">
                       <a-select placeholder="请选择性别" v-model:value="dataTouristSource[index][column.dataIndex]"
-                        allowClear style="width: 80px">
+                        allowClear style="width: 100%">
                         <a-select-option v-for="item in genderOption" :value="item.codeValue" :key="item.codeValue">{{
                           item.name
                         }}
@@ -250,7 +251,7 @@
                   <a-form ref="formRef6" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
                     <a-form-item name="age">
                       <a-input placeholder="请输入年龄" v-model:value.number="dataTouristSource[index][column.dataIndex]"
-                        style="margin: -5px 0" />
+                        allowClear style="margin: -5px 0" />
                     </a-form-item>
                   </a-form>
                 </template>
@@ -263,7 +264,7 @@
                   <a-form :model="dataTouristSource[index]" autocomplete="off">
                     <a-form-item name="phone">
                       <a-input placeholder="请输入电话号码" v-model:value="dataTouristSource[index][column.dataIndex]"
-                        style="margin: -5px 0" />
+                        allowClear style="margin: -5px 0" />
                     </a-form-item>
                   </a-form>
                 </template>
@@ -276,7 +277,7 @@
                   <a-form ref="formRef7" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
                     <a-form-item name="isHealthy">
                       <a-select placeholder="请选健康状态" v-model:value="dataTouristSource[index][column.dataIndex]"
-                        allowClear style="width: 80px">
+                        allowClear style="width: 100%">
                         <a-select-option v-for="item in isHealthyOption" :value="item.codeValue"
                           :key="item.codeValue">{{
                             item.name
@@ -308,7 +309,7 @@
                   <a-form ref="formRef9" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
                     <a-form-item name="isAncientUygur">
                       <a-select placeholder="请选择古维费购买状态" v-model:value="dataTouristSource[index][column.dataIndex]"
-                        allowClear style="width: 130px">
+                        allowClear style="width: 100%">
                         <a-select-option v-for="item in ancientUygurOption" :value="item.codeValue"
                           :key="item.codeValue">{{
                             item.name
@@ -498,7 +499,7 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter, useRoute } from 'vue-router';
+import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router';
 import { CloseOutlined } from '@ant-design/icons-vue';
 import Upload from '@/components/common/imageWrapper.vue';
 import pdfUpload from '@/components/common/pdfWrapper.vue';
@@ -511,6 +512,8 @@ import picker from '@/components/common/datePicker.vue';
 import { accDiv, accMul } from '@/utils/compute';
 import { getAge, getGenderByIdNumber } from '@/utils';
 import type { Rule } from 'ant-design-vue/es/form';
+import { useNavigatorBar } from '@/stores/modules/navigatorBar';
+const navigatorBar = useNavigatorBar();
 const accDivValue = (value: any) => {
   if (typeof value === 'number') {
     return accDiv(value, 100)
@@ -531,8 +534,8 @@ const isRefresh = ref('0')
 const imgUploadRef = ref()
 const pdfUploadRef = ref()
 const back = () => {
-  imgUploadRef.value.clearFileList()
-  pdfUploadRef.value.clearFileList()
+  imgUploadRef.value?.clearFileList()
+  pdfUploadRef.value?.clearFileList()
   router.push({
     name: 'electronicContratList',
     params: {
@@ -738,41 +741,49 @@ const touristColumns = [
     title: '身份证件类型',
     dataIndex: 'certificatesType',
     key: 'certificatesType',
+    width: 180
   },
   {
     title: '证件号码',
     dataIndex: 'certificatesNo',
     key: 'certificatesNo',
+    width: 220
   },
   {
     title: '游客姓名',
     dataIndex: 'touristName',
     key: 'touristName',
+    width: 180
   },
   {
     title: '游客类型',
     dataIndex: 'touristType',
     key: 'touristType',
+    width: 180
   },
   {
     title: '性别',
     dataIndex: 'gender',
     key: 'gender',
+    width: 180
   },
   {
     title: '年龄',
     dataIndex: 'age',
     key: 'age',
+    width: 180
   },
   {
     title: '电话号码',
     dataIndex: 'phone',
     key: 'phone',
+    width: 180
   },
   {
     title: '是否健康',
     dataIndex: 'isHealthy',
     key: 'isHealthy',
+    width: 180
   },
   /* {
     title: '健康码',
@@ -783,6 +794,7 @@ const touristColumns = [
     title: '古维费购买状态',
     dataIndex: 'isAncientUygur',
     key: 'isAncientUygur',
+    width: 220
   },
   /* {
     title: '古维减免',
@@ -799,7 +811,7 @@ const touristColumns = [
     key: 'action',
     dataIndex: 'action',
     fixed: 'right',
-    width: 70
+    width: 120
   }
 ]
 const costColumns = [
@@ -1570,8 +1582,10 @@ watch(
   (newVal) => {
     if (newVal.name === "addElectronicContrat") {
       if (newVal.query.operation === 'add') {
+        navigatorBar.setNavigator(['旅行社管理', '散客电子合同', '新增']);
         isAdd.value = true
       } else if (newVal.query.operation === 'update') {
+        navigatorBar.setNavigator(['旅行社管理', '散客电子合同', '编辑']);
         isAdd.value = false
         getEditDetails(newVal.query.oid)
       }
@@ -1582,7 +1596,6 @@ watch(
     deep: true
   }
 )
-
 onActivated(() => {
   isRefresh.value = '0'
 })
