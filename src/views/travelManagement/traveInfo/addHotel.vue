@@ -170,7 +170,7 @@ import { disabledRangeTime, range, isPositiveInteger, selectSpecialDateRange, is
 import { Modal } from 'ant-design-vue';
 import { createVNode } from 'vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-import {accAdd, accDiv} from '@/utils/compute.js'
+import {accAdd, accDiv, accMul} from '@/utils/compute.js'
 import datePicker from '@/components/common/datePicker.vue';
 
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any ) || {}
@@ -255,7 +255,7 @@ let formState = reactive<{[k: string]: any}>({
 	roomTypeList: [{ ...roomList }],
 	honestyGuidePrice: ''
 });
-const honestyGuidePrice = computed(() => (formState.honestyGuidePrice / 100) || 0)
+const honestyGuidePrice = computed(() => (accDiv(formState.honestyGuidePrice, 100)) || 0)
 
 const addRoom = () => {
 	const room = cloneDeep(roomList)
@@ -335,7 +335,7 @@ const validateCheckIn = async (_rule: Rule, value: string, index: number) => {
 		return Promise.reject('请输入入住总人数');
 	} else if(Number(value) < formState.roomTypeList[index].reserveNumber) {
 		return Promise.reject('入住人数不能低于房间数量');
-	} else if(Number(value) > (formState.roomTypeList[index].reserveNumber * formState.roomTypeList[index].roomOccupancyNum)) {
+	} else if(Number(value) > (accMul(formState.roomTypeList[index].reserveNumber, formState.roomTypeList[index].roomOccupancyNum))) {
 		return Promise.reject('入住人数不能大于预定房间可住人数');
 	} else {
 		return Promise.resolve();
@@ -354,7 +354,7 @@ const getOrderAmount = (data: Array<{[k:string]:any}>, startDate: string, endDat
 	console.log(day);
 	const amount = []
 	for (let k = 0; k < data.length; k++) {
-		amount[k] = data[k].orderAmount * data[k].reserveNumber * day
+		amount[k] = accMul(accMul(data[k].orderAmount, data[k].reserveNumber), day)
 	}
 	return amount.reduce((prev, next) => prev + next)
 }
@@ -382,8 +382,8 @@ const submit = async () => {
 		}
 		const form = cloneDeep(formState);
 		form.roomTypeList = form.roomTypeList.map((it: any, index: number) => {
-			it.unitPrice = it.unitPrice * 100;
-			it.orderAmount = it.orderAmount * 100
+			it.unitPrice = accMul(it.unitPrice, 100);
+			it.orderAmount = accMul(it.orderAmount, 100)
 			return it
 		})
 		form.scheduledRooms = form.roomTypeList.map((it: any) => Number(it.reserveNumber))
@@ -399,7 +399,7 @@ const submit = async () => {
 		newFormState.startDate = newFormState.arrivalDate
 		newFormState.endDate = newFormState.departureDate
 		newFormState.hotelStar = newFormState.hotelStarCode
-		newFormState.orderFee = newFormState.orderAmount / 100
+		newFormState.orderFee = accDiv(newFormState.orderAmount, 100)
 		newFormState.reservePeopleCount = newFormState.roomTypeList.map((it:any) => Number(it.checkInNumber)).reduce((prev: number, next: number) => prev + next)
 		newFormState.roomCount = newFormState.roomTypeList.map((it:any) => Number(it.reserveNumber)).reduce((prev: number, next: number) => prev + next)
 		const res = await api.travelManagement.addHotel(form);
@@ -481,7 +481,7 @@ watch(dialogVisible, (newVal) => {
 				formState[k] = res[k]
 			}
 			formState.arrivalDate = res.startDate
-			formState.orderFee = formState.orderFee / 100
+			formState.orderFee = accDiv(formState.orderFee, 100)
 			formState.departureDate = res.endDate
 			let price = hotelData.hotelStart.filter((it:any) => it.oid == res.hotelStarId)[0].price
 			handleChange(res.hotelStarId, {name: res.hotelStar, price: price})
@@ -491,8 +491,8 @@ watch(dialogVisible, (newVal) => {
 				it.roomTypeLimitPeople = it.limitPeople
 				// it.checkInNumber = it.roomCount
 				it.hotelRoomTypeId = it.roomTypeId
-				it.orderAmount = it.unitPrice / 100
-				it.unitPrice = it.increaseAmount / 100
+				it.orderAmount = accDiv(it.unitPrice, 100)
+				it.unitPrice = accDiv(it.increaseAmount, 100)
 				// it.increaseAmount = it.increaseAmount / 100
 				return it;
 			})

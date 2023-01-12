@@ -3,6 +3,7 @@ import router from "@/router/index";
 import { useTravelStore } from "@/stores/modules/travelManagement";
 import { message } from "ant-design-vue";
 import dayjs, { Dayjs } from "dayjs";
+import { accDiv, accMul } from './compute'
 import isBetween from 'dayjs/plugin/isBetween'
 
 const travelStore = useTravelStore();
@@ -247,7 +248,7 @@ export const downloadFile = (response: any, name?: string) => {
 	let count = 0
 	switch(model) {
 		case FeeModel.Number :
-			count = price * travelStore.touristList.length
+			count = accMul(price, travelStore.touristList.length)
 			break;
 		case FeeModel.Price :
 			count = price
@@ -273,7 +274,7 @@ export const getAmount = (a:any, price: number, model: any) => {
 			break;
 		case ConfirmDailyCharge.IsDay :
 			const dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day');
-			countPrice = getPrice(model, price) * dayCount
+			countPrice = accMul(getPrice(model, price), dayCount);
 			break;
 	}
 	return countPrice
