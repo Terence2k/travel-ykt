@@ -185,13 +185,16 @@ const informationList = () => {
 		oid:route?.query?.oid,
 		itineraryId:route?.query?.itineraryId
 	}
-	console.log(data,'data1111111')
+	// console.log(data,'data1111111')
 	api.ExemptionManagementDetail(data).then((res:any) => {
 		state.tableData.data = res;
 		// 处理显示照片个数
 		res.applyReduceTouristList.map((i:any,index:number)=>{
-			i.num=res.applyReduceTouristList[index].specialCertificateImg.split(',').length
-			return i
+			if(i.specialCertificateImg)
+			{
+				i.num=res.applyReduceTouristList[index].specialCertificateImg.split(',').length
+				return i
+			}
 		})
 	});
 };

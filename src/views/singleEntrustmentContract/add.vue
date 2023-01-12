@@ -403,17 +403,23 @@
               </template>
             </template>
             <template v-if="column.dataIndex === 'adultPrice'">
-              <a-input @change="() => { priceChange(dataCostSource[index]) }" v-if="record.isEdit"
-                v-model:value.number="dataCostSource[index][column.dataIndex]" style="margin: -5px 0"
-                placeholder="输入价格" />
+              <a-form-item name="adultPrice" v-if="record.isEdit"
+                :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validateNumber(dataCostSource[index], 'adultPrice')) }]"
+                style="margin-bottom:0">
+                <a-input v-set-number="{ key: 'adultPrice', obj: dataCostSource[index] }"
+                  v-model:value="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="输入价格" />
+              </a-form-item>
               <template v-else>
                 {{ text }}
               </template>
             </template>
             <template v-if="column.dataIndex === 'childPrice'">
-              <a-input @change="() => { priceChange(dataCostSource[index]) }" v-if="record.isEdit"
-                v-model:value.number="dataCostSource[index][column.dataIndex]" style="margin: -5px 0"
-                placeholder="输入价格" />
+              <a-form-item name="childPrice" v-if="record.isEdit"
+                :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validateNumber(dataCostSource[index], 'childPrice')) }]"
+                style="margin-bottom:0">
+                <a-input v-set-number="{ key: 'childPrice', obj: dataCostSource[index] }"
+                  v-model:value="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="输入价格" />
+              </a-form-item>
               <template v-else>
                 {{ text }}
               </template>
@@ -499,6 +505,8 @@ import picker from '@/components/common/datePicker.vue'
 import { accDiv, accMul } from '@/utils/compute';
 import { getAge, getGenderByIdNumber } from '@/utils';
 import type { Rule } from 'ant-design-vue/es/form';
+import { useNavigatorBar } from '@/stores/modules/navigatorBar';
+const navigatorBar = useNavigatorBar();
 const router = useRouter();
 const route = useRoute();
 const isRefresh = ref('0')
@@ -603,6 +611,19 @@ const disputeResolutionOptions = [
   { codeValue: 2, name: '提交仲裁委员会仲裁' },
   { codeValue: 3, name: '提交人民法院诉讼' }
 ]
+const validateNumber = async (obj: any, key: string) => {
+  if (obj[key] === '') {
+    priceChange(obj)
+    return Promise.resolve();
+  } else {
+    if (!isNaN(Number(obj[key]))) {
+      priceChange(obj)
+      return Promise.resolve();
+    } else {
+      return Promise.reject('请输入正确的价格');
+    }
+  }
+}
 const validateCertificatesNo = async (_rule: Rule, value: string, obj: any) => {
   if (value === '') {
     return Promise.reject('请输入证件号码');
@@ -1383,8 +1404,10 @@ watch(
   (newVal) => {
     if (newVal.name === "addSingleEntrustmentContract") {
       if (newVal.query.operation === 'add') {
+        navigatorBar.setNavigator(['旅行社管理', '单项委托合同', '新增']);
         isAdd.value = true
       } else if (newVal.query.operation === 'update') {
+        navigatorBar.setNavigator(['旅行社管理', '单项委托合同', '编辑']);
         isAdd.value = false
         getEditDetails(newVal.query.oid)
       }

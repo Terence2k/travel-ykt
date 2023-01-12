@@ -60,7 +60,12 @@
 							</a-form-item>
 						</div>
 					</div>
-					<div class="tag">选择合同</div>
+					<div class="add_box">
+						<div class="tag">选择合同</div>
+						<div v-if="travelStore.teamStatus">
+							<a-button @click="addContract" type="primary">添加</a-button>
+						</div>
+					</div>
 					<CommonTable :dataSource="selectedContract" :columns="contractColumns">
 						<template #bodyCell="{ column, record, index }">
 							<template v-if="column.key === 'index'">
@@ -71,7 +76,7 @@
 							</template>
 							<template v-if="column.key === 'action'">
 								<div class="action-btns">
-									<a @click="checkDetails(record.oid)">查看</a>
+									<a @click="checkDetails(record)">查看</a>
 									<a @click="deleteContract(index, record)" :class="{ 'disabled': !travelStore.teamStatus }">删除</a>
 								</div>
 							</template>
@@ -80,9 +85,6 @@
 					<div class="cost_count">
 						<div class="cost_item">费用合计</div>
 						<div class="cost_item">{{ form.totalExpenses }}</div>
-					</div>
-					<div class="add_box" v-if="travelStore.teamStatus">
-						<a-button @click="addContract" type="primary">添加</a-button>
 					</div>
 				</a-form>
 				<div class="operation" v-if="travelStore.teamStatus">
@@ -157,6 +159,43 @@
 		@cancel="auditVisible = false" conform-text="确认" @conform="auditConform">
 		{{ submitAuditInfo }}
 	</CommonModal>
+	<CommonModal title="合同详情" v-model:visible="contractDetailsVisible" @close="contractDetailsClose"
+		@cancel="contractDetailsClose" conform-text="确认" @conform="contractDetailsClose" :is-cancel="false" width="40%">
+		<div class="contract_details">
+			<div class="details_item">
+				<div class="key">合同编号：</div>
+				<div class="value"> {{ contractDetailsForm.contractNo }}</div>
+			</div>
+			<div class="details_item">
+				<div class="key">合同类型：</div>
+				<div class="value"> {{ contractDetailsForm.contractTypeName }}</div>
+			</div>
+			<div class="details_item">
+				<div class="key">内含线路/委托项目：</div>
+				<div class="value"> {{ contractDetailsForm.lineNames }}</div>
+			</div>
+			<div class="details_item">
+				<div class="key">人数：</div>
+				<div class="value"> {{ contractDetailsForm.touristPeopleNumber }}</div>
+			</div>
+			<div class="details_item">
+				<div class="key">行程日期：</div>
+				<div class="value"> {{ contractDetailsForm.tripStartTime + '-' + contractDetailsForm.tripEndTime }}</div>
+			</div>
+			<div class="details_item">
+				<div class="key">合同签约旅行社：</div>
+				<div class="value"> {{ contractDetailsForm.companyName }}</div>
+			</div>
+			<div class="details_item">
+				<div class="key">签署网点：</div>
+				<div class="value"> {{ contractDetailsForm.storeName }}</div>
+			</div>
+			<div class="details_item">
+				<div class="key">合同费用（元）：</div>
+				<div class="value"> {{ contractDetailsForm.contractAmount }}</div>
+			</div>
+		</div>
+	</CommonModal>
 </template>
 
 <script setup lang="ts">
@@ -187,6 +226,8 @@ const back = () => {
 		}
 	})
 }
+const contractDetailsVisible = ref(false)
+const contractDetailsForm = ref({})
 const auditVisible = ref(false)
 const touristVisible = ref(false)
 const isAdd = ref(true)
@@ -212,6 +253,8 @@ type formType = {
 	guide?: {
 		guideOid?: number
 		guideName?: string
+		guideCertificateNo?: string
+		guidePhone?: string
 	}
 	totalExpenses?: number
 	oid?: string
@@ -259,6 +302,8 @@ const CloneActiveKey = ref('1')
 const guideOption = ref<{
 	oid: number
 	guideName: string
+	guideCertificateNo: string
+	phone: string
 }[]>([])
 const touristColumns = [
 	{
@@ -463,6 +508,8 @@ const setBaseInfo = (res: any) => {
 		} = res.basic
 		const guideOid = res.guideList[0]?.guideOid
 		const guideName = res.guideList[0]?.guideName
+		const guideCertificateNo = res.guideList[0]?.guideCertificateNo
+		const guidePhone = res.guideList[0]?.guidePhone
 		const licensePlate = res.transportList[0]?.licencePlateNumber
 		form.value.routeName = routeName
 		form.value.groupType = groupType
@@ -480,7 +527,9 @@ const setBaseInfo = (res: any) => {
 		form.value.endDate = endDate
 		form.value.guide = {
 			guideOid,
-			guideName
+			guideName,
+			guideCertificateNo,
+			guidePhone
 		}
 	}
 }
@@ -638,22 +687,28 @@ const onSelectChange = (Keys: Key[], selectedRows: any[]) => {
 };
 const guideChange = (val: any) => {
 	if (val) {
-		let guideName
+		let guideName, guideCertificateNo, guidePhone
 		for (let i = 0; i < guideOption.value.length; i++) {
 			const element = guideOption.value[i];
 			if (element.oid === form.value.guideOid) {
 				guideName = element.guideName
+				guideCertificateNo = element.guideCertificateNo
+				guidePhone = element.phone
 				break
 			}
 		}
 		form.value.guide = {
 			guideOid: form.value.guideOid,
-			guideName
+			guideName,
+			guideCertificateNo,
+			guidePhone
 		}
 	} else {
 		form.value.guide = {
 			guideOid: undefined,
-			guideName: undefined
+			guideName: undefined,
+			guideCertificateNo: undefined,
+			guidePhone: undefined
 		}
 	}
 }
@@ -774,7 +829,14 @@ const submitAudit = async () => {
 		auditVisible.value = true
 	}
 }
-const checkDetails = (id: number) => { }
+const checkDetails = (record: any) => {
+	contractDetailsVisible.value = true
+	contractDetailsForm.value = record
+}
+const contractDetailsClose = () => {
+	contractDetailsVisible.value = false
+	contractDetailsForm.value = {}
+}
 const getGuideList = async () => {
 	let res = await api.travelManagement.getGuideList();
 	guideOption.value = res;
@@ -918,10 +980,8 @@ onMounted(() => {
 
 .add_box {
 	width: 100%;
-	justify-content: end;
-	align-items: center;
 	display: flex;
-	margin-bottom: 10px;
+	justify-content: space-between;
 }
 
 .cost_count {
@@ -972,5 +1032,18 @@ onMounted(() => {
 
 .red_text {
 	color: #d70095;
+}
+
+.contract_details {
+	padding: 24px;
+
+	.details_item {
+		display: flex;
+		margin-bottom: 24px;
+
+		.key {
+			width: 200px;
+		}
+	}
 }
 </style>

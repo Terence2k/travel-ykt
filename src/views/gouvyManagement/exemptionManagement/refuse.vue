@@ -169,7 +169,7 @@ const expand=(expanded:any,record:any)=>{
 	
 	api.applyReductionList(data).then((res:any)=>{
 		// state.tableData.innerData=res
-		state.tableData.data.map((item)=>{
+		state.tableData.data.map((item:any)=>{
 			if(item.itineraryId==record.itineraryId)
 			{
 				item.innerData=res
