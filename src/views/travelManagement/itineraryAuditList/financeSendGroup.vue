@@ -2,7 +2,7 @@
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns">
     <template #describe>
-      共<span class="color-red">{{state.total}}</span>条行程单。其中待审核 <span class="color-red">{{state.total}}</span> 条。
+      共<span class="color-red">{{state.total}}</span>条行程单。其中待审核 <span class="color-red">{{waitAuditNum}}</span> 条。
     </template>
 		<template #bodyCell="{ column, text, index, record }">
 			<template v-if="column.key === 'index'">
@@ -15,7 +15,8 @@
       </template>
       <template v-if="column.key === 'action'">
         <div class="action-btns">
-          <a @click="auditStatus(record)" v-permission="'发团审核_去审核'">去审核</a>
+          <a @click="auditStatus(record, false)" v-permission="'发团审核_去审核'" v-if="record.financeAuditStatus === 1">去审核</a>
+          <a @click="auditStatus(record, true)" v-else>查看</a>
         </div>
       </template>
     </template>
@@ -28,7 +29,7 @@
 			@showSizeChange="pageSideChange"
 		/>
 	</div>
-  <BaseModal title="审核预冻结金额" v-model="changeAuditVisible" :width="1000">
+  <BaseModal :title="isDetailVisible ? '发团审核详情' : '审核预冻结金额'" v-model="changeAuditVisible" :width="1000">
 		<div class="table_box">
 			<table class="info_table" cellpadding="16px" border="1">
 				<tr class="row">
@@ -80,10 +81,18 @@
 					<td class="value">{{ accDiv(state.detail.travelBalance,100) }}元</td>
 				</tr>
 			</table>
+      <div v-if="isDetailVisible" style="margin-top: 10px;">
+        您已审核，审核结果：【{{state.detail.financeAuditStatusName}}】
+        <span v-if="state.detail.financeAuditStatus === 3">
+          驳回原因：{{ state.detail.financeRejectReason }}
+        </span>
+      </div>
 		</div>
 		<template v-slot:footer>
-      <a-button @click="sendAudit(3)">驳回</a-button>
-			<a-button type="primary" @click="sendAudit(2)">同意预冻结</a-button>
+      <template v-if="!isDetailVisible">
+        <a-button @click="sendAudit(3)">驳回</a-button>
+			  <a-button type="primary" @click="sendAudit(2)">同意预冻结</a-button>
+      </template>
 		</template>
   </BaseModal>
   <BaseModal title="驳回确认" v-model="rejectAuditVisible">
@@ -165,6 +174,11 @@
 					key: 'totalFee',
 			},
 			{
+					title: '审核结果',
+					dataIndex: 'financeAuditStatusName',
+					key: 'financeAuditStatusName',
+			},
+			{
 					title: '操作',
 					fixed: 'right',
 					key: 'action',
@@ -173,30 +187,33 @@
 	})
   const changeAuditVisible = ref(false);
   const rejectAuditVisible = ref(false);
+  const isDetailVisible = ref(false);
   const rejectReason = ref('');
+  const waitAuditNum = ref(0);
+
 	const onSearch = async () => {
 		travelStore.auditList.financeSendGroup.params.status = AuditStaus.FinanceSendGroup;
 		const res = await travelStore.getAuditList(travelStore.auditList.financeSendGroup.params);
-    // res.content.forEach( async (item: any) => {
-    //   item.auditInfo = await getAuditButton(item.auditUuid);
-    // })
+    if (!waitAuditNum.value) {
+      res.content.forEach((item: any) => {
+        if (item.financeAuditStatus === 1) {
+          waitAuditNum.value += 1;
+        }
+      })
+    }
 		travelStore.setAuditList(res, 'financeSendGroup');
 	}
   const cancel = (): any => {
     changeAuditVisible.value = false;
     rejectAuditVisible.value = false;
+    isDetailVisible.value = false;
     onSearch();
   }
-  const auditStatus = (row: any) => {
+  const auditStatus = (row: any, isDetail: boolean) => {
     console.log('row:', row);
     getDetail(row.oid, row);
+    isDetailVisible.value = isDetail;
     changeAuditVisible.value = true;
-  }
-  const getAuditButton = async (uuid: string) => {
-			let res = await api.travelManagement.getAuditButton({uuid: uuid});
-      console.log(res);
-      return res;
-    
   }
   const sendAudit = (status: any) => {
     console.log('state.detail:', state.detail);
@@ -219,6 +236,7 @@
             .then((res: any) => {
               console.log('审核返回信息：', res);
               message.success('保存成功');
+              waitAuditNum.value = 0;
               cancel();
             })
             .catch((err: any) => {
@@ -241,6 +259,7 @@
       .then((res: any) => {
         console.log('审核返回信息：', res);
         message.success('保存成功');
+        waitAuditNum.value = 0;
         cancel();
       })
       .catch((err: any) => {
