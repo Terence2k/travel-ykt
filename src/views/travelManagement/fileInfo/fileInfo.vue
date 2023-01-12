@@ -27,7 +27,7 @@ const props = defineProps({
 	},
 });
 
-const emits = defineEmits(['onSuccess'])
+const emits = defineEmits(['onSuccess', 'getTravelDetail'])
 
 const travelStore = useTravelStore();
 const other = {

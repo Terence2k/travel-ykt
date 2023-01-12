@@ -185,7 +185,7 @@ const roomList = {
 };
 const travelStore = useTravelStore()
 const formRef = ref();
-
+const emits = defineEmits(['update:modelValue', 'getTravelDetail']);
 
 const disCheckInTime = computed(() => {
 	// const isCurrent = dayjs(travelStore.baseInfo.startDate).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD')
@@ -395,18 +395,18 @@ const submit = async () => {
 		// if (Number((formState.scheduledNumber / travelStore.touristList.length).toFixed) < 0.8) {
 		// 	return message.error('入住总人数不低于团客总数的80%')
 		// }
-		const newFormState = cloneDeep(form)
-		newFormState.startDate = newFormState.arrivalDate
-		newFormState.endDate = newFormState.departureDate
-		newFormState.hotelStar = newFormState.hotelStarCode
-		newFormState.orderFee = accDiv(newFormState.orderAmount, 100)
-		newFormState.reservePeopleCount = newFormState.roomTypeList.map((it:any) => Number(it.checkInNumber)).reduce((prev: number, next: number) => prev + next)
-		newFormState.roomCount = newFormState.roomTypeList.map((it:any) => Number(it.reserveNumber)).reduce((prev: number, next: number) => prev + next)
+		// const newFormState = cloneDeep(form)
+		// newFormState.startDate = newFormState.arrivalDate
+		// newFormState.endDate = newFormState.departureDate
+		// newFormState.hotelStar = newFormState.hotelStarCode
+		// newFormState.orderFee = accDiv(newFormState.orderAmount, 100)
+		// newFormState.reservePeopleCount = newFormState.roomTypeList.map((it:any) => Number(it.checkInNumber)).reduce((prev: number, next: number) => prev + next)
+		// newFormState.roomCount = newFormState.roomTypeList.map((it:any) => Number(it.reserveNumber)).reduce((prev: number, next: number) => prev + next)
 		const res = await api.travelManagement.addHotel(form);
-		res && (newFormState.oid = res);
+		// res && (newFormState.oid = res);
 		// message.success('新增成功');
-		
-		travelStore.setHotels(newFormState)
+		emits('getTravelDetail')
+		// travelStore.setHotels(newFormState)
 		// callback()
 	} catch (errorInfo) {
 		// callback(false);
@@ -456,7 +456,7 @@ const getRoomType = async (hotelId: number | string, leaveTime: string, enterTim
 		enterTime,
 	});
 };
-const emits = defineEmits(['update:modelValue']);
+
 const dialogVisible = ref(false);
 watch(
 	() => props.modelValue,

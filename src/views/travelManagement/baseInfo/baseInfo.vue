@@ -238,7 +238,7 @@ const props = defineProps({
 	}
 })
 
-const emits = defineEmits(['onSuccess'])
+const emits = defineEmits(['onSuccess', 'getTravelDetail'])
 const teamGroupType = computed(() => {
 	if (route.query.type) {
 		return Number(route.query.type)

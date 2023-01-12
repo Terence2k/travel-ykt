@@ -113,7 +113,7 @@ const handelChange = (event: any) => {
 	console.log(event)
 	currentDate.value = event;
 }
-const emits = defineEmits(['onSuccess']);
+const emits = defineEmits(['onSuccess', 'getTravelDetail']);
 const { columns, tableData, editableData, edit, save, onSelect, selectKey, inputKey, travelStore, add, del, rulesRef, formRef, handleTime } =
 	useTrafficInfo(props, emits);
 </script>

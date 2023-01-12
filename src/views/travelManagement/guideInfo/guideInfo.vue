@@ -124,7 +124,7 @@ const handelChange = (event: any) => {
 	console.log(event)
 	currentDate.value = event;
 }
-const emits = defineEmits(['onSuccess'])
+const emits = defineEmits(['onSuccess', 'getDetail'])
 const { 
 	columns, 
 	tableData, 
