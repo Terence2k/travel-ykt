@@ -61,7 +61,6 @@ const getBelongCompanyName = computed(() => (value: any) => {
 // 跳转编辑页
 const toEdit = () => {
 	route.go(-1);
-	// route.push({ path: '/settlementManagement/comprehensiveFee/edit' ,query: { edit: 1, oid: route.currentRoute.value?.query?.oid } });
 };
 const formData: any = reactive({
 	data: {},

@@ -187,27 +187,4 @@ onMounted(() => {
 		}
 	}
 }
-// .ant-form-item {
-// 	font-size: 14px;
-// 	font-family: Microsoft YaHei UI;
-// 	font-weight: 400;
-// 	color: #1e2226;
-// 	margin-top: 13px;
-// 	margin-bottom: 0;
-// 	height: 32px;
-// }
-// ::v-deep(.ant-form-item-control-input) {
-// 	height: 18px;
-// }
-// ::v-deep(.ant-form-item-label > label) {
-// 	position: relative;
-// 	display: inline-flex;
-// 	align-items: center;
-// 	max-width: 100%;
-// 	height: 32px;
-// 	font-size: 14px;
-// 	font-family: Microsoft YaHei UI;
-// 	font-weight: 400;
-// 	color: #1e2226;
-// }
 </style>
