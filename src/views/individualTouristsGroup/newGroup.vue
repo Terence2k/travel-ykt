@@ -60,7 +60,12 @@
 							</a-form-item>
 						</div>
 					</div>
-					<div class="tag">选择合同</div>
+					<div class="add_box">
+						<div class="tag">选择合同</div>
+						<div v-if="travelStore.teamStatus">
+							<a-button @click="addContract" type="primary">添加</a-button>
+						</div>
+					</div>
 					<CommonTable :dataSource="selectedContract" :columns="contractColumns">
 						<template #bodyCell="{ column, record, index }">
 							<template v-if="column.key === 'index'">
@@ -80,9 +85,6 @@
 					<div class="cost_count">
 						<div class="cost_item">费用合计</div>
 						<div class="cost_item">{{ form.totalExpenses }}</div>
-					</div>
-					<div class="add_box" v-if="travelStore.teamStatus">
-						<a-button @click="addContract" type="primary">添加</a-button>
 					</div>
 				</a-form>
 				<div class="operation" v-if="travelStore.teamStatus">
@@ -918,10 +920,8 @@ onMounted(() => {
 
 .add_box {
 	width: 100%;
-	justify-content: end;
-	align-items: center;
 	display: flex;
-	margin-bottom: 10px;
+	justify-content: space-between;
 }
 
 .cost_count {

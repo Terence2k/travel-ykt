@@ -544,10 +544,10 @@ const timePickerChange = () => {
 }
 const accountTypeChange = () => {
   if (form.bankAccountType) {
-    if (form.bankAccountType === 1) {
-      radioVisible.value = false
-    } else if ([2, 3].includes(form.bankAccountType)) {
+    if (form.bankAccountType === 3) {
       radioVisible.value = true
+    } else if ([1, 2].includes(form.bankAccountType)) {
+      radioVisible.value = false
     }
   }
 }

@@ -51,6 +51,7 @@ import { message } from 'ant-design-vue';
 import { fileOne, fileThree, fileTwo, useTravelStore } from '@/stores/modules/travelManagement';
 import dayjs, { Dayjs } from 'dayjs';
 import { disabledRangeTime, getAmount } from '@/utils';
+import { accDiv,accMul} from '@/utils/compute';
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 const route = useRoute();
 const router = useRouter();
@@ -323,7 +324,7 @@ const getTraveDetail = () => {
 			const hotel = [
 				...res.waitBuyItem.waitBuyHotel,
 				...res.hotelList.map((it: any) => {
-					it.orderFee = it.orderFee / 100;
+					it.orderFee = accDiv(it.orderFee, 100);
 					return it;
 				}),
 				...travelStore.templateHotel,
@@ -333,7 +334,7 @@ const getTraveDetail = () => {
 			travelStore.scenicTickets = [
 				...res.waitBuyItem.waitBuyTicket,
 				...res.ticketList.map((it: any) => {
-					it.unitPrice = it.unitPrice / 100;
+					it.unitPrice = accDiv(it.unitPrice, 100);
 					return it;
 				}),
 				...travelStore.templateTicket,

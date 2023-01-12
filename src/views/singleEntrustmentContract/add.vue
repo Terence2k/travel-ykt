@@ -499,6 +499,8 @@ import picker from '@/components/common/datePicker.vue'
 import { accDiv, accMul } from '@/utils/compute';
 import { getAge, getGenderByIdNumber } from '@/utils';
 import type { Rule } from 'ant-design-vue/es/form';
+import { useNavigatorBar } from '@/stores/modules/navigatorBar';
+const navigatorBar = useNavigatorBar();
 const router = useRouter();
 const route = useRoute();
 const isRefresh = ref('0')
@@ -1383,8 +1385,10 @@ watch(
   (newVal) => {
     if (newVal.name === "addSingleEntrustmentContract") {
       if (newVal.query.operation === 'add') {
+        navigatorBar.setNavigator(['旅行社管理', '单项委托合同', '新增']);
         isAdd.value = true
       } else if (newVal.query.operation === 'update') {
+        navigatorBar.setNavigator(['旅行社管理', '单项委托合同', '编辑']);
         isAdd.value = false
         getEditDetails(newVal.query.oid)
       }
