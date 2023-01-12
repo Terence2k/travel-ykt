@@ -23,7 +23,7 @@ export const useGeneraRules = defineStore('generaRules', {
 		],
 		chargeModelList: [
 			{ value: 1, name: '百分比' },
-			{ value: 2, name: '按酒店收费' },
+			{ value: 2, name: '按房间收费' },
 			{ value: 3, name: '价格' },
 		],
 		isPrepaidList: [

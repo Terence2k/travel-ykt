@@ -189,7 +189,6 @@ const onSelect = (selectedRowKeys: [],record: any, selected: boolean, selectedRo
 // 新增按钮
 const toAdd = () => {
 	route.push({ path: '/settlementManagement/comprehensiveFee/edit' });
-	// route.push({ path: '/settlementManagement/comprehensiveFee/add' });
 };
 // 批量删除按钮
 const del = () => {

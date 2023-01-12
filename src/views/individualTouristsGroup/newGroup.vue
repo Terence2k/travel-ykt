@@ -149,9 +149,9 @@
 				<template v-if="column.key === 'isAncientUygur'">
 					{{ cmpIsAncientUygur(record.isAncientUygur) }}
 				</template>
-				<template v-if="column.key === 'healthyCode'">
+				<!-- <template v-if="column.key === 'healthyCode'">
 					<span :class="cmpHealthyColor(text)">{{ text }}</span>
-				</template>
+				</template> -->
 			</template>
 		</CommonTable>
 	</CommonModal>
@@ -351,11 +351,11 @@ const touristColumns = [
 		dataIndex: 'isHealthy',
 		key: 'isHealthy',
 	},
-	{
+	/* {
 		title: '健康码',
 		dataIndex: 'healthyCode',
 		key: 'healthyCode',
-	},
+	}, */
 	{
 		title: '古维费购买状态',
 		dataIndex: 'isAncientUygur',
@@ -747,7 +747,7 @@ const saveDraft = async (showMessage?: boolean) => {
 		})
 	})
 }
-// 批量获取健康码
+/* // 批量获取健康码
 const getHealthyCodes = async (ids: number[]) => {
 	let res = await api.getHealthyCode(ids)
 	if (res) {
@@ -769,8 +769,8 @@ const getHealthyCodes = async (ids: number[]) => {
 		})
 	}
 	return res || []
-}
-const configCodeName = (certificateCodes: any, targetArr: any) => {
+} */
+/* const configCodeName = (certificateCodes: any, targetArr: any) => {
 	for (let i = 0, l = certificateCodes.length; i < l; i++) {
 		const item = certificateCodes[i];
 		for (let j = 0, l = targetArr.length; j < l; j++) {
@@ -780,7 +780,7 @@ const configCodeName = (certificateCodes: any, targetArr: any) => {
 			}
 		}
 	}
-}
+} */
 const getTourist = async () => {
 	if (selectedContract.value.length > 0) {
 		let params = selectedContract.value.map((item: any) => {
@@ -791,14 +791,14 @@ const getTourist = async () => {
 		})
 		const res = await api.findIndividualContractTourist(params)
 		if (res) {
-			// 获取身份证列表
+			/* // 获取身份证列表
 			const certificateIds = res.map((item: any) => {
 				return { certificateId: item.certificatesNo }
 			})
 			// 根据身份证列表查询健康码列表
 			const certificateCodes = await getHealthyCodes(certificateIds)
 			// 将健康码和游客列表数据关联
-			configCodeName(certificateCodes, res)
+			configCodeName(certificateCodes, res) */
 
 			touristTable.value.data = res
 		} else {
@@ -856,7 +856,6 @@ const getContractDetails = async () => {
 const findByIdTeamType = async () => {
 	let allFeesProducts = []
 	const res = await api.findIndividualTeamType();
-
 	for (let i = 0; i < res.productVos.length; i++) {
 		// 综费产品itemId为4
 		if (res.productVos[i].itemId === 4) {
