@@ -76,7 +76,7 @@
 							</template>
 							<template v-if="column.key === 'action'">
 								<div class="action-btns">
-									<a @click="checkDetails(record.oid)">查看</a>
+									<a @click="checkDetails(record)">查看</a>
 									<a @click="deleteContract(index, record)" :class="{ 'disabled': !travelStore.teamStatus }">删除</a>
 								</div>
 							</template>
@@ -159,6 +159,43 @@
 		@cancel="auditVisible = false" conform-text="确认" @conform="auditConform">
 		{{ submitAuditInfo }}
 	</CommonModal>
+	<CommonModal title="合同详情" v-model:visible="contractDetailsVisible" @close="contractDetailsClose"
+		@cancel="contractDetailsClose" conform-text="确认" @conform="contractDetailsClose" :is-cancel="false" width="40%">
+		<div class="contract_details">
+			<div class="details_item">
+				<div class="key">合同编号：</div>
+				<div class="value"> {{ contractDetailsForm.contractNo }}</div>
+			</div>
+			<div class="details_item">
+				<div class="key">合同类型：</div>
+				<div class="value"> {{ contractDetailsForm.contractTypeName }}</div>
+			</div>
+			<div class="details_item">
+				<div class="key">内含线路/委托项目：</div>
+				<div class="value"> {{ contractDetailsForm.lineNames }}</div>
+			</div>
+			<div class="details_item">
+				<div class="key">人数：</div>
+				<div class="value"> {{ contractDetailsForm.touristPeopleNumber }}</div>
+			</div>
+			<div class="details_item">
+				<div class="key">行程日期：</div>
+				<div class="value"> {{ contractDetailsForm.tripStartTime + '-' + contractDetailsForm.tripEndTime }}</div>
+			</div>
+			<div class="details_item">
+				<div class="key">合同签约旅行社：</div>
+				<div class="value"> {{ contractDetailsForm.companyName }}</div>
+			</div>
+			<div class="details_item">
+				<div class="key">签署网点：</div>
+				<div class="value"> {{ contractDetailsForm.storeName }}</div>
+			</div>
+			<div class="details_item">
+				<div class="key">合同费用（元）：</div>
+				<div class="value"> {{ contractDetailsForm.contractAmount }}</div>
+			</div>
+		</div>
+	</CommonModal>
 </template>
 
 <script setup lang="ts">
@@ -189,6 +226,8 @@ const back = () => {
 		}
 	})
 }
+const contractDetailsVisible = ref(false)
+const contractDetailsForm = ref({})
 const auditVisible = ref(false)
 const touristVisible = ref(false)
 const isAdd = ref(true)
@@ -790,7 +829,14 @@ const submitAudit = async () => {
 		auditVisible.value = true
 	}
 }
-const checkDetails = (id: number) => { }
+const checkDetails = (record: any) => {
+	contractDetailsVisible.value = true
+	contractDetailsForm.value = record
+}
+const contractDetailsClose = () => {
+	contractDetailsVisible.value = false
+	contractDetailsForm.value = {}
+}
 const getGuideList = async () => {
 	let res = await api.travelManagement.getGuideList();
 	guideOption.value = res;
@@ -986,5 +1032,18 @@ onMounted(() => {
 
 .red_text {
 	color: #d70095;
+}
+
+.contract_details {
+	padding: 24px;
+
+	.details_item {
+		display: flex;
+		margin-bottom: 24px;
+
+		.key {
+			width: 200px;
+		}
+	}
 }
 </style>
