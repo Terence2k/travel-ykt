@@ -69,11 +69,11 @@
 					</template>
 
 					<template v-if="column.key === 'feeNumber'">
-						{{ text / 100 || 0 }}
+						{{ accDiv(text, 100) || 0 }}
 					</template>
 
 					<template v-if="column.key === 'totalMoney'">
-						{{ text / 100 || 0 }}
+						{{ accDiv(text, 100) || 0 }}
 					</template>
 				</template>
 			</CommonTable>
@@ -89,11 +89,11 @@
 					</template>
 					
 					<template v-if="column.key === 'feeNumber'">
-						{{ text / 100 || 0 }}
+						{{ accDiv(text, 100) || 0 }}
 					</template>
 
 					<template v-if="column.key === 'totalMoney'">
-						{{ text / 100 || 0 }}
+						{{ accDiv(text, 100) || 0 }}
 					</template>
 				</template>
 			</CommonTable>
@@ -110,7 +110,7 @@
 
 					<template v-if="column.key === 'totalFee'">
 						<div>
-							{{ record.unitPrice * record.reservePeopleCount || 0 }}
+							{{ accMul(record.unitPrice, record.reservePeopleCount) || 0 }}
 						</div>
 					</template>
 

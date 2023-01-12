@@ -95,14 +95,14 @@
           <a-input v-model:value="form.individualReturnPlace" placeholder="请输入散客常用返回地" allowClear>
           </a-input>
         </a-form-item>
-        <a-form-item name="unitStatus" label="开业状态" v-show="formKeys?.unitStatus && form.businessType === 'HOTEL'">
+        <a-form-item name="unitStatus" label="开业状态" v-if="formKeys?.unitStatus && form.businessType === 'HOTEL'">
           <a-radio-group v-model:value="form.unitStatus">
             <a-radio :value="0">开业</a-radio>
             <a-radio :value="1">停业</a-radio>
           </a-radio-group>
         </a-form-item>
         <a-form-item name="unitStatus" label="开业状态"
-          v-show="formKeys?.unitStatus && ['CATERING', 'TICKET'].includes(form.businessType || '')">
+          v-if="formKeys?.unitStatus && ['CATERING', 'TICKET'].includes(form.businessType || '')">
           <a-radio-group v-model:value="form.unitStatus">
             <a-radio :value="true">开业</a-radio>
             <a-radio :value="false">停业</a-radio>
@@ -123,12 +123,13 @@
           </a-select>
         </a-form-item>
         <a-form-item name="derate" label="是否支持减免" v-show="formKeys?.derate">
-          <a-radio-group v-model:value="form.derate">
+          <a-radio-group v-model:value="form.derate" @change="derateChange">
             <a-radio :value="true">是</a-radio>
             <a-radio :value="false">否</a-radio>
           </a-radio-group>
         </a-form-item>
-        <a-form-item name="fullRule" label="减免规则" v-show="formKeys?.fullRule && formKeys?.reduceRule">
+        <a-form-item name="fullRule" label="减免规则"
+          v-if="formKeys?.fullRule && formKeys?.reduceRule && reduceRuleVisible">
           <div style="display: flex;align-items: start;">
             <div style="display: flex;align-items: center; flex:1">
               <span style="margin: 0 5px;">满</span>
@@ -282,6 +283,7 @@ const formRef = ref();
 const formKeys = ref();
 const dateFormRef = ref<FormInstance>();
 const dateFormat = 'YYYY-MM-DD';
+const reduceRuleVisible = ref(true);
 const saveVisible = ref(false);
 const tipVisible = ref(false);
 const loading = ref(false);
@@ -318,7 +320,7 @@ type detailsType = {
   legalPersonUrl?: string,
   accountPhone?: string,
   accountName?: string,
-  unitStatus?: number,
+  unitStatus?: number | boolean,
   hotelStarId?: number | string,
   scenicLevel?: number | string,
   derate?: boolean,
@@ -348,7 +350,8 @@ const form = reactive<detailsType>({
   bankAccountType: 1,
   isIndividual: 1,
   name: undefined,
-  businessLicenseUrl: ''
+  businessLicenseUrl: '',
+  derate: true
 })
 const radioVisible = ref(false)
 const hotelStarList = ref();
@@ -414,9 +417,14 @@ const getScenicLevels = async () => {
   scenicLevelList.value = await api.getScenicLevels();
 }
 const optionChange = (value: string) => {
+  if (value === 'HOTEL') {
+    getHotelStarList();
+    form.unitStatus = 0
+  } else if (['CATERING', 'TICKET'].includes(value)) {
+    form.unitStatus = true
+  }
   formRules.value = getFormRules(value)
   formKeys.value = getKeylist(value, 'edit')
-  value === 'HOTEL' && getHotelStarList();
   value === 'TICKET' && getScenicLevels();
 }
 const regionChange = () => {
@@ -544,11 +552,18 @@ const timePickerChange = () => {
 }
 const accountTypeChange = () => {
   if (form.bankAccountType) {
-    if (form.bankAccountType === 1) {
-      radioVisible.value = false
-    } else if ([2, 3].includes(form.bankAccountType)) {
+    if (form.bankAccountType === 3) {
       radioVisible.value = true
+    } else if ([1, 2].includes(form.bankAccountType)) {
+      radioVisible.value = false
     }
+  }
+}
+const derateChange = () => {
+  if (form.derate) {
+    reduceRuleVisible.value = true
+  } else {
+    reduceRuleVisible.value = false
   }
 }
 const tipConform = () => { }

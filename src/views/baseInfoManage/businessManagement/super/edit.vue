@@ -118,12 +118,13 @@
             </a-select>
           </a-form-item>
           <a-form-item name="derate" label="是否支持减免" v-show="formKeys?.derate">
-            <a-radio-group v-model:value="form.derate">
+            <a-radio-group v-model:value="form.derate" @change="derateChange">
               <a-radio :value="true">是</a-radio>
               <a-radio :value="false">否</a-radio>
             </a-radio-group>
           </a-form-item>
-          <a-form-item name="fullRule" label="减免规则" v-show="formKeys?.fullRule && formKeys?.reduceRule">
+          <a-form-item name="fullRule" label="减免规则"
+            v-if="formKeys?.fullRule && formKeys?.reduceRule && reduceRuleVisible">
             <div style="display: flex;align-items: start;">
               <div style="display: flex;align-items: center; flex:1">
                 <span style="margin: 0 5px;">满</span>
@@ -297,6 +298,7 @@ const router = useRouter();
 const route = useRoute();
 const isRefresh = ref('0')
 const radioVisible = ref(false)
+const reduceRuleVisible = ref(true)
 const resetForm = () => {
   formRef.value.resetFields()
   dateFormRef.value?.resetFields()
@@ -352,7 +354,7 @@ type detailsType = {
   checkPass?: string,
   unitStatus?: number | boolean,
   hotelStarId?: string,
-  derate?: number,
+  derate?: boolean,
   fullRule?: number,
   reduceRule?: number,
   scenicLevel?: string,
@@ -601,6 +603,7 @@ const getData = async () => {
       form.value.pdfFileUrl = pdfArr.toString()
     }
     accountTypeChange()
+    derateChange()
   }
 }
 const YJGList = ref<{ id: number, name: string }[]>([])
@@ -636,11 +639,18 @@ const yjgSelect = (value: any, option: any) => {
 };
 const accountTypeChange = () => {
   if (form.value.bankAccountType) {
-    if (form.value.bankAccountType === 1) {
-      radioVisible.value = false
-    } else if ([2, 3].includes(form.value.bankAccountType)) {
+    if (form.value.bankAccountType === 3) {
       radioVisible.value = true
+    } else if ([1, 2].includes(form.value.bankAccountType)) {
+      radioVisible.value = false
     }
+  }
+}
+const derateChange = () => {
+  if (form.value.derate) {
+    reduceRuleVisible.value = true
+  } else {
+    reduceRuleVisible.value = false
   }
 }
 onActivated(() => {
