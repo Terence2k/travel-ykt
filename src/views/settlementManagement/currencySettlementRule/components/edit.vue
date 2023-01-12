@@ -82,9 +82,9 @@
 				</a-input-number>
 			</a-form-item>
 			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 2 && formState.productType === 2" :rules="rulesRef.integer">
-				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入酒店房间数收费（单位：个）" style="width: 100%" :min="1">
+				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入酒店房间数收费（单位：元/房间）" style="width: 100%" :min="1">
 					<template #addonAfter>
-						<span>个</span>
+						<span>元/房间</span>
 					</template>
 				</a-input-number>
 			</a-form-item>
