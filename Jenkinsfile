@@ -1,8 +1,6 @@
 // 公共，不需要修改
-def registry = "ynty001-vpc.tencentcloudcr.com"
-
-
-def project = "lijiang"
+def registry = "harbor.ljtengyun.com"
+def project = "lijiang-ykt"
 def image = "ykt-pc-web"
 
 def commit_messages = ""

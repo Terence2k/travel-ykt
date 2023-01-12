@@ -89,11 +89,11 @@ const revoke = async () => {
 		attachmentList: formValidate.data.pic.split(','),
 	});
 
-	const { newItineratyId } = oParams;
+	const { newItineraryId } = oParams;
 
 	route.push({
 		path: '/travel/travel_manage/add_travel',
-		query: { id: newItineratyId, itineraryNo: route.currentRoute.value?.query?.itineraryNo, isRevoke: 1 },
+		query: { id: newItineraryId, itineraryNo: route.currentRoute.value?.query?.itineraryNo, isRevoke: 1 },
 	});
 
 	// if (res) {

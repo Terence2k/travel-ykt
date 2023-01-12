@@ -74,6 +74,10 @@
           </a-form-item>
         </template>
 
+        <div class="tag" v-if="!['YKT', 'SUPERVISE', 'ASSOCIATION', 'GROUP', 'ANCIENT_UYGUR', 'CULTURE_BUREAU'].includes(userInfo.sysCompany.businessType)">
+          扩展信息
+        </div>
+
         <!-- 旅行社特殊字段 -->
         <template v-if="userInfo.sysCompany.businessType == 'TRAVEL'">
           <a-form-item name="businessLicenseUrl1" label="经营许可证">
@@ -215,8 +219,11 @@
           </a-form-item>
         </template>
         <!-- 资质及账号信息（对公账号注册为法人类型，个人账号将被注册为自然人类型） -->
-        <div style="margin: 70px 0" v-if="!['CULTURE_BUREAU'].includes(userInfo.sysCompany.businessType)">
-          <!-- <span style="color: red;">资质及账号信息（对公账号注册为法人类型，个人账号将被注册为自然人类型）</span> -->
+        <div v-if="!['CULTURE_BUREAU'].includes(userInfo.sysCompany.businessType)">
+          <!-- 资质及账号信息 -->
+          <div class="tag">
+            资质及账号信息（对公账号注册为法人类型，个人账号将被注册为自然人类型）
+          </div>
           <a-form-item name="bankAccountType" label="账号类型">
             <div class="flex">
               <a-radio-group v-model:value="form.bankAccountType">
@@ -582,6 +589,13 @@ onMounted(() => {
   .status-btn {
     margin-left: 5px;
     display: block;
+  }
+  
+  .tag {
+    color: #dddddd;
+    border-bottom: 1px solid #dddddd;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
   }
 }
 </style>

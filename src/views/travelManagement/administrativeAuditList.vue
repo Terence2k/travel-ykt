@@ -89,6 +89,7 @@ const chart = computed(() => pages.filter((it: any) => it.value === activeKey.va
 const onSearch = async () => {
 	let chartField: AuditField = chart.value;
 	let storeParams = travelStore.auditList[chartField].params;
+	travelStore.auditList[chartField].params.pageNo = 1;
 	travelStore.auditList[chartField].params.status = activeKey.value;
 	travelStore.auditList[chartField].params.startDate = storeParams.time[0];
 	travelStore.auditList[chartField].params.endDate = storeParams.time[1];
