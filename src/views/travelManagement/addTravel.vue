@@ -358,6 +358,8 @@ const getTraveDetail = () => {
 
 watch(activeKey, (newVal) => {
 	if (newVal === 4) {
+		console.log(travelStore.compositeProducts,'DDDDDDDDDDDDDDDDD');
+		debugger
 		const allFeesProducts = travelStore.compositeProducts.map((it: any) => {
 			it.peopleCount = travelStore.touristList.length;
 			it.unPrice = it.feeNumber;

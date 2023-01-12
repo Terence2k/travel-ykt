@@ -619,22 +619,21 @@ const getTraveDetail = () => {
 			// console.log(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end, '-----');
 			// travelStore.setDisabledTime = disabledRangeTime(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end) as any;
 			route.query.tab && setTimeout(() => (activeKey.value = route.query.tab as string));
-			if (route.query.tab === '2') {
-				const allFeesProducts = travelStore.compositeProducts.map((it: any) => {
-					it.peopleCount = travelStore.touristList.length;
-					it.unPrice = it.feeNumber;
-					it.dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day');
-					it.totalMoney = getAmount(it.confirmDailyCharge, it.feeNumber, it.feeModel);
-					return it;
-				});
-				travelStore.setCompositeProducts(allFeesProducts);
-				/* isSaveBtn.value = false;
-				check.value = !check.value; */
-			}
 			// getHealthCode();
 		});
 };
-
+watch(activeKey, (newVal) => {
+	if (newVal === '2') {
+		const allFeesProducts = travelStore.compositeProducts.map((it: any) => {
+			it.peopleCount = travelStore.touristList.length;
+			it.unPrice = it.feeNumber;
+			it.dayCount = dayjs(form.value.endDate).diff(form.value.startDate, 'day');
+			it.totalMoney = getAmount(it.confirmDailyCharge, it.feeNumber, it.feeModel);
+			return it;
+		});
+		travelStore.setCompositeProducts(allFeesProducts);
+	}
+});
 // 步骤跳转
 const nextTep = (val: string) => {
 	const a = Promise.all([
@@ -713,7 +712,6 @@ const guideChange = (val: any) => {
 	}
 }
 const editDraft = async (callBack?: any) => {
-	form.value.compositeProducts = travelStore.curentProduct
 	api.editIndividualTouristsGroup(form.value).then((res: any) => {
 		isRefresh.value = '1'
 		callBack && callBack(res)
@@ -726,6 +724,7 @@ const saveDraft = async (showMessage?: boolean) => {
 			dateFormRef.value?.validate()
 		])
 		a.then(async () => {
+			form.value.compositeProducts = !travelStore.isOptional ? travelStore.compositeProducts : travelStore.curentProduct
 			if (isAdd.value) {
 				const res = await api.createIndividualItinerary(form.value)
 				if (res) {
@@ -878,14 +877,13 @@ const findByIdTeamType = async () => {
 				result.unPrice = result.feeNumber;
 				result.isDaily = result.confirmDailyCharge ? true : false;
 				result.productName = result.comprehensiveFeeProductName;
-				result.dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day')
+				result.dayCount = dayjs(form.value.endDate).diff(form.value.startDate, 'day')
 				result.totalMoney = getAmount(
 					result.confirmDailyCharge,
 					result.feeNumber,
 					result.feeModel
 				)
 				allFeesProducts.push(result)
-
 			}
 		} else if (res.productVos[i].itemId === 2) {
 
@@ -897,7 +895,6 @@ const findByIdTeamType = async () => {
 	if (travelStore.productList[0]?.productId) {
 		travelStore.curentProduct = allFeesProducts.filter((it: any) => it.oid === travelStore.productList[0].productId);
 	} else if (allFeesProducts.length >= 1) {
-		console.log(allFeesProducts)
 		travelStore.curentProduct = cloneDeep([allFeesProducts[0]]);
 	} else {
 		travelStore.curentProduct = [];
@@ -929,10 +926,10 @@ watch(
 	() => route.query.id,
 	(newVal) => {
 		if (newVal) {
+			findByIdTeamType()
 			form.value.oid = newVal as string
 			isAdd.value = false
 			getGuideList()
-			findByIdTeamType()
 			getContractDetails()
 			getTraveDetail()
 		}
@@ -948,8 +945,8 @@ watch(
 	},
 )
 onMounted(() => {
-	getGuideList()
 	findByIdTeamType()
+	getGuideList()
 })
 </script>
 
