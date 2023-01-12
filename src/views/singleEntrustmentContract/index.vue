@@ -35,6 +35,8 @@
           <a @click="addOrUpdate({ row: record, handle: 'update' })" v-show="(record.contractStatus === 1)"
             v-permission="'编辑'">编辑</a>
           <a v-permission="'撤销'" v-if="([2, 3].includes(record.contractStatus))" @click="withdraw(record)">撤销</a>
+          <a v-show="((record.contractType === 2) && [2, 3, 4, 5, 6, 7].includes(record.contractStatus) && record.signingUrl)"
+            target="_blank" :href="record.signingUrl" v-permission="'12301合同'">12301合同</a>
         </div>
       </template>
     </template>

@@ -1245,12 +1245,12 @@ const saveDraft = (tab?: string, isTip: boolean = true) => {
 const submitCancel = () => {
   submitVisible.value = false
 }
-const accMulCost = (arr: CostItem[]) => {
+const accMulCost = (arr: any[]) => {
   if (arr?.length > 0) {
-    return arr.map((item: CostItem) => {
-      item.adultPrice = accMulValue(item.adultPrice)
-      item.childPrice = accMulValue(item.childPrice)
-      item.individualSubtotal = accMulValue(item.individualSubtotal)
+    return arr.map((item: any) => {
+      item.adultPrice = accMulValue(Number(item.adultPrice))
+      item.childPrice = accMulValue(Number(item.childPrice))
+      item.individualSubtotal = accMulValue(Number(item.individualSubtotal))
       return item
     })
   } else {
@@ -1311,7 +1311,7 @@ const getParams = () => {
     contractFileUrl: fileUrl, //附件
     otherAgreements, //其他约定
     contractAmount: accMulValue(contractAmount),
-    individualContractLineBos: dataLineSource.value, // 线路
+    individualContractLineBos: accMulCost(cloneDeep(dataLineSource.value)), // 线路
     individualContractTouristBos: dataTouristSource.value, // 游客
     individualContractPriceBos: accMulCost(cloneDeep(dataCostSource.value)), // 费用
     emergencyContact,

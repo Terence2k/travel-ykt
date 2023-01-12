@@ -1104,9 +1104,9 @@ const submitCancel = () => {
 const accMulCost = (arr: CostItem[]) => {
   if (arr?.length > 0) {
     return arr.map((item: CostItem) => {
-      item.adultPrice = accMulValue(item.adultPrice)
-      item.childPrice = accMulValue(item.childPrice)
-      item.individualSubtotal = accMulValue(item.individualSubtotal)
+      item.adultPrice = accMulValue(Number(item.adultPrice))
+      item.childPrice = accMulValue(Number(item.childPrice))
+      item.individualSubtotal = accMulValue(Number(item.individualSubtotal))
       return item
     })
   } else {

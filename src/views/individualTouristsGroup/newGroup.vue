@@ -93,7 +93,7 @@
 				</div>
 			</a-tab-pane>
 			<a-tab-pane key="2" tab="产品预订">
-				<traveInfo></traveInfo>
+				<traveInfo @getTravelDetail="getTraveDetail"></traveInfo>
 				<div class="operation" v-if="travelStore.teamStatus">
 					<a-button @click="saveDraft(true)" type="primary" style="margin-right:20px">保存草稿</a-button>
 					<a-button @click="nextTep('1')" type="primary" style="margin-right:20px">上一步</a-button>
