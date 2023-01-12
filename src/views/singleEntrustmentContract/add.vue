@@ -162,7 +162,8 @@
             </template>
           </a-table>
           <div class="tag">添加游客</div>
-          <a-table :columns="touristColumns" :data-source="dataTouristSource" bordered :pagination="false">
+          <a-table :columns="touristColumns" :data-source="dataTouristSource" bordered :pagination="false"
+            :scroll="{ x: '100vw' }">
             <template #headerCell="{ column }">
               <template
                 v-if="['certificatesType', 'certificatesNo', 'touristName', 'touristType', 'gender', 'age', 'isHealthy', 'healthyCode', 'isAncientUygur'].includes(column.key)">
@@ -181,7 +182,7 @@
                   <a-form ref="formRef1" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
                     <a-form-item name="certificatesType">
                       <a-select placeholder="请选择身份证件类型" v-model:value="dataTouristSource[index][column.dataIndex]"
-                        allowClear style="width: 110px">
+                        allowClear style="width: 100%">
                         <a-select-option v-for="item in certificatesTypeOption" :value="item.codeValue"
                           :key="item.codeValue">{{ item.name }}
                         </a-select-option>
@@ -227,7 +228,7 @@
                   <a-form ref="formRef4" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
                     <a-form-item name="touristType">
                       <a-select placeholder="请选择游客类型" v-model:value="dataTouristSource[index][column.dataIndex]"
-                        allowClear>
+                        allowClear style="width: 100%">
                         <a-select-option v-for="item in touristTypeOption" :value="item.codeValue"
                           :key="item.codeValue">{{
                             item.name
@@ -246,7 +247,7 @@
                   <a-form ref="formRef5" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
                     <a-form-item name="gender">
                       <a-select placeholder="请选择性别" v-model:value="dataTouristSource[index][column.dataIndex]"
-                        allowClear style="width: 80px">
+                        allowClear style="width: 100%">
                         <a-select-option v-for="item in genderOption" :value="item.codeValue" :key="item.codeValue">{{
                           item.name
                         }}
@@ -290,7 +291,7 @@
                   <a-form ref="formRef7" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
                     <a-form-item name="isHealthy">
                       <a-select placeholder="请选健康状态" v-model:value="dataTouristSource[index][column.dataIndex]"
-                        allowClear style="width: 80px">
+                        allowClear style="width: 100%">
                         <a-select-option v-for="item in isHealthyOption" :value="item.codeValue"
                           :key="item.codeValue">{{
                             item.name
@@ -322,7 +323,7 @@
                   <a-form ref="formRef9" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
                     <a-form-item name="isAncientUygur">
                       <a-select placeholder="请选择古维费购买状态" v-model:value="dataTouristSource[index][column.dataIndex]"
-                        allowClear style="width: 130px">
+                        allowClear style="width: 100%">
                         <a-select-option v-for="item in ancientUygurOption" :value="item.codeValue"
                           :key="item.codeValue">{{
                             item.name
@@ -355,7 +356,7 @@
           <div class="add_box">
             <a-button @click="handleTouristAdd">添加</a-button>
           </div>
-          <div v-if="isShow">
+          <div style="width:60%">
             <a-form-item name="touristName" label="游客代表">
               <a-select @change="touristChange" placeholder="请选择游客代表" v-model:value="form.touristName" allowClear>
                 <a-select-option v-for="item in dataTouristSource" :value="item.certificatesNo"
@@ -368,7 +369,7 @@
               </a-input>
             </a-form-item>
             <a-form-item name="phone" label="游客代表手机号">
-              <a-input v-model:value="form.phone" placeholder="无需填写，输入名单后自动生成" disabled>
+              <a-input v-model:value="form.phone" placeholder="无需填写，输入名单后自动生成">
               </a-input>
             </a-form-item>
             <a-form-item name="certificatesAddress" label="游客代表地址">
@@ -465,7 +466,7 @@
           <div>
             <a-button type="primary" @click="nextTep('1')" class="mr20">上一步</a-button>
             <a-button type="primary" @click="saveDraft" class="mr20">保存草稿</a-button>
-            <a-button type="primary" @click="submitVisible = true" :disabled="!hasId">发出签署</a-button>
+            <a-button type="primary" @click="submitVisible = true">发出签署</a-button>
           </div>
         </div>
       </a-tab-pane>
@@ -476,7 +477,7 @@
       </template>
     </a-tabs>
   </div>
-  <CommonModal title="散客合同签署确认" v-model:visible="submitVisible" @cancel="submitCancel" @close="submitCancel"
+  <CommonModal title="单项合同签署确认" v-model:visible="submitVisible" @cancel="submitCancel" @close="submitCancel"
     :conform-text="'确定签署'" @conform="saveDraftConfirm">
     <p>您即将发起散客合同签署，合同总金额<span class="cred">{{ form.contractAmount }}</span>元。发出后将由游客代表<span class="cred">{{
       form.touristName
@@ -528,7 +529,6 @@ const formRef2 = ref()
 const formRef3 = ref()
 const formRef4 = ref()
 const isAdd = ref(true)
-const hasId = ref(false)
 const form = ref({
   oid: undefined,
   companyId: undefined, //合同创建旅行社id
@@ -685,7 +685,6 @@ const formRules = {
 const activeKey = ref('1')
 const submitVisible = ref(false)
 const submitResultVisible = ref(false)
-const isShow = ref(true)
 const entrustedProjectColumns = [
   {
     title: '委托项目',
@@ -708,41 +707,49 @@ const touristColumns = [
     title: '身份证件类型',
     dataIndex: 'certificatesType',
     key: 'certificatesType',
+    width: 180
   },
   {
     title: '证件号码',
     dataIndex: 'certificatesNo',
     key: 'certificatesNo',
+    width: 220
   },
   {
     title: '游客姓名',
     dataIndex: 'touristName',
     key: 'touristName',
+    width: 180
   },
   {
     title: '游客类型',
     dataIndex: 'touristType',
     key: 'touristType',
+    width: 180
   },
   {
     title: '性别',
     dataIndex: 'gender',
     key: 'gender',
+    width: 180
   },
   {
     title: '年龄',
     dataIndex: 'age',
     key: 'age',
+    width: 180
   },
   {
     title: '电话号码',
     dataIndex: 'phone',
     key: 'phone',
+    width: 180
   },
   {
     title: '是否健康',
     dataIndex: 'isHealthy',
     key: 'isHealthy',
+    width: 180
   },
   // {
   //   title: '健康码',
@@ -753,13 +760,14 @@ const touristColumns = [
     title: '古维费购买状态',
     dataIndex: 'isAncientUygur',
     key: 'isAncientUygur',
+    width: 220
   },
   {
     title: '操作',
     key: 'action',
     dataIndex: 'action',
     fixed: 'right',
-    width: 70
+    width: 120
   }
 ]
 const costColumns = [
@@ -1048,40 +1056,46 @@ const nextTep = (val: string) => {
     calculateTripFee()
   }
 }
-const saveDraft = (tab?: string) => {
-  const a = Promise.all([
-    formRef.value?.validateFields(),
-    formRef1.value?.validateFields(),
-    formRef2.value?.validateFields(),
-    formRef3.value?.validateFields(),
-    formRef4.value?.validateFields(),
-    dateFormRef.value?.validate(),
-  ])
-  a.then(async () => {
-    tab === '1' && calculateTripFee()
-    const params = getParams()
-    if (isAdd.value) {
-      let res = await api.createSingleContract(params)
-      if (res) {
-        message.success('保存草稿成功！')
-        isRefresh.value = '1'
-        hasId.value = true
-        form.value.oid = res
+const saveDraft = (tab?: string, isTip: boolean = true) => {
+  return new Promise((resolve, reject) => {
+    const a = Promise.all([
+      formRef.value?.validateFields(),
+      formRef1.value?.validateFields(),
+      formRef2.value?.validateFields(),
+      formRef3.value?.validateFields(),
+      formRef4.value?.validateFields(),
+      dateFormRef.value?.validate(),
+    ])
+    a.then(async () => {
+      tab === '1' && calculateTripFee()
+      const params = getParams()
+      if (isAdd.value) {
+        let res = await api.createSingleContract(params)
+        if (res) {
+          isTip && message.success('保存草稿成功！')
+          isRefresh.value = '1'
+          isAdd.value = false
+          form.value.oid = res
+          resolve('down')
+        } else {
+          isTip && message.error('保存草稿失败！')
+          reject('error')
+        }
       } else {
-        message.error('保存草稿失败！')
+        let res = await api.editSingleContract(params)
+        if (res) {
+          isTip && message.success('编辑草稿成功！')
+          isRefresh.value = '1'
+          resolve('down')
+        } else {
+          isTip && message.error('编辑草稿失败！')
+          reject('error')
+        }
       }
-    } else {
-      let res = await api.editSingleContract(params)
-      if (res) {
-        message.success('编辑草稿成功！')
-        isRefresh.value = '1'
-        hasId.value = true
-      } else {
-        message.error('编辑草稿失败！')
-      }
-    }
-  }).catch((error: Error) => {
-    console.log(error);
+    }).catch((error: Error) => {
+      console.log(error);
+      reject('error')
+    })
   })
 }
 const submitCancel = () => {
@@ -1174,6 +1188,7 @@ const getParams = () => {
   }
 }
 const saveDraftConfirm = async () => {
+  await saveDraft(undefined, false)
   const res = await api.releaseSingleContract(form.value.oid)
   if (res) {
     submitResultVisible.value = true
@@ -1330,7 +1345,6 @@ const accDivValue = (value: any) => {
 const getEditDetails = async (oid: any) => {
   const res = await api.getSingleContractDetails(oid)
   if (res) {
-    hasId.value = true
     form.value = res
     form.value.bond = accDivValue(form.value.bond)
     form.value.contractAmount = accDivValue(form.value.contractAmount)
