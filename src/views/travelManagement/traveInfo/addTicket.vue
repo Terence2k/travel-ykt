@@ -70,7 +70,7 @@
 			</a-form-item>
 
             <a-form-item label="门票价格" name="travelName">
-				<span>{{ticketPrice / 100 || 0}}元</span>
+				<span>{{accDiv(ticketPrice, 100) || 0}}元</span>
 			</a-form-item>
 
 			<div v-if="(formState.ticketType === TicketType.SHOW || formState.ticketType === TicketType.UNITE)">
@@ -142,6 +142,7 @@
 	import datePicker from '@/components/common/datePicker.vue';
     import api from '@/api';
 	import { cloneDeep, debounce } from 'lodash';
+	import {accAdd, accDiv, accMul} from '@/utils/compute.js'
 	import { TicketType } from '@/enum';
 	import CommonTable from '@/components/common/CommonTable.vue';
 	const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any ) || {}
@@ -163,7 +164,7 @@
 			default: {}
 		}
 	})
-	const countMoney = computed(()=> (formState.unitPrice / 100 * travelStore.touristList.length) || 0)
+	const countMoney = computed(()=> (accMul(accDiv(formState.unitPrice, 100), travelStore.touristList.length)) || 0)
     const tableData = ref([])
     const ticketData = reactive<{[k:string]: any}>({
         scenicList: [],
@@ -229,7 +230,7 @@
 		).then((res: any) => {
 			ticketData.childTicket = res.map((item: any) => {
 				item.subTicketTypeName = ticketData.ticketType.filter((it: any) => it.data === item.subTicketType)[0]?.typeName
-				item.subTicketPrice = item.subTicketPrice / 100;
+				item.subTicketPrice = accDiv(item.subTicketPrice, 100);
 				item.isHasDiscountName = item.isHasDiscount ? '是' : '否';
 				return item
 			});
@@ -263,8 +264,8 @@
 			}
 			const newFormState = cloneDeep(formState)
 			newFormState.reservePeopleCount = formState.peopleCount
-			newFormState.unitPrice = ticketPrice.value / 100;
-			newFormState.totalFee = newFormState.peopleCount * newFormState.unitPrice
+			newFormState.unitPrice = accDiv(ticketPrice.value, 100);
+			newFormState.totalFee = accMul(newFormState.peopleCount, newFormState.unitPrice)
 			const res = await api.travelManagement.addTicket(formState)
 			res && (newFormState.oid = res)
 			// travelStore.setTicket(newFormState)

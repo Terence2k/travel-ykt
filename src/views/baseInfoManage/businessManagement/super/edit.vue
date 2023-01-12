@@ -636,10 +636,10 @@ const yjgSelect = (value: any, option: any) => {
 };
 const accountTypeChange = () => {
   if (form.value.bankAccountType) {
-    if (form.value.bankAccountType === 1) {
-      radioVisible.value = false
-    } else if ([2, 3].includes(form.value.bankAccountType)) {
+    if (form.value.bankAccountType === 3) {
       radioVisible.value = true
+    } else if ([1, 2].includes(form.value.bankAccountType)) {
+      radioVisible.value = false
     }
   }
 }
