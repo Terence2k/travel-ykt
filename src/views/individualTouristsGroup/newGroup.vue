@@ -214,6 +214,8 @@ type formType = {
 	guide?: {
 		guideOid?: number
 		guideName?: string
+		guideCertificateNo?: string
+		guidePhone?: string
 	}
 	totalExpenses?: number
 	oid?: string
@@ -261,6 +263,8 @@ const CloneActiveKey = ref('1')
 const guideOption = ref<{
 	oid: number
 	guideName: string
+	guideCertificateNo: string
+	phone: string
 }[]>([])
 const touristColumns = [
 	{
@@ -465,6 +469,8 @@ const setBaseInfo = (res: any) => {
 		} = res.basic
 		const guideOid = res.guideList[0]?.guideOid
 		const guideName = res.guideList[0]?.guideName
+		const guideCertificateNo = res.guideList[0]?.guideCertificateNo
+		const guidePhone = res.guideList[0]?.guidePhone
 		const licensePlate = res.transportList[0]?.licencePlateNumber
 		form.value.routeName = routeName
 		form.value.groupType = groupType
@@ -482,7 +488,9 @@ const setBaseInfo = (res: any) => {
 		form.value.endDate = endDate
 		form.value.guide = {
 			guideOid,
-			guideName
+			guideName,
+			guideCertificateNo,
+			guidePhone
 		}
 	}
 }
@@ -640,22 +648,28 @@ const onSelectChange = (Keys: Key[], selectedRows: any[]) => {
 };
 const guideChange = (val: any) => {
 	if (val) {
-		let guideName
+		let guideName, guideCertificateNo, guidePhone
 		for (let i = 0; i < guideOption.value.length; i++) {
 			const element = guideOption.value[i];
 			if (element.oid === form.value.guideOid) {
 				guideName = element.guideName
+				guideCertificateNo = element.guideCertificateNo
+				guidePhone = element.phone
 				break
 			}
 		}
 		form.value.guide = {
 			guideOid: form.value.guideOid,
-			guideName
+			guideName,
+			guideCertificateNo,
+			guidePhone
 		}
 	} else {
 		form.value.guide = {
 			guideOid: undefined,
-			guideName: undefined
+			guideName: undefined,
+			guideCertificateNo: undefined,
+			guidePhone: undefined
 		}
 	}
 }
