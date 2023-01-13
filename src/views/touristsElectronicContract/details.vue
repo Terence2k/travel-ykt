@@ -242,8 +242,8 @@ const lineColumns = [
   },
   {
     title: '线路名称',
-    dataIndex: 'lineId',
-    key: 'lineId',
+    dataIndex: 'lineName',
+    key: 'lineName',
   },
   {
     title: '开始时间',
