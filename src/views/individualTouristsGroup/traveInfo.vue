@@ -59,6 +59,9 @@
 							{{ index + 1 }}
 						</div>
 					</template>
+					<template v-if="column.key === 'roomName'">
+						<div v-html="text"></div>
+					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a v-if="travelStore.reserveStatus && record.orderStatus == 0" class="item"
@@ -85,10 +88,13 @@
 							{{ index + 1 }}
 						</div>
 					</template>
-
+					<template v-if="column.key === 'totalFee'">
+						<div>
+							{{ accMul(record.unitPrice, record.reservePeopleCount) || 0 }}
+						</div>
+					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<!--  v-if="travelStore.reserveStatus && record.orderStatus == 0" -->
 							<a v-if="travelStore.reserveStatus" @click="reserveTicketPeple(record)">预定</a>
 							<a v-if="travelStore.teamStatus" class="item"
 								@click="add('TICKET', record.oid ? 'addTicketPop' : 'productRow', 'addTicketPop', index, record.oid || record)">编辑</a>
@@ -149,12 +155,15 @@
 			</CommonTable>
 		</div>
 	</div>
-	<addHotel @getTravelDetail="$emit('getTravelDetail')" :productRow="editId.productRow" :hotelId="editId.addHotelPop" v-model="addHotelPop" />
-	<addTicket @getTravelDetail="$emit('getTravelDetail')" :productRow="editId.productRow" :ticketId="editId.addTicketPop" v-model="addTicketPop" />
+	<addHotel @getTravelDetail="$emit('getTravelDetail')" :productRow="editId.productRow" :hotelId="editId.addHotelPop"
+		v-model="addHotelPop" />
+	<addTicket @getTravelDetail="$emit('getTravelDetail')" :productRow="editId.productRow" :ticketId="editId.addTicketPop"
+		v-model="addTicketPop" />
 	<Personnel v-model="selectPersonnelPop" :routeId="gouvyId.id" :isReductionPassed="gouvyId.isReductionPassed"
 		:isInitiateReduction="gouvyId.isInitiateReduction" />
 	<!-- <reserveTicket :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop" /> -->
-	<reserveTicket @getTravelDetail="$emit('getTravelDetail')" :orderNo="editId.orderNo" :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop" />
+	<reserveTicket @getTravelDetail="$emit('getTravelDetail')" :orderNo="editId.orderNo"
+		:ticketId="editId.reserveTicketPop" v-model="reserveTicketPop" />
 	<showTicket :ticketId="showId.showTicketPop" v-model="showTicketPop" />
 	<showHotel :hotelId="showId.showHotelPop" v-model="showHotelPop" />
 </template>
@@ -171,6 +180,7 @@ import { accDiv, accMul } from '@/utils/compute';
 import { GroupStatus } from '@/enum';
 import BaseModal from '@/components/common/BaseModal.vue';
 const route = useRoute();
+const router = useRouter();
 const props = defineProps({
 	onCheck: {
 		type: Boolean,

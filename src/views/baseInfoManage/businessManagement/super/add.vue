@@ -275,7 +275,8 @@ import {
   disabledBeforeDate,
   disabledAfterDate,
   getKeylist,
-  businessTypeOption
+  businessTypeOption,
+  toIcbc
 } from '@/views/baseInfoManage/businessManagement/super/common'
 const router = useRouter();
 const route = useRoute();
@@ -353,6 +354,7 @@ const form = reactive<detailsType>({
   businessLicenseUrl: '',
   derate: true
 })
+const companyId = ref()
 const radioVisible = ref(false)
 const hotelStarList = ref();
 const scenicLevelList = ref();
@@ -521,10 +523,11 @@ const saveConform = () => {
   loading.value = true;
   const params = getParams()
   api.addCompany(params).then((res: any) => {
-    if (res == '企业创建成功！') {
+    if (![null, undefined, ''].includes(res)) {
       isRefresh.value = '1'
       saveVisible.value = false
       tipVisible.value = true
+      companyId.value = res
     } else {
       message.error(res);
       saveVisible.value = false
@@ -566,7 +569,12 @@ const derateChange = () => {
     reduceRuleVisible.value = false
   }
 }
-const tipConform = () => { }
+const tipConform = () => {
+  toIcbc(companyId.value, () => {
+    tipVisible.value = false
+    back()
+  })
+}
 </script>
 
 <style scoped lang="scss">
