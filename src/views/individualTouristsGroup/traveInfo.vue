@@ -4,51 +4,55 @@
 			<p class="title">古维管理费</p>
 			<CommonTable :columns="gouvyColumns" :dataSource="gouvyDate" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
-					<template v-if="column.key === 'touristNum'" > 
-						<span v-if="travelStore.baseInfo.status !=11 ">{{ travelStore.touristList.length }}人 </span>
+					<template v-if="column.key === 'touristNum'">
+						<span v-if="travelStore.baseInfo.status != 11">{{ travelStore.touristList.length }}人 </span>
 					</template>
 					<template v-if="column.key === 'payableNum'">
 						<div class="action-btns" v-if="!travelStore.reserveStatus">
-							<span >预计{{ travelStore.touristList.length }}人 </span>
+							<span>预计{{ travelStore.touristList.length }}人 </span>
 						</div>
-						<div v-if="travelStore.reserveStatus " >
-							<span >预计{{ record.payableNum }}人 </span>
+						<div v-if="travelStore.reserveStatus">
+							<span>预计{{ record.payableNum }}人 </span>
 						</div>
 					</template>
 					<template v-if="column.key === 'payablePrice'">
-						<span v-if="!travelStore.reserveStatus ">{{accMul(travelStore.touristList.length,payablePrice)}}元 </span>
-						<span v-else>{{accDiv(record.payablePrice,100)}}元 </span>
+						<span v-if="!travelStore.reserveStatus">{{ accMul(travelStore.touristList.length, payablePrice) }}元 </span>
+						<span v-else>{{ accDiv(record.payablePrice, 100) }}元 </span>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a class="item" v-if="record.issueStatus==0" @click="choice({selectPersonnelPop:'selectPersonnelPop',id:route.query.id,isReductionPassed:record.isReductionPassed,isInitiateReduction:record.isInitiateReduction})">去出票</a>
-							<a class="item" v-if="record.isInitiateReduction==1 && record.isReductionPassed==0"  @click="seeReject('modelValue')">查看驳回原因</a>
-							<a class="item" v-if="record.issueStatus==1" @click="see({ticketingValue:'ticketingValue',itineraryId:record.itineraryId})">查看出票情况</a>
+							<a class="item" v-if="record.issueStatus == 0"
+								@click="choice({ selectPersonnelPop: 'selectPersonnelPop', id: route.query.id, isReductionPassed: record.isReductionPassed, isInitiateReduction: record.isInitiateReduction })">去出票</a>
+							<a class="item" v-if="record.isInitiateReduction == 1 && record.isReductionPassed == 0"
+								@click="seeReject('modelValue')">查看驳回原因</a>
+							<a class="item" v-if="record.issueStatus == 1"
+								@click="see({ ticketingValue: 'ticketingValue', itineraryId: record.itineraryId })">查看出票情况</a>
 						</div>
 					</template>
 				</template>
 			</CommonTable>
-		<BaseModal title="查看驳回原因" v-model="modelValue" :width="500">
-			<p>古维管理员 {{gouvyDate[0].lastUpdaterName}} 于 {{gouvyDate[0].lastUpdateTime}} 驳回</p>
-			<p>驳回原因：{{gouvyDate[0].refuesedReason}}</p>
-			<p>您可以重新修改减免申请信息，重新提交审核。</p>
-			<template v-slot:footer>
-				<a-button @click="modelValue = false">取消</a-button>
-			</template>
-		</BaseModal>
-		<BaseModal title="古维出票记录" v-model="ticketingValue" :width="1000">
-			<p>当前古维费已经于 {{ticketingDate.issueTime}} 全部出票。全部游客{{ticketingDate.total}}名,已减免{{ticketingDate.reduceNum}}人,实缴{{ticketingDate.paidNum}}人。</p>
-			<CommonTable :columns="ticketingColumns" :dataSource="ticketingDate.touristList" :scrollY="false">
-				<template #bodyCell="{ column, text, index, record }">
-					<template v-if="column.key === 'actualPrice'">
-						<span>{{accDiv(record.actualPrice,100)}}</span>
-					</template>
+			<BaseModal title="查看驳回原因" v-model="modelValue" :width="500">
+				<p>古维管理员 {{ gouvyDate[0].lastUpdaterName }} 于 {{ gouvyDate[0].lastUpdateTime }} 驳回</p>
+				<p>驳回原因：{{ gouvyDate[0].refuesedReason }}</p>
+				<p>您可以重新修改减免申请信息，重新提交审核。</p>
+				<template v-slot:footer>
+					<a-button @click="modelValue = false">取消</a-button>
 				</template>
-			</CommonTable>
-			<template v-slot:footer>
+			</BaseModal>
+			<BaseModal title="古维出票记录" v-model="ticketingValue" :width="1000">
+				<p>当前古维费已经于 {{ ticketingDate.issueTime }}
+					全部出票。全部游客{{ ticketingDate.total }}名,已减免{{ ticketingDate.reduceNum }}人,实缴{{ ticketingDate.paidNum }}人。</p>
+				<CommonTable :columns="ticketingColumns" :dataSource="ticketingDate.touristList" :scrollY="false">
+					<template #bodyCell="{ column, text, index, record }">
+						<template v-if="column.key === 'actualPrice'">
+							<span>{{ accDiv(record.actualPrice, 100) }}</span>
+						</template>
+					</template>
+				</CommonTable>
+				<template v-slot:footer>
 					<a-button @click="ticketingValue = false">取消</a-button>
-			</template>
-		</BaseModal>
+				</template>
+			</BaseModal>
 		</div>
 		<div class="item-container">
 			<p class="title">预定酒店</p>
@@ -107,7 +111,7 @@
 			<p class="title">综费</p>
 			<CommonTable ref="tableRef" rowKey="oid"
 				:row-selection="{ selectedRowKeys: selectedRowKeys, type: 'radio', onChange: onSelectChange }"
-				v-if="allFeesProducts.length > 1" :columns="columns" :dataSource="allFeesProducts" :scrollY="false">
+				v-if="travelStore.isOptional" :columns="columns" :dataSource="allFeesProducts" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
 					<template v-if="column.key === 'index'">
 						<div>
@@ -119,11 +123,11 @@
 					</template>
 
 					<template v-if="column.key === 'feeNumber'">
-						{{ text / 100 || 0 }}
+						{{ accDiv(text, 100) || 0 }}
 					</template>
 
 					<template v-if="column.key === 'totalMoney'">
-						{{ text / 100 || 0 }}
+						{{ accDiv(text, 100) || 0 }}
 					</template>
 				</template>
 			</CommonTable>
@@ -139,22 +143,22 @@
 					</template>
 
 					<template v-if="column.key === 'feeNumber'">
-						{{ text / 100 || 0 }}
+						{{ accDiv(text, 100) || 0 }}
 					</template>
 
 					<template v-if="column.key === 'totalMoney'">
-						{{ text / 100 || 0 }}
+						{{ accDiv(text, 100) || 0 }}
 					</template>
 				</template>
 			</CommonTable>
 		</div>
 	</div>
-	<addHotel :productRow="editId.productRow" :hotelId="editId.addHotelPop" v-model="addHotelPop" />
-	<addTicket :productRow="editId.productRow" :ticketId="editId.addTicketPop" v-model="addTicketPop" />
+	<addHotel @getTravelDetail="$emit('getTravelDetail')" :productRow="editId.productRow" :hotelId="editId.addHotelPop" v-model="addHotelPop" />
+	<addTicket @getTravelDetail="$emit('getTravelDetail')" :productRow="editId.productRow" :ticketId="editId.addTicketPop" v-model="addTicketPop" />
 	<Personnel v-model="selectPersonnelPop" :routeId="gouvyId.id" :isReductionPassed="gouvyId.isReductionPassed"
 		:isInitiateReduction="gouvyId.isInitiateReduction" />
 	<!-- <reserveTicket :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop" /> -->
-	<reserveTicket :orderNo="editId.orderNo" :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop" />
+	<reserveTicket @getTravelDetail="$emit('getTravelDetail')" :orderNo="editId.orderNo" :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop" />
 	<showTicket :ticketId="showId.showTicketPop" v-model="showTicketPop" />
 	<showHotel :hotelId="showId.showHotelPop" v-model="showHotelPop" />
 </template>
@@ -176,8 +180,7 @@ const props = defineProps({
 		type: Boolean,
 	},
 });
-const emits = defineEmits(['onSuccess']);
-
+const emits = defineEmits(['onSuccess', 'getTravelDetail']);
 const {
 	columns,
 	ticketColumns,
