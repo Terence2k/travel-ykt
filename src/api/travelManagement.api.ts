@@ -747,4 +747,12 @@ export const travelManagement = {
 			data,
 		});
 	},
+	getItineraryOperationLog(data: any, showLoading: boolean) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/operationLog/getItineraryOperationLog`,
+			method: 'post',
+			data,
+			showLoading,
+		});
+	},
 };
