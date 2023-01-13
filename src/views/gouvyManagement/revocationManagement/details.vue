@@ -153,7 +153,7 @@ const FailedDialogVisible = ref(false);
 const modelValue = ref(false);
 const comparison =ref(false)
 const route = useRouter();
-const emit = defineEmits(['update:modelValue', 'cancel', 'onSearchList']);
+const emit = defineEmits(['update:modelValue', 'cancel', 'getWaitsList']);
 const props = defineProps({
 	modelValue: {
 		type: Boolean,
@@ -245,6 +245,7 @@ const closeCompare = () => {
 const AuditAdopt = () => {
 	api.itineraryRevokeAuditAdopt(state.detail.itinerarySubmitRevokeBasicVo.itineraryNo).then((res: any) => {
 		message.success('审核通过');
+		emit('getWaitsList')
 		dialogVisible.value=false
 	});
 };
@@ -256,6 +257,7 @@ const auditFailed = () => {
 	formRef.value.validateFields().then((values: any) => {
 		api.itineraryRevokeAuditFailed(data).then((res: any) => {
 			message.error('已驳回');
+			emit('getWaitsList')
 			cancel();
 			dialogVisible.value=false
 		});
