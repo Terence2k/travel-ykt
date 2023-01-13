@@ -20,6 +20,9 @@
 						<template v-if="column.key === 'index'">
 							{{ index + 1 }}
 						</template>
+						<template v-if="column.key === 'totalFee'">
+							{{ accDivValue(record.totalFee) }}
+						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
 								<a @click="addOrUpdate({ row: record, handle: 'update' })" v-permission="'草稿_编辑'">编辑</a>
@@ -34,19 +37,17 @@
 						</template>
 					</template>
 				</CommonTable>
-				<CommonPagination
-					v-model:current="tableData1.param.pageNo"
-					v-model:page-size="tableData1.param.pageSize"
-					:total="tableData1.total"
-					@change="onHandleCurrentChange1"
-					@showSizeChange="pageSideChange1"
-				/>
+				<CommonPagination v-model:current="tableData1.param.pageNo" v-model:page-size="tableData1.param.pageSize"
+					:total="tableData1.total" @change="onHandleCurrentChange1" @showSizeChange="pageSideChange1" />
 			</a-tab-pane>
 			<a-tab-pane key="2" tab="待审核" v-if="getTabPermission('待审核')">
 				<CommonTable :dataSource="tableData2.data" :columns="columns">
 					<template #bodyCell="{ column, record, index }">
 						<template v-if="column.key === 'index'">
 							{{ index + 1 }}
+						</template>
+						<template v-if="column.key === 'totalFee'">
+							{{ accDivValue(record.totalFee) }}
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
@@ -59,13 +60,8 @@
 						</template>
 					</template>
 				</CommonTable>
-				<CommonPagination
-					v-model:current="tableData2.param.pageNo"
-					v-model:page-size="tableData2.param.pageSize"
-					:total="tableData2.total"
-					@change="onHandleCurrentChange2"
-					@showSizeChange="pageSideChange2"
-				/>
+				<CommonPagination v-model:current="tableData2.param.pageNo" v-model:page-size="tableData2.param.pageSize"
+					:total="tableData2.total" @change="onHandleCurrentChange2" @showSizeChange="pageSideChange2" />
 			</a-tab-pane>
 			<a-tab-pane key="3" tab="待出团" v-if="getTabPermission('待出团')">
 				<CommonTable :dataSource="tableData3.data" :columns="columns">
@@ -73,9 +69,13 @@
 						<template v-if="column.key === 'index'">
 							{{ index + 1 }}
 						</template>
+						<template v-if="column.key === 'totalFee'">
+							{{ accDivValue(record.totalFee) }}
+						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a v-if="dateTime > dayjs(record.startDate).unix()" @click="outGroup(record)" v-permission="'待出团_手动出团'">手动出团</a>
+								<a v-if="dateTime > dayjs(record.startDate).unix()" @click="outGroup(record)"
+									v-permission="'待出团_手动出团'">手动出团</a>
 								<a @click="change(record)" v-permission="'待出团_行程变更'">行程变更</a>
 								<!-- <a v-permission="'待出团_查看日志'">查看日志</a> -->
 								<a @click="goToPath(record)" v-permission="'待出团_进入预订'">进入预订</a>
@@ -87,19 +87,17 @@
 						</template>
 					</template>
 				</CommonTable>
-				<CommonPagination
-					v-model:current="tableData3.param.pageNo"
-					v-model:page-size="tableData3.param.pageSize"
-					:total="tableData3.total"
-					@change="onHandleCurrentChange3"
-					@showSizeChange="pageSideChange3"
-				/>
+				<CommonPagination v-model:current="tableData3.param.pageNo" v-model:page-size="tableData3.param.pageSize"
+					:total="tableData3.total" @change="onHandleCurrentChange3" @showSizeChange="pageSideChange3" />
 			</a-tab-pane>
 			<a-tab-pane key="4" tab="已出团" v-if="getTabPermission('已出团')">
 				<CommonTable :dataSource="tableData4.data" :columns="columns">
 					<template #bodyCell="{ column, record, index }">
 						<template v-if="column.key === 'index'">
 							{{ index + 1 }}
+						</template>
+						<template v-if="column.key === 'totalFee'">
+							{{ accDivValue(record.totalFee) }}
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
@@ -113,19 +111,17 @@
 						</template>
 					</template>
 				</CommonTable>
-				<CommonPagination
-					v-model:current="tableData4.param.pageNo"
-					v-model:page-size="tableData4.param.pageSize"
-					:total="tableData4.total"
-					@change="onHandleCurrentChange4"
-					@showSizeChange="pageSideChange4"
-				/>
+				<CommonPagination v-model:current="tableData4.param.pageNo" v-model:page-size="tableData4.param.pageSize"
+					:total="tableData4.total" @change="onHandleCurrentChange4" @showSizeChange="pageSideChange4" />
 			</a-tab-pane>
 			<a-tab-pane key="5" tab="已散团" v-if="getTabPermission('已散团')">
 				<CommonTable :dataSource="tableData5.data" :columns="columns">
 					<template #bodyCell="{ column, record, index }">
 						<template v-if="column.key === 'index'">
 							{{ index + 1 }}
+						</template>
+						<template v-if="column.key === 'totalFee'">
+							{{ accDivValue(record.totalFee) }}
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
@@ -137,19 +133,17 @@
 						</template>
 					</template>
 				</CommonTable>
-				<CommonPagination
-					v-model:current="tableData5.param.pageNo"
-					v-model:page-size="tableData5.param.pageSize"
-					:total="tableData5.total"
-					@change="onHandleCurrentChange5"
-					@showSizeChange="pageSideChange5"
-				/>
+				<CommonPagination v-model:current="tableData5.param.pageNo" v-model:page-size="tableData5.param.pageSize"
+					:total="tableData5.total" @change="onHandleCurrentChange5" @showSizeChange="pageSideChange5" />
 			</a-tab-pane>
 			<a-tab-pane key="6" tab="待变更" v-if="getTabPermission('待变更')">
 				<CommonTable :dataSource="tableData6.data" :columns="columns">
 					<template #bodyCell="{ column, record, index }">
 						<template v-if="column.key === 'index'">
 							{{ index + 1 }}
+						</template>
+						<template v-if="column.key === 'totalFee'">
+							{{ accDivValue(record.totalFee) }}
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
@@ -163,19 +157,17 @@
 						</template>
 					</template>
 				</CommonTable>
-				<CommonPagination
-					v-model:current="tableData6.param.pageNo"
-					v-model:page-size="tableData6.param.pageSize"
-					:total="tableData6.total"
-					@change="onHandleCurrentChange6"
-					@showSizeChange="pageSideChange6"
-				/>
+				<CommonPagination v-model:current="tableData6.param.pageNo" v-model:page-size="tableData6.param.pageSize"
+					:total="tableData6.total" @change="onHandleCurrentChange6" @showSizeChange="pageSideChange6" />
 			</a-tab-pane>
 			<a-tab-pane key="7" tab="已过期" v-if="getTabPermission('已过期')">
 				<CommonTable :dataSource="tableData7.data" :columns="columns">
 					<template #bodyCell="{ column, record, index }">
 						<template v-if="column.key === 'index'">
 							{{ index + 1 }}
+						</template>
+						<template v-if="column.key === 'totalFee'">
+							{{ accDivValue(record.totalFee) }}
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
@@ -187,19 +179,17 @@
 						</template>
 					</template>
 				</CommonTable>
-				<CommonPagination
-					v-model:current="tableData7.param.pageNo"
-					v-model:page-size="tableData7.param.pageSize"
-					:total="tableData7.total"
-					@change="onHandleCurrentChange7"
-					@showSizeChange="pageSideChange7"
-				/>
+				<CommonPagination v-model:current="tableData7.param.pageNo" v-model:page-size="tableData7.param.pageSize"
+					:total="tableData7.total" @change="onHandleCurrentChange7" @showSizeChange="pageSideChange7" />
 			</a-tab-pane>
 			<a-tab-pane key="8" tab="待处理" v-if="getTabPermission('待处理')">
 				<CommonTable :dataSource="tableData8.data" :columns="columns">
 					<template #bodyCell="{ column, record, index }">
 						<template v-if="column.key === 'index'">
 							{{ index + 1 }}
+						</template>
+						<template v-if="column.key === 'totalFee'">
+							{{ accDivValue(record.totalFee) }}
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
@@ -213,13 +203,8 @@
 						</template>
 					</template>
 				</CommonTable>
-				<CommonPagination
-					v-model:current="tableData8.param.pageNo"
-					v-model:page-size="tableData8.param.pageSize"
-					:total="tableData8.total"
-					@change="onHandleCurrentChange8"
-					@showSizeChange="pageSideChange8"
-				/>
+				<CommonPagination v-model:current="tableData8.param.pageNo" v-model:page-size="tableData8.param.pageSize"
+					:total="tableData8.total" @change="onHandleCurrentChange8" @showSizeChange="pageSideChange8" />
 			</a-tab-pane>
 			<template #rightExtra>
 				<a-button type="primary" @click="addOrUpdate({ handle: 'add' })">新增拼团</a-button>
@@ -250,6 +235,14 @@ import dayjs from 'dayjs';
 import BaseModal from '@/components/common/BaseModal.vue';
 import AllRevoke from '@/views/travelManagement/travelTakeGroupList/revoke/components/allRevoke.vue';
 import { getTabPermission } from '@/utils/util';
+import { accDiv, accMul } from '@/utils/compute';
+const accDivValue = (value: any) => {
+	if (typeof value === 'number') {
+		return accDiv(value, 100)
+	} else {
+		return '/'
+	}
+}
 const router = useRouter();
 const route = useRoute();
 const goto = (name: string, val?: any) => {
@@ -788,11 +781,11 @@ const sendGroup = (id: string) => {
 	});
 };
 watch(
-	()=>route.params.isRefresh,
-	(newVal)=>{
+	() => route.params.isRefresh,
+	(newVal) => {
 		if (newVal === '1') {
 			onSearch1();
-		}	else if (newVal === '2') {
+		} else if (newVal === '2') {
 			onSearch1();
 			onSearch2();
 		}
