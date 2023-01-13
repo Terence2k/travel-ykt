@@ -11,6 +11,11 @@
 				<template v-if="column.dataIndex === 'bank'"> {{ getBank(record, column) }} </template>
 				<template v-if="column.key === 'ruleMap'"> {{ getRulePrice(record, column) }} </template>
 				<template v-if="column.dataIndex.includes('tualPrice')"> {{ getActualPrice(record, column) }} </template>
+				<template v-if="column.dataIndex.includes('lastCostBelongCompany')">
+					<div>
+						<span>{{ getTypeName('lastCostBelongCompany') }}</span>
+					</div>
+				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a href="javascript:;" @click="lookTrip(record)">查看</a>
@@ -218,6 +223,12 @@ const getRulePrice = computed(() => (record: any, column: any) => {
 				}
 			}
 		}
+	}
+});
+const getTypeName = computed(() => (str: string) => {
+	const idx = generaRulesOptions.teamTypeList.findIndex((item: any) => item.oid === formState.teamTypeId);
+	if (idx !== -1) {
+		return generaRulesOptions.teamTypeList[idx]['name'];
 	}
 });
 </script>
