@@ -99,28 +99,25 @@
       已选择线路（<span class="count">{{ form.individualContractLineBos.length }}</span>）
     </div>
     <div class="content">
-      <CommonTable :dataSource="form.individualContractLineBos" :columns="lineColumns">
+      <a-table :columns="lineColumns" :data-source="form.individualContractLineBos" bordered :pagination="false">
         <template #bodyCell="{ column, record, index }">
           <template v-if="column.key === 'index'">
             {{ index + 1 }}
           </template>
         </template>
-      </CommonTable>
+      </a-table>
     </div>
     <div class="tag">
       签约游客（<span class="count">{{ form.individualContractTouristBos.length }}</span>）
     </div>
     <div class="content">
-      <CommonTable :dataSource="form.individualContractTouristBos" :columns="touristColumns">
-        <template #bodyCell="{ column, record, text, index }">
+      <a-table :columns="touristColumns" :data-source="form.individualContractTouristBos" bordered :pagination="false">
+        <template #bodyCell="{ column, record, index }">
           <template v-if="column.key === 'index'">
             {{ index + 1 }}
           </template>
-          <!-- <template v-if="column.key === 'healthyCode'">
-            <span :class="cmpHealthyColor(text)">{{ text }}</span>
-          </template> -->
         </template>
-      </CommonTable>
+      </a-table>
     </div>
     <div class="content" v-show="(form.contractType === 2)">
       <div class="content_item">
@@ -148,15 +145,14 @@
         游客合同费用支付方式：{{ form.paymentMethodName }}
       </div>
     </div>
-
     <div class="content">
-      <CommonTable :dataSource="form.individualContractPriceBos" :columns="costColumns">
+      <a-table :columns="costColumns" :data-source="form.individualContractPriceBos" bordered :pagination="false">
         <template #bodyCell="{ column, record, index }">
           <template v-if="column.key === 'index'">
             {{ index + 1 }}
           </template>
         </template>
-      </CommonTable>
+      </a-table>
     </div>
     <div class="tag">
       其他约定
@@ -405,7 +401,7 @@ const setList = (list: any) => {
   list.forEach((item: any) => {
     item.adultPrice = accDivValue(item.adultPrice)
     item.childPrice = accDivValue(item.childPrice)
-    item.individualSubtotal = accDivValue(item.individualSubtotal)
+    item.hasOwnProperty('individualSubtotal') && (item.individualSubtotal = accDivValue(item.individualSubtotal))
     const keys = Object.keys(item)
     for (let i = 0; i < keys.length; i++) {
       const element = keys[i];
