@@ -57,8 +57,8 @@
         <div class="content_item"
           v-show="((form.contractType === 2) && [2, 3, 4, 5, 6, 7].includes(form.contractStatus))">
           <div class="key_name">合同编号</div>
-          <div class="key_val">{{ form.electronicContractNo }}<a target="_blank" :href="form.fileUrl" class="append"
-              v-show="form.fileUrl">下载12301合同电子版
+          <div class="key_val">{{ form.electronicContractNo }}<a target="_blank" :href="form.signingUrl" class="append"
+              v-show="form.signingUrl">下载12301合同电子版
             </a></div>
         </div>
         <div class="content_item">
@@ -235,7 +235,7 @@ const form = ref({
   emergencyContact: '',
   emergencyContactPhone: '',
   electronicContractNo: '',
-  fileUrl: '',
+  signingUrl: '',
   contractStatus: -1,
 })
 const lineColumns = [
@@ -487,7 +487,7 @@ const getDetails = async (id: number) => {
       emergencyContact,
       emergencyContactPhone,
       electronicContractNo,
-      fileUrl,
+      signingUrl,
       contractStatus
     } = res
     const arr = contractFileUrl ? contractFileUrl.split(',') : []
@@ -592,7 +592,7 @@ const getDetails = async (id: number) => {
       emergencyContact,
       emergencyContactPhone,
       electronicContractNo: electronicContractNo || '/',
-      fileUrl,
+      signingUrl,
       contractStatus
     }
   }
