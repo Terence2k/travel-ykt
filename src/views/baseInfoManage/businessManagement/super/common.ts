@@ -1,3 +1,4 @@
+import api from '@/api';
 import type { Rule } from 'ant-design-vue/es/form';
 import dayjs, { Dayjs } from 'dayjs';
 // 银行二级账户开通信息（如果需要充值或收付款、提现，均需先开通银行二级账户）
@@ -180,6 +181,7 @@ const commonFormRules: Record<string, Rule[]> = {
   account: [{ required: true, trigger: 'blur', message: '请输入管理员账号' }],
   accountPhone: [{ required: true, trigger: 'blur', message: '请输入管理员手机号' }],
   password: [{ required: true, trigger: 'blur', message: '请输入管理员密码' }],
+  phone: [{ required: true, trigger: 'blur', message: '请输入联系人电话' }],
   ...bankCommonFormRules
 }
 const hotelCommonFormRules: Record<string, Rule[]> = {
@@ -269,11 +271,20 @@ const disabledAfterDate = (current: Dayjs) => {
   // Can not select days after today
   return dayjs().endOf('day') < current;
 };
+const toIcbc = (id: number, callback?: any) => {
+  api.certification({ companyId: id }).then((res: any) => {
+    if (res?.redirectParam) {
+      window.open(res.redirectParam, '_blank');
+      callback && callback()
+    }
+  })
+}
 export {
   getKeylist,
   getFormRules,
   flat,
   disabledBeforeDate,
   disabledAfterDate,
-  businessTypeOption
+  businessTypeOption,
+  toIcbc
 }

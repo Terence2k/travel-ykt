@@ -104,9 +104,9 @@
             </div>
           </template>
           <!-- 健康码 -->
-          <template v-if="column.key === 'healthyCode'">
+          <!-- <template v-if="column.key === 'healthyCode'">
             <span :class="cmpHealthyColor(text)">{{ text }}</span>
-          </template>
+          </template> -->
           <!-- 是否按天收费 -->
           <template v-if="column.key === 'isDaily'">
             {{ cmpRowValue(record.isDaily, 'isDaily') }}
@@ -261,7 +261,7 @@ const onHandleCurrentChange = (e: any) => {
   state.param.pageNo = e;
   getItineraryDetail(router.currentRoute.value.query.oid);
 }
-// 批量获取健康码
+/* // 批量获取健康码
 const getHealthyCodes = async (ids: number[]) => {
   let res = await api.getHealthyCode(ids)
   if (res) {
@@ -283,8 +283,8 @@ const getHealthyCodes = async (ids: number[]) => {
     })
   }
   return res || []
-}
-const configCodeName = (certificateCodes: any, targetArr: any) => {
+} */
+/* const configCodeName = (certificateCodes: any, targetArr: any) => {
   for (let i = 0, l = certificateCodes.length; i < l; i++) {
     const item = certificateCodes[i];
     for (let j = 0, l = targetArr.length; j < l; j++) {
@@ -294,7 +294,7 @@ const configCodeName = (certificateCodes: any, targetArr: any) => {
       }
     }
   }
-}
+} */
 const getItineraryDetail = (orderId: any, isPrint?: any) => {
   let queryData = {
     oid: orderId,
@@ -304,14 +304,14 @@ const getItineraryDetail = (orderId: any, isPrint?: any) => {
     state.basicData = res.basic;
     state.guideList = res.guideList;
     state.transportList = res.transportList;
-    // 获取身份证列表
+   /*  // 获取身份证列表
     const certificateIds = res.touristList?.content.map((item: any) => {
       return { certificateId: item.certificateNo }
     })
     // 根据身份证列表查询健康码列表
     const certificateCodes = await getHealthyCodes(certificateIds)
     // 将健康码和游客列表数据关联
-    configCodeName(certificateCodes, res.touristList.content)
+    configCodeName(certificateCodes, res.touristList.content) */
     // 获取合同信息
     const { content } = await api.getContractList({
       pageNo: 1,

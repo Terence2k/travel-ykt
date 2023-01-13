@@ -67,8 +67,8 @@
       <div class="flex1">
         <div class="content_item">
           <div class="key_name">合同编号</div>
-          <div class="key_val">{{ form.electronicContractNo }}<a :href="form.fileUrl" class="append"
-              v-show="form.fileUrl">下载12301合同电子版
+          <div class="key_val">{{ form.electronicContractNo }}<a target="_blank" :href="form.signingUrl" class="append"
+              v-show="form.signingUrl">下载12301合同电子版
             </a></div>
         </div>
         <div class="content_item">
@@ -234,7 +234,7 @@ const form = ref({
   emergencyContact: '',
   emergencyContactPhone: '',
   electronicContractNo: '',
-  fileUrl: '',
+  signingUrl: '',
   hotelFine: '',
   carRentalFine: '',
   totalPriceFine: '',
@@ -322,13 +322,13 @@ const touristColumns = [
     dataIndex: 'isHealthy',
     key: 'isHealthy',
   },
-/*   {
-    title: '健康码',
-    dataIndex: 'healthyCode',
-    key: 'healthyCode',
-  }, */
+  /*   {
+      title: '健康码',
+      dataIndex: 'healthyCode',
+      key: 'healthyCode',
+    }, */
   {
-    title: '古维费代收代缴',
+    title: '古维费购买状态',
     dataIndex: 'isAncientUygur',
     key: 'isAncientUygur',
   },
@@ -431,7 +431,7 @@ const setList1 = (list: any) => {
       } else if (element === 'isHealthy') {
         item[element] = [undefined, null, ''].includes(item[element]) ? '/' : item[element] === 1 ? '是' : '否'
       } else if (element === 'isAncientUygur') {
-        item[element] = [undefined, null, ''].includes(item[element]) ? '/' : item[element] === 1 ? '本次需要代收' : '本次不需要代收'
+        item[element] = [undefined, null, ''].includes(item[element]) ? '/' : item[element] === 1 ? '已购' : '未购'
       } else if (element === 'certificatesType') {
         switch (item[element]) {
           case 'IDENTITY_CARD':
@@ -484,7 +484,7 @@ const getDetails = async (id: number) => {
       emergencyContact,
       emergencyContactPhone,
       electronicContractNo,
-      fileUrl,
+      signingUrl,
       hotelFine,
       carRentalFine,
       totalPriceFine,
@@ -594,7 +594,7 @@ const getDetails = async (id: number) => {
       emergencyContact,
       emergencyContactPhone,
       electronicContractNo: electronicContractNo || '/',
-      fileUrl,
+      signingUrl,
       hotelFine,
       carRentalFine,
       totalPriceFine,

@@ -107,7 +107,9 @@
                 <!-- <a-date-picker v-if="record.isEdit" v-model:value="dataLineSource[index][column.dataIndex]"
                   placeholder="请选择开始时间" style="width:100%" :format="dateFormat" :valueFormat="dateFormat" /> -->
                 <picker v-if="record.isEdit" v-model="dataLineSource[index][column.dataIndex]" type="date"
-                  :value-format="dateFormat" placeholder="请选择开始时间" style="width:100%"></picker>
+                  :value-format="dateFormat"
+                  :disabled-date="(current: Dayjs) => { return disabledDateRange(current, dataLineSource[index]) }"
+                  placeholder="请选择开始时间" style="width:100%"></picker>
                 <template v-else>
                   {{ text }}
                 </template>
@@ -116,7 +118,9 @@
                 <!-- <a-date-picker v-if="record.isEdit" v-model:value="dataLineSource[index][column.dataIndex]"
                   placeholder="请选择结束时间" style="width:100%" :format="dateFormat" :valueFormat="dateFormat" /> -->
                 <picker v-if="record.isEdit" v-model="dataLineSource[index][column.dataIndex]" type="date"
-                  :value-format="dateFormat" placeholder="请选择结束时间" style="width:100%"></picker>
+                  :value-format="dateFormat"
+                  :disabled-date="(current: Dayjs) => { return disabledDateRange1(current, dataLineSource[index]) }"
+                  placeholder="请选择结束时间" style="width:100%"></picker>
                 <template v-else>
                   {{ text }}
                 </template>
@@ -519,6 +523,7 @@ import { accDiv, accMul } from '@/utils/compute';
 import { getAge, getGenderByIdNumber } from '@/utils';
 import type { Rule } from 'ant-design-vue/es/form';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
+import dayjs, { Dayjs } from 'dayjs';
 const navigatorBar = useNavigatorBar();
 const accDivValue = (value: any) => {
   if (typeof value === 'number') {
@@ -1245,12 +1250,12 @@ const saveDraft = (tab?: string, isTip: boolean = true) => {
 const submitCancel = () => {
   submitVisible.value = false
 }
-const accMulCost = (arr: CostItem[]) => {
+const accMulCost = (arr: any[]) => {
   if (arr?.length > 0) {
-    return arr.map((item: CostItem) => {
-      item.adultPrice = accMulValue(item.adultPrice)
-      item.childPrice = accMulValue(item.childPrice)
-      item.individualSubtotal = accMulValue(item.individualSubtotal)
+    return arr.map((item: any) => {
+      item.adultPrice = accMulValue(Number(item.adultPrice))
+      item.childPrice = accMulValue(Number(item.childPrice))
+      item.individualSubtotal = accMulValue(Number(item.individualSubtotal))
       return item
     })
   } else {
@@ -1311,7 +1316,7 @@ const getParams = () => {
     contractFileUrl: fileUrl, //附件
     otherAgreements, //其他约定
     contractAmount: accMulValue(contractAmount),
-    individualContractLineBos: dataLineSource.value, // 线路
+    individualContractLineBos: accMulCost(cloneDeep(dataLineSource.value)), // 线路
     individualContractTouristBos: dataTouristSource.value, // 游客
     individualContractPriceBos: accMulCost(cloneDeep(dataCostSource.value)), // 费用
     emergencyContact,
@@ -1581,6 +1586,28 @@ const getComprehensiveProductsList = async () => {
   }];
   gwFee.value = newData;
 }
+const disabledDateRange = (current: Dayjs, obj: any) => {
+  if (form.value.tripStartTime && form.value.tripEndTime) {
+    if (!obj?.lineEndTime) {
+      return current < dayjs(form.value.tripStartTime) || current > dayjs(form.value.tripEndTime);
+    } else {
+      return current < dayjs(form.value.tripStartTime) || current > dayjs(obj.lineEndTime);
+    }
+  } else {
+    return false
+  }
+};
+const disabledDateRange1 = (current: Dayjs, obj: any) => {
+  if (form.value.tripStartTime && form.value.tripEndTime) {
+    if (!obj?.lineStartTime) {
+      return current < dayjs(form.value.tripStartTime) || current > dayjs(form.value.tripEndTime);
+    } else {
+      return current < dayjs(obj.lineStartTime) || current > dayjs(form.value.tripEndTime);
+    }
+  } else {
+    return false
+  }
+};
 onMounted(() => {
   initOpeion()
   getLineOptions()

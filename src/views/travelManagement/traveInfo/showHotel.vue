@@ -38,7 +38,7 @@
 					label="单价"
 					:wrapper-col="{ span: 16 }"
 				>
-					{{room.unitPrice}}
+					{{room.unitPrice / 100}}
 				</a-form-item>
 			</div>
 

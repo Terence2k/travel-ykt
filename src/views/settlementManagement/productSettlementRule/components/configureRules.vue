@@ -45,8 +45,8 @@
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a href="javascript:;" v-permission="`${getProductKeyName}_配置规则`" @click="toCheck(record)">查看</a>
-							<a href="javascript:;" @click="toEditPage(record)" v-permission="`${getProductKeyName}_编辑`">编辑</a>
+							<a href="javascript:;" @click="toCheck(record)">查看</a>
+							<a href="javascript:;" @click="toEditPage(record)">编辑</a>
 							<a v-if="record.ruleStatus === 1" href="javascript:;" @click="showTip('state', 0, record)">禁用</a>
 							<a v-if="record.ruleStatus === 0" href="javascript:;" @click="showTip('state', 1, record)">启用</a>
 							<a href="javascript:;" @click="showTip('index', index, record)">删除</a>
@@ -297,6 +297,12 @@ const updateStatus = async (ids: Array<number>, ruleStatus: number) => {
 	});
 	console.log(result);
 };
+const getProductKeyName = computed(() => {
+	const array: any = ['景区', '酒店', '餐饮', '综费产品'];
+	console.log(array[Number(state.tableData.param.productType) - 1], `array[Number(key) - 1]`);
+
+	return array[Number(state.tableData.param.productType) - 1] || 0;
+});
 interface cacheDataType {
 	delIndex: null | number | Array<any> | string;
 	delShow: boolean;

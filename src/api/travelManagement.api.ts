@@ -254,7 +254,7 @@ export const travelManagement = {
 	},
 	getGuidePriceStarCodeByHotelId(data: any) {
 		return request({
-			url: `${commonPath}/hotel-service/public/api/hotel-information/getGuidePriceStarCodeByHotelId/${data}`,
+			url: `${commonPath}/hotel-service/public/api/hotel-information/getGuidePriceStarCodeByCompanyId/${data}`,
 			method: 'get',
 			showLoading: false,
 		});
@@ -745,6 +745,14 @@ export const travelManagement = {
 			method: 'put',
 			showLoading: true,
 			data,
+		});
+	},
+	getItineraryOperationLog(data: any, showLoading: boolean) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/operationLog/getItineraryOperationLog`,
+			method: 'post',
+			data,
+			showLoading,
 		});
 	},
 };

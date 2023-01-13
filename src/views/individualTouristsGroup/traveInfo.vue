@@ -1,6 +1,6 @@
 <template>
 	<div class="table-container">
-		<div class="item-container">
+		<div class="item-container" v-if="travelStore.reserveStatus">
 			<p class="title">古维管理费</p>
 			<CommonTable :columns="gouvyColumns" :dataSource="gouvyDate" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
@@ -59,6 +59,9 @@
 							{{ index + 1 }}
 						</div>
 					</template>
+					<template v-if="column.key === 'roomName'">
+						<div v-html="text"></div>
+					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
 							<a v-if="travelStore.reserveStatus && record.orderStatus == 0" class="item"
@@ -85,10 +88,13 @@
 							{{ index + 1 }}
 						</div>
 					</template>
-
+					<template v-if="column.key === 'totalFee'">
+						<div>
+							{{ accMul(record.unitPrice, record.reservePeopleCount) || 0 }}
+						</div>
+					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<!--  v-if="travelStore.reserveStatus && record.orderStatus == 0" -->
 							<a v-if="travelStore.reserveStatus" @click="reserveTicketPeple(record)">预定</a>
 							<a v-if="travelStore.teamStatus" class="item"
 								@click="add('TICKET', record.oid ? 'addTicketPop' : 'productRow', 'addTicketPop', index, record.oid || record)">编辑</a>
@@ -107,7 +113,7 @@
 			<p class="title">综费</p>
 			<CommonTable ref="tableRef" rowKey="oid"
 				:row-selection="{ selectedRowKeys: selectedRowKeys, type: 'radio', onChange: onSelectChange }"
-				v-if="allFeesProducts.length > 1" :columns="columns" :dataSource="allFeesProducts" :scrollY="false">
+				v-if="travelStore.isOptional" :columns="columns" :dataSource="allFeesProducts" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
 					<template v-if="column.key === 'index'">
 						<div>
@@ -119,11 +125,11 @@
 					</template>
 
 					<template v-if="column.key === 'feeNumber'">
-						{{ text / 100 || 0 }}
+						{{ accDiv(text, 100) || 0 }}
 					</template>
 
 					<template v-if="column.key === 'totalMoney'">
-						{{ text / 100 || 0 }}
+						{{ accDiv(text, 100) || 0 }}
 					</template>
 				</template>
 			</CommonTable>
@@ -139,22 +145,25 @@
 					</template>
 
 					<template v-if="column.key === 'feeNumber'">
-						{{ text / 100 || 0 }}
+						{{ accDiv(text, 100) || 0 }}
 					</template>
 
 					<template v-if="column.key === 'totalMoney'">
-						{{ text / 100 || 0 }}
+						{{ accDiv(text, 100) || 0 }}
 					</template>
 				</template>
 			</CommonTable>
 		</div>
 	</div>
-	<addHotel :productRow="editId.productRow" :hotelId="editId.addHotelPop" v-model="addHotelPop" />
-	<addTicket :productRow="editId.productRow" :ticketId="editId.addTicketPop" v-model="addTicketPop" />
+	<addHotel @getTravelDetail="$emit('getTravelDetail')" :productRow="editId.productRow" :hotelId="editId.addHotelPop"
+		v-model="addHotelPop" />
+	<addTicket @getTravelDetail="$emit('getTravelDetail')" :productRow="editId.productRow" :ticketId="editId.addTicketPop"
+		v-model="addTicketPop" />
 	<Personnel v-model="selectPersonnelPop" :routeId="gouvyId.id" :isReductionPassed="gouvyId.isReductionPassed"
 		:isInitiateReduction="gouvyId.isInitiateReduction" />
 	<!-- <reserveTicket :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop" /> -->
-	<reserveTicket :orderNo="editId.orderNo" :ticketId="editId.reserveTicketPop" v-model="reserveTicketPop" />
+	<reserveTicket @getTravelDetail="$emit('getTravelDetail')" :orderNo="editId.orderNo"
+		:ticketId="editId.reserveTicketPop" v-model="reserveTicketPop" />
 	<showTicket :ticketId="showId.showTicketPop" v-model="showTicketPop" />
 	<showHotel :hotelId="showId.showHotelPop" v-model="showHotelPop" />
 </template>
@@ -171,13 +180,13 @@ import { accDiv, accMul } from '@/utils/compute';
 import { GroupStatus } from '@/enum';
 import BaseModal from '@/components/common/BaseModal.vue';
 const route = useRoute();
+const router = useRouter();
 const props = defineProps({
 	onCheck: {
 		type: Boolean,
 	},
 });
-const emits = defineEmits(['onSuccess']);
-
+const emits = defineEmits(['onSuccess', 'getTravelDetail']);
 const {
 	columns,
 	ticketColumns,

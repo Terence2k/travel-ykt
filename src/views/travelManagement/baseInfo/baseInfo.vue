@@ -1,6 +1,6 @@
 <template>
 	<div class="base-info-container">
-		<div class="import-btn">
+		<div class="import-btn" v-if="travelStore.teamStatus">
 			<a-button type="primary" @click="(dialogVisible = true)">导入模板</a-button>
 		</div>
 		<a-form
