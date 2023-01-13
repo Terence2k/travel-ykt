@@ -83,7 +83,7 @@
 								<!-- <a @click="resetPassword(record.oid)" v-permission="'已审核_重置密码'">重置密码</a> -->
 								<!-- <a @click="edit(record)" v-show="editVisible(record?.businessType)" v-permission="'已审核_编辑'">编辑</a> -->
 								<a @click="edit(record)" v-permission="'已审核_编辑'">编辑</a>
-								<a v-permission="'已审核_去认证'">去认证</a>
+								<a v-permission="'已审核_去认证'" v-if="record.icbcStatus === 1" @click="toIcbc(record.oid)">去认证</a>
 							</div>
 						</template>
 					</template>
@@ -281,6 +281,7 @@ import { useBusinessManageOption } from '@/stores/modules/businessManage';
 import { flat } from '@/views/baseInfoManage/businessManagement/super/common';
 import { getTabPermission } from '@/utils/util';
 import { awsGetPreSignedUrl } from '@/utils/awsUpload';
+import { toIcbc } from '@/views/baseInfoManage/businessManagement/super/common';
 const businessManageOptions = useBusinessManageOption();
 const router = useRouter();
 const route = useRoute();

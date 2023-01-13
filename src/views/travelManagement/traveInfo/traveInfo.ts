@@ -255,11 +255,6 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				dataIndex: 'totalFee',
 				key: 'totalFee',
 			},
-			{
-				title: '订单状态',
-				dataIndex: 'orderStatusName',
-				key: 'orderStatusName',
-			},
 			// {
 			// 	title: '支付状态',
 			// 	dataIndex: 'reserveStatusName',
@@ -278,7 +273,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				width: '80px',
 			},
 			{
-				title: '酒店星级',
+				title: '酒店类型',
 				dataIndex: 'hotelStar',
 				key: 'hotelStar',
 			},
@@ -288,19 +283,9 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				key: 'hotelName',
 			},
 			{
-				title: '房间明细',
-				dataIndex: 'roomName',
-				key: 'roomName'
-			},
-			{
-				title: '可入住人数',
-				dataIndex: 'limitPeopleCount',
-				key: 'limitPeopleCount',
-			},
-			{
-				title: '入住天数',
-				dataIndex: 'dayCount',
-				key: 'dayCount',
+				title: '房间数量',
+				dataIndex: 'roomCount',
+				key: 'roomCount',
 			},
 			{
 				title: '入住时间',
@@ -323,19 +308,14 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			// 	key: 'reservePeopleCount',
 			// },
 			{
-				title: '费用总计（元）',
+				title: '金额（元）',
 				dataIndex: 'orderFee',
 				key: 'orderFee',
 			},
 			{
-				title: '订单状态',
-				dataIndex: 'orderStatusName',
-				key: 'orderStatusName',
-			},
-			{
 				title: '操作',
 				key: 'action',
-				fixed: 'right'
+				fixed: 'right',
 			},
 		],
 	});
@@ -437,8 +417,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 					formData.append('oid', row.oid)
 					
 					api.travelManagement.reserveHotel(formData).then((res:any) => {
-						// travelStore.setHotelsStatus(row.oid)
-						emits('getTravelDetail')
+						travelStore.setHotelsStatus(row.oid)
 						message.success('预定成功')
 					})
 				},
@@ -460,9 +439,12 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			// rowRadioSelection.onChange([52], [travelStore.curentProduct[0]])
 		}, 1000)
 	})
+	onActivated(()=>{
+		travelStore.getManagementExpenses(route.query.id)			
+	})
 	if(travelStore.reserveStatus)
 	{
-		travelStore.getManagementExpenses(route.query.id)
+		travelStore.getManagementExpenses(route.query.id)		
 	}else{
 		travelStore.setGouvyList([
 			{

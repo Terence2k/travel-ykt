@@ -20,7 +20,7 @@
 			@showSizeChange="pageSideChange"
 		>
 		</CommonPagination>
-		<Details v-model="state.isDialogVisible" :oid="state.oid"></Details>
+		<Details v-model="state.isDialogVisible" :oid="state.oid" @getWaitsList="getWaitsList"></Details>
 	</div>
 </template>
 

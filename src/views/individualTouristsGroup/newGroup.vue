@@ -62,7 +62,7 @@
 					</div>
 					<div class="add_box">
 						<div class="tag">选择合同</div>
-						<div v-if="travelStore.teamStatus">
+						<div>
 							<a-button @click="addContract" type="primary">添加</a-button>
 						</div>
 					</div>
@@ -213,7 +213,8 @@ import { message } from 'ant-design-vue/es';
 import { cloneDeep } from 'lodash';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import dayjs from 'dayjs';
-import { disabledRangeTime, getAmount } from '@/utils';
+import { disabledRangeTime, getAmount, getDiffDay } from '@/utils';
+import { accDiv,accMul} from '@/utils/compute';
 const travelStore = useTravelStore();
 const router = useRouter();
 const route = useRoute();
@@ -491,6 +492,55 @@ const datePickerChange = () => {
 		form.value.groupType = undefined;
 	}
 }
+const disDate = (res: any) => {
+	const start = dayjs().isBefore(dayjs(res.basic.startDate));
+	const isCurrent = dayjs(res.basic.startDate).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD');
+	let dis = null;
+	console.log(start);
+	if (!start && !isCurrent) {
+		dis = (current: Dayjs) => {
+			return (
+				(current && current < dayjs().startOf('day')) || (dayjs(res.basic.endDate) && dayjs(res.basic.endDate).endOf('day') < current && current)
+			);
+		};
+	} else {
+		dis = (current: Dayjs): any => {
+			return (
+				(dayjs(res.basic.startDate) && dayjs(res.basic.startDate).startOf('day') > current && current) ||
+				(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).endOf('day') < current && current)
+			);
+		};
+	}
+	return dis;
+};
+
+const disTime = (res: any) => {
+	const isCurrent = dayjs(travelStore.baseInfo.startDate).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD');
+	const startFlag = dayjs().isBefore(dayjs(travelStore.baseInfo.startDate));
+	let start = {
+		hour: dayjs(res.basic.startDate).hour(),
+		min: dayjs(res.basic.startDate).minute(),
+		second: dayjs(res.basic.startDate).second(),
+	};
+	start =
+		startFlag || isCurrent
+			? start
+			: {
+				hour: 0,
+				min: 0,
+				second: 0,
+			};
+
+	let end = {
+		hour: dayjs(res.basic.endDate).hour(),
+		min: dayjs(res.basic.endDate).minute(),
+		second: dayjs(res.basic.endDate).second(),
+	};
+	return {
+		start,
+		end,
+	};
+};
 const setBaseInfo = (res: any) => {
 	if (res) {
 		const {
@@ -588,12 +638,14 @@ const getTraveDetail = () => {
 					it.scenicId = it.productId;
 					it.scenicName = it.productName;
 					return it;
-				})
+				}).filter((it: any) => it.scenicId)
 				: [];
 			const hotel = [
 				...res.waitBuyItem.waitBuyHotel,
 				...res.hotelList.map((it: any) => {
-					it.orderFee = it.orderFee / 100;
+					it.orderFee = accDiv(it.orderFee, 100);
+					it.dayCount = getDiffDay(it.startDate, it.endDate);
+					it.roomName = it.roomTypeList.map((item: any) => `${item.roomTypeName} * ${item.roomCount}<br />`).join('')
 					return it;
 				}),
 				...travelStore.templateHotel,
@@ -603,7 +655,7 @@ const getTraveDetail = () => {
 			travelStore.scenicTickets = [
 				...res.waitBuyItem.waitBuyTicket,
 				...res.ticketList.map((it: any) => {
-					it.unitPrice = it.unitPrice / 100;
+					it.unitPrice = accDiv(it.unitPrice, 100);
 					return it;
 				}),
 				...travelStore.templateTicket,
@@ -611,13 +663,13 @@ const getTraveDetail = () => {
 			travelStore.insuranceStatus = res.insuranceStatus?.toString();
 			travelStore.checkInsurance = res.insuranceStatus ? true : false;
 			travelStore.teamTime = [res.basic.startDate, res.basic.endDate] as any;
-			// travelStore.setDisabled = disDate(res);
-			// const dateTime = disTime(res);
-			// travelStore.setStarEndHMS = dateTime
-			// travelStore.defaultStartTime = new Date(2022, 12, 1, dateTime.start.hour, dateTime.start.min, dateTime.start.second);
-			// travelStore.defaultEndTime = new Date(2022, 12, 1, dateTime.end.hour, dateTime.end.min, dateTime.end.second)
-			// console.log(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end, '-----');
-			// travelStore.setDisabledTime = disabledRangeTime(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end) as any;
+			travelStore.setDisabled = disDate(res);
+			const dateTime = disTime(res);
+			travelStore.setStarEndHMS = dateTime
+			travelStore.defaultStartTime = new Date(2022, 12, 1, dateTime.start.hour, dateTime.start.min, dateTime.start.second);
+			travelStore.defaultEndTime = new Date(2022, 12, 1, dateTime.end.hour, dateTime.end.min, dateTime.end.second)
+			console.log(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end, '-----');
+			travelStore.setDisabledTime = disabledRangeTime(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end) as any;
 			route.query.tab && setTimeout(() => (activeKey.value = route.query.tab as string));
 			// getHealthCode();
 		});
