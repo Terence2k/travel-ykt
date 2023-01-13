@@ -62,7 +62,7 @@
 					</div>
 					<div class="add_box">
 						<div class="tag">选择合同</div>
-						<div v-if="travelStore.teamStatus">
+						<div>
 							<a-button @click="addContract" type="primary">添加</a-button>
 						</div>
 					</div>
