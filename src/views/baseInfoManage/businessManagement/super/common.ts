@@ -1,3 +1,4 @@
+import api from '@/api';
 import type { Rule } from 'ant-design-vue/es/form';
 import dayjs, { Dayjs } from 'dayjs';
 // 银行二级账户开通信息（如果需要充值或收付款、提现，均需先开通银行二级账户）
@@ -269,11 +270,20 @@ const disabledAfterDate = (current: Dayjs) => {
   // Can not select days after today
   return dayjs().endOf('day') < current;
 };
+const toIcbc = (id: number, callback?: any) => {
+  api.certification({ companyId: id }).then((res: any) => {
+    if (res?.redirectParam) {
+      window.open(res.redirectParam, '_blank');
+      callback && callback()
+    }
+  })
+}
 export {
   getKeylist,
   getFormRules,
   flat,
   disabledBeforeDate,
   disabledAfterDate,
-  businessTypeOption
+  businessTypeOption,
+  toIcbc
 }

@@ -180,3 +180,12 @@ export function getYJGList(businessType: string) {
 		});
 	}
 }
+// 去认证 
+export function certification(data: any) {
+	return request({
+		url: `${commonPart}certification`,
+		method: 'post',
+		data,
+		showLoading: true
+	});
+}
