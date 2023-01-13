@@ -54,13 +54,16 @@ const computeTableHeight = () => {
 			const pagination = document.getElementsByClassName('ant-pagination');
 			// common-table
 			const commonTable = document.getElementsByClassName('common-table');
-      
+      let paginationHeight = 0;
+      if (pagination.length) {
+        paginationHeight = getStyles(pagination[pagination.length - 1], 'height');
+      }
 			// 计算总高度vh-除表格内容外高度
 			let num = getElementPos(commonTable[commonTable.length - 1]).y
       +
       getStyles(tableHeader[tableHeader.length - 1], 'height') 
-      + 
-      getStyles(pagination[pagination.length - 1], 'height') ;
+      +
+      paginationHeight;
 			const antTableBody = document.getElementsByClassName('ant-table-body');
       antTableBody[antTableBody.length - 1].style.height = `calc(100vh - ${num + 25}px)`; // num + 微调
 
