@@ -460,6 +460,9 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			// rowRadioSelection.onChange([52], [travelStore.curentProduct[0]])
 		}, 1000)
 	})
+	onActivated(()=>{
+		travelStore.getManagementExpenses(route.query.id)			
+	})
 	if(travelStore.reserveStatus)
 	{
 		travelStore.getManagementExpenses(route.query.id)

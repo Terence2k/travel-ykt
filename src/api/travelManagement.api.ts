@@ -755,4 +755,15 @@ export const travelManagement = {
 			showLoading,
 		});
 	},
+	//撤销重提详情
+	getRecommitFinanceDetail(id: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/audit/getRecommitFinanceDetail?itineraryId=${id}`,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			method: 'get',
+			showLoading: true,
+		});
+	},
 };

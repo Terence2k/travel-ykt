@@ -37,86 +37,86 @@
 			<table class="info_table" cellpadding="16px" border="1">
 				<tr class="row">
 					<td class="key">行程单编号</td>
-					<td class="value">{{ state.detailData.itineraryNo}}</td>
+					<td class="value">{{ state.revokedItinerary.itineraryNo}}</td>
 				</tr>
 				<tr class="row">
 					<td class="key">线路名称</td>
-					<td class="value">{{ state.detailData.routeName }}</td>
+					<td class="value">{{ state.revokedItinerary.routeName }}</td>
 				</tr>
 				<tr class="row">
 					<td class="key">组团社计调</td>
-					<td class="value">{{ state.detailData.travelOperatorName }} {{ state.detailData.travelOperatorPhone }}</td>
+					<td class="value">{{ state.revokedItinerary.travelOperatorName }}</td>
 				</tr>
 				<tr class="row">
 					<td class="key">地接社</td>
-					<td class="value">{{ state.detailData.subTravelName }}</td>
+					<td class="value">{{ state.revokedItinerary.subTravelName }}</td>
 				</tr>
 				<tr class="row">
 					<td class="key">出散团时间</td>
-					<td class="value">{{state.detailData.startDate}}-{{ state.detailData.endDate }} ({{ dayjs(state.detailData.endDate).diff(state.detailData.startDate, 'day') }})天，</td>
+					<td class="value">{{state.revokedItinerary.startDate}}-{{ state.revokedItinerary.endDate }} ({{ dayjs(state.revokedItinerary.endDate).diff(state.revokedItinerary.startDate, 'day') }})天，</td>
 				</tr>
 				<tr class="row">
 					<td class="key">撤销前团客人数</td>
-					<td class="value">{{state.detailData.routeName}}</td>
+					<td class="value">{{state.revokedItinerary.touristCount}}人</td>
 				</tr>
 				<tr class="row">
 					<td class="key">撤销前冻结金额</td>
-					<td class="value">{{accDiv(state.detailData.routeName,100)  }}元</td>
+					<td class="value">{{accDiv(state.revokedItinerary.totalFee,100)}}元</td>
 				</tr>
 			</table>
-			<p style="margin-top:15px">2022.10.10.23 09:00:23 丽江市黑白水旅行社已撤销原始行程单，并创建了以下新行程单，请审核需冻结金额：</p>
+			<p style="margin-top:15px"> <span style="margin-right:10px">{{state.revokedItinerary.revokeTime}}</span>{{state.revokedItinerary.subTravelName}}已撤销原始行程单，并创建了以下新行程单，请审核需冻结金额：</p>
 			<table class="info_table" cellpadding="16px" border="1">
 				<tr class="row">
 					<td class="key">行程单编号</td>
-					<td class="value">{{  }}</td>
+					<td class="value">{{ state.newItinerary.itineraryNo }}</td>
 				</tr>
 				<tr class="row">
 					<td class="key">线路名称</td>
-					<td class="value">{{  }}</td>
+					<td class="value">{{ state.newItinerary.routeName }}</td>
 				</tr>
 				<tr class="row">
 					<td class="key">出散团时间</td>
-					<td class="value">{{  }}</td>
+					<td class="value">{{state.newItinerary.startDate}}-{{ state.newItinerary.endDate }} ({{ dayjs(state.newItinerary.endDate).diff(state.newItinerary.startDate, 'day') }})天，</td>
 				</tr>
 				<tr class="row">
 					<td class="key">团客人数</td>
-					<td class="value">{{  }}人</td>
+					<td class="value">{{ state.newItinerary.touristCount }}人</td>
 				</tr>
 				<tr class="row">
 					<td class="key">古维管理费</td>
-					<td class="value">{{  }}</td>
+					<td class="value">{{accDiv(state.newItinerary.maintainFee,100)}}元</td>
 				</tr>
 				
 				<tr class="row">
 					<td class="key">综费产品</td>
-					<td class="value">{{  }}</td>
+					<td class="value">{{accDiv(state.newItinerary?.productFee,100)}}元</td>
 				</tr>
 				<tr class="row">
 					<td class="key">酒店</td>
-					<td class="value">{{}}</td>
+					<td class="value">{{accDiv(state.newItinerary?.hotelFee,100)}}元</td>
 				</tr>
 				<tr class="row">
 					<td class="key">景区</td>
-					<td class="value">{{}}</td>
+					<td class="value">{{accDiv(state.newItinerary?.ticketFee,100)}}元</td>
 				</tr>
 				<tr class="row">
 					<td class="key">本次预冻结金额</td>
-					<td class="value">{{accDiv()  }}元</td>
+					<td class="value">{{accDiv(state.newItinerary.totalFee,100)}}元</td>
 				</tr>
 				<tr class="row">
 					<td class="key">公司账户可用余额</td>
-					<td class="value">{{accDiv()  }}元</td>
+					<td class="value">{{accDiv(state.newItinerary.travelBalance,100)}}元</td>
 				</tr>
 			</table>
 		</div>
-		<p style="margin-top: 20px; font-size: 18px;">2022.10.23 19:00:45 您已审核，审核结果：【驳回】驳回原因：xxxxxxxxxxxxxx</p>
+		<p style="margin-top: 20px; font-size: 18px;" v-if="state.newItinerary.financeAuditStatus=='3'">审核结果：【驳回】驳回原因：{{state.newItinerary.financeRejectReason }}</p>
 		<template v-slot:footer>
-			<a-button @click="sendAudit(3)">驳回</a-button>
-			<a-button type="primary" @click="sendAudit(2)">同意预冻结</a-button>
+			<a-button @click="sendAudit(3)" v-if="state.newItinerary.financeAuditStatus=='1'">驳回</a-button>
+			<a-button type="primary" @click="sendAudit(2)" v-if="state.newItinerary.financeAuditStatus=='1'">同意预冻结</a-button>
 		</template>
 	</BaseModal>
 	<BaseModal title="驳回确认" v-model="rejectAuditVisible">
-		驳回 {{ state.rowDate.subTravelName }} 申请的行程变更申请，填写驳回理由：
+		驳回 {{ state.revokedItinerary.subTravelName }} 申请的行程变更申请，填写驳回理由：
 		<a-textarea v-model:value="auditRemark" placeholder="请填写驳回理由" :rows="4" />
 		<template v-slot:footer>
 			<a-button @click="rejectAuditVisible = false">取消</a-button>
@@ -145,6 +145,8 @@ const state = reactive({
 	},
 	tableData: computed(() => travelStore.auditList.withdrawalChange.list),
 	detailData:[] as any,
+	revokedItinerary:[] as any,
+	newItinerary:[] as any,
 	newOrderAmount: '' as any,
 	oldOrderAmount: '' as any,
 	rowDate:[] as any,
@@ -240,25 +242,22 @@ const sendAudit = (status: any) => {
 			closable: true,
 			centered: true,
 			icon: false,
-			content: `您即将批准 ${state.rowDate.subTravelName} 申请的撤销重提申请，撤销重提后冻结金额将调整为 ${state.newOrderAmount/100} 元？是否同意？是否同意？`,
+			content: `您即将批准 ${state.revokedItinerary.subTravelName} 申请的撤销重提申请，撤销重提后冻结金额将调整为 ${accDiv(state.newItinerary.totalFee,100)} 元？是否同意？是否同意？`,
 			onOk() {
-				const queryData = {
-					auditStatus:2,
-					auditRemark: auditRemark.value, //审核描述
-					// changeId:state.rowDate.changeId, //changeId
-					isPass: true,
-				};
+				let queryData = new FormData();
+				queryData.append('auditRemark', auditRemark.value);
+				queryData.append('itineraryId', state.newItinerary.oid);
+				queryData.append('isPass', true);
 				console.log('queryData:', queryData);
-				api.travelManagement
-					.changeItineraryAudit(queryData)
-					.then((res: any) => {
-						console.log('审核返回信息：', res);
-						message.success('保存成功');
-						cancel();
-					})
-					.catch((err: any) => {
-						console.error(err);
-					});
+				// api.travelManagement.financeAudit(queryData)
+				// 	.then((res: any) => {
+				// 		console.log('审核返回信息：', res);
+				// 		message.success('保存成功');
+				// 		cancel();
+				// 	})
+				// 	.catch((err: any) => {
+				// 		console.error(err);
+				// 	});
 			},
 			onCancel() {},
 		});
@@ -268,15 +267,12 @@ const sendAudit = (status: any) => {
 	}
 };
 const rejectAudit = () => {
-	const queryData = {
-		auditStatus:3,
-		auditRemark: auditRemark.value, //审核描述
-		changeId:state.rowDate.changeId , //uuid
-		isPass: false,
-	};
+	let queryData = new FormData();
+	queryData.append('auditRemark', auditRemark.value);
+	queryData.append('itineraryId', state.newItinerary.oid);
+	queryData.append('isPass', false);
 	console.log('queryData:', queryData);
-	api.travelManagement
-		.changeItineraryAudit(queryData)
+	api.travelManagement.financeAudit(queryData)
 		.then((res: any) => {
 			console.log('审核返回信息：', res);
 			message.success('保存成功');
@@ -287,15 +283,10 @@ const rejectAudit = () => {
 		});
 };
 const getDetail = async (id: any, row: any) => {
-	state.rowDate=row;
-	await api.travelManagement
-		.getAuditInfo(id)
-		.then((res: any) => {
-			state.detailData=res
+	 api.travelManagement.getRecommitFinanceDetail(id).then((res: any) => {
+			state.newItinerary=res.newItinerary;
+			state.revokedItinerary=res.revokedItinerary;
 		})
-		.catch((err: any) => {
-			console.error(err);
-		});
 };
 const onHandleCurrentChange = (e: any) => {
 	travelStore.auditList.withdrawalChange.params.pageNo = e;
@@ -305,7 +296,7 @@ const pageSideChange = () => {};
 onSearch();
 
 watch(changeAuditVisible, (nVal) => {
-	if (!nVal) state.detail = {};
+	if (!nVal) state.detailData = {};
 });
 </script>
 <style scoped lang="less">
