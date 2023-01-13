@@ -319,6 +319,12 @@
                 保存
               </template>
             </a-button>
+            <a-button
+              type="primary"
+              @click="authentication"
+              v-if="form.icbcStatus === 1">
+              去认证
+            </a-button>
         </a-form-item>
       </a-form>
     </div>
@@ -349,6 +355,7 @@ import { getUserInfo } from '@/utils/util';
 import Upload from '@/components/common/imageWrapper.vue';
 import picker from '@/components/common/datePicker.vue';
 import BaseModal from '@/components/common/BaseModal.vue';
+import { message } from 'ant-design-vue';
 
 const formRef = ref()
 const loading = ref(false)
@@ -422,9 +429,19 @@ const getScenicLevels = async () => {
   scenicLevelList.value = await api.getScenicLevels();
 }
 
-const getImage = (options: any) => {
-  console.log('getImage:', options);
-  
+const authentication = async () => {
+  let queryData = {
+    companyId: userInfo.sysCompany.oid
+  }
+  api.commonApi.certification(queryData).then((res: any) => {
+    if (res.success && res.redirectParam) {
+      window.open(res.redirectParam, '_blank');
+    } else {
+      message.error('系统错误');
+    }
+  }).catch((err: any) => {
+    console.error(err);
+  })
 }
 
 const initOpeion = async () => {
