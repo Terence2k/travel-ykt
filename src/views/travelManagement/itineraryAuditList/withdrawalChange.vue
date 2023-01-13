@@ -2,7 +2,7 @@
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns">
       <template #describe>
-        共<span class="color-red">{{state.total}}</span>条撤销后重提的行程单。其中待审核 <span class="color-red">{{state.total}}</span> 条。
+		共<span class="color-red">{{state.total}}</span>条行程单。其中待审核 <span class="color-red">{{waitAuditNum}}</span> 条。
       </template>
 			<template #bodyCell="{ column, text, index, record }">
 				<template v-if="column.key === 'index'">
@@ -10,14 +10,15 @@
 						{{ (travelStore.auditList.withdrawalChange.params.pageNo - 1) * travelStore.auditList.withdrawalChange.params.pageSize + (index + 1) }}
 					</div>
 				</template>
-				<template v-if="column.key === 'newOrderAmount'">
+				<template v-if="column.key === 'totalFee'">
 					<div>
-						{{record.newOrderAmount/100}}
+						{{accDiv(record.totalFee,100)}}
 					</div>
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
-						<a @click="auditStatus(record)" v-permission="'撤销重提审核_去审核'">去审核</a>
+						<a @click="auditStatus(record)" v-permission="'撤销重提审核_去审核'" v-if="record.financeAuditStatus==1">去审核</a>
+						<a @click="auditStatus(record)" v-permission="'撤销重提审核_查看'" v-else>查看</a>
 					</div>
 				</template>
 			</template>
@@ -30,66 +31,85 @@
 			@showSizeChange="pageSideChange"
 		/>
 	</div>
-	<BaseModal title="行程单变更审核" v-model="changeAuditVisible" :width="1000">
+	<BaseModal title="行程单重提审核" v-model="changeAuditVisible" :width="1000">
 		<div class="table_box">
+			<p>已撤销的行程单：</p>
 			<table class="info_table" cellpadding="16px" border="1">
 				<tr class="row">
-					<td class="key">变更项目</td>
-					<td class="key">变更前内容</td>
-					<td class="key">变更后内容</td>
+					<td class="key">行程单编号</td>
+					<td class="value">{{ state.detailData.itineraryNo}}</td>
 				</tr>
 				<tr class="row">
-					<td class="key">行程信息</td>
-					<td class="value">
-						<div style="margin-bottom:20px" v-if="state.oldHotelList!=null">
-							<p style="text-align:left; margin-bottom: 0px;">酒店：</p>
-							<p v-for="(item, index) in state.oldHotelList" :key="index">							
-							<span>{{ state.oldHotelList[index].hotelName }}，</span> 
-							<span v-for="(item, i) in state.oldHotelList[index].roomTypeList" :key="index">{{ state.oldHotelList[index].roomTypeList[i].roomTypeName }}</span>
-							<span>{{ state.oldHotelList[index].roomCount }}间</span>
-							<span>{{ dayjs(state.oldHotelList[index].endDate).diff(state.oldHotelList[index].startDate, 'day') }}天，</span>
-							<span>费用总计 <span style="color: red">{{ state.oldHotelList[index].orderFee / 100 }}</span>元；</span></p>
-						</div>
-						<div v-if="state.oldTicketList!=null">
-							<p style="text-align:left; margin-bottom: 0px;">景区：</p>
-							<p v-for="(item, index) in state.oldTicketList" :key="index">							
-							<span>{{ state.oldTicketList[index].scenicName }}，</span> 
-							<span>{{ state.oldTicketList[index].ticketName }}</span>
-							<span>{{ state.oldTicketList[index].reservePeopleCount }}张，</span>
-							<span>费用总计 <span style="color: red">{{ state.oldTicketList[index].reservePeopleCount * (state.oldTicketList[index].unitPrice/100) }}</span>元；</span></p>
-						</div>
-					</td>
-					<td class="value" v-if="state.newHotelList!=null">
-						<div style="margin-bottom:20px" >
-							<p style="text-align:left; margin-bottom: 0px;">酒店：</p>
-							<p v-for="(item, index) in state.newHotelList" :key="index">							
-							<span>{{ state.newHotelList[index].hotelName }}，</span> 
-							<span v-for="(item, i) in state.newHotelList[index].roomTypeList" :key="index">{{ state.newHotelList[index].roomTypeList[i].roomTypeName }}</span>
-							<span>{{ state.newHotelList[index].roomCount }}间</span>
-							<span>{{ dayjs(state.newHotelList[index].endDate).diff(state.newHotelList[index].startDate, 'day') }}天，</span>
-							<span>费用总计 <span style="color: red">{{ state.newHotelList[index].orderFee / 100 }}</span>元；</span></p>
-						</div>
-						<div v-if="state.newTicketList!=null">
-							<p style="text-align:left; margin-bottom: 0px;">景区：</p>			
-							<p v-for="(item, index) in state.newTicketList" :key="index">							
-							<span>{{ state.newTicketList[index].scenicName }}，</span> 
-							<span>{{ state.newTicketList[index].ticketName }}</span>
-							<span>{{ state.newTicketList[index].reservePeopleCount }}张，</span>
-							<span>费用总计 <span style="color: red">{{ state.newTicketList[index].reservePeopleCount * (state.newTicketList[index].unitPrice/100) }}</span>元；</span></p>
-						</div>
-					</td>
+					<td class="key">线路名称</td>
+					<td class="value">{{ state.detailData.routeName }}</td>
 				</tr>
 				<tr class="row">
-					<td class="key">行程预冻结费用</td>
-					<td class="value">
-						<span style="color: red">{{ state.oldOrderAmount / 100 }}</span> 元
-					</td>
-					<td class="value">
-						<span style="color: red">{{ state.newOrderAmount / 100 }}</span> 元
-					</td>
+					<td class="key">组团社计调</td>
+					<td class="value">{{ state.detailData.travelOperatorName }} {{ state.detailData.travelOperatorPhone }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">地接社</td>
+					<td class="value">{{ state.detailData.subTravelName }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">出散团时间</td>
+					<td class="value">{{state.detailData.startDate}}-{{ state.detailData.endDate }} ({{ dayjs(state.detailData.endDate).diff(state.detailData.startDate, 'day') }})天，</td>
+				</tr>
+				<tr class="row">
+					<td class="key">撤销前团客人数</td>
+					<td class="value">{{state.detailData.routeName}}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">撤销前冻结金额</td>
+					<td class="value">{{accDiv(state.detailData.routeName,100)  }}元</td>
+				</tr>
+			</table>
+			<p style="margin-top:15px">2022.10.10.23 09:00:23 丽江市黑白水旅行社已撤销原始行程单，并创建了以下新行程单，请审核需冻结金额：</p>
+			<table class="info_table" cellpadding="16px" border="1">
+				<tr class="row">
+					<td class="key">行程单编号</td>
+					<td class="value">{{  }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">线路名称</td>
+					<td class="value">{{  }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">出散团时间</td>
+					<td class="value">{{  }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">团客人数</td>
+					<td class="value">{{  }}人</td>
+				</tr>
+				<tr class="row">
+					<td class="key">古维管理费</td>
+					<td class="value">{{  }}</td>
+				</tr>
+				
+				<tr class="row">
+					<td class="key">综费产品</td>
+					<td class="value">{{  }}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">酒店</td>
+					<td class="value">{{}}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">景区</td>
+					<td class="value">{{}}</td>
+				</tr>
+				<tr class="row">
+					<td class="key">本次预冻结金额</td>
+					<td class="value">{{accDiv()  }}元</td>
+				</tr>
+				<tr class="row">
+					<td class="key">公司账户可用余额</td>
+					<td class="value">{{accDiv()  }}元</td>
 				</tr>
 			</table>
 		</div>
+		<p style="margin-top: 20px; font-size: 18px;">2022.10.23 19:00:45 您已审核，审核结果：【驳回】驳回原因：xxxxxxxxxxxxxx</p>
 		<template v-slot:footer>
 			<a-button @click="sendAudit(3)">驳回</a-button>
 			<a-button type="primary" @click="sendAudit(2)">同意预冻结</a-button>
@@ -111,6 +131,7 @@ import BaseModal from '@/components/common/BaseModal.vue';
 import { message } from 'ant-design-vue';
 import { Modal } from 'ant-design-vue';
 import api from '@/api/index';
+import { accDiv, accMul } from '@/utils/compute';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import { AuditStaus } from '@/enum';
 import dayjs, { Dayjs } from 'dayjs';
@@ -123,10 +144,7 @@ const state = reactive({
 		status: 1,
 	},
 	tableData: computed(() => travelStore.auditList.withdrawalChange.list),
-	oldHotelList: [] as any,
-	newHotelList: [] as any,
-	oldTicketList: [] as any,
-	newTicketList: [] as any,
+	detailData:[] as any,
 	newOrderAmount: '' as any,
 	oldOrderAmount: '' as any,
 	rowDate:[] as any,
@@ -158,28 +176,28 @@ const state = reactive({
 		},
 		{
 			title: '撤销前人数',
-			dataIndex: 'touristCount"',
-			key: 'touristCount"',
+			dataIndex: 'touristCount',
+			key: 'touristCount',
 		},
 		{
 			title: '变更后人数',
 			dataIndex: 'newTouristCount',
 			key: 'newTouristCount',
 		},
-		// {
-		// 	title: '撤销前冻结金额',
-		// 	dataIndex: 'touristCount',
-		// 	key: 'touristCount',
-		// },
-		// {
-		// 	title: '变更后金额',
-		// 	dataIndex: 'newOrderAmount',
-		// 	key: 'newOrderAmount',
-		// },
+		{
+			title: '撤销前冻结金额',
+			dataIndex: 'touristCount',
+			key: 'touristCount',
+		},
+		{
+			title: '变更后金额',
+			dataIndex: 'totalFee',
+			key: 'totalFee',
+		},
 		{
 			title: '审核结果',
-			dataIndex: 'newOrderAmount',
-			key: 'newOrderAmount',
+			dataIndex: 'financeAuditStatusName',
+			key: 'financeAuditStatusName',
 		},
 		{
 			title: '操作',
@@ -191,9 +209,17 @@ const state = reactive({
 const changeAuditVisible = ref(false);
 const rejectAuditVisible = ref(false);
 const auditRemark = ref('');
+const waitAuditNum = ref(0);
 const onSearch = async () => {
 	travelStore.auditList.withdrawalChange.params.status = AuditStaus.withdrawalChange;
 	const res = await travelStore.getAuditList(travelStore.auditList.withdrawalChange.params);
+	if (!waitAuditNum.value) {
+      res.content.forEach((item: any) => {
+        if (item.financeAuditStatus === 1) {
+          waitAuditNum.value += 1;
+        }
+      })
+    }
 	travelStore.setAuditList(res, 'withdrawalChange');
 };
 const cancel = (): any => {
@@ -202,44 +228,44 @@ const cancel = (): any => {
 	onSearch();
 };
 const auditStatus = async (row: any) => {
-	await getDetail(row.changeId, row);
+	await getDetail(row.oid, row);
 	changeAuditVisible.value = true;
 };
 const sendAudit = (status: any) => {
 	// 审核通过
-	// if (status == 2) {
-	// 	Modal.confirm({
-	// 		title: '行程变更审核提示',
-	// 		width: 560,
-	// 		closable: true,
-	// 		centered: true,
-	// 		icon: false,
-	// 		content: `您即将批准 ${state.rowDate.subTravelName} 申请的行程变更申请，变更后冻结金额将调整为 ${state.newOrderAmount/100} 元？是否同意？是否同意？`,
-	// 		onOk() {
-	// 			const queryData = {
-	// 				auditStatus:2,
-	// 				auditRemark: auditRemark.value, //审核描述
-	// 				changeId:state.rowDate.changeId, //changeId
-	// 				isPass: true,
-	// 			};
-	// 			console.log('queryData:', queryData);
-	// 			api.travelManagement
-	// 				.changeItineraryAudit(queryData)
-	// 				.then((res: any) => {
-	// 					console.log('审核返回信息：', res);
-	// 					message.success('保存成功');
-	// 					cancel();
-	// 				})
-	// 				.catch((err: any) => {
-	// 					console.error(err);
-	// 				});
-	// 		},
-	// 		onCancel() {},
-	// 	});
-	// } else if (status == 3) {
-	// 	// 审核不通过
-	// 	rejectAuditVisible.value = true;
-	// }
+	if (status == 2) {
+		Modal.confirm({
+			title: '撤销重提审核提示',
+			width: 560,
+			closable: true,
+			centered: true,
+			icon: false,
+			content: `您即将批准 ${state.rowDate.subTravelName} 申请的撤销重提申请，撤销重提后冻结金额将调整为 ${state.newOrderAmount/100} 元？是否同意？是否同意？`,
+			onOk() {
+				const queryData = {
+					auditStatus:2,
+					auditRemark: auditRemark.value, //审核描述
+					// changeId:state.rowDate.changeId, //changeId
+					isPass: true,
+				};
+				console.log('queryData:', queryData);
+				api.travelManagement
+					.changeItineraryAudit(queryData)
+					.then((res: any) => {
+						console.log('审核返回信息：', res);
+						message.success('保存成功');
+						cancel();
+					})
+					.catch((err: any) => {
+						console.error(err);
+					});
+			},
+			onCancel() {},
+		});
+	} else if (status == 3) {
+		// 审核不通过
+		rejectAuditVisible.value = true;
+	}
 };
 const rejectAudit = () => {
 	const queryData = {
@@ -262,16 +288,10 @@ const rejectAudit = () => {
 };
 const getDetail = async (id: any, row: any) => {
 	state.rowDate=row;
-	const backup = row;
 	await api.travelManagement
-		.getItineraryChangeProductHistory(id)
+		.getAuditInfo(id)
 		.then((res: any) => {
-			state.newHotelList = res.newHotelList;
-			state.oldHotelList = res.oldHotelList;
-			state.newTicketList = res.newTicketList;
-			state.oldTicketList = res.oldTicketList;
-			state.newOrderAmount = res.newOrderAmount;
-			state.oldOrderAmount = res.oldOrderAmount;
+			state.detailData=res
 		})
 		.catch((err: any) => {
 			console.error(err);
@@ -290,9 +310,9 @@ watch(changeAuditVisible, (nVal) => {
 </script>
 <style scoped lang="less">
 .table_box {
-	max-height: 80vh;
-	padding: 1px 0;
-	overflow: auto;
+	// max-height: 80vh;
+	// padding: 1px 0;
+	// overflow: auto;
 
 	.row {
 		width: 100%;
