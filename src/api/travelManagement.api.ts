@@ -254,7 +254,7 @@ export const travelManagement = {
 	},
 	getGuidePriceStarCodeByHotelId(data: any) {
 		return request({
-			url: `${commonPath}/hotel-service/public/api/hotel-information/getGuidePriceStarCodeByHotelId/${data}`,
+			url: `${commonPath}/hotel-service/public/api/hotel-information/getGuidePriceStarCodeByCompanyId/${data}`,
 			method: 'get',
 			showLoading: false,
 		});
