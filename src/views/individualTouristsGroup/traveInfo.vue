@@ -67,23 +67,13 @@
 						<div v-html="text"></div>
 					</template>
 					<template v-if="column.key === 'action'">
-						<!-- <div class="action-btns">
+						<div class="action-btns">
 							<a v-if="travelStore.reserveStatus && record.orderStatus == 0" class="item"
 								@click="reserveHotel(record)">预定</a>
 							<a v-if="travelStore.teamStatus" class="item"
 								@click="add('HOTEL', record.oid ? 'addHotelPop' : 'productRow', 'addHotelPop', index, record.oid || record)">编辑</a>
 							<a v-if="travelStore.teamStatus" class="item" @click="delHotel(record, index)">删除</a>
 							<a class="item" @click="show('showHotelPop', record.oid)">查看</a>
-						</div> -->
-						<div class="action-btns">
-							<a v-if="travelStore.reserveStatus && record.orderStatus == 0" class="item"
-								@click="reserveHotel(record)">预定</a>
-							<a v-if="record.orderStatus !== 0 && !travelStore.teamStatus"
-								@click="toHotelOrder(record.hotelOrderNo)">查看订单</a>
-							<a :class="{ 'disabled': !travelStore.teamStatus }" class="item"
-								@click="add('HOTEL', record.oid ? 'addHotelPop' : 'productRow', 'addHotelPop', index, record.oid || record)">编辑</a>
-							<a :class="{ 'disabled': !travelStore.teamStatus }" class="item" @click="delHotel(record, index)">删除</a>
-							<!-- <a class="item" v-if="record.oid" @click="show('showHotelPop', record.oid)">查看</a> -->
 						</div>
 					</template>
 				</template>
@@ -108,23 +98,12 @@
 						</div>
 					</template>
 					<template v-if="column.key === 'action'">
-						<!-- <div class="action-btns">
+						<div class="action-btns">
 							<a v-if="travelStore.reserveStatus" @click="reserveTicketPeple(record)">预定</a>
 							<a v-if="travelStore.teamStatus" class="item"
 								@click="add('TICKET', record.oid ? 'addTicketPop' : 'productRow', 'addTicketPop', index, record.oid || record)">编辑</a>
 							<a v-if="travelStore.teamStatus" class="item" @click="delTicket(record, index)">删除</a>
 							<a class="item" @click="show('showTicketPop', record.oid)">查看</a>
-						</div> -->
-						<div class="action-btns">
-							<!--  v-if="travelStore.reserveStatus && record.orderStatus == 0" -->
-							<a v-if="travelStore.reserveStatus" @click="reserveTicketPeple(record, index)">预定</a>
-							<a v-if="record.orderStatus !== 0 && !travelStore.teamStatus"
-								@click="toScenicDetail(record.ticketOrderNo)">查看订单</a>
-							<!--  v-if="travelStore.teamStatus" -->
-							<a :class="{ 'disabled': !travelStore.teamStatus }" class="item"
-								@click="add('TICKET', record.oid ? 'addTicketPop' : 'productRow', 'addTicketPop', index, record.oid || record)">编辑</a>
-							<a :class="{ 'disabled': !travelStore.teamStatus }" class="item" @click="delTicket(record, index)">删除</a>
-							<!-- <a class="item" v-if="record.oid" @click="show('showTicketPop', record.oid)">查看</a> -->
 						</div>
 					</template>
 				</template>
@@ -211,15 +190,6 @@ const props = defineProps({
 		type: Boolean,
 	},
 });
-const emits = defineEmits(['onSuccess', 'getTravelDetail']);
-// 跳转酒店订单
-const toHotelOrder = (value: any) => {
-	router.push({ path: '/hotelManagement/hotelOrder/orderEdit', query: { orderNo: value } });
-};
-// 跳转景区订单
-const toScenicDetail = (value: any) => {
-	router.push({ path: '/scenic-spot/order-manage/edit', query: { oid: value } });
-};
 const {
 	columns,
 	ticketColumns,
