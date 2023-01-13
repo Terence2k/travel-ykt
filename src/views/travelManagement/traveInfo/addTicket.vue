@@ -164,6 +164,7 @@
 			default: {}
 		}
 	})
+	const emits = defineEmits(['update:modelValue', 'getTravelDetail'])
 	const countMoney = computed(()=> (accMul(accDiv(formState.unitPrice, 100), travelStore.touristList.length)) || 0)
     const tableData = ref([])
     const ticketData = reactive<{[k:string]: any}>({
@@ -262,14 +263,15 @@
 			} else {
 				formState.childTicketIds = []
 			}
-			const newFormState = cloneDeep(formState)
-			newFormState.reservePeopleCount = formState.peopleCount
-			newFormState.unitPrice = accDiv(ticketPrice.value, 100);
-			newFormState.totalFee = accMul(newFormState.peopleCount, newFormState.unitPrice)
+			// const newFormState = cloneDeep(formState)
+			// newFormState.reservePeopleCount = formState.peopleCount
+			// newFormState.unitPrice = accDiv(ticketPrice.value, 100);
+			// newFormState.totalFee = accMul(newFormState.peopleCount, newFormState.unitPrice)
 			const res = await api.travelManagement.addTicket(formState)
-			res && (newFormState.oid = res)
+			emits('getTravelDetail')
+			// res && (newFormState.oid = res)
+			// // travelStore.setTicket(newFormState)
 			// travelStore.setTicket(newFormState)
-			travelStore.setTicket(newFormState)
 			
 			callback()
 		} catch (errorInfo) {
@@ -338,7 +340,7 @@
 
 	}
 
-	const emits = defineEmits(['update:modelValue'])
+	
 	const dialogVisible = ref(false);
 	watch(() => props.modelValue, (newVal) => {
 		dialogVisible.value = newVal

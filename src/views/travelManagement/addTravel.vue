@@ -3,7 +3,7 @@
 		<div class="tab-container">
 			<a-tabs v-model:activeKey="activeKey">
 				<a-tab-pane v-for="(item, index) in pages" :key="index" :tab="item.label">
-					<component @onSuccess="save" :onCheck="check" :is="item.name"></component>
+					<component @onSuccess="save" :onCheck="check" :is="item.name" @getTravelDetail="getTraveDetail"></component>
 				</a-tab-pane>
 			</a-tabs>
 		</div>
@@ -50,7 +50,7 @@ import api from '@/api';
 import { message } from 'ant-design-vue';
 import { fileOne, fileThree, fileTwo, useTravelStore } from '@/stores/modules/travelManagement';
 import dayjs, { Dayjs } from 'dayjs';
-import { disabledRangeTime, getAmount } from '@/utils';
+import { disabledRangeTime, getAmount, getDiffDay } from '@/utils';
 import { accDiv,accMul} from '@/utils/compute';
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 const route = useRoute();
@@ -325,6 +325,8 @@ const getTraveDetail = () => {
 				...res.waitBuyItem.waitBuyHotel,
 				...res.hotelList.map((it: any) => {
 					it.orderFee = accDiv(it.orderFee, 100);
+					it.dayCount = getDiffDay(it.startDate, it.endDate);
+					it.roomName = it.roomTypeList.map((item: any) => `${item.roomTypeName} * ${item.roomCount}<br />`).join('')
 					return it;
 				}),
 				...travelStore.templateHotel,

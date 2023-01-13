@@ -408,17 +408,23 @@
               </template>
             </template>
             <template v-if="column.dataIndex === 'adultPrice'">
-              <a-input @change="() => { priceChange(dataCostSource[index]) }" v-if="record.isEdit"
-                v-model:value.number="dataCostSource[index][column.dataIndex]" style="margin: -5px 0"
-                placeholder="输入价格" />
+              <a-form-item name="adultPrice" v-if="record.isEdit"
+                :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validateNumber(dataCostSource[index], 'adultPrice')) }]"
+                style="margin-bottom:0">
+                <a-input v-set-number="{ key: 'adultPrice', obj: dataCostSource[index] }"
+                  v-model:value="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="输入价格" />
+              </a-form-item>
               <template v-else>
                 {{ text }}
               </template>
             </template>
             <template v-if="column.dataIndex === 'childPrice'">
-              <a-input @change="() => { priceChange(dataCostSource[index]) }" v-if="record.isEdit"
-                v-model:value.number="dataCostSource[index][column.dataIndex]" style="margin: -5px 0"
-                placeholder="输入价格" />
+              <a-form-item name="childPrice" v-if="record.isEdit"
+                :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validateNumber(dataCostSource[index], 'childPrice')) }]"
+                style="margin-bottom:0">
+                <a-input v-set-number="{ key: 'childPrice', obj: dataCostSource[index] }"
+                  v-model:value="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="输入价格" />
+              </a-form-item>
               <template v-else>
                 {{ text }}
               </template>
@@ -657,6 +663,19 @@ const validateCertificatesNo = async (_rule: Rule, value: string, obj: any) => {
     }
   }
 };
+const validateNumber = async (obj: any, key: string) => {
+  if (obj[key] === '') {
+    priceChange(obj)
+    return Promise.resolve();
+  } else {
+    if (!isNaN(Number(obj[key]))) {
+      priceChange(obj)
+      return Promise.resolve();
+    } else {
+      return Promise.reject('请输入正确的价格');
+    }
+  }
+}
 const formRules = {
   paymentMethod: [{ required: true, trigger: 'blur', message: '选择游客线下的实际支付方式' }],
   departurePlace: [{ required: true, trigger: 'blur', message: '请填写出发地' }],
@@ -1226,12 +1245,12 @@ const saveDraft = (tab?: string, isTip: boolean = true) => {
 const submitCancel = () => {
   submitVisible.value = false
 }
-const accMulCost = (arr: CostItem[]) => {
+const accMulCost = (arr: any[]) => {
   if (arr?.length > 0) {
-    return arr.map((item: CostItem) => {
-      item.adultPrice = accMulValue(item.adultPrice)
-      item.childPrice = accMulValue(item.childPrice)
-      item.individualSubtotal = accMulValue(item.individualSubtotal)
+    return arr.map((item: any) => {
+      item.adultPrice = accMulValue(Number(item.adultPrice))
+      item.childPrice = accMulValue(Number(item.childPrice))
+      item.individualSubtotal = accMulValue(Number(item.individualSubtotal))
       return item
     })
   } else {
@@ -1292,7 +1311,7 @@ const getParams = () => {
     contractFileUrl: fileUrl, //附件
     otherAgreements, //其他约定
     contractAmount: accMulValue(contractAmount),
-    individualContractLineBos: dataLineSource.value, // 线路
+    individualContractLineBos: accMulCost(cloneDeep(dataLineSource.value)), // 线路
     individualContractTouristBos: dataTouristSource.value, // 游客
     individualContractPriceBos: accMulCost(cloneDeep(dataCostSource.value)), // 费用
     emergencyContact,
@@ -1385,7 +1404,6 @@ const allPrice = () => {
 // 价格改变事件自动计算总费用
 let priceTimer: NodeJS.Timeout
 const priceChange = (obj: any) => {
-  // form.registeredCapital = form.registeredCapital?.replace(/[^0-9.]/g, '')
   priceTimer && clearTimeout(priceTimer)
   priceTimer = setTimeout(async () => {
     rowPrice(obj)
