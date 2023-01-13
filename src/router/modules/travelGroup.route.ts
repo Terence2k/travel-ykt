@@ -54,6 +54,17 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
+					{
+						path: 'travel_log',
+						component: () => import('@/views/travelManagement/travelLog.vue'),
+						name: 'travel_log',
+						meta: {
+							title: '行程日志',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
 				],
 			},
 			{

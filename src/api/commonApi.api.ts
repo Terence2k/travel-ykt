@@ -60,4 +60,12 @@ export const commonApi = {
 			showLoading: false,
 		});
 	},
+	certification(data: any) {
+		return request({
+			url: `${commonPath}/customer-service/public/api/company/certification`,
+			method: 'post',
+			data,
+			showLoading: true,
+		});
+	},
 };
