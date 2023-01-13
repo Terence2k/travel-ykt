@@ -225,7 +225,7 @@ const getRulePrice = computed(() => (record: any, column: any) => {
 		}
 	}
 });
-const getTypeName = computed(() => (str: string) => {
+const getTypeName = computed(() => () => {
 	const idx = generaRulesOptions.teamTypeList.findIndex((item: any) => item.oid === formState.teamTypeId);
 	if (idx !== -1) {
 		return generaRulesOptions.teamTypeList[idx]['name'];
