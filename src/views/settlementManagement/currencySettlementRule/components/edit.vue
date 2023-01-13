@@ -150,7 +150,7 @@
 		</div>
 	</div>
 	<rules-add-update v-model="cacheData.rulesShow" @submit="rulesSubmit" :params="cacheData.rulesParams" />
-	<DelModal :params="{ title: '删除规则', content: '是否确定该条数据' }" v-model="cacheData.delShow" @submit="delSubmit" @cancel="delCancel" />
+	<del-modal :params="{ title: '删除规则', content: '是否确定该条数据' }" v-model="cacheData.delShow" @submit="delSubmit" @cancel="delCancel" />
 </template>
 
 <script setup lang="ts">

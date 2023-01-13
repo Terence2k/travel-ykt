@@ -254,7 +254,7 @@ export const travelManagement = {
 	},
 	getGuidePriceStarCodeByHotelId(data: any) {
 		return request({
-			url: `${commonPath}/hotel-service/public/api/hotel-information/getGuidePriceStarCodeByHotelId/${data}`,
+			url: `${commonPath}/hotel-service/public/api/hotel-information/getGuidePriceStarCodeByCompanyId/${data}`,
 			method: 'get',
 			showLoading: false,
 		});
@@ -753,6 +753,17 @@ export const travelManagement = {
 			method: 'post',
 			data,
 			showLoading,
+		});
+	},
+	//撤销重提详情
+	getRecommitFinanceDetail(id: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/audit/getRecommitFinanceDetail?itineraryId=${id}`,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			method: 'get',
+			showLoading: true,
 		});
 	},
 };

@@ -165,7 +165,7 @@
 		}
 	})
 	const emits = defineEmits(['update:modelValue', 'getTravelDetail'])
-	const countMoney = computed(()=> (accMul(accDiv(formState.unitPrice, 100), travelStore.touristList.length)) || 0)
+	const countMoney = computed(()=> (accMul(accDiv(ticketPrice.value, 100), travelStore.touristList.length)) || 0)
     const tableData = ref([])
     const ticketData = reactive<{[k:string]: any}>({
         scenicList: [],
@@ -250,6 +250,7 @@
 			formState.ticketId && formState.startDate && getChildTicket(formState.ticketId, formState.startDate)
 		}
 	}
+
     
 	const handleOk = async (callback: Function) => {
 		try {
@@ -352,6 +353,7 @@
 			for (let k in formState) {
 				formState[k] = '';
 			}
+			ticketPrice.value = 0
 		} else {
 			
 			!props.productRow.productId && props.ticketId && api.travelManagement.ticketDetail(props.ticketId).then((res:any) => {
