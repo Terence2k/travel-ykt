@@ -14,6 +14,8 @@
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a href="javascript:;" @click="lookTrip(record)">查看</a>
+						<a href="javascript:;" v-permission="`编辑`" @click="lookTrip(record)">编辑</a>
+						<!-- <a href="javascript:;" @click="showTip('index', index, record)" v-permission="`删除`">删除</a> -->
 					</div>
 				</template>
 			</template></CommonTable
