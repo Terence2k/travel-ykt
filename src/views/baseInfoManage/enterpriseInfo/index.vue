@@ -54,9 +54,9 @@
             <a-input v-model:value="form.contactName" placeholder="请输入联系人"/>
           </div>
         </a-form-item>
-        <a-form-item name="phone" label="联系电话">
+        <a-form-item name="phone" label="联系人电话">
           <div class="flex">
-            <a-input v-model:value="form.phone" placeholder="请输入联系电话"/>
+            <a-input v-model:value="form.phone" placeholder="请输入联系人电话"/>
           </div>
         </a-form-item>
         
@@ -389,6 +389,7 @@ const formRules: Record<string, Rule[]> = {
   addressIds: [{ required: true, trigger: 'change', message: '请选择所属地区' }],
   bankAddressIds: [{ required: true, trigger: 'change', message: '请选择开户行所在地' }],
   addressDetail: [{ required: true, trigger: 'blur', message: '请输入企业详情地址' }],
+  phone: [{ required: true, trigger: 'blur', message: '请输入联系人电话' }],
   bankAccountType: [{ required: true, trigger: 'change', message: '请选择账号类型' }],
   legalPerson: [{ required: true, trigger: 'blur', message: '请输入法定代表人' }],
   legalPersonIdNumber: [{ required: true, trigger: 'blur', message: '请输入法人身份证号码' }],
