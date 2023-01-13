@@ -65,7 +65,7 @@ export const commonApi = {
 			url: `${commonPath}/customer-service/public/api/company/certification`,
 			method: 'post',
 			data,
-			showLoading: false,
+			showLoading: true,
 		});
 	},
 };
