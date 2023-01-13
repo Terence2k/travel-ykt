@@ -24,7 +24,7 @@
           </a-select>
         </a-form-item>
         <a-form-item name="name" label="企业名称" v-show="formKeys?.name">
-          <a-input v-model:value="form.name" placeholder="请输入企业名称">
+          <a-input v-model:value="form.name" placeholder="请输入企业名称" allowClear>
           </a-input>
         </a-form-item>
         <a-form-item name="regionCode" label="所属地址" v-show="formKeys?.regionCode">
@@ -32,7 +32,7 @@
           </address-selector>
         </a-form-item>
         <a-form-item name="addressDetail" label="详细地址" v-show="formKeys?.addressDetail">
-          <a-input v-model:value="form.addressDetail" placeholder="请输入企业详细地址">
+          <a-input v-model:value="form.addressDetail" placeholder="请输入企业详细地址" allowClear>
           </a-input>
         </a-form-item>
         <el-form ref="dateFormRef" :model="form" :rules="dateRules" :label-width="labelWidth" label-position="left">
@@ -46,15 +46,15 @@
           </el-form-item>
         </el-form>
         <a-form-item name="contactName" label="联系人" v-show="formKeys?.contactName">
-          <a-input v-model:value="form.contactName" placeholder="请输入联系人姓名">
+          <a-input v-model:value="form.contactName" placeholder="请输入联系人姓名" allowClear>
           </a-input>
         </a-form-item>
         <a-form-item name="phone" label="联系人电话" v-show="formKeys?.phone">
-          <a-input v-model:value="form.phone" placeholder="请输入联系人电话">
+          <a-input v-model:value="form.phone" placeholder="请输入联系人电话" allowClear>
           </a-input>
         </a-form-item>
         <a-form-item name="creditCode" label="统一社会信息代码" v-show="formKeys?.creditCode">
-          <a-input v-model:value="form.creditCode" placeholder="请输入企业统一社会信息代码">
+          <a-input v-model:value="form.creditCode" placeholder="请输入企业统一社会信息代码" allowClear>
           </a-input>
         </a-form-item>
         <a-form-item name="businessLicenseUrl" label="营业执照" v-show="formKeys?.businessLicenseUrl">
@@ -134,13 +134,13 @@
             <div style="display: flex;align-items: center; flex:1">
               <span style="margin: 0 5px;">满</span>
               <a-input placeholder="请配置数字" v-model:value="form.fullRule"
-                oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')" />
+                oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')" allowClear />
             </div>
             <a-form-item name="reduceRule" style="flex:1">
               <div style="display: flex;align-items: center;">
                 <span style="margin: 0 5px;">减</span>
                 <a-input placeholder="请配置数字" v-model:value="form.reduceRule"
-                  oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')" />
+                  oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')" allowClear />
               </div>
             </a-form-item>
           </div>
@@ -153,14 +153,15 @@
           </el-form-item>
         </el-form>
         <a-form-item name="shopPhone" label="店铺联系电话" v-show="formKeys?.shopPhone">
-          <a-input v-model:value="form.shopPhone" placeholder="请输入店铺联系电话" />
+          <a-input v-model:value="form.shopPhone" placeholder="请输入店铺联系电话" allowClear />
         </a-form-item>
         <a-form-item name="cateringDesc" label="其他" v-show="formKeys?.cateringDesc">
-          <a-input v-model:value="form.cateringDesc" placeholder="其他描述" />
+          <a-input v-model:value="form.cateringDesc" placeholder="其他描述" allowClear />
         </a-form-item>
       </div>
       <!-- 资质及账号信息 -->
-      <div class="tag" v-show="![undefined, null, '', 'CULTURE_BUREAU'].includes(form.businessType)">
+      <div class="tag"
+        v-show="![undefined, null, '', 'CULTURE_BUREAU', 'INSURANCE_COMPANY'].includes(form.businessType)">
         资质及账号信息（对公账号注册为法人类型，个人账号将被注册为自然人类型）
       </div>
       <div class="form_body">
