@@ -5,7 +5,7 @@
 				<a-select 
 					:disabled="productRow.productId &&
 								productRow.productId.toString() ? true : false"
-					v-model:value="formState.hotelStarId" placeholder="请选择星级" @change="handleChange">
+					v-model:value="formState.hotelStarId" placeholder="请选择星级" @change="handelChangeStart">
 					<a-select-option 
 						:value="item.oid" 
 						v-for="item in hotelData.hotelStart" 
@@ -143,7 +143,7 @@
 			</div>
 
 			<a-form-item label="订单金额">
-				<a-input v-model:value="formState.orderFee" disabled placeholder="无需填写，填写房间数量后自动计算" />
+				<a-input v-model:value="orderFeeCount" disabled placeholder="无需填写，填写房间数量后自动计算" />
 				<span class="gary">如果符合满16减1标准，则自动优惠减扣。</span>
 			</a-form-item>
 
@@ -270,6 +270,14 @@ const handleHotel = (e: any, option: any) => {
 	formState.hotelName = option.name;
 }
 
+const handelChangeStart = (id: any, option: any) => {
+	formState.hotelId = ''
+	for (let i = 0; i < formState.roomTypeList.length; i++) {
+		formState.roomTypeList[i].hotelRoomTypeId = ''
+	}
+	handleChange(id, option)
+}
+
 const handleChangCheckIn = () => {
 	// disLeave.value = (current: Dayjs): any => current && current < dayjs(formState.arrivalDate).endOf('day') || 
 	// (dayjs(travelStore.teamTime[1]).endOf('day') < current && current)
@@ -285,7 +293,7 @@ const disabeldleave = (current: Dayjs) => {
 }
 
 const changeRoomType = (e: any, option: any, index: number) => {
-	console.log(12312312312313131)
+	// console.log(12312312312313131)
 	formState.roomTypeList[index].roomOccupancyNum = option.num;
 	formState.roomTypeList[index].roomTypeLimitPeople = option.num;
 	formState.roomTypeList[index].stockNum = option.stockNum
@@ -303,6 +311,7 @@ const handleMoeny = (i: number, e: string) => {
 }
 
 const handleChange = async (id: number, option: any) => {
+	// console.log(id, option, 'formState.hotelIdformState.hotelIdformState.hotelId');
 	formState.honestyGuidePrice = option.price;
 	formState.hotelStarCode = option.name;
 	id && (hotelData.hotel = await api.getHotelInfoByRated(id));
@@ -548,6 +557,11 @@ watch(
 		}
 	}
 );
+
+const orderFeeCount = computed(() => {
+	
+	return getOrderAmount(formState.roomTypeList, formState.arrivalDate, formState.departureDate) || 0
+})
 getHotelStarList();
 </script>
 
