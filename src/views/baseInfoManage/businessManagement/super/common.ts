@@ -181,6 +181,7 @@ const commonFormRules: Record<string, Rule[]> = {
   account: [{ required: true, trigger: 'blur', message: '请输入管理员账号' }],
   accountPhone: [{ required: true, trigger: 'blur', message: '请输入管理员手机号' }],
   password: [{ required: true, trigger: 'blur', message: '请输入管理员密码' }],
+  phone: [{ required: true, trigger: 'blur', message: '请输入联系人电话' }],
   ...bankCommonFormRules
 }
 const hotelCommonFormRules: Record<string, Rule[]> = {
