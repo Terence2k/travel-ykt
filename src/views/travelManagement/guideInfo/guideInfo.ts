@@ -128,8 +128,14 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 			// state.tableData = state.tableData.filter((item: any) => key !== (item.key ? item.key : item.oid));
 		},
 		handleTime(event: any, key: string) {
-			state.editableData[key].startDate = event[0];
-			state.editableData[key].endDate = event[1];
+			if (event) {
+				state.editableData[key].startDate = event[0];
+				state.editableData[key].endDate = event[1];
+			} else {
+				state.editableData[key].startDate = '';
+				state.editableData[key].endDate = '';
+			}
+			
 		},
 		save: async (key?: string) => {
 			state.rulesRef = {}

@@ -166,8 +166,13 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 			console.log(state.tableData)
 		},
 		handleTime(event: any, key: string) {
-			state.editableData[key].startDate = event[0];
-			state.editableData[key].endDate = event[1];
+			if (event) {
+				state.editableData[key].startDate = event[0];
+				state.editableData[key].endDate = event[1];
+			} else {
+				state.editableData[key].startDate = '';
+				state.editableData[key].endDate = '';
+			}
 		}
 	}
 	travelStore.getTraveCode(CODEVALUE.TRAVE_CODE.TRAFFICTYPE, 'trafficType');
