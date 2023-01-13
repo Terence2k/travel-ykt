@@ -190,6 +190,7 @@ const props = defineProps({
 		type: Boolean,
 	},
 });
+const emits = defineEmits(['onSuccess', 'getTravelDetail']);
 const {
 	columns,
 	ticketColumns,
