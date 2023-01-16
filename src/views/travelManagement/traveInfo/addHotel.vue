@@ -359,7 +359,8 @@ const validateCheckIn = async (_rule: Rule, value: string, index: number) => {
  */
 const getOrderAmount = (data: Array<{[k:string]:any}>, startDate: string, endDate: string) => {
 	
-	const day = getDiffDay(startDate, endDate);
+	// const day = getDiffDay(startDate, endDate);
+	const day = dayjs(dayjs(endDate).format('YYYY-MM-DD')).diff(dayjs(startDate).format('YYYY-MM-DD'), 'days') 
 	console.log(day);
 	const amount = []
 	for (let k = 0; k < data.length; k++) {
