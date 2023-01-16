@@ -211,17 +211,19 @@ const state = reactive({
 const changeAuditVisible = ref(false);
 const rejectAuditVisible = ref(false);
 const auditRemark = ref('');
-const waitAuditNum = ref(0);
+const waitAuditNum = computed(() => travelStore.auditList.withdrawalChange.waitAuditNum);
 const onSearch = async () => {
 	travelStore.auditList.withdrawalChange.params.status = AuditStaus.withdrawalChange;
 	const res = await travelStore.getAuditList(travelStore.auditList.withdrawalChange.params);
-	if (!waitAuditNum.value) {
-      res.content.forEach((item: any) => {
-        if (item.financeAuditStatus === 1) {
-          waitAuditNum.value += 1;
-        }
-      })
-    }
+  if (travelStore.auditList.withdrawalChange.params.pageNo === 1) {
+    let num = 0;
+    res.content.forEach((item: any) => {
+      if (item.financeAuditStatus === 1) {
+        num += 1;
+      }
+    })
+    travelStore.setWaitAuditNumt(num, 'withdrawalChange');
+  }
 	travelStore.setAuditList(res, 'withdrawalChange');
 };
 const cancel = (): any => {
@@ -249,15 +251,16 @@ const sendAudit = (status: any) => {
 				queryData.append('itineraryId', state.newItinerary.oid);
 				queryData.append('isPass', true);
 				console.log('queryData:', queryData);
-				// api.travelManagement.financeAudit(queryData)
-				// 	.then((res: any) => {
-				// 		console.log('审核返回信息：', res);
-				// 		message.success('保存成功');
-				// 		cancel();
-				// 	})
-				// 	.catch((err: any) => {
-				// 		console.error(err);
-				// 	});
+				api.travelManagement.financeAudit(queryData)
+					.then((res: any) => {
+						console.log('审核返回信息：', res);
+						message.success('保存成功');
+            travelStore.setWaitAuditNumt(0, 'withdrawalChange');
+						cancel();
+					})
+					.catch((err: any) => {
+						console.error(err);
+					});
 			},
 			onCancel() {},
 		});
@@ -276,6 +279,7 @@ const rejectAudit = () => {
 		.then((res: any) => {
 			console.log('审核返回信息：', res);
 			message.success('保存成功');
+      travelStore.setWaitAuditNumt(0, 'withdrawalChange');
 			cancel();
 		})
 		.catch((err: any) => {
