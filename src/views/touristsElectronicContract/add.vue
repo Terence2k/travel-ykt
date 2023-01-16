@@ -669,9 +669,8 @@ const validateCertificatesNo = async (_rule: Rule, value: string, obj: any) => {
   }
 };
 const validateNumber = async (obj: any, key: string) => {
-  if (obj[key] === '') {
-    priceChange(obj)
-    return Promise.resolve();
+  if (['', undefined].includes(obj[key])) {
+    return Promise.reject('请输入价格');
   } else {
     if (!isNaN(Number(obj[key]))) {
       priceChange(obj)
@@ -1096,7 +1095,11 @@ const onCostDelete = (index: number) => {
   dataCostSource.value.splice(index, 1)
 };
 const save = (obj: any) => {
-  obj.isEdit = false
+  if (!obj.priceName || !obj.adultPrice || !obj.childPrice) {
+    message.error('请输入费用名称或成人、儿童价！')
+  } else {
+    obj.isEdit = false
+  }
 };
 const cancel = (obj: any) => {
   obj.isEdit = false
@@ -1120,7 +1123,7 @@ const getLineFee = () => {
   })
 }
 const guideFee = ref<CostItem>({
-  isEdit: true,
+  isEdit: false,
   isOperate: true,
   isDelete: false,
   priceName: "导游服务费",
@@ -1140,6 +1143,12 @@ const getList = () => {
   })
   if (gwFee.value.length > 0) {
     arr.push(...gwFee.value)
+  }
+  // 新增的时候为编辑状态，编辑的时候为非编辑状态，点击编辑再编辑
+  if (isAdd.value) {
+    guideFee.value.isEdit = true
+  } else {
+    guideFee.value.isEdit = false
   }
   arr.push(guideFee.value)
   if (LineFee.length > 0) {
