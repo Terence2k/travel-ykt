@@ -108,6 +108,16 @@ const onSearch = async () => {
 	else {
 		const res = await travelStore.getAuditList(params);
 		travelStore.setAuditList(res, chartField);
+    // 获取待审核
+    if (travelStore.auditList[chartField].params.pageNo === 1) {
+      let num = 0;
+      res.content.forEach((item: any) => {
+        if (item.financeAuditStatus === 1) {
+          num += 1;
+        }
+      })
+      travelStore.setWaitAuditNumt(num, 'financeSendGroup');
+    }
 	}
 };
 //重置
