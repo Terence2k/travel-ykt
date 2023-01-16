@@ -998,6 +998,12 @@ const getList = () => {
   if (gwFee.value.length > 0) {
     arr.push(...gwFee.value)
   }
+  // 新增的时候为编辑状态，编辑的时候为非编辑状态，点击编辑再编辑
+  if (isAdd.value) {
+    guideFee.value.isEdit = true
+  } else {
+    guideFee.value.isEdit = false
+  }
   arr.push(guideFee.value)
   if (entrustedFee) {
     arr.push(entrustedFee)
