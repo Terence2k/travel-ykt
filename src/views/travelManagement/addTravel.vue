@@ -361,7 +361,8 @@ watch(activeKey, (newVal) => {
 		const allFeesProducts = travelStore.compositeProducts.map((it: any) => {
 			it.peopleCount = travelStore.touristList.length;
 			it.unPrice = it.feeNumber;
-			it.dayCount = dayjs(travelStore.teamTime[1]).diff(travelStore.teamTime[0], 'day');
+			it.dayCount = getDiffDay(travelStore.teamTime[0], travelStore.teamTime[1])
+			// it.dayCount = dayjs(travelStore.teamTime[1]).diff(travelStore.teamTime[0], 'day');
 			it.totalMoney = getAmount(it.confirmDailyCharge, it.feeNumber, it.feeModel);
 			return it;
 		});
