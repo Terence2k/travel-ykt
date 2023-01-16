@@ -1,5 +1,5 @@
 <template>
-  <div style="display: flex;align-items: center; height: 100%;">
+  <div style="display: flex;align-items: center; height: 100%;background: #fff;">
     <div class="login-container">
       <div class="pic-box rowCC">
         <LoginPic />
@@ -27,7 +27,7 @@ import LoginPic from './pic.vue';
 
 .login-container {
 	width: 77vw;
-	background: rgba(255, 255, 255, 0.39);
+	background: rgba(255, 255, 255);
 	box-shadow: 0px 8px 50px rgba(5, 27, 80, 0.1);
 	display: flex;
 	justify-content: space-between;
@@ -58,7 +58,7 @@ import LoginPic from './pic.vue';
 	}
 	.login_right_container {
     min-width: 500px;
-		background: rgba(255, 255, 255, 0.39);
+		background: rgba(255, 255, 255);
 		box-shadow: 0px 2px 16px rgba(1, 48, 100, 0.12);
 		border-radius: 4px;
     padding: 8%;

@@ -73,7 +73,7 @@ import CommonImg from '@/components/common/CommonImg.vue';
     const travelStore = useTravelStore()
     const touristList = ref([]);
     const selectedRowKeys = ref([])// 已预定游客
-    const emits = defineEmits(['update:modelValue', 'onSuccess'])
+    const emits = defineEmits(['update:modelValue', 'onSuccess', 'getTravelDetail'])
     const IDCard = computed(() => travelStore.IDCard)
     const specialId = computed(() => travelStore.specialId)
     const columns = [
@@ -189,10 +189,10 @@ import CommonImg from '@/components/common/CommonImg.vue';
                 `),
                 // 订票人数（${reserveParams.reservePeopleList.length}人），订单金额（${ticketInfo.value.unitPrice * reserveParams.reservePeopleList.length}元）。请免票人员带好相关证件到线下进行核准，学生证/老年人身份证可以到线下进行差价退款。
             onOk() {
-                
                 api.travelManagement.reserveTicket(reserveParams).then((res:any) => {
                     // travelStore.setTicketStatus(props.ticketId);
-                    travelStore.setTicketResvePeple(reserveParams.reservePeopleList.length);
+                    // travelStore.setTicketResvePeple(reserveParams.reservePeopleList.length);
+                    emits('getTravelDetail');
                     message.success('预定成功');
                     callback()
                 }).catch((err:any) => {

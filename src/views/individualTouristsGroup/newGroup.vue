@@ -62,7 +62,7 @@
 					</div>
 					<div class="add_box">
 						<div class="tag">选择合同</div>
-						<div v-if="travelStore.teamStatus">
+						<div>
 							<a-button @click="addContract" type="primary">添加</a-button>
 						</div>
 					</div>
@@ -93,7 +93,7 @@
 				</div>
 			</a-tab-pane>
 			<a-tab-pane key="2" tab="产品预订">
-				<traveInfo></traveInfo>
+				<traveInfo @getTravelDetail="getTraveDetail"></traveInfo>
 				<div class="operation" v-if="travelStore.teamStatus">
 					<a-button @click="saveDraft(true)" type="primary" style="margin-right:20px">保存草稿</a-button>
 					<a-button @click="nextTep('1')" type="primary" style="margin-right:20px">上一步</a-button>
@@ -149,9 +149,9 @@
 				<template v-if="column.key === 'isAncientUygur'">
 					{{ cmpIsAncientUygur(record.isAncientUygur) }}
 				</template>
-				<template v-if="column.key === 'healthyCode'">
+				<!-- <template v-if="column.key === 'healthyCode'">
 					<span :class="cmpHealthyColor(text)">{{ text }}</span>
-				</template>
+				</template> -->
 			</template>
 		</CommonTable>
 	</CommonModal>
@@ -213,7 +213,8 @@ import { message } from 'ant-design-vue/es';
 import { cloneDeep } from 'lodash';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import dayjs from 'dayjs';
-import { disabledRangeTime, getAmount } from '@/utils';
+import { disabledRangeTime, getAmount, getDiffDay } from '@/utils';
+import { accDiv,accMul} from '@/utils/compute';
 const travelStore = useTravelStore();
 const router = useRouter();
 const route = useRoute();
@@ -351,11 +352,11 @@ const touristColumns = [
 		dataIndex: 'isHealthy',
 		key: 'isHealthy',
 	},
-	{
+	/* {
 		title: '健康码',
 		dataIndex: 'healthyCode',
 		key: 'healthyCode',
-	},
+	}, */
 	{
 		title: '古维费购买状态',
 		dataIndex: 'isAncientUygur',
@@ -491,6 +492,55 @@ const datePickerChange = () => {
 		form.value.groupType = undefined;
 	}
 }
+const disDate = (res: any) => {
+	const start = dayjs().isBefore(dayjs(res.basic.startDate));
+	const isCurrent = dayjs(res.basic.startDate).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD');
+	let dis = null;
+	console.log(start);
+	if (!start && !isCurrent) {
+		dis = (current: Dayjs) => {
+			return (
+				(current && current < dayjs().startOf('day')) || (dayjs(res.basic.endDate) && dayjs(res.basic.endDate).endOf('day') < current && current)
+			);
+		};
+	} else {
+		dis = (current: Dayjs): any => {
+			return (
+				(dayjs(res.basic.startDate) && dayjs(res.basic.startDate).startOf('day') > current && current) ||
+				(dayjs(res.basic.endDate) && dayjs(res.basic.endDate).endOf('day') < current && current)
+			);
+		};
+	}
+	return dis;
+};
+
+const disTime = (res: any) => {
+	const isCurrent = dayjs(travelStore.baseInfo.startDate).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD');
+	const startFlag = dayjs().isBefore(dayjs(travelStore.baseInfo.startDate));
+	let start = {
+		hour: dayjs(res.basic.startDate).hour(),
+		min: dayjs(res.basic.startDate).minute(),
+		second: dayjs(res.basic.startDate).second(),
+	};
+	start =
+		startFlag || isCurrent
+			? start
+			: {
+				hour: 0,
+				min: 0,
+				second: 0,
+			};
+
+	let end = {
+		hour: dayjs(res.basic.endDate).hour(),
+		min: dayjs(res.basic.endDate).minute(),
+		second: dayjs(res.basic.endDate).second(),
+	};
+	return {
+		start,
+		end,
+	};
+};
 const setBaseInfo = (res: any) => {
 	if (res) {
 		const {
@@ -588,12 +638,14 @@ const getTraveDetail = () => {
 					it.scenicId = it.productId;
 					it.scenicName = it.productName;
 					return it;
-				})
+				}).filter((it: any) => it.scenicId)
 				: [];
 			const hotel = [
 				...res.waitBuyItem.waitBuyHotel,
 				...res.hotelList.map((it: any) => {
-					it.orderFee = it.orderFee / 100;
+					it.orderFee = accDiv(it.orderFee, 100);
+					it.dayCount = getDiffDay(it.startDate, it.endDate);
+					it.roomName = it.roomTypeList.map((item: any) => `${item.roomTypeName} * ${item.roomCount}<br />`).join('')
 					return it;
 				}),
 				...travelStore.templateHotel,
@@ -603,7 +655,7 @@ const getTraveDetail = () => {
 			travelStore.scenicTickets = [
 				...res.waitBuyItem.waitBuyTicket,
 				...res.ticketList.map((it: any) => {
-					it.unitPrice = it.unitPrice / 100;
+					it.unitPrice = accDiv(it.unitPrice, 100);
 					return it;
 				}),
 				...travelStore.templateTicket,
@@ -611,30 +663,29 @@ const getTraveDetail = () => {
 			travelStore.insuranceStatus = res.insuranceStatus?.toString();
 			travelStore.checkInsurance = res.insuranceStatus ? true : false;
 			travelStore.teamTime = [res.basic.startDate, res.basic.endDate] as any;
-			// travelStore.setDisabled = disDate(res);
-			// const dateTime = disTime(res);
-			// travelStore.setStarEndHMS = dateTime
-			// travelStore.defaultStartTime = new Date(2022, 12, 1, dateTime.start.hour, dateTime.start.min, dateTime.start.second);
-			// travelStore.defaultEndTime = new Date(2022, 12, 1, dateTime.end.hour, dateTime.end.min, dateTime.end.second)
-			// console.log(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end, '-----');
-			// travelStore.setDisabledTime = disabledRangeTime(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end) as any;
+			travelStore.setDisabled = disDate(res);
+			const dateTime = disTime(res);
+			travelStore.setStarEndHMS = dateTime
+			travelStore.defaultStartTime = new Date(2022, 12, 1, dateTime.start.hour, dateTime.start.min, dateTime.start.second);
+			travelStore.defaultEndTime = new Date(2022, 12, 1, dateTime.end.hour, dateTime.end.min, dateTime.end.second)
+			console.log(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end, '-----');
+			travelStore.setDisabledTime = disabledRangeTime(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end) as any;
 			route.query.tab && setTimeout(() => (activeKey.value = route.query.tab as string));
-			if (route.query.tab === '2') {
-				const allFeesProducts = travelStore.compositeProducts.map((it: any) => {
-					it.peopleCount = travelStore.touristList.length;
-					it.unPrice = it.feeNumber;
-					it.dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day');
-					it.totalMoney = getAmount(it.confirmDailyCharge, it.feeNumber, it.feeModel);
-					return it;
-				});
-				travelStore.setCompositeProducts(allFeesProducts);
-				/* isSaveBtn.value = false;
-				check.value = !check.value; */
-			}
 			// getHealthCode();
 		});
 };
-
+watch(activeKey, (newVal) => {
+	if (newVal === '2') {
+		const allFeesProducts = travelStore.compositeProducts.map((it: any) => {
+			it.peopleCount = travelStore.touristList.length;
+			it.unPrice = it.feeNumber;
+			it.dayCount = dayjs(form.value.endDate).diff(form.value.startDate, 'day');
+			it.totalMoney = getAmount(it.confirmDailyCharge, it.feeNumber, it.feeModel);
+			return it;
+		});
+		travelStore.setCompositeProducts(allFeesProducts);
+	}
+});
 // 步骤跳转
 const nextTep = (val: string) => {
 	const a = Promise.all([
@@ -713,7 +764,6 @@ const guideChange = (val: any) => {
 	}
 }
 const editDraft = async (callBack?: any) => {
-	form.value.compositeProducts = travelStore.curentProduct
 	api.editIndividualTouristsGroup(form.value).then((res: any) => {
 		isRefresh.value = '1'
 		callBack && callBack(res)
@@ -726,6 +776,7 @@ const saveDraft = async (showMessage?: boolean) => {
 			dateFormRef.value?.validate()
 		])
 		a.then(async () => {
+			form.value.compositeProducts = !travelStore.isOptional ? travelStore.compositeProducts : travelStore.curentProduct
 			if (isAdd.value) {
 				const res = await api.createIndividualItinerary(form.value)
 				if (res) {
@@ -747,7 +798,7 @@ const saveDraft = async (showMessage?: boolean) => {
 		})
 	})
 }
-// 批量获取健康码
+/* // 批量获取健康码
 const getHealthyCodes = async (ids: number[]) => {
 	let res = await api.getHealthyCode(ids)
 	if (res) {
@@ -769,8 +820,8 @@ const getHealthyCodes = async (ids: number[]) => {
 		})
 	}
 	return res || []
-}
-const configCodeName = (certificateCodes: any, targetArr: any) => {
+} */
+/* const configCodeName = (certificateCodes: any, targetArr: any) => {
 	for (let i = 0, l = certificateCodes.length; i < l; i++) {
 		const item = certificateCodes[i];
 		for (let j = 0, l = targetArr.length; j < l; j++) {
@@ -780,7 +831,7 @@ const configCodeName = (certificateCodes: any, targetArr: any) => {
 			}
 		}
 	}
-}
+} */
 const getTourist = async () => {
 	if (selectedContract.value.length > 0) {
 		let params = selectedContract.value.map((item: any) => {
@@ -791,14 +842,14 @@ const getTourist = async () => {
 		})
 		const res = await api.findIndividualContractTourist(params)
 		if (res) {
-			// 获取身份证列表
+			/* // 获取身份证列表
 			const certificateIds = res.map((item: any) => {
 				return { certificateId: item.certificatesNo }
 			})
 			// 根据身份证列表查询健康码列表
 			const certificateCodes = await getHealthyCodes(certificateIds)
 			// 将健康码和游客列表数据关联
-			configCodeName(certificateCodes, res)
+			configCodeName(certificateCodes, res) */
 
 			touristTable.value.data = res
 		} else {
@@ -856,7 +907,6 @@ const getContractDetails = async () => {
 const findByIdTeamType = async () => {
 	let allFeesProducts = []
 	const res = await api.findIndividualTeamType();
-
 	for (let i = 0; i < res.productVos.length; i++) {
 		// 综费产品itemId为4
 		if (res.productVos[i].itemId === 4) {
@@ -879,14 +929,13 @@ const findByIdTeamType = async () => {
 				result.unPrice = result.feeNumber;
 				result.isDaily = result.confirmDailyCharge ? true : false;
 				result.productName = result.comprehensiveFeeProductName;
-				result.dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day')
+				result.dayCount = dayjs(form.value.endDate).diff(form.value.startDate, 'day')
 				result.totalMoney = getAmount(
 					result.confirmDailyCharge,
 					result.feeNumber,
 					result.feeModel
 				)
 				allFeesProducts.push(result)
-
 			}
 		} else if (res.productVos[i].itemId === 2) {
 
@@ -898,7 +947,6 @@ const findByIdTeamType = async () => {
 	if (travelStore.productList[0]?.productId) {
 		travelStore.curentProduct = allFeesProducts.filter((it: any) => it.oid === travelStore.productList[0].productId);
 	} else if (allFeesProducts.length >= 1) {
-		console.log(allFeesProducts)
 		travelStore.curentProduct = cloneDeep([allFeesProducts[0]]);
 	} else {
 		travelStore.curentProduct = [];
@@ -930,10 +978,10 @@ watch(
 	() => route.query.id,
 	(newVal) => {
 		if (newVal) {
+			findByIdTeamType()
 			form.value.oid = newVal as string
 			isAdd.value = false
 			getGuideList()
-			findByIdTeamType()
 			getContractDetails()
 			getTraveDetail()
 		}
@@ -949,8 +997,8 @@ watch(
 	},
 )
 onMounted(() => {
-	getGuideList()
 	findByIdTeamType()
+	getGuideList()
 })
 </script>
 

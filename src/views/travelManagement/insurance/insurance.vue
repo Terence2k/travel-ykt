@@ -31,7 +31,7 @@ const props = defineProps({
 });
 
 const checked = ref<boolean>(travelStore.insuranceStatus ? true : false);
-const emits = defineEmits(['onSuccess']);
+const emits = defineEmits(['onSuccess', 'getTravelDetail']);
 // watch(() => props.onCheck, newVal => {
 // 	if (!checked.value) {
 // 		return message.error('请同意《云南省团队旅游保险购买政策》、《一卡通平台免责声明》')

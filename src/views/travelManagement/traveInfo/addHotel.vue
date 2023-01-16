@@ -5,7 +5,7 @@
 				<a-select 
 					:disabled="productRow.productId &&
 								productRow.productId.toString() ? true : false"
-					v-model:value="formState.hotelStarId" placeholder="请选择星级" @change="handleChange">
+					v-model:value="formState.hotelStarId" placeholder="请选择星级" @change="handelChangeStart">
 					<a-select-option 
 						:value="item.oid" 
 						v-for="item in hotelData.hotelStart" 
@@ -143,7 +143,7 @@
 			</div>
 
 			<a-form-item label="订单金额">
-				<a-input v-model:value="formState.orderFee" disabled placeholder="无需填写，填写房间数量后自动计算" />
+				<a-input v-model:value="orderFeeCount" disabled placeholder="无需填写，填写房间数量后自动计算" />
 				<span class="gary">如果符合满16减1标准，则自动优惠减扣。</span>
 			</a-form-item>
 
@@ -185,7 +185,7 @@ const roomList = {
 };
 const travelStore = useTravelStore()
 const formRef = ref();
-
+const emits = defineEmits(['update:modelValue', 'getTravelDetail']);
 
 const disCheckInTime = computed(() => {
 	// const isCurrent = dayjs(travelStore.baseInfo.startDate).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD')
@@ -270,6 +270,14 @@ const handleHotel = (e: any, option: any) => {
 	formState.hotelName = option.name;
 }
 
+const handelChangeStart = (id: any, option: any) => {
+	formState.hotelId = ''
+	for (let i = 0; i < formState.roomTypeList.length; i++) {
+		formState.roomTypeList[i].hotelRoomTypeId = ''
+	}
+	handleChange(id, option)
+}
+
 const handleChangCheckIn = () => {
 	// disLeave.value = (current: Dayjs): any => current && current < dayjs(formState.arrivalDate).endOf('day') || 
 	// (dayjs(travelStore.teamTime[1]).endOf('day') < current && current)
@@ -285,7 +293,7 @@ const disabeldleave = (current: Dayjs) => {
 }
 
 const changeRoomType = (e: any, option: any, index: number) => {
-	console.log(12312312312313131)
+	// console.log(12312312312313131)
 	formState.roomTypeList[index].roomOccupancyNum = option.num;
 	formState.roomTypeList[index].roomTypeLimitPeople = option.num;
 	formState.roomTypeList[index].stockNum = option.stockNum
@@ -303,6 +311,7 @@ const handleMoeny = (i: number, e: string) => {
 }
 
 const handleChange = async (id: number, option: any) => {
+	// console.log(id, option, 'formState.hotelIdformState.hotelIdformState.hotelId');
 	formState.honestyGuidePrice = option.price;
 	formState.hotelStarCode = option.name;
 	id && (hotelData.hotel = await api.getHotelInfoByRated(id));
@@ -395,18 +404,18 @@ const submit = async () => {
 		// if (Number((formState.scheduledNumber / travelStore.touristList.length).toFixed) < 0.8) {
 		// 	return message.error('入住总人数不低于团客总数的80%')
 		// }
-		const newFormState = cloneDeep(form)
-		newFormState.startDate = newFormState.arrivalDate
-		newFormState.endDate = newFormState.departureDate
-		newFormState.hotelStar = newFormState.hotelStarCode
-		newFormState.orderFee = accDiv(newFormState.orderAmount, 100)
-		newFormState.reservePeopleCount = newFormState.roomTypeList.map((it:any) => Number(it.checkInNumber)).reduce((prev: number, next: number) => prev + next)
-		newFormState.roomCount = newFormState.roomTypeList.map((it:any) => Number(it.reserveNumber)).reduce((prev: number, next: number) => prev + next)
+		// const newFormState = cloneDeep(form)
+		// newFormState.startDate = newFormState.arrivalDate
+		// newFormState.endDate = newFormState.departureDate
+		// newFormState.hotelStar = newFormState.hotelStarCode
+		// newFormState.orderFee = accDiv(newFormState.orderAmount, 100)
+		// newFormState.reservePeopleCount = newFormState.roomTypeList.map((it:any) => Number(it.checkInNumber)).reduce((prev: number, next: number) => prev + next)
+		// newFormState.roomCount = newFormState.roomTypeList.map((it:any) => Number(it.reserveNumber)).reduce((prev: number, next: number) => prev + next)
 		const res = await api.travelManagement.addHotel(form);
-		res && (newFormState.oid = res);
+		// res && (newFormState.oid = res);
 		// message.success('新增成功');
-		
-		travelStore.setHotels(newFormState)
+		emits('getTravelDetail')
+		// travelStore.setHotels(newFormState)
 		// callback()
 	} catch (errorInfo) {
 		// callback(false);
@@ -456,7 +465,7 @@ const getRoomType = async (hotelId: number | string, leaveTime: string, enterTim
 		enterTime,
 	});
 };
-const emits = defineEmits(['update:modelValue']);
+
 const dialogVisible = ref(false);
 watch(
 	() => props.modelValue,
@@ -548,6 +557,11 @@ watch(
 		}
 	}
 );
+
+const orderFeeCount = computed(() => {
+	
+	return getOrderAmount(formState.roomTypeList, formState.arrivalDate, formState.departureDate) || 0
+})
 getHotelStarList();
 </script>
 

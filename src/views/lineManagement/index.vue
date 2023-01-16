@@ -1286,9 +1286,33 @@ const getEditDetails = async (oid: number) => {
       individualLineTicketBos,
       individualLinePriceBos
     } = res
-    form.CATERINGSelected = getData(groupBy(individualLineCateringBos, 'day'), 'cateringCompanyId')
-    form.TICKETSelected = getData(groupBy(individualLineTicketBos, 'day'), 'ticketCompanyId')
-    form.HOTELSelected = getData(groupBy(individualLineHotelBos, 'day'), 'hotelCompanyId')
+    if (individualLineCateringBos?.length > 0) {
+      form.CATERINGSelected = getData(groupBy(individualLineCateringBos, 'day'), 'cateringCompanyId')
+    } else {
+      form.CATERINGSelected = [{
+        day: 1,
+        selectedList: [],
+        key: Date.now(),
+      }]
+    }
+    if (individualLineTicketBos?.length > 0) {
+      form.TICKETSelected = getData(groupBy(individualLineTicketBos, 'day'), 'ticketCompanyId')
+    } else {
+      form.TICKETSelected = [{
+        day: 1,
+        selectedList: [],
+        key: Date.now(),
+      }]
+    }
+    if (individualLineHotelBos?.length > 0) {
+      form.HOTELSelected = getData(groupBy(individualLineHotelBos, 'day'), 'hotelCompanyId')
+    } else {
+      form.HOTELSelected = [{
+        day: 1,
+        selectedList: [],
+        key: Date.now(),
+      }]
+    }
     individualLinePriceBos?.forEach((item: any) => {
       form[item.priceTypeCode] = accDivValue(item.priceAmount)
     })

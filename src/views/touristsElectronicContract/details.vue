@@ -57,8 +57,8 @@
         <div class="content_item"
           v-show="((form.contractType === 2) && [2, 3, 4, 5, 6, 7].includes(form.contractStatus))">
           <div class="key_name">合同编号</div>
-          <div class="key_val">{{ form.electronicContractNo }}<a :href="form.fileUrl" class="append"
-              v-show="form.fileUrl">下载12301合同电子版
+          <div class="key_val">{{ form.electronicContractNo }}<a target="_blank" :href="form.signingUrl" class="append"
+              v-show="form.signingUrl">下载12301合同电子版
             </a></div>
         </div>
         <div class="content_item">
@@ -99,28 +99,25 @@
       已选择线路（<span class="count">{{ form.individualContractLineBos.length }}</span>）
     </div>
     <div class="content">
-      <CommonTable :dataSource="form.individualContractLineBos" :columns="lineColumns">
+      <a-table :columns="lineColumns" :data-source="form.individualContractLineBos" bordered :pagination="false">
         <template #bodyCell="{ column, record, index }">
           <template v-if="column.key === 'index'">
             {{ index + 1 }}
           </template>
         </template>
-      </CommonTable>
+      </a-table>
     </div>
     <div class="tag">
       签约游客（<span class="count">{{ form.individualContractTouristBos.length }}</span>）
     </div>
     <div class="content">
-      <CommonTable :dataSource="form.individualContractTouristBos" :columns="touristColumns">
-        <template #bodyCell="{ column, record, text, index }">
+      <a-table :columns="touristColumns" :data-source="form.individualContractTouristBos" bordered :pagination="false">
+        <template #bodyCell="{ column, record, index }">
           <template v-if="column.key === 'index'">
             {{ index + 1 }}
           </template>
-          <!-- <template v-if="column.key === 'healthyCode'">
-            <span :class="cmpHealthyColor(text)">{{ text }}</span>
-          </template> -->
         </template>
-      </CommonTable>
+      </a-table>
     </div>
     <div class="content" v-show="(form.contractType === 2)">
       <div class="content_item">
@@ -148,15 +145,14 @@
         游客合同费用支付方式：{{ form.paymentMethodName }}
       </div>
     </div>
-
     <div class="content">
-      <CommonTable :dataSource="form.individualContractPriceBos" :columns="costColumns">
+      <a-table :columns="costColumns" :data-source="form.individualContractPriceBos" bordered :pagination="false">
         <template #bodyCell="{ column, record, index }">
           <template v-if="column.key === 'index'">
             {{ index + 1 }}
           </template>
         </template>
-      </CommonTable>
+      </a-table>
     </div>
     <div class="tag">
       其他约定
@@ -235,7 +231,7 @@ const form = ref({
   emergencyContact: '',
   emergencyContactPhone: '',
   electronicContractNo: '',
-  fileUrl: '',
+  signingUrl: '',
   contractStatus: -1,
 })
 const lineColumns = [
@@ -246,8 +242,8 @@ const lineColumns = [
   },
   {
     title: '线路名称',
-    dataIndex: 'lineId',
-    key: 'lineId',
+    dataIndex: 'lineName',
+    key: 'lineName',
   },
   {
     title: '开始时间',
@@ -327,7 +323,7 @@ const touristColumns = [
     key: 'healthyCode',
   }, */
   {
-    title: '古维费代收代缴',
+    title: '古维费购买状态',
     dataIndex: 'isAncientUygur',
     key: 'isAncientUygur',
   },
@@ -405,7 +401,7 @@ const setList = (list: any) => {
   list.forEach((item: any) => {
     item.adultPrice = accDivValue(item.adultPrice)
     item.childPrice = accDivValue(item.childPrice)
-    item.individualSubtotal = accDivValue(item.individualSubtotal)
+    item.hasOwnProperty('individualSubtotal') && (item.individualSubtotal = accDivValue(item.individualSubtotal))
     const keys = Object.keys(item)
     for (let i = 0; i < keys.length; i++) {
       const element = keys[i];
@@ -423,7 +419,7 @@ const setList1 = (list: any) => {
       } else if (element === 'isHealthy') {
         item[element] = [undefined, null, ''].includes(item[element]) ? '/' : item[element] === 1 ? '是' : '否'
       } else if (element === 'isAncientUygur') {
-        item[element] = [undefined, null, ''].includes(item[element]) ? '/' : item[element] === 1 ? '本次需要代收' : '本次不需要代收'
+        item[element] = [undefined, null, ''].includes(item[element]) ? '/' : item[element] === 1 ? '已购' : '未购'
       } else if (element === 'certificatesType') {
         switch (item[element]) {
           case 'IDENTITY_CARD':
@@ -487,7 +483,7 @@ const getDetails = async (id: number) => {
       emergencyContact,
       emergencyContactPhone,
       electronicContractNo,
-      fileUrl,
+      signingUrl,
       contractStatus
     } = res
     const arr = contractFileUrl ? contractFileUrl.split(',') : []
@@ -592,7 +588,7 @@ const getDetails = async (id: number) => {
       emergencyContact,
       emergencyContactPhone,
       electronicContractNo: electronicContractNo || '/',
-      fileUrl,
+      signingUrl,
       contractStatus
     }
   }

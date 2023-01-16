@@ -164,7 +164,8 @@
 			default: {}
 		}
 	})
-	const countMoney = computed(()=> (accMul(accDiv(formState.unitPrice, 100), travelStore.touristList.length)) || 0)
+	const emits = defineEmits(['update:modelValue', 'getTravelDetail'])
+	const countMoney = computed(()=> (accMul(accDiv(ticketPrice.value, 100), travelStore.touristList.length)) || 0)
     const tableData = ref([])
     const ticketData = reactive<{[k:string]: any}>({
         scenicList: [],
@@ -249,6 +250,7 @@
 			formState.ticketId && formState.startDate && getChildTicket(formState.ticketId, formState.startDate)
 		}
 	}
+
     
 	const handleOk = async (callback: Function) => {
 		try {
@@ -262,14 +264,15 @@
 			} else {
 				formState.childTicketIds = []
 			}
-			const newFormState = cloneDeep(formState)
-			newFormState.reservePeopleCount = formState.peopleCount
-			newFormState.unitPrice = accDiv(ticketPrice.value, 100);
-			newFormState.totalFee = accMul(newFormState.peopleCount, newFormState.unitPrice)
+			// const newFormState = cloneDeep(formState)
+			// newFormState.reservePeopleCount = formState.peopleCount
+			// newFormState.unitPrice = accDiv(ticketPrice.value, 100);
+			// newFormState.totalFee = accMul(newFormState.peopleCount, newFormState.unitPrice)
 			const res = await api.travelManagement.addTicket(formState)
-			res && (newFormState.oid = res)
+			emits('getTravelDetail')
+			// res && (newFormState.oid = res)
+			// // travelStore.setTicket(newFormState)
 			// travelStore.setTicket(newFormState)
-			travelStore.setTicket(newFormState)
 			
 			callback()
 		} catch (errorInfo) {
@@ -338,7 +341,7 @@
 
 	}
 
-	const emits = defineEmits(['update:modelValue'])
+	
 	const dialogVisible = ref(false);
 	watch(() => props.modelValue, (newVal) => {
 		dialogVisible.value = newVal
@@ -350,6 +353,7 @@
 			for (let k in formState) {
 				formState[k] = '';
 			}
+			ticketPrice.value = 0
 		} else {
 			
 			!props.productRow.productId && props.ticketId && api.travelManagement.ticketDetail(props.ticketId).then((res:any) => {
