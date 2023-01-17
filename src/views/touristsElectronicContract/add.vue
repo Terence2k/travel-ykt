@@ -372,7 +372,7 @@
             </a-form-item>
             <a-form-item name="phone" label="游客代表手机号"
               :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.phone, true, '请填写游客代表手机号')) }]">
-              <a-input v-model:value="form.phone" placeholder="请填写游客代表手机号" allowClear>
+              <a-input v-model:value="form.phone" placeholder="请填写游客代表手机号" @change="phoneChange" allowClear>
               </a-input>
             </a-form-item>
             <a-form-item name="certificatesAddress" label="游客代表地址">
@@ -632,8 +632,7 @@ const isHealthyOption = [
 const validatePhone = async (mobile: string, required: boolean = false, msg?: string) => {
   if (required && !mobile) {
     return Promise.reject(msg);
-  }
-  else if (mobile && !/^1[3-9]\d{9}$/.test(mobile)) {
+  } else if (mobile && !/^1[3-9]\d{9}$/.test(mobile)) {
     return Promise.reject('请输入正确的手机号！');
   }
 }
@@ -1463,6 +1462,18 @@ const getLineOptions = async () => {
     }
   })
 }
+// 游客代表手机号改变事件
+let phoneTimer: NodeJS.Timeout
+const phoneChange = () => {
+  phoneTimer && clearTimeout(phoneTimer)
+  phoneTimer = setTimeout(async () => {
+    dataTouristSource.value.forEach((item: any) => {
+      if (item.isAncientUygur === 1) {
+        item.phone = form.value.phone
+      }
+    })
+  }, 1000)
+}
 // 游客代表改变事件
 const touristChange = () => {
   if (form.value.touristName) {
@@ -1485,7 +1496,7 @@ const addressChange = () => {
   addresTimer && clearTimeout(addresTimer)
   addresTimer = setTimeout(async () => {
     dataTouristSource.value.forEach((item: any) => {
-      if (item.certificatesNo === form.value.touristName) {
+      if (item.isAncientUygur === 1) {
         item.certificatesAddress = form.value.certificatesAddress
       }
     })
