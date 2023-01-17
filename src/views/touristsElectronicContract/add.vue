@@ -1095,11 +1095,7 @@ const onCostDelete = (index: number) => {
   dataCostSource.value.splice(index, 1)
 };
 const save = (obj: any) => {
-  if (!obj.priceName || !obj.adultPrice || !obj.childPrice) {
-    message.error('请输入费用名称或成人、儿童价！')
-  } else {
-    obj.isEdit = false
-  }
+  obj.isEdit = false
 };
 const cancel = (obj: any) => {
   obj.isEdit = false
