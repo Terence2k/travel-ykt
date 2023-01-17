@@ -57,7 +57,7 @@
 
 <script setup lang="ts">
 import BaseModal from '@/components/common/BaseModal.vue';
-import { isIntegerNotMust, isBtnZeroToHundred } from '@/utils/validator';
+import { isIntegerNotMust, isBtnZeroToHundred, isTwoDecimalPlaces } from '@/utils/validator';
 import { Ref } from 'vue';
 import lodash from 'lodash';
 import { message } from 'ant-design-vue';
@@ -104,7 +104,7 @@ const rules: any = {
 	// 人数和金额
 	integer: [{ required: true, validator: isIntegerNotMust, trigger: 'blur' }],
 	// 金额
-	money: [{ required: true, message: '请输入金额' }],
+	money: [{ required: true, validator: isTwoDecimalPlaces, trigger: 'blur' }],
 };
 const splitList = ref([]);
 const init = async () => {
