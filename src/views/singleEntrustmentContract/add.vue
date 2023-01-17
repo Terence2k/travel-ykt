@@ -414,7 +414,7 @@
             </template>
             <template v-if="column.dataIndex === 'priceName'">
               <a-input v-if="record.isEdit && record.priceName !== '导游服务费'"
-                v-model:value="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="输入产品名称" />
+                v-model:value="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="请输入产品名称" />
               <template v-else>
                 {{ text }}
               </template>
@@ -424,7 +424,7 @@
                 :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validateNumber(dataCostSource[index], 'adultPrice')) }]"
                 style="margin-bottom:0">
                 <a-input v-set-number="{ key: 'adultPrice', obj: dataCostSource[index] }"
-                  v-model:value="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="输入价格" />
+                  v-model:value="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="请输入成人价" />
               </a-form-item>
               <template v-else>
                 {{ text }}
@@ -435,7 +435,7 @@
                 :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validateNumber(dataCostSource[index], 'childPrice')) }]"
                 style="margin-bottom:0">
                 <a-input v-set-number="{ key: 'childPrice', obj: dataCostSource[index] }"
-                  v-model:value="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="输入价格" />
+                  v-model:value="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="请输入儿童价" />
               </a-form-item>
               <template v-else>
                 {{ text }}
@@ -1096,11 +1096,11 @@ const getEntrustedFee = () => {
   }
 }
 const guideFee = ref<CostItem>({
-  isEdit: true,
+  isEdit: false,
   isOperate: true,
   priceName: "导游服务费",
-  adultPrice: undefined,
-  childPrice: undefined,
+  adultPrice: 0,
+  childPrice: 0,
   adultNumber: 0,
   childNumber: 0,
   individualSubtotal: 0,
