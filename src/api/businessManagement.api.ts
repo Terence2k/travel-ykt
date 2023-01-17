@@ -189,3 +189,11 @@ export function certification(data: any) {
 		showLoading: true
 	});
 }
+// 查询委托社社企业（电子合同）
+export function getTravelCompany(companyId: any) {
+	return request({
+		url: `${commonPart}getTravelCompany?companyId=${companyId}`,
+		method: 'post',
+		showLoading: true
+	});
+}
