@@ -522,6 +522,8 @@ import { accDiv, accMul } from '@/utils/compute';
 import { getAge, getGenderByIdNumber } from '@/utils';
 import type { Rule } from 'ant-design-vue/es/form';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
+import { getUserInfo } from '@/utils/util';
+const userInfo = getUserInfo();
 const navigatorBar = useNavigatorBar();
 const router = useRouter();
 const route = useRoute();
@@ -579,10 +581,9 @@ const adultNumber = ref(0)
 const childNumber = ref(0)
 const businessManageOptions = useBusinessManageOption();
 const initOpeion = async () => {
-  await businessManageOptions.getCompanyByBusinessType('TRAVEL');
   await businessManageOptions.getBusinessTypeOption('CERTIFICATE_TYPE')
 };
-const entrustTravelOption = computed(() => businessManageOptions.companyOptions);
+const entrustTravelOption = ref([]);
 const certificatesTypeOption = computed(() => businessManageOptions.businessTypeOption);
 
 const insuranceOption = [
@@ -734,18 +735,9 @@ const formRules = {
   travelNight: [{ required: true, trigger: 'blur', message: '请输入合同夜数' }],
   travelData: [{ required: true, trigger: 'blur', message: '请选择行程日期' }],
   touristPeopleNumber: [{ required: true, trigger: 'blur', message: '游客人数不能为空' }],
-  certificatesType: [{ required: true, trigger: 'blur', message: '请选择身份证件类型' }],
   touristName: [{ required: true, trigger: 'blur', message: '请选择游客代表' }],
-  // phone: [{ required: true, trigger: 'blur', message: '游客代表手机号不能为空' }],
   certificatesAddress: [{ required: true, trigger: 'blur', message: '游客代表地址不能为空' }],
-  touristType: [{ required: true, trigger: 'blur', message: '请选择游客类型' }],
-  gender: [{ required: true, trigger: 'blur', message: '请选择性别' }],
-  age: [{ required: true, trigger: 'blur', message: '请输入年龄' }],
-  isHealthy: [{ required: true, trigger: 'blur', message: '请选健康状态' }],
-  // healthyCode: [{ required: true, trigger: 'blur', message: '健康码不能为空' }],
-  isAncientUygur: [{ required: true, trigger: 'blur', message: '请选择古维费购买状态' }],
   emergencyContact: [{ required: true, trigger: 'blur', message: '请填写紧急联系人' }],
-  emergencyContactPhone: [{ required: true, trigger: 'blur', message: '请填写紧急联系电话' }],
   deposit: [{ required: true, trigger: 'blur', message: '请输入合同金额' }],
   liquidatedDamages: [{ required: true, trigger: 'blur', message: '请输入合同终止违约金' }],
   bond: [{ required: true, trigger: 'blur', message: '请输入黄金周保证金' }],
@@ -756,8 +748,6 @@ const formRules = {
   nonStandardFine: [{ required: true, trigger: 'blur', message: '不能为空' }],
   entrustFine: [{ required: true, trigger: 'blur', message: '不能为空' }],
   disputeResolution: [{ required: true, trigger: 'blur', message: '请选择争议解决办法' }],
-  /*   entrustedProject: [{ required: true, trigger: 'blur', message: '请输入委托项目' }],
-    entrustedProjectAmount: [{ required: true, trigger: 'blur', message: '请输入委托价格' }], */
 }
 const activeKey = ref('1')
 const submitVisible = ref(false)
@@ -1269,10 +1259,7 @@ const accMulValue = (value: any) => {
 }
 // 获取提交参数
 const getParams = () => {
-  let userInfo: any = window.localStorage.getItem('userInfo');
-  userInfo = JSON.parse(userInfo);
-  const { sysCompany } = userInfo
-  form.value.companyId = sysCompany.oid
+  form.value.companyId = userInfo.sysCompany.oid
   const {
     oid,
     companyId, //合同创建旅行社id
@@ -1546,7 +1533,13 @@ const getComprehensiveProductsList = async () => {
   }];
   gwFee.value = newData;
 }
+const getEntrustTravelOption = () => {
+  api.getTravelCompany(userInfo.sysCompany.oid).then((res: any) => {
+    entrustTravelOption.value = res
+  })
+}
 onMounted(() => {
+  getEntrustTravelOption()
   initOpeion()
   getLineOptions()
   getComprehensiveProductsList()

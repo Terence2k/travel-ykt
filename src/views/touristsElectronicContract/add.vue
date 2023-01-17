@@ -730,19 +730,10 @@ const formRules = {
   touristPeopleNumber: [{ required: true, trigger: 'blur', message: '游客人数不能为空' }],
   insuranceBuyMode: [{ required: true, trigger: 'blur', message: '请选择保险购买方式' }],
   contractType: [{ required: true, trigger: 'blur', message: '请选择散客合同类型' }],
-  // certificatesType: [{ required: true, trigger: 'blur', message: '请选择身份证件类型' }],
   touristName: [{ required: true, trigger: 'blur', message: '请选择游客代表' }],
-  // phone: [{ required: true, trigger: 'blur', message: '游客代表手机号不能为空' }],
   certificatesAddress: [{ required: true, trigger: 'blur', message: '游客代表地址不能为空' }],
   contractFileUrl: [{ required: true, trigger: 'blur', message: '请上传附件' }],
-  // touristType: [{ required: true, trigger: 'blur', message: '请选择游客类型' }],
-  // gender: [{ required: true, trigger: 'blur', message: '请选择性别' }],
-  // age: [{ required: true, trigger: 'blur', message: '请输入年龄' }],
-  // isHealthy: [{ required: true, trigger: 'blur', message: '请选健康状态' }],
-  // healthyCode: [{ required: true, trigger: 'blur', message: '健康码不能为空' }],
-  // isAncientUygur: [{ required: true, trigger: 'blur', message: '请选择古维费购买状态' }],
   emergencyContact: [{ required: true, trigger: 'blur', message: '请填写紧急联系人' }],
-  emergencyContactPhone: [{ required: true, trigger: 'blur', message: '请填写紧急联系电话' }],
 }
 const activeKey = ref('1')
 const submitVisible = ref(false)
