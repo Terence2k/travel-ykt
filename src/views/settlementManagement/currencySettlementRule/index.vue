@@ -332,9 +332,9 @@ const getTeamTypeName = computed(() => (value: number) => {
 });
 const getProductTypeName = computed(() => (value: number) => {
 	if (generaRulesOptions.productTypeList) {
-		const idx = generaRulesOptions.productTypeList.findIndex((item) => item.value === value);
+		const idx = generaRulesOptions.currencyProductTypeList.findIndex((item) => item.value === value);
 		if (idx !== -1) {
-			return generaRulesOptions.productTypeList[idx]['name'];
+			return generaRulesOptions.currencyProductTypeList[idx]['name'];
 		}
 		return '';
 	}
