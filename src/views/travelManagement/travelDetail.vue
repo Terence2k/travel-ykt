@@ -15,22 +15,24 @@
     </div>
     <a-row>
       <a-col :span="17">
-        <a-descriptions :title="`行程单ID：${state.basicData.itineraryNo}`" bordered>
-          <a-descriptions-item label="线路名称" :span="3">{{state.basicData.routeName}}</a-descriptions-item>
-          <a-descriptions-item label="组团模式" :span="2">{{state.basicData.groupTypeName}}</a-descriptions-item>
+        <a-descriptions :column="2" :title="`行程单ID：${state.basicData.itineraryNo}`" bordered>
+          <a-descriptions-item label="线路名称" :span="2">{{state.basicData.routeName}}</a-descriptions-item>
+          <a-descriptions-item label="组团模式">{{state.basicData.groupTypeName}}</a-descriptions-item>
           <a-descriptions-item label="团队类型">{{state.basicData.teamTypeName}}</a-descriptions-item>
-          <a-descriptions-item label="组团社" :span="2">{{state.basicData.travelName}}</a-descriptions-item>
+          <a-descriptions-item label="组团社">{{state.basicData.travelName}}</a-descriptions-item>
           <a-descriptions-item label="组团社计调" >{{state.basicData.travelOperatorName}} {{state.basicData.travelOperatorPhone}}</a-descriptions-item>
-          <a-descriptions-item label="地接社" :span="2">{{state.basicData.subTravelName}}</a-descriptions-item>
+          <a-descriptions-item label="地接社">{{state.basicData.subTravelName}}</a-descriptions-item>
           <a-descriptions-item label="地接社计调">{{state.basicData.subTravelOperatorName}} {{state.basicData.subTravelOperatorPhone}}</a-descriptions-item>
-          <a-descriptions-item label="游客人数" :span="2">{{state.basicData.touristCount}}</a-descriptions-item>
+          <a-descriptions-item label="游客人数">{{state.basicData.touristCount}}</a-descriptions-item>
           <a-descriptions-item label="古维费应缴人数">{{state.basicData.guWeiCount}}</a-descriptions-item>
-          <a-descriptions-item label="行程时间" :span="2">{{state.basicData.startDate}} - {{ state.basicData.endDate }}</a-descriptions-item>
+          <a-descriptions-item label="行程时间">{{state.basicData.startDate}} - {{ state.basicData.endDate }}</a-descriptions-item>
           <a-descriptions-item label="综费应缴人数">{{state.basicData.productPeopleCount }}</a-descriptions-item>
-          <a-descriptions-item label="已添加景区" :span="2">{{state.basicData.ticketCount}}</a-descriptions-item>
+          <a-descriptions-item label="已添加景区">{{state.basicData.ticketCount}}</a-descriptions-item>
           <a-descriptions-item label="已添加酒店">{{state.basicData.hotelCount}}</a-descriptions-item>
-          <a-descriptions-item label="已添加餐饮" :span="2">{{state.basicData.cateringCount}}</a-descriptions-item>
+          <a-descriptions-item label="已添加餐饮">{{state.basicData.cateringCount}}</a-descriptions-item>
           <a-descriptions-item label="预估应缴费（元）">{{accDiv(state.basicData.totalFee, 100)}}元</a-descriptions-item>
+          <a-descriptions-item label="关联行程单">{{state.basicData.relatedItineraryNo}}</a-descriptions-item>
+          <a-descriptions-item label="保险购买方">{{state.basicData.insuranceStatusName}}</a-descriptions-item>
         </a-descriptions>
       </a-col>
       <a-col :span="7">

@@ -16,17 +16,17 @@
       <a-descriptions-item label="已添加酒店">{{state.basicData.hotelCount}}</a-descriptions-item>
       <a-descriptions-item label="已添加餐饮">{{state.basicData.cateringCount}}</a-descriptions-item>
       <a-descriptions-item label="预估应缴费（元）">{{accDiv(state.basicData.totalFee, 100)}}元</a-descriptions-item>
-      <!-- <a-descriptions-item label="关联行程单">{{state.insuranceStatusName}}</a-descriptions-item> -->
-      <a-descriptions-item label="保险购买方" :span="2">{{state.insuranceStatusName}}</a-descriptions-item>
+      <a-descriptions-item label="关联行程单">{{state.basicData.relatedItineraryNo}}</a-descriptions-item>
+      <a-descriptions-item label="保险购买方">{{state.basicData.insuranceStatusName}}</a-descriptions-item>
     </a-descriptions>
     <div class="page-title" style="margin-top: 32px;">
       行程日志记录（共{{state.operationLog.total}}条）
     </div>
-    <CommonTable :dataSource="state.operationLog.content" :columns="columns">
+    <CommonTable :dataSource="state.operationLog.content" :columns="columns" :scrollY="false">
         <template #bodyCell="{ column, index, record }">
           <template v-if="column.key === 'index'">
               <div>
-                  {{(state.operationLog.param.pageNo - 1) * (state.operationLog.param.pageSize) + (index + 1)}}
+                  {{(state.operationLog.pageNo - 1) * (state.operationLog.pageSize) + (index + 1)}}
               </div>
           </template>
       </template>
@@ -94,10 +94,8 @@ const state = reactive({
   operationLog: {
     content: [],
     total: 0,
-    param: {
-      pageNo: 1,
-      pageSize: 10,
-    },
+    pageNo: 1,
+    pageSize: 10,
   }
 });
 const route = useRouter();
@@ -137,7 +135,7 @@ getItineraryOperationLog(route.currentRoute.value.query.oid);
 
 <style lang="less" scoped>
 .container {
-  padding: 0 20px;
+  padding: 20px;
   .page-title {
     line-height: 44px;
     font-size: 16px;

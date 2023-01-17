@@ -16,7 +16,7 @@
 					<div class="action-btns">
 						<a @click="goToPath(record)" v-permission="'已接团_行程详情'">行程详情</a>
 						<a @click="goToChange(record)" v-permission="'已接团_行程变更'">行程变更</a>
-						<!-- <a v-permission="'已接团_查看日志'">查看日志</a> -->
+						<a @click="goToLog(record)" v-permission="'已接团_查看日志'">查看日志</a>
 					</div>
 				</template>
 			</template>
@@ -143,6 +143,12 @@ const goToChange = (row: any) => {
 		} else {
 			message.error('该行程单发生过核销不可变更');
 		}
+	});
+};
+const goToLog = (row: any) => {
+	router.push({
+		path: '/travel/travel_manage/travel_log',
+		query: { oid: encodeURIComponent(row.oid) },
 	});
 };
 const onHandleCurrentChange = (e: any) => {
