@@ -3,7 +3,6 @@
 		<div class="list-btn">
 			<a-button type="primary" class="success" @click="toAddPage()" style="margin-right: 10px">新增</a-button>
 			<a-button type="primary" class="success" @click="showTip('all', undefined)">删除</a-button>
-			<span> {{ getProductKeyName }} </span>
 		</div>
 		<a-spin size="large" :spinning="state.tableData.loading">
 			<CommonTable
