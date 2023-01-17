@@ -69,7 +69,8 @@
 			</a-form-item>
 			<a-form-item label="收费数量" name="chargeCount">
 				<div>
-					<span>{{ formState.chargeCount }}</span>
+					<span v-if="formState.chargeModel !== 3">{{ formState.chargeCount }}</span>
+					<span v-else>{{ (formState.chargeCount / 100).toFixed(2) }}</span>
 					<span v-if="formState.chargeModel === 1">%</span>
 					<span v-if="formState.chargeModel === 2">人</span>
 					<span v-if="formState.chargeModel === 3">元</span>
