@@ -1549,7 +1549,14 @@ const getEntrustTravelOption = () => {
     entrustTravelOption.value = res
   })
 }
+const getBusinessDetails = async () => {
+  const params = { oid: userInfo.sysCompany.oid, businessType: 'TRAVEL' }
+  const { individualDeparturePlace, individualReturnPlace } = await api.getBusinessDetails(params)
+  form.value.departurePlace = individualDeparturePlace
+  form.value.returnPlace = individualReturnPlace
+}
 onMounted(() => {
+  getBusinessDetails()
   getEntrustTravelOption()
   initOpeion()
   getLineOptions()
