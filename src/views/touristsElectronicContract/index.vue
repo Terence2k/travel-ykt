@@ -199,15 +199,22 @@ const contractStatusOption = [
   { codeValue: 6, name: '旅行社解除' },
   { codeValue: 7, name: '已解除' },
 ]
+const contractType = ref()
 const withdraw = (record: any) => {
   withdrawVisible.value = true
   form.value.oid = record.oid
   form.value.contractAmount = record.contractAmount
   form.value.representativeName = record.representativeName
   form.value.contractNo = record.contractNo
+  contractType.value = record.contractType
 }
 const withdrawConfirm = async () => {
-  const res = await api.revokeContract(form.value.oid)
+  let res
+  if (contractType.value === 1) { // 线上
+    res = await api.releaseOnlineContract({ oid: form.value.oid, operation: 2 }) //1.发布  2.撤销
+  } else if (contractType.value === 2) { // 线下
+    res = await api.revokeContract(form.value.oid)
+  }
   if (res) {
     withdrawresVisible.value = true
     onSearch()

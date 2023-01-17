@@ -42,7 +42,7 @@
 					<!-- 收费名称 -->
 					<template v-if="column.key === 'chargeCount'">
 						<span v-if="record.chargeModel === 1">{{ record.chargeCount }}%</span>
-						<span v-if="record.chargeModel === 2">{{ record.chargeCount }}人</span>
+						<span v-if="record.chargeModel === 2">{{ (record.chargeCount / 100).toFixed(2) }}元/房间</span>
 						<span v-if="record.chargeModel === 3">{{ (record.chargeCount / 100).toFixed(2) }}元</span>
 					</template>
 					<template v-if="column.key === 'action'">
@@ -332,9 +332,9 @@ const getTeamTypeName = computed(() => (value: number) => {
 });
 const getProductTypeName = computed(() => (value: number) => {
 	if (generaRulesOptions.productTypeList) {
-		const idx = generaRulesOptions.productTypeList.findIndex((item) => item.value === value);
+		const idx = generaRulesOptions.currencyProductTypeList.findIndex((item) => item.value === value);
 		if (idx !== -1) {
-			return generaRulesOptions.productTypeList[idx]['name'];
+			return generaRulesOptions.currencyProductTypeList[idx]['name'];
 		}
 		return '';
 	}

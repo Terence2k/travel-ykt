@@ -198,10 +198,11 @@ const state = reactive({
 	hotelNameList: [],
 });
 const reset = () => {
+	const productType = state.tableData.param.productType;
 	state.tableData.param = {
 		scenicId: null, //关联景区id
 		productName: null, //产品名称
-		productType: 1, //产品类型 1-景区 2-酒店 3-餐饮
+		productType, //产品类型 1-景区 2-酒店 3-餐饮
 		productSonType: null, //产品类型下拉列表，UNITE-联票 ONE-单票 SHOW-演出票
 		hasProductRule: null, //是否有结算规则 true-是 false-否
 		pageNo: 1, //页号
