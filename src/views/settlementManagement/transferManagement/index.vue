@@ -212,11 +212,12 @@ const rowSelection = computed(() => {
 // 	}
 // };
 const reset = () => {
+	const status = state.tableData.param.status;
 	state.tableData.param = {
 		createName: null, //申请人
 		startTime: null, //申请开始日期
 		endTime: null, //申请结束日期
-		status: 1, //转账单状态 1-待审核 2-转账完成 3-审核不通过
+		status, //转账单状态 1-待审核 2-转账完成 3-审核不通过
 		pageNo: 1, //页号
 		pageSize: 10, //页大小
 	};
