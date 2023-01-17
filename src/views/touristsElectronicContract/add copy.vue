@@ -443,7 +443,7 @@
             <template v-if="(column.dataIndex === 'action' && record.isOperate)">
               <div class="editable-row-operations">
                 <span v-if="record.isEdit">
-                  <a @click="save(dataCostSource[index])">确定</a>
+                  <a @click="saveCost(dataCostSource[index])">确定</a>
                   <a @click="cancel(dataCostSource[index])">取消</a>
                 </span>
                 <span v-else>
@@ -566,7 +566,7 @@ const formRef4 = ref()
 const formRef5 = ref()
 const formRef6 = ref()
 const formRef7 = ref()
-const formRef8 = ref()
+// const formRef8 = ref()
 const formRef9 = ref()
 const isAdd = ref(true)
 const form = ref({
@@ -1095,7 +1095,31 @@ const onCostDelete = (index: number) => {
   dataCostSource.value.splice(index, 1)
 };
 const save = (obj: any) => {
-  obj.isEdit = false
+  const a = Promise.all([
+    formRef1.value?.validateFields(),
+    formRef2.value?.validateFields(),
+    formRef3.value?.validateFields(),
+    formRef4.value?.validateFields(),
+    formRef5.value?.validateFields(),
+    formRef6.value?.validateFields(),
+    formRef7.value?.validateFields(),
+    formRef9.value?.validateFields(),
+  ])
+  a.then(()=>{
+    obj.isEdit = false
+  })
+  /* if (!obj.priceName || !obj.adultPrice || !obj.childPrice) {
+    message.error('请输入费用名称或成人、儿童价！')
+  } else {
+    obj.isEdit = false
+  } */
+};
+const saveCost = (obj: any) => {
+  if (!obj.priceName || !obj.adultPrice || !obj.childPrice) {
+    message.error('请输入费用名称或成人、儿童价！')
+  } else {
+    obj.isEdit = false
+  }
 };
 const cancel = (obj: any) => {
   obj.isEdit = false
@@ -1205,7 +1229,40 @@ const nextTep = (val: string) => {
     calculateTripFee()
   }
 }
+const validateList = () => {
+  let return1 = false, return2 = false, return3 = false
+  for (let i = 0; i < dataLineSource.value.length; i++) {
+    const element = dataLineSource.value[i];
+    if (element?.isEdit) {
+      message.error('请确认线路列表数据！')
+      return1 = true
+      break
+    }
+  }
+  for (let i = 0; i < dataTouristSource.value.length; i++) {
+    const element = dataTouristSource.value[i];
+    if (element?.isEdit) {
+      message.error('请确认游客列表数据！')
+      return2 = true
+      break
+    }
+  }
+  for (let i = 0; i < dataCostSource.value.length; i++) {
+    const element = dataCostSource.value[i];
+    if (element?.isEdit) {
+      message.error('请确认行程费用列表数据！')
+      return3 = true
+      break
+    }
+  }
+  if (return1 || return2 || return3) {
+    return true
+  }
+}
 const saveDraft = (tab?: string, isTip: boolean = true) => {
+  if (validateList()) {
+    return
+  }
   return new Promise((resolve, reject) => {
     const a = Promise.all([
       formRef.value?.validateFields(),
@@ -1216,7 +1273,7 @@ const saveDraft = (tab?: string, isTip: boolean = true) => {
       formRef5.value?.validateFields(),
       formRef6.value?.validateFields(),
       formRef7.value?.validateFields(),
-      formRef8.value?.validateFields(),
+      // formRef8.value?.validateFields(),
       formRef9.value?.validateFields(),
       dateFormRef.value?.validate()
     ])

@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEqual } from 'lodash';
 import dayjs from 'dayjs';
 import type { UnwrapRef } from 'vue';
 
@@ -161,6 +161,35 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 				}
 			})
 		},
+		getRepetition(key: any) {
+			const sourceData: any = state.editableData[key];
+			let msg: any = ''
+			// if (key) {
+			const cur = state.tableData.filter((it: any) => {
+				let id = it.oid ? it.oid : it.key
+				console.log(id, key)
+				return it.certificateNo === sourceData.certificateNo && id !== key
+			})[0];
+			console.log(cur)
+			if (cur) {
+				msg = `游客${sourceData.name}证件号重复`
+			}
+			// }
+			// else {
+			// 	const certificateNoList: any = []
+			// 	const cur = state.tableData.filter((it: any) => {
+			// 		if (certificateNoList.includes(it.certificateNo)) {
+			// 			return it;
+			// 		}
+			// 		certificateNoList.push(it.certificateNo)
+					
+			// 	})[0]
+			// 	if (cur) {
+			// 		msg = message.error(`游客${cur.name}证件号重复`)
+			// 	}
+			// }
+			return msg;
+		},
 		loadData (selectedOptions:any) {
 			console.log(selectedOptions)
 			const targetOption = selectedOptions[selectedOptions.length - 1];
@@ -303,6 +332,8 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 				const result = methods.isOld(key)
 				const isUpload = methods.isUpload(key)
 				const isPhone = methods.isPhone(key)
+				const repetition = methods.getRepetition(key);
+				if (repetition) return message.error(repetition)
 				if (!result.flag) return message.error(result.text);
 				if (!isUpload.flag) return message.error(isUpload.text);
 				if (!isPhone.flag) return message.error(isPhone.text);
@@ -310,9 +341,11 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 				delete state.editableData[key];
 			} else {
 				for (let k in state.editableData) {
+					const repetition = methods.getRepetition(k);
 					const result = methods.isOld(k);
 					const isUpload = methods.isUpload(k);
 					const isPhone = methods.isPhone(k);
+					if (repetition) return emits('onSuccess', {touristList: {valid: false, message: repetition, index: 2}});
 					if (!result.flag) return emits('onSuccess', {touristList: {valid: false, message: result.text, index: 2}});
 					if (!isUpload.flag) return emits('onSuccess', {touristList: {valid: false, message: isUpload.text, index: 2}});
 					if (!isPhone.flag) return emits('onSuccess', {touristList: {valid: false, message: isPhone.text, index: 2}});
@@ -381,7 +414,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			if (columns === 'certificateNo' || columns === 'name') {
 				if (state.editableData[key].certificateNo && state.editableData[key].name) {
 					const res = await travelStore.getHealthCode([state.editableData[key]]);
-					state.editableData[key].healthCode = res[0].healthCode;
+					state.editableData[key].healthCode = res[0]?.healthCode;
 					methods.copyData(key)
 				}
 			}
