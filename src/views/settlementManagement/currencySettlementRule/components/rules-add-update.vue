@@ -57,7 +57,7 @@
 
 <script setup lang="ts">
 import BaseModal from '@/components/common/BaseModal.vue';
-import { isIntegerNotMust, isBtnZeroToHundred } from '@/utils/validator';
+import { isIntegerNotMust, isBtnZeroToHundred, isTwoDecimalPlaces } from '@/utils/validator';
 import { Ref } from 'vue';
 import lodash from 'lodash';
 import { message } from 'ant-design-vue';
@@ -100,7 +100,7 @@ const rules: any = {
 	// percentage: [{ required: formValidate.value.splitModel === 1 ? true : false, validator: isBtnZeroToHundred, trigger: 'blur' }],
 	// // 人数和金额
 	// integer: [{ required: formValidate.value.splitModel === 2 ? true : false, validator: isIntegerNotMust, trigger: 'blur' }],
-	money: [{ required: true, message: '请输入金额' }],
+	money: [{ required: true, validator: isTwoDecimalPlaces, trigger: 'blur' }],
 };
 const splitList = ref([]);
 const init = async () => {
