@@ -18,7 +18,7 @@
   <div class="add_box">
     <div>共 {{ tableData.total }} 条可用的单项委托合同</div>
     <div>
-      <a-button type="primary" @click="addOrUpdate({ handle: 'add' })">新增</a-button>
+      <a-button type="primary" @click="addOrUpdate({ handle: 'add' })" v-permission="'新增'">新增</a-button>
     </div>
   </div>
   <CommonTable :dataSource="tableData.data" :columns="columns">
