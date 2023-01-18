@@ -688,8 +688,6 @@ const getTraveDetail = () => {
 };
 watch(activeKey, async (newVal) => {
 	if (newVal === '2') {
-		await saveDraft()
-		await getTraveDetail()
 		const allFeesProducts = travelStore.compositeProducts.map((it: any) => {
 			it.peopleCount = travelStore.touristList.length;
 			it.unPrice = it.feeNumber;
@@ -708,10 +706,10 @@ const nextTep = (val: string) => {
 	])
 	a.then(async () => {
 		activeKey.value = val
-		/* if (val === '2') {
+		if (val === '2') {
 			await saveDraft()
 			await getTraveDetail()
-		} */
+		}
 	}).catch((error: Error) => {
 		activeKey.value = CloneActiveKey.value
 		console.log(error);
