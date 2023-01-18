@@ -62,13 +62,19 @@ const state = reactive<StateType>({
 		data: [],
 		total: 400,
 		loading: false,
+		// param: {
+		// 	teamTypeId: null, //团队类型id(对应ljykt_travel_agency数据库sys_team_type表oid)
+		// 	productType: null, //产品类型 1-景区 2-酒店 3-餐饮 6开始为综费产品id
+		// 	costName: '', //费用名称
+		// 	ruleStatus: null, //规则状态 1-启用 0-禁用
+		// 	pageNo: 1, //页号
+		// 	pageSize: 10, //页大小
+		// },
 		param: {
-			teamTypeId: null, //团队类型id(对应ljykt_travel_agency数据库sys_team_type表oid)
-			productType: null, //产品类型 1-景区 2-酒店 3-餐饮 6开始为综费产品id
-			costName: '', //费用名称
-			ruleStatus: null, //规则状态 1-启用 0-禁用
-			pageNo: 1, //页号
-			pageSize: 10, //页大小
+			transferAccountsId: 1,
+			itineraryNo: 'aaaaaa',
+			pageNo: 1,
+			pageSize: 10,
 		},
 	},
 	modalShow: false,
@@ -196,102 +202,13 @@ const tipSubmit = () => {
 };
 const initList = async (query: any) => {
 	state.tableData.loading = true;
-	// let res = await api.currencySettlementRuleList(state.tableData.param);
-	// const { total, content } = res;
-	// state.tableData.total = total;
+	let res = await api.currencySettlementRuleList(state.tableData.param);
+	const { total, content } = res;
+	state.tableData.total = total;
 	// const list: [any] = dealData(content);
-	// state.tableData.data = list;
+	state.tableData.data = content;
 	state.tableData.loading = false;
-	state.tableData.data = [
-		{
-			itineraryNo: '001',
-			subTravelName: '001',
-			superviseVo: {
-				ykt: '一卡通',
-				bank: '建设银行',
-			},
-			associationVo: {
-				ykt: '一卡通',
-				bank: '建设银行',
-			},
-			qmTravelAgencyVo: {
-				ykt: '一卡通',
-				bank: '建设银行',
-			},
-			ljTravelAgencyVo: {
-				ykt: '一卡通',
-				bank: '建设银行',
-			},
-			state: '开启',
-			totalFee: '888元',
-		},
-		{
-			itineraryNo: '001',
-			subTravelName: '001',
-			superviseVo: {
-				ykt: '一卡通',
-				bank: '建设银行',
-			},
-			associationVo: {
-				ykt: '一卡通',
-				bank: '建设银行',
-			},
-			qmTravelAgencyVo: {
-				ykt: '一卡通',
-				bank: '建设银行',
-			},
-			ljTravelAgencyVo: {
-				ykt: '一卡通',
-				bank: '建设银行',
-			},
-			state: '开启',
-			totalFee: '888元',
-		},
-		{
-			itineraryNo: '001',
-			subTravelName: '001',
-			superviseVo: {
-				ykt: '一卡通',
-				bank: '建设银行',
-			},
-			associationVo: {
-				ykt: '一卡通',
-				bank: '建设银行',
-			},
-			qmTravelAgencyVo: {
-				ykt: '一卡通',
-				bank: '建设银行',
-			},
-			ljTravelAgencyVo: {
-				ykt: '一卡通',
-				bank: '建设银行',
-			},
-			state: '开启',
-			totalFee: '888元',
-		},
-		{
-			itineraryNo: '001',
-			subTravelName: '001',
-			superviseVo: {
-				ykt: '一卡通',
-				bank: '建设银行',
-			},
-			associationVo: {
-				ykt: '一卡通',
-				bank: '建设银行',
-			},
-			qmTravelAgencyVo: {
-				ykt: '一卡通',
-				bank: '建设银行',
-			},
-			ljTravelAgencyVo: {
-				ykt: '一卡通',
-				bank: '建设银行',
-			},
-			state: '开启',
-			totalFee: '888元',
-		},
-	];
+	// state.tableData.data = [];
 };
 const tipCancel = () => {
 	state.modalShow = false;

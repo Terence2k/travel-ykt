@@ -51,8 +51,10 @@
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a href="javascript:;" @click="toHandle(record)" v-if="state.tableData.param.status === 1 || record.status === 4">处理</a>
-							<a href="javascript:;" @click="toDetails(record)">详情</a>
+							<a href="javascript:;" @click="toHandle(record)" v-if="state.tableData.param.status === 1 || record.status === 4">
+								{{ record.status === 1 ? '处理' : '详情' }}
+							</a>
+							<!-- <a href="javascript:;" @click="toDetails(record)">详情</a> -->
 						</div>
 					</template>
 				</template></CommonTable

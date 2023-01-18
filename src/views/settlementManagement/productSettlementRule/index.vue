@@ -83,6 +83,7 @@ import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import api from '@/api';
+import lodash from 'lodash';
 import { useGeneraRules } from '@/stores/modules/generaRules';
 import { getTabPermission } from '@/utils/util';
 const navigatorBar = useNavigatorBar();
@@ -229,6 +230,9 @@ const generaRulesOptions = useGeneraRules();
 const toConfigure = (record: any) => {
 	console.log(record, `record`);
 	let query = {};
+	// 记录跳转时的数据缓存到Pinia
+	generaRulesOptions.productSettlementRuleBack = true;
+	generaRulesOptions.productSettlementRuleParams = state.tableData.param;
 	if (state.tableData.param.productType === 1) {
 		query = {
 			productId: encodeURIComponent(record.productId),
@@ -269,6 +273,10 @@ const dealData = (params: [any]) => {
 	return params;
 };
 onMounted(() => {
+	if (generaRulesOptions.productSettlementRuleBack) {
+		state.tableData.param = lodash.cloneDeep(generaRulesOptions.productSettlementRuleParams);
+		generaRulesOptions.resetProductSettlementRuleParams();
+	}
 	initList();
 	getEnum();
 });
@@ -306,7 +314,8 @@ const getAllOpenHotelNameList = async () => {
 };
 const tabsChange = () => {
 	state.tableData.param.scenicId = null;
-	initList();
+	reset();
+	// initList();
 };
 const getProductKeyName = computed(() => {
 	const array: any = ['景区', '酒店', '餐饮', '综费产品'];
