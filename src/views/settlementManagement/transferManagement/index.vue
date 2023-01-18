@@ -27,7 +27,13 @@
 			<a-tab-pane :key="3" tab="审核不通过"></a-tab-pane>
 		</a-tabs>
 		<a-spin size="large" :spinning="state.tableData.loading">
-			<CommonTable :dataSource="state.tableData.data" :columns="columns" :row-selection="rowSelection" :scroll="{ x: '100%', y: '100%' }">
+			<CommonTable
+				:dataSource="state.tableData.data"
+				:columns="columns"
+				rowKey="oid"
+				:row-selection="{ selectedRowKeys: cacheData.selectedRowKeys, onChange: onSelectChange }"
+				:scroll="{ x: '100%', y: '100%' }"
+			>
 				<template #button>
 					<div class="btn" v-if="state.tableData.param.status === 1">
 						<a-button type="primary" class="success" @click="toBatchTransfer">处理</a-button>
@@ -139,7 +145,6 @@ const cacheData = ref({
 const initList = async () => {
 	state.tableData.loading = true;
 	let res = await api.getTransferAccountList(state.tableData.param);
-	console.log(res, `res`);
 	const { total, content } = res;
 	state.tableData.total = total;
 	// const list: [any] = dealData(content);
@@ -192,25 +197,19 @@ const lookTrip = (record: any) => {
 const tabsChange = (e: any) => {
 	initList();
 };
+// const onSelectChange = (selectedRowKeys: any) => {
+// 	cacheData.value.selectedRowKeys = selectedRowKeys;
+// };
+// const rowSelection = computed(() => {
+// 	if (state.tableData.param.status === 1) {
+// 		return { selectedRowKeys: cacheData.value.selectedRowKeys, onChange: onSelectChange };
+// 	} else {
+// 		return false;
+// 	}
+// });
 const onSelectChange = (selectedRowKeys: any) => {
 	cacheData.value.selectedRowKeys = selectedRowKeys;
 };
-const rowSelection = computed(() => {
-	if (state.tableData.param.status === 1) {
-		return { selectedRowKeys: cacheData.value.selectedRowKeys, onChange: onSelectChange };
-	} else {
-		return false;
-	}
-});
-// const timeChange = (arr: any) => {
-// 	if (arr && arr.length > 0) {
-// 		state.tableData.param.startTime = arr[0]['$d'];
-// 		state.tableData.param.endTime = arr[1]['$d'];
-// 	} else {
-// 		state.tableData.param.startTime = null;
-// 		state.tableData.param.endTime = null;
-// 	}
-// };
 const reset = () => {
 	const status = state.tableData.param.status;
 	state.tableData.param = {

@@ -359,8 +359,9 @@
             <a-button @click="handleTouristAdd">添加</a-button>
           </div>
           <div v-if="isShow" style="width:60%">
-            <a-form-item name="touristName" label="游客代表">
-              <a-select @change="touristChange" placeholder="请选择游客代表" v-model:value="form.touristName" allowClear>
+            <a-form-item name="touristName1" label="游客代表"
+              :rules="[{ required: true, trigger: 'change', validator: (_rule: Rule, value: string) => (validateFields(form.touristName, 'touristName1')) }]">
+              <a-select @change="touristChange" placeholder="请选择游客代表" v-model:value="form.certificatesNo" allowClear>
                 <a-select-option v-for="item in dataTouristSource" :value="item.certificatesNo"
                   :key="item.certificatesNo">{{ item.touristName }}
                 </a-select-option>
@@ -372,7 +373,7 @@
             </a-form-item>
             <a-form-item name="phone" label="游客代表手机号"
               :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.phone, true, '请填写游客代表手机号')) }]">
-              <a-input v-model:value="form.phone" placeholder="请填写游客代表手机号" allowClear>
+              <a-input v-model:value="form.phone" placeholder="请填写游客代表手机号" @change="phoneChange" allowClear>
               </a-input>
             </a-form-item>
             <a-form-item name="certificatesAddress" label="游客代表地址">
@@ -460,8 +461,7 @@
         </div>
         <a-form ref="formRef4" :model="form" :rules="formRules" autocomplete="off">
           <a-form-item name="paymentMethod" label="游客费用支付方式">
-            <a-select @change="touristChange" placeholder="选择游客线下的实际支付方式" v-model:value="form.paymentMethod" allowClear
-              style="width:20%">
+            <a-select placeholder="选择游客线下的实际支付方式" v-model:value="form.paymentMethod" allowClear style="width:20%">
               <a-select-option v-for="item in paymentOptions" :value="item.codeValue" :key="item.codeValue">{{
                 item.name
               }}
@@ -632,8 +632,7 @@ const isHealthyOption = [
 const validatePhone = async (mobile: string, required: boolean = false, msg?: string) => {
   if (required && !mobile) {
     return Promise.reject(msg);
-  }
-  else if (mobile && !/^1[3-9]\d{9}$/.test(mobile)) {
+  } else if (mobile && !/^1[3-9]\d{9}$/.test(mobile)) {
     return Promise.reject('请输入正确的手机号！');
   }
 }
@@ -717,6 +716,12 @@ const validateFields = async (obj: any, type: string) => {
     } else {
       return Promise.reject('请选择古维费购买状态');
     }
+  } else if (type === 'touristName1') {
+    if (obj) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject('请选择游客代表');
+    }
   }
 }
 const formRules = {
@@ -730,7 +735,7 @@ const formRules = {
   touristPeopleNumber: [{ required: true, trigger: 'blur', message: '游客人数不能为空' }],
   insuranceBuyMode: [{ required: true, trigger: 'blur', message: '请选择保险购买方式' }],
   contractType: [{ required: true, trigger: 'blur', message: '请选择散客合同类型' }],
-  touristName: [{ required: true, trigger: 'blur', message: '请选择游客代表' }],
+  // touristName: [{ required: true, trigger: 'blur', message: '请选择游客代表' }],
   certificatesAddress: [{ required: true, trigger: 'blur', message: '游客代表地址不能为空' }],
   contractFileUrl: [{ required: true, trigger: 'blur', message: '请上传附件' }],
   emergencyContact: [{ required: true, trigger: 'blur', message: '请填写紧急联系人' }],
@@ -1463,21 +1468,32 @@ const getLineOptions = async () => {
     }
   })
 }
-// 游客代表改变事件
-const touristChange = () => {
-  if (form.value.touristName) {
+// 游客代表手机号改变事件
+let phoneTimer: NodeJS.Timeout
+const phoneChange = () => {
+  phoneTimer && clearTimeout(phoneTimer)
+  phoneTimer = setTimeout(async () => {
     dataTouristSource.value.forEach((item: any) => {
-      if (item.certificatesNo === form.value.touristName) {
-        form.value.phone = item.phone
-        form.value.certificatesNo = item.certificatesNo
-        item.certificatesAddress = form.value.certificatesAddress
-        item.isRepresentative = 1 // 是否为游客代表 1：是、0：否
-      } else {
-        item.certificatesAddress = ''
-        item.isRepresentative = 0
+      if (item.isAncientUygur === 1) {
+        item.phone = form.value.phone
       }
     })
-  }
+  }, 1000)
+}
+// 游客代表改变事件
+const touristChange = () => {
+  dataTouristSource.value.forEach((item: any) => {
+    if (item.certificatesNo === form.value.certificatesNo) {
+      form.value.phone = item.phone
+      form.value.touristName = item.touristName
+      item.certificatesAddress = form.value.certificatesAddress
+      item.isRepresentative = 1 // 是否为游客代表 1：是、0：否
+    } else {
+      item.certificatesAddress = ''
+      item.isRepresentative = 0
+      form.value.touristName = undefined
+    }
+  })
 }
 // 游客代表地址改变事件
 let addresTimer: NodeJS.Timeout
@@ -1485,7 +1501,7 @@ const addressChange = () => {
   addresTimer && clearTimeout(addresTimer)
   addresTimer = setTimeout(async () => {
     dataTouristSource.value.forEach((item: any) => {
-      if (item.certificatesNo === form.value.touristName) {
+      if (item.isAncientUygur === 1) {
         item.certificatesAddress = form.value.certificatesAddress
       }
     })
@@ -1723,7 +1739,14 @@ const getEntrustTravelOption = () => {
     entrustTravelOption.value = res
   })
 }
+const getBusinessDetails = async () => {
+  const params = { oid: userInfo.sysCompany.oid, businessType: 'TRAVEL' }
+  const { individualDeparturePlace, individualReturnPlace } = await api.getBusinessDetails(params)
+  form.value.departurePlace = individualDeparturePlace
+  form.value.returnPlace = individualReturnPlace
+}
 onMounted(() => {
+  getBusinessDetails()
   getEntrustTravelOption()
   initOpeion()
   getLineOptions()
