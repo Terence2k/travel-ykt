@@ -1327,16 +1327,48 @@ const validateList = () => {
     }
   })
 }
-const saveDraft = (tab?: string, isTip: boolean = true) => {
+const saveDraft = (tab?: string, isTip: boolean = true, isRelease: boolean = false) => {
   tab === '1' && calculateTripFee()
-  return new Promise((resolve, reject) => {
-    const a = Promise.all([
-      formRef.value?.validateFields(),
-      dateFormRef.value?.validate(),
-      validateList()
-    ])
-    a.then(async () => {
+  return new Promise(async (resolve, reject) => {
+    if (isRelease) {
+      const a = Promise.all([
+        formRef.value?.validateFields(),
+        dateFormRef.value?.validate(),
+        validateList()
+      ])
+      a.then(async () => {
+        const params = getParams()
+        params.isRelease = isRelease
+        if (isAdd.value) {
+          let res = await api.createIndividualContract(params)
+          if (res) {
+            isTip && message.success('保存草稿成功！')
+            isRefresh.value = '1'
+            isAdd.value = false
+            form.value.oid = res
+            resolve('down')
+          } else {
+            isTip && message.error('保存草稿失败！')
+            reject('error')
+          }
+        } else {
+          let res = await api.editFindIndividualContract(params)
+          if (res) {
+            isTip && message.success('编辑草稿成功！')
+            isRefresh.value = '1'
+            resolve('down')
+          } else {
+            isTip && message.error('编辑草稿失败！')
+            reject('error')
+          }
+        }
+      }).catch((error: Error) => {
+        console.log(error);
+        reject('error')
+      })
+    } else {
       const params = getParams()
+      params.isRelease = isRelease
       if (isAdd.value) {
         let res = await api.createIndividualContract(params)
         if (res) {
@@ -1360,10 +1392,7 @@ const saveDraft = (tab?: string, isTip: boolean = true) => {
           reject('error')
         }
       }
-    }).catch((error: Error) => {
-      console.log(error);
-      reject('error')
-    })
+    }
   })
 }
 const submitCancel = () => {
@@ -1437,10 +1466,11 @@ const getParams = () => {
     individualContractPriceBos: accMulCost(cloneDeep(dataCostSource.value)), // 费用
     emergencyContact,
     emergencyContactPhone,
+    isRelease: true
   }
 }
 const saveDraftConfirm = async () => {
-  await saveDraft(undefined, false)
+  await saveDraft(undefined, false, true)
   const res = await api.releaseContract(form.value.oid)
   if (res) {
     submitResultVisible.value = true
@@ -1686,7 +1716,7 @@ const submitClick = async () => {
     submitVisible.value = true
   } else {
     // 提交发布线上合同
-    await saveDraft(undefined, false)
+    await saveDraft(undefined, false, true)
     const res = await api.releaseOnlineContract({ oid: form.value.oid, operation: 1 }) //1.发布  2.撤销
     if (res) {
       submitResultVisible1.value = true
