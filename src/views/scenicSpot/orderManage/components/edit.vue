@@ -35,8 +35,6 @@
 						</template>
 						<template v-if="column.key === 'certificateType'">
 							{{ certificateTypeList[record.certificateType] }}
-							111
-							{{ record.gender }}
 						</template>
 						<template v-if="column.key === 'gender'">
 							{{ record.gender ? '男' : '女' }}

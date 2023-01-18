@@ -16,7 +16,7 @@
 						<a @click="goToDetail(record)" v-permission="'待出团_行程详情'">行程详情</a>
 						<a v-if="dateTime > dayjs(record.startDate).unix()" @click="outGroup(record)" v-permission="'待出团_手动出团'">手动出团</a>
 						<a @click="goToChange(record)" v-permission="'待出团_行程变更'">行程变更</a>
-						<!-- <a v-permission="'待出团_查看日志'">查看日志</a> -->
+						<a @click="goToLog(record)" v-permission="'待出团_查看日志'">查看日志</a>
 						<a @click="goToPath(record)" v-permission="'待出团_进入预订'">进入预订</a>
 					</div>
 				</template>
@@ -143,6 +143,12 @@ const goToPath = (row: any) => {
 const goToDetail = (row: any) => {
 	router.push({
 		path: '/travel/travel_manage/travel_detail',
+		query: { oid: encodeURIComponent(row.oid) },
+	});
+};
+const goToLog = (row: any) => {
+	router.push({
+		path: '/travel/travel_manage/travel_log',
 		query: { oid: encodeURIComponent(row.oid) },
 	});
 };

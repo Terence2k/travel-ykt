@@ -766,4 +766,23 @@ export const travelManagement = {
 			showLoading: true,
 		});
 	},
+	//下载模板
+	downloadTouristTemplate(id: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itinerary/template/downloadTouristTemplate`,
+			method: 'get',
+			responseType: 'blob',
+			showLoading: true,
+		});
+	},
+	importTourist(data: any) {
+		return request({
+			url: `${commonPath}/travel-agency-service/public/api/itineraryTourist/importTourist`,
+			method: 'put',
+			data,
+			showLoading: true,
+		});
+	},
+	
+	
 };

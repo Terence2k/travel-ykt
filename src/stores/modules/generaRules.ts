@@ -9,6 +9,8 @@ export const useGeneraRules = defineStore('generaRules', {
 			{ value: 1, name: '景区' },
 			{ value: 2, name: '酒店' },
 			{ value: 3, name: '餐饮' },
+			{ value: 4, name: '综费产品' },
+			{ value: 5, name: '古维' },
 		],
 		currencyProductTypeList: [
 			{ value: 1, name: '景区' },
@@ -44,6 +46,17 @@ export const useGeneraRules = defineStore('generaRules', {
 		],
 		hotelRatedList: [], //酒店星级
 		getDictionaryList: [], // 报表费用归属数据
+		productSettlementRuleBack: false,
+		// 缓存产品结算页面跳转数据
+		productSettlementRuleParams: {
+			scenicId: null, //关联景区id
+			productName: null, //产品名称
+			productType: 1, //产品类型 1-景区 2-酒店 3-餐饮
+			productSonType: null, //产品类型下拉列表，UNITE-联票 ONE-单票 SHOW-演出票
+			hasProductRule: null, //是否有结算规则 true-是 false-否
+			pageNo: 1, //页号
+			pageSize: 10, //页大小
+		},
 	}),
 	getters: {},
 	actions: {
@@ -81,6 +94,18 @@ export const useGeneraRules = defineStore('generaRules', {
 					this.getDictionaryList = res;
 				});
 			}
+		},
+		resetProductSettlementRuleParams() {
+			this.productSettlementRuleBack = false;
+			this.productSettlementRuleParams = {
+				scenicId: null, //关联景区id
+				productName: null, //产品名称
+				productType: 1, //产品类型 1-景区 2-酒店 3-餐饮
+				productSonType: null, //产品类型下拉列表，UNITE-联票 ONE-单票 SHOW-演出票
+				hasProductRule: null, //是否有结算规则 true-是 false-否
+				pageNo: 1, //页号
+				pageSize: 10, //页大小
+			};
 		},
 	},
 });

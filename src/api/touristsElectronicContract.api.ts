@@ -85,3 +85,12 @@ export function findIndividualContractTourist(data: any) {
     showLoading: true
   });
 }
+// 发布签署（线上合同)
+export function releaseOnlineContract(data: any) {
+  return request({
+    url: `${commonPart}releaseOnlineContract`,
+    method: 'post',
+    data,
+    showLoading: true
+  });
+}

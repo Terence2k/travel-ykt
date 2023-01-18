@@ -42,6 +42,11 @@
       </div>
     </div>
   </div>
+  <CommonModal title="充值" v-model:visible="chargeVisible" @close="chargeVisibleClose" @cancel="chargeVisibleClose"
+    :isConform="false" width="40%">
+    <iframe id="charge_form" :srcdoc="chargeFormHTMLText" :frameborder="0">
+    </iframe>
+  </CommonModal>
 </template>
 
 <script setup lang="ts">
@@ -49,6 +54,7 @@ import convertCurrency from '@/views/fundManagement/change'
 import { message } from 'ant-design-vue';
 import { CloseOutlined } from '@ant-design/icons-vue';
 import { useRouter, useRoute } from 'vue-router';
+import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import api from '@/api';
 const router = useRouter();
 const route = useRoute();
@@ -70,6 +76,8 @@ const form = reactive({
   runningAmount: ''
 })
 const bigAmount = ref()
+const chargeVisible = ref(false)
+const chargeFormHTMLText = ref('')
 let timer: NodeJS.Timeout
 const inputChange = () => {
   timer && clearTimeout(timer)
@@ -80,20 +88,12 @@ const inputChange = () => {
     } else {
       let val = Number(form.runningAmount)
       if (!isNaN(val)) {
-        if (val.toString().length <= 8) {
-          bigAmount.value = convertCurrency(val)
-        } else {
-          form.runningAmount = ''
-          bigAmount.value = ''
-          message.warning('请输入小于8位的金额！')
-        }
+        bigAmount.value = convertCurrency(val)
       } else {
-        form.runningAmount = ''
-        bigAmount.value = ''
         message.warning('请输入正确金额！')
       }
     }
-  }, 300);
+  }, 500);
 }
 const addAmount = async () => {
   let params = {
@@ -102,18 +102,37 @@ const addAmount = async () => {
     runningAmount: Number(form.runningAmount) * 100
   }
   let res = await api.recharge(params)
-  if (res) {
+  if (!res.enableICBC) {
     message.success('充值成功！')
     form.runningAmount = ''
     getBaseInfo()
   } else {
-    message.error('充值失败！')
+    chargeVisible.value = true
+    const searchRegExp = /&quot;/g
+    const replaceWith = "'"
+    // const searchRegExp1 = /\//g
+    // const replaceWith1 = ""
+    chargeFormHTMLText.value = res.rechargeForm.replace(searchRegExp, replaceWith)
+    // chargeFormHTMLText.value = result.replace(searchRegExp1, replaceWith1)
+    console.log(chargeFormHTMLText.value);
+    /* nextTick(() => {
+      const testFormDom = document.getElementById('testForm')!
+      console.dir(testFormDom);
+      testFormDom.innerHTML = chargeFormHTMLText.value
+    }) */
+
+    /* const str = res.rechargeForm.replace('&quot', '"')
+    chargeFormHTMLText.value = str.replace('/', '') */
   }
 }
+const chargeVisibleClose = () => {
+  chargeVisible.value = false
+  chargeFormHTMLText.value = ''
+}
 const getUserInfo = () => {
-  let userInfo = window.localStorage.getItem('userInfo')!;
-  const userInfoObj = JSON.parse(userInfo)
-  const { sysCompany: { oid } } = userInfoObj
+  let userInfo = window.localStorage.getItem('userInfo');
+  userInfo = JSON.parse(userInfo as string)
+  const { sysCompany: { oid } } = userInfo
   form.companyId = oid
 }
 const getBaseInfo = async () => {
@@ -204,5 +223,10 @@ onMounted(() => {
       }
     }
   }
+}
+
+#charge_form {
+  width: 100%;
+  height: 400px;
 }
 </style>

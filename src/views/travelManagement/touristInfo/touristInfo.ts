@@ -1,9 +1,9 @@
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEqual } from 'lodash';
 import dayjs from 'dayjs';
 import type { UnwrapRef } from 'vue';
 
 import { useTravelStore } from '@/stores/modules/travelManagement';
-import { validateRules, validateFields, generateGuid, getAge, phoneReg, isPositiveInteger, getGenderByIdNumber } from '@/utils';
+import { validateRules, validateFields, generateGuid, getAge, phoneReg, isPositiveInteger, getGenderByIdNumber, downloadFile } from '@/utils';
 import api from '@/api/index';
 import { CODEVALUE } from '@/constant'
 import { message } from 'ant-design-vue';
@@ -151,6 +151,27 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 		]
 	});
 	const methods = {
+		async downloadTouristTemplate() {
+			const res = await api.travelManagement.downloadTouristTemplate();
+			downloadFile(res, '游客名单模板.xlsx');
+		},
+		readExcel(event: any) {
+			const file = event.file;
+			const formData = new FormData();
+			formData.append('file', file)
+			api.travelManagement.importTourist(formData).then((res: any) => {
+				state.tableData.push(...res.map((item: any) => {
+					const key = generateGuid();
+					item.key = key
+					item.edit = true;
+					state.editableData[key] = item;
+					return item;
+				}))
+				
+				
+				
+			});
+		},
 		async getCityList(data:any, length: number) {
 			const res = await api.commonApi.getCityList(data);
 			return res.map((item:any) => {
@@ -160,6 +181,35 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 					isLeaf: length >=3 ? true : false
 				}
 			})
+		},
+		getRepetition(key: any) {
+			const sourceData: any = state.editableData[key];
+			let msg: any = ''
+			// if (key) {
+			const cur = state.tableData.filter((it: any) => {
+				let id = it.oid ? it.oid : it.key
+				console.log(id, key)
+				return it.certificateNo === sourceData.certificateNo && id !== key
+			})[0];
+			console.log(cur)
+			if (cur) {
+				msg = `游客${sourceData.name}证件号重复`
+			}
+			// }
+			// else {
+			// 	const certificateNoList: any = []
+			// 	const cur = state.tableData.filter((it: any) => {
+			// 		if (certificateNoList.includes(it.certificateNo)) {
+			// 			return it;
+			// 		}
+			// 		certificateNoList.push(it.certificateNo)
+					
+			// 	})[0]
+			// 	if (cur) {
+			// 		msg = message.error(`游客${cur.name}证件号重复`)
+			// 	}
+			// }
+			return msg;
 		},
 		loadData (selectedOptions:any) {
 			console.log(selectedOptions)
@@ -303,6 +353,8 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 				const result = methods.isOld(key)
 				const isUpload = methods.isUpload(key)
 				const isPhone = methods.isPhone(key)
+				const repetition = methods.getRepetition(key);
+				if (repetition) return message.error(repetition)
 				if (!result.flag) return message.error(result.text);
 				if (!isUpload.flag) return message.error(isUpload.text);
 				if (!isPhone.flag) return message.error(isPhone.text);
@@ -310,9 +362,11 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 				delete state.editableData[key];
 			} else {
 				for (let k in state.editableData) {
+					const repetition = methods.getRepetition(k);
 					const result = methods.isOld(k);
 					const isUpload = methods.isUpload(k);
 					const isPhone = methods.isPhone(k);
+					if (repetition) return emits('onSuccess', {touristList: {valid: false, message: repetition, index: 2}});
 					if (!result.flag) return emits('onSuccess', {touristList: {valid: false, message: result.text, index: 2}});
 					if (!isUpload.flag) return emits('onSuccess', {touristList: {valid: false, message: isUpload.text, index: 2}});
 					if (!isPhone.flag) return emits('onSuccess', {touristList: {valid: false, message: isPhone.text, index: 2}});
@@ -335,10 +389,17 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 		},
 		handleChange(val: any, option: any, key: string) {
 			// console.log(val, option)
-			state.editableData[key].provinceId = val[0]
-			state.editableData[key].cityId = val[1]
-			state.editableData[key].sourceAddress = val[val.length - 1];
-			state.editableData[key].sourceAddressName = option.map((it:any) => it.label).join('/')
+			if (val) {
+				state.editableData[key].provinceId = val[0]
+				state.editableData[key].cityId = val[1]
+				state.editableData[key].sourceAddress = val[val.length - 1];
+				state.editableData[key].sourceAddressName = option.map((it:any) => it.label).join('/')
+			} else {
+				state.editableData[key].provinceId = ''
+				state.editableData[key].cityId = ''
+				state.editableData[key].sourceAddress = '';
+				state.editableData[key].sourceAddressName = ''
+			}
 		},
 		async changeIDCard(val: any, key: string, columns: string) {
 			
@@ -381,7 +442,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			if (columns === 'certificateNo' || columns === 'name') {
 				if (state.editableData[key].certificateNo && state.editableData[key].name) {
 					const res = await travelStore.getHealthCode([state.editableData[key]]);
-					state.editableData[key].healthCode = res[0].healthCode;
+					state.editableData[key].healthCode = res[0]?.healthCode;
 					methods.copyData(key)
 				}
 			}

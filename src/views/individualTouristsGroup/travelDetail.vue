@@ -24,8 +24,7 @@
           <a-descriptions-item label="线路名称" :span="3">{{ state.basicData.routeName }}</a-descriptions-item>
           <a-descriptions-item label="团队类型" :span="2">{{ state.basicData.teamTypeName }}</a-descriptions-item>
           <a-descriptions-item label="散客组团类型">{{ state.basicData.groupTypeName }}</a-descriptions-item>
-          <a-descriptions-item label="行程时间" :span="2">{{ state.basicData.startDate + ' - ' + state.basicData.endDate
-}}</a-descriptions-item>
+          <a-descriptions-item label="行程时间" :span="2">{{ state.basicData.startDate + ' - ' + state.basicData.endDate}}</a-descriptions-item>
           <a-descriptions-item label="导游">{{ state.guideList[0]?.guideName }}
             {{ state.guideList[0]?.guidePhone }}</a-descriptions-item>
           <a-descriptions-item label="散客拼团社" :span="2">{{ state.basicData.travelName }}</a-descriptions-item>
@@ -34,18 +33,23 @@
           <a-descriptions-item label="电子合同数量" :span="2">{{ state.basicData.subTravelName }}</a-descriptions-item>
           <a-descriptions-item label="游客总人数">{{ state.basicData.touristCount }}</a-descriptions-item>
           <a-descriptions-item label="古维减免人数" :span="2">{{ state.basicData.guWeiReduceCount }}</a-descriptions-item>
-          <a-descriptions-item label="行程冻结金额（元）">{{ state.basicData.totalFee }}</a-descriptions-item>
+          <a-descriptions-item label="行程冻结金额（元）">{{ accDiv(state.basicData.totalFee, 100) }}元</a-descriptions-item>
           <a-descriptions-item label="联系人" :span="2">{{ state.basicData.travelOperatorName }}</a-descriptions-item>
           <a-descriptions-item label="联系人电话">{{ state.basicData.travelOperatorPhone }}</a-descriptions-item>
-          <a-descriptions-item label="用车车牌号" :span="2">{{ state.transportList[0]?.licencePlateNumber
-}}</a-descriptions-item>
+          <a-descriptions-item label="用车车牌号" :span="2">{{ state.transportList[0]?.licencePlateNumber}}</a-descriptions-item>
           <a-descriptions-item label="自编团号">{{ state.basicData.selfTeamNo }}</a-descriptions-item>
         </a-descriptions>
       </a-col>
       <a-col :span="7">
         <a-descriptions title="&nbsp;" bordered layout="vertical">
           <a-descriptions-item label="行程单二维码" :labelStyle="labelStyle" :contentStyle="contentStyle">
-            待提交后生成
+            <!-- 1-草稿，5-待财务审核 -->
+            <template v-if="[1,5].includes(state.basicData.status)">
+              财务审核通过后自动生成
+            </template>
+            <template v-else-if="codeUrl">
+            <qrcode-vue :value="codeUrl" :size="200" level="H" />
+            </template>
           </a-descriptions-item>
         </a-descriptions>
       </a-col>
@@ -113,7 +117,7 @@
           </template>
           <!-- 入住天数 -->
           <template v-if="column.key === 'stayDays'">
-            {{ cmpRowValue(record, 'stayDays') }}
+            {{ getDiffDay(record.startDate, record.endDate) }}
           </template>
           <!-- 合同行程日期 -->
           <template v-if="column.key === 'tripDate'">
@@ -121,7 +125,7 @@
           </template>
           <template v-if="column.key === 'action'">
             <div class="action-btns">
-              <a>查看订单</a>
+              <a @click="toOrderDetail(record, item.title)">查看订单</a>
             </div>
           </template>
           <template v-if="column.key === 'attachmentUrl'">
@@ -144,8 +148,13 @@ import { accDiv } from '@/utils/compute';
 import dayjs from 'dayjs';
 import { CloseOutlined } from '@ant-design/icons-vue';
 import { useRouter, useRoute } from 'vue-router';
+import QrcodeVue from 'qrcode.vue'
+import { getStyles, getDiffDay } from '@/utils/util';
+
+
 const router = useRouter();
 const route = useRoute();
+const codeUrl = ref();
 const back = () => {
   router.push({
     name: 'individualTouristsGroup',
@@ -162,7 +171,7 @@ const state = reactive({
     pageNo: 1,
     pageSize: 10,
   },
-  itineraryDetail: {}
+  itineraryDetail: {} as any
 });
 const printBtn = ref();
 
@@ -225,9 +234,9 @@ const cmpRowValue = computed(() => (val: any, type: string) => {
         res = '否'
       }
       break;
-    case 'stayDays':
-      res = dayjs(val.endDate).diff(val.startDate, 'day')
-      break;
+    // case 'stayDays':
+    //   res = dayjs(val.endDate).diff(val.startDate, 'day')
+    //   break;
     case 'ticketTotalFee':
       const x = val.reservePeopleCount || 0
       const y = val.unitPrice || 0
@@ -242,7 +251,6 @@ const cmpRowValue = computed(() => (val: any, type: string) => {
 // 行程单二维码内容样式
 const contentStyle = computed((): CSSProperties => {
   return {
-    lineHeight: '352px',
     display: 'flex',
     justifyContent: 'center',
     color: '#9DA0A4',
@@ -319,15 +327,52 @@ const getItineraryDetail = (orderId: any, isPrint?: any) => {
     })
     res.contractList = content
     state.itineraryDetail = res;
+    codeUrl.value = JSON.stringify({
+      itineraryNo: state.basicData.itineraryNo,
+      oid: state.basicData.oid
+    })
     nextTick(() => {
       if (isPrint) {
         printBtn.value.click();
       }
     })
+    state.itineraryDetail.guWeiDetail = await api.getManagementExpenses(orderId);
   }).catch((err: any) => {
     console.log(err);
   });
 }
+
+const toOrderDetail = (row: any, title: any) => {
+  switch (title) {
+    case '古维管理费':
+      toGuweiOrder(row.oid);
+    break;
+    case '酒店费用':
+      toHotelOrder(row.hotelOrderNo);
+    break;
+    case '景区费用':
+      toScenicDetail(row.ticketOrderNo);
+    break;
+  }
+}
+
+// 跳转古维订单
+const toGuweiOrder = (value: any) => {
+  router.push({ path: '/gouvyManagement/order/order_edit', query: { oid: value } });
+};
+
+// 跳转酒店订单
+const toHotelOrder = (value: any) => {
+  router.push({ path: '/hotelManagement/hotelOrder/orderEdit', query: { orderNo: value } });
+};
+
+// 跳转景区订单
+const toScenicDetail = (value: any) => {
+  router.push({ path: '/scenic-spot/order-manage/edit', query: { oid: value } });
+};
+onMounted(() => {
+  document.getElementsByClassName('ant-descriptions-view')[1].style.height = `${getStyles(document.getElementsByClassName('ant-descriptions-view')[0], 'height')}px`;
+})
 watch(
   () => route,
   (newVal) => {

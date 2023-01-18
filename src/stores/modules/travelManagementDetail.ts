@@ -38,6 +38,29 @@ export const takeGroupListParams = {
 		isSend: false,
 	},
 };
+export const fileOne = {
+	attachmentName: '',
+	attachmentTypeName: '旅行合同上传：',
+	attachmentType: 1,
+	attachmentUrl: '',
+	oid: null,
+}
+
+export const fileTwo = {
+	attachmentName: '',
+	attachmentTypeName: '委托接待协议上传：',
+	attachmentType: 2,
+	attachmentUrl: '',
+	oid: null,
+}
+
+export const fileThree = {
+	attachmentName: '',
+	attachmentTypeName: '包车合同上传：',
+	attachmentType: 3,
+	attachmentUrl: '',
+	oid: null,
+}
 export const useTravelStore = defineStore({
 	id: 'Travel',
 	state: () => ({
@@ -56,6 +79,7 @@ export const useTravelStore = defineStore({
 		newGuideList:[],
 		trafficList: [],
 		delTrafficList: [],
+		delAttachmentList:[],
 		touristList: [],
 		teamTime: [] as any,
 		IDCard: [],
@@ -66,29 +90,7 @@ export const useTravelStore = defineStore({
 		disbledDate: true as any,
 		ticketsList: [],
 		auditticket: [] as any,
-		attachmentList: [
-			{
-				attachmentName: '',
-				attachmentTypeName: '旅行合同上传：',
-				attachmentType: 1,
-				attachmentUrl: '',
-				oid: null,
-			},
-			{
-				attachmentName: '',
-				attachmentTypeName: '委托接待协议上传：',
-				attachmentType: 2,
-				attachmentUrl: '',
-				oid: null,
-			},
-			{
-				attachmentName: '',
-				attachmentTypeName: '包车合同上传：',
-				attachmentType: 3,
-				attachmentUrl: '',
-				oid: null,
-			},
-		],
+		attachmentList: [fileOne, fileTwo, fileThree],
 	}),
 	getters: {},
 	actions: {
@@ -141,8 +143,14 @@ export const useTravelStore = defineStore({
 			this.trafficList = list;
 		},
 		setdelTrafficList(list: any) {
-			console.log(list,'交通大菠萝')
 			this.delTrafficList = list;
+		},
+		setFileInfo(data: any) {
+			this.attachmentList = data;
+		},
+		setdelFileInfo(list: any) {
+			console.log('附件大菠萝',list);
+			this.delAttachmentList = list;
 		},
 		SetHotels(data: any, oid: any, key: string) {
 			if (key) {
@@ -191,8 +199,6 @@ export const useTravelStore = defineStore({
 				}
 			}
 		},
-		setFileInfo(data: any) {
-			this.attachmentList = data;
-		},
+		
 	},
 });

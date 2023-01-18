@@ -72,7 +72,7 @@
 					</template>
 				</a-input-number>
 			</a-form-item>
-			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 2 && formState.productType === 2" :rules="rulesRef.integer">
+			<a-form-item label="收费数量" name="chargeCount" v-if="formState.chargeModel === 2 && formState.productType === 2" :rules="rulesRef.money">
 				<a-input-number v-model:value="formState.chargeCount" placeholder="请输入酒店房间数收费（单位：元/房间）" style="width: 100%" :min="1">
 					<template #addonAfter>
 						<span>元/房间</span>
@@ -166,7 +166,7 @@ import lodash from 'lodash';
 import { useRouter } from 'vue-router';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import { message } from 'ant-design-vue';
-import { isIntegerNotMust, isBtnZeroToHundred } from '@/utils/validator';
+import { isIntegerNotMust, isBtnZeroToHundred, isTwoDecimalPlaces } from '@/utils/validator';
 import api from '@/api';
 import { updateProductRule } from '@/api/settlementManage.api';
 import { FormState } from './type';
@@ -243,7 +243,8 @@ const rulesRef = {
 	// 人数
 	integer: [{ required: true, validator: isIntegerNotMust, trigger: 'blur' }],
 	// 金额
-	money: [{ required: true, message: '请输入金额' }],
+	//   mobile: [{ required: true, validator: validPhone, trigger: 'blur' }],
+	money: [{ required: true, validator: isTwoDecimalPlaces, trigger: 'blur' }],
 };
 const route: any = useRouter();
 // 缓存删除编辑数据
@@ -315,7 +316,7 @@ const productRuleDetail = async (id: number) => {
 	const result = await api.productRuleDetail(id);
 	for (let key in formState) {
 		if (result[key] || result[key] === 0) {
-			if (key === 'chargeCount' && Number(result['chargeModel']) === 3) {
+			if (key === 'chargeCount' && (Number(result['chargeModel']) === 3 || Number(result['chargeModel']) === 2)) {
 				formState['chargeCount'] = result['chargeCount'] / 100;
 			} else {
 				formState[key] = result[key];
@@ -396,7 +397,7 @@ const saveParams = () => {
 	if (oid.value) {
 		formState.oid = oid.value;
 	}
-	if (formState.chargeModel === 3) {
+	if (formState.chargeModel === 3 || formState.chargeModel === 2) {
 		formState.chargeCount = Number(formState.chargeCount) * 100;
 	}
 };

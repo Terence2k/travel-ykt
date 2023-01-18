@@ -339,11 +339,12 @@ export async function getInfoByCompanyId(id: number) {
 }
 
 // hotel-service/public/api/hotel-information/getAllUnAuditRoomTypeHotel
-export async function getHotelListInAudit() {
+export async function getHotelListInAudit(data: any) {
 	return request({
 		url: `${commonPath}/hotel-service/public/api/hotel-information/getAllUnAuditRoomTypeHotel`,
-		method: 'get',
+		method: 'post',
 		showLoading: true,
+		data,
 	});
 }
 
@@ -423,7 +424,7 @@ export async function changeRefreshRoom(data: any) {
 		url: `${commonPath}/hotel-service/public/api/hotel-order/changeRefreshRoom`,
 		method: 'post',
 		showLoading: true,
-		data
+		data,
 	});
 }
 //(App) 根据订单号查询改刷数据
@@ -438,7 +439,7 @@ export async function getAuditButton(data: any) {
 	return request({
 		url: `${commonPath}/customer-service/public/api/sys/audit/flow/getAuditButton`,
 		method: 'post',
-		data
+		data,
 	});
 }
 // 审核
@@ -446,7 +447,6 @@ export async function orderhandle(data: any) {
 	return request({
 		url: `${commonPath}/customer-service/public/api/sys/audit/flow/handle`,
 		method: 'post',
-		data
+		data,
 	});
 }
-
