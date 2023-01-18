@@ -87,8 +87,8 @@ export const getOptions = (props: any) => {
       },
       {
         title: '健康码',
-        dataIndex: 'healthyCode',
-        key: 'healthyCode',
+        dataIndex: 'healthCodeName',
+        key: 'healthCodeName',
       },
       {
         title: '中高风险',
@@ -97,8 +97,8 @@ export const getOptions = (props: any) => {
       },
       {
         title: '特殊证件',
-        dataIndex: 'specialCertificateType',
-        key: 'specialCertificateType',
+        dataIndex: 'specialCertificateTypeName',
+        key: 'specialCertificateTypeName',
       },
     ],
     title: '游客信息',
@@ -454,7 +454,7 @@ export const getOptions = (props: any) => {
     ],
     title: '已选择的合同',
     descriptions:
-      `（${props.contractList?.length}）`,
+      `（${props.contractList?.length || 0}）`,
     dataSource: props.contractList,
   }
   return {
