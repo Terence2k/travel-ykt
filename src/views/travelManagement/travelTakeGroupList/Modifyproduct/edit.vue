@@ -43,6 +43,9 @@
 							{{ index + 1 }}
 						</div>
 					</template>
+					<template v-if="column.key === 'roomName'">
+						<div v-html="text"></div>
+					</template>
 					<template v-if="column.key === 'orderFee'">
 						<div>
 							{{ accDiv(record.orderFee, 100) }}
@@ -69,9 +72,9 @@
 							{{ index + 1 }}
 						</div>
 					</template>
-					<template v-if="column.key === 'totalFee'">
+					<template v-if="column.key === 'orderFee'">
 						<div>
-							{{ accDiv(record.reservePeopleCount * record.unitPrice, 100) }}
+							{{ accDiv(record.orderFee, 100) }}
 						</div>
 					</template>
 					<template v-if="column.key === 'unitPrice'">

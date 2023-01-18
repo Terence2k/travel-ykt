@@ -1,9 +1,13 @@
 <template>
 	<div class="table-area">
-		<div class="list-btn">
-			<a-button type="primary" class="success" @click="toAddPage()" style="margin-right: 10px">新增</a-button>
-			<a-button type="primary" class="success" @click="showTip('all', undefined)">删除</a-button>
-			<span> {{ getProductKeyName }} </span>
+		<div class="btn-container">
+			<div class="left-btn">
+				<a-button @click="toBack()" style="margin-right: 10px">返回</a-button>
+			</div>
+			<div class="list-btn">
+				<a-button type="primary" class="success" @click="toAddPage()" style="margin-right: 10px">新增</a-button>
+				<a-button type="primary" class="success" @click="showTip('all', undefined)">删除</a-button>
+			</div>
 		</div>
 		<a-spin size="large" :spinning="state.tableData.loading">
 			<CommonTable
@@ -40,7 +44,7 @@
 					<!-- 收费名称 -->
 					<template v-if="column.key === 'chargeCount'">
 						<span v-if="record.chargeModel === 1">{{ record.chargeCount }}%</span>
-						<span v-if="record.chargeModel === 2">{{ record.chargeCount }}人</span>
+						<span v-if="record.chargeModel === 2">{{ (record.chargeCount / 100).toFixed(2) }}元/房间</span>
 						<span v-if="record.chargeModel === 3">{{ (record.chargeCount / 100).toFixed(2) }}元</span>
 					</template>
 					<template v-if="column.key === 'action'">
@@ -78,6 +82,7 @@ import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import api from '@/api';
 import { useGeneraRules } from '@/stores/modules/generaRules';
 import { number } from 'vue-types';
+import router from '@/router';
 const navigatorBar = useNavigatorBar();
 // import { userList } from '@/api';
 const route = useRouter();
@@ -303,6 +308,11 @@ const getProductKeyName = computed(() => {
 
 	return array[Number(state.tableData.param.productType) - 1] || 0;
 });
+const toBack = () => {
+	router.push({
+		path: '/settlementManagement/productSettlementRule/list',
+	});
+};
 interface cacheDataType {
 	delIndex: null | number | Array<any> | string;
 	delShow: boolean;
@@ -420,5 +430,15 @@ const getProductName = computed(() => (productSonType: string, chargeProductSonI
 .table-area {
 	position: relative;
 	overflow: hidden;
+}
+.btn-container {
+	width: 100%;
+	display: flex;
+	.left-btn {
+		padding: 8px 0;
+	}
+	.list-btn {
+		margin-left: auto;
+	}
 }
 </style>

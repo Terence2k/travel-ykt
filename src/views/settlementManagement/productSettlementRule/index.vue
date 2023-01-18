@@ -36,7 +36,8 @@
 			</a-select>
 		</search-item>
 		<template #button>
-			<a-button @click="initList" v-permission="'景区_查询'">查询</a-button>
+			<a-button @click="reset" v-permission="`${getProductKeyName}_查询`" style="margin-right: 30px">重置</a-button>
+			<a-button @click="initList" v-permission="`${getProductKeyName}_查询`">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
@@ -82,6 +83,7 @@ import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import api from '@/api';
+import lodash from 'lodash';
 import { useGeneraRules } from '@/stores/modules/generaRules';
 import { getTabPermission } from '@/utils/util';
 const navigatorBar = useNavigatorBar();
@@ -196,6 +198,19 @@ const state = reactive({
 	shopList: [],
 	hotelNameList: [],
 });
+const reset = () => {
+	const productType = state.tableData.param.productType;
+	state.tableData.param = {
+		scenicId: null, //关联景区id
+		productName: null, //产品名称
+		productType, //产品类型 1-景区 2-酒店 3-餐饮
+		productSonType: null, //产品类型下拉列表，UNITE-联票 ONE-单票 SHOW-演出票
+		hasProductRule: null, //是否有结算规则 true-是 false-否
+		pageNo: 1, //页号
+		pageSize: 10, //页大小
+	};
+	initList();
+};
 //搜索
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
@@ -215,6 +230,9 @@ const generaRulesOptions = useGeneraRules();
 const toConfigure = (record: any) => {
 	console.log(record, `record`);
 	let query = {};
+	// 记录跳转时的数据缓存到Pinia
+	generaRulesOptions.productSettlementRuleBack = true;
+	generaRulesOptions.productSettlementRuleParams = state.tableData.param;
 	if (state.tableData.param.productType === 1) {
 		query = {
 			productId: encodeURIComponent(record.productId),
@@ -255,6 +273,10 @@ const dealData = (params: [any]) => {
 	return params;
 };
 onMounted(() => {
+	if (generaRulesOptions.productSettlementRuleBack) {
+		state.tableData.param = lodash.cloneDeep(generaRulesOptions.productSettlementRuleParams);
+		generaRulesOptions.resetProductSettlementRuleParams();
+	}
 	initList();
 	getEnum();
 });
@@ -292,7 +314,8 @@ const getAllOpenHotelNameList = async () => {
 };
 const tabsChange = () => {
 	state.tableData.param.scenicId = null;
-	initList();
+	reset();
+	// initList();
 };
 const getProductKeyName = computed(() => {
 	const array: any = ['景区', '酒店', '餐饮', '综费产品'];

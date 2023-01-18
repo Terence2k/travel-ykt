@@ -21,6 +21,7 @@
 			</a-select>
 		</search-item>
 		<template #button>
+			<a-button @click="reset" v-permission="`查询`" style="margin-right: 30px">重置</a-button>
 			<a-button @click="initList" v-permission="`查询`">查询</a-button>
 		</template>
 	</CommonSearch>
@@ -41,7 +42,7 @@
 					<!-- 收费名称 -->
 					<template v-if="column.key === 'chargeCount'">
 						<span v-if="record.chargeModel === 1">{{ record.chargeCount }}%</span>
-						<span v-if="record.chargeModel === 2">{{ record.chargeCount }}人</span>
+						<span v-if="record.chargeModel === 2">{{ (record.chargeCount / 100).toFixed(2) }}元/房间</span>
 						<span v-if="record.chargeModel === 3">{{ (record.chargeCount / 100).toFixed(2) }}元</span>
 					</template>
 					<template v-if="column.key === 'action'">
@@ -260,6 +261,17 @@ const showTip = (str: string, par: any, record: any) => {
 	}
 	cacheData.value.delShow = true;
 };
+const reset = () => {
+	state.tableData.param = {
+		teamTypeId: null, //团队类型id(对应ljykt_travel_agency数据库sys_team_type表oid)
+		productType: null, //产品类型 1-景区 2-酒店 3-餐饮 6开始为综费产品id
+		costName: '', //费用名称
+		ruleStatus: null, //规则状态 1-启用 0-禁用
+		pageNo: 1, //页号
+		pageSize: 10, //页大小
+	};
+	initList();
+};
 const tipSubmit = async () => {
 	// 修改状态
 	if (cacheData.value.delState === 'state') {
@@ -320,9 +332,9 @@ const getTeamTypeName = computed(() => (value: number) => {
 });
 const getProductTypeName = computed(() => (value: number) => {
 	if (generaRulesOptions.productTypeList) {
-		const idx = generaRulesOptions.productTypeList.findIndex((item) => item.value === value);
+		const idx = generaRulesOptions.currencyProductTypeList.findIndex((item) => item.value === value);
 		if (idx !== -1) {
-			return generaRulesOptions.productTypeList[idx]['name'];
+			return generaRulesOptions.currencyProductTypeList[idx]['name'];
 		}
 		return '';
 	}

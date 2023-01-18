@@ -55,6 +55,7 @@ export const auditListParams = {
 		keyWordType: 1,
 		groupType: '',
 	},
+  waitAuditNum: 0
 };
 export const fileOne = {
 	attachmentName: '',
@@ -449,6 +450,9 @@ export const useTravelStore = defineStore({
 		setAuditList(data: any, key: AuditField) {
 			this.auditList[key].list = data.content;
 			this.auditList[key].total = data.total;
+		},
+		setWaitAuditNumt(num: any, key: AuditField) {
+			this.auditList[key].waitAuditNum = num;
 		},
 		setTakeGroupList(data: any, key: TakeGroupField) {
 			this.takeGroupList[key].list = data.content;

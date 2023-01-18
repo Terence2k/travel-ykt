@@ -1,8 +1,13 @@
 <template>
 	<div class="tourist-container">
 		<div class="action-btn">
-			<a-button type="primary">模板下载</a-button>
-			<a-button type="primary" v-if="travelStore.teamStatus">批量导入</a-button>
+			<a-button type="primary" @click="downloadTouristTemplate">模板下载</a-button>
+			<!-- <a-button type="primary" @click="importTourist" v-if="travelStore.teamStatus">批量导入</a-button> -->
+			<a-upload :customRequest="readExcel" :showUploadList="false" accept=".xls,.xlsx" v-if="travelStore.teamStatus">
+				<a-button type="primary">
+					批量导入
+				</a-button>
+			</a-upload>
 			<!-- <a-button type="primary">中高风险地区一键检查</a-button> -->
 			<a-button type="primary" @click="getHealthCode">健康码一键检查</a-button>
 		</div>
@@ -32,6 +37,7 @@
 							<a-form-item v-if="editableData[record.key ? record.key : record.oid]" :name="[record.key ? record.key : record.oid, column.key]">
 								<a-select 
 										style="width: 100%" 
+										allowClear
 										v-model:value="editableData[record.key ? record.key : record.oid][column.key]"
 										placeholder="请选择">
 									<a-select-option v-for="val in column.data" :key="val.codeValue" :value="val.codeValue">{{ val.name }}</a-select-option>
@@ -179,7 +185,9 @@ const {
 	checkCode,
 	checkHighRish,
 	highRish,
-	mustFillIn
+	mustFillIn,
+	downloadTouristTemplate,
+	readExcel
 } = useTouristInfo(props, emits);
 </script>
 <style lang="less" scoped>

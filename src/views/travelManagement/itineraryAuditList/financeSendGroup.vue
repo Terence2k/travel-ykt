@@ -189,19 +189,21 @@
   const rejectAuditVisible = ref(false);
   const isDetailVisible = ref(false);
   const rejectReason = ref('');
-  const waitAuditNum = ref(0);
+  const waitAuditNum = computed(() => travelStore.auditList.financeSendGroup.waitAuditNum);
 
 	const onSearch = async () => {
 		travelStore.auditList.financeSendGroup.params.status = AuditStaus.FinanceSendGroup;
 		const res = await travelStore.getAuditList(travelStore.auditList.financeSendGroup.params);
-    if (!waitAuditNum.value) {
+    if (travelStore.auditList.financeSendGroup.params.pageNo === 1) {
+      let num = 0;
       res.content.forEach((item: any) => {
         if (item.financeAuditStatus === 1) {
-          waitAuditNum.value += 1;
+          num += 1;
         }
       })
+		  travelStore.setWaitAuditNumt(num, 'financeSendGroup');
     }
-		travelStore.setAuditList(res, 'financeSendGroup');
+    travelStore.setAuditList(res, 'financeSendGroup');
 	}
   const cancel = (): any => {
     changeAuditVisible.value = false;
@@ -236,7 +238,7 @@
             .then((res: any) => {
               console.log('审核返回信息：', res);
               message.success('保存成功');
-              waitAuditNum.value = 0;
+              travelStore.setWaitAuditNumt(0, 'financeSendGroup');
               cancel();
             })
             .catch((err: any) => {
@@ -259,7 +261,7 @@
       .then((res: any) => {
         console.log('审核返回信息：', res);
         message.success('保存成功');
-        waitAuditNum.value = 0;
+        travelStore.setWaitAuditNumt(0, 'financeSendGroup');
         cancel();
       })
       .catch((err: any) => {
