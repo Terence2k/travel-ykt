@@ -117,7 +117,7 @@
           </template>
           <!-- 入住天数 -->
           <template v-if="column.key === 'stayDays'">
-            {{ cmpRowValue(record, 'stayDays') }}
+            {{ getDiffDay(record.startDate, record.endDate) }}
           </template>
           <!-- 合同行程日期 -->
           <template v-if="column.key === 'tripDate'">
@@ -125,7 +125,7 @@
           </template>
           <template v-if="column.key === 'action'">
             <div class="action-btns">
-              <a>查看订单</a>
+              <a @click="toOrderDetail(record, item.title)">查看订单</a>
             </div>
           </template>
           <template v-if="column.key === 'attachmentUrl'">
@@ -171,7 +171,7 @@ const state = reactive({
     pageNo: 1,
     pageSize: 10,
   },
-  itineraryDetail: {}
+  itineraryDetail: {} as any
 });
 const printBtn = ref();
 
@@ -234,9 +234,9 @@ const cmpRowValue = computed(() => (val: any, type: string) => {
         res = '否'
       }
       break;
-    case 'stayDays':
-      res = dayjs(val.endDate).diff(val.startDate, 'day')
-      break;
+    // case 'stayDays':
+    //   res = dayjs(val.endDate).diff(val.startDate, 'day')
+    //   break;
     case 'ticketTotalFee':
       const x = val.reservePeopleCount || 0
       const y = val.unitPrice || 0
@@ -336,10 +336,40 @@ const getItineraryDetail = (orderId: any, isPrint?: any) => {
         printBtn.value.click();
       }
     })
+    state.itineraryDetail.guWeiDetail = await api.getManagementExpenses(orderId);
   }).catch((err: any) => {
     console.log(err);
   });
 }
+
+const toOrderDetail = (row: any, title: any) => {
+  switch (title) {
+    case '古维管理费':
+      toGuweiOrder(row.oid);
+    break;
+    case '酒店费用':
+      toHotelOrder(row.hotelOrderNo);
+    break;
+    case '景区费用':
+      toScenicDetail(row.ticketOrderNo);
+    break;
+  }
+}
+
+// 跳转古维订单
+const toGuweiOrder = (value: any) => {
+  router.push({ path: '/gouvyManagement/order/order_edit', query: { oid: value } });
+};
+
+// 跳转酒店订单
+const toHotelOrder = (value: any) => {
+  router.push({ path: '/hotelManagement/hotelOrder/orderEdit', query: { orderNo: value } });
+};
+
+// 跳转景区订单
+const toScenicDetail = (value: any) => {
+  router.push({ path: '/scenic-spot/order-manage/edit', query: { oid: value } });
+};
 onMounted(() => {
   document.getElementsByClassName('ant-descriptions-view')[1].style.height = `${getStyles(document.getElementsByClassName('ant-descriptions-view')[0], 'height')}px`;
 })
