@@ -80,12 +80,20 @@ const inputChange = () => {
     } else {
       let val = Number(form.runningAmount)
       if (!isNaN(val)) {
-        bigAmount.value = convertCurrency(val)
+        if (val.toString().length <= 8) {
+          bigAmount.value = convertCurrency(val)
+        } else {
+          form.runningAmount = ''
+          bigAmount.value = ''
+          message.warning('请输入小于8位的金额！')
+        }
       } else {
+        form.runningAmount = ''
+        bigAmount.value = ''
         message.warning('请输入正确金额！')
       }
     }
-  }, 500);
+  }, 300);
 }
 const addAmount = async () => {
   let params = {
@@ -103,9 +111,9 @@ const addAmount = async () => {
   }
 }
 const getUserInfo = () => {
-  let userInfo = window.localStorage.getItem('userInfo');
-  userInfo = JSON.parse(userInfo as string)
-  const { sysCompany: { oid } } = userInfo
+  let userInfo = window.localStorage.getItem('userInfo')!;
+  const userInfoObj = JSON.parse(userInfo)
+  const { sysCompany: { oid } } = userInfoObj
   form.companyId = oid
 }
 const getBaseInfo = async () => {
