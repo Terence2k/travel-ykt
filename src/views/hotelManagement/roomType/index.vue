@@ -1,6 +1,34 @@
 <template>
 	<div class="roomType-wrapper">
 		<div class="content-container">
+			<div class="search-bar">
+				<div class="item">
+					<span class="field-select item">星级星标</span>
+					<a-select
+						v-model:value="tableState.tableData.param.starCode"
+						class="select-writeOff-status select item"
+						:showArrow="true"
+						:options="tableState.starCodeOptions"
+						placeholder="请选择星级星标"
+					>
+					</a-select>
+				</div>
+
+				<div class="item">
+					<span class="field-input item">酒店名称</span>
+					<a-input class="input-order-num item" v-model:value="tableState.tableData.param.hotelName" placeholder="请输入酒店名称" />
+				</div>
+
+				<div class="item">
+					<span class="field-input item">联系电话</span>
+					<a-input class="input-order-num item" v-model:value="tableState.tableData.param.phone" placeholder="请输入联系电话" />
+				</div>
+
+				<div class="item button-search-wrapper">
+					<!-- <a-button @click="clearFilter" class="button-clear item">重置</a-button> -->
+					<a-button @click="searchByFilter" class="button-search item" v-permission="'查询'">查询</a-button>
+				</div>
+			</div>
 			<div class="table-bar">
 				<div class="flex-container">
 					<span v-if="tableState.pageIsShow" class="title"
@@ -65,26 +93,7 @@ interface DataSourceItem {
 	submitTime: string;
 }
 
-let statusOptionsData = ref([
-	{
-		value: 0,
-		label: '未提交',
-	},
-	{
-		value: 1,
-		label: '待审核',
-	},
-	{
-		value: 2,
-		label: '审核通过',
-	},
-	{
-		value: 3,
-		label: '审核不通过',
-	},
-]);
-
-let starOptionsData = ref([]);
+let starCodeOptionsData = ref([]);
 
 const columns: TableColumnsType = [
 	{
@@ -146,16 +155,14 @@ const tableState = reactive({
 		param: {
 			pageNo: 1,
 			pageSize: 10,
-			unitStatus: undefined,
-			starCode: undefined,
-			hotelName: undefined,
-			phone: undefined,
+			starCode: '',
+			hotelName: '',
+			phone: '',
 		},
 	},
 	pageIsShow: false,
 	inAuditRecordNum: 0,
-	statusOptions: ref<SelectProps['options']>(statusOptionsData),
-	starOptions: ref<SelectProps['options']>(starOptionsData),
+	starCodeOptions: ref<SelectProps['options']>(starCodeOptionsData),
 });
 
 const rowSelection = computed(() => {
@@ -185,11 +192,11 @@ const dataSource = computed(() => {
 	}
 });
 
-const getUnitStatusName = (unitStatus: number) => {
-	if (unitStatus || unitStatus === 0) {
-		return statusOptionsData.value.find((item) => item.value === unitStatus)?.label || '';
-	}
-};
+// const getUnitStatusName = (unitStatus: number) => {
+// 	if (unitStatus || unitStatus === 0) {
+// 		return statusOptionsData.value.find((item) => item.value === unitStatus)?.label || '';
+// 	}
+// };
 
 const onSearch = () => {
 	console.log('tableState.tableData.param:', tableState.tableData.param);
@@ -205,7 +212,11 @@ const onSearch = () => {
 		console.log('我是协会超级管理员');
 		tableState.pageIsShow = true;
 		api
-			.getHotelListInAudit()
+			.getHotelListInAudit({
+				starCode: '',
+				hotelName: '',
+				phone: '',
+			})
 			.then((res: any) => {
 				tableState.inAuditRecordNum = res?.length || 0;
 				tableState.tableData.data = res?.content || res;
@@ -223,14 +234,21 @@ const onSearch = () => {
 	}
 };
 
-const onHandleCurrentChange = (val: number) => {
-	tableState.tableData.param.pageNo = val;
-	onSearch();
-};
-
-const pageSideChange = (current: number, size: number) => {
-	tableState.tableData.param.pageSize = size;
-	onSearch();
+const searchByFilter = () => {
+	api
+		.getHotelListInAudit({
+			starCode: tableState.tableData.param.starCode,
+			hotelName: tableState.tableData.param.hotelName,
+			phone: tableState.tableData.param.phone,
+		})
+		.then((res: any) => {
+			tableState.inAuditRecordNum = res?.length || 0;
+			tableState.tableData.data = res?.content || res;
+			tableState.tableData.total = res?.total || 0;
+		})
+		.catch((err: any) => {
+			message.error(err?.message || err);
+		});
 };
 
 const getHotelStarList = () => {
@@ -238,9 +256,9 @@ const getHotelStarList = () => {
 		.getHotelStarList({})
 		.then((res: any) => {
 			if (Array.isArray(res) && res.length > 0) {
-				starOptionsData.value = res.map((item) => {
+				starCodeOptionsData.value = res.map((item) => {
 					return {
-						value: item.oid,
+						value: item.starCode, //item.oid,
 						label: item.starCode,
 					};
 				});
