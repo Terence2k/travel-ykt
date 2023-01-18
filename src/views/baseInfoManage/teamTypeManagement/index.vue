@@ -13,7 +13,7 @@
             <p v-for="(item, index) in record.productItems" :key="index">{{ item }}</p>
           </template>
           <div style="color:#4197EF" v-show="record.productItems && record.productItems.length !== 0">{{
-              `${record.productItems && record.productItems.length}项`
+          `${record.productItems && record.productItems.length}项`
           }}
           </div>
         </a-popover>
@@ -41,9 +41,9 @@
   <CommonPagination v-model:current="tableData.param.pageNo" v-model:page-size="tableData.param.pageSize"
     :total="tableData.total" @change="onHandleCurrentChange" @showSizeChange="pageSideChange" />
 
-  <CommonModal :title="title" v-model:visible="modalVisible" @close="closeModal" @cancel="closeModal" @conform="save">
-    <a-form ref="teamRef" :model="teamForm" :rules="formRules" name="addTeam" autocomplete="off"
-      :label-col="{ span: 4 }" :wrapper-col="{ span: 24 }">
+  <CommonModal :title="title" v-model:visible="modalVisible" @close="closeModal" @cancel="closeModal" @conform="save"
+    width="auto">
+    <a-form ref="teamRef" :model="teamForm" :rules="formRules" name="addTeam" autocomplete="off" :label-col="labelCol">
       <a-form-item label="取个名字" name="name">
         <a-input v-model:value="teamForm.name" placeholder="给团队类型取个名字，20字以内…" />
       </a-form-item>
@@ -135,6 +135,7 @@ const columns = [
     width: 208
   },
 ]
+const labelCol = { style: { width: '80px' } }
 let isAdd = true
 // let normalProductIds: number[] = []
 const teamRef = ref()
@@ -412,6 +413,7 @@ const getProductsList = async () => {
   let data: TransferProps['dataSource']
   data = res.map((item: any) => {
     return {
+      disabled: item.itemId === 4 ? true : false,
       key: item.itemId,
       title: item.itemName,
       children: item.productVos.map((citem: any) => {

@@ -79,7 +79,8 @@
     <a-form ref="addOperatorRef" :model="form" :rules="formRules" name="addOperator" autocomplete="off"
       :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
       <a-form-item name="companyId" label="所属旅行社">
-        <a-select placeholder="请选择所属旅行社" v-model:value="form.companyId" allowClear :disabled="!isSuper || !isAdd">
+        <a-select placeholder="请选择所属旅行社" v-model:value="form.companyId" allowClear :disabled="!isSuper || !isAdd"
+          @change="companyChange">
           <a-select-option v-for="item in companyOptions" :value="item.oid">{{
             item.name
           }}
@@ -547,15 +548,18 @@ const cmpAuditState = (record: any) => {
   }
 }
 const getStoreList = async () => {
-  const res = await api.individualStoreListByCompanyId(form.value.companyId)
-  storeOptions.value = res?.map((item: { oid: string | number, storeName: string }) => {
-    return {
-      oid: item.oid,
-      name: item.storeName
-    }
-  })
+  if (form.value.companyId) {
+    const res = await api.individualStoreListByCompanyId(form.value.companyId)
+    storeOptions.value = res?.map((item: { oid: string | number, storeName: string }) => {
+      return {
+        oid: item.oid,
+        name: item.storeName
+      }
+    })
+  } else {
+    storeOptions.value = []
+  }
 }
-
 const onHandleCurrentChange = (val: number) => {
   state.tableData.param.pageNo = val;
   onSearch();
@@ -625,6 +629,9 @@ const addOrUpdate = async ({ row, handle }: addInterface) => {
 const tabsChange = () => { }
 const operatorChange = (val: any) => {
   form.value.operatorRole = val.key
+}
+const companyChange = () => {
+  getStoreList()
 }
 const submitStore = () => {
   addOperatorRef.value.validateFields().then(async () => {
@@ -734,8 +741,6 @@ const changeCancel = () => {
   oldArrList.value = {}
   changeKeys.value = []
 }
-const changeConform = () => { }
-
 const getUserInfo = () => {
   let userInfo: any = window.localStorage.getItem('userInfo');
   userInfo = JSON.parse(userInfo);
@@ -754,9 +759,9 @@ const getUserInfo = () => {
     state.tableData.param.companyId = oid
     form.value.companyId = oid
     state.isSuper = false
+    getStoreList()
   }
 }
-
 const getDetails = async (oid: string | number) => {
   const res = await api.findIndividualStoreUserById(oid)
   return res ? res : {}
@@ -788,7 +793,6 @@ onMounted(() => {
   onSearch()
   onAuditSearch()
   initOpeion()
-  getStoreList()
 })
 </script>
 
