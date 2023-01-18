@@ -121,6 +121,7 @@ const formState = reactive<{ [k: string]: any }>({
 	startDate: '',
 	endData: '',
 	count: '',
+	orderFee:''
 });
 const columns: any = [
 	{
@@ -194,11 +195,11 @@ const handelChangeType = async (e: any) => {
 
 const handleOk = async (callback: Function) => {
 	try {
-		let traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 		await formRef.value.validateFields();
 		formState.unitPrice = ticketPrice.value;
 		formState.itineraryId = route.query.oid;
 		formState.reservePeopleCount = travelStore.touristList.length;
+		formState.orderFee = formState.reservePeopleCount * formState.unitPrice
 		if (formState.ticketType === TicketType.UNITE) {
 			formState.childTicketIds = ticketData.childTicket.map((it: any) => it.subTicketId);
 		} else {
@@ -217,8 +218,6 @@ const handleOk = async (callback: Function) => {
 		}
 		const newFormState = cloneDeep(formState);
 		newFormState.reservePeopleCount = formState.reservePeopleCount;
-		newFormState.totalFee = newFormState.reservePeopleCount * newFormState.unitPrice;
-
 		travelStore.setTicket(newFormState, formState.oid ? formState.oid : null, props.productRow.key);
 		callback();
 	} catch (errorInfo) {

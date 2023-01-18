@@ -151,11 +151,11 @@ const state = reactive({
 			dataIndex: 'isHealthy',
 			key: 'isHealthy',
 		},
-		{
-			title: '健康码',
-			dataIndex: 'healthyCode',
-			key: 'healthyCode',
-		},
+		// {
+		// 	title: '健康码',
+		// 	dataIndex: 'healthyCode',
+		// 	key: 'healthyCode',
+		// },
 		{
 			title: '古维费购买状态',
 			dataIndex: 'isAncientUygur',
@@ -263,39 +263,39 @@ const getTourist = () => {
 			pageSize: 20,
 		})
 		.then(async (res: any) => {
-			const certificateIds = res.content.map((item: any) => {
-				return { certificateId: item.certificatesNo };
-			});
-			// 根据身份证列表查询健康码列表
-			const certificateCodes = await getHealthyCodes(certificateIds);
-			// 将健康码和游客列表数据关联
-			configCodeName(certificateCodes, res.content);
+			// const certificateIds = res.content.map((item: any) => {
+			// 	return { certificateId: item.certificatesNo };
+			// });
+			// // 根据身份证列表查询健康码列表
+			// const certificateCodes = await getHealthyCodes(certificateIds);
+			// // 将健康码和游客列表数据关联
+			// configCodeName(certificateCodes, res.content);
 			state.touristTable.data = res.content;
 		});
 	touristVisible.value = true;
 };
-const getHealthyCodes = async (ids: number[]) => {
-	let res = await api.getHealthyCode(ids);
-	if (res) {
-		res.forEach((item: any) => {
-			// 00:绿码，01：黄码，10：红码
-			switch (item.healthCodeStatus) {
-				case '00':
-					item.codeName = '绿码';
-					break;
-				case '01':
-					item.codeName = '黄码';
-					break;
-				case '10':
-					item.codeName = '红码';
-					break;
-				default:
-					item.codeName = '暂无健康码';
-			}
-		});
-	}
-	return res || [];
-};
+// const getHealthyCodes = async (ids: number[]) => {
+// 	let res = await api.getHealthyCode(ids);
+// 	if (res) {
+// 		res.forEach((item: any) => {
+// 			// 00:绿码，01：黄码，10：红码
+// 			switch (item.healthCodeStatus) {
+// 				case '00':
+// 					item.codeName = '绿码';
+// 					break;
+// 				case '01':
+// 					item.codeName = '黄码';
+// 					break;
+// 				case '10':
+// 					item.codeName = '红码';
+// 					break;
+// 				default:
+// 					item.codeName = '暂无健康码';
+// 			}
+// 		});
+// 	}
+// 	return res || [];
+// };
 const touristClose = () => {
 	touristVisible.value = false;
 };

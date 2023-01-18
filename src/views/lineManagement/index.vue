@@ -152,7 +152,7 @@
       <a-form-item name="lineDescribe" label="线路描述">
         <a-textarea v-model:value="form.lineDescribe" placeholder="请输入线路描述，300字以内" show-count :maxlength="300" />
       </a-form-item>
-      <a-form-item label="适用范围" v-if="rolesLevel !== 3 && state.isAdd">
+      <a-form-item name="suitableRange" label="适用范围" v-if="rolesLevel !== 3 && state.isAdd">
         <a-form-item name="suitableRange" v-if="rolesLevel === 1">
           <a-radio-group v-model:value="form.suitableRange" @change="radioChange">
             <a-radio :style="radioStyle" :value="1">全部旅行社全部门店可用</a-radio>
@@ -172,7 +172,7 @@
             <a-radio :style="radioStyle" :value="3">本门店</a-radio>
           </a-radio-group>
         </a-form-item> -->
-        <a-form-item name="suitableRangeTravelId" v-show="travelVisible">
+        <a-form-item name="suitableRangeTravelId" v-if="travelVisible">
           <a-select placeholder="选择旅行社" v-model:value="form.suitableRangeTravelId" allowClear @change="getStoreList">
             <a-select-option v-for="item in TRAVELOptions" :value="item.oid" :key="item.oid">{{
               item.name
@@ -180,7 +180,7 @@
             </a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item name="suitableRangeStoreId" v-show="storeVisible">
+        <a-form-item name="suitableRangeStoreId" v-if="storeVisible">
           <a-select placeholder="选择门店" v-model:value="form.suitableRangeStoreId" allowClear>
             <a-select-option v-for="item in storeOptions" :value="item.oid" :key="item.oid">{{
               item.name
@@ -213,11 +213,15 @@
       <a-form-item v-for="(item, index) in form.TICKETSelected" :key="item.key" :label="index === 0 ? '景区' : ' '"
         :colon="index === 0 ? true : false" :name="['TICKETSelected', index, 'value']" style="margin-bottom: 8px;">
         <div style="display: flex">
-          <a-form-item style="width:200px;margin-bottom: 8px;">
+          <a-form-item
+            :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validateFields(item.day, 'day')) }]"
+            style="width:200px;margin-bottom: 8px;">
             <a-input-number v-model:value="item.day" addon-before="第" addon-after="天" :min="1"
               class="mr8"></a-input-number>
           </a-form-item>
-          <a-form-item style="flex:1;margin-bottom: 8px;">
+          <a-form-item
+            :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validateFields(item.selectedList, 'scene')) }]"
+            style="flex:1;margin-bottom: 8px;">
             <a-select placeholder="请选择景区" mode="multiple" v-model:value="item.selectedList" allowClear>
               <a-select-option v-for="item in TICKETOptions" :value="item.oid" :key="item.oid">{{ item.name }}
               </a-select-option>
@@ -237,7 +241,8 @@
       <a-form-item v-for="(item, index) in form.HOTELSelected" :key="item.key" :label="index === 0 ? '酒店' : ' '"
         :colon="index === 0 ? true : false" :name="['HOTELSelected', index, 'value']" style="margin-bottom: 8px;">
         <div style="display: flex">
-          <a-form-item style="width:200px;margin-bottom: 8px;">
+          <a-form-item style="width:200px;margin-bottom: 8px;"
+            :rules="[{ required: true, trigger: 'change', validator: (_rule: Rule, value: string) => (validateFields(item.day, 'day')) }]">
             <a-input-number v-model:value="item.day" addon-before="第" addon-after="天" :min="1"
               class="mr8"></a-input-number>
           </a-form-item>
@@ -261,7 +266,8 @@
       <a-form-item v-for="(item, index) in form.CATERINGSelected" :key="item.key" :label="index === 0 ? '餐厅' : ' '"
         :colon="index === 0 ? true : false" :name="['CATERINGSelected', index, 'value']" style="margin-bottom: 8px;">
         <div style="display: flex">
-          <a-form-item style="width:200px;margin-bottom: 8px;">
+          <a-form-item style="width:200px;margin-bottom: 8px;"
+            :rules="[{ required: true, trigger: 'change', validator: (_rule: Rule, value: string) => (validateFields(item.day, 'day')) }]">
             <a-input-number v-model:value="item.day" addon-before="第" addon-after="天" :min="1"
               class="mr8"></a-input-number>
           </a-form-item>
@@ -682,7 +688,30 @@ const failFormRules: Record<string, Rule[]> = {
 }
 const lineRef = ref()
 const failFormRef = ref()
-const formRules = {}
+const formRules = {
+  lineName: [{ required: true, trigger: 'blur', message: '请输入线路名称' }],
+  // suitableRange: [{ required: true, trigger: 'blur', message: '请选择适用范围' }],
+  // suitableRangeTravelId: [{ required: true, trigger: 'blur', message: '请选择旅行社' }],
+  // suitableRangeStoreId: [{ required: true, trigger: 'blur', message: '请选择门店' }],
+  enableSatus: [{ required: true, trigger: 'blur', message: '请选择启用状态' }],
+  INDIVIDUAL_LINE_ADULT: [{ required: true, trigger: 'blur', message: '请输入成人价' }],
+  INDIVIDUAL_LINE_CHILDREN: [{ required: true, trigger: 'blur', message: '请输入儿童价' }]
+}
+const validateFields = async (obj: any, type: string) => {
+  if (type === 'day') {
+    if (obj) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject('请输入行程日');
+    }
+  } else if (type === 'scene') {
+    if (obj) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject('请选择景区');
+    }
+  }
+}
 const newArrList = ref<any>({})
 const oldArrList = ref<any>({})
 const changeKeys = ref<string[]>([])
@@ -1164,45 +1193,47 @@ const getParams = () => {
   return params
 }
 const submitLine = () => {
-  const params = getParams()
-  if (state.isAdd) { // 新增
-    if (state.rolesLevel === 1) { // 无需审核
-      api.createIndividualLineAdmin(params).then((res: any) => {
-        message.success('创建线路成功！')
-        cancel()
-        onSearch()
-      }).catch((err: Error) => {
-        message.error('出错了！')
-      })
-    } else if ([2, 3].includes(state.rolesLevel)) { // 需审核 
-      api.createIndividualLine(params).then((res: any) => {
-        message.success('创建线路成功！请耐心等待审核结果')
-        cancel()
-        onAuditSearch()
-      }).catch((err: Error) => {
-        message.error('出错了！')
-      })
+  lineRef.value.validateFields().then(async () => {
+    const params = getParams()
+    if (state.isAdd) { // 新增
+      if (state.rolesLevel === 1) { // 无需审核
+        api.createIndividualLineAdmin(params).then((res: any) => {
+          message.success('创建线路成功！')
+          cancel()
+          onSearch()
+        }).catch((err: Error) => {
+          message.error('出错了！')
+        })
+      } else if ([2, 3].includes(state.rolesLevel)) { // 需审核 
+        api.createIndividualLine(params).then((res: any) => {
+          message.success('创建线路成功！请耐心等待审核结果')
+          cancel()
+          onAuditSearch()
+        }).catch((err: Error) => {
+          message.error('出错了！')
+        })
+      }
+    } else { // 编辑
+      if (state.rolesLevel === 1) { // 无需审核
+        api.editIndividualLineAdmin(params).then((res: any) => {
+          message.success('编辑线路成功！')
+          cancel()
+          onSearch()
+        }).catch((err: Error) => {
+          message.error('出错了！')
+        })
+      } else if ([2, 3].includes(state.rolesLevel)) { // 需审核 
+        api.editIndividualLine(params).then((res: any) => {
+          message.success('修改线路成功！请耐心等待审核结果')
+          cancel()
+          onSearch()
+          onAuditSearch()
+        }).catch((err: Error) => {
+          message.error('出错了！')
+        })
+      }
     }
-  } else { // 编辑
-    if (state.rolesLevel === 1) { // 无需审核
-      api.editIndividualLineAdmin(params).then((res: any) => {
-        message.success('编辑线路成功！')
-        cancel()
-        onSearch()
-      }).catch((err: Error) => {
-        message.error('出错了！')
-      })
-    } else if ([2, 3].includes(state.rolesLevel)) { // 需审核 
-      api.editIndividualLine(params).then((res: any) => {
-        message.success('修改线路成功！请耐心等待审核结果')
-        cancel()
-        onSearch()
-        onAuditSearch()
-      }).catch((err: Error) => {
-        message.error('出错了！')
-      })
-    }
-  }
+  })
 }
 const cancel = () => {
   lineRef.value.resetFields()

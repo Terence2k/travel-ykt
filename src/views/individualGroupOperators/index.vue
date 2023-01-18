@@ -96,7 +96,7 @@
           </a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item name="storeId" label="选择门店" v-show="form.operatorRoleId === 33">
+      <a-form-item name="storeId" label="选择门店" v-if="form.operatorRoleId === 33">
         <a-select placeholder="请选择门店" v-model:value="form.storeId" allowClear :disabled="!isAdd">
           <a-select-option v-for="item in storeOptions" :value="item.oid">{{
             item.name
@@ -108,12 +108,14 @@
         <a-input v-model:value="form.operatorName" placeholder="请输入操作员姓名">
         </a-input>
       </a-form-item>
-      <a-form-item name="operatorPhone" label="操作员电话">
+      <a-form-item name="operatorPhone" label="操作员电话"
+        :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.operatorPhone, true, '请输入操作员电话')) }]">
         <a-input v-model:value="form.operatorPhone" placeholder="请输入操作员电话">
         </a-input>
       </a-form-item>
-      <a-form-item name="certificateNo" label="证件号">
-        <a-input v-model:value="form.certificateNo" placeholder="请输入证件号">
+      <a-form-item name="certificateNo" label="身份证号"
+        :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validateCertificateNo(form.certificateNo)) }]">
+        <a-input v-model:value="form.certificateNo" placeholder="请输入身份证号">
         </a-input>
       </a-form-item>
       <a-form-item name="account" label="设置登录账号">
@@ -296,7 +298,17 @@ const changeKeys = ref<string[]>([])
 const detailsForm = ref<detailsKeysType>({})
 const auditForm = ref()
 const addOperatorRef = ref()
-const formRules = {}
+const formRules = {
+  companyId: [{ required: true, trigger: 'blur', message: '请选择所属旅行社' }],
+  operatorRoleId: [{ required: true, trigger: 'blur', message: '请选择操作员角色' }],
+  storeId: [{ required: true, trigger: 'blur', message: '请选择门店' }],
+  operatorName: [{ required: true, trigger: 'blur', message: '请输入操作员姓名' }],
+  operatorPhone: [{ required: true, trigger: 'blur', message: '请输入操作员电话' }],
+  certificateNo: [{ required: true, trigger: 'blur', message: '请输入身份证号' }],
+  account: [{ required: true, trigger: 'blur', message: '请创建登录账号' }],
+  password: [{ required: true, trigger: 'blur', message: '请输入密码' }],
+  enableSatus: [{ required: true, trigger: 'blur', message: '请选择启用状态' }],
+}
 const failForm = reactive({
   oid: '',
   userId: '',
@@ -409,7 +421,7 @@ const columns = [
     key: 'account',
   },
   {
-    title: '证件号',
+    title: '身份证号',
     dataIndex: 'certificateNo',
     key: 'certificateNo',
   },
@@ -467,7 +479,7 @@ const columns1 = [
     key: 'account',
   },
   {
-    title: '证件号',
+    title: '身份证号',
     dataIndex: 'certificateNo',
     key: 'certificateNo',
   },
@@ -504,7 +516,7 @@ const detailsKeys = {
   storeName: '所属门店',
   operatorName: '操作员姓名',
   operatorPhone: '操作员电话',
-  certificateNo: '证件号',
+  certificateNo: '身份证号',
   account: '登录账号',
   createTime: '创建时间',
   auditState: '审核状态',
@@ -515,7 +527,7 @@ const detailsKeys = {
 const compareKeys = {
   operatorName: '操作员姓名',
   operatorPhone: '操作员电话',
-  certificateNo: '证件号',
+  certificateNo: '身份证号',
   enableSatusName: '启用状态',
 }
 let storeOptions = ref<optionsType[]>([])
@@ -787,6 +799,20 @@ const checkDetails = async (record: any) => {
 const detailsClose = () => {
   detailsVisible.value = false
   detailsForm.value = {}
+}
+const validatePhone = async (mobile: string, required: boolean = false, msg?: string) => {
+  if (required && !mobile) {
+    return Promise.reject(msg);
+  } else if (mobile && !/^1[3-9]\d{9}$/.test(mobile)) {
+    return Promise.reject('请输入正确的手机号！');
+  }
+}
+const validateCertificateNo = async (value: string) => {
+  if (!value) {
+    return Promise.reject('请输入身份证号');
+  } else if (value.length < 18) {
+    return Promise.reject('请输入正确的身份证');
+  }
 }
 onMounted(() => {
   getUserInfo()

@@ -1,9 +1,9 @@
 <template>
 	<CommonSearch>
 		<SearchItem label="是否存在减免">
-			<a-select ref="select" style="width: 200px" placeholder="请选择减免情况" v-model:value="state.tableData.param.isReductionExist">
-				<a-select-option value="1">是</a-select-option>
-				<a-select-option value="0">否</a-select-option>
+			<a-select ref="select" style="width: 200px" placeholder="请选择减免情况" v-model:value="state.tableData.param.isReductionExist" allowClear>
+				<a-select-option :value="1">是</a-select-option>
+				<a-select-option :value="0">否</a-select-option>
 			</a-select>
 		</SearchItem>
 		<SearchItem label="接团旅行社">
@@ -435,7 +435,7 @@ const state = reactive({
 			itineraryStartDate: '',
 			itineraryNo: '',
 			subTravelName: '',
-			isReductionExist: '',
+			isReductionExist:null,
 		},
 		details: [] as any,
 		forceBrushStatus: '',
@@ -623,7 +623,7 @@ const updateSubmit = () => {
 };
 // 重置
 const reset = () => {
-	state.tableData.param.isReductionExist = '';
+	state.tableData.param.isReductionExist =null;
 	state.tableData.param.itineraryNo = '';
 	state.tableData.param.subTravelName = '';
 	state.tableData.param.itineraryStartDate = '';
