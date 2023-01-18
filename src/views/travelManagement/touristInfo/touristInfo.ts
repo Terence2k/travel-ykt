@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import type { UnwrapRef } from 'vue';
 
 import { useTravelStore } from '@/stores/modules/travelManagement';
-import { validateRules, validateFields, generateGuid, getAge, phoneReg, isPositiveInteger, getGenderByIdNumber } from '@/utils';
+import { validateRules, validateFields, generateGuid, getAge, phoneReg, isPositiveInteger, getGenderByIdNumber, downloadFile } from '@/utils';
 import api from '@/api/index';
 import { CODEVALUE } from '@/constant'
 import { message } from 'ant-design-vue';
@@ -151,6 +151,27 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 		]
 	});
 	const methods = {
+		async downloadTouristTemplate() {
+			const res = await api.travelManagement.downloadTouristTemplate();
+			downloadFile(res, '游客名单模板.xlsx');
+		},
+		readExcel(event: any) {
+			const file = event.file;
+			const formData = new FormData();
+			formData.append('file', file)
+			api.travelManagement.importTourist(formData).then((res: any) => {
+				state.tableData.push(...res.map((item: any) => {
+					const key = generateGuid();
+					item.key = key
+					item.edit = true;
+					state.editableData[key] = item;
+					return item;
+				}))
+				
+				
+				
+			});
+		},
 		async getCityList(data:any, length: number) {
 			const res = await api.commonApi.getCityList(data);
 			return res.map((item:any) => {
@@ -368,10 +389,17 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 		},
 		handleChange(val: any, option: any, key: string) {
 			// console.log(val, option)
-			state.editableData[key].provinceId = val[0]
-			state.editableData[key].cityId = val[1]
-			state.editableData[key].sourceAddress = val[val.length - 1];
-			state.editableData[key].sourceAddressName = option.map((it:any) => it.label).join('/')
+			if (val) {
+				state.editableData[key].provinceId = val[0]
+				state.editableData[key].cityId = val[1]
+				state.editableData[key].sourceAddress = val[val.length - 1];
+				state.editableData[key].sourceAddressName = option.map((it:any) => it.label).join('/')
+			} else {
+				state.editableData[key].provinceId = ''
+				state.editableData[key].cityId = ''
+				state.editableData[key].sourceAddress = '';
+				state.editableData[key].sourceAddressName = ''
+			}
 		},
 		async changeIDCard(val: any, key: string, columns: string) {
 			

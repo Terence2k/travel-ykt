@@ -3,7 +3,6 @@
 		<div class="list-btn">
 			<a-button type="primary" class="success" @click="toAddPage()" style="margin-right: 10px">新增</a-button>
 			<a-button type="primary" class="success" @click="showTip('all', undefined)">删除</a-button>
-			<span> {{ getProductKeyName }} </span>
 		</div>
 		<a-spin size="large" :spinning="state.tableData.loading">
 			<CommonTable
@@ -40,7 +39,7 @@
 					<!-- 收费名称 -->
 					<template v-if="column.key === 'chargeCount'">
 						<span v-if="record.chargeModel === 1">{{ record.chargeCount }}%</span>
-						<span v-if="record.chargeModel === 2">{{ record.chargeCount }}人</span>
+						<span v-if="record.chargeModel === 2">{{ (record.chargeCount / 100).toFixed(2) }}元/房间</span>
 						<span v-if="record.chargeModel === 3">{{ (record.chargeCount / 100).toFixed(2) }}元</span>
 					</template>
 					<template v-if="column.key === 'action'">
