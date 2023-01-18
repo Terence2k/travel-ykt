@@ -1,10 +1,10 @@
 <template>
   <CommonSearch>
 		<SearchItem label="委派状态">
-      <a-select ref="select" style="width: 200px" placeholder="请选择委派状态" v-model:value="state.tableData.param.signStatus">
-        <a-select-option value="0">邀请中</a-select-option>
-				<a-select-option value="1">已签约</a-select-option>
-				<a-select-option value="-1">未签约</a-select-option>
+      <a-select ref="select" style="width: 200px" placeholder="请选择委派状态" v-model:value="state.tableData.param.signStatus"  allowClear>
+        <a-select-option :value="0">邀请中</a-select-option>
+				<a-select-option :value="1">已签约</a-select-option>
+				<a-select-option :value="-1">未签约</a-select-option>
 			</a-select>
 		</SearchItem>
 		<SearchItem label="导游姓名">
@@ -169,7 +169,7 @@ const state = reactive({
       guideCertificateNo:'',
       guideName:'',
       phone:'',
-      signStatus:''
+      signStatus:null
     },
   },
   detailsData:[] as any,
@@ -239,14 +239,14 @@ const onSearch = () => {
   api.travelGuideList(state.tableData.param).then((res:any)=>{
     state.tableData.data=res.content;
     state.tableData.total=res.total
-    
+
   })
 }
 const reset=()=>{
-  state.tableData.param.guideCertificateNo=''
-  state.tableData.param.guideName=''
-  state.tableData.param.phone=''
-  state.tableData.param.signStatus=''
+  state.tableData.param.guideCertificateNo='';
+  state.tableData.param.guideName='';
+  state.tableData.param.phone='';
+  state.tableData.param.signStatus=null;
 }
 const add=()=>{
   api.travelSynchronizeGuide().then((res:any)=>{
