@@ -13,7 +13,7 @@
 					<div class="action-btns">
 						<a @click="goToDetail(record)" v-permission="'待处理_行程详情'">行程详情</a>
 						<a @click="revoke(record)" v-permission="'待处理_申请撤销'">申请撤销</a>
-						<!-- <a v-permission="'待处理_查看日志'">查看日志</a> -->
+						<a @click="goToLog(record)" v-permission="'待处理_查看日志'">查看日志</a>
 					</div>
 				</template>
 			</template>
@@ -179,6 +179,12 @@ const revoke = async (row: any) => {
 const goToDetail = (row: any) => {
 	router.push({
 		path: '/travel/travel_manage/travel_detail',
+		query: { oid: encodeURIComponent(row.oid) },
+	});
+};
+const goToLog = (row: any) => {
+	router.push({
+		path: '/travel/travel_manage/travel_log',
 		query: { oid: encodeURIComponent(row.oid) },
 	});
 };

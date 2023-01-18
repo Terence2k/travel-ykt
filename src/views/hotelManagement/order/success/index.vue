@@ -8,9 +8,10 @@
 						<a v-permission="'审核通过_打印票据'">打印票据</a>
 					</div>
 				</template>
-				<template v-if="column.key == 'fullRule'">
-					满{{ record.fullRule }} 减 {{ record.reduceRule }}
+				<template v-if="column.key == 'reduceAfterAmount'">
+					{{ accDiv(record.reduceAfterAmount, 100) }}
 				</template>
+				<template v-if="column.key == 'fullRule'"> 满{{ record.fullRule }} 减 {{ record.reduceRule }} </template>
 			</template>
 		</CommonTable>
 		<CommonPagination
@@ -113,14 +114,14 @@ const state = reactive({
 			scheduledTime: null,
 			arrivalDate: null,
 			status: null,
-			itineraryNo:null
+			itineraryNo: null,
 		},
 		type: '1',
 	},
 });
 
 const onHandleCurrentChange = (val: any) => {
-	hotelStore.HotelList.success.params.pageNo = val
+	hotelStore.HotelList.success.params.pageNo = val;
 	// state.tableData.param.pageNo = val;
 	hotelOrderPage();
 };
@@ -132,11 +133,10 @@ const pageSideChange = (current: number, size: number) => {
 };
 
 const hotelOrderPage = async () => {
-	hotelStore.HotelList.success.params.status = HotelStatus.success
+	hotelStore.HotelList.success.params.status = HotelStatus.success;
 	const res = await api.hotelOrderPage(hotelStore.HotelList.success.params);
-	hotelStore.setOrderList(res, 'success')
+	hotelStore.setOrderList(res, 'success');
 };
-
 
 const openInfoPage = (orderNo: any) => {
 	router.push({ path: '/hotelManagement/hotelOrder/orderEdit', query: { orderNo: orderNo } });
@@ -160,5 +160,4 @@ onBeforeUnmount(() => {
 		height: 100% !important;
 	}
 }
-
 </style>

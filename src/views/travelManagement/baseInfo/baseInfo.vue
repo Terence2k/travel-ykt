@@ -100,7 +100,7 @@
 			</div>
 
 			<a-form-item label="游客人数" name="touristNum">
-				<a-input v-model:value="formState.touristNum" placeholder="添加游客名单后自动计算"  disabled/>
+				<a-input v-model:value="touristListCount" placeholder="添加游客名单后自动计算"  disabled/>
 			</a-form-item>
 
 			<!-- <a-form-item label="线路类型" name="routeType">
@@ -210,6 +210,7 @@ interface TeamType {
 }
 
 const travelStore = useTravelStore();
+const touristListCount = computed(() => travelStore.touristList.length)
 const touristCount = computed(() => travelStore.touristList.length ? travelStore.touristList.length.toString() : 0)
 const route = useRoute()
 const dialogVisible = ref(false);
@@ -597,7 +598,7 @@ getTravelTemplateList();
 	}
 	.import-btn {
 		display: flex;
-		justify-content: end;
+		justify-content: flex-end;
 		margin-bottom: 10px;
 	}
 	.mb-2 {

@@ -57,7 +57,7 @@
 											style="width: 60px"
 										>
 											<template #suffixIcon>
-												<span class="icon-minus">-</span>
+												<span v-if="!editableData[record.key].minusNum" class="icon-minus">-</span>
 											</template>
 										</a-select>
 									</template>
@@ -70,7 +70,7 @@
 											style="width: 60px"
 										>
 											<template #suffixIcon>
-												<span class="icon-plus">+</span>
+												<span v-if="!editableData[record.key].plusNum" class="icon-plus">+</span>
 											</template>
 										</a-select>
 									</template>

@@ -4,10 +4,11 @@
 			<CommonTable :dataSource="tableList" :columns="columnsCount" :scrollY="false" bordered class="left">
 				<template #bodyCell="{ column, record, index }">
 					<template v-if="column.key === 'priceRange'">
-						<span v-if="getMin(record) === getMax(record, index)">{{ getMax(record, index) }} </span>
+						{{ getMax(record, index) / 100 }}
+						<!-- <span v-if="getMin(record) === getMax(record, index)">{{ getMax(record, index) }} </span>
 
-						<span v-else>{{ getMin(record) / 100 }} - {{ getMax(record, index) / 100 }} </span></template
-					>
+						<span v-else>{{ getMin(record) / 100 }} - {{ getMax(record, index) / 100 }} </span> -->
+					</template>
 					<template v-if="column.key === 'settlementModel'">
 						<a-select v-model:value="record.settlementModel" :allowClear="true" ref="select" placeholder="请选择" :options="settlementModelList">
 						</a-select>
@@ -111,10 +112,10 @@ const columnsCount = ref([
 		width: 200,
 	},
 	{
-		title: '联票价格估算',
+		title: '联票价格',
 		dataIndex: 'priceRange',
 		key: 'priceRange',
-		width: 200,
+		width: 250,
 		customCell: (record: any, index: number) => {
 			if (record.price && !index) {
 				return { rowSpan: props.tableList.length };

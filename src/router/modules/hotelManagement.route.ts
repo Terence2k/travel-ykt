@@ -19,49 +19,16 @@ export default [
 				},
 			},
 			{
-				path: 'hotelBaseInfo',
-				name: 'hotelBaseInfo',
-				meta: {
-					title: '基础信息管理',
-				},
-				children: [
-					{
-						path: '',
-						component: () => import('@/views/hotelManagement/baseInfo/index.vue'),
-						meta: {
-							title: '基础信息',
-							isDetail: true,
-						},
-					},
-					{
-						path: 'hotelStarEdit',
-						name: 'hotelStarEdit',
-						component: () => import('@/views/hotelManagement/baseInfo/pages/hotelStar-edit/hotelStar-edit.vue'),
-						meta: {
-							title: '编辑',
-							isDetail: true,
-						},
-					},
-					{
-						path: 'hotelStarDisplay',
-						name: 'hotelStarDisplay',
-						component: () => import('@/views/hotelManagement/baseInfo/pages/hotelStar-display/hotelStar-display.vue'),
-						meta: {
-							title: '审核',
-							isDetail: true,
-						},
-					},
-				],
-			},
-			{
 				path: 'roomType',
 				name: 'roomType',
+				redirect: '/hotelManagement/roomType/list',
 				meta: {
 					title: '房型管理',
 				},
 				children: [
 					{
-						path: '',
+						path: 'list',
+						name: 'roomType-list',
 						component: () => import('@/views/hotelManagement/roomType/index.vue'),
 						meta: {
 							title: '基础信息',
@@ -91,12 +58,14 @@ export default [
 			{
 				path: 'roomStatus',
 				name: 'roomStatus',
+				redirect: '/hotelManagement/roomStatus/list',
 				meta: {
 					title: '房态上报管理',
 				},
 				children: [
 					{
-						path: '',
+						path: 'list',
+						name: 'roomStatus-list',
 						component: () => import('@/views/hotelManagement/roomStatus/index.vue'),
 						meta: {
 							title: '房态上报',

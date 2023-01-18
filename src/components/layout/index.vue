@@ -26,7 +26,7 @@
 				<div class="header_right">
 					<a-dropdown>
 						<a class="ant-dropdown-link" @click.prevent>
-							<span>{{ userInfo.username }} &nbsp;</span>
+							<span>{{ `${userInfo.sysCompany.name}-${userInfo.username}（${userInfo.sysRoles.map((i:any) => i.roleName).join(',')}）` }} &nbsp;</span>
 							<user-outlined />
 							<DownOutlined />
 						</a>

@@ -45,10 +45,9 @@
 					</a-form-item>
 				</a-tab-pane>
 			</a-tabs>
-			<p class="text">{{ state.activeKey == 1 ? '密码登录' : '短信验证码登录' }}</p>
 			<div class="bottom">
 				<div class="register">
-					<span class="register-text" @click="goTo">企业注册</span>
+					<!-- <span class="register-text" @click="goTo">企业注册</span> -->
 				</div>
 				<a-button html-type="submit" class="btn" type="primary" :loading="loading">登录</a-button>
 				<a-row style="margin-top: 16px">
@@ -238,13 +237,6 @@ const getsmscode = () => {
 	}
 	.icon {
 		color: #666666;
-	}
-	.text {
-		font-size: 14px;
-		line-height: 20px;
-		color: #999999;
-		letter-spacing: 1.1px;
-		margin-bottom: 10px;
 	}
 	.gray_text {
 		font-size: 12px;

@@ -71,23 +71,19 @@ const editKeyNameList4 = {
   shopPhone: '店铺联系电话',
   cateringDesc: '其他'
 }
-// 监理、古维管理部门
+// 文旅局、保险公司
 const keyNameList5 = {
   businessType: '企业类型',
   name: '企业名称',
-  regionCode: '企业所属地区',
-  addressDetail: '企业详情地址',
-  accountType: '公司账户类型',
-  ...bankAccountKeys
-}
-// 文旅局、保险公司
-const keyNameList6 = {
-  businessType: '企业类型',
-  name: '企业名称',
-  regionCode: '企业所属地区',
-  addressDetail: '企业详情地址',
+  regionCode: '所属地址',
+  addressDetail: '详情地址',
   contactName: '联系人',
   phone: '联系电话',
+}
+// 集团、一卡通、监理、协会、古维管理部门
+const keyNameList6 = {
+  ...keyNameList5,
+  ...bankAccountKeys
 }
 // 旅行社
 const keyNameList7 = {
@@ -99,14 +95,6 @@ const keyNameList7 = {
   manageUrl: '经营许可证',
   ...bankAccountKeys
 }
-// 旅游协会、一卡通
-const keyNameList8 = {
-  businessType: '企业类型',
-  name: '企业名称',
-  regionCode: '企业所属地区',
-  addressDetail: '企业详情地址',
-  ...bankAccountKeys
-}
 const fullRuleKeyNames = {
   fullRule: '满',
   reduceRule: '减'
@@ -114,44 +102,40 @@ const fullRuleKeyNames = {
 function getKeylist(businessType: string, type?: string) {
   let keys
   switch (businessType) {
-    case 'TRAVEL':
+    case 'TRAVEL': // 旅行社
       keys = keyNameList7
       break;
-    case 'GROUP':
-      keys = keyNameList1
-      break;
-    case 'HOTEL':
+    case 'HOTEL': // 酒店
       if (type === 'edit') {
         keys = { ...editKeyNameList2, ...fullRuleKeyNames }
       } else {
         keys = keyNameList2
       }
       break;
-    case 'TICKET':
+    case 'TICKET': // 景区
       if (type === 'edit') {
         keys = { ...keyNameList3, ...fullRuleKeyNames }
       } else {
         keys = keyNameList3
       }
       break;
-    case 'CATERING':
+    case 'CATERING': // 餐饮
       if (type === 'edit') {
         keys = editKeyNameList4
       } else {
         keys = keyNameList4
       }
       break;
-    case 'ANCIENT_UYGUR':
+    case 'GROUP': // 集团、一卡通、监理、协会、古维管理部门
+    case 'YKT':
     case 'SUPERVISE':
-      keys = keyNameList5
-      break;
-    case 'CULTURE_BUREAU':
-    case 'INSURANCE_COMPANY':
+    case 'ASSOCIATION':
+    case 'ANCIENT_UYGUR':
       keys = keyNameList6
       break;
-    case 'ASSOCIATION':
-    case 'YKT':
-      keys = keyNameList8
+    case 'CULTURE_BUREAU': // 文旅局、保险公司
+    case 'INSURANCE_COMPANY':
+      keys = keyNameList5
       break;
   }
   return keys
@@ -169,6 +153,13 @@ const bankCommonFormRules: Record<string, Rule[]> = {
   contactEmail: [{ required: true, trigger: 'blur', message: '请输入联系人邮箱' }],
   postalCode: [{ required: true, trigger: 'blur', message: '请输入邮政编码' }],
 }
+const accountCommonFormRules: Record<string, Rule[]> = {
+  accountName: [{ required: true, trigger: 'blur', message: '请输入超级管理员姓名' }],
+  account: [{ required: true, trigger: 'blur', message: '请输入管理员账号' }],
+  accountPhone: [{ required: true, trigger: 'blur', message: '请输入管理员手机号' }],
+  password: [{ required: true, trigger: 'blur', message: '请输入管理员密码' }],
+  phone: [{ required: true, trigger: 'blur', message: '请输入联系人电话' }],
+}
 const commonFormRules: Record<string, Rule[]> = {
   businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
   name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
@@ -177,12 +168,8 @@ const commonFormRules: Record<string, Rule[]> = {
   creditCode: [{ required: true, trigger: 'blur', message: '请输入统一社会信息代码' }],
   businessLicenseUrl: [{ required: true, trigger: 'blur', message: '请上传营业执照照片' }],
   registeredCapital: [{ required: true, trigger: 'blur', message: '请输入注册资本' }],
-  accountName: [{ required: true, trigger: 'blur', message: '请输入超级管理员姓名' }],
-  account: [{ required: true, trigger: 'blur', message: '请输入管理员账号' }],
-  accountPhone: [{ required: true, trigger: 'blur', message: '请输入管理员手机号' }],
-  password: [{ required: true, trigger: 'blur', message: '请输入管理员密码' }],
-  phone: [{ required: true, trigger: 'blur', message: '请输入联系人电话' }],
-  ...bankCommonFormRules
+  ...bankCommonFormRules,
+  ...accountCommonFormRules
 }
 const hotelCommonFormRules: Record<string, Rule[]> = {
   ...commonFormRules,
@@ -215,6 +202,14 @@ const travelCommonFormRules: Record<string, Rule[]> = {
   isIndividual: [{ required: true, trigger: 'blur', message: '请选择是否为散客中心' }],
   manageUrl: [{ required: true, trigger: 'blur', message: '请上传经营许可证' }],
 }
+const commonFormRules1: Record<string, Rule[]> = {
+  businessType: [{ required: true, trigger: 'blur', message: '请选择企业类型' }],
+  name: [{ required: true, trigger: 'blur', message: '请输入企业名称' }],
+  regionCode: [{ required: true, trigger: 'blur', message: '请选择所属地址' }],
+  addressDetail: [{ required: true, trigger: 'blur', message: '请输入详情地址' }],
+  phone: [{ required: true, trigger: 'blur', message: '请输入联系人电话' }],
+  ...accountCommonFormRules
+}
 const getFormRules = (businessType: string) => {
   if (businessType === 'HOTEL') {
     return hotelCommonFormRules
@@ -224,8 +219,10 @@ const getFormRules = (businessType: string) => {
     return ticketCommonFormRules
   } else if (businessType === 'TRAVEL') {
     return travelCommonFormRules
-  } else {
-    return {}
+  } else if (['GROUP', 'YKT', 'SUPERVISE', 'ASSOCIATION', 'ANCIENT_UYGUR'].includes(businessType)) {
+    return { ...commonFormRules1, ...bankCommonFormRules }
+  } else if (['CULTURE_BUREAU', 'INSURANCE_COMPANY'].includes(businessType)) {
+    return commonFormRules1
   }
 }
 const businessTypeOption = [

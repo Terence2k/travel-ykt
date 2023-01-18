@@ -120,28 +120,25 @@
       委托项目
     </div>
     <div class="content">
-      <CommonTable :dataSource="form.dataEntrustedProjectSource" :columns="entrustedProjectColumns">
+      <a-table :columns="entrustedProjectColumns" :data-source="form.dataEntrustedProjectSource" bordered :pagination="false">
         <template #bodyCell="{ column, record, index }">
           <template v-if="column.key === 'index'">
             {{ index + 1 }}
           </template>
         </template>
-      </CommonTable>
+      </a-table>
     </div>
     <div class="tag">
       签约游客（<span class="count">{{ form.individualContractTouristBos.length }}</span>）
     </div>
     <div class="content">
-      <CommonTable :dataSource="form.individualContractTouristBos" :columns="touristColumns">
-        <template #bodyCell="{ column, record, text, index }">
+      <a-table :columns="touristColumns" :data-source="form.individualContractTouristBos" bordered :pagination="false">
+        <template #bodyCell="{ column, record, index }">
           <template v-if="column.key === 'index'">
             {{ index + 1 }}
           </template>
-          <!-- <template v-if="column.key === 'healthyCode'">
-            <span :class="cmpHealthyColor(text)">{{ text }}</span>
-          </template> -->
         </template>
-      </CommonTable>
+      </a-table>
     </div>
     <div class="content">
       <div class="content_item">
@@ -171,13 +168,13 @@
     </div>
 
     <div class="content">
-      <CommonTable :dataSource="form.individualContractPriceBos" :columns="costColumns">
+      <a-table :columns="costColumns" :data-source="form.individualContractPriceBos" bordered :pagination="false">
         <template #bodyCell="{ column, record, index }">
           <template v-if="column.key === 'index'">
             {{ index + 1 }}
           </template>
         </template>
-      </CommonTable>
+      </a-table>
     </div>
     <div class="tag">
       其他约定

@@ -15,7 +15,7 @@
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a @click="revokeGroupToDraft(record.oid)" v-permission="'已过期_置为草稿'">置为草稿</a>
-						<!-- <a v-permission="'已过期_查看日志'">查看日志</a> -->
+						<a @click="goToLog(record)" v-permission="'已过期_查看日志'">查看日志</a>
 					</div>
 				</template>
 			</template>
@@ -40,6 +40,7 @@
 	import { message } from 'ant-design-vue';
 
 	const travelStore = useTravelStore();
+	const router = useRouter()
 	const state = reactive({
 		total: computed(() => travelStore.traveList.overtime.total),
 		params: {
@@ -112,6 +113,12 @@
 		onSearch()
 		message.success('操作成功')
 	}
+  const goToLog = (row: any) => {
+    router.push({
+      path: '/travel/travel_manage/travel_log',
+      query: { oid: encodeURIComponent(row.oid) },
+    });
+  };
 	const onHandleCurrentChange = (e:any) => {
 		travelStore.traveList.overtime.params.pageNo = e
 		onSearch()

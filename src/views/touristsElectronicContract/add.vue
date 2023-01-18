@@ -76,14 +76,19 @@
               <a-input v-model:value="form.emergencyContact" placeholder="请填写紧急联系人" allowClear>
               </a-input>
             </a-form-item>
-            <a-form-item name="emergencyContactPhone" label="紧急联系电话">
+            <a-form-item name="emergencyContactPhone" label="紧急联系电话"
+              :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.emergencyContactPhone, true, '请填写紧急联系电话')) }]">
               <a-input v-model:value="form.emergencyContactPhone" placeholder="请填写紧急联系电话" allowClear>
               </a-input>
             </a-form-item>
-            <a-form-item name="contractFileUrl" label="上传附件" v-if="!isShow">
-              <Upload v-model="form.contractFileUrl" :maxCount="9" ref="imgUploadRef" />
-              <pdfUpload v-model="form.pdfFileUrl" :maxCount="1" ref="pdfUploadRef" />
-            </a-form-item>
+            <div>
+              <a-form-item name="contractFileUrl" label="上传附件" v-if="!isShow">
+                <Upload v-model="form.contractFileUrl" :maxCount="9" ref="imgUploadRef" />
+              </a-form-item>
+              <a-form-item name="pdfFileUrl" label=" " :colon="false" v-if="!isShow">
+                <pdfUpload v-model="form.pdfFileUrl" :maxCount="1" ref="pdfUploadRef" />
+              </a-form-item>
+            </div>
           </div>
           <div class="tag">选择线路</div>
           <a-table :columns="lineColumns" :data-source="dataLineSource" bordered :pagination="false">
@@ -135,15 +140,14 @@
               <template v-if="column.dataIndex === 'action'">
                 <div class="editable-row-operations">
                   <span v-if="record.isEdit">
-                    <a @click="save(dataLineSource[index])">确定</a>
-                    <a @click="cancel(dataLineSource[index])">取消</a>
+                    <a @click="saveLine(dataLineSource[index])">确定</a>
                   </span>
                   <span v-else>
                     <a @click="edit(dataLineSource[index])">编辑</a>
-                    <a-popconfirm title="确认删除数据？" @confirm="onLineDelete(index)">
-                      <a>删除</a>
-                    </a-popconfirm>
                   </span>
+                  <a-popconfirm title="确认删除数据？" @confirm="onLineDelete(index)">
+                    <a>删除</a>
+                  </a-popconfirm>
                 </div>
               </template>
             </template>
@@ -169,16 +173,15 @@
               </template>
               <template v-if="column.dataIndex === 'certificatesType'">
                 <template v-if="record.isEdit">
-                  <a-form ref="formRef1" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
-                    <a-form-item name="certificatesType">
-                      <a-select placeholder="请选择身份证件类型" v-model:value="dataTouristSource[index][column.dataIndex]"
-                        allowClear style="width: 100%">
-                        <a-select-option v-for="item in certificatesTypeOption" :value="item.codeValue"
-                          :key="item.codeValue">{{ item.name }}
-                        </a-select-option>
-                      </a-select>
-                    </a-form-item>
-                  </a-form>
+                  <a-form-item name="certificatesType"
+                    :rules="[{ required: true, trigger: 'change', validator: (_rule: Rule, value: string) => (validateFields(dataTouristSource[index], 'certificatesType')) }]">
+                    <a-select placeholder="请选择身份证件类型" v-model:value="dataTouristSource[index][column.dataIndex]"
+                      allowClear style="width: 100%">
+                      <a-select-option v-for="item in certificatesTypeOption" :value="item.codeValue"
+                        :key="item.codeValue">{{ item.name }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
                 </template>
                 <template v-else>
                   {{ cmpCertificatesType(text) }}
@@ -186,15 +189,13 @@
               </template>
               <template v-if="column.dataIndex === 'certificatesNo'">
                 <template v-if="record.isEdit">
-                  <a-form ref="formRef2" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
-                    <a-form-item name="certificatesNo"
-                      :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validateCertificatesNo(_rule, value, dataTouristSource[index])) }]">
-                      <!-- <a-input placeholder="请输入证件号码" @change="() => { certificatesNoChange(dataTouristSource[index]) }"
+                  <a-form-item name="certificatesNo"
+                    :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validateFields(dataTouristSource[index], 'certificatesNo')) }]">
+                    <!-- <a-input placeholder="请输入证件号码" @change="() => { certificatesNoChange(dataTouristSource[index]) }"
                         v-model:value="dataTouristSource[index][column.dataIndex]" allowClear style="margin: -5px 0" /> -->
-                      <a-input placeholder="请输入证件号码" v-model:value="dataTouristSource[index][column.dataIndex]"
-                        allowClear style="margin: -5px 0" />
-                    </a-form-item>
-                  </a-form>
+                    <a-input placeholder="请输入证件号码" v-model:value="dataTouristSource[index][column.dataIndex]" allowClear
+                      style="margin: -5px 0" />
+                  </a-form-item>
                 </template>
                 <template v-else>
                   {{ text }}
@@ -202,12 +203,11 @@
               </template>
               <template v-if="column.dataIndex === 'touristName'">
                 <template v-if="record.isEdit">
-                  <a-form ref="formRef3" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
-                    <a-form-item name="touristName">
-                      <a-input placeholder="请输入游客姓名" v-model:value="dataTouristSource[index][column.dataIndex]"
-                        allowClear style="margin: -5px 0" />
-                    </a-form-item>
-                  </a-form>
+                  <a-form-item name="touristName"
+                    :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validateFields(dataTouristSource[index], 'touristName')) }]">
+                    <a-input placeholder="请输入游客姓名" v-model:value="dataTouristSource[index][column.dataIndex]" allowClear
+                      style="margin: -5px 0" />
+                  </a-form-item>
                 </template>
                 <template v-else>
                   {{ text }}
@@ -215,18 +215,17 @@
               </template>
               <template v-if="column.dataIndex === 'touristType'">
                 <template v-if="record.isEdit">
-                  <a-form ref="formRef4" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
-                    <a-form-item name="touristType">
-                      <a-select placeholder="请选择游客类型" v-model:value="dataTouristSource[index][column.dataIndex]"
-                        allowClear style="width: 100%">
-                        <a-select-option v-for="item in touristTypeOption" :value="item.codeValue"
-                          :key="item.codeValue">{{
-                            item.name
-                          }}
-                        </a-select-option>
-                      </a-select>
-                    </a-form-item>
-                  </a-form>
+                  <a-form-item name="touristType"
+                    :rules="[{ required: true, trigger: 'change', validator: (_rule: Rule, value: string) => (validateFields(dataTouristSource[index], 'touristType')) }]">
+                    <a-select placeholder="请选择游客类型" v-model:value="dataTouristSource[index][column.dataIndex]"
+                      allowClear style="width: 100%">
+                      <a-select-option v-for="item in touristTypeOption" :value="item.codeValue"
+                        :key="item.codeValue">{{
+                          item.name
+                        }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
                 </template>
                 <template v-else>
                   {{ cmpTouristType(text) }}
@@ -234,17 +233,16 @@
               </template>
               <template v-if="column.dataIndex === 'gender'">
                 <template v-if="record.isEdit">
-                  <a-form ref="formRef5" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
-                    <a-form-item name="gender">
-                      <a-select placeholder="请选择性别" v-model:value="dataTouristSource[index][column.dataIndex]"
-                        allowClear style="width: 100%">
-                        <a-select-option v-for="item in genderOption" :value="item.codeValue" :key="item.codeValue">{{
-                          item.name
-                        }}
-                        </a-select-option>
-                      </a-select>
-                    </a-form-item>
-                  </a-form>
+                  <a-form-item name="gender"
+                    :rules="[{ required: true, trigger: 'change', validator: (_rule: Rule, value: string) => (validateFields(dataTouristSource[index], 'gender')) }]">
+                    <a-select placeholder="请选择性别" v-model:value="dataTouristSource[index][column.dataIndex]" allowClear
+                      style="width: 100%">
+                      <a-select-option v-for="item in genderOption" :value="item.codeValue" :key="item.codeValue">{{
+                        item.name
+                      }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
                 </template>
                 <template v-else>
                   {{ text }}
@@ -252,12 +250,11 @@
               </template>
               <template v-if="column.dataIndex === 'age'">
                 <template v-if="record.isEdit">
-                  <a-form ref="formRef6" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
-                    <a-form-item name="age">
-                      <a-input placeholder="请输入年龄" v-model:value.number="dataTouristSource[index][column.dataIndex]"
-                        allowClear style="margin: -5px 0" />
-                    </a-form-item>
-                  </a-form>
+                  <a-form-item name="age"
+                    :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validateFields(dataTouristSource[index], 'age')) }]">
+                    <a-input placeholder="请输入年龄" v-model:value.number="dataTouristSource[index][column.dataIndex]"
+                      allowClear style="margin: -5px 0" />
+                  </a-form-item>
                 </template>
                 <template v-else>
                   {{ text }}
@@ -266,7 +263,8 @@
               <template v-if="column.dataIndex === 'phone'">
                 <template v-if="record.isEdit">
                   <a-form :model="dataTouristSource[index]" autocomplete="off">
-                    <a-form-item name="phone">
+                    <a-form-item name="phone"
+                      :rules="[{ trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(dataTouristSource[index][column.dataIndex])) }]">
                       <a-input placeholder="请输入电话号码" v-model:value="dataTouristSource[index][column.dataIndex]"
                         allowClear style="margin: -5px 0" />
                     </a-form-item>
@@ -278,18 +276,16 @@
               </template>
               <template v-if="column.dataIndex === 'isHealthy'">
                 <template v-if="record.isEdit">
-                  <a-form ref="formRef7" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
-                    <a-form-item name="isHealthy">
-                      <a-select placeholder="请选健康状态" v-model:value="dataTouristSource[index][column.dataIndex]"
-                        allowClear style="width: 100%">
-                        <a-select-option v-for="item in isHealthyOption" :value="item.codeValue"
-                          :key="item.codeValue">{{
-                            item.name
-                          }}
-                        </a-select-option>
-                      </a-select>
-                    </a-form-item>
-                  </a-form>
+                  <a-form-item name="isHealthy"
+                    :rules="[{ required: true, trigger: 'change', validator: (_rule: Rule, value: string) => (validateFields(dataTouristSource[index], 'isHealthy')) }]">
+                    <a-select placeholder="请选健康状态" v-model:value="dataTouristSource[index][column.dataIndex]" allowClear
+                      style="width: 100%">
+                      <a-select-option v-for="item in isHealthyOption" :value="item.codeValue" :key="item.codeValue">{{
+                        item.name
+                      }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
                 </template>
                 <template v-else>
                   {{ cmpIsHealthy(text) }}
@@ -310,18 +306,17 @@
               </template> -->
               <template v-if="column.dataIndex === 'isAncientUygur'">
                 <template v-if="record.isEdit">
-                  <a-form ref="formRef9" :model="dataTouristSource[index]" :rules="formRules" autocomplete="off">
-                    <a-form-item name="isAncientUygur">
-                      <a-select placeholder="请选择古维费购买状态" v-model:value="dataTouristSource[index][column.dataIndex]"
-                        allowClear style="width: 100%">
-                        <a-select-option v-for="item in ancientUygurOption" :value="item.codeValue"
-                          :key="item.codeValue">{{
-                            item.name
-                          }}
-                        </a-select-option>
-                      </a-select>
-                    </a-form-item>
-                  </a-form>
+                  <a-form-item name="isAncientUygur"
+                    :rules="[{ required: true, trigger: 'change', validator: (_rule: Rule, value: string) => (validateFields(dataTouristSource[index], 'isAncientUygur')) }]">
+                    <a-select placeholder="请选择古维费购买状态" v-model:value="dataTouristSource[index][column.dataIndex]"
+                      allowClear style="width: 100%">
+                      <a-select-option v-for="item in ancientUygurOption" :value="item.codeValue"
+                        :key="item.codeValue">{{
+                          item.name
+                        }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
                 </template>
                 <template v-else>
                   {{ cmpAncientUygur(text) }}
@@ -348,15 +343,14 @@
               <template v-if="column.dataIndex === 'action'">
                 <div class="editable-row-operations">
                   <span v-if="record.isEdit">
-                    <a @click="save(dataTouristSource[index])">确定</a>
-                    <a @click="cancel(dataTouristSource[index])">取消</a>
+                    <a @click="saveTourist(dataTouristSource[index])">确定</a>
                   </span>
                   <span v-else>
                     <a @click="edit(dataTouristSource[index])">编辑</a>
-                    <a-popconfirm title="确认删除数据？" @confirm="onTouristDelete(index)">
-                      <a>删除</a>
-                    </a-popconfirm>
                   </span>
+                  <a-popconfirm title="确认删除数据？" @confirm="onTouristDelete(index)">
+                    <a>删除</a>
+                  </a-popconfirm>
                 </div>
               </template>
             </template>
@@ -365,8 +359,9 @@
             <a-button @click="handleTouristAdd">添加</a-button>
           </div>
           <div v-if="isShow" style="width:60%">
-            <a-form-item name="touristName" label="游客代表">
-              <a-select @change="touristChange" placeholder="请选择游客代表" v-model:value="form.touristName" allowClear>
+            <a-form-item name="touristName1" label="游客代表"
+              :rules="[{ required: true, trigger: 'change', validator: (_rule: Rule, value: string) => (validateFields(form.touristName, 'touristName1')) }]">
+              <a-select @change="touristChange" placeholder="请选择游客代表" v-model:value="form.certificatesNo" allowClear>
                 <a-select-option v-for="item in dataTouristSource" :value="item.certificatesNo"
                   :key="item.certificatesNo">{{ item.touristName }}
                 </a-select-option>
@@ -376,12 +371,14 @@
               <a-input v-model:value="form.certificatesNo" placeholder="无需填写，输入名单后自动生成" disabled>
               </a-input>
             </a-form-item>
-            <a-form-item name="phone" label="游客代表手机号">
-              <a-input v-model:value="form.phone" placeholder="无需填写，输入名单后自动生成">
+            <a-form-item name="phone" label="游客代表手机号"
+              :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.phone, true, '请填写游客代表手机号')) }]">
+              <a-input v-model:value="form.phone" placeholder="请填写游客代表手机号" @change="phoneChange" allowClear>
               </a-input>
             </a-form-item>
             <a-form-item name="certificatesAddress" label="游客代表地址">
-              <a-input @change="addressChange" v-model:value="form.certificatesAddress" placeholder="请输入游客代表地址">
+              <a-input @change="addressChange" v-model:value="form.certificatesAddress" placeholder="请输入游客代表地址"
+                allowClear>
               </a-input>
             </a-form-item>
           </div>
@@ -406,7 +403,7 @@
             </template>
             <template v-if="column.dataIndex === 'priceName'">
               <a-input v-if="record.isEdit && record.isDelete" v-model:value="dataCostSource[index][column.dataIndex]"
-                style="margin: -5px 0" placeholder="输入产品名称" />
+                style="margin: -5px 0" placeholder="请输入产品名称" />
               <template v-else>
                 {{ text }}
               </template>
@@ -416,7 +413,7 @@
                 :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validateNumber(dataCostSource[index], 'adultPrice')) }]"
                 style="margin-bottom:0">
                 <a-input v-set-number="{ key: 'adultPrice', obj: dataCostSource[index] }"
-                  v-model:value="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="输入价格" />
+                  v-model:value="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="请输入成人价" />
               </a-form-item>
               <template v-else>
                 {{ text }}
@@ -427,7 +424,7 @@
                 :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validateNumber(dataCostSource[index], 'childPrice')) }]"
                 style="margin-bottom:0">
                 <a-input v-set-number="{ key: 'childPrice', obj: dataCostSource[index] }"
-                  v-model:value="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="输入价格" />
+                  v-model:value="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="请输入儿童价" />
               </a-form-item>
               <template v-else>
                 {{ text }}
@@ -443,15 +440,14 @@
             <template v-if="(column.dataIndex === 'action' && record.isOperate)">
               <div class="editable-row-operations">
                 <span v-if="record.isEdit">
-                  <a @click="save(dataCostSource[index])">确定</a>
-                  <a @click="cancel(dataCostSource[index])">取消</a>
+                  <a @click="saveCost(dataCostSource[index])">确定</a>
                 </span>
                 <span v-else>
                   <a @click="edit(dataCostSource[index])">编辑</a>
-                  <a-popconfirm title="确认删除数据？" @confirm="onCostDelete(index)">
-                    <a v-if="record.isDelete">删除</a>
-                  </a-popconfirm>
                 </span>
+                <a-popconfirm title="确认删除数据？" @confirm="onCostDelete(index)">
+                  <a v-if="record.isDelete">删除</a>
+                </a-popconfirm>
               </div>
             </template>
           </template>
@@ -465,8 +461,7 @@
         </div>
         <a-form ref="formRef4" :model="form" :rules="formRules" autocomplete="off">
           <a-form-item name="paymentMethod" label="游客费用支付方式">
-            <a-select @change="touristChange" placeholder="选择游客线下的实际支付方式" v-model:value="form.paymentMethod" allowClear
-              style="width:20%">
+            <a-select placeholder="选择游客线下的实际支付方式" v-model:value="form.paymentMethod" allowClear style="width:20%">
               <a-select-option v-for="item in paymentOptions" :value="item.codeValue" :key="item.codeValue">{{
                 item.name
               }}
@@ -524,6 +519,8 @@ import { getAge, getGenderByIdNumber } from '@/utils';
 import type { Rule } from 'ant-design-vue/es/form';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import dayjs, { Dayjs } from 'dayjs';
+import { getUserInfo } from '@/utils/util';
+const userInfo = getUserInfo();
 const navigatorBar = useNavigatorBar();
 const accDivValue = (value: any) => {
   if (typeof value === 'number') {
@@ -559,15 +556,6 @@ const labelWidth = '130px'
 const labelCol = { style: { width: labelWidth } }
 const formRef = ref()
 const dateFormRef = ref()
-const formRef1 = ref()
-const formRef2 = ref()
-const formRef3 = ref()
-const formRef4 = ref()
-const formRef5 = ref()
-const formRef6 = ref()
-const formRef7 = ref()
-const formRef8 = ref()
-const formRef9 = ref()
 const isAdd = ref(true)
 const form = ref({
   oid: undefined,
@@ -589,7 +577,7 @@ const form = ref({
   certificatesAddress: "",//游客详细住址
   contractAmount: 0,
   pdfFileUrl: "",
-  paymentMethod: undefined,
+  paymentMethod: 1,
   departurePlace: '',
   destination: '',
   returnPlace: '',
@@ -600,10 +588,9 @@ const adultNumber = ref(0)
 const childNumber = ref(0)
 const businessManageOptions = useBusinessManageOption();
 const initOpeion = async () => {
-  await businessManageOptions.getCompanyByBusinessType('TRAVEL');
   await businessManageOptions.getBusinessTypeOption('CERTIFICATE_TYPE')
 };
-const entrustTravelOption = computed(() => businessManageOptions.companyOptions);
+const entrustTravelOption = ref([])
 const certificatesTypeOption = computed(() => businessManageOptions.businessTypeOption);
 
 const insuranceOption = [
@@ -642,42 +629,98 @@ const isHealthyOption = [
   { codeValue: 1, name: '是' },
   { codeValue: 0, name: '否' }
 ]
-const validateCertificatesNo = async (_rule: Rule, value: string, obj: any) => {
-  if (value === '') {
-    return Promise.reject('请输入证件号码');
-  } else {
-    if (obj.certificatesType === 'IDENTITY_CARD') {
-      if (obj.certificatesNo.length < 18) {
-        return Promise.reject('请输入正确的身份证');
-      } else {
-        obj.age = getAge(obj.certificatesNo)
-        const genderType = getGenderByIdNumber(obj.certificatesNo)
-        if (genderType === 1) {
-          obj.gender = '男'
-        } else if (genderType === 0) {
-          obj.gender = '女'
-        } else {
-          obj.gender = undefined
-        }
-        return Promise.resolve();
-      }
-    } else if (obj.certificatesType === 'PASSPORT') {
-      return Promise.resolve();
-    } else if (obj.certificatesType === 'COMPATRIOT_CARD') {
-      return Promise.resolve();
-    }
+const validatePhone = async (mobile: string, required: boolean = false, msg?: string) => {
+  if (required && !mobile) {
+    return Promise.reject(msg);
+  } else if (mobile && !/^1[3-9]\d{9}$/.test(mobile)) {
+    return Promise.reject('请输入正确的手机号！');
   }
-};
+}
 const validateNumber = async (obj: any, key: string) => {
-  if (obj[key] === '') {
-    priceChange(obj)
-    return Promise.resolve();
+  if (['', undefined].includes(obj[key])) {
+    return Promise.reject('请输入价格');
   } else {
     if (!isNaN(Number(obj[key]))) {
       priceChange(obj)
       return Promise.resolve();
     } else {
       return Promise.reject('请输入正确的价格');
+    }
+  }
+}
+const validateFields = async (obj: any, type: string) => {
+  if (type === 'certificatesType') {
+    if (obj.certificatesType) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject('请选择身份证件类型');
+    }
+  } else if (type === 'certificatesNo') {
+    if (obj.certificatesNo) {
+      if (obj.certificatesType === 'IDENTITY_CARD') {
+        if (obj.certificatesNo.length < 18) {
+          return Promise.reject('请输入正确的身份证');
+        } else {
+          obj.age = getAge(obj.certificatesNo)
+          const genderType = getGenderByIdNumber(obj.certificatesNo)
+          if (genderType === 1) {
+            obj.gender = '男'
+          } else if (genderType === 0) {
+            obj.gender = '女'
+          } else {
+            obj.gender = undefined
+          }
+          return Promise.resolve();
+        }
+      } else if (obj.certificatesType === 'PASSPORT') {
+        return Promise.resolve();
+      } else if (obj.certificatesType === 'COMPATRIOT_CARD') {
+        return Promise.resolve();
+      }
+    } else {
+      return Promise.reject('请输入证件号码');
+    }
+  } else if (type === 'touristName') {
+    if (obj.touristName) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject('请输入游客姓名');
+    }
+  } else if (type === 'touristType') {
+    if (obj.touristType) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject('请选择游客类型');
+    }
+  } else if (type === 'gender') {
+    if (obj.gender) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject('请选择性别');
+    }
+  } else if (type === 'age') {
+    if (obj.age) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject('请输入年龄');
+    }
+  } else if (type === 'isHealthy') {
+    if ([1, 0].includes(obj.isHealthy)) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject('请选健康状态');
+    }
+  } else if (type === 'isAncientUygur') {
+    if ([1, 0].includes(obj.isAncientUygur)) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject('请选择古维费购买状态');
+    }
+  } else if (type === 'touristName1') {
+    if (obj) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject('请选择游客代表');
     }
   }
 }
@@ -692,19 +735,10 @@ const formRules = {
   touristPeopleNumber: [{ required: true, trigger: 'blur', message: '游客人数不能为空' }],
   insuranceBuyMode: [{ required: true, trigger: 'blur', message: '请选择保险购买方式' }],
   contractType: [{ required: true, trigger: 'blur', message: '请选择散客合同类型' }],
-  certificatesType: [{ required: true, trigger: 'blur', message: '请选择身份证件类型' }],
-  touristName: [{ required: true, trigger: 'blur', message: '请选择游客代表' }],
-  // phone: [{ required: true, trigger: 'blur', message: '游客代表手机号不能为空' }],
+  // touristName: [{ required: true, trigger: 'blur', message: '请选择游客代表' }],
   certificatesAddress: [{ required: true, trigger: 'blur', message: '游客代表地址不能为空' }],
   contractFileUrl: [{ required: true, trigger: 'blur', message: '请上传附件' }],
-  touristType: [{ required: true, trigger: 'blur', message: '请选择游客类型' }],
-  gender: [{ required: true, trigger: 'blur', message: '请选择性别' }],
-  age: [{ required: true, trigger: 'blur', message: '请输入年龄' }],
-  isHealthy: [{ required: true, trigger: 'blur', message: '请选健康状态' }],
-  // healthyCode: [{ required: true, trigger: 'blur', message: '健康码不能为空' }],
-  isAncientUygur: [{ required: true, trigger: 'blur', message: '请选择古维费购买状态' }],
   emergencyContact: [{ required: true, trigger: 'blur', message: '请填写紧急联系人' }],
-  emergencyContactPhone: [{ required: true, trigger: 'blur', message: '请填写紧急联系电话' }],
 }
 const activeKey = ref('1')
 const submitVisible = ref(false)
@@ -760,6 +794,7 @@ const touristColumns = [
     title: '序号',
     dataIndex: 'index',
     key: 'index',
+    width: 100
   },
   {
     title: '身份证件类型',
@@ -1095,11 +1130,53 @@ const handleCostAdd = () => {
 const onCostDelete = (index: number) => {
   dataCostSource.value.splice(index, 1)
 };
-const save = (obj: any) => {
-  obj.isEdit = false
+const saveCost = (obj: any) => {
+  const msg = []
+  !obj.priceName && msg.push('请输入产品名称')
+  if (obj.adultPrice === '' || obj.adultPrice === undefined || obj.adultPrice === null) {
+    msg.push('请输入成人价')
+  }
+  if (obj.childPrice === '' || obj.childPrice === undefined || obj.childPrice === null) {
+    msg.push('请输入儿童价')
+  }
+  if (msg.length > 0) {
+    let str = msg.toString()
+    str = str.replaceAll(',', '、')
+    message.error(str)
+  } else {
+    obj.isEdit = false
+  }
 };
-const cancel = (obj: any) => {
-  obj.isEdit = false
+const saveLine = (obj: any) => {
+  const msg = []
+  !obj.lineId && msg.push('请选择可用线路')
+  !obj.lineStartTime && msg.push('请选择开始时间')
+  !obj.lineEndTime && msg.push('请选择结束时间')
+  if (msg.length > 0) {
+    let str = msg.toString()
+    str = str.replaceAll(',', '、')
+    message.error(str)
+  } else {
+    obj.isEdit = false
+  }
+}
+const saveTourist = (obj: any) => {
+  const msg = []
+  !obj.certificatesType && msg.push('请选择身份证件类型')
+  !obj.certificatesNo && msg.push('请输入证件号码')
+  !obj.touristName && msg.push('请输入游客姓名')
+  !obj.touristType && msg.push('请选择游客类型')
+  !obj.gender && msg.push('请选择性别')
+  !obj.age && msg.push('请输入年龄')
+  ![1, 0].includes(obj.isHealthy) && msg.push('请选健康状态')
+  ![1, 0].includes(obj.isAncientUygur) && msg.push('请选择古维费购买状态')
+  if (msg.length > 0) {
+    let str = msg.toString()
+    str = str.replaceAll(',', '、')
+    message.error(str)
+  } else {
+    obj.isEdit = false
+  }
 };
 const edit = (obj: any) => {
   obj.isEdit = true
@@ -1120,12 +1197,12 @@ const getLineFee = () => {
   })
 }
 const guideFee = ref<CostItem>({
-  isEdit: true,
+  isEdit: false,
   isOperate: true,
   isDelete: false,
   priceName: "导游服务费",
-  adultPrice: undefined,
-  childPrice: undefined,
+  adultPrice: 0,
+  childPrice: 0,
   adultNumber: 0,
   childNumber: 0,
   individualSubtotal: 0,
@@ -1140,6 +1217,12 @@ const getList = () => {
   })
   if (gwFee.value.length > 0) {
     arr.push(...gwFee.value)
+  }
+  // 新增的时候为编辑状态，编辑的时候为非编辑状态，点击编辑再编辑
+  if (isAdd.value) {
+    guideFee.value.isEdit = true
+  } else {
+    guideFee.value.isEdit = false
   }
   arr.push(guideFee.value)
   if (LineFee.length > 0) {
@@ -1200,23 +1283,57 @@ const nextTep = (val: string) => {
     calculateTripFee()
   }
 }
+const validateList = () => {
+  return new Promise((resolve, reject) => {
+    const msg = []
+    if (dataTouristSource.value.length === 0) {
+      msg.push('请添加游客！')
+    } else {
+      for (let i = 0; i < dataTouristSource.value.length; i++) {
+        const element = dataTouristSource.value[i];
+        if (element.isEdit) {
+          msg.push('请确认游客列表添加的数据！')
+          break
+        }
+      }
+    }
+    if (dataLineSource.value.length === 0) {
+      msg.push('请添加线路！')
+    } else {
+      for (let i = 0; i < dataLineSource.value.length; i++) {
+        const element = dataLineSource.value[i];
+        if (element.isEdit) {
+          msg.push('请确认线路列表添加的数据！')
+          break
+        }
+      }
+    }
+    for (let i = 0; i < dataCostSource.value.length; i++) {
+      const element = dataCostSource.value[i];
+      if (element.isEdit) {
+        msg.push('请确认行程费用列表添加的数据！')
+        break
+      }
+    }
+    if (msg.length > 0) {
+      let str = msg.toString()
+      str = str.replaceAll(',', '、')
+      message.error(str)
+      reject('error')
+    } else {
+      resolve(true)
+    }
+  })
+}
 const saveDraft = (tab?: string, isTip: boolean = true) => {
+  tab === '1' && calculateTripFee()
   return new Promise((resolve, reject) => {
     const a = Promise.all([
       formRef.value?.validateFields(),
-      formRef1.value?.validateFields(),
-      formRef2.value?.validateFields(),
-      formRef3.value?.validateFields(),
-      formRef4.value?.validateFields(),
-      formRef5.value?.validateFields(),
-      formRef6.value?.validateFields(),
-      formRef7.value?.validateFields(),
-      formRef8.value?.validateFields(),
-      formRef9.value?.validateFields(),
-      dateFormRef.value?.validate()
+      dateFormRef.value?.validate(),
+      validateList()
     ])
     a.then(async () => {
-      tab === '1' && calculateTripFee()
       const params = getParams()
       if (isAdd.value) {
         let res = await api.createIndividualContract(params)
@@ -1264,10 +1381,7 @@ const accMulCost = (arr: any[]) => {
 }
 // 获取提交参数
 const getParams = () => {
-  let userInfo: any = window.localStorage.getItem('userInfo');
-  userInfo = JSON.parse(userInfo);
-  const { sysCompany } = userInfo
-  form.value.companyId = sysCompany.oid
+  form.value.companyId = userInfo.sysCompany.oid
   const {
     oid,
     companyId, //合同创建旅行社id
@@ -1354,21 +1468,32 @@ const getLineOptions = async () => {
     }
   })
 }
-// 游客代表改变事件
-const touristChange = () => {
-  if (form.value.touristName) {
+// 游客代表手机号改变事件
+let phoneTimer: NodeJS.Timeout
+const phoneChange = () => {
+  phoneTimer && clearTimeout(phoneTimer)
+  phoneTimer = setTimeout(async () => {
     dataTouristSource.value.forEach((item: any) => {
-      if (item.certificatesNo === form.value.touristName) {
-        form.value.phone = item.phone
-        form.value.certificatesNo = item.certificatesNo
-        item.certificatesAddress = form.value.certificatesAddress
-        item.isRepresentative = 1 // 是否为游客代表 1：是、0：否
-      } else {
-        item.certificatesAddress = ''
-        item.isRepresentative = 0
+      if (item.isAncientUygur === 1) {
+        item.phone = form.value.phone
       }
     })
-  }
+  }, 1000)
+}
+// 游客代表改变事件
+const touristChange = () => {
+  dataTouristSource.value.forEach((item: any) => {
+    if (item.certificatesNo === form.value.certificatesNo) {
+      form.value.phone = item.phone
+      form.value.touristName = item.touristName
+      item.certificatesAddress = form.value.certificatesAddress
+      item.isRepresentative = 1 // 是否为游客代表 1：是、0：否
+    } else {
+      item.certificatesAddress = ''
+      item.isRepresentative = 0
+      form.value.touristName = undefined
+    }
+  })
 }
 // 游客代表地址改变事件
 let addresTimer: NodeJS.Timeout
@@ -1376,7 +1501,7 @@ const addressChange = () => {
   addresTimer && clearTimeout(addresTimer)
   addresTimer = setTimeout(async () => {
     dataTouristSource.value.forEach((item: any) => {
-      if (item.certificatesNo === form.value.touristName) {
+      if (item.isAncientUygur === 1) {
         item.certificatesAddress = form.value.certificatesAddress
       }
     })
@@ -1558,8 +1683,9 @@ const submitClick = async () => {
   if (isShow.value) {
     submitVisible.value = true
   } else {
+    // 提交发布线上合同
     await saveDraft(undefined, false)
-    const res = await api.releaseContract(form.value.oid)
+    const res = await api.releaseOnlineContract({ oid: form.value.oid, operation: 1 }) //1.发布  2.撤销
     if (res) {
       submitResultVisible1.value = true
     } else {
@@ -1608,7 +1734,20 @@ const disabledDateRange1 = (current: Dayjs, obj: any) => {
     return false
   }
 };
+const getEntrustTravelOption = () => {
+  api.getTravelCompany(userInfo.sysCompany.oid).then((res: any) => {
+    entrustTravelOption.value = res
+  })
+}
+const getBusinessDetails = async () => {
+  const params = { oid: userInfo.sysCompany.oid, businessType: 'TRAVEL' }
+  const { individualDeparturePlace, individualReturnPlace } = await api.getBusinessDetails(params)
+  form.value.departurePlace = individualDeparturePlace
+  form.value.returnPlace = individualReturnPlace
+}
 onMounted(() => {
+  getBusinessDetails()
+  getEntrustTravelOption()
   initOpeion()
   getLineOptions()
   getComprehensiveProductsList()
