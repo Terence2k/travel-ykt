@@ -237,7 +237,8 @@ const synchronization=()=>{
 }
 const onSearch = () => {
   api.travelGuideList(state.tableData.param).then((res:any)=>{
-    state.tableData.data=res.content
+    state.tableData.data=res.content;
+    state.tableData.total=res.total
   })
 }
 const reset=()=>{
