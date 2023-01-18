@@ -40,8 +40,8 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 		formRef: null,
 		editableData: {},
 		startRef: {},
-		selectKey: ['transportationType', 'licencePlateColor'],
-		inputKey: ['licencePlateNumber', 'companyName', 'approvedLoad', 'driver', 'driverPhone'], 
+		selectKey: ['licencePlateColor'],
+		inputKey: ['transportationType', 'licencePlateNumber', 'companyName', 'approvedLoad', 'driver', 'driverPhone'], 
 		rulesRef: {
 			1: {
 				licencePlateNumber: [{ required: true, message: '请选择行程类型' }]
