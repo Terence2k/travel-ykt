@@ -83,10 +83,7 @@
             </a-form-item>
             <div>
               <a-form-item name="contractFileUrl" label="上传附件" v-if="!isShow">
-                <Upload v-model="form.contractFileUrl" :maxCount="9" ref="imgUploadRef" />
-              </a-form-item>
-              <a-form-item name="pdfFileUrl" label=" " :colon="false" v-if="!isShow">
-                <pdfUpload v-model="form.pdfFileUrl" :maxCount="1" ref="pdfUploadRef" />
+                <fileUpload v-model="form.contractFileUrl" :maxCount="11" ref="imgUploadRef" />
               </a-form-item>
             </div>
           </div>
@@ -510,6 +507,7 @@ import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router';
 import { CloseOutlined } from '@ant-design/icons-vue';
 import Upload from '@/components/common/imageWrapper.vue';
 import pdfUpload from '@/components/common/pdfWrapper.vue';
+import fileUpload from '@/components/common/fileWrapper.vue';
 import { cloneDeep } from 'lodash';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import { useBusinessManageOption } from '@/stores/modules/businessManage';
@@ -578,7 +576,6 @@ const form = ref({
   phone: "", //电话
   certificatesAddress: "",//游客详细住址
   contractAmount: 0,
-  pdfFileUrl: "",
   paymentMethod: 1,
   departurePlace: '',
   destination: '',
@@ -995,7 +992,6 @@ const contractOptionChange = (val: number) => {
     case 2:
       isShow.value = true
       form.value.contractFileUrl = ''
-      form.value.pdfFileUrl = ''
       submiBtnName.value = '发出签署'
       break;
     case 1:
@@ -1015,7 +1011,6 @@ const contractOptionChange = (val: number) => {
       form.value.certificatesAddress = ''
       form.value.certificatesNo = undefined
       form.value.contractFileUrl = ''
-      form.value.pdfFileUrl = ''
       submiBtnName.value = '发出签署'
   }
 }
@@ -1425,7 +1420,6 @@ const getParams = () => {
     insuranceBuyMode, //保险购买方式
     contractType, //合同类型
     contractFileUrl, //附件
-    pdfFileUrl,
     otherAgreements, //其他约定
     contractAmount, //行程费用
     paymentMethod,
@@ -1435,14 +1429,6 @@ const getParams = () => {
     emergencyContact,
     emergencyContactPhone,
   } = form.value
-  let fileUrl
-  if (contractFileUrl && pdfFileUrl) {
-    fileUrl = contractFileUrl + ',' + pdfFileUrl
-  } else if (contractFileUrl && !pdfFileUrl) {
-    fileUrl = contractFileUrl
-  } else if (!contractFileUrl && pdfFileUrl) {
-    fileUrl = pdfFileUrl
-  }
   return {
     paymentMethod,
     departurePlace,
@@ -1458,7 +1444,7 @@ const getParams = () => {
     touristPeopleNumber, //游客人数
     insuranceBuyMode, //保险购买方式
     contractType, //合同类型
-    contractFileUrl: fileUrl, //附件
+    contractFileUrl, //附件
     otherAgreements, //其他约定
     contractAmount: accMulValue(contractAmount),
     individualContractLineBos: accMulCost(cloneDeep(dataLineSource.value)), // 线路
@@ -1650,18 +1636,6 @@ const getEditDetails = async (oid: any) => {
   const res = await api.editFindIndividualContractById(oid)
   if (res) {
     form.value = res
-    const files = form.value.contractFileUrl?.split(',')
-    const contractFileUrl: string[] = []
-    const pdfFileUrl: string[] = []
-    files?.forEach((item: any) => {
-      if (['jpg', 'png'].indexOf(item.split('.')[1]) !== -1) {
-        contractFileUrl.push(item)
-      } else if (['pdf'].indexOf(item.split('.')[1]) !== -1) {
-        pdfFileUrl.push(item)
-      }
-    })
-    form.value.contractFileUrl = contractFileUrl.toString()
-    form.value.pdfFileUrl = pdfFileUrl.toString()
     form.value.travelData = [res.tripStartTime, res.tripEndTime]
     dataLineSource.value = res.individualContractLineBos.map((item: any) => {
       item.adultPrice = accDivValue(item.adultPrice)
