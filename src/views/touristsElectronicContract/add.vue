@@ -413,7 +413,8 @@
                 :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validateNumber(dataCostSource[index], 'adultPrice')) }]"
                 style="margin-bottom:0">
                 <a-input v-set-number="{ key: 'adultPrice', obj: dataCostSource[index] }"
-                  v-model:value="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="请输入成人价" />
+                  v-model:value="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="请输入成人价"
+                  :autocapitalize="false" />
               </a-form-item>
               <template v-else>
                 {{ text }}
@@ -424,7 +425,8 @@
                 :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validateNumber(dataCostSource[index], 'childPrice')) }]"
                 style="margin-bottom:0">
                 <a-input v-set-number="{ key: 'childPrice', obj: dataCostSource[index] }"
-                  v-model:value="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="请输入儿童价" />
+                  v-model:value="dataCostSource[index][column.dataIndex]" style="margin: -5px 0" placeholder="请输入儿童价"
+                  :autocapitalize="false" />
               </a-form-item>
               <template v-else>
                 {{ text }}
@@ -1474,7 +1476,7 @@ const phoneChange = () => {
   phoneTimer && clearTimeout(phoneTimer)
   phoneTimer = setTimeout(async () => {
     dataTouristSource.value.forEach((item: any) => {
-      if (item.isAncientUygur === 1) {
+      if (item.certificatesNo === form.value.certificatesNo) {
         item.phone = form.value.phone
       }
     })
@@ -1501,7 +1503,7 @@ const addressChange = () => {
   addresTimer && clearTimeout(addresTimer)
   addresTimer = setTimeout(async () => {
     dataTouristSource.value.forEach((item: any) => {
-      if (item.isAncientUygur === 1) {
+      if (item.certificatesNo === form.value.certificatesNo) {
         item.certificatesAddress = form.value.certificatesAddress
       }
     })

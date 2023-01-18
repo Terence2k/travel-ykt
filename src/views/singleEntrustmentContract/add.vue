@@ -385,7 +385,7 @@
             </a-form-item>
             <a-form-item name="phone" label="游客代表手机号"
               :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.phone, true, '请填写游客代表手机号')) }]">
-              <a-input v-model:value="form.phone" placeholder="请填写游客代表手机号" allowClear>
+              <a-input v-model:value="form.phone" placeholder="请填写游客代表手机号" @change="phoneChange" allowClear>
               </a-input>
             </a-form-item>
             <a-form-item name="certificatesAddress" label="游客代表地址">
@@ -1363,7 +1363,7 @@ const phoneChange = () => {
   phoneTimer && clearTimeout(phoneTimer)
   phoneTimer = setTimeout(async () => {
     dataTouristSource.value.forEach((item: any) => {
-      if (item.isAncientUygur === 1) {
+      if (item.certificatesNo === form.value.certificatesNo) {
         item.phone = form.value.phone
       }
     })
@@ -1390,7 +1390,7 @@ const addressChange = () => {
   addresTimer && clearTimeout(addresTimer)
   addresTimer = setTimeout(async () => {
     dataTouristSource.value.forEach((item: any) => {
-      if (item.isAncientUygur === 1) {
+      if (item.certificatesNo === form.value.certificatesNo) {
         item.certificatesAddress = form.value.certificatesAddress
       }
     })

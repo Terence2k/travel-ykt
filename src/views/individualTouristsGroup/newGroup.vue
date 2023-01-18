@@ -42,7 +42,8 @@
 								<a-input v-model:value="form.groupTypeName" placeholder="无需填写，选择行程日期后自动判断" disabled>
 								</a-input>
 							</a-form-item>
-							<a-form-item name="travelOperatorPhone" label="联系人号码">
+							<a-form-item name="travelOperatorPhone" label="联系人号码"
+								:rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.travelOperatorPhone, true, '请输入联系人手机号')) }]">
 								<a-input v-model:value="form.travelOperatorPhone" placeholder="请输入联系人手机号">
 								</a-input>
 							</a-form-item>
@@ -214,7 +215,8 @@ import { cloneDeep } from 'lodash';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import dayjs from 'dayjs';
 import { disabledRangeTime, getAmount, getDiffDay } from '@/utils';
-import { accDiv,accMul} from '@/utils/compute';
+import { accDiv, accMul } from '@/utils/compute';
+import type { Rule } from 'ant-design-vue/es/form';
 const travelStore = useTravelStore();
 const router = useRouter();
 const route = useRoute();
@@ -295,6 +297,13 @@ const formRules = {
 	contractDays: [{ required: true, trigger: 'blur', message: '请输入合同天数' }],
 	groupTypeName: [{ required: true, trigger: 'blur', message: '散客组团类型不能为空' }],
 	touristPeopleNumber: [{ required: true, trigger: 'blur', message: '游客人数不能为空' }],
+}
+const validatePhone = async (mobile: any, required: boolean = false, msg?: string) => {
+	if (required && !mobile) {
+		return Promise.reject(msg);
+	} else if (mobile && !/^1[3-9]\d{9}$/.test(mobile)) {
+		return Promise.reject('请输入正确的手机号！');
+	}
 }
 const dateFormat = 'YYYY-MM-DD';
 const dateTimeFormat = 'YYYY-MM-DD HH:mm:ss';
