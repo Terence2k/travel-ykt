@@ -155,7 +155,7 @@ const tableState = reactive({
 		param: {
 			pageNo: 1,
 			pageSize: 10,
-			starCode: '',
+			starCode: undefined,
 			hotelName: '',
 			phone: '',
 		},
