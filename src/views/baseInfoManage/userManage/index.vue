@@ -1,5 +1,5 @@
 <template>
-  <CommonSearch v-if="!isBusinessSuperAdmin">
+  <CommonSearch>
     <search-item label="角色名称">
       <a-input v-model:value="state.tableData.param.roleName" placeholder="请输入角色名称"/>
     </search-item>

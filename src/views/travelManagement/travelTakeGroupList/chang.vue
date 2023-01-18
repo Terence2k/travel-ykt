@@ -67,11 +67,13 @@ const saveOrder = () => {
 	guideData = guideData.filter((item: any) => item.edit == true);
 	let transportData=[].concat.call(travelStore.delTrafficList, travelStore.trafficList)
 	transportData = transportData.filter((item: any) => item.edit == true);
-  let queryData = {
-    oid: travelStore.baseInfo.oid,
-    attachmentList: travelStore.attachmentList,
-    guideList: guideData,
-    transportList: transportData
+	// let attachmentData=[].concat.call(travelStore.delTrafficList, travelStore.trafficList)
+	let attachmentData = travelStore.attachmentList.filter((item: any) => item.edit == true);
+	let queryData = {
+		oid: travelStore.baseInfo.oid,
+		attachmentList: attachmentData,
+		guideList: guideData,
+		transportList: transportData
    };
 	api.travelManagement.changeItineraryBasic(queryData)
 		.then((res: any) => {

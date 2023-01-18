@@ -246,12 +246,14 @@ export default [
 			{
 				path: 'verificationRecord',
 				name: 'verificationRecord',
+				redirect: '/scenic-spot/verificationRecord/list',
 				meta: {
 					title: '核销记录',
 				},
 				children: [
 					{
-						path: '',
+						path: 'list',
+						name: 'verificationRecord-list',
 						component: () => import('@/views/scenicSpot/verificationRecord/index.vue'),
 						meta: {
 							title: '基础信息',
