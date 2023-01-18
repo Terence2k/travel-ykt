@@ -108,8 +108,8 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			},
 			{
 				title: '团队游客人数',
-				dataIndex: 'reservePeopleCount',
-				key: 'reservePeopleCount',
+				dataIndex: 'peopleCount',
+				key: 'peopleCount',
 			},
 			{
 				title: '购票人数',
@@ -118,8 +118,8 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			},
 			{
 				title: '费用预估（元）',
-				dataIndex: 'totalFee',
-				key: 'totalFee',
+				dataIndex: 'orderFee',
+				key: 'orderFee',
 			},
 			{
 				title: '支付状态',
@@ -149,9 +149,14 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				key: 'hotelName',
 			},
 			{
-				title: '房间数量',
-				dataIndex: 'roomCount',
-				key: 'roomCount',
+				title: '房间明细',
+				dataIndex: 'roomName',
+				key: 'roomName'
+			},
+			{
+				title: '可入住人数',
+				dataIndex: 'limitPeopleCount',
+				key: 'limitPeopleCount',
 			},
 			{
 				title: '入住时间',
@@ -163,16 +168,6 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				dataIndex: 'endDate',
 				key: 'endDate',
 			},
-			// {
-			// 	title: '单价（元）',
-			// 	dataIndex: 'unitPrice',
-			// 	key: 'unitPrice',
-			// },
-			// {
-			// 	title: '入住人数',
-			// 	dataIndex: 'reservePeopleCount',
-			// 	key: 'reservePeopleCount',
-			// },
 			{
 				title: '金额（元）',
 				dataIndex: 'orderFee',
@@ -275,7 +270,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		let money = 0 as number;
 		if (params) {
 			for (let index = 0; index < params.length; index++) {
-				money = accMul(params[index].reservePeopleCount, params[index].unitPrice) + money;
+				money = params[index].orderFee + money;
 			}
 			return accDiv(money, 100);
 		}
@@ -301,6 +296,10 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 						res.endDate = dayjs(res.endDate).format('YYYY-MM-DD HH:mm:ss');
 						state.startTime = res.startDate;
 						state.endTime = res.endDate;
+						res.newHotelList.map((it: any) => {
+							it.roomName = it.roomTypeList.map((item: any) => `${item.roomTypeName} * ${item.roomCount}<br />`).join('')
+							return it;
+						}),
 						travelStore.hotelList = res.newHotelList;
 						travelStore.ticketsList = res.newTicketList;
 						travelStore.touristList = res.touristList.content;
@@ -320,6 +319,10 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 						.then((res: any) => {
 							state.startTime = res.basic?.startDate;
 							state.endTime = res.basic?.endDate;
+							res.hotelList.map((it: any) => {
+								it.roomName = it.roomTypeList.map((item: any) => `${item.roomTypeName} * ${item.roomCount}<br />`).join('')
+								return it;
+							}),							
 							travelStore.hotelList = res.hotelList;
 							travelStore.ticketsList = res.ticketList;
 							travelStore.touristList = res.touristList.content;
