@@ -38,7 +38,7 @@ export async function sendSignInvitation(data: any) {
             'Content-Type': 'application/json',
         },
         method: 'put',
-        showLoading: false,
+        showLoading: true,
     });
 }
 //取消委派邀请
