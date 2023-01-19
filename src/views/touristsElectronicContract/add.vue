@@ -83,10 +83,7 @@
             </a-form-item>
             <div>
               <a-form-item name="contractFileUrl" label="上传附件" v-if="!isShow">
-                <Upload v-model="form.contractFileUrl" :maxCount="9" ref="imgUploadRef" />
-              </a-form-item>
-              <a-form-item name="pdfFileUrl" label=" " :colon="false" v-if="!isShow">
-                <pdfUpload v-model="form.pdfFileUrl" :maxCount="1" ref="pdfUploadRef" />
+                <fileUpload v-model="form.contractFileUrl" :maxCount="11" ref="imgUploadRef" />
               </a-form-item>
             </div>
           </div>
@@ -510,6 +507,7 @@ import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router';
 import { CloseOutlined } from '@ant-design/icons-vue';
 import Upload from '@/components/common/imageWrapper.vue';
 import pdfUpload from '@/components/common/pdfWrapper.vue';
+import fileUpload from '@/components/common/fileWrapper.vue';
 import { cloneDeep } from 'lodash';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 import { useBusinessManageOption } from '@/stores/modules/businessManage';
@@ -578,7 +576,6 @@ const form = ref({
   phone: "", //电话
   certificatesAddress: "",//游客详细住址
   contractAmount: 0,
-  pdfFileUrl: "",
   paymentMethod: 1,
   departurePlace: '',
   destination: '',
@@ -995,7 +992,6 @@ const contractOptionChange = (val: number) => {
     case 2:
       isShow.value = true
       form.value.contractFileUrl = ''
-      form.value.pdfFileUrl = ''
       submiBtnName.value = '发出签署'
       break;
     case 1:
@@ -1015,7 +1011,6 @@ const contractOptionChange = (val: number) => {
       form.value.certificatesAddress = ''
       form.value.certificatesNo = undefined
       form.value.contractFileUrl = ''
-      form.value.pdfFileUrl = ''
       submiBtnName.value = '发出签署'
   }
 }
@@ -1327,16 +1322,48 @@ const validateList = () => {
     }
   })
 }
-const saveDraft = (tab?: string, isTip: boolean = true) => {
+const saveDraft = (tab?: string, isTip: boolean = true, isRelease: boolean = false) => {
   tab === '1' && calculateTripFee()
-  return new Promise((resolve, reject) => {
-    const a = Promise.all([
-      formRef.value?.validateFields(),
-      dateFormRef.value?.validate(),
-      validateList()
-    ])
-    a.then(async () => {
+  return new Promise(async (resolve, reject) => {
+    if (isRelease) {
+      const a = Promise.all([
+        formRef.value?.validateFields(),
+        dateFormRef.value?.validate(),
+        validateList()
+      ])
+      a.then(async () => {
+        const params = getParams()
+        params.isRelease = isRelease
+        if (isAdd.value) {
+          let res = await api.createIndividualContract(params)
+          if (res) {
+            isTip && message.success('保存草稿成功！')
+            isRefresh.value = '1'
+            isAdd.value = false
+            form.value.oid = res
+            resolve('down')
+          } else {
+            isTip && message.error('保存草稿失败！')
+            reject('error')
+          }
+        } else {
+          let res = await api.editFindIndividualContract(params)
+          if (res) {
+            isTip && message.success('编辑草稿成功！')
+            isRefresh.value = '1'
+            resolve('down')
+          } else {
+            isTip && message.error('编辑草稿失败！')
+            reject('error')
+          }
+        }
+      }).catch((error: Error) => {
+        console.log(error);
+        reject('error')
+      })
+    } else {
       const params = getParams()
+      params.isRelease = isRelease
       if (isAdd.value) {
         let res = await api.createIndividualContract(params)
         if (res) {
@@ -1360,10 +1387,7 @@ const saveDraft = (tab?: string, isTip: boolean = true) => {
           reject('error')
         }
       }
-    }).catch((error: Error) => {
-      console.log(error);
-      reject('error')
-    })
+    }
   })
 }
 const submitCancel = () => {
@@ -1396,7 +1420,6 @@ const getParams = () => {
     insuranceBuyMode, //保险购买方式
     contractType, //合同类型
     contractFileUrl, //附件
-    pdfFileUrl,
     otherAgreements, //其他约定
     contractAmount, //行程费用
     paymentMethod,
@@ -1406,14 +1429,6 @@ const getParams = () => {
     emergencyContact,
     emergencyContactPhone,
   } = form.value
-  let fileUrl
-  if (contractFileUrl && pdfFileUrl) {
-    fileUrl = contractFileUrl + ',' + pdfFileUrl
-  } else if (contractFileUrl && !pdfFileUrl) {
-    fileUrl = contractFileUrl
-  } else if (!contractFileUrl && pdfFileUrl) {
-    fileUrl = pdfFileUrl
-  }
   return {
     paymentMethod,
     departurePlace,
@@ -1429,7 +1444,7 @@ const getParams = () => {
     touristPeopleNumber, //游客人数
     insuranceBuyMode, //保险购买方式
     contractType, //合同类型
-    contractFileUrl: fileUrl, //附件
+    contractFileUrl, //附件
     otherAgreements, //其他约定
     contractAmount: accMulValue(contractAmount),
     individualContractLineBos: accMulCost(cloneDeep(dataLineSource.value)), // 线路
@@ -1437,10 +1452,11 @@ const getParams = () => {
     individualContractPriceBos: accMulCost(cloneDeep(dataCostSource.value)), // 费用
     emergencyContact,
     emergencyContactPhone,
+    isRelease: true
   }
 }
 const saveDraftConfirm = async () => {
-  await saveDraft(undefined, false)
+  await saveDraft(undefined, false, true)
   const res = await api.releaseContract(form.value.oid)
   if (res) {
     submitResultVisible.value = true
@@ -1620,18 +1636,6 @@ const getEditDetails = async (oid: any) => {
   const res = await api.editFindIndividualContractById(oid)
   if (res) {
     form.value = res
-    const files = form.value.contractFileUrl?.split(',')
-    const contractFileUrl: string[] = []
-    const pdfFileUrl: string[] = []
-    files?.forEach((item: any) => {
-      if (['jpg', 'png'].indexOf(item.split('.')[1]) !== -1) {
-        contractFileUrl.push(item)
-      } else if (['pdf'].indexOf(item.split('.')[1]) !== -1) {
-        pdfFileUrl.push(item)
-      }
-    })
-    form.value.contractFileUrl = contractFileUrl.toString()
-    form.value.pdfFileUrl = pdfFileUrl.toString()
     form.value.travelData = [res.tripStartTime, res.tripEndTime]
     dataLineSource.value = res.individualContractLineBos.map((item: any) => {
       item.adultPrice = accDivValue(item.adultPrice)
@@ -1686,7 +1690,7 @@ const submitClick = async () => {
     submitVisible.value = true
   } else {
     // 提交发布线上合同
-    await saveDraft(undefined, false)
+    await saveDraft(undefined, false, true)
     const res = await api.releaseOnlineContract({ oid: form.value.oid, operation: 1 }) //1.发布  2.撤销
     if (res) {
       submitResultVisible1.value = true

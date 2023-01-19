@@ -111,7 +111,7 @@
 		</div>
 		<div class="item-container">
 			<p class="title">综费</p>
-			<CommonTable ref="tableRef" rowKey="oid"
+			<!-- <CommonTable ref="tableRef" rowKey="oid"
 				:row-selection="{ selectedRowKeys: selectedRowKeys, type: 'radio', onChange: onSelectChange }"
 				v-if="travelStore.isOptional" :columns="columns" :dataSource="allFeesProducts" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
@@ -132,8 +132,8 @@
 						{{ accDiv(text, 100) || 0 }}
 					</template>
 				</template>
-			</CommonTable>
-			<CommonTable v-else :columns="columns" :dataSource="allFeesProducts" :scrollY="false">
+			</CommonTable> -->
+			<CommonTable :columns="columns" :dataSource="allFeesProducts" :scrollY="false">
 				<template #bodyCell="{ column, text, index, record }">
 					<template v-if="column.key === 'index'">
 						<div>
