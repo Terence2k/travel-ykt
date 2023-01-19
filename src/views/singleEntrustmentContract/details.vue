@@ -120,7 +120,8 @@
       委托项目
     </div>
     <div class="content">
-      <a-table :columns="entrustedProjectColumns" :data-source="form.dataEntrustedProjectSource" bordered :pagination="false">
+      <a-table :columns="entrustedProjectColumns" :data-source="form.dataEntrustedProjectSource" bordered
+        :pagination="false">
         <template #bodyCell="{ column, record, index }">
           <template v-if="column.key === 'index'">
             {{ index + 1 }}
@@ -560,8 +561,8 @@ const getDetails = async (id: number) => {
 
     setList(individualContractPriceBos)
     setList1(individualContractTouristBos)
-    const travelDayNight = `${contractDays}天${travelNight}夜`
-    const travelDate = `${tripStartTime}至${tripEndTime}`
+    const travelDayNight = contractDays && travelNight ? `${contractDays}天${travelNight}夜` : '/'
+    const travelDate = tripStartTime && tripEndTime ? `${tripStartTime}至${tripEndTime}` : '/'
     let touristName, certificatesNo, phone, certificatesAddress
     for (let i = 0, l = individualContractTouristBos.length; i < l; i++) {
       const item = individualContractTouristBos[i];
@@ -578,27 +579,27 @@ const getDetails = async (id: number) => {
       travelDayNight,
       entrustTravelName: entrustTravelName || '未填写',
       travelDate,
-      touristPeopleNumber,
+      touristPeopleNumber: touristPeopleNumber || '/',
       insuranceBuyModeName,
-      contractTypeName,
+      contractTypeName: contractTypeName || '/',
       contractType,
       contractFileUrlList,
       contractFileUrl,
       contractStatusName: contractStatusName || '/',
-      deposit,
-      liquidatedDamages,
+      deposit: deposit || '/',
+      liquidatedDamages: liquidatedDamages || '/',
       bond: accDivValue(bond) || '/',
-      emergencyContact,
-      emergencyContactPhone,
+      emergencyContact: emergencyContact || '/',
+      emergencyContactPhone: emergencyContactPhone || '/',
       electronicContractNo: electronicContractNo || '/',
       signingUrl,
-      hotelFine,
-      carRentalFine,
-      totalPriceFine,
-      nonPerformanceFine,
-      nonStandardFine,
-      entrustFine,
-      disputeResolutionName,
+      hotelFine: hotelFine || '/',
+      carRentalFine: carRentalFine || '/',
+      totalPriceFine: totalPriceFine || '/',
+      nonPerformanceFine: nonPerformanceFine || '/',
+      nonStandardFine: nonStandardFine || '/',
+      entrustFine: entrustFine || '/',
+      disputeResolutionName: disputeResolutionName || '/',
       dataEntrustedProjectSource: [{
         entrustedProject,
         entrustedProjectAmount: accDivValue(entrustedProjectAmount),
@@ -612,14 +613,14 @@ const getDetails = async (id: number) => {
       otherAgreements: otherAgreements || '/',
       individualContractTouristBos,
       individualContractPriceBos,
-      touristName,
-      certificatesNo,
-      phone,
-      certificatesAddress,
-      departurePlace,
-      destination,
-      returnPlace,
-      paymentMethodName
+      touristName: touristName || '/',
+      certificatesNo: certificatesNo || '/',
+      phone: phone || '/',
+      certificatesAddress: certificatesAddress || '/',
+      departurePlace: departurePlace || '/',
+      destination: destination || '/',
+      returnPlace: returnPlace || '/',
+      paymentMethodName: paymentMethodName || '/'
     }
   }
 }

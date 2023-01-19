@@ -525,7 +525,7 @@ const getDetails = async (id: number) => {
           res = '线下合同'
           break
         default:
-          res = ''
+          res = '/'
           break
       }
       return res
@@ -542,8 +542,8 @@ const getDetails = async (id: number) => {
     setList(individualContractLineBos)
     setList(individualContractPriceBos)
     setList1(individualContractTouristBos)
-    const travelDayNight = `${contractDays}天${travelNight}夜`
-    const travelDate = `${tripStartTime}至${tripEndTime}`
+    const travelDayNight = contractDays && travelNight ? `${contractDays}天${travelNight}夜` : '/'
+    const travelDate = tripStartTime && tripEndTime ? `${tripStartTime}至${tripEndTime}` : '/'
     let touristName, certificatesNo, phone, certificatesAddress
     for (let i = 0, l = individualContractTouristBos.length; i < l; i++) {
       const item = individualContractTouristBos[i];
@@ -560,7 +560,7 @@ const getDetails = async (id: number) => {
       travelDayNight,
       entrustTravelName: entrustTravelName || '未填写',
       travelDate,
-      touristPeopleNumber,
+      touristPeopleNumber: touristPeopleNumber || '/',
       insuranceBuyModeName,
       contractTypeName,
       contractType,
@@ -581,12 +581,12 @@ const getDetails = async (id: number) => {
       certificatesNo,
       phone,
       certificatesAddress,
-      departurePlace,
-      destination,
-      returnPlace,
-      paymentMethodName,
-      emergencyContact,
-      emergencyContactPhone,
+      departurePlace: departurePlace || '/',
+      destination: destination || '/',
+      returnPlace: returnPlace || '/',
+      paymentMethodName: paymentMethodName || '/',
+      emergencyContact: emergencyContact || '/',
+      emergencyContactPhone: emergencyContactPhone || '/',
       electronicContractNo: electronicContractNo || '/',
       signingUrl,
       contractStatus

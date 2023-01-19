@@ -385,7 +385,7 @@
             </a-form-item>
             <a-form-item name="phone" label="游客代表手机号"
               :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.phone, true, '请填写游客代表手机号')) }]">
-              <a-input v-model:value="form.phone" placeholder="请填写游客代表手机号" allowClear>
+              <a-input v-model:value="form.phone" placeholder="请填写游客代表手机号" @change="phoneChange" allowClear>
               </a-input>
             </a-form-item>
             <a-form-item name="certificatesAddress" label="游客代表地址">
@@ -1201,16 +1201,48 @@ const validateList = () => {
     }
   })
 }
-const saveDraft = (tab?: string, isTip: boolean = true) => {
+const saveDraft = (tab?: string, isTip: boolean = true, isRelease: boolean = false) => {
   tab === '1' && calculateTripFee()
-  return new Promise((resolve, reject) => {
-    const a = Promise.all([
-      formRef.value?.validateFields(),
-      dateFormRef.value?.validate(),
-      validateList()
-    ])
-    a.then(async () => {
+  return new Promise(async (resolve, reject) => {
+    if (isRelease) {
+      const a = Promise.all([
+        formRef.value?.validateFields(),
+        dateFormRef.value?.validate(),
+        validateList()
+      ])
+      a.then(async () => {
+        const params = getParams()
+        params.isRelease = isRelease
+        if (isAdd.value) {
+          let res = await api.createSingleContract(params)
+          if (res) {
+            isTip && message.success('保存草稿成功！')
+            isRefresh.value = '1'
+            isAdd.value = false
+            form.value.oid = res
+            resolve('down')
+          } else {
+            isTip && message.error('保存草稿失败！')
+            reject('error')
+          }
+        } else {
+          let res = await api.editSingleContract(params)
+          if (res) {
+            isTip && message.success('编辑草稿成功！')
+            isRefresh.value = '1'
+            resolve('down')
+          } else {
+            isTip && message.error('编辑草稿失败！')
+            reject('error')
+          }
+        }
+      }).catch((error: Error) => {
+        console.log(error);
+        reject('error')
+      })
+    } else {
       const params = getParams()
+      params.isRelease = isRelease
       if (isAdd.value) {
         let res = await api.createSingleContract(params)
         if (res) {
@@ -1234,10 +1266,7 @@ const saveDraft = (tab?: string, isTip: boolean = true) => {
           reject('error')
         }
       }
-    }).catch((error: Error) => {
-      console.log(error);
-      reject('error')
-    })
+    }
   })
 }
 const submitCancel = () => {
@@ -1324,10 +1353,11 @@ const getParams = () => {
     entrustedProjectAmount: accMulValue(dataEntrustedProjectSource.value[0].entrustedProjectAmount),
     individualContractTouristBos: dataTouristSource.value, // 游客
     individualContractPriceBos: accMulCost(cloneDeep(dataCostSource.value)), // 费用
+    isRelease: true
   }
 }
 const saveDraftConfirm = async () => {
-  await saveDraft(undefined, false)
+  await saveDraft(undefined, false, true)
   const res = await api.releaseSingleContract(form.value.oid)
   if (res) {
     submitResultVisible.value = true
@@ -1363,7 +1393,7 @@ const phoneChange = () => {
   phoneTimer && clearTimeout(phoneTimer)
   phoneTimer = setTimeout(async () => {
     dataTouristSource.value.forEach((item: any) => {
-      if (item.isAncientUygur === 1) {
+      if (item.certificatesNo === form.value.certificatesNo) {
         item.phone = form.value.phone
       }
     })
@@ -1390,7 +1420,7 @@ const addressChange = () => {
   addresTimer && clearTimeout(addresTimer)
   addresTimer = setTimeout(async () => {
     dataTouristSource.value.forEach((item: any) => {
-      if (item.isAncientUygur === 1) {
+      if (item.certificatesNo === form.value.certificatesNo) {
         item.certificatesAddress = form.value.certificatesAddress
       }
     })

@@ -42,7 +42,8 @@
 								<a-input v-model:value="form.groupTypeName" placeholder="无需填写，选择行程日期后自动判断" disabled>
 								</a-input>
 							</a-form-item>
-							<a-form-item name="travelOperatorPhone" label="联系人号码">
+							<a-form-item name="travelOperatorPhone" label="联系人号码"
+								:rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.travelOperatorPhone, true, '请输入联系人手机号')) }]">
 								<a-input v-model:value="form.travelOperatorPhone" placeholder="请输入联系人手机号">
 								</a-input>
 							</a-form-item>
@@ -214,7 +215,8 @@ import { cloneDeep } from 'lodash';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import dayjs from 'dayjs';
 import { disabledRangeTime, getAmount, getDiffDay } from '@/utils';
-import { accDiv,accMul} from '@/utils/compute';
+import { accDiv, accMul } from '@/utils/compute';
+import type { Rule } from 'ant-design-vue/es/form';
 const travelStore = useTravelStore();
 const router = useRouter();
 const route = useRoute();
@@ -295,6 +297,13 @@ const formRules = {
 	contractDays: [{ required: true, trigger: 'blur', message: '请输入合同天数' }],
 	groupTypeName: [{ required: true, trigger: 'blur', message: '散客组团类型不能为空' }],
 	touristPeopleNumber: [{ required: true, trigger: 'blur', message: '游客人数不能为空' }],
+}
+const validatePhone = async (mobile: any, required: boolean = false, msg?: string) => {
+	if (required && !mobile) {
+		return Promise.reject(msg);
+	} else if (mobile && !/^1[3-9]\d{9}$/.test(mobile)) {
+		return Promise.reject('请输入正确的手机号！');
+	}
 }
 const dateFormat = 'YYYY-MM-DD';
 const dateTimeFormat = 'YYYY-MM-DD HH:mm:ss';
@@ -584,97 +593,100 @@ const setBaseInfo = (res: any) => {
 	}
 }
 const getTraveDetail = () => {
-	travelStore.getItineraryStatus();
-	// const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
-	// console.log(traveListData, 'traveListData')
-	if (!form.value.oid) {
-		travelStore.setBaseInfo({});
-		travelStore.setGuideList([]);
-		travelStore.setTouristList([]);
-		travelStore.setTrafficList([]);
-		return;
-	}
-	api.travelManagement
-		.getItineraryDetail(
-			{
-				oid: form.value.oid,
-				pageNo: 1,
-				pageSize: 100000,
-			},
-			true
-			// isSaveBtn.value
-		)
-		.then((res: any) => {
-			res.basic.teamId = res.basic.itineraryNo;
-			res.basic.time = [res.basic.startDate, res.basic.endDate];
-			res.basic.touristNum = res.basic.touristCount || 0;
-			setBaseInfo(res)
-			travelStore.setBaseInfo(res.basic);
-			res.attachmentList.length && travelStore.setFileInfo(res.attachmentList);
-			travelStore.setGuideList(res.guideList);
-			travelStore.setTouristList(
-				res.touristList.content.map((it: any) => {
-					if (it.specialCertificatePicture instanceof String) {
-						it.specialCertificatePicture = it.specialCertificatePicture?.split(',');
-					}
+	return new Promise((resolve, reject) => {
+		travelStore.getItineraryStatus();
+		// const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
+		// console.log(traveListData, 'traveListData')
+		if (!form.value.oid) {
+			travelStore.setBaseInfo({});
+			travelStore.setGuideList([]);
+			travelStore.setTouristList([]);
+			travelStore.setTrafficList([]);
+			return;
+		}
+		api.travelManagement
+			.getItineraryDetail(
+				{
+					oid: form.value.oid,
+					pageNo: 1,
+					pageSize: 100000,
+				},
+				true
+				// isSaveBtn.value
+			)
+			.then((res: any) => {
+				res.basic.teamId = res.basic.itineraryNo;
+				res.basic.time = [res.basic.startDate, res.basic.endDate];
+				res.basic.touristNum = res.basic.touristCount || 0;
+				setBaseInfo(res)
+				travelStore.setBaseInfo(res.basic);
+				res.attachmentList.length && travelStore.setFileInfo(res.attachmentList);
+				travelStore.setGuideList(res.guideList);
+				travelStore.setTouristList(
+					res.touristList.content.map((it: any) => {
+						if (it.specialCertificatePicture instanceof String) {
+							it.specialCertificatePicture = it.specialCertificatePicture?.split(',');
+						}
 
+						return it;
+					})
+				);
+				res.transportList = res.transportList.map((it: any) => {
+					it.time = [it.startDate, it.endDate];
 					return it;
-				})
-			);
-			res.transportList = res.transportList.map((it: any) => {
-				it.time = [it.startDate, it.endDate];
-				return it;
+				});
+				travelStore.setTrafficList(res.transportList);
+				res.waitBuyItem.waitBuyHotel = res.waitBuyItem.waitBuyHotel
+					? res.waitBuyItem.waitBuyHotel.map((it: any) => {
+						it.hotelId = it.productId;
+						it.hotelName = it.productName;
+						return it;
+					})
+					: [];
+				res.waitBuyItem.waitBuyTicket = res.waitBuyItem.waitBuyTicket
+					? res.waitBuyItem.waitBuyTicket.map((it: any) => {
+						it.scenicId = it.productId;
+						it.scenicName = it.productName;
+						return it;
+					}).filter((it: any) => it.scenicId)
+					: [];
+				const hotel = [
+					...res.waitBuyItem.waitBuyHotel,
+					...res.hotelList.map((it: any) => {
+						it.orderFee = accDiv(it.orderFee, 100);
+						it.dayCount = getDiffDay(it.startDate, it.endDate);
+						it.roomName = it.roomTypeList.map((item: any) => `${item.roomTypeName} * ${item.roomCount}<br />`).join('')
+						return it;
+					}),
+					...travelStore.templateHotel,
+				];
+				travelStore.hotels = [...hotel] as any;
+				travelStore.productList = res.productList;
+				travelStore.scenicTickets = [
+					...res.waitBuyItem.waitBuyTicket,
+					...res.ticketList.map((it: any) => {
+						it.unitPrice = accDiv(it.unitPrice, 100);
+						return it;
+					}),
+					...travelStore.templateTicket,
+				] as any;
+				travelStore.insuranceStatus = res.insuranceStatus?.toString();
+				travelStore.checkInsurance = res.insuranceStatus ? true : false;
+				travelStore.teamTime = [res.basic.startDate, res.basic.endDate] as any;
+				travelStore.setDisabled = disDate(res);
+				const dateTime = disTime(res);
+				travelStore.setStarEndHMS = dateTime
+				travelStore.defaultStartTime = new Date(2022, 12, 1, dateTime.start.hour, dateTime.start.min, dateTime.start.second);
+				travelStore.defaultEndTime = new Date(2022, 12, 1, dateTime.end.hour, dateTime.end.min, dateTime.end.second)
+				console.log(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end, '-----');
+				travelStore.setDisabledTime = disabledRangeTime(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end) as any;
+				route.query.tab && setTimeout(() => (activeKey.value = route.query.tab as string));
+				// getHealthCode();
+				resolve('down')
 			});
-			travelStore.setTrafficList(res.transportList);
-			res.waitBuyItem.waitBuyHotel = res.waitBuyItem.waitBuyHotel
-				? res.waitBuyItem.waitBuyHotel.map((it: any) => {
-					it.hotelId = it.productId;
-					it.hotelName = it.productName;
-					return it;
-				})
-				: [];
-			res.waitBuyItem.waitBuyTicket = res.waitBuyItem.waitBuyTicket
-				? res.waitBuyItem.waitBuyTicket.map((it: any) => {
-					it.scenicId = it.productId;
-					it.scenicName = it.productName;
-					return it;
-				}).filter((it: any) => it.scenicId)
-				: [];
-			const hotel = [
-				...res.waitBuyItem.waitBuyHotel,
-				...res.hotelList.map((it: any) => {
-					it.orderFee = accDiv(it.orderFee, 100);
-					it.dayCount = getDiffDay(it.startDate, it.endDate);
-					it.roomName = it.roomTypeList.map((item: any) => `${item.roomTypeName} * ${item.roomCount}<br />`).join('')
-					return it;
-				}),
-				...travelStore.templateHotel,
-			];
-			travelStore.hotels = [...hotel] as any;
-			travelStore.productList = res.productList;
-			travelStore.scenicTickets = [
-				...res.waitBuyItem.waitBuyTicket,
-				...res.ticketList.map((it: any) => {
-					it.unitPrice = accDiv(it.unitPrice, 100);
-					return it;
-				}),
-				...travelStore.templateTicket,
-			] as any;
-			travelStore.insuranceStatus = res.insuranceStatus?.toString();
-			travelStore.checkInsurance = res.insuranceStatus ? true : false;
-			travelStore.teamTime = [res.basic.startDate, res.basic.endDate] as any;
-			travelStore.setDisabled = disDate(res);
-			const dateTime = disTime(res);
-			travelStore.setStarEndHMS = dateTime
-			travelStore.defaultStartTime = new Date(2022, 12, 1, dateTime.start.hour, dateTime.start.min, dateTime.start.second);
-			travelStore.defaultEndTime = new Date(2022, 12, 1, dateTime.end.hour, dateTime.end.min, dateTime.end.second)
-			console.log(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end, '-----');
-			travelStore.setDisabledTime = disabledRangeTime(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end) as any;
-			route.query.tab && setTimeout(() => (activeKey.value = route.query.tab as string));
-			// getHealthCode();
-		});
+	})
 };
-watch(activeKey, (newVal) => {
+watch(activeKey, async (newVal) => {
 	if (newVal === '2') {
 		const allFeesProducts = travelStore.compositeProducts.map((it: any) => {
 			it.peopleCount = travelStore.touristList.length;
@@ -696,7 +708,7 @@ const nextTep = (val: string) => {
 		activeKey.value = val
 		if (val === '2') {
 			await saveDraft()
-			getTraveDetail()
+			await getTraveDetail()
 		}
 	}).catch((error: Error) => {
 		activeKey.value = CloneActiveKey.value

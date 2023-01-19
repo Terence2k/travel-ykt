@@ -198,8 +198,9 @@
   // }
 
   onBeforeMount(() => {
-    // 企业超级管理员不显示搜索区域
-    isBusinessSuperAdmin.value = userInfo.sysRoles.some((item: any) => !['PLATFORM_SUPER_ADMIN', 'GROUP_SUPER_ADMIN'].includes(item.roleCode));
+    // 企业超级管理员不显示搜索区域（一卡通、集团、旅游局、监理、协会、古维）
+    isBusinessSuperAdmin.value = userInfo.sysRoles.some((item: any) => 
+    !['PLATFORM_SUPER_ADMIN'].includes(item.roleCode));
     // 集团超级管理员不显示操作
     // isGroupSuperAdmin.value = userInfo.sysRoles.some((item: any) => ['GROUP_SUPER_ADMIN'].includes(item.roleCode));
     columns.value = [
