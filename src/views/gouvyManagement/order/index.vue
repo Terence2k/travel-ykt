@@ -220,8 +220,8 @@ const updateVisible = ref(false);
 const columns = [
 	{
 		title: '订单编号',
-		dataIndex: 'itineraryNo',
-		key: 'itineraryNo',
+		dataIndex: 'orderNo',
+		key: 'orderNo',
 	},
 	{
 		title: '关联行程单号',
