@@ -6,7 +6,7 @@
 					:disabled="productRow.productId && productRow.productId.toString() ? true : false"
 					v-model:value="formState.hotelStarId"
 					placeholder="请选择星级"
-					@change="handleChange"
+					@change="handelChangeStart"
 				>
 					<a-select-option :value="item.oid" v-for="item in hotelData.hotelStart" :price="item.price" :key="item.oid" :name="item.starCode">{{
 						item.starCode
@@ -222,6 +222,15 @@ const delRoom = (index: number) => {
 const handleHotel = (e: any, option: any) => {
 	formState.hotelName = option.name;
 };
+
+const handelChangeStart = (id: any, option: any) => {
+	formState.hotelId = ''
+	for (let i = 0; i < formState.roomTypeList.length; i++) {
+		formState.roomTypeList[i].hotelRoomTypeId = ''
+	}
+	handleChange(id, option)
+}
+
 
 const handleChangCheckIn = () => {
 	// disLeave.value = (current: Dayjs): any =>
