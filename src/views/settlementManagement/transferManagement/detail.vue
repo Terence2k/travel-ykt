@@ -19,7 +19,7 @@
 					<span v-if="record.status === 1">已转账</span>
 					<span v-if="record.status === 3">转账失败</span>
 				</template>
-				<template v-if="column.key === 'action' && (record.status === 0 || record.status === 3)">
+				<template v-if="column.key === 'action' && record.status === 3">
 					<div class="action-btns">
 						<a href="javascript:;" @click="transferAccounts(record.oid, record.itineraryNo)">申请转账</a>
 					</div>
@@ -189,7 +189,7 @@ const pageSideChange = (current: number, size: number) => {
 	initList();
 };
 const submit = () => {
-	state.audit.status = 2;
+	state.audit.status = 1;
 	transferAccountAudit();
 };
 const refuse = () => {
