@@ -24,9 +24,18 @@
 		</search-item>
 		<search-item label="结算时间" style="width: 350px">
 			<!-- <a-range-picker v-model:value="state.times" @change="timeChange" /> -->
-			<picker v-model="state.times" @change="timeChange" style="width: 180px" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"> </picker>
+			<picker
+				v-model="state.times"
+				@change="timeChange"
+				style="width: 180px"
+				type="daterange"
+				start-placeholder="开始日期"
+				end-placeholder="结束日期"
+			>
+			</picker>
 		</search-item>
 		<template #button>
+			<a-button @click="reset" style="margin-right: 30px">重置</a-button>
 			<a-button @click="initList" v-permission="'查询'">查询</a-button>
 		</template>
 	</CommonSearch>
@@ -350,7 +359,7 @@ const state = reactive<StateType>({
 		settlementStartTimeList: [],
 	},
 	viewList: [],
-	times: ''
+	times: '',
 });
 // 查询
 const initList = async () => {
@@ -363,7 +372,7 @@ const initList = async () => {
 };
 //搜索
 const onHandleCurrentChange = (val: number) => {
-	if(typeof val == 'number') {
+	if (typeof val == 'number') {
 		state.tableData.param.pageNo = val;
 		initList();
 	}
@@ -388,6 +397,19 @@ const timeChange = (arr: any) => {
 		state.tableData.param.settlementStartTime = null;
 		state.tableData.param.settlementEndTime = null;
 	}
+};
+const reset = () => {
+	state.tableData.param = {
+		itineraryNo: '', //行程单号
+		travelTypeId: null, //团队类型id
+		travelId: null, // 组团社id
+		subTravelId: null, //地接社id
+		settlementStartTime: '', //结算开始时间
+		settlementEndTime: '', //结算结束时间
+		pageSize: 10, //页大小
+		pageNo: 1, //页号
+	};
+	initList();
 };
 </script>
 <style scoped lang="less">

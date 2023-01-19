@@ -35,6 +35,7 @@
 			<a-date-picker v-model:value="state.tableData.param.applicationDate" style="width: 180px" />
 		</search-item> -->
 		<template #button>
+			<a-button @click="reset" style="margin-right: 30px">重置</a-button>
 			<a-button @click="initList">查询</a-button>
 		</template>
 	</CommonSearch>
@@ -306,5 +307,16 @@ onMounted(() => {
 	options.getEarthContactAgencyList();
 	initList();
 });
+const reset = () => {
+	state.tableData.param = {
+		scenicId: null, //关联景区id
+		ticketName: '', //门票名称
+		settlementStartTime: '', //结算开始时间
+		settlementEndTime: '', //结算结束时间
+		pageSize: 10, //页大小
+		pageNo: 1, //页号
+	};
+	initList();
+};
 </script>
 <style scoped lang="less"></style>

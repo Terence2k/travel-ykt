@@ -32,6 +32,7 @@
 			</picker>
 		</search-item>
 		<template #button>
+			<a-button @click="reset" style="margin-right: 30px">重置</a-button>
 			<a-button @click="initList" v-permission="`查询`">查询</a-button>
 		</template>
 	</CommonSearch>
@@ -294,6 +295,18 @@ const timeChange = (arr: any) => {
 		state.tableData.param.settlementEndTime = null;
 		state.tableData.param.settlementStartTime = null;
 	}
+};
+const reset = () => {
+	state.tableData.param = {
+		travelId: null, //组团社id
+		subTravelId: null, //地接社id
+		settlementTimeStart: '', //结算开始时间
+		settlementTimeEnd: '', //结算结束时间
+		travelTypeId: null, //团队类型id
+		pageNo: 1, //页号
+		pageSize: 10, //页大小
+	};
+	initList();
 };
 </script>
 <style scoped lang="less"></style>

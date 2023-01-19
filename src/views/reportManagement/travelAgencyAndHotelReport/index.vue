@@ -20,16 +20,33 @@
 		</search-item>
 		<search-item label="结算时间" style="width: 350px">
 			<!-- <a-range-picker v-model:value="state.settlementTimeList" @change="settlementTimeChange" /> -->
-			<picker v-model="state.settlementTimeList" style="width: 180px" @change="settlementTimeChange" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"> </picker>
+			<picker
+				v-model="state.settlementTimeList"
+				style="width: 180px"
+				@change="settlementTimeChange"
+				type="daterange"
+				start-placeholder="开始日期"
+				end-placeholder="结束日期"
+			>
+			</picker>
 		</search-item>
 		<search-item label="酒店名称" style="width: 280px">
 			<a-input v-model:value="state.tableData.param.hotelName" placeholder="请输入酒店名称" allowClear style="width: 180px" />
 		</search-item>
 		<search-item label="核销时间" style="width: 350px">
 			<!-- <a-range-picker v-model:value="state.verificationTimeList" @change="verificationTimeChange" /> -->
-			<picker v-model="state.verificationTimeList" style="width: 180px" @change="verificationTimeChange" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"> </picker>
+			<picker
+				v-model="state.verificationTimeList"
+				style="width: 180px"
+				@change="verificationTimeChange"
+				type="daterange"
+				start-placeholder="开始日期"
+				end-placeholder="结束日期"
+			>
+			</picker>
 		</search-item>
 		<template #button>
+			<a-button @click="reset" style="margin-right: 30px">重置</a-button>
 			<a-button @click="initList" v-permission="'查询'">查询</a-button>
 		</template>
 	</CommonSearch>
@@ -343,7 +360,7 @@ const initList = async () => {
 };
 //搜索
 const onHandleCurrentChange = (val: number) => {
-	if(typeof val == 'number') {
+	if (typeof val == 'number') {
 		state.tableData.param.pageNo = val;
 		initList();
 	}
@@ -379,12 +396,28 @@ const getSettlementRule = computed(() => (column: TableColumnsType, record: Data
 	const data = record.settlementRuleList;
 	for (const key in data) {
 		if (column.title === data[key].costName) {
-			let price:any = data[key].settlementCost;
-			return ((price / 100) > 0 ? (price / 100).toFixed(2) : 0);
+			let price: any = data[key].settlementCost;
+			return price / 100 > 0 ? (price / 100).toFixed(2) : 0;
 		}
 	}
 	return '';
 });
+const reset = () => {
+	state.tableData.param = {
+		orderNo: '', //订单编号
+		itineraryNo: '', //团单编号
+		teamType: null, //团队类型
+		subTravelOid: null, //地接社id
+		settlementStartTime: '', //结算开始时间
+		settlementEndTime: '', //结算结束时间
+		hotelName: '', //酒店名称
+		verificationStartTime: '', //核销开始时间
+		verificationEndTime: '', //核销结束时间
+		pageSize: 10, //页大小
+		pageNo: 1, //页号
+	};
+	initList();
+};
 </script>
 <style scoped lang="less">
 ::v-deep(.ant-table-thead > tr > th, .ant-table-tbody > tr > td, .ant-table tfoot > tr > th, .ant-table tfoot > tr > td) {
