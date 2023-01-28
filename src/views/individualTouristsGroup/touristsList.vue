@@ -75,12 +75,12 @@
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<!-- <a v-if="dateTime > dayjs(record.startDate).unix()" @click="outGroup(record)"
-									v-permission="'待出团_手动出团'">手动出团</a> -->
 								<a @click="goToDetail(record)" v-permission="'待出团_查看行程'">查看行程</a>
 								<a @click="goToPath(record)" v-permission="'待出团_去预订'">去预订</a>
 								<a @click="change(record)" v-permission="'待出团_变更'">变更</a>
 								<a @click="toRevoke(record)" v-permission="'待出团_撤销'">撤销</a>
+								<a v-if="dateTime > dayjs(record.startDate).unix()" @click="outGroup(record)"
+									v-permission="'待出团_手动出团'">手动出团</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
