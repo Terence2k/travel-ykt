@@ -36,7 +36,7 @@
 			</a-select>
 		</search-item>
 		<template #button>
-			<a-button @click="reset" v-permission="`${getProductKeyName}_查询`" style="margin-right: 30px">重置</a-button>
+			<a-button @click="reset" v-permission="`${getProductKeyName}_重置`" style="margin-right: 30px">重置</a-button>
 			<a-button @click="initList" v-permission="`${getProductKeyName}_查询`">查询</a-button>
 		</template>
 	</CommonSearch>
