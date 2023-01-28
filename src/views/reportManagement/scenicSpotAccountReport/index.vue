@@ -41,12 +41,13 @@
 			</picker>
 		</search-item>
 		<template #button>
-			<a-button @click="initList">查询</a-button>
+			<a-button @click="reset" style="margin-right: 30px" v-permission="`重置`">重置</a-button>
+			<a-button @click="initList" v-permission="`查询`">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
 		<div class="list-btn">
-			<a-button type="primary" class="success">导出</a-button>
+			<a-button type="primary" class="success" v-permission="`导出`">导出</a-button>
 		</div>
 	</div>
 	<div>
@@ -268,76 +269,6 @@ const initList = async () => {
 	state.tableData.total = total;
 	state.tableData.data = content;
 	state.tableData.loading = false;
-	// state.tableData.data = [
-	// 	{
-	// 		itineraryNo: '111', //团单编号
-	// 		scenicId: 1, //关联景区id
-	// 		scenicName: '111', //景区名称
-	// 		ticketId: 1, //票id
-	// 		ticketName: '111', //门票名称
-	// 		travelTypeId: 1, //团队类型id
-	// 		travelTypeName: 111, //团队类型名称
-	// 		subTravelId: 1, //地接社id
-	// 		subTravelName: 111, //地接社名称
-	// 		verificationTime: '2022.03.01 09:00', //核销时间
-	// 		settlementTime: '2022.03.01 09:00', //结算时间
-	// 		unitPrice: '1', //单价
-	// 		reservationNum: 1, //预定数
-	// 		settlementNum: 1, //实刷数
-	// 		breaksNum: 1, //减免数
-	// 		orderPrice: '1', //预定金额
-	// 		unSettlementPrice: '1', //未核销金额
-	// 		breaksPrice: '1', //减免金额
-	// 		ticketPrice: '1', //票款金额
-	// 		scenicPrice: '1', //景点实收
-	// 		settlementRuleList: [
-	// 			{
-	// 				ruleName: '测试1', //结算规则名称
-	// 				rulePrice: '10', //结算费用
-	// 			},
-	// 			{
-	// 				ruleName: '测试2', //结算规则名称
-	// 				rulePrice: '22', //结算费用
-	// 			},
-	// 		], //结算规则信息
-	// 	},
-	// 	{
-	// 		itineraryNo: '111', //团单编号
-	// 		scenicId: 1, //关联景区id
-	// 		scenicName: '111', //景区名称
-	// 		ticketId: 1, //票id
-	// 		ticketName: '111', //门票名称
-	// 		travelTypeId: 1, //团队类型id
-	// 		travelTypeName: 111, //团队类型名称
-	// 		subTravelId: 1, //地接社id
-	// 		subTravelName: 111, //地接社名称
-	// 		verificationTime: '2022.03.01 09:00', //核销时间
-	// 		settlementTime: '2022.03.01 09:00', //结算时间
-	// 		unitPrice: '1', //单价
-	// 		reservationNum: 1, //预定数
-	// 		settlementNum: 1, //实刷数
-	// 		breaksNum: 1, //减免数
-	// 		orderPrice: '1', //预定金额
-	// 		unSettlementPrice: '1', //未核销金额
-	// 		breaksPrice: '1', //减免金额
-	// 		ticketPrice: '1', //票款金额
-	// 		scenicPrice: '1', //景点实收
-	// 		settlementRuleList: [
-	// 			{
-	// 				ruleName: '测试1', //结算规则名称
-	// 				rulePrice: '10', //结算费用
-	// 			},
-	// 			{
-	// 				ruleName: '测试3', //结算规则名称
-	// 				rulePrice: '22', //结算费用
-	// 			},
-	// 			{
-	// 				ruleName: '测试4', //结算规则名称
-	// 				rulePrice: '444', //结算费用
-	// 			},
-	// 		], //结算规则信息
-	// 	},
-	// ];
 };
 // 获取景区下拉列表
 const getViewList = async () => {
@@ -393,5 +324,22 @@ const getSettlementRule = computed(() => (column: TableColumnsType, record: Data
 	}
 	return '';
 });
+const reset = () => {
+	state.tableData.param = {
+		itineraryNo: '', //行程单号
+		scenicId: null, //关联景区id
+		ticketName: '', //门票名称
+		travelTypeId: null, //团队类型id
+		subTravelId: null, //地接社id
+		// verificationStartTime: '', //核销开始时间
+		// verificationEndTime: '', //核销结束时间
+		settlementStartTime: '', //结算开始时间
+		settlementEndTime: '', //结算结束时间
+		pageSize: 10, //页大小
+		pageNo: 1, //页号
+	};
+	state.tableData.settlementStartTimeList = [];
+	initList();
+};
 </script>
 <style scoped lang="less"></style>
