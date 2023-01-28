@@ -77,7 +77,7 @@
               </a-input>
             </a-form-item>
             <a-form-item name="emergencyContactPhone" label="紧急联系电话"
-              :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.emergencyContactPhone, true, '请填写紧急联系电话')) }]">
+              :rules="[{ trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.emergencyContactPhone, true, '请填写紧急联系电话')) }]">
               <a-input v-model:value="form.emergencyContactPhone" placeholder="请填写紧急联系电话" allowClear>
               </a-input>
             </a-form-item>
@@ -737,7 +737,7 @@ const formRules = {
   // touristName: [{ required: true, trigger: 'blur', message: '请选择游客代表' }],
   certificatesAddress: [{ required: true, trigger: 'blur', message: '游客代表地址不能为空' }],
   contractFileUrl: [{ required: true, trigger: 'blur', message: '请上传附件' }],
-  emergencyContact: [{ required: true, trigger: 'blur', message: '请填写紧急联系人' }],
+  // emergencyContact: [{ required: true, trigger: 'blur', message: '请填写紧急联系人' }],
 }
 const activeKey = ref('1')
 const submitVisible = ref(false)
