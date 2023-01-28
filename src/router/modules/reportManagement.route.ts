@@ -2,7 +2,7 @@ export default [
 	{
 		path: '/reportManagement',
 		name: '',
-		redirect: '/reportManagement/scenicSpotTransferReport',
+		redirect: '/reportManagement/managementCenterGeneralReport',
 		meta: {
 			title: '报表管理',
 		},

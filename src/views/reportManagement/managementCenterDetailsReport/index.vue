@@ -32,7 +32,7 @@
 			</picker>
 		</search-item>
 		<template #button>
-			<a-button @click="reset" style="margin-right: 30px">重置</a-button>
+			<a-button @click="reset" style="margin-right: 30px" v-permission="`重置`">重置</a-button>
 			<a-button @click="initList" v-permission="`查询`">查询</a-button>
 		</template>
 	</CommonSearch>
