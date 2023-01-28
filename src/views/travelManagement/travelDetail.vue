@@ -104,7 +104,7 @@
             <template v-if="column.key === 'isDaily'">
               {{ record.isDaily ? '是' : '否' }}
             </template>
-            <template v-if="column.key === 'action'">
+            <template v-if="column.key === 'action' && record.issueStatusName != '未出票'">
               <div class="action-btns">
                 <a @click="toOrderDetail(record, item.title)">查看订单</a>
               </div>
@@ -222,7 +222,20 @@
           printBtn.value.click();
         }
       })
-      state.itineraryDetail.guWeiDetail = await api.getManagementExpenses(orderId);
+      if ([1, 2, 3, 4, 5, 6, 7, 20].includes(state.basicData.status)) {
+        state.itineraryDetail.guWeiDetail = [{
+          feeName: '古维管理费',
+          touristNum: state.basicData.touristCount,
+          payableNum: state.basicData.guWeiCount,
+          payablePrice: state.basicData.guWeiCount * 5000,
+          isInitiateReductionName: '否',
+          isReductionPassedName: '否',
+          feeStatus: '预计应缴费用',
+          issueStatusName: '未出票',
+        }]
+      } else {
+        state.itineraryDetail.guWeiDetail = await api.getManagementExpenses(orderId);
+      }
 		})
 		.catch((err: any) => {
 			console.log(err);
