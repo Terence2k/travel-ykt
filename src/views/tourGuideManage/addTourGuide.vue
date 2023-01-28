@@ -107,6 +107,11 @@ const submit = () => {
     message.error('请先选择导游')
     return false
   }
+  if(!state.tableData.data[0]?.guideCertificateNo)
+  {
+    message.error('该导游不在导游库,请重新输入')
+    return false
+  }
   let data={
     guideId:state.tableData.data[0]?.oid,
     signStartDate:state.tableData.data[0]?.signStartDate,
@@ -117,10 +122,10 @@ const submit = () => {
   }
   // let signAttachmentList=state.signAttachmentList.split(',')
   // console.log(signAttachmentList,'signAttachmentList')
-  api.sendSignInvitation(data).then((res:any)=>{
-      message.success('发送委派成功')
-      router.push({ path: '/travel/tourGuideManage/tourGuideList' });
-  })
+  // api.sendSignInvitation(data).then((res:any)=>{
+  //     message.success('发送委派成功')
+  //     router.push({ path: '/travel/tourGuideManage/tourGuideList' });
+  // })
 }
 
 </script>
