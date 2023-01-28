@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
-			<template #bodyCell="{ column, text, index }">
+			<template #bodyCell="{ column, text, index, record }">
 				<template v-if="column.key === 'index'">
 					<div>
 							{{(travelStore.traveList.waitingChange.params.pageNo - 1) * (travelStore.traveList.waitingChange.params.pageSize) + (index + 1)}}
@@ -38,6 +38,7 @@
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, GroupStatus } from '@/enum'
 
+	const router = useRouter()
 	const travelStore = useTravelStore();
 	const state = reactive({
 		total: computed(() => travelStore.traveList.waitingChange.total),
