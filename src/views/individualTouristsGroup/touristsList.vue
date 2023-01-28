@@ -53,7 +53,7 @@
 							<div class="action-btns">
 								<!-- <a @click="revokeGroupToDraft(record.oid)" v-permission="'待审核_撤回任务'">撤回任务</a>
 								<a v-permission="'待审核_催办'">催办</a> -->
-								<a @click="goToDetail(record)" v-permission="'待审核_查看行程'">查看行程</a>
+								<a @click="goToDetail(record, '1')" v-permission="'待审核_查看行程'">查看行程</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -719,10 +719,10 @@ const outGroup = async (row: any) => {
 	onSearch4();
 };
 const dateTime = ref(dayjs().unix());
-const goToDetail = (row: any) => {
+const goToDetail = (row: any, isAudit: string = "0") => {
 	router.push({
 		name: 'individualTouristsGroupDetail',
-		query: { oid: encodeURIComponent(row.oid) },
+		query: { oid: encodeURIComponent(row.oid), isAudit },
 	});
 };
 const checkPower = async (id: any) => {

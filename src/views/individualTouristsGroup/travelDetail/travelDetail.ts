@@ -111,9 +111,11 @@ export const getOptions = (props: any) => {
     ],
     title: '古维管理费',
     descriptions:
-    `共<span style="color: red;">${props.guWeiDetail?.reduce((prev: any, curr: any) => prev + curr.touristNum, 0) || 0}</span>人，
+      props.isAudit === 'none' ?
+        `共<span style="color: red;">${props.guWeiDetail?.reduce((prev: any, curr: any) => prev + curr.touristNum, 0) || 0}</span>人，
     古维待缴人数：<span style="color: red;">${props.guWeiDetail?.reduce((prev: any, curr: any) => prev + curr.payableNum, 0) || 0}</span>，
-    应缴费用：<span style="color: red;">￥${accDiv(props.guWeiDetail?.reduce((prev: any, curr: any) => prev + curr.payablePrice, 0), 100) || 0}</span>`,
+    应缴费用：<span style="color: red;">￥${accDiv(props.guWeiDetail?.reduce((prev: any, curr: any) => prev + curr.payablePrice, 0), 100) || 0}</span>` :
+        `（共<span style="color: red;">${props.guWeiDetail?.reduce((prev: any, curr: any) => prev + curr.touristNum, 0) || 0}</span>人，预计应缴费用：<span style="color: red;">￥${accDiv(props.guWeiDetail?.reduce((prev: any, curr: any) => prev + curr.payablePrice, 0), 100) || 0}</span>，  订单状态：尚未生成）`,
     dataSource: props.guWeiDetail,
   }
   let productOption = {
@@ -166,7 +168,7 @@ export const getOptions = (props: any) => {
     ],
     title: '综费产品',
     descriptions:
-    `费用总计<span style="color: red;">${accDiv(props.productList?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0), 100)}</span>元`,
+      `费用总计<span style="color: red;">${accDiv(props.productList?.reduce((prev: any, curr: any) => prev + curr.totalFee, 0), 100)}</span>元`,
     dataSource: props.productList,
   }
   let hotelListOption = {
@@ -286,7 +288,7 @@ export const getOptions = (props: any) => {
     ],
     title: '景区费用',
     descriptions:
-    `已预订<span style="color: red;">${[...new Set(props.ticketList?.map((item: any) => item.oid))].length}</span>个景区，
+      `已预订<span style="color: red;">${[...new Set(props.ticketList?.map((item: any) => item.oid))].length}</span>个景区，
     游玩人数：<span style="color: red;">${props.ticketList?.reduce((prev: any, curr: any) => Number(prev) + Number(curr.reservePeopleCount), 0)}</span>；
     费用总计：<span style="color: red;">${accDiv(props.ticketList?.reduce((prev: any, curr: any) => prev + curr.orderFee, 0), 100)}</span>元`,
     dataSource: props.ticketList,
