@@ -122,10 +122,10 @@ const submit = () => {
   }
   // let signAttachmentList=state.signAttachmentList.split(',')
   // console.log(signAttachmentList,'signAttachmentList')
-  // api.sendSignInvitation(data).then((res:any)=>{
-  //     message.success('发送委派成功')
-  //     router.push({ path: '/travel/tourGuideManage/tourGuideList' });
-  // })
+  api.sendSignInvitation(data).then((res:any)=>{
+      message.success('发送委派成功')
+      router.push({ path: '/travel/tourGuideManage/tourGuideList' });
+  })
 }
 
 </script>
