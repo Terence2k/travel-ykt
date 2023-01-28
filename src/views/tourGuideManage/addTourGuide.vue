@@ -107,6 +107,11 @@ const submit = () => {
     message.error('请先选择导游')
     return false
   }
+  if(!state.tableData.data[0]?.guideCertificateNo)
+  {
+    message.error('该导游不在导游库,请重新输入')
+    return false
+  }
   let data={
     guideId:state.tableData.data[0]?.oid,
     signStartDate:state.tableData.data[0]?.signStartDate,

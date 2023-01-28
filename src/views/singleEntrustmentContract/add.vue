@@ -47,7 +47,7 @@
                 </a-input>
               </a-form-item>
               <a-form-item name="emergencyContactPhone" label="紧急联系电话"
-                :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.emergencyContactPhone, true, '请填写紧急联系电话')) }]">
+                :rules="[{ trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.emergencyContactPhone, true, '请填写紧急联系电话')) }]">
                 <a-input v-model:value="form.emergencyContactPhone" placeholder="请填写紧急联系电话" allowClear>
                 </a-input>
               </a-form-item>
@@ -742,7 +742,7 @@ const formRules = {
   touristPeopleNumber: [{ required: true, trigger: 'blur', message: '游客人数不能为空' }],
   // touristName: [{ required: true, trigger: 'blur', message: '请选择游客代表' }],
   certificatesAddress: [{ required: true, trigger: 'blur', message: '游客代表地址不能为空' }],
-  emergencyContact: [{ required: true, trigger: 'blur', message: '请填写紧急联系人' }],
+  // emergencyContact: [{ required: true, trigger: 'blur', message: '请填写紧急联系人' }],
   deposit: [{ required: true, trigger: 'blur', message: '请输入合同金额' }],
   liquidatedDamages: [{ required: true, trigger: 'blur', message: '请输入合同终止违约金' }],
   bond: [{ required: true, trigger: 'blur', message: '请输入黄金周保证金' }],
@@ -1531,19 +1531,21 @@ const getEditDetails = async (oid: any) => {
     form.value.travelData = [res.tripStartTime, res.tripEndTime]
     dataEntrustedProjectSource.value[0].entrustedProject = res.entrustedProject
     dataEntrustedProjectSource.value[0].entrustedProjectAmount = accDivValue(res.entrustedProjectAmount)
-    dataTouristSource.value = res.individualContractTouristBos.map((item: any) => {
-      // 获取游客代表
-      if (item.isRepresentative === 1) {
-        form.value.touristName = item.touristName
-        form.value.phone = item.phone
-        form.value.certificatesNo = item.certificatesNo
-        form.value.certificatesAddress = item.certificatesAddress
-      }
-      return {
-        isEdit: false,
-        ...item
-      }
-    })
+    if (res.individualContractTouristBos?.length) {
+      dataTouristSource.value = res.individualContractTouristBos.map((item: any) => {
+        // 获取游客代表
+        if (item.isRepresentative === 1) {
+          form.value.touristName = item.touristName
+          form.value.phone = item.phone
+          form.value.certificatesNo = item.certificatesNo
+          form.value.certificatesAddress = item.certificatesAddress
+        }
+        return {
+          isEdit: false,
+          ...item
+        }
+      })
+    }
     /* // 获取身份证列表
     const certificateIds = res.individualContractTouristBos.map((item: any) => {
       return { certificateId: item.certificatesNo }

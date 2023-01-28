@@ -36,6 +36,7 @@
 			</picker>
 		</search-item>
 		<template #button>
+			<a-button @click="reset" style="margin-right: 30px" v-permission="`重置`">重置</a-button>
 			<a-button @click="initList" v-permission="`查询`">查询</a-button>
 		</template>
 	</CommonSearch>
@@ -160,12 +161,26 @@ onMounted(() => {
 });
 const timeChange = (arr: any) => {
 	if (arr && arr.length > 0) {
-		state.tableData.param.settlementStartTime = arr[0];
-		state.tableData.param.settlementEndTime = arr[1];
+		state.tableData.param.settlementStartTime = Date.parse(arr[0]);
+		state.tableData.param.settlementEndTime = Date.parse(arr[1]);
 	} else {
 		state.tableData.param.settlementStartTime = null;
 		state.tableData.param.settlementEndTime = null;
 	}
+};
+const reset = () => {
+	state.tableData.param = {
+		itineraryNo: '', //团单编号
+		scenicId: null, //关联景区id
+		ticketName: '', //门票名称
+		subTravelId: null, //地接社id
+		settlementStartTime: null, //结算开始时间
+		settlementEndTime: null, //结算结束时间
+		pageSize: 10, //页大小
+		pageNo: 1, //页号
+	};
+	state.tableData.settlementStartTimeList = [];
+	initList();
 };
 </script>
 <style scoped lang="less"></style>

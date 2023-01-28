@@ -77,7 +77,7 @@
               </a-input>
             </a-form-item>
             <a-form-item name="emergencyContactPhone" label="紧急联系电话"
-              :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.emergencyContactPhone, true, '请填写紧急联系电话')) }]">
+              :rules="[{ trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.emergencyContactPhone, true, '请填写紧急联系电话')) }]">
               <a-input v-model:value="form.emergencyContactPhone" placeholder="请填写紧急联系电话" allowClear>
               </a-input>
             </a-form-item>
@@ -737,7 +737,7 @@ const formRules = {
   // touristName: [{ required: true, trigger: 'blur', message: '请选择游客代表' }],
   certificatesAddress: [{ required: true, trigger: 'blur', message: '游客代表地址不能为空' }],
   contractFileUrl: [{ required: true, trigger: 'blur', message: '请上传附件' }],
-  emergencyContact: [{ required: true, trigger: 'blur', message: '请填写紧急联系人' }],
+  // emergencyContact: [{ required: true, trigger: 'blur', message: '请填写紧急联系人' }],
 }
 const activeKey = ref('1')
 const submitVisible = ref(false)
@@ -978,7 +978,7 @@ const cmpAncientUygur = computed(() => (val: any) => {
 // 根据线路id获取线路名称
 const cmplineName = computed(() => (val: any) => {
   let res
-  lineOption.value.forEach((item: any) => {
+  lineOption.value?.forEach((item: any) => {
     if (item.codeValue == val) {
       res = item.name
     }
@@ -1102,6 +1102,7 @@ const handleTouristAdd = () => {
     isHealthy: 1,
     // healthyCode: ''
   };
+  console.log(typeof dataTouristSource.value);
   dataTouristSource.value.push(newData);
 };
 // 删除游客
@@ -1500,7 +1501,7 @@ const phoneChange = () => {
 }
 // 游客代表改变事件
 const touristChange = () => {
-  dataTouristSource.value.forEach((item: any) => {
+  dataTouristSource.value?.forEach((item: any) => {
     if (item.certificatesNo === form.value.certificatesNo) {
       form.value.phone = item.phone
       form.value.touristName = item.touristName
@@ -1637,27 +1638,31 @@ const getEditDetails = async (oid: any) => {
   if (res) {
     form.value = res
     form.value.travelData = [res.tripStartTime, res.tripEndTime]
-    dataLineSource.value = res.individualContractLineBos.map((item: any) => {
-      item.adultPrice = accDivValue(item.adultPrice)
-      item.childPrice = accDivValue(item.childPrice)
-      return {
-        isEdit: false,
-        ...item,
-      }
-    })
-    dataTouristSource.value = res.individualContractTouristBos.map((item: any) => {
-      // 获取游客代表
-      if (item.isRepresentative === 1) {
-        form.value.touristName = item.touristName
-        form.value.phone = item.phone
-        form.value.certificatesNo = item.certificatesNo
-        form.value.certificatesAddress = item.certificatesAddress
-      }
-      return {
-        isEdit: false,
-        ...item
-      }
-    })
+    if (res.individualContractLineBos?.length) {
+      dataLineSource.value = res.individualContractLineBos?.map((item: any) => {
+        item.adultPrice = accDivValue(item.adultPrice)
+        item.childPrice = accDivValue(item.childPrice)
+        return {
+          isEdit: false,
+          ...item,
+        }
+      })
+    }
+    if (res.individualContractTouristBos?.length) {
+      dataTouristSource.value = res.individualContractTouristBos?.map((item: any) => {
+        // 获取游客代表
+        if (item.isRepresentative === 1) {
+          form.value.touristName = item.touristName
+          form.value.phone = item.phone
+          form.value.certificatesNo = item.certificatesNo
+          form.value.certificatesAddress = item.certificatesAddress
+        }
+        return {
+          isEdit: false,
+          ...item
+        }
+      })
+    }
     /* // 获取身份证列表
     const certificateIds = res.individualContractTouristBos.map((item: any) => {
       return { certificateId: item.certificatesNo }
@@ -1761,7 +1766,7 @@ onMounted(() => {
 watch(
   dataTouristSource,
   () => {
-    form.value.touristPeopleNumber = dataTouristSource.value.length || ''
+    form.value.touristPeopleNumber = dataTouristSource.value?.length || ''
   },
   {
     deep: true
