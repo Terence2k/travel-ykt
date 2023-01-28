@@ -47,7 +47,7 @@
                 </a-input>
               </a-form-item>
               <a-form-item name="emergencyContactPhone" label="紧急联系电话"
-                :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.emergencyContactPhone, true, '请填写紧急联系电话')) }]">
+                :rules="[{ trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.emergencyContactPhone, true, '请填写紧急联系电话')) }]">
                 <a-input v-model:value="form.emergencyContactPhone" placeholder="请填写紧急联系电话" allowClear>
                 </a-input>
               </a-form-item>
@@ -742,7 +742,7 @@ const formRules = {
   touristPeopleNumber: [{ required: true, trigger: 'blur', message: '游客人数不能为空' }],
   // touristName: [{ required: true, trigger: 'blur', message: '请选择游客代表' }],
   certificatesAddress: [{ required: true, trigger: 'blur', message: '游客代表地址不能为空' }],
-  emergencyContact: [{ required: true, trigger: 'blur', message: '请填写紧急联系人' }],
+  // emergencyContact: [{ required: true, trigger: 'blur', message: '请填写紧急联系人' }],
   deposit: [{ required: true, trigger: 'blur', message: '请输入合同金额' }],
   liquidatedDamages: [{ required: true, trigger: 'blur', message: '请输入合同终止违约金' }],
   bond: [{ required: true, trigger: 'blur', message: '请输入黄金周保证金' }],
