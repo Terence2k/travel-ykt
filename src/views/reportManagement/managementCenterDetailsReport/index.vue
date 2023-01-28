@@ -311,8 +311,8 @@ const timeChange = (arr: any) => {
 	console.log(arr);
 	if (arr && arr.length > 0) {
 		// const timeList: any = [arr[0], arr[1]];
-		state.tableData.param.settlementTimeStart = arr[0];
-		state.tableData.param.settlementTimeEnd = arr[1];
+		state.tableData.param.settlementTimeStart = Date.parse(arr[0]);
+		state.tableData.param.settlementTimeEnd = Date.parse(arr[1]);
 	} else {
 		state.tableData.param.settlementTimeStart = null;
 		state.tableData.param.settlementTimeEnd = null;
@@ -328,6 +328,7 @@ const reset = () => {
 		pageNo: 1, //页号
 		pageSize: 10, //页大小
 	};
+	state.tableData.settlementStartTimeList = [];
 	initList();
 };
 </script>

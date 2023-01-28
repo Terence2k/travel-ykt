@@ -306,6 +306,7 @@ const reset = () => {
 		pageNo: 1, //页号
 		pageSize: 10, //页大小
 	};
+	state.tableData.settlementStartTimeList = [];
 	initList();
 };
 </script>

@@ -391,8 +391,8 @@ const pageSideChange = (current: number, size: number) => {
 };
 const settlementTimeChange = (arr: any) => {
 	if (arr && arr.length > 0) {
-		state.tableData.param.settlementStartTime = arr[0];
-		state.tableData.param.settlementEndTime = arr[1];
+		state.tableData.param.settlementStartTime = Date.parse(arr[0]);
+		state.tableData.param.settlementEndTime = Date.parse(arr[1]);
 	} else {
 		state.tableData.param.settlementStartTime = '';
 		state.tableData.param.settlementEndTime = '';
@@ -400,8 +400,8 @@ const settlementTimeChange = (arr: any) => {
 };
 const verificationTimeChange = (arr: any) => {
 	if (arr && arr.length > 0) {
-		state.tableData.param.verificationStartTime = arr[0];
-		state.tableData.param.verificationEndTime = arr[1];
+		state.tableData.param.verificationStartTime = Date.parse(arr[0]);
+		state.tableData.param.verificationEndTime = Date.parse(arr[1]);
 	} else {
 		state.tableData.param.verificationStartTime = '';
 		state.tableData.param.verificationEndTime = '';
@@ -435,6 +435,8 @@ const reset = () => {
 		pageSize: 10, //页大小
 		pageNo: 1, //页号
 	};
+	state.settlementTimeList = [];
+	state.verificationTimeList = [];
 	initList();
 };
 </script>

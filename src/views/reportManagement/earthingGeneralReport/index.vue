@@ -391,8 +391,8 @@ onMounted(() => {
 });
 const timeChange = (arr: any) => {
 	if (arr && arr.length > 0) {
-		state.tableData.param.settlementStartTime = arr[0];
-		state.tableData.param.settlementEndTime = arr[1];
+		state.tableData.param.settlementStartTime = Date.parse(arr[0]);
+		state.tableData.param.settlementEndTime = Date.parse(arr[1]);
 	} else {
 		state.tableData.param.settlementStartTime = null;
 		state.tableData.param.settlementEndTime = null;
@@ -409,6 +409,7 @@ const reset = () => {
 		pageSize: 10, //页大小
 		pageNo: 1, //页号
 	};
+	state.times = [];
 	initList();
 };
 </script>
