@@ -14,6 +14,7 @@
         <div class="action-btns">
           <a @click="takeGroup(record.oid)" v-permission="'待接团_同意接团'">同意接团</a>
           <a @click="rejectGroup(record.oid)" v-permission="'待接团_拒绝接团'">拒绝接团</a>
+          <a @click="goToDetail(record)" v-permission="'待接团_查看行程'">查看行程</a>
         </div>
       </template>
     </template>

@@ -12,6 +12,7 @@
 					<div class="action-btns">
 						<a @click="goToPath(record)" v-permission="'待预订_进入预订'">进入预订</a>
 						<a @click="goToChange(record)" v-permission="'待预订_行程变更'">行程变更</a>
+            <a @click="goToDetail(record)" v-permission="'待预订_查看行程'">查看行程</a>
 					</div>
 				</template>
 			</template>

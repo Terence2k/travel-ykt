@@ -15,6 +15,7 @@
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a @click="revokeGroupToDraft(record.oid)" v-permission="'待审核_撤回任务'">撤回任务</a>
+						<a @click="goToPath(record)" v-permission="'待审核_查看行程'">查看行程</a>
 						<!-- <a v-permission="'待审核_催办'">催办</a> -->
 					</div>
 				</template>
@@ -39,6 +40,7 @@
 	import { GroupMode, GroupStatus } from '@/enum'
 	import { message } from 'ant-design-vue';
 
+	const router = useRouter()
 	const travelStore = useTravelStore();
 	const state = reactive({
 		total: computed(() => travelStore.traveList.waitRegiment.total),
@@ -126,6 +128,15 @@
 		await api.travelManagement.revokeGroupToDraft(id);
 		onSearch()
 		message.success('撤回成功')
+	}
+
+	const goToPath = (row: any) => {
+		router.push({
+			path: '/travel/travel_manage/travel_detail',
+			query: {
+				oid: row.oid
+			}
+		})
 	}
 
 	const onHandleCurrentChange = (e:any) => {

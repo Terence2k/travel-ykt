@@ -16,6 +16,7 @@
 					<div class="action-btns">
 						<!-- <a v-permission="'待变更_去审核'">去审核</a> -->
 						<a @click="goToLog(record)" v-permission="'待变更_查看日志'">查看日志</a>
+						<a @click="goToPath(record)" v-permission="'待变更_查看行程'">查看行程</a>
 					</div>
 				</template>
 			</template>
@@ -101,6 +102,14 @@
 			}
 		]
 	})
+  const goToPath = (row: any) => {
+    router.push({
+      path: '/travel/travel_manage/travel_detail',
+      query: {
+        oid: row.oid
+      }
+    })
+  }
   const goToLog = (row: any) => {
     router.push({
       path: '/travel/travel_manage/travel_log',

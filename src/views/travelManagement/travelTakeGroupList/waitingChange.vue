@@ -13,6 +13,7 @@
         <template v-if="column.key === 'action'">
           <div class="action-btns">
             <!-- <a v-permission="'待变更_催促审核'">催促审核</a> -->
+            <a @click="goToDetail(record)" v-permission="'待变更_查看行程'">查看行程</a>
           </div>
         </template>
 			</template>
