@@ -193,7 +193,7 @@
 			</div>
 			<div class="details_item">
 				<div class="key">合同费用（元）：</div>
-				<div class="value"> {{ contractDetailsForm.contractAmount }}</div>
+				<div class="value"> {{ contractDetailsForm.contractAmount / 100 }}</div>
 			</div>
 		</div>
 	</CommonModal>
