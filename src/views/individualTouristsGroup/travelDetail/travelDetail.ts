@@ -42,7 +42,7 @@ export const getOptions = (props: any) => {
         dataIndex: 'sourceAddressName',
         key: 'sourceAddressName',
       },
-      {
+      /* {
         title: '健康码',
         dataIndex: 'healthCodeName',
         key: 'healthCodeName',
@@ -51,7 +51,7 @@ export const getOptions = (props: any) => {
         title: '中高风险',
         dataIndex: '',
         key: '',
-      },
+      }, */
       {
         title: '特殊证件',
         dataIndex: 'specialCertificateTypeName',
@@ -104,7 +104,7 @@ export const getOptions = (props: any) => {
       },
       {
         title: '操作',
-        key: 'action',
+        key: 'action1',
         fixed: 'right',
         width: 208
       },
@@ -342,8 +342,8 @@ export const getOptions = (props: any) => {
       },
       {
         title: '操作',
-        dataIndex: '',
-        key: '',
+        key: 'action2',
+        fixed: 'right',
       },
     ],
     title: '已选择的合同',

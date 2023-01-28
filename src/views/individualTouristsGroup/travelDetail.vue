@@ -133,6 +133,16 @@
               <a @click="toOrderDetail(record, item.title)">查看订单</a>
             </div>
           </template>
+          <template v-if="column.key === 'action1'">
+            <div class="action-btns">
+              <a v-show="route.query.isAudit !== '1'" @click="toOrderDetail(record, item.title)">查看订单</a>
+            </div>
+          </template>
+          <template v-if="column.key === 'action2'">
+            <div class="action-btns">
+              <a @click="contractDetail(record)">查看</a>
+            </div>
+          </template>
           <template v-if="column.key === 'attachmentUrl'">
             <a-image width="100%" :src="record.attachmentUrl" />
           </template>
@@ -141,6 +151,43 @@
       <CommonPagination :current="state.param.pageNo" :page-size="state.param.pageSize" :total="item.total"
         @change="onHandleCurrentChange" v-if="item.pagination" />
     </div>
+    <CommonModal title="合同详情" v-model:visible="contractDetailsVisible" @close="contractDetailsClose"
+      @cancel="contractDetailsClose" conform-text="确认" @conform="contractDetailsClose" :is-cancel="false" width="40%">
+      <div class="contract_details">
+        <div class="details_item">
+          <div class="key">合同编号：</div>
+          <div class="value"> {{ contractDetailsForm.contractNo }}</div>
+        </div>
+        <div class="details_item">
+          <div class="key">合同类型：</div>
+          <div class="value"> {{ contractDetailsForm.contractTypeName }}</div>
+        </div>
+        <div class="details_item">
+          <div class="key">内含线路/委托项目：</div>
+          <div class="value"> {{ contractDetailsForm.lineNames }}</div>
+        </div>
+        <div class="details_item">
+          <div class="key">人数：</div>
+          <div class="value"> {{ contractDetailsForm.touristPeopleNumber }}</div>
+        </div>
+        <div class="details_item">
+          <div class="key">行程日期：</div>
+          <div class="value"> {{ contractDetailsForm.tripStartTime + '-' + contractDetailsForm.tripEndTime }}</div>
+        </div>
+        <div class="details_item">
+          <div class="key">合同签约旅行社：</div>
+          <div class="value"> {{ contractDetailsForm.companyName }}</div>
+        </div>
+        <div class="details_item">
+          <div class="key">签署网点：</div>
+          <div class="value"> {{ contractDetailsForm.storeName }}</div>
+        </div>
+        <div class="details_item">
+          <div class="key">合同费用（元）：</div>
+          <div class="value"> {{ contractDetailsForm.contractAmount / 100 }}</div>
+        </div>
+      </div>
+    </CommonModal>
   </div>
 </template>
 <script lang="ts" setup>
@@ -155,7 +202,7 @@ import { CloseOutlined } from '@ant-design/icons-vue';
 import { useRouter, useRoute } from 'vue-router';
 import QrcodeVue from 'qrcode.vue'
 import { getStyles, getDiffDay } from '@/utils/util';
-
+import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
 
 const router = useRouter();
 const route = useRoute();
@@ -165,6 +212,8 @@ const back = () => {
     name: 'individualTouristsGroup',
   })
 }
+const contractDetailsVisible = ref(false)
+const contractDetailsForm = ref({})
 const state = reactive({
   basicData: {
     travelOperator: {},
@@ -326,11 +375,8 @@ const getItineraryDetail = (orderId: any, isPrint?: any) => {
      // 将健康码和游客列表数据关联
      configCodeName(certificateCodes, res.touristList.content) */
     // 获取合同信息
-    const { content } = await api.getContractList({
-      pageNo: 1,
-      pageSize: 10000,
-    })
-    res.contractList = content
+    const content = await api.getContractListByItineraryId(route.query.oid)
+    res.contractList = content ? content : []
     state.itineraryDetail = res;
     codeUrl.value = JSON.stringify({
       itineraryNo: state.basicData.itineraryNo,
@@ -365,7 +411,14 @@ const toOrderDetail = (row: any, title: any) => {
       break;
   }
 }
-
+const contractDetail = (record: any) => {
+  contractDetailsVisible.value = true
+  contractDetailsForm.value = record
+}
+const contractDetailsClose = () => {
+  contractDetailsVisible.value = false
+  contractDetailsForm.value = {}
+}
 // 跳转古维订单
 const toGuweiOrder = (value: any) => {
   router.push({ path: '/gouvyManagement/order/order_edit', query: { oid: value } });
@@ -449,6 +502,19 @@ watch(
 
   .red_text {
     color: #d70095;
+  }
+}
+
+.contract_details {
+  padding: 24px;
+
+  .details_item {
+    display: flex;
+    margin-bottom: 24px;
+
+    .key {
+      width: 200px;
+    }
   }
 }
 </style>
