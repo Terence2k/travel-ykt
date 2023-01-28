@@ -24,7 +24,10 @@
           <a-descriptions-item label="线路名称" :span="3">{{ state.basicData.routeName }}</a-descriptions-item>
           <a-descriptions-item label="团队类型" :span="2">{{ state.basicData.teamTypeName }}</a-descriptions-item>
           <a-descriptions-item label="散客组团类型">{{ state.basicData.groupTypeName }}</a-descriptions-item>
-          <a-descriptions-item label="行程时间" :span="2">{{ state.basicData.startDate + ' - ' + state.basicData.endDate}}</a-descriptions-item>
+          <a-descriptions-item label="行程时间" :span="2">{{
+            state.basicData.startDate + ' - ' +
+              state.basicData.endDate
+          }}</a-descriptions-item>
           <a-descriptions-item label="导游">{{ state.guideList[0]?.guideName }}
             {{ state.guideList[0]?.guidePhone }}</a-descriptions-item>
           <a-descriptions-item label="散客拼团社" :span="2">{{ state.basicData.travelName }}</a-descriptions-item>
@@ -36,7 +39,9 @@
           <a-descriptions-item label="行程冻结金额（元）">{{ accDiv(state.basicData.totalFee, 100) }}元</a-descriptions-item>
           <a-descriptions-item label="联系人" :span="2">{{ state.basicData.travelOperatorName }}</a-descriptions-item>
           <a-descriptions-item label="联系人电话">{{ state.basicData.travelOperatorPhone }}</a-descriptions-item>
-          <a-descriptions-item label="用车车牌号" :span="2">{{ state.transportList[0]?.licencePlateNumber}}</a-descriptions-item>
+          <a-descriptions-item label="用车车牌号" :span="2">{{
+            state.transportList[0]?.licencePlateNumber
+          }}</a-descriptions-item>
           <a-descriptions-item label="自编团号">{{ state.basicData.selfTeamNo }}</a-descriptions-item>
         </a-descriptions>
       </a-col>
@@ -44,11 +49,11 @@
         <a-descriptions title="&nbsp;" bordered layout="vertical">
           <a-descriptions-item label="行程单二维码" :labelStyle="labelStyle" :contentStyle="contentStyle">
             <!-- 1-草稿，5-待财务审核 -->
-            <template v-if="[1,5].includes(state.basicData.status)">
+            <template v-if="[1, 5].includes(state.basicData.status)">
               财务审核通过后自动生成
             </template>
             <template v-else-if="codeUrl">
-            <qrcode-vue :value="codeUrl" :size="200" level="H" />
+              <qrcode-vue :value="codeUrl" :size="200" level="H" />
             </template>
           </a-descriptions-item>
         </a-descriptions>
@@ -312,14 +317,14 @@ const getItineraryDetail = (orderId: any, isPrint?: any) => {
     state.basicData = res.basic;
     state.guideList = res.guideList;
     state.transportList = res.transportList;
-   /*  // 获取身份证列表
-    const certificateIds = res.touristList?.content.map((item: any) => {
-      return { certificateId: item.certificateNo }
-    })
-    // 根据身份证列表查询健康码列表
-    const certificateCodes = await getHealthyCodes(certificateIds)
-    // 将健康码和游客列表数据关联
-    configCodeName(certificateCodes, res.touristList.content) */
+    /*  // 获取身份证列表
+     const certificateIds = res.touristList?.content.map((item: any) => {
+       return { certificateId: item.certificateNo }
+     })
+     // 根据身份证列表查询健康码列表
+     const certificateCodes = await getHealthyCodes(certificateIds)
+     // 将健康码和游客列表数据关联
+     configCodeName(certificateCodes, res.touristList.content) */
     // 获取合同信息
     const { content } = await api.getContractList({
       pageNo: 1,
@@ -337,6 +342,11 @@ const getItineraryDetail = (orderId: any, isPrint?: any) => {
       }
     })
     state.itineraryDetail.guWeiDetail = await api.getManagementExpenses(orderId);
+    if (route.query.isAudit === '1') {
+      state.itineraryDetail.isAudit = 'inline-block'
+    } else {
+      state.itineraryDetail.isAudit = 'none'
+    }
   }).catch((err: any) => {
     console.log(err);
   });
@@ -346,13 +356,13 @@ const toOrderDetail = (row: any, title: any) => {
   switch (title) {
     case '古维管理费':
       toGuweiOrder(row.oid);
-    break;
+      break;
     case '酒店费用':
       toHotelOrder(row.hotelOrderNo);
-    break;
+      break;
     case '景区费用':
       toScenicDetail(row.ticketOrderNo);
-    break;
+      break;
   }
 }
 
