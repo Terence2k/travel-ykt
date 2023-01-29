@@ -34,7 +34,7 @@
 								<el-form-item label="行程日期：" prop="travelData">
 									<picker v-model="form.travelData" @change="datePickerChange" type="datetimerange"
 										:value-format="dateTimeFormat" start-placeholder="请选择开始时间" end-placeholder="请选择结束时间"
-										style="width:100%">
+										style="width:100%" :disabled-date="disabledBeforeDate">
 									</picker>
 								</el-form-item>
 							</el-form>
@@ -213,7 +213,7 @@ import api from '@/api';
 import { message } from 'ant-design-vue/es';
 import { cloneDeep } from 'lodash';
 import { useTravelStore } from '@/stores/modules/travelManagement';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { disabledRangeTime, getAmount, getDiffDay } from '@/utils';
 import { accDiv, accMul } from '@/utils/compute';
 import type { Rule } from 'ant-design-vue/es/form';
@@ -460,6 +460,9 @@ const dateRules = {
 		},
 	],
 }
+const disabledBeforeDate = (current: Dayjs) => {
+  return current < dayjs().startOf('date');
+};
 const addContractConform = () => {
 	addContractVisible.value = false
 }
@@ -720,12 +723,20 @@ const nextTep = (val: string) => {
 const tabClick = () => {
 	CloneActiveKey.value = cloneDeep(activeKey.value)
 }
-const deleteContract = (index: number, record: { touristPeopleNumber: number, contractAmount: number }) => {
+const deleteContract = async (index: number, record: any) => {
 	selectedContract.value.splice(index, 1)
 	selectedRowKeys.value.splice(index, 1)
 	form.value.touristPeopleNumber -= record.touristPeopleNumber
 	form.value.touristPeopleNumber = form.value.touristPeopleNumber === 0 ? undefined : form.value.touristPeopleNumber
 	form.value.totalExpenses -= record.contractAmount
+	if (!isAdd.value) {
+		const params = {
+			itineraryId: Number(form.value.oid),
+			contractId: record.oid,
+			contractType: record.contractType
+		}
+		await api.deleteItineraryContract(params)
+	}
 }
 const onSelectChange = (Keys: Key[], selectedRows: any[]) => {
 	selectedRowKeys.value = Keys;

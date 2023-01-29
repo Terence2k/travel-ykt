@@ -126,7 +126,7 @@ import {
 const options = settlementOptions();
 const columns = computed(() => {
 	const column = ref<TableColumnsType>([]);
-	column.value = lodash.cloneDeep(fixedColumn);
+	column.value = lodash.cloneDeep(detailFixedColumn);
 	const data: Array<DataType> = state.tableData.data;
 	// 拼接遍历综费冻结费用
 	let nameList: Array<string> = [];

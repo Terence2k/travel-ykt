@@ -45,7 +45,8 @@
               label-position="right">
               <el-form-item label="行程日期：" prop="travelData">
                 <picker v-model="form.travelData" @change="datePickerChange" type="daterange" :value-format="dateFormat"
-                  start-placeholder="请选择开始时间" end-placeholder="请选择结束时间" style="width:100%"></picker>
+                  start-placeholder="请选择开始时间" end-placeholder="请选择结束时间" style="width:100%"
+                  :disabled-date="disabledBeforeDate"></picker>
               </el-form-item>
             </el-form>
             <a-form-item name="touristPeopleNumber" label="游客人数">
@@ -1014,6 +1015,9 @@ const contractOptionChange = (val: number) => {
       submiBtnName.value = '发出签署'
   }
 }
+const disabledBeforeDate = (current: Dayjs) => {
+  return current < dayjs().startOf('day');
+};
 // 行程日期改变事件
 const datePickerChange = () => {
   if (form.value.travelData) {
