@@ -77,6 +77,7 @@ import SearchItem from '@/components/common/CommonSearchItem.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import api from '@/api';
+import lodash from 'lodash';
 import { settlementOptions } from '@/stores/modules/settlement';
 import picker from '@/components/common/datePicker.vue';
 import {
@@ -94,7 +95,7 @@ const comprehensiveGuideVoListIds = ref([]);
 const comprehensiveVoListIds = ref([]);
 const columns = computed(() => {
 	const column = ref<TableColumnsType>([]);
-	column.value = fixedColumn;
+	column.value = lodash.cloneDeep(fixedColumn);
 	const data: Array<DataType> = state.tableData.data;
 	/**
 	 * 先获取数据源，根据数据源的综费产品列表渲染到表头上
