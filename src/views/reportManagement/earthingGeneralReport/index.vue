@@ -107,6 +107,7 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import { settlementOptions } from '@/stores/modules/settlement';
 import type { TableColumnsType } from 'ant-design-vue';
 import picker from '@/components/common/datePicker.vue';
+import lodash from 'lodash';
 import api from '@/api';
 import {
 	StateType,
@@ -125,7 +126,7 @@ import {
 const options = settlementOptions();
 const columns = computed(() => {
 	const column = ref<TableColumnsType>([]);
-	column.value = fixedColumn;
+	column.value = lodash.cloneDeep(fixedColumn);
 	const data: Array<DataType> = state.tableData.data;
 	// 拼接遍历综费冻结费用
 	let nameList: Array<string> = [];
