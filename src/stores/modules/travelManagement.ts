@@ -23,6 +23,7 @@ export const traveListParams = {
 		groupType: '',
 		time: [],
 		isSend: true,
+    itineraryNo: ''
 	},
 };
 export const takeGroupListParams = {
