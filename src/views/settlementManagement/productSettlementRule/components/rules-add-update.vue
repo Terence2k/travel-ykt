@@ -45,7 +45,7 @@
 				</a-input-number>
 			</a-form-item>
 			<a-form-item label="优先级" name="level">
-				<a-input-number v-model:value="formValidate.level" placeholder="请输入优先级" />
+				<a-input-number v-model:value="formValidate.level" placeholder="请输入优先级" :min="0" />
 			</a-form-item>
 		</a-form>
 		<template v-slot:footer>
