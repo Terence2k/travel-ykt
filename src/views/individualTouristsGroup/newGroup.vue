@@ -34,7 +34,7 @@
 								<el-form-item label="行程日期：" prop="travelData">
 									<picker v-model="form.travelData" @change="datePickerChange" type="datetimerange"
 										:value-format="dateTimeFormat" start-placeholder="请选择开始时间" end-placeholder="请选择结束时间"
-										style="width:100%">
+										style="width:100%" :disabled-date="disabledBeforeDate">
 									</picker>
 								</el-form-item>
 							</el-form>
@@ -213,7 +213,7 @@ import api from '@/api';
 import { message } from 'ant-design-vue/es';
 import { cloneDeep } from 'lodash';
 import { useTravelStore } from '@/stores/modules/travelManagement';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { disabledRangeTime, getAmount, getDiffDay } from '@/utils';
 import { accDiv, accMul } from '@/utils/compute';
 import type { Rule } from 'ant-design-vue/es/form';
@@ -223,7 +223,7 @@ const route = useRoute();
 const isRefresh = ref('0')
 const back = () => {
 	router.push({
-		name: 'individualTouristsGroup',
+		name: 'tourists',
 		params: {
 			isRefresh: isRefresh.value
 		}
@@ -272,6 +272,7 @@ const formRef = ref()
 const dateFormRef = ref()
 type Key = string | number;
 const selectedRowKeys = ref<Key[]>([])
+const savedContract = ref<any[]>([])
 const selectedContract = ref<any[]>([])
 const state = reactive({
 	contractTable: {
@@ -460,6 +461,9 @@ const dateRules = {
 		},
 	],
 }
+const disabledBeforeDate = (current: Dayjs) => {
+	return current < dayjs().startOf('date');
+};
 const addContractConform = () => {
 	addContractVisible.value = false
 }
@@ -711,6 +715,7 @@ const nextTep = (val: string) => {
 			await saveDraft()
 			await getTraveDetail()
 			findByIdTeamType()
+			getContractDetails()
 		}
 	}).catch((error: Error) => {
 		activeKey.value = CloneActiveKey.value
@@ -720,15 +725,24 @@ const nextTep = (val: string) => {
 const tabClick = () => {
 	CloneActiveKey.value = cloneDeep(activeKey.value)
 }
-const deleteContract = (index: number, record: { touristPeopleNumber: number, contractAmount: number }) => {
+const deleteContract = async (index: number, record: any) => {
 	selectedContract.value.splice(index, 1)
 	selectedRowKeys.value.splice(index, 1)
 	form.value.touristPeopleNumber -= record.touristPeopleNumber
 	form.value.touristPeopleNumber = form.value.touristPeopleNumber === 0 ? undefined : form.value.touristPeopleNumber
 	form.value.totalExpenses -= record.contractAmount
+	if (!isAdd.value) {
+		const params = {
+			itineraryId: Number(form.value.oid),
+			contractId: record.oid,
+			contractType: record.contractType
+		}
+		await api.deleteItineraryContract(params)
+	}
 }
 const onSelectChange = (Keys: Key[], selectedRows: any[]) => {
 	selectedRowKeys.value = Keys;
+	selectedRows = [...savedContract.value, ...selectedRows]
 	if (selectedRows.length) {
 		let touristPeopleSum = 0
 		let totalExpenses = 0
@@ -914,13 +928,20 @@ const getGuideList = async () => {
 const getContractDetails = async () => {
 	const res = await api.getContractDetails(form.value.oid)
 	if (res) {
-		selectedContract.value = res
 		let keys: number[] = []
-		selectedContract.value.forEach((item: any) => {
+		let touristPeopleSum = 0
+		let totalExpenses = 0
+		res.forEach((item: any) => {
 			keys.push(item.oid)
 			item.contractAmount = item.contractAmount && item.contractAmount / 100
+			touristPeopleSum += item.touristPeopleNumber
+			totalExpenses += item.contractAmount
 		})
-		onSelectChange(keys, selectedContract.value)
+		form.value.totalExpenses = totalExpenses
+		form.value.touristPeopleNumber = touristPeopleSum
+		selectedRowKeys.value = keys
+		savedContract.value = res
+		selectedContract.value = res
 	}
 }
 const findByIdTeamType = () => {

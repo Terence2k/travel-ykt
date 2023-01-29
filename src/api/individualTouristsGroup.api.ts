@@ -95,3 +95,13 @@ export function getContractListByItineraryId(itineraryId: any) {
     showLoading: true
   });
 }
+
+// 行程单填写/编辑过程中删除合同
+export function deleteItineraryContract(data: any) {
+  return request({
+    url: `${commonPart}deleteItineraryContract`,
+    method: 'post',
+    data,
+    showLoading: false
+  });
+}
