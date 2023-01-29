@@ -730,20 +730,14 @@ const deleteContract = (index: number, record: { touristPeopleNumber: number, co
 const onSelectChange = (Keys: Key[], selectedRows: any[]) => {
 	selectedRowKeys.value = Keys;
 	if (selectedRows.length) {
-		const select: any = []
 		let touristPeopleSum = 0
 		let totalExpenses = 0
 		selectedRows.forEach((item: any) => {
 			touristPeopleSum += item.touristPeopleNumber
 			totalExpenses += item.contractAmount
-			select.push({
-				contractId: item.oid,
-				contractType: item.contractType
-			})
 		})
 		form.value.totalExpenses = totalExpenses
 		form.value.touristPeopleNumber = touristPeopleSum
-		form.value.contracts = select
 		formRef.value.clearValidate('touristPeopleNumber')
 	} else {
 		form.value.touristPeopleNumber = undefined
@@ -791,6 +785,16 @@ const saveDraft = async (showMessage?: boolean) => {
 			dateFormRef.value?.validate()
 		])
 		a.then(async () => {
+			if (selectedContract.value.length > 0) {
+				form.value.contracts = selectedContract.value.map((item: any) => {
+					return {
+						contractId: item.oid,
+						contractType: item.contractType
+					}
+				})
+			} else {
+				form.value.contracts = []
+			}
 			if (isAdd.value) {
 				const res = await api.createIndividualItinerary(form.value)
 				if (res) {
