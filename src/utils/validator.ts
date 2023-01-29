@@ -51,7 +51,7 @@ export function isPositiveInteger(rule: any, value: any, callback: any) {
 }
 // 验证是否是[0-100]的整数
 export function isBtnZeroToHundred(rule: any, value: any, callback: any) {
-	if (''.includes.call(value, '.')) {
+	if (value && ''.includes.call(value, '.')) {
 		return Promise.reject('请输入正整形的数字');
 	}
 	if (!value) {

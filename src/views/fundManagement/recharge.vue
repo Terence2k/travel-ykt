@@ -70,6 +70,7 @@ const form = reactive({
   runningAmount: ''
 })
 const bigAmount = ref()
+const chargeFormHTMLText = ref('')
 let timer: NodeJS.Timeout
 const inputChange = () => {
   timer && clearTimeout(timer)
@@ -80,20 +81,12 @@ const inputChange = () => {
     } else {
       let val = Number(form.runningAmount)
       if (!isNaN(val)) {
-        if (val.toString().length <= 8) {
-          bigAmount.value = convertCurrency(val)
-        } else {
-          form.runningAmount = ''
-          bigAmount.value = ''
-          message.warning('请输入小于8位的金额！')
-        }
+        bigAmount.value = convertCurrency(val)
       } else {
-        form.runningAmount = ''
-        bigAmount.value = ''
         message.warning('请输入正确金额！')
       }
     }
-  }, 300);
+  }, 500);
 }
 const addAmount = async () => {
   let params = {
@@ -102,18 +95,25 @@ const addAmount = async () => {
     runningAmount: Number(form.runningAmount) * 100
   }
   let res = await api.recharge(params)
-  if (res) {
+  if (!res.enableICBC) {
     message.success('充值成功！')
     form.runningAmount = ''
     getBaseInfo()
   } else {
-    message.error('充值失败！')
+    /* const searchRegExp = /\n/g
+    const replaceWith = ""
+    const searchRegExp1 = /\\"/g
+    const replaceWith1 = '"'
+    chargeFormHTMLText.value = res.rechargeForm.replace(searchRegExp, replaceWith)
+    chargeFormHTMLText.value = chargeFormHTMLText.value.replace(searchRegExp1, replaceWith1) */
+    const win = window.open()!;
+    win.document.write(res.rechargeForm)
   }
 }
 const getUserInfo = () => {
-  let userInfo = window.localStorage.getItem('userInfo')!;
-  const userInfoObj = JSON.parse(userInfo)
-  const { sysCompany: { oid } } = userInfoObj
+  let userInfo = window.localStorage.getItem('userInfo');
+  userInfo = JSON.parse(userInfo as string)
+  const { sysCompany: { oid } } = userInfo
   form.companyId = oid
 }
 const getBaseInfo = async () => {
@@ -204,5 +204,10 @@ onMounted(() => {
       }
     }
   }
+}
+
+#charge_form {
+  width: 100vw;
+  height: 100vh;
 }
 </style>
