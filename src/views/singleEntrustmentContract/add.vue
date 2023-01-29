@@ -11,7 +11,8 @@
                 label-position="right">
                 <el-form-item label="行程日期：" prop="travelData">
                   <picker v-model="form.travelData" @change="datePickerChange" type="daterange"
-                    :value-format="dateFormat" start-placeholder="请选择开始时间" end-placeholder="请选择结束时间" style="width:100%">
+                    :value-format="dateFormat" start-placeholder="请选择开始时间" end-placeholder="请选择结束时间" style="width:100%"
+                    :disabled-date="disabledBeforeDate">
                   </picker>
                 </el-form-item>
               </el-form>
@@ -47,7 +48,7 @@
                 </a-input>
               </a-form-item>
               <a-form-item name="emergencyContactPhone" label="紧急联系电话"
-                :rules="[{ trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.emergencyContactPhone, true, '请填写紧急联系电话')) }]">
+                :rules="[{ trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.emergencyContactPhone)) }]">
                 <a-input v-model:value="form.emergencyContactPhone" placeholder="请填写紧急联系电话" allowClear>
                 </a-input>
               </a-form-item>
@@ -956,6 +957,9 @@ const cmplineName = computed(() => (val: any) => {
   })
   return res
 })
+const disabledBeforeDate = (current: Dayjs) => {
+  return current < dayjs().startOf('day');
+};
 // 行程日期改变事件
 const datePickerChange = () => {
   if (form.value.travelData) {

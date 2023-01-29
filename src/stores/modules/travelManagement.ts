@@ -23,6 +23,7 @@ export const traveListParams = {
 		groupType: '',
 		time: [],
 		isSend: true,
+    itineraryNo: ''
 	},
 };
 export const takeGroupListParams = {
@@ -39,6 +40,7 @@ export const takeGroupListParams = {
 		groupType: '',
 		time: [],
 		isSend: false,
+    itineraryNo: ''
 	},
 };
 export const auditListParams = {

@@ -76,11 +76,6 @@ const state = reactive({
 			key: 'time',
 		},
 		{
-			title: '草稿编辑状态',
-			dataIndex: 'childStatusName',
-			key: 'childStatusName',
-		},
-		{
 			title: '团队类型',
 			dataIndex: 'teamTypeName',
 			key: 'teamTypeName',

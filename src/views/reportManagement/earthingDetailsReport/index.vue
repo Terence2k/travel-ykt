@@ -35,7 +35,7 @@
 			</picker>
 		</search-item>
 		<template #button>
-			<a-button @click="reset" style="margin-right: 30px">重置</a-button>
+			<a-button @click="reset" v-permission="'重置'" style="margin-right: 30px">重置</a-button>
 			<a-button @click="initList" v-permission="'查询'">查询</a-button>
 		</template>
 	</CommonSearch>
@@ -107,6 +107,7 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import { settlementOptions } from '@/stores/modules/settlement';
 import type { TableColumnsType } from 'ant-design-vue';
 import picker from '@/components/common/datePicker.vue';
+import lodash from 'lodash';
 import api from '@/api';
 import {
 	StateType,
@@ -125,7 +126,7 @@ import {
 const options = settlementOptions();
 const columns = computed(() => {
 	const column = ref<TableColumnsType>([]);
-	column.value = detailFixedColumn;
+	column.value = lodash.cloneDeep(detailFixedColumn);
 	const data: Array<DataType> = state.tableData.data;
 	// 拼接遍历综费冻结费用
 	let nameList: Array<string> = [];

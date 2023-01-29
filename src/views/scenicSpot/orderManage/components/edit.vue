@@ -17,7 +17,7 @@
 					<a-form-item label="订单金额"> {{ formData.data.orderInfo.orderCountAmount / 100 }} </a-form-item>
 					<a-form-item label="订单编号"> {{ formData.data.orderInfo.orderNo }} </a-form-item>
 					<a-form-item label="门票"> {{ formData.data.orderInfo.ticketName }} </a-form-item>
-					<a-form-item label="门票分类"> {{ formData.data.orderInfo.ticketType }} </a-form-item>
+					<!-- <a-form-item label="门票分类"> {{ formData.data.orderInfo.ticketType }} </a-form-item> -->
 
 					<div class="footer">
 						<div class="tooter-btn">
