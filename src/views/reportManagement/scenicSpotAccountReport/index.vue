@@ -80,6 +80,7 @@ import { settlementOptions } from '@/stores/modules/settlement';
 import type { TableColumnsType } from 'ant-design-vue';
 import picker from '@/components/common/datePicker.vue';
 import api from '@/api';
+import lodash from 'lodash';
 interface StateType {
 	tableData: TableDataType;
 	viewList: Array<any>;
