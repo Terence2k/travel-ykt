@@ -10,6 +10,7 @@
 			</a-select>
 		</search-item>
 		<template #button>
+			<a-button @click="reset" v-permission="'重置'" style="margin-right: 30px">重置</a-button>
 			<a-button @click="initList" v-permission="'查询'">查询</a-button>
 		</template>
 	</CommonSearch>
@@ -237,6 +238,15 @@ const deleteFun = (id: any) => {
 //查看
 const toCheck = (record: any) => {
 	route.push({ path: '/settlementManagement/comprehensiveFee/info', query: { oid: encodeURIComponent(record.oid) } });
+};
+const reset = () => {
+	state.tableData.param = {
+		comprehensiveFeeProductName: null, //综费产品名称
+		status: null, //启用状态：0-启用  1-禁用
+		pageNo: 1, //页号
+		pageSize: 10, //页大小
+	};
+	initList();
 };
 // 初始化列表
 const initList = async () => {
