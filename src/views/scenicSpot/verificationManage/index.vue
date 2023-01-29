@@ -13,7 +13,7 @@
 						class="select-status item"
 						:showArrow="true"
 						:options="tableState.scenicSpotOptions"
-						placeholder="请选择状态"
+						placeholder="请选择归属景区"
 					>
 					</a-select>
 				</div>
