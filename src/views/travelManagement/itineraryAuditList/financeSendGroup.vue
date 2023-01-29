@@ -72,6 +72,10 @@
 					<td class="key">餐饮</td>
 					<td class="value">{{ accDiv(state.detail.cateringFee,100) }}元</td>
 				</tr>
+				<tr class="row" v-if="state.detail.teamTypeCode === 'INDIVIDUAL'">
+					<td class="key">合同费用</td>
+					<td class="value">{{ accDiv(state.detail.contractFee,100) }}元</td>
+				</tr>
 				<tr class="row">
 					<td class="key">本次预冻结金额</td>
 					<td class="value">{{ accDiv(state.detail.totalFee,100) }}元</td>

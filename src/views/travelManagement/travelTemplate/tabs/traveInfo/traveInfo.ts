@@ -50,18 +50,6 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		holteDate: computed(() => travelStore.hotels),
 		gouvyDate: computed(() => travelStore.gouvyList),
 		ticketingDate: [],
-		tableData: [
-			{
-				key: '1',
-				name: '2022-09-21 09:59:14',
-				name1: '123',
-				name2: '123',
-				name3: '123',
-				name4: '123',
-				confirmDailyChargeName: '123',
-				name6: '123',
-			},
-		],
 		params: {
 			comprehensiveFeeProductName: '',
 			status: 1,
@@ -134,14 +122,10 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 				key: 'ticketName',
 			},
 			{
-				title: '单价（元）',
-				dataIndex: 'unitPrice',
-				key: 'unitPrice',
-			},
-			{
 				title: '操作',
 				key: 'action',
-				fixed: 'right',
+				width:160
+				
 			},
 		],
 		ticketColumnstwo: [
@@ -190,7 +174,7 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 			{
 				title: '操作',
 				key: 'action',
-				fixed: 'right',
+				width:160
 			},
 		],
 		hotelColumnstwo: [

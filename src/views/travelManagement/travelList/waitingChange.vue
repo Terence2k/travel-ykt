@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
-			<template #bodyCell="{ column, text, index }">
+			<template #bodyCell="{ column, text, index, record }">
 				<template v-if="column.key === 'index'">
 					<div>
 							{{(travelStore.traveList.waitingChange.params.pageNo - 1) * (travelStore.traveList.waitingChange.params.pageSize) + (index + 1)}}
@@ -16,6 +16,7 @@
 					<div class="action-btns">
 						<!-- <a v-permission="'待变更_去审核'">去审核</a> -->
 						<a @click="goToLog(record)" v-permission="'待变更_查看日志'">查看日志</a>
+						<a @click="goToPath(record)" v-permission="'待变更_查看行程'">查看行程</a>
 					</div>
 				</template>
 			</template>
@@ -38,6 +39,7 @@
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, GroupStatus } from '@/enum'
 
+	const router = useRouter()
 	const travelStore = useTravelStore();
 	const state = reactive({
 		total: computed(() => travelStore.traveList.waitingChange.total),
@@ -100,6 +102,14 @@
 			}
 		]
 	})
+  const goToPath = (row: any) => {
+    router.push({
+      path: '/travel/travel_manage/travel_detail',
+      query: {
+        oid: row.oid
+      }
+    })
+  }
   const goToLog = (row: any) => {
     router.push({
       path: '/travel/travel_manage/travel_log',

@@ -193,7 +193,7 @@
 			</div>
 			<div class="details_item">
 				<div class="key">合同费用（元）：</div>
-				<div class="value"> {{ contractDetailsForm.contractAmount }}</div>
+				<div class="value"> {{ contractDetailsForm.contractAmount / 100 }}</div>
 			</div>
 		</div>
 	</CommonModal>
@@ -627,7 +627,6 @@ const getTraveDetail = () => {
 						if (it.specialCertificatePicture instanceof String) {
 							it.specialCertificatePicture = it.specialCertificatePicture?.split(',');
 						}
-
 						return it;
 					})
 				);
@@ -640,6 +639,7 @@ const getTraveDetail = () => {
 					? res.waitBuyItem.waitBuyHotel.map((it: any) => {
 						it.hotelId = it.productId;
 						it.hotelName = it.productName;
+						it.isMustBuy = true;
 						return it;
 					})
 					: [];
@@ -647,6 +647,7 @@ const getTraveDetail = () => {
 					? res.waitBuyItem.waitBuyTicket.map((it: any) => {
 						it.scenicId = it.productId;
 						it.scenicName = it.productName;
+						it.isMustBuy = true;
 						return it;
 					}).filter((it: any) => it.scenicId)
 					: [];
@@ -686,7 +687,7 @@ const getTraveDetail = () => {
 			});
 	})
 };
-watch(activeKey, async (newVal) => {
+/* watch(activeKey, async (newVal) => {
 	if (newVal === '2') {
 		const allFeesProducts = travelStore.compositeProducts.map((it: any) => {
 			it.peopleCount = travelStore.touristList.length;
@@ -697,7 +698,7 @@ watch(activeKey, async (newVal) => {
 		});
 		travelStore.setCompositeProducts(allFeesProducts);
 	}
-});
+}); */
 // 步骤跳转
 const nextTep = (val: string) => {
 	const a = Promise.all([
@@ -709,6 +710,7 @@ const nextTep = (val: string) => {
 		if (val === '2') {
 			await saveDraft()
 			await getTraveDetail()
+			findByIdTeamType()
 		}
 	}).catch((error: Error) => {
 		activeKey.value = CloneActiveKey.value
@@ -776,6 +778,7 @@ const guideChange = (val: any) => {
 	}
 }
 const editDraft = async (callBack?: any) => {
+	form.value.compositeProducts = !travelStore.isOptional ? travelStore.compositeProducts : travelStore.curentProduct
 	api.editIndividualTouristsGroup(form.value).then((res: any) => {
 		isRefresh.value = '1'
 		callBack && callBack(res)
@@ -788,21 +791,21 @@ const saveDraft = async (showMessage?: boolean) => {
 			dateFormRef.value?.validate()
 		])
 		a.then(async () => {
-			form.value.compositeProducts = !travelStore.isOptional ? travelStore.compositeProducts : travelStore.curentProduct
 			if (isAdd.value) {
 				const res = await api.createIndividualItinerary(form.value)
 				if (res) {
 					sessionStorage.setItem('traveList', JSON.stringify({ oid: res }));
 					form.value.oid = res
 					isAdd.value = false
+					await findByIdTeamType()
 					editDraft()
-					resolve(res)
 					showMessage && message.success('保存草稿成功！')
+					resolve(res)
 				}
 			} else {
 				editDraft((editRes: any) => {
-					resolve(editRes)
 					showMessage && message.success('保存草稿成功！')
+					resolve(editRes)
 				})
 			}
 		}).catch((error: Error) => {
@@ -916,54 +919,57 @@ const getContractDetails = async () => {
 		onSelectChange(keys, selectedContract.value)
 	}
 }
-const findByIdTeamType = async () => {
-	let allFeesProducts = []
-	const res = await api.findIndividualTeamType();
-	for (let i = 0; i < res.productVos.length; i++) {
-		// 综费产品itemId为4
-		if (res.productVos[i].itemId === 4) {
-			if (!res.productVos[i].productId) {
-				travelStore.isOptional = true;
-				const res = await api.travelManagement.comprehensiveFeeProduct({
-					pageNo: 1,
-					pageSize: 99999,
-					status: 1
-				});
-				allFeesProducts = res.content.map((it: any) => {
-					it.isDaily = it.confirmDailyCharge ? true : false;
-					it.productName = it.comprehensiveFeeProductName;
-					return it;
-				});
-			} else {
-				travelStore.isOptional = false;
-				const result = await api.travelManagement.findProductInfo(res.productVos[i].productId)
-				result.peopleCount = travelStore.touristList.length;
-				result.unPrice = result.feeNumber;
-				result.isDaily = result.confirmDailyCharge ? true : false;
-				result.productName = result.comprehensiveFeeProductName;
-				result.dayCount = dayjs(form.value.endDate).diff(form.value.startDate, 'day')
-				result.totalMoney = getAmount(
-					result.confirmDailyCharge,
-					result.feeNumber,
-					result.feeModel
-				)
-				allFeesProducts.push(result)
-			}
-		} else if (res.productVos[i].itemId === 2) {
+const findByIdTeamType = () => {
+	return new Promise(async (resolve, reject) => {
+		let allFeesProducts = []
+		const res = await api.findIndividualTeamType();
+		for (let i = 0; i < res.productVos.length; i++) {
+			// 综费产品itemId为4
+			if (res.productVos[i].itemId === 4) {
+				if (!res.productVos[i].productId) {
+					travelStore.isOptional = true;
+					const res = await api.travelManagement.comprehensiveFeeProduct({
+						pageNo: 1,
+						pageSize: 99999,
+						status: 1
+					});
+					allFeesProducts = res.content.map((it: any) => {
+						it.isDaily = it.confirmDailyCharge ? true : false;
+						it.productName = it.comprehensiveFeeProductName;
+						return it;
+					});
+				} else {
+					travelStore.isOptional = false;
+					const result = await api.travelManagement.findProductInfo(res.productVos[i].productId)
+					result.peopleCount = travelStore.touristList.length;
+					result.unPrice = result.feeNumber;
+					result.isDaily = result.confirmDailyCharge ? true : false;
+					result.productName = result.comprehensiveFeeProductName;
+					result.dayCount = dayjs(form.value.endDate).diff(form.value.startDate, 'day')
+					result.totalMoney = getAmount(
+						result.confirmDailyCharge,
+						result.feeNumber,
+						result.feeModel
+					)
+					allFeesProducts.push(result)
+				}
+			} else if (res.productVos[i].itemId === 2) {
 
-		} else if (res.productVos[i].itemId === 1) {
+			} else if (res.productVos[i].itemId === 1) {
+
+			}
 
 		}
-
-	}
-	if (travelStore.productList[0]?.productId) {
-		travelStore.curentProduct = allFeesProducts.filter((it: any) => it.oid === travelStore.productList[0].productId);
-	} else if (allFeesProducts.length >= 1) {
-		travelStore.curentProduct = cloneDeep([allFeesProducts[0]]);
-	} else {
-		travelStore.curentProduct = [];
-	}
-	travelStore.setCompositeProducts(allFeesProducts);
+		if (travelStore.productList[0]?.productId) {
+			travelStore.curentProduct = allFeesProducts.filter((it: any) => it.oid === travelStore.productList[0].productId);
+		} else if (allFeesProducts.length >= 1) {
+			travelStore.curentProduct = cloneDeep([allFeesProducts[0]]);
+		} else {
+			travelStore.curentProduct = [];
+		}
+		travelStore.setCompositeProducts(allFeesProducts);
+		resolve('down')
+	})
 }
 const resetFormFields = () => {
 	dateFormRef.value?.resetFields()
@@ -988,18 +994,18 @@ const resetFormFields = () => {
 }
 watch(
 	() => route.query.id,
-	(newVal) => {
+	async (newVal) => {
 		if (newVal) {
-			findByIdTeamType()
 			form.value.oid = newVal as string
 			isAdd.value = false
+			await getTraveDetail()
+			findByIdTeamType()
 			getGuideList()
 			getContractDetails()
-			getTraveDetail()
 		}
 	},
-	{ immediate: true })
-
+	{ immediate: true }
+)
 watch(
 	() => route.name,
 	(newVal) => {
@@ -1009,7 +1015,6 @@ watch(
 	},
 )
 onMounted(() => {
-	findByIdTeamType()
 	getGuideList()
 })
 </script>

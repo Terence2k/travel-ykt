@@ -16,6 +16,7 @@
 					<div class="action-btns">
 						<a @click="revokeGroupToDraft(record.oid)" v-permission="'已过期_置为草稿'">置为草稿</a>
 						<a @click="goToLog(record)" v-permission="'已过期_查看日志'">查看日志</a>
+						<a @click="goToPath(record)" v-permission="'已过期_查看行程'">查看行程</a>
 					</div>
 				</template>
 			</template>
@@ -118,7 +119,15 @@
       path: '/travel/travel_manage/travel_log',
       query: { oid: encodeURIComponent(row.oid) },
     });
-  };
+  }
+  const goToPath = (row: any) => {
+    router.push({
+      path: '/travel/travel_manage/travel_detail',
+      query: {
+        oid: row.oid
+      }
+    })
+  }
 	const onHandleCurrentChange = (e:any) => {
 		travelStore.traveList.overtime.params.pageNo = e
 		onSearch()

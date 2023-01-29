@@ -199,7 +199,8 @@ export const getOptions = (props: any) => {
     descriptions: 
       `共<span style="color: red;">${props.guWeiDetail?.reduce((prev: any, curr: any) => prev + curr.touristNum, 0) || 0}</span>人，
       古维待缴人数：<span style="color: red;">${props.guWeiDetail?.reduce((prev: any, curr: any) => prev + curr.payableNum, 0) || 0}</span>，
-      应缴费用：<span style="color: red;">￥${accDiv(props.guWeiDetail?.reduce((prev: any, curr: any) => prev + curr.payablePrice, 0), 100) || 0}</span>`,
+      ${props.guWeiDetail?.length && props.guWeiDetail[0].feeStatus ? props.guWeiDetail[0].feeStatus : '应缴费用'}：<span style="color: red;">￥${accDiv(props.guWeiDetail?.reduce((prev: any, curr: any) => prev + curr.payablePrice, 0), 100) || 0}</span>，
+      订单状态：${props.guWeiDetail?.length? props.guWeiDetail[0].issueStatusName : ''}`,
     dataSource: props.guWeiDetail,
   }
   let productOption = {
