@@ -130,7 +130,7 @@
           </a-form-item>
           <a-form-item name="derate" label="是否支持减免">
             <div class="flex">
-              <a-radio-group v-model:value="form.derate">
+              <a-radio-group v-model:value="form.derate" @change="changeDerate">
                 <a-radio :value="true">是</a-radio>
                 <a-radio :value="false">否</a-radio>
               </a-radio-group>
@@ -535,6 +535,13 @@ const uploadData = () => {
     console.error(err);
   })
   confirmDialog.value = false;
+}
+
+const changeDerate = (e: any) => {
+  if (e.target.value && !form.value.fullRule && !form.value.reduceRule && userInfo.sysCompany.businessType == 'HOTEL') {
+    form.value.fullRule = 16;
+    form.value.reduceRule = 1;
+  }
 }
 
 const submit = () => {
