@@ -223,7 +223,7 @@ const route = useRoute();
 const isRefresh = ref('0')
 const back = () => {
 	router.push({
-		name: 'individualTouristsGroup',
+		name: 'tourists',
 		params: {
 			isRefresh: isRefresh.value
 		}
