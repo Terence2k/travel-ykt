@@ -720,12 +720,20 @@ const nextTep = (val: string) => {
 const tabClick = () => {
 	CloneActiveKey.value = cloneDeep(activeKey.value)
 }
-const deleteContract = (index: number, record: { touristPeopleNumber: number, contractAmount: number }) => {
+const deleteContract = async (index: number, record: any) => {
 	selectedContract.value.splice(index, 1)
 	selectedRowKeys.value.splice(index, 1)
 	form.value.touristPeopleNumber -= record.touristPeopleNumber
 	form.value.touristPeopleNumber = form.value.touristPeopleNumber === 0 ? undefined : form.value.touristPeopleNumber
 	form.value.totalExpenses -= record.contractAmount
+	if (!isAdd.value) {
+		const params = {
+			itineraryId: Number(form.value.oid),
+			contractId: record.oid,
+			contractType: record.contractType
+		}
+		await api.deleteItineraryContract(params)
+	}
 }
 const onSelectChange = (Keys: Key[], selectedRows: any[]) => {
 	selectedRowKeys.value = Keys;
