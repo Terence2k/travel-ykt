@@ -39,6 +39,7 @@ export const takeGroupListParams = {
 		groupType: '',
 		time: [],
 		isSend: false,
+    itineraryNo: ''
 	},
 };
 export const auditListParams = {
