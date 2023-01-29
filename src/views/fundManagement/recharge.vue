@@ -100,15 +100,14 @@ const addAmount = async () => {
     form.runningAmount = ''
     getBaseInfo()
   } else {
-    const searchRegExp = /\n/g
+    /* const searchRegExp = /\n/g
     const replaceWith = ""
     const searchRegExp1 = /\\"/g
     const replaceWith1 = '"'
     chargeFormHTMLText.value = res.rechargeForm.replace(searchRegExp, replaceWith)
-    chargeFormHTMLText.value = chargeFormHTMLText.value.replace(searchRegExp1, replaceWith1)
-    console.log(chargeFormHTMLText.value);
+    chargeFormHTMLText.value = chargeFormHTMLText.value.replace(searchRegExp1, replaceWith1) */
     const win = window.open()!;
-    win.document.write(chargeFormHTMLText.value)
+    win.document.write(res.rechargeForm)
   }
 }
 const getUserInfo = () => {
