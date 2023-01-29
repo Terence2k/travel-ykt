@@ -461,7 +461,10 @@ export function useTraveInfo(props: any, emits: any): Record<string, any> {
 		}, 1000)
 	})
 	onActivated(()=>{
-		travelStore.getManagementExpenses(route.query.id)			
+		if(travelStore.reserveStatus)
+			{
+				travelStore.getManagementExpenses(route.query.id)
+			}	
 	})
 	if(travelStore.reserveStatus)
 	{

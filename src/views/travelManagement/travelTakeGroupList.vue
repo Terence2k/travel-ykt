@@ -1,6 +1,7 @@
 <template>
 	<div class="trave-contaner">
 		<CommonSearch>
+
 			<search-item label="关键词搜索">
 				<a-input v-model:value="travelStore.takeGroupList[chart].params.keyWord" placeholder="请输入游客姓名、导游姓名、旅行社名称、线路名称等关键字" />
 			</search-item>
@@ -20,6 +21,10 @@
 					end-placeholder="结束日期"
 					value-format="YYYY-MM-DD HH:mm:ss"
 				/>
+			</search-item>
+      
+			<search-item label="行程单号">
+				<a-input v-model:value="travelStore.takeGroupList[chart].params.itineraryNo" placeholder="请输入行程单号" />
 			</search-item>
 
 			<template #button>
@@ -155,7 +160,6 @@ const onSearch = async () => {
 //重置
 const reset = () => {
 	let chartField: TakeGroupField = chart.value;
-
 	travelStore.takeGroupList[chartField].params = cloneDeep(takeGroupListParams.params);
 	onSearch();
 };
