@@ -46,6 +46,7 @@
 			</picker>
 		</search-item>
 		<template #button>
+			<a-button @click="reset" v-permission="'重置'" style="margin-right: 30px">重置</a-button>
 			<a-button @click="initList" v-permission="'查询'">查询</a-button>
 		</template>
 	</CommonSearch>
@@ -151,7 +152,21 @@ const state = reactive({
 });
 
 const listRef = ref<any>();
-
+const reset = async () => {
+	state.tableData.param = {
+		pageNo: 1,
+		pageSize: 10,
+		teamTypeId: null,
+		itineraryNo: null,
+		travelId: null,
+		subTravelId: null,
+		time: '',
+		groupTime: '',
+	};
+	setTimeout(() => {
+		initList()
+	}, 10);
+};
 // 搜索触发子组件查询
 const initList = async () => {
 	if (listRef.value) {

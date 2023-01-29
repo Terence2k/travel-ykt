@@ -77,7 +77,7 @@
               </a-input>
             </a-form-item>
             <a-form-item name="emergencyContactPhone" label="紧急联系电话"
-              :rules="[{ trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.emergencyContactPhone, true, '请填写紧急联系电话')) }]">
+              :rules="[{ trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.emergencyContactPhone)) }]">
               <a-input v-model:value="form.emergencyContactPhone" placeholder="请填写紧急联系电话" allowClear>
               </a-input>
             </a-form-item>

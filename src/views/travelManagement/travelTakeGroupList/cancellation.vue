@@ -14,6 +14,7 @@
         <template v-if="column.key === 'action'">
           <div class="action-btns">
             <a @click="goToPath(record)" v-permission="'已散团_查看行程单'">查看行程单</a>
+            <a @click="goToDetail(record)" v-permission="'已散团_查看详情'">查看详情</a>
           </div>
         </template>
 			</template>
@@ -72,11 +73,6 @@
 				title: '行程时间',
 				dataIndex: 'time',
 				key: 'time',
-			},
-			{
-				title: '草稿编辑状态',
-				dataIndex: 'childStatusName',
-				key: 'childStatusName',
 			},
 			{
 				title: '团队类型',

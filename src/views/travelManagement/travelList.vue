@@ -27,6 +27,10 @@
 					value-format="YYYY-MM-DD HH:mm:ss"
 				/>
 			</search-item>
+      
+			<search-item label="行程单号">
+				<a-input v-model:value="travelStore.traveList[chart].params.itineraryNo" placeholder="请输入行程单号" />
+			</search-item>
 
 			<template #button>
 				<a-button style="margin-right: 30px" @click="reset" v-permission="'重置'">重置</a-button>
