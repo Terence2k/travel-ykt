@@ -436,7 +436,7 @@ const debounceFun = debounce((hotelId: number | string, leaveTime: string, enter
 }, 500);
 
 watch(
-	() => [formState.hotelId, formState.arrivalDate, formState.departureDate],
+	() => [formState.hotelId, formState.startData, formState.endData],
 	([newHotelId, newArrivalDate, newDepartureDate]) => {
 		if (newHotelId && newDepartureDate && newArrivalDate) {
 			debounceFun(newHotelId, newDepartureDate, newArrivalDate);

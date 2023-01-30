@@ -49,6 +49,7 @@
 									@change="(event) => handleTime(event, record.key ? record.key : record.oid)"
 								/> -->
 								<datePicker
+										style="width: 300px"
 										v-model="editableData[record.key ? record.key : record.oid][column.key]"
 										type="datetimerange"
 										popper-class="hidden-date-picker"

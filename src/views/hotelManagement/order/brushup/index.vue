@@ -23,7 +23,7 @@
 						</div>
 					</div>
 					<div class="title">订单房型信息</div>
-					<CommonTable 
+					<CommonTable
 						v-if="route.query.brush || route.query.process"
 						:columns="route.query.brush ? brushcolumns : processcolumns"
 						:dataSource="state.data"
@@ -54,7 +54,13 @@
 							<template v-if="column.key === 'refreshNum'">
 								<div>
 									<a-form-item v-if="editableData[record.hotelRoomTypeId]" name="refreshNum">
-										<a-input style="width: 50px" v-model:value="editableData[record.hotelRoomTypeId]['refreshNum']"> </a-input>
+										<!-- <a-input style="width: 50px" v-model:value="editableData[record.hotelRoomTypeId]['refreshNum']"> </a-input> -->
+										<a-input-number
+											id="inputNumber"
+											v-model:value="editableData[record.hotelRoomTypeId]['refreshNum']"
+											:min="accSub(0, record.verificationRoom)"
+											:max="accSub(accAdd(record.reserveNumber, record.verificationRoom), record.verificationRoom)"
+										/>
 									</a-form-item>
 									<template v-else>
 										{{ text }}
@@ -65,16 +71,12 @@
 								<a class="item" v-if="!editableData[record.hotelRoomTypeId]" @click="edit(record.hotelRoomTypeId)">编辑</a>
 								<span v-else>
 									<a style="margin-right: 16px" class="item" @click="save(record.hotelRoomTypeId)">确定</a>
-									<a class="item" @click="cancle(record.hotelRoomTypeId)">取消</a>
+									<!-- <a class="item" @click="cancle(record.hotelRoomTypeId)">取消</a> -->
 								</span>
 							</template>
 						</template>
 					</CommonTable>
-					<CommonTable v-else
-						:columns="route.query.detail == 1 ? brushcolumnsdet : processcolumns"
-						:dataSource="state.data"
-						:scrollY="false"
-					>
+					<CommonTable v-else :columns="route.query.detail == 1 ? brushcolumnsdet : processcolumns" :dataSource="state.data" :scrollY="false">
 						<template #bodyCell="{ column, index, record, text }">
 							<template v-if="column.key === 'index'">
 								<div>
@@ -97,23 +99,6 @@
 									{{ accDiv(accMul(record.orderAmount, record.verificationRoom), 100) }}
 								</div>
 							</template>
-							<template v-if="column.key === 'refreshNum'">
-								<div>
-									<a-form-item v-if="editableData[record.hotelRoomTypeId]" name="refreshNum">
-										<a-input style="width: 50px" v-model:value="editableData[record.hotelRoomTypeId]['refreshNum']"> </a-input>
-									</a-form-item>
-									<template v-else>
-										{{ text }}
-									</template>
-								</div>
-							</template>
-							<template v-if="column.key === 'action' && route.query?.brush">
-								<a class="item" v-if="!editableData[record.hotelRoomTypeId]" @click="edit(record.hotelRoomTypeId)">编辑</a>
-								<span v-else>
-									<a style="margin-right: 16px" class="item" @click="save(record.hotelRoomTypeId)">确定</a>
-									<a class="item" @click="cancle(record.hotelRoomTypeId)">取消</a>
-								</span>
-							</template>
 						</template>
 					</CommonTable>
 					<div class="table_total" v-if="!route.query?.brush">
@@ -121,26 +106,7 @@
 						>元，已核销<span>{{ VerificationMoney(state.data) || 0 }}</span
 						>元
 					</div>
-					<!-- <div v-if="route.query?.brush">
-						<div class="title">改刷原因（200字）</div>
-						<a-form-item label="" name="aduit">
-							<a-textarea v-model:value="editableData.aduit" :auto-size="{ minRows: 4, maxRows: 10 }"
-						/></a-form-item>
-					</div>
-					<div v-else>
-						<div class="title">改刷记录</div>
-						<div>当前订单还未发生改刷</div>
-						<div>
-							<a-form-item class="mb_0">已于 2022.10.23 09:00:23 提交改刷，正在等待审核。</a-form-item>
-							<a-form-item class="mb_0" label="改刷前：" :label-col="{ span: 2 }"> 已核销【大床房13，双床房13，套间13】 </a-form-item>
-							<a-form-item class="mb_0" label="改刷后：" :label-col="{ span: 2 }"> 核销【大床房13，双床房15，套间13】 </a-form-item>
-							<a-form-item class="mb_0" label="改刷原因：" :label-col="{ span: 2 }">
-								测试文字我也不知道为什么，测试文字我也不知道为什么。
-							</a-form-item>
-							<a-form-item class="mb_0" label="审核时间：" :label-col="{ span: 2 }"> 2022.10.24 09:00:23 </a-form-item>
-							<a-form-item class="mb_0" label="驳回理由：" :label-col="{ span: 2 }"> 测试文字我也不知道为什么 </a-form-item>
-						</div>
-					</div> -->
+					
 				</a-form>
 			</div>
 		</div>
@@ -192,7 +158,7 @@ import { CloseOutlined } from '@ant-design/icons-vue';
 import type { Rule } from 'ant-design-vue/es/form';
 import { message } from 'ant-design-vue';
 import CommonTable from '@/components/common/CommonTable.vue';
-import { accDiv, accMul, accSub } from '@/utils/compute';
+import { accDiv, accMul, accSub, accAdd } from '@/utils/compute';
 import { toNumber } from '@vue/shared';
 const router = useRouter();
 const navigatorBar = useNavigatorBar();
@@ -213,7 +179,7 @@ interface DataItem {
 const formRef = ref();
 const VisibleFalseRef = ref();
 
-const col = []
+const col = [];
 const brushcolumns = [
 	{
 		title: '序号',
@@ -316,7 +282,7 @@ const brushcolumnsdet = [
 		title: '实际核销费用',
 		dataIndex: 'expenses',
 		key: 'expenses',
-	}
+	},
 ];
 const processcolumns = [
 	{
@@ -386,7 +352,7 @@ const state = reactive({
 	VisibleFalseData: {
 		cause: '',
 	},
-	detail:route.query?.detail
+	detail: route.query?.detail,
 });
 
 const rulesRef = {
@@ -408,18 +374,23 @@ const copyData = (key: any) => {
 };
 
 const cancle = (key: any) => {
+	// editableData[key].refreshNum = ''
+	console.log(editableData[key].refreshNum, 'editableData[key].refreshNum');
+	if (Number(editableData[key].refreshNum) == 0) {
+		editableData[key].refreshNum == '';
+	}
 	delete editableData[key];
 };
 
 const save = async (key?: string) => {
 	if (key) {
 		copyData(key);
-		if (toNumber(editableData[key].refreshNum) > toNumber(editableData[key].reserveNumber)) {
-			message.error('改刷房数不能大于预定房数');
-			return;
-		}
-		if (!Number(editableData[key].refreshNum)) {
-			message.error('请输入大于0的正整数');
+		// if (toNumber(editableData[key].refreshNum) > toNumber(editableData[key].reserveNumber)) {
+		// 	message.error('改刷房数不能大于预定房数');
+		// 	return;
+		// }
+		if (Number(editableData[key].refreshNum) == 0) {
+			message.error('改刷房数不能为零');
 			return;
 		}
 		delete editableData[key];
@@ -452,6 +423,8 @@ const visibleTrueSub = () => {
 				businessType: res.auditBusinessType,
 				auditStatus: 2, //审核类型
 			};
+			console.log(data,'tatda');
+			
 			api.orderhandle(data).then((Res: any) => {
 				message.success('操作成功');
 				state.VisibleTrue = false;
@@ -495,7 +468,6 @@ const modalCancel = () => {
 };
 
 const initPage = async (): Promise<void> => {
-
 	let hotelTypeList = [] as any;
 	api.HotelOrderInfo(route?.query?.orderNo).then((res: any) => {
 		hotelTypeList = res.hotelTypeList;
@@ -539,14 +511,13 @@ const VerificationMoney = computed(() => (params: any) => {
 });
 
 const auditing = () => {
-	// formRef.value.validate().then(() => {
 	for (let index = 0; index < state.data.length; index++) {
 		if (!state.data[index].refreshNum) {
 			message.error('请填写改刷房数');
 			return;
 		}
 		if (state.data[index].refreshNum) {
-			state.data[index].Num = accSub(state.data[index].refreshNum, state.data[index].reserveNumber);
+			state.data[index].Num = state.data[index].refreshNum
 		}
 	}
 	const refreshVOList = state.data.map((item: any) => {
@@ -559,12 +530,13 @@ const auditing = () => {
 		orderNo: route.query.orderNo,
 		refreshVOList: refreshVOList,
 	};
+	console.log(data,'data');
+	
 	api.changeRefreshRoom(data).then((res: any) => {
 		message.success('申请改刷成功');
 		router.go(-1);
 		return;
 	});
-	// });
 };
 
 const cancel = () => {
@@ -580,8 +552,6 @@ onMounted(() => {
 		navigatorBar.setNavigator(['酒店管理', '订单管理', `订单：${route.query.orderNo}`]);
 	}
 });
-
-
 
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
