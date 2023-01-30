@@ -78,8 +78,6 @@ import BaseModal from '@/components/common/BaseModal.vue';
 import { message } from 'ant-design-vue';
 import type { FormInstance } from 'ant-design-vue';
 import api from '@/api';
-import { accDiv, accMul } from '@/utils/compute';
-import { isOnedecimalpoint } from '@/utils/validator';
 const route = useRouter();
 const dialogVisible = ref(false);
 const navigatorBar = useNavigatorBar();
@@ -100,7 +98,7 @@ const rules: any = {
 	age1: [{ required: true, trigger: 'blur', message: '请填写年龄' }],
 	age2: [{ required: true, trigger: 'blur', message: '请填写年龄' }],
 	discountConditionName: [{ required: true, trigger: 'blur', message: '请填写减免模式内容' }],
-	discount: [{ required: true, trigger: 'blur', message: '请输入1-99之间的整数' }],
+	discount: [{ required: true, trigger: 'blur', message: '请输入0-99之间的整数' }],
 	discountRuleStatus: [{ required: true, trigger: 'blur', message: '请选择状态' }],
 };
 const state = reactive({
