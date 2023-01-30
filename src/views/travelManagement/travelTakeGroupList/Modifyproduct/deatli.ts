@@ -54,7 +54,7 @@ export const getOptions = (props: any) => {
 			},
 		],
 		title: '酒店费用',
-		descriptions: `已预订<span style="color: red;">${props.hotelList ? props.hotelList?.length : props.newHotelList?.length}</span>个酒店，
+		descriptions: `已添加<span style="color: red;">${props.hotelList ? props.hotelList?.length : props.newHotelList?.length}</span>个酒店，
           最大可入住人数：<span style="color: red;">${
 						props.hotelList
 							? props.hotelList?.reduce((prev: any, curr: any) => prev + curr.roomCount, 0)
@@ -132,7 +132,7 @@ export const getOptions = (props: any) => {
 			},
 		],
 		title: '景区费用',
-		descriptions: `已预订<span style="color: red;">${props.ticketList ? props.ticketList?.length : props.newTicketList?.length}</span>个景区，
+		descriptions: `已添加<span style="color: red;">${props.ticketList ? props.ticketList?.length : props.newTicketList?.length}</span>个景区，
           游玩人数：<span style="color: red;">${
 						props.ticketList
 							? props.ticketList?.reduce((prev: any, curr: any) => prev + curr.reservePeopleCount, 0)

@@ -362,8 +362,10 @@ watch(route, () => {
 		install();
 	}
 });
-onMounted(() => {
+onActivated(() => {
 	install();
+});
+onMounted(() => {
 	getGuideList();
 });
 </script>
