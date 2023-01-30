@@ -36,6 +36,7 @@
 
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, GroupStatus } from '@/enum'
+	import { cloneDeep } from 'lodash';
 
 	const travelStore = useTravelStore();
 	const state = reactive({
@@ -100,8 +101,13 @@
 		]
 	})
 	const onSearch = async () => {
+		let params: any = {};
 		travelStore.traveList.refuseGroup.params.status = GroupStatus.RefuseGroup
-		const res = await travelStore.getTravelList(travelStore.traveList.refuseGroup.params);
+		params = cloneDeep(travelStore.traveList.refuseGroup.params)
+		params.groupType = travelStore.traveList.refuseGroup.params.groupType === '0' ? '' : 
+		travelStore.traveList.refuseGroup.params.groupType;
+		
+		const res = await travelStore.getTravelList(params);
 		
 		travelStore.setTraveList(res, 'refuseGroup')
 	}

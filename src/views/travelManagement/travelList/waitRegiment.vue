@@ -39,6 +39,7 @@
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, GroupStatus } from '@/enum'
 	import { message } from 'ant-design-vue';
+	import { cloneDeep } from 'lodash-es';
 
 	const router = useRouter()
 	const travelStore = useTravelStore();
@@ -117,8 +118,12 @@
 		// const res = await travelStore.getTravelList({pageNo: 1, pageSize: 10, status: GroupStatus.WaitRegiment});
 		// state.tableData = res.content
 		// state.total = res.total;
+		let params: any = {};
 		travelStore.traveList.waitRegiment.params.status = GroupStatus.WaitRegiment
-		const res = await travelStore.getTravelList(travelStore.traveList.waitRegiment.params);
+		params = cloneDeep(travelStore.traveList.waitRegiment.params)
+		params.groupType = travelStore.traveList.waitRegiment.params.groupType === '0' ? '' : 
+		travelStore.traveList.waitRegiment.params.groupType;
+		const res = await travelStore.getTravelList(params);
 
 		travelStore.setTraveList(res, 'waitRegiment')
 	}

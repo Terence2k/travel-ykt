@@ -46,7 +46,10 @@
 					<a-button @click="goToPath(GroupType.Cooperation)" type="primary" style="margin-right: 20px" v-permission="'协作填报'">+协作填报</a-button>
 					<a-button @click="goToPath(GroupType.NonCooperation)" type="primary" style="margin-right: 20px" v-permission="'非协作填报'">+非协作填报</a-button>
 				</div>
-				<component :onCheck="check" :is="item.name"></component>
+				<div v-if="activeKey === item.value">
+					<component :onCheck="check" :is="item.name"></component>
+				</div>
+				
 			</a-tab-pane>
 		</a-tabs>
 	</div>

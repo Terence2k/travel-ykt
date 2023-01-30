@@ -188,19 +188,19 @@ const columns = computed(() => {
 			title: '订单号',
 			dataIndex: 'orderNo',
 			key: 'orderNo',
-			width: 100,
+			width: 150,
 		},
 		{
 			title: '团单编号',
 			dataIndex: 'itineraryNo',
 			key: 'itineraryNo',
-			width: 100,
+			width: 150,
 		},
 		{
 			title: '自编团号',
 			dataIndex: 'privateNo',
 			key: 'privateNo',
-			width: 100,
+			width: 130,
 		},
 		{
 			title: '旅行社',
@@ -212,7 +212,7 @@ const columns = computed(() => {
 			title: '结算时间',
 			dataIndex: 'settlementTime',
 			key: 'settlementTime',
-			width: 100,
+			width: 130,
 		},
 		{
 			title: '酒店名称',
@@ -224,7 +224,7 @@ const columns = computed(() => {
 			title: '核销时间',
 			dataIndex: 'verificationTime',
 			key: 'verificationTime',
-			width: 100,
+			width: 130,
 		},
 		{
 			title: '入住情况',
@@ -251,13 +251,13 @@ const columns = computed(() => {
 					title: '入住时间',
 					dataIndex: 'arrivalDate',
 					key: 'arrivalDate',
-					width: 100,
+					width: 130,
 				},
 				{
 					title: '离店时间',
 					dataIndex: 'departureDate',
 					key: 'departureDate',
-					width: 100,
+					width: 130,
 				},
 				{
 					title: '预订金额(元)',
