@@ -25,6 +25,7 @@ export function synchronizeYjgGuide() {
   return request({
     url: `${commonPart}synchronizeYjgGuide`,
     method: 'put',
-    showLoading: false
+    showLoading: false,
+    timeout: 0
   });
 }

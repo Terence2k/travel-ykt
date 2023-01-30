@@ -152,6 +152,9 @@ import CommonImg from '@/components/common/CommonImg.vue';
 	});
     watch(dialogVisible, newVal => {
 		if (newVal) {
+            for (let k in reserveParams) {
+                reserveParams[k] = '';
+            }
             props.ticketId && api.travelManagement.ticketDetail(props.ticketId).then((res:any) => {
                 ticketInfo.value = res
 			})
@@ -174,6 +177,7 @@ import CommonImg from '@/components/common/CommonImg.vue';
 
     const reserveTicket = (callback: Function) => {
 		reserveParams.oid = props.ticketId
+        reserveParams.reservePeopleList = reserveParams.reservePeopleList.filter((it: any) => !it.isReserved);
         if (!reserveParams.reservePeopleList || !reserveParams.reservePeopleList.length) {
             callback(false)
             return message.error('请选择订票人员')
@@ -184,11 +188,11 @@ import CommonImg from '@/components/common/CommonImg.vue';
             icon: createVNode(CheckOutlined),
             content: createVNode('div', { style: 'color: #333;' }, 
                 `您即将提交${ticketInfo.value.startDate}日出行
-                “${ticketInfo.value.ticketName}”的门票，
-                行程人数（${ticketInfo.value.peopleCount}人）
+                “${ticketInfo.value.ticketName}”的门票
                 `),
                 // 订票人数（${reserveParams.reservePeopleList.length}人），订单金额（${ticketInfo.value.unitPrice * reserveParams.reservePeopleList.length}元）。请免票人员带好相关证件到线下进行核准，学生证/老年人身份证可以到线下进行差价退款。
             onOk() {
+                
                 api.travelManagement.reserveTicket(reserveParams).then((res:any) => {
                     // travelStore.setTicketStatus(props.ticketId);
                     // travelStore.setTicketResvePeple(reserveParams.reservePeopleList.length);

@@ -61,27 +61,6 @@ let rulesPass = reactive<{ [k: string]: any }>([]);
 let obj = reactive({
 	data: {},
 });
-
-const saveOrder = () => {
-	let guideData=[].concat.call(travelStore.delGuideList, travelStore.guideList);
-	guideData = guideData.filter((item: any) => item.edit == true);
-	let transportData=[].concat.call(travelStore.delTrafficList, travelStore.trafficList)
-	transportData = transportData.filter((item: any) => item.edit == true);
-	// let attachmentData=[].concat.call(travelStore.delTrafficList, travelStore.trafficList)
-	let attachmentData = travelStore.attachmentList.filter((item: any) => item.edit == true);
-	let queryData = {
-		oid: travelStore.baseInfo.oid,
-		attachmentList: attachmentData,
-		guideList: guideData,
-		transportList: transportData
-   };
-	api.travelManagement.changeItineraryBasic(queryData)
-		.then((res: any) => {
-      console.log('保存修改：', res);
-      router.go(-1)
-      message.success('变更成功')
-		});
-}
 const getTraveDetail = () => {
 	api.travelManagement
 		.changDetail({
@@ -111,6 +90,29 @@ const getTraveDetail = () => {
 			
 		});
 };
+const saveOrder = () => {
+	let guideData=[].concat.call(travelStore.delGuideList, travelStore.guideList);
+	guideData = guideData.filter((item: any) => item.edit == true);
+	let transportData=[].concat.call(travelStore.delTrafficList, travelStore.trafficList)
+	transportData = transportData.filter((item: any) => item.edit == true);
+	// let attachmentData=[].concat.call(travelStore.delTrafficList, travelStore.trafficList)
+	let attachmentData = travelStore.attachmentList.filter((item: any) => item.edit == true);
+	let queryData = {
+		oid: travelStore.baseInfo.oid,
+		attachmentList: attachmentData,
+		guideList: guideData,
+		transportList: transportData
+   	};
+	api.travelManagement.changeItineraryBasic(queryData)
+		.then((res: any) => {
+      console.log('保存修改：', res);
+	  travelStore.setdelGuideList({});
+	  travelStore.setdelTrafficList({});
+	  travelStore.setdelFileInfo({});
+      router.go(-1)
+      message.success('变更成功')
+		});
+}
 const changeTab = (event: number) => {
 	// sendTeam.value = false;
 	// if (event === 4) {

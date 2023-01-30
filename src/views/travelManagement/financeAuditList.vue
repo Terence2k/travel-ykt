@@ -12,7 +12,7 @@
 			</search-item>
 
 			<search-item label="行程时间">
-        <picker v-model="travelStore.auditList[chart].params.time" type="datetimerange" start-placeholder="开始日期" end-placeholder="结束日期" value-format="YYYY-MM-DD HH:mm"/>
+        <picker v-model="travelStore.auditList[chart].params.time" type="datetimerange" start-placeholder="开始日期" end-placeholder="结束日期" value-format="YYYY-MM-DD HH:mm:ss"/>
 			</search-item>
 
 			<template #button>

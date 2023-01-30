@@ -131,9 +131,10 @@
   import CommonPagination from '@/components/common/CommonPagination.vue';
   import { getOptions } from './travelDetail/travelDetail';
   import { accDiv } from '@/utils/compute';
-  import { getStyles, getDiffDay } from '@/utils/util';
+  import { getStyles } from '@/utils/util';
   import QrcodeVue from 'qrcode.vue'
   import { awsGetPreSignedUrl } from '@/utils/awsUpload';
+  import dayjs from 'dayjs';
 
   const codeUrl = ref();
 
@@ -240,6 +241,10 @@
 		.catch((err: any) => {
 			console.log(err);
 		});
+  }
+
+  const getDiffDay = (startDate: string, endDate: string) => {
+    return dayjs(dayjs(endDate).format('YYYY-MM-DD')).diff(dayjs(startDate).format('YYYY-MM-DD'), 'days')
   }
 
   const toOrderDetail = (row: any, title: any) => {

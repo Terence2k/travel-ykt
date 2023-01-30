@@ -91,10 +91,10 @@ const pages = [
 		name: fileInfo,
 		label: '附件上传',
 	},
-	{
-		name: insurance,
-		label: '确认保险',
-	},
+	// {
+	// 	name: insurance,
+	// 	label: '确认保险',
+	// },
 ];
 let rulesPass = reactive<{ [k: string]: any }>([]);
 

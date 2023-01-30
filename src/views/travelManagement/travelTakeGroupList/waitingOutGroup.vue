@@ -117,6 +117,7 @@ const pageSideChange = () => {};
 const outGroup = async (row: any) => {
 	await api.travelManagement.handGoOut(row.oid)
 	message.success('操作成功')
+	onSearch();
 	console.log('手动出团：', row);
 };
 const goToChange = (row: any) => {

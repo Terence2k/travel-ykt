@@ -65,17 +65,17 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 				dataIndex: 'guideCertificateNo',
 				key: 'guideCertificateNo',
 			},
-			{
-				title: '导游类型',
-				dataIndex: 'guideType',
-				key: 'guideType',
-				data: travelStore.guideType
-			},
-			{
-				title: '签约旅行社',
-				dataIndex: 'belongTravelAgencyName',
-				key: 'belongTravelAgencyName',
-			},
+			// {
+			// 	title: '导游类型',
+			// 	dataIndex: 'guideType',
+			// 	key: 'guideType',
+			// 	data: travelStore.guideType
+			// },
+			// {
+			// 	title: '签约旅行社',
+			// 	dataIndex: 'belongTravelAgencyName',
+			// 	key: 'belongTravelAgencyName',
+			// },
 			{
 				title: '操作',
 				key: 'action',

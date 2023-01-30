@@ -192,7 +192,7 @@
           </a-form-item>
         </template>
         <!-- 景区、酒店减免规则字段 -->
-        <template v-if="['HOTEL', 'TICKET'].includes(userInfo.sysCompany.businessType)">
+        <template v-if="['HOTEL', 'TICKET'].includes(userInfo.sysCompany.businessType) && form.derate">
           <a-form-item label="减免规则">
             <div style="display: flex;align-items: start;">
               <a-form-item name="fullRule">
@@ -473,7 +473,11 @@ const initOpeion = async () => {
   if (state.form?.areaId) state.form.addressIds = [state.form.provinceId, state.form.cityId, state.form.areaId];
   if (state.form?.bankAccountProvince && state.form?.bankAccountCity) state.form.bankAddressIds = [Number(state.form.bankAccountProvince), Number(state.form.bankAccountCity)];
   state.form.rangeTime = [state.form.startTime, state.form.endTime];
-  console.log('state.form:', state.form);
+  
+  if (state.form.derate && !form.value.fullRule && !form.value.reduceRule && userInfo.sysCompany.businessType == 'HOTEL') {
+    form.value.fullRule = 16;
+    form.value.reduceRule = 1;
+  }
   
   // submitFunc:提交编辑审核函数名
   if (Object.keys(travelStore.businessTypeOptions).includes(userInfo.sysCompany.businessType)) {
@@ -513,6 +517,10 @@ const uploadData = () => {
   let queryData = form.value;
   if (userInfo.sysCompany.businessType == 'HOTEL') {
     queryData.hotelName = queryData.name;
+    if (!queryData.derate) {
+      queryData.fullRule = '';
+      queryData.reduceRule = '';
+    }
   }
   if (queryData.addressIds?.length) {
     queryData.provinceId = queryData.addressIds[0];

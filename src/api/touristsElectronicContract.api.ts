@@ -73,7 +73,8 @@ export function releaseContract(oid: number) {
   return request({
     url: `${commonPart}releaseContract?oid=${oid}`,
     method: 'post',
-    showLoading: true
+    showLoading: true,
+    timeout: 20000
   });
 }
 // 查询游客列表
