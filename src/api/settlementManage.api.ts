@@ -363,3 +363,21 @@ export async function updateFrozen(data: any) {
 		showLoading: true,
 	});
 }
+// 批量处理转账单页面接口
+export async function transferAccountList(data: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/transfer-account/dealTransferAccountsList`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}
+// 批量审核转账单接口
+export async function auditTransferAccounts(data: any) {
+	return request({
+		url: `${commonPath}/settlement-service/public/api/transfer-account/auditTransferAccounts`,
+		method: 'post',
+		data,
+		showLoading: true,
+	});
+}

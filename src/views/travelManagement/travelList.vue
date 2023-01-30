@@ -149,7 +149,7 @@ const pages = [
 ];
 const filterPages = pages.filter((item: any) => getTabPermission(item.label));
 activeKey.value = filterPages.length ? filterPages[0].value : pages[0].value;
-
+travelStore.insuranceStatus = '3'
 const goToPath = (type: number) => {
 	router.push({
 		path: '/travel/travel_manage/add_travel',

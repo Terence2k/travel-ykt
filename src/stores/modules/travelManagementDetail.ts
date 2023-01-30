@@ -149,7 +149,6 @@ export const useTravelStore = defineStore({
 			this.attachmentList = data;
 		},
 		setdelFileInfo(list: any) {
-			console.log('附件大菠萝',list);
 			this.delAttachmentList = list;
 		},
 		SetHotels(data: any, oid: any, key: string) {
