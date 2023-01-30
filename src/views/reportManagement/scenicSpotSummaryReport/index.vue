@@ -148,11 +148,11 @@ interface SettlementRuleListType {
 }
 const columns = computed(() => {
 	const column: TableColumnsType = [
-		{
-			title: '团单编号',
-			dataIndex: 'itineraryNo',
-			key: 'itineraryNo',
-		},
+		// {
+		// 	title: '团单编号',
+		// 	dataIndex: 'itineraryNo',
+		// 	key: 'itineraryNo',
+		// },
 		{
 			title: '景区名称',
 			dataIndex: 'scenicName',
@@ -173,16 +173,16 @@ const columns = computed(() => {
 			dataIndex: 'subTravelName',
 			key: 'subTravelName',
 		},
-		{
-			title: '核销时间',
-			dataIndex: 'verificationTime',
-			key: 'verificationTime',
-		},
-		{
-			title: '结算时间',
-			dataIndex: 'settlementTime',
-			key: 'settlementTime',
-		},
+		// {
+		// 	title: '核销时间',
+		// 	dataIndex: 'verificationTime',
+		// 	key: 'verificationTime',
+		// },
+		// {
+		// 	title: '结算时间',
+		// 	dataIndex: 'settlementTime',
+		// 	key: 'settlementTime',
+		// },
 		{
 			title: '单价（元）',
 			dataIndex: 'unitPrice',
