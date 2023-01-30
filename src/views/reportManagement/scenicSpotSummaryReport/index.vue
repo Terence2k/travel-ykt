@@ -282,7 +282,7 @@ const getSettlementRule = computed(() => (column: TableColumnsType, record: Data
 			return data[key].rulePrice;
 		}
 	}
-	return '暂无数据';
+	return '';
 });
 // 获取景区下拉列表
 const getViewList = async () => {

@@ -305,7 +305,7 @@ export const getRulePrice = computed(() => (record: any, column: any) => {
 			}
 		}
 	}
-	return `暂无数据`;
+	return ``;
 });
 
 //获取所有父子级嵌套数据值

@@ -289,7 +289,7 @@ export const getRulePrice = computed(() => (record: any, column: any): string =>
 			}
 		}
 	}
-	return `暂无数据`;
+	return ``;
 });
 // 获取实收
 export const getActualPrice = computed(() => (record: any, column: any): string => {

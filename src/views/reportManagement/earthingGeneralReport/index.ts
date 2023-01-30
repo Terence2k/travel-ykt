@@ -320,7 +320,7 @@ export const getRulePrice = computed(() => (record: any, column: any) => {
 			}
 		}
 	}
-	return `暂无数据`;
+	return ``;
 });
 // 获取实收
 export const getActualPrice = computed(() => (record: any, column: any) => {
@@ -374,11 +374,11 @@ const amountHandleFun = (num: any) => {
 // 金额单位处理 分--元
 export const amountYuanHandle = computed(() => (num: any) => {
 	let str = num / 100 > 0 ? (num / 100).toFixed(2) : 0;
-	return str.toString() + '元';
+	return str.toString();
 });
 const amountYuanHandleFun = (num: any) => {
 	let str = num / 100 > 0 ? (num / 100).toFixed(2) : 0;
-	return str.toString() + '元';
+	return str.toString();
 };
 // 数字千位分隔符处理
 const fillNumberWithComma = (num: any) => {
