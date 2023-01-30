@@ -83,6 +83,9 @@
 								<!-- <a @click="resetPassword(record.oid)" v-permission="'已审核_重置密码'">重置密码</a> -->
 								<!-- <a @click="edit(record)" v-show="editVisible(record?.businessType)" v-permission="'已审核_编辑'">编辑</a> -->
 								<a @click="edit(record)" v-permission="'已审核_编辑'">编辑</a>
+								<a v-for="item in companyStateBtn(record.companyState)"
+									@click="updateCompanyState({ operation: item.state, oid: record.oid })"
+									v-permission="`已审核_${item.name}`">{{ item.name }}</a>
 								<a v-permission="'已审核_去认证'" v-if="record.icbcStatus === 1" @click="toIcbc(record.oid)">去认证</a>
 							</div>
 						</template>
@@ -472,7 +475,7 @@ const columns = [
 		title: '操作',
 		key: 'action',
 		fixed: 'right',
-		width: 200
+		width: 280
 	},
 ]
 const auditColumns = [
@@ -607,6 +610,31 @@ const keyNameList = {
 const newArrList = ref<any>({})
 const oldArrList = ref<any>({})
 const changeKeys = ref<string[]>([])
+/* 
+2.停业状态下可以操作开业（原启用）、暂停营业
+3.开业状态下可以操作停业（原禁用）、暂停营业
+4.暂停营业状态下可以操作停业、开业 */
+const companyStateBtn = computed(() => (state: number) => {
+	const val = {
+		name: '停业',
+		state: 0
+	}
+	const val1 = {
+		name: '开业',
+		state: 1
+	}
+	const val2 = {
+		name: '暂停营业',
+		state: 2
+	}
+	if (state === 0) {
+		return [val1, val2]
+	} else if (state === 1) {
+		return [val, val2]
+	} else if (state === 2) {
+		return [val, val1]
+	}
+})
 const regionChange = () => {
 	switch (activeKey.value) {
 		case '1':
@@ -910,6 +938,11 @@ const changeAuditCancel = () => {
 	newArrList.value = {}
 	oldArrList.value = {}
 	changeKeys.value = []
+}
+const updateCompanyState = (param: { oid: number, operation: number }) => {
+	api.updateCompanyState(param).then(() => {
+		onSearch()
+	})
 }
 onActivated(() => {
 	if (route.params?.isRefresh === '1') {

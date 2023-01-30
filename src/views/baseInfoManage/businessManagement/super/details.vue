@@ -75,8 +75,20 @@ const getComputedVal = computed(() => (key: string | number, val: any) => {
         break
     }
     return res
-  } else if (key === 'unitStatus') {
-    return val === 1 || val === false ? '停业' : '开业'
+  } else if (key === 'companyState') {
+    let res
+    switch (val) {
+      case 0:
+        res = '停业'
+        break
+      case 1:
+        res = '开业'
+        break
+      case 2:
+        res = '暂停营业'
+        break
+    }
+    return res
   } else if (key === 'derate') {
     return val === 1 || val === true ? '是' : '否'
   } else if (key === 'businessType') {
@@ -151,7 +163,7 @@ const getData = async () => {
       }
     } else if (key === 'reduceRules') {
       if (res.reduceRule && res.fullRule) {
-        detailsArrList.value['reduceRules'] = `满${res.fullRule}减${res.reduceRule}`
+        detailsArrList.value['reduceRules'] = `满${res.fullRule}人减${res.reduceRule}人`
       }
     } else if (['manageUrl', 'businessLicenseUrl', 'legalPersonUrl'].includes(key)) {
       detailsArrList.value[key] = await getURL(res[key])

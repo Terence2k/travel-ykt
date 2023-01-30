@@ -28,6 +28,7 @@
 									value-format="YYYY-MM-DD HH:mm:ss"
 								/> -->
 								<datePicker
+									style="width: 300px"
 									v-model="editableData[record.key ? record.key : record.oid][column.key]"
 									type="datetimerange"
 									popper-class="hidden-date-picker"

@@ -6,7 +6,7 @@
 					<div class="query_box">
 						<a-form autocomplete="off">
 							<a-form-item label="查询">
-								<a-input v-model:value.trim="state.queryParams" placeholder="请输入ID或者名称" @change="queryList" />
+								<a-input v-model:value.trim="state.queryParams" placeholder="请输入ID或者名称" @change="queryList" allowClear/>
 							</a-form-item>
 						</a-form>
 						<a-button type="primary" @click="addOrUpdate({ handle: 'add' })" v-permission="'新增'">新增</a-button>

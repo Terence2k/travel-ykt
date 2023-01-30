@@ -49,6 +49,11 @@
 							<a @click="opendetail(record)">查看订单</a>
 						</div>
 					</template>
+					<template v-if="column.key === 'Action'">
+						<div class="action-btns">
+							<a @click="openScenicdetail(record)">查看订单</a>
+						</div>
+					</template>
 				</template>
 			</CommonTable>
 		</div>
@@ -79,7 +84,12 @@ const state = reactive({
 	remark:'0'
 });
 
-const opendetail = (record: any) => {};
+const opendetail = (record: any) => {
+	router.push({ path: '/hotelManagement/hotelOrder/orderEdit', query: { orderNo: record.hotelOrderNo } });
+};
+const openScenicdetail = (record: any) => {
+	router.push({ path: '/scenic-spot/order-manage/edit', query: { oid: record.ticketOrderNo } });
+};
 const openEdit = (data: any) => {
 	router.push({
 		path: '/travel/take_group/modify_product_edit',
