@@ -4,13 +4,13 @@ export const fixedColumn: Array<any> = [
 		title: '团单编号',
 		dataIndex: 'itineraryNo',
 		key: 'itineraryNo',
-		width: 100,
+		width: 150,
 	},
 	{
 		title: '自编团号',
 		dataIndex: 'privateNo',
 		key: 'privateNo',
-		width: 100,
+		width: 130,
 	},
 	{
 		title: '景区名称',

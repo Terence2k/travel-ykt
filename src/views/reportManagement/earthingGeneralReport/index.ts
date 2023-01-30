@@ -73,13 +73,13 @@ export const detailFixedColumn: Array<any> = [
 		title: '行程单号',
 		dataIndex: 'itineraryNo',
 		key: 'itineraryNo',
-		width: 100,
+		width: 150,
 	},
 	{
 		title: '自编团号',
-		dataIndex: 'test',
-		key: 'test',
-		width: 100,
+		dataIndex: 'privateNo',
+		key: 'privateNo',
+		width: 130,
 	},
 	{
 		title: '组团社',
@@ -257,7 +257,7 @@ export interface DataType {
 	comprehensiveVoList?: Array<comprehensiveVoListType>; //综费产品-除导服费外
 	itineraryNo?: string; // 行程单号
 	settlementTime?: string; // 结算时间
-	test?: string; // 自编团号
+	privateNo?: string; // 自编团号
 }
 // 综费产品-导服费
 export interface comprehensiveGuideVoListType {
