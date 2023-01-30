@@ -26,16 +26,17 @@
         <template #bodyCell="{ column, index, record }">
           <template v-if="column.key === 'index'">
               <div>
-                  {{(state.operationLog.pageNo - 1) * (state.operationLog.pageSize) + (index + 1)}}
+                  {{(state.param.pageNo - 1) * (state.param.pageSize) + (index + 1)}}
               </div>
           </template>
       </template>
     </CommonTable>
-    <!-- <CommonPagination
-      :current="state.operationLog.param.pageNo"
-      :page-size="state.operationLog.param.pageSize"
+    <CommonPagination
+      :current="state.param.pageNo"
+      :page-size="state.param.pageSize"
       :total="state.operationLog.total"
-    /> -->
+			@change="onHandleCurrentChange"
+    />
   </div>
 </template>
 
@@ -127,6 +128,10 @@ const getItineraryOperationLog = (orderId: any) => {
   .catch((err: any) => {
     console.log(err);
   });
+}
+const onHandleCurrentChange = (e:any) => {
+  state.param.pageNo = e
+  getItineraryOperationLog(route.currentRoute.value.query.oid);
 }
 
 getItineraryDetail(route.currentRoute.value.query.oid);

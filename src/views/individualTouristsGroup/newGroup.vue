@@ -34,7 +34,7 @@
 								<el-form-item label="行程日期：" prop="travelData">
 									<picker v-model="form.travelData" @change="datePickerChange" type="datetimerange"
 										:value-format="dateTimeFormat" start-placeholder="请选择开始时间" end-placeholder="请选择结束时间"
-										style="width:100%">
+										style="width:100%" :disabled-date="disabledBeforeDate">
 									</picker>
 								</el-form-item>
 							</el-form>
@@ -42,7 +42,8 @@
 								<a-input v-model:value="form.groupTypeName" placeholder="无需填写，选择行程日期后自动判断" disabled>
 								</a-input>
 							</a-form-item>
-							<a-form-item name="travelOperatorPhone" label="联系人号码">
+							<a-form-item name="travelOperatorPhone" label="联系人号码"
+								:rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.travelOperatorPhone, true, '请输入联系人手机号')) }]">
 								<a-input v-model:value="form.travelOperatorPhone" placeholder="请输入联系人手机号">
 								</a-input>
 							</a-form-item>
@@ -192,7 +193,7 @@
 			</div>
 			<div class="details_item">
 				<div class="key">合同费用（元）：</div>
-				<div class="value"> {{ contractDetailsForm.contractAmount }}</div>
+				<div class="value"> {{ contractDetailsForm.contractAmount / 100 }}</div>
 			</div>
 		</div>
 	</CommonModal>
@@ -212,16 +213,17 @@ import api from '@/api';
 import { message } from 'ant-design-vue/es';
 import { cloneDeep } from 'lodash';
 import { useTravelStore } from '@/stores/modules/travelManagement';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { disabledRangeTime, getAmount, getDiffDay } from '@/utils';
-import { accDiv,accMul} from '@/utils/compute';
+import { accDiv, accMul } from '@/utils/compute';
+import type { Rule } from 'ant-design-vue/es/form';
 const travelStore = useTravelStore();
 const router = useRouter();
 const route = useRoute();
 const isRefresh = ref('0')
 const back = () => {
 	router.push({
-		name: 'individualTouristsGroup',
+		name: 'tourists',
 		params: {
 			isRefresh: isRefresh.value
 		}
@@ -270,6 +272,7 @@ const formRef = ref()
 const dateFormRef = ref()
 type Key = string | number;
 const selectedRowKeys = ref<Key[]>([])
+const savedContract = ref<any[]>([])
 const selectedContract = ref<any[]>([])
 const state = reactive({
 	contractTable: {
@@ -295,6 +298,13 @@ const formRules = {
 	contractDays: [{ required: true, trigger: 'blur', message: '请输入合同天数' }],
 	groupTypeName: [{ required: true, trigger: 'blur', message: '散客组团类型不能为空' }],
 	touristPeopleNumber: [{ required: true, trigger: 'blur', message: '游客人数不能为空' }],
+}
+const validatePhone = async (mobile: any, required: boolean = false, msg?: string) => {
+	if (required && !mobile) {
+		return Promise.reject(msg);
+	} else if (mobile && !/^1[3-9]\d{9}$/.test(mobile)) {
+		return Promise.reject('请输入正确的手机号！');
+	}
 }
 const dateFormat = 'YYYY-MM-DD';
 const dateTimeFormat = 'YYYY-MM-DD HH:mm:ss';
@@ -451,6 +461,9 @@ const dateRules = {
 		},
 	],
 }
+const disabledBeforeDate = (current: Dayjs) => {
+	return current < dayjs().startOf('date');
+};
 const addContractConform = () => {
 	addContractVisible.value = false
 }
@@ -584,97 +597,101 @@ const setBaseInfo = (res: any) => {
 	}
 }
 const getTraveDetail = () => {
-	travelStore.getItineraryStatus();
-	// const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
-	// console.log(traveListData, 'traveListData')
-	if (!form.value.oid) {
-		travelStore.setBaseInfo({});
-		travelStore.setGuideList([]);
-		travelStore.setTouristList([]);
-		travelStore.setTrafficList([]);
-		return;
-	}
-	api.travelManagement
-		.getItineraryDetail(
-			{
-				oid: form.value.oid,
-				pageNo: 1,
-				pageSize: 100000,
-			},
-			true
-			// isSaveBtn.value
-		)
-		.then((res: any) => {
-			res.basic.teamId = res.basic.itineraryNo;
-			res.basic.time = [res.basic.startDate, res.basic.endDate];
-			res.basic.touristNum = res.basic.touristCount || 0;
-			setBaseInfo(res)
-			travelStore.setBaseInfo(res.basic);
-			res.attachmentList.length && travelStore.setFileInfo(res.attachmentList);
-			travelStore.setGuideList(res.guideList);
-			travelStore.setTouristList(
-				res.touristList.content.map((it: any) => {
-					if (it.specialCertificatePicture instanceof String) {
-						it.specialCertificatePicture = it.specialCertificatePicture?.split(',');
-					}
-
+	return new Promise((resolve, reject) => {
+		travelStore.getItineraryStatus();
+		// const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
+		// console.log(traveListData, 'traveListData')
+		if (!form.value.oid) {
+			travelStore.setBaseInfo({});
+			travelStore.setGuideList([]);
+			travelStore.setTouristList([]);
+			travelStore.setTrafficList([]);
+			return;
+		}
+		api.travelManagement
+			.getItineraryDetail(
+				{
+					oid: form.value.oid,
+					pageNo: 1,
+					pageSize: 100000,
+				},
+				true
+				// isSaveBtn.value
+			)
+			.then((res: any) => {
+				res.basic.teamId = res.basic.itineraryNo;
+				res.basic.time = [res.basic.startDate, res.basic.endDate];
+				res.basic.touristNum = res.basic.touristCount || 0;
+				setBaseInfo(res)
+				travelStore.setBaseInfo(res.basic);
+				res.attachmentList.length && travelStore.setFileInfo(res.attachmentList);
+				travelStore.setGuideList(res.guideList);
+				travelStore.setTouristList(
+					res.touristList.content.map((it: any) => {
+						if (it.specialCertificatePicture instanceof String) {
+							it.specialCertificatePicture = it.specialCertificatePicture?.split(',');
+						}
+						return it;
+					})
+				);
+				res.transportList = res.transportList.map((it: any) => {
+					it.time = [it.startDate, it.endDate];
 					return it;
-				})
-			);
-			res.transportList = res.transportList.map((it: any) => {
-				it.time = [it.startDate, it.endDate];
-				return it;
+				});
+				travelStore.setTrafficList(res.transportList);
+				res.waitBuyItem.waitBuyHotel = res.waitBuyItem.waitBuyHotel
+					? res.waitBuyItem.waitBuyHotel.map((it: any) => {
+						it.hotelId = it.productId;
+						it.hotelName = it.productName;
+						it.isMustBuy = true;
+						return it;
+					})
+					: [];
+				res.waitBuyItem.waitBuyTicket = res.waitBuyItem.waitBuyTicket
+					? res.waitBuyItem.waitBuyTicket.map((it: any) => {
+						it.scenicId = it.productId;
+						it.scenicName = it.productName;
+						it.isMustBuy = true;
+						return it;
+					}).filter((it: any) => it.scenicId)
+					: [];
+				const hotel = [
+					...res.waitBuyItem.waitBuyHotel,
+					...res.hotelList.map((it: any) => {
+						it.orderFee = accDiv(it.orderFee, 100);
+						it.dayCount = getDiffDay(it.startDate, it.endDate);
+						it.roomName = it.roomTypeList.map((item: any) => `${item.roomTypeName} * ${item.roomCount}<br />`).join('')
+						return it;
+					}),
+					...travelStore.templateHotel,
+				];
+				travelStore.hotels = [...hotel] as any;
+				travelStore.productList = res.productList;
+				travelStore.scenicTickets = [
+					...res.waitBuyItem.waitBuyTicket,
+					...res.ticketList.map((it: any) => {
+						it.unitPrice = accDiv(it.unitPrice, 100);
+						return it;
+					}),
+					...travelStore.templateTicket,
+				] as any;
+				travelStore.insuranceStatus = res.insuranceStatus?.toString();
+				travelStore.checkInsurance = res.insuranceStatus ? true : false;
+				travelStore.teamTime = [res.basic.startDate, res.basic.endDate] as any;
+				travelStore.setDisabled = disDate(res);
+				const dateTime = disTime(res);
+				travelStore.setStarEndHMS = dateTime
+				travelStore.defaultStartTime = new Date(2022, 12, 1, dateTime.start.hour, dateTime.start.min, dateTime.start.second);
+				travelStore.defaultEndTime = new Date(2022, 12, 1, dateTime.end.hour, dateTime.end.min, dateTime.end.second)
+				console.log(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end, '-----');
+				travelStore.setDisabledTime = disabledRangeTime(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end) as any;
+				route.query.tab && setTimeout(() => (activeKey.value = route.query.tab as string));
+				// getHealthCode();
+				resolve('down')
 			});
-			travelStore.setTrafficList(res.transportList);
-			res.waitBuyItem.waitBuyHotel = res.waitBuyItem.waitBuyHotel
-				? res.waitBuyItem.waitBuyHotel.map((it: any) => {
-					it.hotelId = it.productId;
-					it.hotelName = it.productName;
-					return it;
-				})
-				: [];
-			res.waitBuyItem.waitBuyTicket = res.waitBuyItem.waitBuyTicket
-				? res.waitBuyItem.waitBuyTicket.map((it: any) => {
-					it.scenicId = it.productId;
-					it.scenicName = it.productName;
-					return it;
-				}).filter((it: any) => it.scenicId)
-				: [];
-			const hotel = [
-				...res.waitBuyItem.waitBuyHotel,
-				...res.hotelList.map((it: any) => {
-					it.orderFee = accDiv(it.orderFee, 100);
-					it.dayCount = getDiffDay(it.startDate, it.endDate);
-					it.roomName = it.roomTypeList.map((item: any) => `${item.roomTypeName} * ${item.roomCount}<br />`).join('')
-					return it;
-				}),
-				...travelStore.templateHotel,
-			];
-			travelStore.hotels = [...hotel] as any;
-			travelStore.productList = res.productList;
-			travelStore.scenicTickets = [
-				...res.waitBuyItem.waitBuyTicket,
-				...res.ticketList.map((it: any) => {
-					it.unitPrice = accDiv(it.unitPrice, 100);
-					return it;
-				}),
-				...travelStore.templateTicket,
-			] as any;
-			travelStore.insuranceStatus = res.insuranceStatus?.toString();
-			travelStore.checkInsurance = res.insuranceStatus ? true : false;
-			travelStore.teamTime = [res.basic.startDate, res.basic.endDate] as any;
-			travelStore.setDisabled = disDate(res);
-			const dateTime = disTime(res);
-			travelStore.setStarEndHMS = dateTime
-			travelStore.defaultStartTime = new Date(2022, 12, 1, dateTime.start.hour, dateTime.start.min, dateTime.start.second);
-			travelStore.defaultEndTime = new Date(2022, 12, 1, dateTime.end.hour, dateTime.end.min, dateTime.end.second)
-			console.log(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end, '-----');
-			travelStore.setDisabledTime = disabledRangeTime(travelStore.setStarEndHMS.start, travelStore.setStarEndHMS.end) as any;
-			route.query.tab && setTimeout(() => (activeKey.value = route.query.tab as string));
-			// getHealthCode();
-		});
+	})
 };
-watch(activeKey, (newVal) => {
+/* watch(activeKey, async (newVal) => {
 	if (newVal === '2') {
 		const allFeesProducts = travelStore.compositeProducts.map((it: any) => {
 			it.peopleCount = travelStore.touristList.length;
@@ -685,7 +702,7 @@ watch(activeKey, (newVal) => {
 		});
 		travelStore.setCompositeProducts(allFeesProducts);
 	}
-});
+}); */
 // 步骤跳转
 const nextTep = (val: string) => {
 	const a = Promise.all([
@@ -696,7 +713,9 @@ const nextTep = (val: string) => {
 		activeKey.value = val
 		if (val === '2') {
 			await saveDraft()
-			getTraveDetail()
+			await getTraveDetail()
+			findByIdTeamType()
+			getContractDetails()
 		}
 	}).catch((error: Error) => {
 		activeKey.value = CloneActiveKey.value
@@ -706,30 +725,33 @@ const nextTep = (val: string) => {
 const tabClick = () => {
 	CloneActiveKey.value = cloneDeep(activeKey.value)
 }
-const deleteContract = (index: number, record: { touristPeopleNumber: number, contractAmount: number }) => {
+const deleteContract = async (index: number, record: any) => {
 	selectedContract.value.splice(index, 1)
 	selectedRowKeys.value.splice(index, 1)
 	form.value.touristPeopleNumber -= record.touristPeopleNumber
 	form.value.touristPeopleNumber = form.value.touristPeopleNumber === 0 ? undefined : form.value.touristPeopleNumber
 	form.value.totalExpenses -= record.contractAmount
+	if (!isAdd.value) {
+		const params = {
+			itineraryId: Number(form.value.oid),
+			contractId: record.oid,
+			contractType: record.contractType
+		}
+		await api.deleteItineraryContract(params)
+	}
 }
 const onSelectChange = (Keys: Key[], selectedRows: any[]) => {
 	selectedRowKeys.value = Keys;
+	selectedRows = [...savedContract.value, ...selectedRows]
 	if (selectedRows.length) {
-		const select: any = []
 		let touristPeopleSum = 0
 		let totalExpenses = 0
 		selectedRows.forEach((item: any) => {
 			touristPeopleSum += item.touristPeopleNumber
 			totalExpenses += item.contractAmount
-			select.push({
-				contractId: item.oid,
-				contractType: item.contractType
-			})
 		})
 		form.value.totalExpenses = totalExpenses
 		form.value.touristPeopleNumber = touristPeopleSum
-		form.value.contracts = select
 		formRef.value.clearValidate('touristPeopleNumber')
 	} else {
 		form.value.touristPeopleNumber = undefined
@@ -764,6 +786,7 @@ const guideChange = (val: any) => {
 	}
 }
 const editDraft = async (callBack?: any) => {
+	form.value.compositeProducts = !travelStore.isOptional ? travelStore.compositeProducts : travelStore.curentProduct
 	api.editIndividualTouristsGroup(form.value).then((res: any) => {
 		isRefresh.value = '1'
 		callBack && callBack(res)
@@ -776,21 +799,31 @@ const saveDraft = async (showMessage?: boolean) => {
 			dateFormRef.value?.validate()
 		])
 		a.then(async () => {
-			form.value.compositeProducts = !travelStore.isOptional ? travelStore.compositeProducts : travelStore.curentProduct
+			if (selectedContract.value.length > 0) {
+				form.value.contracts = selectedContract.value.map((item: any) => {
+					return {
+						contractId: item.oid,
+						contractType: item.contractType
+					}
+				})
+			} else {
+				form.value.contracts = []
+			}
 			if (isAdd.value) {
 				const res = await api.createIndividualItinerary(form.value)
 				if (res) {
 					sessionStorage.setItem('traveList', JSON.stringify({ oid: res }));
 					form.value.oid = res
 					isAdd.value = false
+					await findByIdTeamType()
 					editDraft()
-					resolve(res)
 					showMessage && message.success('保存草稿成功！')
+					resolve(res)
 				}
 			} else {
 				editDraft((editRes: any) => {
-					resolve(editRes)
 					showMessage && message.success('保存草稿成功！')
+					resolve(editRes)
 				})
 			}
 		}).catch((error: Error) => {
@@ -895,63 +928,73 @@ const getGuideList = async () => {
 const getContractDetails = async () => {
 	const res = await api.getContractDetails(form.value.oid)
 	if (res) {
-		selectedContract.value = res
 		let keys: number[] = []
-		selectedContract.value.forEach((item: any) => {
+		let touristPeopleSum = 0
+		let totalExpenses = 0
+		res.forEach((item: any) => {
 			keys.push(item.oid)
 			item.contractAmount = item.contractAmount && item.contractAmount / 100
+			touristPeopleSum += item.touristPeopleNumber
+			totalExpenses += item.contractAmount
 		})
-		onSelectChange(keys, selectedContract.value)
+		form.value.totalExpenses = totalExpenses
+		form.value.touristPeopleNumber = touristPeopleSum
+		selectedRowKeys.value = keys
+		savedContract.value = res
+		selectedContract.value = res
 	}
 }
-const findByIdTeamType = async () => {
-	let allFeesProducts = []
-	const res = await api.findIndividualTeamType();
-	for (let i = 0; i < res.productVos.length; i++) {
-		// 综费产品itemId为4
-		if (res.productVos[i].itemId === 4) {
-			if (!res.productVos[i].productId) {
-				travelStore.isOptional = true;
-				const res = await api.travelManagement.comprehensiveFeeProduct({
-					pageNo: 1,
-					pageSize: 99999,
-					status: 1
-				});
-				allFeesProducts = res.content.map((it: any) => {
-					it.isDaily = it.confirmDailyCharge ? true : false;
-					it.productName = it.comprehensiveFeeProductName;
-					return it;
-				});
-			} else {
-				travelStore.isOptional = false;
-				const result = await api.travelManagement.findProductInfo(res.productVos[i].productId)
-				result.peopleCount = travelStore.touristList.length;
-				result.unPrice = result.feeNumber;
-				result.isDaily = result.confirmDailyCharge ? true : false;
-				result.productName = result.comprehensiveFeeProductName;
-				result.dayCount = dayjs(form.value.endDate).diff(form.value.startDate, 'day')
-				result.totalMoney = getAmount(
-					result.confirmDailyCharge,
-					result.feeNumber,
-					result.feeModel
-				)
-				allFeesProducts.push(result)
-			}
-		} else if (res.productVos[i].itemId === 2) {
+const findByIdTeamType = () => {
+	return new Promise(async (resolve, reject) => {
+		let allFeesProducts = []
+		const res = await api.findIndividualTeamType();
+		for (let i = 0; i < res.productVos.length; i++) {
+			// 综费产品itemId为4
+			if (res.productVos[i].itemId === 4) {
+				if (!res.productVos[i].productId) {
+					travelStore.isOptional = true;
+					const res = await api.travelManagement.comprehensiveFeeProduct({
+						pageNo: 1,
+						pageSize: 99999,
+						status: 1
+					});
+					allFeesProducts = res.content.map((it: any) => {
+						it.isDaily = it.confirmDailyCharge ? true : false;
+						it.productName = it.comprehensiveFeeProductName;
+						return it;
+					});
+				} else {
+					travelStore.isOptional = false;
+					const result = await api.travelManagement.findProductInfo(res.productVos[i].productId)
+					result.peopleCount = travelStore.touristList.length;
+					result.unPrice = result.feeNumber;
+					result.isDaily = result.confirmDailyCharge ? true : false;
+					result.productName = result.comprehensiveFeeProductName;
+					result.dayCount = dayjs(form.value.endDate).diff(form.value.startDate, 'day')
+					result.totalMoney = getAmount(
+						result.confirmDailyCharge,
+						result.feeNumber,
+						result.feeModel
+					)
+					allFeesProducts.push(result)
+				}
+			} else if (res.productVos[i].itemId === 2) {
 
-		} else if (res.productVos[i].itemId === 1) {
+			} else if (res.productVos[i].itemId === 1) {
+
+			}
 
 		}
-
-	}
-	if (travelStore.productList[0]?.productId) {
-		travelStore.curentProduct = allFeesProducts.filter((it: any) => it.oid === travelStore.productList[0].productId);
-	} else if (allFeesProducts.length >= 1) {
-		travelStore.curentProduct = cloneDeep([allFeesProducts[0]]);
-	} else {
-		travelStore.curentProduct = [];
-	}
-	travelStore.setCompositeProducts(allFeesProducts);
+		if (travelStore.productList[0]?.productId) {
+			travelStore.curentProduct = allFeesProducts.filter((it: any) => it.oid === travelStore.productList[0].productId);
+		} else if (allFeesProducts.length >= 1) {
+			travelStore.curentProduct = cloneDeep([allFeesProducts[0]]);
+		} else {
+			travelStore.curentProduct = [];
+		}
+		travelStore.setCompositeProducts(allFeesProducts);
+		resolve('down')
+	})
 }
 const resetFormFields = () => {
 	dateFormRef.value?.resetFields()
@@ -976,18 +1019,18 @@ const resetFormFields = () => {
 }
 watch(
 	() => route.query.id,
-	(newVal) => {
+	async (newVal) => {
 		if (newVal) {
-			findByIdTeamType()
 			form.value.oid = newVal as string
 			isAdd.value = false
+			await getTraveDetail()
+			findByIdTeamType()
 			getGuideList()
 			getContractDetails()
-			getTraveDetail()
 		}
 	},
-	{ immediate: true })
-
+	{ immediate: true }
+)
 watch(
 	() => route.name,
 	(newVal) => {
@@ -997,7 +1040,6 @@ watch(
 	},
 )
 onMounted(() => {
-	findByIdTeamType()
 	getGuideList()
 })
 </script>

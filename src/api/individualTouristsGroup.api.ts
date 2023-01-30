@@ -86,3 +86,22 @@ export function deleteIndividualTouristsGroup(oid: number) {
     showLoading: true
   });
 }
+
+// 散客团查看详情合同列表
+export function getContractListByItineraryId(itineraryId: any) {
+  return request({
+    url: `${commonPart}getContractListByItineraryId?itineraryId=${itineraryId}`,
+    method: 'post',
+    showLoading: true
+  });
+}
+
+// 行程单填写/编辑过程中删除合同
+export function deleteItineraryContract(data: any) {
+  return request({
+    url: `${commonPart}deleteItineraryContract`,
+    method: 'post',
+    data,
+    showLoading: false
+  });
+}

@@ -5,6 +5,9 @@
 				<a-tab-pane v-for="(item, index) in pages" :key="index" :tab="item.label">
 					<component @onSuccess="save" :onCheck="check" :is="item.name" @getTravelDetail="getTraveDetail"></component>
 				</a-tab-pane>
+				<template #rightExtra>
+				<a-button type="primary" @click="go">返回上一级</a-button>
+			</template>
 			</a-tabs>
 		</div>
 		<div class="footer d-flex justify-content-between" v-if="travelStore.teamStatus">
@@ -109,7 +112,9 @@ const save = (e: any) => {
 	}
 };
 
-
+const go=()=>{
+	router.go(-1)
+}
 const sendGroup = async (id: string) => {
 	const formData = new FormData();
 	formData.append('itineraryId', id);
@@ -424,5 +429,11 @@ travelStore.getItineraryStatus();
 	button:first-of-type {
 		margin-right: 16px;
 	}
+}
+.top{
+	display: flex;
+	justify-content: end;
+	margin-right: 20px;
+	margin-top: 20px;
 }
 </style>

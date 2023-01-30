@@ -115,7 +115,7 @@ const open = async (id: number | null) => {
 	modelValue.value = true;
 	// let res = await api.travelManagement.getRevokeItineraryTouristList(id);
 	let res = await api.queryRevokeTouristCompare(id);
-	data.value = [...res.newTouristList, ...res.oldTouristList];
+	data.value = res.newTouristList;
 	console.log(res, 'compare');
 };
 // 关闭弹窗

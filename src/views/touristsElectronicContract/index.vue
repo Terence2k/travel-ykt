@@ -59,6 +59,17 @@
     @close="withdrawresVisible = false" :conform-text="'确定'" @conform="withdrawresVisible = false" :is-cancel="false">
     散客合同{{ form.contractNo }}已提交撤销，请等待游客代表完成确认。撤销成功后一卡通系统将更新合同状态。
   </CommonModal>
+  <CommonModal title="散客合同撤销确认" v-model:visible="withdrawVisible1" @cancel="withdrawVisible1 = false"
+    @close="withdrawVisible1 = false" :conform-text="'确认撤销'" @conform="withdrawConfirm">
+    <p>您即将撤销编号为{{ form.contractNo }}的散客合同，合同总金额<span class="cred">{{
+      accDivValue(form.contractAmount)
+    }}</span>元。当前游客代表尚未完成签署，您可以直接撤销，撤销成功后后12301平台也将同步撒销。是否确认要撤销?
+    </p>
+  </CommonModal>
+  <CommonModal title="撤销成功" v-model:visible="withdrawresVisible1" @cancel="withdrawresVisible1 = false"
+    @close="withdrawresVisible1 = false" :conform-text="'确定'" @conform="withdrawresVisible1 = false" :is-cancel="false">
+    散客合同{{ form.contractNo }}已撤销成功，稍后一卡通系统将更新合同状态。
+  </CommonModal>
 </template>
 
 <script setup lang="ts">
@@ -98,7 +109,9 @@ const form = ref({
   contractNo: ''
 })
 const withdrawresVisible = ref(false)
+const withdrawresVisible1 = ref(false)
 const withdrawVisible = ref(false)
+const withdrawVisible1 = ref(false)
 const state = reactive({
   tableData: {
     data: [],
@@ -200,13 +213,19 @@ const contractStatusOption = [
   { codeValue: 7, name: '已解除' },
 ]
 const contractType = ref()
+const contractStatus = ref()
 const withdraw = (record: any) => {
-  withdrawVisible.value = true
   form.value.oid = record.oid
   form.value.contractAmount = record.contractAmount
   form.value.representativeName = record.representativeName
   form.value.contractNo = record.contractNo
   contractType.value = record.contractType
+  if (record.contractStatus === 2) { // 已登记
+    withdrawVisible1.value = true
+  } else if (record.contractStatus === 3) { // 已签署
+    withdrawVisible.value = true
+  }
+  contractStatus.value = record.contractStatus
 }
 const withdrawConfirm = async () => {
   let res
@@ -216,12 +235,17 @@ const withdrawConfirm = async () => {
     res = await api.revokeContract(form.value.oid)
   }
   if (res) {
-    withdrawresVisible.value = true
+    if (contractStatus.value === 2) { // 已登记
+      withdrawresVisible1.value = true
+    } else if (contractStatus.value === 3) { // 已签署
+      withdrawresVisible.value = true
+    }
     onSearch()
   } else {
     message.error('撤销失败！')
   }
   withdrawVisible.value = false
+  withdrawVisible1.value = false
 }
 const checkDetails = (id: number) => {
   goTo('electronicContratDetails', { id })

@@ -11,7 +11,8 @@
                 label-position="right">
                 <el-form-item label="行程日期：" prop="travelData">
                   <picker v-model="form.travelData" @change="datePickerChange" type="daterange"
-                    :value-format="dateFormat" start-placeholder="请选择开始时间" end-placeholder="请选择结束时间" style="width:100%">
+                    :value-format="dateFormat" start-placeholder="请选择开始时间" end-placeholder="请选择结束时间" style="width:100%"
+                    :disabled-date="disabledBeforeDate">
                   </picker>
                 </el-form-item>
               </el-form>
@@ -47,7 +48,7 @@
                 </a-input>
               </a-form-item>
               <a-form-item name="emergencyContactPhone" label="紧急联系电话"
-                :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.emergencyContactPhone, true, '请填写紧急联系电话')) }]">
+                :rules="[{ trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.emergencyContactPhone)) }]">
                 <a-input v-model:value="form.emergencyContactPhone" placeholder="请填写紧急联系电话" allowClear>
                 </a-input>
               </a-form-item>
@@ -371,8 +372,9 @@
             <a-button @click="handleTouristAdd">添加</a-button>
           </div>
           <div style="width:60%">
-            <a-form-item name="touristName" label="游客代表">
-              <a-select @change="touristChange" placeholder="请选择游客代表" v-model:value="form.touristName" allowClear>
+            <a-form-item name="touristName1" label="游客代表"
+              :rules="[{ required: true, trigger: 'change', validator: (_rule: Rule, value: string) => (validateFields(form.touristName, 'touristName1')) }]">
+              <a-select @change="touristChange" placeholder="请选择游客代表" v-model:value="form.certificatesNo" allowClear>
                 <a-select-option v-for="item in dataTouristSource" :value="item.certificatesNo"
                   :key="item.certificatesNo">{{ item.touristName }}
                 </a-select-option>
@@ -384,7 +386,7 @@
             </a-form-item>
             <a-form-item name="phone" label="游客代表手机号"
               :rules="[{ required: true, trigger: 'blur', validator: (_rule: Rule, value: string) => (validatePhone(form.phone, true, '请填写游客代表手机号')) }]">
-              <a-input v-model:value="form.phone" placeholder="请填写游客代表手机号" allowClear>
+              <a-input v-model:value="form.phone" placeholder="请填写游客代表手机号" @change="phoneChange" allowClear>
               </a-input>
             </a-form-item>
             <a-form-item name="certificatesAddress" label="游客代表地址">
@@ -468,8 +470,7 @@
         </div>
         <a-form ref="formRef4" :model="form" :rules="formRules" autocomplete="off">
           <a-form-item name="paymentMethod" label="游客费用支付方式">
-            <a-select @change="touristChange" placeholder="选择游客线下的实际支付方式" v-model:value="form.paymentMethod" allowClear
-              style="width:20%">
+            <a-select placeholder="选择游客线下的实际支付方式" v-model:value="form.paymentMethod" allowClear style="width:20%">
               <a-select-option v-for="item in paymentOptions" :value="item.codeValue" :key="item.codeValue">{{
                 item.name
               }}
@@ -522,6 +523,8 @@ import { accDiv, accMul } from '@/utils/compute';
 import { getAge, getGenderByIdNumber } from '@/utils';
 import type { Rule } from 'ant-design-vue/es/form';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
+import { getUserInfo } from '@/utils/util';
+const userInfo = getUserInfo();
 const navigatorBar = useNavigatorBar();
 const router = useRouter();
 const route = useRoute();
@@ -579,10 +582,9 @@ const adultNumber = ref(0)
 const childNumber = ref(0)
 const businessManageOptions = useBusinessManageOption();
 const initOpeion = async () => {
-  await businessManageOptions.getCompanyByBusinessType('TRAVEL');
   await businessManageOptions.getBusinessTypeOption('CERTIFICATE_TYPE')
 };
-const entrustTravelOption = computed(() => businessManageOptions.companyOptions);
+const entrustTravelOption = ref([]);
 const certificatesTypeOption = computed(() => businessManageOptions.businessTypeOption);
 
 const insuranceOption = [
@@ -625,8 +627,7 @@ const disputeResolutionOptions = [
 const validatePhone = async (mobile: string, required: boolean = false, msg?: string) => {
   if (required && !mobile) {
     return Promise.reject(msg);
-  }
-  else if (mobile && !/^1[3-9]\d{9}$/.test(mobile)) {
+  } else if (mobile && !/^1[3-9]\d{9}$/.test(mobile)) {
     return Promise.reject('请输入正确的手机号！');
   }
 }
@@ -723,6 +724,12 @@ const validateFields = async (obj: any, type: string) => {
     } else {
       return Promise.resolve();
     }
+  } else if (type === 'touristName1') {
+    if (obj) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject('请选择游客代表');
+    }
   }
 }
 const formRules = {
@@ -734,18 +741,9 @@ const formRules = {
   travelNight: [{ required: true, trigger: 'blur', message: '请输入合同夜数' }],
   travelData: [{ required: true, trigger: 'blur', message: '请选择行程日期' }],
   touristPeopleNumber: [{ required: true, trigger: 'blur', message: '游客人数不能为空' }],
-  certificatesType: [{ required: true, trigger: 'blur', message: '请选择身份证件类型' }],
-  touristName: [{ required: true, trigger: 'blur', message: '请选择游客代表' }],
-  // phone: [{ required: true, trigger: 'blur', message: '游客代表手机号不能为空' }],
+  // touristName: [{ required: true, trigger: 'blur', message: '请选择游客代表' }],
   certificatesAddress: [{ required: true, trigger: 'blur', message: '游客代表地址不能为空' }],
-  touristType: [{ required: true, trigger: 'blur', message: '请选择游客类型' }],
-  gender: [{ required: true, trigger: 'blur', message: '请选择性别' }],
-  age: [{ required: true, trigger: 'blur', message: '请输入年龄' }],
-  isHealthy: [{ required: true, trigger: 'blur', message: '请选健康状态' }],
-  // healthyCode: [{ required: true, trigger: 'blur', message: '健康码不能为空' }],
-  isAncientUygur: [{ required: true, trigger: 'blur', message: '请选择古维费购买状态' }],
-  emergencyContact: [{ required: true, trigger: 'blur', message: '请填写紧急联系人' }],
-  emergencyContactPhone: [{ required: true, trigger: 'blur', message: '请填写紧急联系电话' }],
+  // emergencyContact: [{ required: true, trigger: 'blur', message: '请填写紧急联系人' }],
   deposit: [{ required: true, trigger: 'blur', message: '请输入合同金额' }],
   liquidatedDamages: [{ required: true, trigger: 'blur', message: '请输入合同终止违约金' }],
   bond: [{ required: true, trigger: 'blur', message: '请输入黄金周保证金' }],
@@ -756,8 +754,6 @@ const formRules = {
   nonStandardFine: [{ required: true, trigger: 'blur', message: '不能为空' }],
   entrustFine: [{ required: true, trigger: 'blur', message: '不能为空' }],
   disputeResolution: [{ required: true, trigger: 'blur', message: '请选择争议解决办法' }],
-  /*   entrustedProject: [{ required: true, trigger: 'blur', message: '请输入委托项目' }],
-    entrustedProjectAmount: [{ required: true, trigger: 'blur', message: '请输入委托价格' }], */
 }
 const activeKey = ref('1')
 const submitVisible = ref(false)
@@ -961,6 +957,9 @@ const cmplineName = computed(() => (val: any) => {
   })
   return res
 })
+const disabledBeforeDate = (current: Dayjs) => {
+  return current < dayjs().startOf('day');
+};
 // 行程日期改变事件
 const datePickerChange = () => {
   if (form.value.travelData) {
@@ -1206,16 +1205,48 @@ const validateList = () => {
     }
   })
 }
-const saveDraft = (tab?: string, isTip: boolean = true) => {
+const saveDraft = (tab?: string, isTip: boolean = true, isRelease: boolean = false) => {
   tab === '1' && calculateTripFee()
-  return new Promise((resolve, reject) => {
-    const a = Promise.all([
-      formRef.value?.validateFields(),
-      dateFormRef.value?.validate(),
-      validateList()
-    ])
-    a.then(async () => {
+  return new Promise(async (resolve, reject) => {
+    if (isRelease) {
+      const a = Promise.all([
+        formRef.value?.validateFields(),
+        dateFormRef.value?.validate(),
+        validateList()
+      ])
+      a.then(async () => {
+        const params = getParams()
+        params.isRelease = isRelease
+        if (isAdd.value) {
+          let res = await api.createSingleContract(params)
+          if (res) {
+            isTip && message.success('保存草稿成功！')
+            isRefresh.value = '1'
+            isAdd.value = false
+            form.value.oid = res
+            resolve('down')
+          } else {
+            isTip && message.error('保存草稿失败！')
+            reject('error')
+          }
+        } else {
+          let res = await api.editSingleContract(params)
+          if (res) {
+            isTip && message.success('编辑草稿成功！')
+            isRefresh.value = '1'
+            resolve('down')
+          } else {
+            isTip && message.error('编辑草稿失败！')
+            reject('error')
+          }
+        }
+      }).catch((error: Error) => {
+        console.log(error);
+        reject('error')
+      })
+    } else {
       const params = getParams()
+      params.isRelease = isRelease
       if (isAdd.value) {
         let res = await api.createSingleContract(params)
         if (res) {
@@ -1239,10 +1270,7 @@ const saveDraft = (tab?: string, isTip: boolean = true) => {
           reject('error')
         }
       }
-    }).catch((error: Error) => {
-      console.log(error);
-      reject('error')
-    })
+    }
   })
 }
 const submitCancel = () => {
@@ -1269,10 +1297,7 @@ const accMulValue = (value: any) => {
 }
 // 获取提交参数
 const getParams = () => {
-  let userInfo: any = window.localStorage.getItem('userInfo');
-  userInfo = JSON.parse(userInfo);
-  const { sysCompany } = userInfo
-  form.value.companyId = sysCompany.oid
+  form.value.companyId = userInfo.sysCompany.oid
   const {
     oid,
     companyId, //合同创建旅行社id
@@ -1332,10 +1357,11 @@ const getParams = () => {
     entrustedProjectAmount: accMulValue(dataEntrustedProjectSource.value[0].entrustedProjectAmount),
     individualContractTouristBos: dataTouristSource.value, // 游客
     individualContractPriceBos: accMulCost(cloneDeep(dataCostSource.value)), // 费用
+    isRelease: true
   }
 }
 const saveDraftConfirm = async () => {
-  await saveDraft(undefined, false)
+  await saveDraft(undefined, false, true)
   const res = await api.releaseSingleContract(form.value.oid)
   if (res) {
     submitResultVisible.value = true
@@ -1365,21 +1391,32 @@ const getLineOptions = async () => {
     }
   })
 }
-// 游客代表改变事件
-const touristChange = () => {
-  if (form.value.touristName) {
+// 游客代表手机号改变事件
+let phoneTimer: NodeJS.Timeout
+const phoneChange = () => {
+  phoneTimer && clearTimeout(phoneTimer)
+  phoneTimer = setTimeout(async () => {
     dataTouristSource.value.forEach((item: any) => {
-      if (item.certificatesNo === form.value.touristName) {
-        form.value.phone = item.phone
-        form.value.certificatesNo = item.certificatesNo
-        item.certificatesAddress = form.value.certificatesAddress
-        item.isRepresentative = 1 // 是否为游客代表 1：是、0：否
-      } else {
-        item.certificatesAddress = ''
-        item.isRepresentative = 0
+      if (item.certificatesNo === form.value.certificatesNo) {
+        item.phone = form.value.phone
       }
     })
-  }
+  }, 1000)
+}
+// 游客代表改变事件
+const touristChange = () => {
+  dataTouristSource.value.forEach((item: any) => {
+    if (item.certificatesNo === form.value.certificatesNo) {
+      form.value.phone = item.phone
+      form.value.touristName = item.touristName
+      item.certificatesAddress = form.value.certificatesAddress
+      item.isRepresentative = 1 // 是否为游客代表 1：是、0：否
+    } else {
+      item.certificatesAddress = ''
+      item.isRepresentative = 0
+      form.value.touristName = undefined
+    }
+  })
 }
 // 游客代表地址改变事件
 let addresTimer: NodeJS.Timeout
@@ -1387,7 +1424,7 @@ const addressChange = () => {
   addresTimer && clearTimeout(addresTimer)
   addresTimer = setTimeout(async () => {
     dataTouristSource.value.forEach((item: any) => {
-      if (item.certificatesNo === form.value.touristName) {
+      if (item.certificatesNo === form.value.certificatesNo) {
         item.certificatesAddress = form.value.certificatesAddress
       }
     })
@@ -1498,19 +1535,21 @@ const getEditDetails = async (oid: any) => {
     form.value.travelData = [res.tripStartTime, res.tripEndTime]
     dataEntrustedProjectSource.value[0].entrustedProject = res.entrustedProject
     dataEntrustedProjectSource.value[0].entrustedProjectAmount = accDivValue(res.entrustedProjectAmount)
-    dataTouristSource.value = res.individualContractTouristBos.map((item: any) => {
-      // 获取游客代表
-      if (item.isRepresentative === 1) {
-        form.value.touristName = item.touristName
-        form.value.phone = item.phone
-        form.value.certificatesNo = item.certificatesNo
-        form.value.certificatesAddress = item.certificatesAddress
-      }
-      return {
-        isEdit: false,
-        ...item
-      }
-    })
+    if (res.individualContractTouristBos?.length) {
+      dataTouristSource.value = res.individualContractTouristBos.map((item: any) => {
+        // 获取游客代表
+        if (item.isRepresentative === 1) {
+          form.value.touristName = item.touristName
+          form.value.phone = item.phone
+          form.value.certificatesNo = item.certificatesNo
+          form.value.certificatesAddress = item.certificatesAddress
+        }
+        return {
+          isEdit: false,
+          ...item
+        }
+      })
+    }
     /* // 获取身份证列表
     const certificateIds = res.individualContractTouristBos.map((item: any) => {
       return { certificateId: item.certificatesNo }
@@ -1546,7 +1585,20 @@ const getComprehensiveProductsList = async () => {
   }];
   gwFee.value = newData;
 }
+const getEntrustTravelOption = () => {
+  api.getTravelCompany(userInfo.sysCompany.oid).then((res: any) => {
+    entrustTravelOption.value = res
+  })
+}
+const getBusinessDetails = async () => {
+  const params = { oid: userInfo.sysCompany.oid, businessType: 'TRAVEL' }
+  const { individualDeparturePlace, individualReturnPlace } = await api.getBusinessDetails(params)
+  form.value.departurePlace = individualDeparturePlace
+  form.value.returnPlace = individualReturnPlace
+}
 onMounted(() => {
+  getBusinessDetails()
+  getEntrustTravelOption()
   initOpeion()
   getLineOptions()
   getComprehensiveProductsList()

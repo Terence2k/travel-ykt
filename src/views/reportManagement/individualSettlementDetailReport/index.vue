@@ -12,9 +12,18 @@
 		</search-item>
 		<search-item label="结算时间" style="width: 350px">
 			<!-- <a-range-picker v-model:value="state.tableData.settlementStartTimeList" @change="timeChange" /> -->
-			<picker v-model="state.tableData.settlementStartTimeList" style="width: 180px" @change="timeChange" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"> </picker>
+			<picker
+				v-model="state.tableData.settlementStartTimeList"
+				style="width: 180px"
+				@change="timeChange"
+				type="daterange"
+				start-placeholder="开始日期"
+				end-placeholder="结束日期"
+			>
+			</picker>
 		</search-item>
 		<template #button>
+			<a-button @click="reset" v-permission="'重置'" style="margin-right: 30px">重置</a-button>
 			<a-button @click="initList" v-permission="'查询'">查询</a-button>
 		</template>
 	</CommonSearch>
@@ -57,17 +66,31 @@ import SearchItem from '@/components/common/CommonSearchItem.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import api from '@/api';
+import lodash from 'lodash';
 import { settlementOptions } from '@/stores/modules/settlement';
 import picker from '@/components/common/datePicker.vue';
-import { StateType, DataType, fixedColumn, notConsumed, ticketVo, hotelVo, getComprehensiveProduct, cateringVo, hmVo, getRulePrice, formatColumn, formatData } from '.';
+import {
+	StateType,
+	DataType,
+	fixedColumn,
+	notConsumed,
+	ticketVo,
+	hotelVo,
+	getComprehensiveProduct,
+	cateringVo,
+	hmVo,
+	getRulePrice,
+	formatColumn,
+	formatData,
+} from '.';
 const options = settlementOptions();
 const comprehensiveGuideVoListIds = ref([]);
 const comprehensiveVoListIds = ref([]);
 const columns = computed(() => {
 	const column = ref<TableColumnsType>([]);
-	column.value = fixedColumn;
+	column.value = lodash.cloneDeep(fixedColumn);
 	const data: Array<DataType> = state.tableData.data;
-		// // 先添加综费项目
+	// // 先添加综费项目
 	const comprehensiveFrozenPriceArray: any = [];
 	for (let index = 0; index < data.length; index++) {
 		if (data[index].comprehensiveFrozenPriceList && data[index].comprehensiveFrozenPriceList.length) {
@@ -92,10 +115,9 @@ const columns = computed(() => {
 		children: comprehensiveFrozenPriceArray,
 	};
 	// 避免重复插入
-	let idx = column.value
-		.filter((item: any) => {
-			return item.dataIndex == 'comprehensiveFrozenPriceList';
-		}).length
+	let idx = column.value.filter((item: any) => {
+		return item.dataIndex == 'comprehensiveFrozenPriceList';
+	}).length;
 	if (idx <= 1) {
 		column.value.splice(11, 0, parent);
 	}
@@ -255,7 +277,7 @@ const initList = async () => {
 
 //搜索
 const onHandleCurrentChange = (val: number) => {
-	if(typeof val == 'number') {
+	if (typeof val == 'number') {
 		state.tableData.param.pageNo = val;
 		initList();
 	}
@@ -280,6 +302,18 @@ const timeChange = (arr: any) => {
 		state.tableData.param.settlementTimeStart = null;
 		state.tableData.param.settlementTimeEnd = null;
 	}
+};
+const reset = () => {
+	state.tableData.param = {
+		itineraryNo: null, // 团单编号
+		travelId: null, //组团社id
+		settlementTimeStart: '', //结算开始时间
+		settlementTimeEnd: '', //结算结束时间
+		pageNo: 1, //页号
+		pageSize: 10, //页大小
+	};
+	state.tableData.settlementStartTimeList = [];
+	initList();
 };
 </script>
 <style scoped lang="less">

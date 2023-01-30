@@ -6,7 +6,7 @@
 					:disabled="productRow.productId && productRow.productId.toString() ? true : false"
 					v-model:value="formState.hotelStarId"
 					placeholder="请选择星级"
-					@change="handleChange"
+					@change="handelChangeStart"
 				>
 					<a-select-option :value="item.oid" v-for="item in hotelData.hotelStart" :price="item.price" :key="item.oid" :name="item.starCode">{{
 						item.starCode
@@ -82,7 +82,8 @@
 							:key="item.oid"
 							:stockNum="item.stockNum"
 							:num="item.roomOccupancyNum"
-							>{{ item.roomTypeName }}</a-select-option
+							:sysRoomTypeName="item.sysRoomTypeName"
+							>{{ item.roomTypeName + '-' + item.sysRoomTypeName }}</a-select-option
 						>
 					</a-select>
 				</a-form-item>
@@ -201,6 +202,9 @@ let formState = reactive<{ [k: string]: any }>({
 	enterTime: '',
 	roomTypeList: [{ ...roomList }],
 	honestyGuidePrice: '',
+	createTime: '',
+	roomName: '',
+	limitPeopleCount: '',
 });
 let contrastdata = reactive({} as any);
 const honestyGuidePrice = computed(() => accDiv(formState.honestyGuidePrice, 100));
@@ -218,9 +222,16 @@ const handleHotel = (e: any, option: any) => {
 	formState.hotelName = option.name;
 };
 
+const handelChangeStart = (id: any, option: any) => {
+	formState.hotelId = ''
+	for (let i = 0; i < formState.roomTypeList.length; i++) {
+		formState.roomTypeList[i].hotelRoomTypeId = ''
+	}
+	handleChange(id, option)
+}
+
+
 const handleChangCheckIn = () => {
-	disLeave.value = (current: Dayjs): any =>
-		(current && current < dayjs(formState.arrivalDate).add(1, 'day')) || (dayjs(travelStore.teamTime[1]).add(1, 'day') < current && current);
 	const isAfter = dayjs(dayjs(formState.arrivalDate)).isAfter(dayjs(formState.departureDate).subtract(1, 'day'));
 	if (formState.departureDate && isAfter) {
 		formState.departureDate = '';
@@ -232,7 +243,9 @@ const changeRoomType = (e: any, option: any, index: number) => {
 	formState.roomTypeList[index].roomTypeLimitPeople = option.num;
 	formState.roomTypeList[index].stockNum = option.stockNum;
 	formState.roomTypeList[index].roomTypeName = option.name;
+	formState.roomTypeList[index].limitPeople = option.num;
 	formState.roomTypeList[index].roomTypeId = option.key;
+	formState.roomTypeList[index].roomTypeName = option.name + '-' + option.sysRoomTypeName;
 };
 
 const getHotelStarList = async () => {
@@ -292,8 +305,6 @@ const getOrderAmount = (data: Array<{ [k: string]: any }>, startDate: string, en
 
 const submit = async () => {
 	try {
-		let traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
-		console.log('formState.roomTypeList:', formState.roomTypeList);
 		formState.roomTypeList = formState.roomTypeList.map((it: any) => {
 			it.unitPrice = it.unitPrice * 100;
 			it.orderAmount = it.orderAmount * 100;
@@ -303,7 +314,9 @@ const submit = async () => {
 		formState.scheduledNumber = formState.roomTypeList.map((it: any) => Number(it.checkInNumber)).reduce((prev: any, current: any) => prev + current);
 		formState.scheduledRooms = formState.roomTypeList.map((it: any) => Number(it.roomCount)).reduce((prev: any, current: any) => prev + current);
 		formState.tripNumber = travelStore.touristList.length;
-		formState.itineraryId = route.query.oid || traveListData.oid;
+		formState.itineraryId = route.query.oid
+		formState.startDate = formState.arrivalDate;
+		formState.endDate = formState.departureDate;
 		formState.orderAmount = getOrderAmount(formState.roomTypeList, formState.arrivalDate, formState.departureDate);
 		const key = generateGuid();
 		if (!formState.oid) {
@@ -320,9 +333,9 @@ const submit = async () => {
 		) {
 			formState.edit = true;
 		}
+		formState.roomName = formState.roomTypeList.map((item: any) => `${item.roomTypeName} * ${item.roomCount}<br />`).join('');		
+		formState.limitPeopleCount = formState.roomTypeList.map((item: any) => item.limitPeople * item.roomCount)[0];
 		const newFormState = cloneDeep(formState);
-		newFormState.startDate = newFormState.arrivalDate;
-		newFormState.endDate = newFormState.departureDate;
 		newFormState.hotelStar = newFormState.hotelStarCode;
 		newFormState.orderFee = newFormState.orderAmount;
 		newFormState.editstatus = true;

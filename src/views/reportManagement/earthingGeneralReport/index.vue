@@ -24,9 +24,18 @@
 		</search-item>
 		<search-item label="结算时间" style="width: 350px">
 			<!-- <a-range-picker v-model:value="state.times" @change="timeChange" /> -->
-			<picker v-model="state.times" @change="timeChange" style="width: 180px" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"> </picker>
+			<picker
+				v-model="state.times"
+				@change="timeChange"
+				style="width: 180px"
+				type="daterange"
+				start-placeholder="开始日期"
+				end-placeholder="结束日期"
+			>
+			</picker>
 		</search-item>
 		<template #button>
+			<a-button @click="reset" v-permission="'重置'" style="margin-right: 30px">重置</a-button>
 			<a-button @click="initList" v-permission="'查询'">查询</a-button>
 		</template>
 	</CommonSearch>
@@ -98,6 +107,7 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import { settlementOptions } from '@/stores/modules/settlement';
 import type { TableColumnsType } from 'ant-design-vue';
 import picker from '@/components/common/datePicker.vue';
+import lodash from 'lodash';
 import api from '@/api';
 import {
 	StateType,
@@ -116,7 +126,7 @@ import {
 const options = settlementOptions();
 const columns = computed(() => {
 	const column = ref<TableColumnsType>([]);
-	column.value = fixedColumn;
+	column.value = lodash.cloneDeep(fixedColumn);
 	const data: Array<DataType> = state.tableData.data;
 	// 拼接遍历综费冻结费用
 	let nameList: Array<string> = [];
@@ -350,7 +360,7 @@ const state = reactive<StateType>({
 		settlementStartTimeList: [],
 	},
 	viewList: [],
-	times: ''
+	times: '',
 });
 // 查询
 const initList = async () => {
@@ -363,7 +373,7 @@ const initList = async () => {
 };
 //搜索
 const onHandleCurrentChange = (val: number) => {
-	if(typeof val == 'number') {
+	if (typeof val == 'number') {
 		state.tableData.param.pageNo = val;
 		initList();
 	}
@@ -382,12 +392,26 @@ onMounted(() => {
 });
 const timeChange = (arr: any) => {
 	if (arr && arr.length > 0) {
-		state.tableData.param.settlementStartTime = arr[0];
-		state.tableData.param.settlementEndTime = arr[1];
+		state.tableData.param.settlementStartTime = Date.parse(arr[0]);
+		state.tableData.param.settlementEndTime = Date.parse(arr[1]);
 	} else {
 		state.tableData.param.settlementStartTime = null;
 		state.tableData.param.settlementEndTime = null;
 	}
+};
+const reset = () => {
+	state.tableData.param = {
+		itineraryNo: '', //行程单号
+		travelTypeId: null, //团队类型id
+		travelId: null, // 组团社id
+		subTravelId: null, //地接社id
+		settlementStartTime: '', //结算开始时间
+		settlementEndTime: '', //结算结束时间
+		pageSize: 10, //页大小
+		pageNo: 1, //页号
+	};
+	state.times = [];
+	initList();
 };
 </script>
 <style scoped lang="less">

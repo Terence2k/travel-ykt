@@ -24,8 +24,10 @@
           <a-descriptions-item label="线路名称" :span="3">{{ state.basicData.routeName }}</a-descriptions-item>
           <a-descriptions-item label="团队类型" :span="2">{{ state.basicData.teamTypeName }}</a-descriptions-item>
           <a-descriptions-item label="散客组团类型">{{ state.basicData.groupTypeName }}</a-descriptions-item>
-          <a-descriptions-item label="行程时间" :span="2">{{ state.basicData.startDate + ' - ' + state.basicData.endDate
-}}</a-descriptions-item>
+          <a-descriptions-item label="行程时间" :span="2">{{
+            state.basicData.startDate + ' - ' +
+              state.basicData.endDate
+          }}</a-descriptions-item>
           <a-descriptions-item label="导游">{{ state.guideList[0]?.guideName }}
             {{ state.guideList[0]?.guidePhone }}</a-descriptions-item>
           <a-descriptions-item label="散客拼团社" :span="2">{{ state.basicData.travelName }}</a-descriptions-item>
@@ -34,18 +36,25 @@
           <a-descriptions-item label="电子合同数量" :span="2">{{ state.basicData.subTravelName }}</a-descriptions-item>
           <a-descriptions-item label="游客总人数">{{ state.basicData.touristCount }}</a-descriptions-item>
           <a-descriptions-item label="古维减免人数" :span="2">{{ state.basicData.guWeiReduceCount }}</a-descriptions-item>
-          <a-descriptions-item label="行程冻结金额（元）">{{ state.basicData.totalFee }}</a-descriptions-item>
+          <a-descriptions-item label="行程冻结金额（元）">{{ accDiv(state.basicData.totalFee, 100) }}元</a-descriptions-item>
           <a-descriptions-item label="联系人" :span="2">{{ state.basicData.travelOperatorName }}</a-descriptions-item>
           <a-descriptions-item label="联系人电话">{{ state.basicData.travelOperatorPhone }}</a-descriptions-item>
-          <a-descriptions-item label="用车车牌号" :span="2">{{ state.transportList[0]?.licencePlateNumber
-}}</a-descriptions-item>
+          <a-descriptions-item label="用车车牌号" :span="2">{{
+            state.transportList[0]?.licencePlateNumber
+          }}</a-descriptions-item>
           <a-descriptions-item label="自编团号">{{ state.basicData.selfTeamNo }}</a-descriptions-item>
         </a-descriptions>
       </a-col>
       <a-col :span="7">
         <a-descriptions title="&nbsp;" bordered layout="vertical">
           <a-descriptions-item label="行程单二维码" :labelStyle="labelStyle" :contentStyle="contentStyle">
-            待提交后生成
+            <!-- 1-草稿，5-待财务审核 -->
+            <template v-if="[1, 5].includes(state.basicData.status)">
+              财务审核通过后自动生成
+            </template>
+            <template v-else-if="codeUrl">
+              <qrcode-vue :value="codeUrl" :size="200" level="H" />
+            </template>
           </a-descriptions-item>
         </a-descriptions>
       </a-col>
@@ -113,7 +122,7 @@
           </template>
           <!-- 入住天数 -->
           <template v-if="column.key === 'stayDays'">
-            {{ cmpRowValue(record, 'stayDays') }}
+            {{ getDiffDay(record.startDate, record.endDate) }}
           </template>
           <!-- 合同行程日期 -->
           <template v-if="column.key === 'tripDate'">
@@ -121,7 +130,17 @@
           </template>
           <template v-if="column.key === 'action'">
             <div class="action-btns">
-              <a>查看订单</a>
+              <a @click="toOrderDetail(record, item.title)">查看订单</a>
+            </div>
+          </template>
+          <template v-if="column.key === 'action1'">
+            <div class="action-btns">
+              <a v-show="route.query.isAudit !== '1'" @click="toOrderDetail(record, item.title)">查看订单</a>
+            </div>
+          </template>
+          <template v-if="column.key === 'action2'">
+            <div class="action-btns">
+              <a @click="contractDetail(record)">查看</a>
             </div>
           </template>
           <template v-if="column.key === 'attachmentUrl'">
@@ -132,6 +151,43 @@
       <CommonPagination :current="state.param.pageNo" :page-size="state.param.pageSize" :total="item.total"
         @change="onHandleCurrentChange" v-if="item.pagination" />
     </div>
+    <CommonModal title="合同详情" v-model:visible="contractDetailsVisible" @close="contractDetailsClose"
+      @cancel="contractDetailsClose" conform-text="确认" @conform="contractDetailsClose" :is-cancel="false" width="40%">
+      <div class="contract_details">
+        <div class="details_item">
+          <div class="key">合同编号：</div>
+          <div class="value"> {{ contractDetailsForm.contractNo }}</div>
+        </div>
+        <div class="details_item">
+          <div class="key">合同类型：</div>
+          <div class="value"> {{ contractDetailsForm.contractTypeName }}</div>
+        </div>
+        <div class="details_item">
+          <div class="key">内含线路/委托项目：</div>
+          <div class="value"> {{ contractDetailsForm.lineNames }}</div>
+        </div>
+        <div class="details_item">
+          <div class="key">人数：</div>
+          <div class="value"> {{ contractDetailsForm.touristPeopleNumber }}</div>
+        </div>
+        <div class="details_item">
+          <div class="key">行程日期：</div>
+          <div class="value"> {{ contractDetailsForm.tripStartTime + '-' + contractDetailsForm.tripEndTime }}</div>
+        </div>
+        <div class="details_item">
+          <div class="key">合同签约旅行社：</div>
+          <div class="value"> {{ contractDetailsForm.companyName }}</div>
+        </div>
+        <div class="details_item">
+          <div class="key">签署网点：</div>
+          <div class="value"> {{ contractDetailsForm.storeName }}</div>
+        </div>
+        <div class="details_item">
+          <div class="key">合同费用（元）：</div>
+          <div class="value"> {{ contractDetailsForm.contractAmount / 100 }}</div>
+        </div>
+      </div>
+    </CommonModal>
   </div>
 </template>
 <script lang="ts" setup>
@@ -144,13 +200,20 @@ import { accDiv } from '@/utils/compute';
 import dayjs from 'dayjs';
 import { CloseOutlined } from '@ant-design/icons-vue';
 import { useRouter, useRoute } from 'vue-router';
+import QrcodeVue from 'qrcode.vue'
+import { getStyles, getDiffDay } from '@/utils/util';
+import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
+
 const router = useRouter();
 const route = useRoute();
+const codeUrl = ref();
 const back = () => {
   router.push({
     name: 'individualTouristsGroup',
   })
 }
+const contractDetailsVisible = ref(false)
+const contractDetailsForm = ref({})
 const state = reactive({
   basicData: {
     travelOperator: {},
@@ -162,7 +225,7 @@ const state = reactive({
     pageNo: 1,
     pageSize: 10,
   },
-  itineraryDetail: {}
+  itineraryDetail: {} as any
 });
 const printBtn = ref();
 
@@ -225,9 +288,9 @@ const cmpRowValue = computed(() => (val: any, type: string) => {
         res = '否'
       }
       break;
-    case 'stayDays':
-      res = dayjs(val.endDate).diff(val.startDate, 'day')
-      break;
+    // case 'stayDays':
+    //   res = dayjs(val.endDate).diff(val.startDate, 'day')
+    //   break;
     case 'ticketTotalFee':
       const x = val.reservePeopleCount || 0
       const y = val.unitPrice || 0
@@ -242,7 +305,6 @@ const cmpRowValue = computed(() => (val: any, type: string) => {
 // 行程单二维码内容样式
 const contentStyle = computed((): CSSProperties => {
   return {
-    lineHeight: '352px',
     display: 'flex',
     justifyContent: 'center',
     color: '#9DA0A4',
@@ -304,30 +366,76 @@ const getItineraryDetail = (orderId: any, isPrint?: any) => {
     state.basicData = res.basic;
     state.guideList = res.guideList;
     state.transportList = res.transportList;
-   /*  // 获取身份证列表
-    const certificateIds = res.touristList?.content.map((item: any) => {
-      return { certificateId: item.certificateNo }
-    })
-    // 根据身份证列表查询健康码列表
-    const certificateCodes = await getHealthyCodes(certificateIds)
-    // 将健康码和游客列表数据关联
-    configCodeName(certificateCodes, res.touristList.content) */
+    /*  // 获取身份证列表
+     const certificateIds = res.touristList?.content.map((item: any) => {
+       return { certificateId: item.certificateNo }
+     })
+     // 根据身份证列表查询健康码列表
+     const certificateCodes = await getHealthyCodes(certificateIds)
+     // 将健康码和游客列表数据关联
+     configCodeName(certificateCodes, res.touristList.content) */
     // 获取合同信息
-    const { content } = await api.getContractList({
-      pageNo: 1,
-      pageSize: 10000,
-    })
-    res.contractList = content
+    const content = await api.getContractListByItineraryId(route.query.oid)
+    res.contractList = content ? content : []
     state.itineraryDetail = res;
+    codeUrl.value = JSON.stringify({
+      itineraryNo: state.basicData.itineraryNo,
+      oid: state.basicData.oid
+    })
     nextTick(() => {
       if (isPrint) {
         printBtn.value.click();
       }
     })
+    state.itineraryDetail.guWeiDetail = await api.getManagementExpenses(orderId);
+    if (route.query.isAudit === '1') {
+      state.itineraryDetail.isAudit = 'inline-block'
+    } else {
+      state.itineraryDetail.isAudit = 'none'
+    }
   }).catch((err: any) => {
     console.log(err);
   });
 }
+
+const toOrderDetail = (row: any, title: any) => {
+  switch (title) {
+    case '古维管理费':
+      toGuweiOrder(row.oid);
+      break;
+    case '酒店费用':
+      toHotelOrder(row.hotelOrderNo);
+      break;
+    case '景区费用':
+      toScenicDetail(row.ticketOrderNo);
+      break;
+  }
+}
+const contractDetail = (record: any) => {
+  contractDetailsVisible.value = true
+  contractDetailsForm.value = record
+}
+const contractDetailsClose = () => {
+  contractDetailsVisible.value = false
+  contractDetailsForm.value = {}
+}
+// 跳转古维订单
+const toGuweiOrder = (value: any) => {
+  router.push({ path: '/gouvyManagement/order/order_edit', query: { oid: value } });
+};
+
+// 跳转酒店订单
+const toHotelOrder = (value: any) => {
+  router.push({ path: '/hotelManagement/hotelOrder/orderEdit', query: { orderNo: value } });
+};
+
+// 跳转景区订单
+const toScenicDetail = (value: any) => {
+  router.push({ path: '/scenic-spot/order-manage/edit', query: { oid: value } });
+};
+onMounted(() => {
+  document.getElementsByClassName('ant-descriptions-view')[1].style.height = `${getStyles(document.getElementsByClassName('ant-descriptions-view')[0], 'height')}px`;
+})
 watch(
   () => route,
   (newVal) => {
@@ -394,6 +502,19 @@ watch(
 
   .red_text {
     color: #d70095;
+  }
+}
+
+.contract_details {
+  padding: 24px;
+
+  .details_item {
+    display: flex;
+    margin-bottom: 24px;
+
+    .key {
+      width: 200px;
+    }
   }
 }
 </style>

@@ -399,8 +399,8 @@ onActivated(() => {
 onDeactivated(() => {
   dateFormRef.value?.resetFields()
   formRef.value?.resetFields()
-  imgUploadRef.value.clearFileList()
-  imgUploadRef1.value.clearFileList()
+  imgUploadRef.value?.clearFileList()
+  imgUploadRef1.value?.clearFileList()
 })
 
 /* const businessManageOptions = useBusinessManageOption();

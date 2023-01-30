@@ -32,6 +32,7 @@
 			</picker>
 		</search-item>
 		<template #button>
+			<a-button @click="reset" style="margin-right: 30px" v-permission="`重置`">重置</a-button>
 			<a-button @click="initList" v-permission="`查询`">查询</a-button>
 		</template>
 	</CommonSearch>
@@ -78,13 +79,14 @@ import CommonTable from '@/components/common/CommonTable.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import type { TableColumnsType } from 'ant-design-vue';
+import lodash from 'lodash';
 import api from '@/api';
 import { settlementOptions } from '@/stores/modules/settlement';
 import { StateType, DataType, fixedColumn, getRulePrice, getActualPrice, getSubTravelVoUnSettlementPrice, formatColumn, formatData } from '.';
 const options = settlementOptions();
 const columns = computed(() => {
 	const column = ref<TableColumnsType>([]);
-	column.value = fixedColumn;
+	column.value = lodash.cloneDeep(fixedColumn);
 	const data: Array<DataType> = state.tableData.data;
 	/**
 	 * 先获取数据源，根据数据源的综费产品列表渲染到表头上
@@ -284,7 +286,9 @@ const pageSideChange = (current: number, size: number) => {
 };
 onMounted(() => {
 	initList();
+	console.log(fixedColumn, `fixedColumn`);
 });
+
 const timeChange = (arr: any) => {
 	console.log(arr);
 	if (arr && arr.length > 0) {
@@ -294,6 +298,19 @@ const timeChange = (arr: any) => {
 		state.tableData.param.settlementEndTime = null;
 		state.tableData.param.settlementStartTime = null;
 	}
+};
+const reset = () => {
+	state.tableData.param = {
+		travelId: null, //组团社id
+		subTravelId: null, //地接社id
+		settlementTimeStart: '', //结算开始时间
+		settlementTimeEnd: '', //结算结束时间
+		travelTypeId: null, //团队类型id
+		pageNo: 1, //页号
+		pageSize: 10, //页大小
+	};
+	state.tableData.settlementStartTimeList = [];
+	initList();
 };
 </script>
 <style scoped lang="less"></style>

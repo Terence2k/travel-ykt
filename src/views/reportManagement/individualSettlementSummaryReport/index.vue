@@ -20,6 +20,7 @@
 			</picker>
 		</search-item>
 		<template #button>
+			<a-button @click="reset" style="margin-right: 30px" v-permission="`重置`">重置</a-button>
 			<a-button @click="initList" v-permission="`查询`">查询</a-button>
 		</template>
 	</CommonSearch>
@@ -66,6 +67,7 @@ import SearchItem from '@/components/common/CommonSearchItem.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import api from '@/api';
+import lodash from 'lodash';
 import picker from '@/components/common/datePicker.vue';
 import { settlementOptions } from '@/stores/modules/settlement';
 import {
@@ -122,7 +124,7 @@ const pageSideChange = (current: number, size: number) => {
 };
 const columns = computed(() => {
 	const column = ref<TableColumnsType>([]);
-	column.value = fixedColumn;
+	column.value = lodash.cloneDeep(fixedColumn);
 	const data: Array<DataType> = state.tableData.data;
 	// // 先添加综费项目
 	const comprehensiveFrozenPriceArray: any = [];
@@ -319,6 +321,17 @@ const timeChange = (arr: any) => {
 		state.tableData.param.settlementTimeStart = null;
 		state.tableData.param.settlementTimeEnd = null;
 	}
+};
+const reset = () => {
+	state.tableData.param = {
+		travelId: null, //组团社id
+		settlementTimeStart: '', //结算开始时间
+		settlementTimeEnd: '', //结算结束时间
+		pageNo: 1, //页号
+		pageSize: 10, //页大小
+	};
+	state.tableData.settlementStartTimeList = [];
+	initList();
 };
 </script>
 <style scoped lang="less"></style>

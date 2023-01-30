@@ -56,7 +56,6 @@ const newAwsObj = () => {
     }
   });
 };
-newAwsObj();
 
 export const awsUploadFile = (options: any) => {
   return new Promise<{
@@ -148,3 +147,10 @@ export const awsGetPreSignedUrl = (fileUrl: string) => {
 const handleUploadErr = (reject: any, err: any) => {
   reject(err);
 };
+
+// 初始化获取密钥
+newAwsObj();
+setInterval(() => {
+  awsObject = {};
+  newAwsObj();
+}, 1000 * 60 * 30)

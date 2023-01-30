@@ -165,10 +165,15 @@
   </div>
   <CommonModal title="散客合同签署确认" v-model:visible="modalVisible" @close="(modalVisible = false)"
     @cancel="(modalVisible = false)" @conform="(modalVisible = false)" :conform-text="'关闭'" :is-cancel="false">
-    <p>已上传{{ imageCount }}张图片，{{ pdfCount }}个pdf：</p>
+    <p>已上传{{ imageCount }}张图片，{{ pdfCount }}个pdf，{{ docCount }}个doc：</p>
     <div v-for="(item, index) in form.contractFileUrlList" :key="index" class="file">
-      <a :href="item" class="file_box" v-if="item.indexOf('.pdf') !== -1">合同附件.pdf</a>
-      <a-image width="104px" :src="item" v-else />
+      <a :href="item" target="_blank" class="file_box"
+        v-if="item.indexOf('.png') === -1 && item.indexOf('.jpg') === -1">{{
+          getFileName(item)
+        }}</a>
+      <div style="width:104px;margin: 0 8px 8px 0;" v-else>
+        <a-image :src="item" />
+      </div>
     </div>
   </CommonModal>
 </template>
@@ -198,6 +203,7 @@ const back = () => {
 const modalVisible = ref(false)
 const imageCount = ref(0)
 const pdfCount = ref(0)
+const docCount = ref(0)
 const form = ref({
   contractNo: '',
   travelDayNight: '',
@@ -365,6 +371,16 @@ const costColumns = [
     key: 'individualSubtotal',
   },
 ]
+const getFileName = computed(() => (name: string) => {
+  if (name) {
+    const arr = name.split('?')
+    const str = arr[0]
+    const arr1 = str.split('/')
+    return arr1[arr1.length - 1]
+  } else {
+    return '文件'
+  }
+})
 /* const cmpHealthyColor = computed(() => (text: string) => {
   if (text === '绿码') {
     return 'green_text'
@@ -492,6 +508,8 @@ const getDetails = async (id: number) => {
         imageCount.value += 1
       } else if (['pdf'].indexOf(item.split('.')[1]) !== -1) {
         pdfCount.value += 1
+      } else if (['doc', 'docx'].indexOf(item.split('.')[1]) !== -1) {
+        docCount.value += 1
       }
       item = await awsGetPreSignedUrl(item);
       return item
@@ -525,7 +543,7 @@ const getDetails = async (id: number) => {
           res = '线下合同'
           break
         default:
-          res = ''
+          res = '/'
           break
       }
       return res
@@ -542,8 +560,8 @@ const getDetails = async (id: number) => {
     setList(individualContractLineBos)
     setList(individualContractPriceBos)
     setList1(individualContractTouristBos)
-    const travelDayNight = `${contractDays}天${travelNight}夜`
-    const travelDate = `${tripStartTime}至${tripEndTime}`
+    const travelDayNight = contractDays && travelNight ? `${contractDays}天${travelNight}夜` : '/'
+    const travelDate = tripStartTime && tripEndTime ? `${tripStartTime}至${tripEndTime}` : '/'
     let touristName, certificatesNo, phone, certificatesAddress
     for (let i = 0, l = individualContractTouristBos.length; i < l; i++) {
       const item = individualContractTouristBos[i];
@@ -560,7 +578,7 @@ const getDetails = async (id: number) => {
       travelDayNight,
       entrustTravelName: entrustTravelName || '未填写',
       travelDate,
-      touristPeopleNumber,
+      touristPeopleNumber: touristPeopleNumber || '/',
       insuranceBuyModeName,
       contractTypeName,
       contractType,
@@ -581,12 +599,12 @@ const getDetails = async (id: number) => {
       certificatesNo,
       phone,
       certificatesAddress,
-      departurePlace,
-      destination,
-      returnPlace,
-      paymentMethodName,
-      emergencyContact,
-      emergencyContactPhone,
+      departurePlace: departurePlace || '/',
+      destination: destination || '/',
+      returnPlace: returnPlace || '/',
+      paymentMethodName: paymentMethodName || '/',
+      emergencyContact: emergencyContact || '/',
+      emergencyContactPhone: emergencyContactPhone || '/',
       electronicContractNo: electronicContractNo || '/',
       signingUrl,
       contractStatus
@@ -670,9 +688,10 @@ watch(
 
 .file_box {
   display: inline-block;
+  text-align: justify;
+  vertical-align: middle;
   width: 104px;
   height: 104px;
-  line-height: 88px;
   margin: 0 8px 8px 0;
   padding: 8px;
   border: 1px solid #d9d9d9;

@@ -15,7 +15,11 @@
 				<template v-if="column.key === 'settlementCost'">
 					<span>{{ (record.settlementCost / 100).toFixed(2) }}元</span>
 				</template>
-				<template v-if="column.key === 'action'">
+				<template v-if="column.key === 'status'">
+					<span v-if="record.status === 1">已转账</span>
+					<span v-if="record.status === 3">转账失败</span>
+				</template>
+				<template v-if="column.key === 'action' && record.status === 3">
 					<div class="action-btns">
 						<a href="javascript:;" @click="transferAccounts(record.oid, record.itineraryNo)">申请转账</a>
 					</div>
@@ -89,9 +93,19 @@ const columns = computed(() => {
 			key: 'collectionCompanyName',
 		},
 		{
+			title: '状态',
+			dataIndex: 'status',
+			key: 'status',
+		},
+		{
 			title: '收款账户',
 			dataIndex: 'collectionAccount',
 			key: 'collectionAccount',
+		},
+		{
+			title: '操作',
+			dataIndex: 'action',
+			key: 'action',
 		},
 	];
 	if (state.status === 4) {
@@ -175,7 +189,7 @@ const pageSideChange = (current: number, size: number) => {
 	initList();
 };
 const submit = () => {
-	state.audit.status = 2;
+	state.audit.status = 1;
 	transferAccountAudit();
 };
 const refuse = () => {

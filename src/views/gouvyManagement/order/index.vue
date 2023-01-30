@@ -1,9 +1,9 @@
 <template>
 	<CommonSearch>
 		<SearchItem label="是否存在减免">
-			<a-select ref="select" style="width: 200px" placeholder="请选择减免情况" v-model:value="state.tableData.param.isReductionExist">
-				<a-select-option value="1">是</a-select-option>
-				<a-select-option value="0">否</a-select-option>
+			<a-select ref="select" style="width: 200px" placeholder="请选择减免情况" v-model:value="state.tableData.param.isReductionExist" allowClear>
+				<a-select-option :value="1">是</a-select-option>
+				<a-select-option :value="0">否</a-select-option>
 			</a-select>
 		</SearchItem>
 		<SearchItem label="接团旅行社">
@@ -154,7 +154,7 @@
 			<a-button type="primary" @click="submit">确认本次勾选游客，提交强刷</a-button>
 		</template>
 	</BaseModal>
-	<BaseModal title="改刷游客详情" v-model="touristDetails" :width="800">
+	<BaseModal title="改刷游客详情" v-model="touristDetails" :width="1200">
 		<div class="div-select">
 			<a-button @click="touristDetails = false">返回</a-button>
 			<p>全部游客{{ state.touristData.total }}名,已减免{{ state.touristData.reduceNum }}人。</p>
@@ -164,11 +164,14 @@
 				<!-- <template v-if="column.key === 'actualPrice'">
 					<span>{{ accDiv(record.actualPrice, 100) }}</span>
 				</template> -->
+				<template v-if="column.key === 'specialCertificateImg' ">
+					<Upload v-model="record.specialCertificateImg" :maxCount="record.num" v-if="record.specialCertificateType!=null"  disabled />
+				</template>
 			</template>
 		</CommonTable>
 		<template v-slot:footer> </template>
 	</BaseModal>
-	<BaseModal title="勾选古维费应缴游客" v-model="updateVisible" :width="800">
+	<BaseModal title="勾选古维费应缴游客" v-model="updateVisible" :width="1200">
 		<div class="div-select">
 			<a-button @click="updateVisible = false">返回</a-button>
 			<p>全部游客{{ state.touristData.total }}名</p>
@@ -177,6 +180,9 @@
 			<template #bodyCell="{ column, text, index, record }">
 				<template v-if="column.key === 'Checkbox'">
 					<a-checkbox v-model:checked="record.checked" :disabled="record.disabled"></a-checkbox>
+				</template>
+				<template v-if="column.key === 'specialCertificateImg' ">
+					<Upload v-model="record.specialCertificateImg" :maxCount="record.num" v-if="record.specialCertificateType!=null"  disabled />
 				</template>
 			</template>
 		</CommonTable>
@@ -201,7 +207,7 @@ import api from '@/api';
 import { downloadFile } from '@/utils/util';
 import dayjs, { Dayjs } from 'dayjs';
 import picker from '@/components/common/datePicker.vue';
-
+import Upload from '@/components/common/imageWrapper.vue';
 const route = useRouter();
 const navigatorBar = useNavigatorBar();
 const strongBrushVisible = ref(false);
@@ -214,8 +220,8 @@ const updateVisible = ref(false);
 const columns = [
 	{
 		title: '订单编号',
-		dataIndex: 'itineraryNo',
-		key: 'itineraryNo',
+		dataIndex: 'orderNo',
+		key: 'orderNo',
 	},
 	{
 		title: '关联行程单号',
@@ -435,7 +441,7 @@ const state = reactive({
 			itineraryStartDate: '',
 			itineraryNo: '',
 			subTravelName: '',
-			isReductionExist: '',
+			isReductionExist:null,
 		},
 		details: [] as any,
 		forceBrushStatus: '',
@@ -589,6 +595,14 @@ const changeSubmit = () => {
 			}
 			return i;
 		});
+		// 处理显示照片个数
+		res.touristList.map((i:any,index:number)=>{
+			if(i.specialCertificateImg)
+			{
+				i.num=res.touristList[index].specialCertificateImg.split(',').length
+				return i
+			}
+		})
 		state.touristData = res;
 	});
 };
@@ -623,7 +637,7 @@ const updateSubmit = () => {
 };
 // 重置
 const reset = () => {
-	state.tableData.param.isReductionExist = '';
+	state.tableData.param.isReductionExist =null;
 	state.tableData.param.itineraryNo = '';
 	state.tableData.param.subTravelName = '';
 	state.tableData.param.itineraryStartDate = '';

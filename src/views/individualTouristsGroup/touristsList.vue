@@ -51,8 +51,9 @@
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a @click="revokeGroupToDraft(record.oid)" v-permission="'待审核_撤回任务'">撤回任务</a>
-								<a v-permission="'待审核_催办'">催办</a>
+								<!-- <a @click="revokeGroupToDraft(record.oid)" v-permission="'待审核_撤回任务'">撤回任务</a>
+								<a v-permission="'待审核_催办'">催办</a> -->
+								<a @click="goToDetail(record, '1')" v-permission="'待审核_查看行程'">查看行程</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -74,12 +75,12 @@
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
+								<a @click="goToDetail(record)" v-permission="'待出团_查看行程'">查看行程</a>
+								<a @click="goToPath(record)" v-permission="'待出团_去预订'">去预订</a>
+								<a @click="change(record)" v-permission="'待出团_变更'">变更</a>
+								<a @click="toRevoke(record)" v-permission="'待出团_撤销'">撤销</a>
 								<a v-if="dateTime > dayjs(record.startDate).unix()" @click="outGroup(record)"
 									v-permission="'待出团_手动出团'">手动出团</a>
-								<a @click="change(record)" v-permission="'待出团_行程变更'">行程变更</a>
-								<!-- <a v-permission="'待出团_查看日志'">查看日志</a> -->
-								<a @click="goToPath(record)" v-permission="'待出团_进入预订'">进入预订</a>
-								<a @click="toRevoke(record)" v-permission="'待出团_撤回'">撤回</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -101,9 +102,9 @@
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a @click="goToDetail(record)" v-permission="'已出团_查看'">查看</a>
-								<a @click="change(record)" v-permission="'已出团_行程变更'">行程变更</a>
-								<a @click="goToPath(record)" v-permission="'已出团_进入预订'">进入预订</a>
+								<a @click="goToDetail(record)" v-permission="'已出团_查看行程'">查看行程</a>
+								<a @click="change(record)" v-permission="'已出团_变更'">变更</a>
+								<a @click="toRevoke(record)" v-permission="'已出团_撤销'">撤销</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -125,7 +126,7 @@
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a @click="goToDetail(record)" v-permission="'已散团_查看行程单'">查看行程单</a>
+								<a @click="goToDetail(record)" v-permission="'已散团_查看行程'">查看行程</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -147,9 +148,7 @@
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a @click="addOrUpdate({ row: record, handle: 'update' })">编辑</a>
-								<a @click="">删除</a>
-								<a @click="">提交审核</a>
+								<a @click="goToDetail(record)" v-permission="'待变更_查看行程'">查看行程</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -171,7 +170,7 @@
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a @click="goToDetail(record)" v-permission="'已过期_查看行程单'">查看行程单</a>
+								<a @click="goToDetail(record)" v-permission="'已过期_查看行程'">查看行程</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -193,9 +192,8 @@
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
-								<a @click="goToDetail(record)" v-permission="'待处理_行程详情'">行程详情</a>
-								<a @click="revoke(record)" v-permission="'待处理_申请撤销'">申请撤销</a>
-								<!-- <a v-permission="'待处理_查看日志'">查看日志</a> -->
+								<a @click="goToDetail(record)" v-permission="'待处理_查看行程'">查看行程</a>
+								<a @click="revoke(record)" v-permission="'待处理_撤销'">撤销</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -721,10 +719,10 @@ const outGroup = async (row: any) => {
 	onSearch4();
 };
 const dateTime = ref(dayjs().unix());
-const goToDetail = (row: any) => {
+const goToDetail = (row: any, isAudit: string = "0") => {
 	router.push({
 		name: 'individualTouristsGroupDetail',
-		query: { oid: encodeURIComponent(row.oid) },
+		query: { oid: encodeURIComponent(row.oid), isAudit },
 	});
 };
 const checkPower = async (id: any) => {
