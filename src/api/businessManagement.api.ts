@@ -197,3 +197,12 @@ export function getTravelCompany(companyId: any) {
 		showLoading: true
 	});
 }
+// 修改企业开业、停业、暂停营业
+export function updateCompanyState(data: any) {
+	return request({
+		url: `${commonPart}updateCompanyState`,
+		method: 'post',
+		data,
+		showLoading: true
+	});
+}

@@ -48,6 +48,30 @@
 		<a-spin size="large" :spinning="state.tableData.loading">
 			<CommonTable :dataSource="state.tableData.data" :columns="columns">
 				<template #bodyCell="{ column, record }">
+					<!-- 单价（元） 单位转成元-->
+					<template v-if="column.key === 'unitPrice'">
+						{{ record.unitPrice / 100 > 0 ? (record.unitPrice / 100).toFixed(2) : 0 }}
+					</template>
+					<!-- 预定金额 单位转成元-->
+					<template v-if="column.key === 'orderPrice'">
+						{{ record.orderPrice / 100 > 0 ? (record.orderPrice / 100).toFixed(2) : 0 }}
+					</template>
+					<!-- 减免金额 单位转成元-->
+					<template v-if="column.key === 'breaksPrice'">
+						{{ record.breaksPrice / 100 > 0 ? (record.breaksPrice / 100).toFixed(2) : 0 }}
+					</template>
+					<!-- 未核销金额金额（元） 单位转成元-->
+					<template v-if="column.key === 'unSettlementPrice'">
+						{{ record.unSettlementPrice / 100 > 0 ? (record.unSettlementPrice / 100).toFixed(2) : 0 }}
+					</template>
+					<!-- 票款金额（元） 单位转成元-->
+					<template v-if="column.key === 'ticketPrice'">
+						{{ record.orderPrice / 100 > 0 ? (record.ticketPrice / 100).toFixed(2) : 0 }}
+					</template>
+					<!-- 景点实收（元） 单位转成元-->
+					<template v-if="column.key === 'scenicPrice'">
+						{{ record.orderPrice / 100 > 0 ? (record.scenicPrice / 100).toFixed(2) : 0 }}
+					</template>
 					<template v-if="column.key === 'settlementRuleName'">
 						<span>{{ getSettlementRule(column, record) }}</span>
 					</template>
@@ -124,11 +148,11 @@ interface SettlementRuleListType {
 }
 const columns = computed(() => {
 	const column: TableColumnsType = [
-		{
-			title: '团单编号',
-			dataIndex: 'itineraryNo',
-			key: 'itineraryNo',
-		},
+		// {
+		// 	title: '团单编号',
+		// 	dataIndex: 'itineraryNo',
+		// 	key: 'itineraryNo',
+		// },
 		{
 			title: '景区名称',
 			dataIndex: 'scenicName',
@@ -144,21 +168,21 @@ const columns = computed(() => {
 			dataIndex: 'travelTypeName',
 			key: 'travelTypeName',
 		},
-		{
-			title: '地接社',
-			dataIndex: 'subTravelName',
-			key: 'subTravelName',
-		},
-		{
-			title: '核销时间',
-			dataIndex: 'verificationTime',
-			key: 'verificationTime',
-		},
-		{
-			title: '结算时间',
-			dataIndex: 'settlementTime',
-			key: 'settlementTime',
-		},
+		// {
+		// 	title: '地接社',
+		// 	dataIndex: 'subTravelName',
+		// 	key: 'subTravelName',
+		// },
+		// {
+		// 	title: '核销时间',
+		// 	dataIndex: 'verificationTime',
+		// 	key: 'verificationTime',
+		// },
+		// {
+		// 	title: '结算时间',
+		// 	dataIndex: 'settlementTime',
+		// 	key: 'settlementTime',
+		// },
 		{
 			title: '单价（元）',
 			dataIndex: 'unitPrice',
@@ -279,10 +303,10 @@ const getSettlementRule = computed(() => (column: TableColumnsType, record: Data
 	const data = record.settlementRuleList;
 	for (const key in data) {
 		if (column.title === data[key].ruleName) {
-			return data[key].rulePrice;
+			return data[key].rulePrice ? (data[key].rulePrice / 100).toFixed(2) : 0;
 		}
 	}
-	return '暂无数据';
+	return '';
 });
 // 获取景区下拉列表
 const getViewList = async () => {
