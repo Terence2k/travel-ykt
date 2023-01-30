@@ -344,7 +344,7 @@ const getSettlementRule = computed(() => (column: TableColumnsType, record: Data
 	const data = record.settlementRuleList;
 	for (const key in data) {
 		if (column.title === data[key].ruleName) {
-			return data[key].rulePrice;
+			return data[key].rulePrice ? (data[key].rulePrice / 100).toFixed(2) : 0;
 		}
 	}
 	return '';
