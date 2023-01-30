@@ -37,6 +37,7 @@
 
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, GroupStatus } from '@/enum'
+	import { cloneDeep } from 'lodash';
 
 	const travelStore = useTravelStore();
 	const state = reactive({
@@ -101,8 +102,13 @@
 		]
 	})
 	const onSearch = async () => {
+		let params: any = {};
 		travelStore.traveList.closeAnAccount.params.status = GroupStatus.CloseAnAccount
-		const res = await travelStore.getTravelList(travelStore.traveList.closeAnAccount.params);
+		params = cloneDeep(travelStore.traveList.closeAnAccount.params)
+		params.groupType = travelStore.traveList.closeAnAccount.params.groupType === '0' ? '' : 
+		travelStore.traveList.closeAnAccount.params.groupType;
+		
+		const res = await travelStore.getTravelList(params);
 		
 		travelStore.setTraveList(res, 'closeAnAccount')
 	}
