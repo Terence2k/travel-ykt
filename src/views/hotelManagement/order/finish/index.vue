@@ -4,8 +4,8 @@
 			<template #bodyCell="{ column, record }">
 				<template v-if="column.dataIndex === 'actions'">
 					<div class="action-btns">
-						<a @click="openbrushup(record.orderNo)">申请改刷</a>
-						<a @click="openbrushupdetail(record.orderNo)">详情</a>
+						<a v-if="record.unitStatus == 0" @click="openbrushup(record.orderNo)" v-permission="'已核销_申请改刷'">申请改刷</a>
+						<a @click="openbrushupdetail(record.orderNo)" v-permission="'已核销_详情'">详情</a>
 					</div>
 				</template>
 				<template v-if="column.key == 'reduceAfterAmount'">
