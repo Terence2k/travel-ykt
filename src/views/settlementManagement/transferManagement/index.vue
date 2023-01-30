@@ -41,7 +41,7 @@
 				</template>
 				<template #bodyCell="{ column, record }">
 					<template v-if="column.key === 'settlementCost'">
-						<span>{{ (record.settlementCost / 100).toFixed(2) }}元</span>
+						<span>{{ (record.settlementCost / 100) }}元</span>
 					</template>
 					<template v-if="column.key === 'status'">
 						<span v-if="record.status === 1" style="color: red">待审核</span>

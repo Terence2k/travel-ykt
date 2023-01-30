@@ -253,19 +253,19 @@ const twoDecimalPlaces = computed(() => (number: any): any => {
 	if (typeof number === 'string') {
 		if (number.includes('-')) {
 			number = number.slice(1);
-			return `-${Number(number / 100).toFixed(2)}`;
+			return `-${Number(number / 100)}`;
 		}
 	}
-	return Number(number / 100).toFixed(2);
+	return Number(number / 100);
 });
 const twoDecimalPlacesFunc = (number: any): any => {
 	if (typeof number === 'string') {
 		if (number.includes('-')) {
 			number = number.slice(1);
-			return `-${Number(number / 100).toFixed(2)}`;
+			return `-${Number(number / 100)}`;
 		}
 	}
-	return Number(number / 100).toFixed(2);
+	return Number(number / 100);
 };
 const getCollectionCompany = computed(() => (column: any, record: any) => {
 	const list = record.list;

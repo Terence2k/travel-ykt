@@ -44,7 +44,7 @@
 					</template>
 					<!-- 结算费用 单位转成元-->
 					<template v-if="column.key === 'settlementCost'">
-						<span> {{ record.settlementCost / 100 > 0 ? (record.settlementCost / 100).toFixed(2) : 0 }} </span>
+						<span> {{ record.settlementCost / 100 > 0 ? (record.settlementCost / 100) : 0 }} </span>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">

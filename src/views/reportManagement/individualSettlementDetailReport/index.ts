@@ -317,10 +317,10 @@ export const twoDecimalPlaces = (number: any): any => {
 	if (typeof number === 'string') {
 		if (number.includes('-')) {
 			number = number.slice(1);
-			return `-${Number(number / 100).toFixed(2)}`;
+			return `-${Number(number / 100)}`;
 		}
 	}
-	return Number(number / 100).toFixed(2);
+	return Number(number / 100);
 };
 // 需要/100的字段
 export const formatColumn = computed(() => (column: any) => {
