@@ -95,7 +95,14 @@
           <a-input v-model:value="form.individualReturnPlace" placeholder="请输入散客常用返回地" allowClear>
           </a-input>
         </a-form-item>
-        <a-form-item name="unitStatus" label="开业状态" v-if="formKeys?.unitStatus && form.businessType === 'HOTEL'">
+        <a-form-item name="companyState" label="企业状态" v-if="formKeys?.companyState">
+          <a-radio-group v-model:value="form.companyState">
+            <a-radio :value="0">停业</a-radio>
+            <a-radio :value="1">开业</a-radio>
+            <a-radio :value="2">暂停营业</a-radio>
+          </a-radio-group>
+        </a-form-item>
+        <!-- <a-form-item name="unitStatus" label="开业状态" v-if="formKeys?.unitStatus && form.businessType === 'HOTEL'">
           <a-radio-group v-model:value="form.unitStatus">
             <a-radio :value="0">开业</a-radio>
             <a-radio :value="1">停业</a-radio>
@@ -107,7 +114,7 @@
             <a-radio :value="true">开业</a-radio>
             <a-radio :value="false">停业</a-radio>
           </a-radio-group>
-        </a-form-item>
+        </a-form-item> -->
         <a-form-item name="hotelStarId" label="星级" v-show="formKeys?.hotelStarId">
           <a-select v-model:value="form.hotelStarId" placeholder="请选择酒店星级">
             <a-select-option v-for="item in hotelStarList" :value="item.oid" :key="item.oid">
@@ -135,12 +142,14 @@
               <span style="margin: 0 5px;">满</span>
               <a-input placeholder="请配置数字" v-model:value="form.fullRule"
                 oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')" allowClear />
+              <span style="margin: 0 5px;">人</span>
             </div>
             <a-form-item name="reduceRule" style="flex:1">
               <div style="display: flex;align-items: center;">
                 <span style="margin: 0 5px;">减</span>
                 <a-input placeholder="请配置数字" v-model:value="form.reduceRule"
                   oninput="value=value.replace(/^(-1+)|[^\d]+/g,'')" allowClear />
+                <span style="margin: 0 5px;">人</span>
               </div>
             </a-form-item>
           </div>
@@ -323,6 +332,7 @@ type detailsType = {
   accountPhone?: string,
   accountName?: string,
   unitStatus?: number | boolean,
+  companyState?: number,
   hotelStarId?: number | string,
   scenicLevel?: number | string,
   derate?: boolean,
@@ -353,7 +363,8 @@ const form = reactive<detailsType>({
   isIndividual: 1,
   name: undefined,
   businessLicenseUrl: '',
-  derate: true
+  derate: true,
+  companyState: 0
 })
 const companyId = ref()
 const radioVisible = ref(false)
@@ -422,9 +433,9 @@ const getScenicLevels = async () => {
 const optionChange = (value: string) => {
   if (value === 'HOTEL') {
     getHotelStarList();
-    form.unitStatus = 0
+    // form.unitStatus = 0
   } else if (['CATERING', 'TICKET'].includes(value)) {
-    form.unitStatus = true
+    // form.unitStatus = true
   }
   formRules.value = getFormRules(value)
   formKeys.value = getKeylist(value, 'edit')
@@ -468,14 +479,12 @@ const getParams = () => {
   } else if (form.businessType === 'CATERING') {
     // 餐厅
     const {
-      unitStatus,
       startTime,
       endTime,
       shopPhone,
       cateringDesc,
     } = form
     const cateringInfoBO = {
-      unitStatus,
       startTime,
       endTime,
       shopPhone,
@@ -488,11 +497,9 @@ const getParams = () => {
   } else if (form.businessType === 'TICKET') {
     // 景区
     const {
-      unitStatus,
       scenicLevel,
     } = form
     const scenicCompanyBo = {
-      unitStatus,
       scenicLevel,
     }
     return {
@@ -503,11 +510,9 @@ const getParams = () => {
     // 酒店
     const {
       hotelStarId,
-      unitStatus,
     } = form
     const hotelInfoBO = {
       hotelStarId,
-      unitStatus,
     }
     return {
       ...toRaw(form),
