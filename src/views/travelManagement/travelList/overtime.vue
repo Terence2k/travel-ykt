@@ -39,6 +39,7 @@
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, GroupStatus } from '@/enum'
 	import { message } from 'ant-design-vue';
+	import { cloneDeep } from 'lodash';
 
 	const travelStore = useTravelStore();
 	const router = useRouter()
@@ -104,8 +105,13 @@
 		]
 	})
 	const onSearch = async () => {
+		let params: any = {};
 		travelStore.traveList.overtime.params.status = GroupStatus.Overtime
-		const res = await travelStore.getTravelList(travelStore.traveList.overtime.params);
+		params = cloneDeep(travelStore.traveList.overtime.params)
+		params.groupType = travelStore.traveList.overtime.params.groupType === '0' ? '' : 
+		travelStore.traveList.overtime.params.groupType;
+		
+		const res = await travelStore.getTravelList(params);
 		
 		travelStore.setTraveList(res, 'overtime')
 	}
