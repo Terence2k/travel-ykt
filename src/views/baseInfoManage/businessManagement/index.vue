@@ -21,6 +21,7 @@ import apply from '@/views/baseInfoManage/businessManagement/super/apply.vue';
 import normal from '@/views/baseInfoManage/businessManagement/normal/index.vue';
 import { useRouter, useRoute } from 'vue-router';
 const router = useRouter();
+const route = useRoute()
 const goto = (name: string) => {
 	router.push({
 		name
@@ -29,18 +30,27 @@ const goto = (name: string) => {
 // const isSuper = ref(true)
 const groupId = ref()
 const type = ref()
-let userInfo = window.localStorage.getItem('userInfo');
-userInfo = JSON.parse(userInfo as string)
-const { sysCompany: { businessType, oid } } = userInfo
-groupId.value = oid
-type.value = businessType
-if (businessType === 'GROUP') {
-	// isSuper.value = false
-	goto('memberReview')
-} else {
-	// isSuper.value = true
-	goto('apply')
-}
+
+watch(
+	() => route.name,
+	(newVal) => {
+		if (newVal === 'businessManagement') {
+			let userInfo = window.localStorage.getItem('userInfo');
+			userInfo = JSON.parse(userInfo as string)
+			const { sysCompany: { businessType, oid } } = userInfo
+			groupId.value = oid
+			type.value = businessType
+			if (businessType === 'GROUP') {
+				// isSuper.value = false
+				goto('memberReview')
+			} else {
+				// isSuper.value = true
+				goto('apply')
+			}
+		}
+	},
+	{ immediate: true }
+)
 </script>
 
 <style lang="scss" scoped>
