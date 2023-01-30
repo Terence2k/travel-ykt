@@ -420,10 +420,10 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 						state.editableData[key].sourceAddressName += `/${res.cityName}`
 						state.editableData[key].cityId = res.cityId;
 					}
-					if (res.areaName) {
-						state.editableData[key].sourceAddressName += `/${res.areaName}`
-						state.editableData[key].sourceAddress = res.areaId;
-					}
+					// if (res.areaName) {
+					// 	state.editableData[key].sourceAddressName += `/${res.areaName}`
+					// 	state.editableData[key].sourceAddress = res.areaId;
+					// }
 					
 					
 					
