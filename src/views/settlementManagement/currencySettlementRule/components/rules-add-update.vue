@@ -26,7 +26,7 @@
 				</a-radio-group>
 			</a-form-item>
 			<a-form-item label="分账金额" v-if="formValidate.splitModel === 2" name="splitCount" :rules="rules.money">
-				<a-input-number v-model:value="formValidate.splitCount" placeholder="请输入分账金额（单位：元）" style="width: 100%">
+				<a-input-number v-model:value="formValidate.splitCount" placeholder="请输入分账金额（单位：元）" style="width: 100%" :min="0">
 					<template #addonAfter>
 						<span>元</span>
 					</template>
@@ -38,14 +38,14 @@
 				name="splitCount"
 				:rules="[{ required: formValidate.splitModel === 1 ? true : false, validator: isBtnZeroToHundred, trigger: 'blur' }]"
 			>
-				<a-input-number v-model:value="formValidate.splitCount" placeholder="请输入分账占比（单位：%）" style="width: 100%">
+				<a-input-number v-model:value="formValidate.splitCount" placeholder="请输入分账占比（单位：%）" style="width: 100%" :min="0">
 					<template #addonAfter>
 						<span>%</span>
 					</template>
 				</a-input-number>
 			</a-form-item>
 			<a-form-item label="优先级" name="level">
-				<a-input-number v-model:value="formValidate.level" placeholder="请输入优先级" />
+				<a-input-number v-model:value="formValidate.level" placeholder="请输入优先级" :min="0" />
 			</a-form-item>
 		</a-form>
 		<template v-slot:footer>

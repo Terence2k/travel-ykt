@@ -11,11 +11,12 @@ interface OptionsProp {
   headers?: any;
   data?: any;
   showLoading?: boolean;
-  responseType?: ResponseType
+  responseType?: ResponseType;
+  timeout?: number;
 }
 // responseType:'stream'
 const fetch = async (options: OptionsProp) => {
-  const { method = "get", data, url, headers = {}, showLoading, responseType } = options;
+  const { method = "get", data, url, headers = {}, showLoading, responseType, timeout = 5000 } = options;
 
   const cloneData = cloneDeep(data);
 
@@ -30,7 +31,8 @@ const fetch = async (options: OptionsProp) => {
         params: cloneData,
         method: 'GET',
         headers,
-        responseType
+        responseType,
+        timeout
       });
     case "post":
       return axios.request({
@@ -38,7 +40,8 @@ const fetch = async (options: OptionsProp) => {
         data,
         method: 'POST',
         headers,
-        responseType
+        responseType,
+        timeout
       });
     case "put":
       return axios.request({
@@ -46,7 +49,8 @@ const fetch = async (options: OptionsProp) => {
         data,
         method: 'PUT',
         headers,
-        responseType
+        responseType,
+        timeout
       });
       case "delete":
       return axios.request({
@@ -54,7 +58,8 @@ const fetch = async (options: OptionsProp) => {
         data,
         method: 'DELETE',
         headers,
-        responseType
+        responseType,
+        timeout
       });
     /**
      * {
@@ -77,7 +82,8 @@ const fetch = async (options: OptionsProp) => {
           "Content-Type": "multipart/form-data",
           ...headers,
         },
-        responseType
+        responseType,
+        timeout
       });
     default:
       return axios.request(options);
