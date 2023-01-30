@@ -171,6 +171,20 @@
 			<a-form-item label="自编团号">
 				<a-input v-model:value="formState.selfTeamNo" placeholder="请输入自编团号" />
 			</a-form-item>
+			<a-form-item label="保险购买方：" name="insuranceStatus">
+				<a-select 
+					v-model:value="travelStore.insuranceStatus" 
+					placeholder="请选择保险购买方" >
+					<a-select-option 
+						:value="key" 
+						:name="item"
+						v-for="(item, key) in INSURANCE" 
+						:key="key">
+						{{item}}
+					</a-select-option>
+				</a-select>
+			</a-form-item>
+			<a-radio v-model:checked="travelStore.checkInsurance"> 我已阅读并同意<a>《云南省团队旅游保险购买政策》</a>、<a>《一卡通平台免责声明》</a></a-radio>
 		</a-form>
 	</div>
 	<BaseModal v-model="dialogVisible" title="选择行程单模板" :text="{confirm: '确认', cancel: '取消'}" :onOk="handleOk">
@@ -193,6 +207,7 @@
 import { disabledRangeTime, generateGuid, getAmount, getUserInfo, disabledDateTime, disabledHours, disabledMinutes, disabledSeconds } from '@/utils/util';
 import { ConfirmDailyCharge, FeeModel, GroupMode, RouteType } from '@/enum';
 import api from '@/api/index';
+import { INSURANCE } from '@/constant';
 import BaseModal from '@/components/common/BaseModal.vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import dayjs, { Dayjs } from 'dayjs';
@@ -594,7 +609,7 @@ getTravelTemplateList();
 </script>
 <style lang="less" scoped>
 	.base-info-container {
-		padding: 0 20px;
+		padding: 0 20px 100px;
 	}
 	.import-btn {
 		display: flex;
