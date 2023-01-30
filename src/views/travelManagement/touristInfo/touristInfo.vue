@@ -199,7 +199,9 @@ const {
 		margin-left: 16px;
 	}
 }
-
+.img-container{
+	margin-top: -22px !important;
+}
 .upload-img,::v-deep(.ant-upload-drag) {
 	width: 64px !important;
 	height: 34px !important;

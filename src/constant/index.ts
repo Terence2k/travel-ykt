@@ -48,7 +48,7 @@ export const TICKET = {
 }
 
 export const INSURANCE = {
-    [Insurance.NOTSURE]: '没有确认',
+    // [Insurance.NOTSURE]: '没有确认',
     [Insurance.SUBBUY]: '应地接社购买',
     [Insurance.TEAMBUY]: '组团社确认已购买'
 }
