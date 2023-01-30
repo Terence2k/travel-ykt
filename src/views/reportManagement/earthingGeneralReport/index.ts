@@ -306,7 +306,7 @@ export const getRulePrice = computed(() => (record: any, column: any) => {
 						column.title === record[ruleColumnKey][key].ruleList[subKey].ruleName &&
 						Number(column.type) === Number(record[ruleColumnKey][key].ruleList[subKey].type)
 					) {
-						return `${record[ruleColumnKey][key].ruleList[subKey].rulePrice}`;
+						return `${amountYuanHandleFun(record[ruleColumnKey][key].ruleList[subKey].rulePrice)}`;
 					}
 				}
 			}
@@ -316,7 +316,7 @@ export const getRulePrice = computed(() => (record: any, column: any) => {
 	if (record[ruleColumnKey] && record[ruleColumnKey].ruleList && record[ruleColumnKey].ruleList.length) {
 		for (const key in record[ruleColumnKey].ruleList) {
 			if (column.title === record[ruleColumnKey].ruleList[key].ruleName && Number(column.type) === Number(record[ruleColumnKey].ruleList[key].type)) {
-				return `${record[ruleColumnKey].ruleList[key].rulePrice}`;
+				return `${amountYuanHandleFun(record[ruleColumnKey].ruleList[key].rulePrice)}`;
 			}
 		}
 	}
@@ -364,45 +364,20 @@ export const getSettlementRuleGuide = computed(() => (column, record) => {
 });
 // 金额单位处理 分--元
 export const amountHandle = computed(() => (num: any) => {
-	let str = num / 100 > 0 ? (num / 100) : 0;
+	let str = num / 100 > 0 ? num / 100 : 0;
 	return str.toString();
 });
 const amountHandleFun = (num: any) => {
-	let str = num / 100 > 0 ? (num / 100) : 0;
+	let str = num / 100 > 0 ? num / 100 : 0;
 	return str.toString();
 };
 // 金额单位处理 分--元
 export const amountYuanHandle = computed(() => (num: any) => {
-	let str = num / 100 > 0 ? (num / 100) : 0;
+	let str = num / 100 > 0 ? num / 100 : 0;
 	return str.toString();
 });
 const amountYuanHandleFun = (num: any) => {
-	let str = num / 100 > 0 ? (num / 100) : 0;
+	let str = num / 100 > 0 ? num / 100 : 0;
 	return str.toString();
 };
-// 数字千位分隔符处理
-const fillNumberWithComma = (num: any) => {
-	let str = String(num);
-	return str.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-};
-// 金额格式化（元、万元、亿元）
-export const numberFormat = computed(() => (value: any) => {
-	var param = {
-		value: '', // 数值
-		unit: '', // 单位
-	};
-	var k = 10000,
-		sizes = ['', '万元', '亿'],
-		i;
-	// 直接赋予元的单位
-	if (value < k) {
-		param.value = Number(value);
-		param.unit = '元';
-	} else {
-		i = Math.floor(Math.log(value) / Math.log(k));
-		param.value = (value / Math.pow(k, i));
-		param.unit = sizes[i];
-	}
-	let num = fillNumberWithComma(param.value);
-	return num + param.unit;
-});
+
