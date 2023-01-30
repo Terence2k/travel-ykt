@@ -41,6 +41,7 @@ import BaseModal from '@/components/common/BaseModal.vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import { GroupMode, GroupStatus } from '@/enum';
 import { message } from 'ant-design-vue';
+import { cloneDeep } from 'lodash';
 const travelStore = useTravelStore();
 const router = useRouter();
 const modelValue = ref(false);
@@ -113,8 +114,13 @@ const state = reactive({
 	],
 });
 const onSearch = async () => {
-	travelStore.traveList.haveABall.params.status = GroupStatus.HaveABall;
-	const res = await travelStore.getTravelList(travelStore.traveList.haveABall.params);
+	let params: any = {};
+	travelStore.traveList.haveABall.params.status = GroupStatus.HaveABall
+	params = cloneDeep(travelStore.traveList.haveABall.params)
+	params.groupType = travelStore.traveList.haveABall.params.groupType === '0' ? '' : 
+	travelStore.traveList.haveABall.params.groupType;
+	
+	const res = await travelStore.getTravelList(params);
 
 	travelStore.setTraveList(res, 'haveABall');
 };

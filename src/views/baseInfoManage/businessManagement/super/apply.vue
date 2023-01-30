@@ -11,10 +11,17 @@
 				:key="activeKey">
 			</address-selector>
 		</search-item>
-		<search-item label="启用状态">
+		<!-- <search-item label="启用状态">
 			<a-select ref="select" placeholder="请选择启用状态" v-model:value="tableData.param.onOff" allowClear>
 				<a-select-option :value="1">已启用</a-select-option>
 				<a-select-option :value="0">已禁用</a-select-option>
+			</a-select>
+		</search-item> -->
+		<search-item label="企业状态">
+			<a-select ref="select" placeholder="请选择状态" v-model:value="tableData.param.companyState" allowClear>
+				<a-select-option :value="0">停业</a-select-option>
+				<a-select-option :value="1">开业</a-select-option>
+				<a-select-option :value="2">暂停营业</a-select-option>
 			</a-select>
 		</search-item>
 		<search-item label="企业名称">
@@ -75,6 +82,9 @@
 						<template v-if="column.key === 'creditCode'">
 							{{ record?.creditCode || '/' }}
 						</template>
+						<template v-if="column.key === 'companyState'">
+							{{ companyStateName(record.companyState) }}
+						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
 								<a @click="disable(record)" v-if="record?.onOff" v-permission="'已审核_禁用'">禁用</a>
@@ -83,7 +93,7 @@
 								<!-- <a @click="resetPassword(record.oid)" v-permission="'已审核_重置密码'">重置密码</a> -->
 								<!-- <a @click="edit(record)" v-show="editVisible(record?.businessType)" v-permission="'已审核_编辑'">编辑</a> -->
 								<a @click="edit(record)" v-permission="'已审核_编辑'">编辑</a>
-								<a v-for="item in companyStateBtn(record.companyState)"
+								<a v-for="item in companyStateBtn(record)"
 									@click="updateCompanyState({ operation: item.state, oid: record.oid })"
 									v-permission="`已审核_${item.name}`">{{ item.name }}</a>
 								<a v-permission="'已审核_去认证'" v-if="record.icbcStatus === 1" @click="toIcbc(record.oid)">去认证</a>
@@ -106,6 +116,9 @@
 						</template>
 						<template v-if="column.key === 'creditCode'">
 							{{ record?.creditCode || '/' }}
+						</template>
+						<template v-if="column.key === 'companyState'">
+							{{ companyStateName(record.companyState) }}
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
@@ -132,6 +145,9 @@
 						</template>
 						<template v-if="column.key === 'creditCode'">
 							{{ record?.creditCode || '/' }}
+						</template>
+						<template v-if="column.key === 'companyState'">
+							{{ companyStateName(record.companyState) }}
 						</template>
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
@@ -434,7 +450,7 @@ const commonColumns = [
 		key: 'regionName',
 	},
 	{
-		title: '统一社会信用代码',
+		title: '企业信用代码',
 		dataIndex: 'creditCode',
 		key: 'creditCode',
 	},
@@ -452,6 +468,11 @@ const commonColumns = [
 		title: '联系人',
 		dataIndex: 'contactName',
 		key: 'contactName',
+	},
+	{
+		title: '企业状态',
+		dataIndex: 'companyState',
+		key: 'companyState',
 	},
 	{
 		title: '认证状态',
@@ -540,7 +561,7 @@ const state = reactive({
 			pageNo: 1,
 			pageSize: 10,
 			auditStatus: 2,
-			onOff: undefined,
+			companyState: undefined,
 			...commonParams
 		},
 	},
@@ -614,26 +635,46 @@ const changeKeys = ref<string[]>([])
 2.停业状态下可以操作开业（原启用）、暂停营业
 3.开业状态下可以操作停业（原禁用）、暂停营业
 4.暂停营业状态下可以操作停业、开业 */
-const companyStateBtn = computed(() => (state: number) => {
-	const val = {
-		name: '停业',
-		state: 0
+const companyStateBtn = computed(() => ({ companyState, businessType }: { companyState: number, businessType: string }) => {
+	if (['HOTEL', 'CATERING', 'TICKET',].includes(businessType)) {
+		const val = {
+			name: '停业',
+			state: 0
+		}
+		const val1 = {
+			name: '开业',
+			state: 1
+		}
+		const val2 = {
+			name: '暂停营业',
+			state: 2
+		}
+		if (companyState === 0) {
+			return [val1, val2]
+		} else if (companyState === 1) {
+			return [val, val2]
+		} else if (companyState === 2) {
+			return [val, val1]
+		}
 	}
-	const val1 = {
-		name: '开业',
-		state: 1
+})
+const companyStateName = computed(() => (val: number) => {
+	let res
+	switch (val) {
+		case 0:
+			res = '停业'
+			break
+		case 1:
+			res = '开业'
+			break
+		case 2:
+			res = '暂停营业'
+			break
+		default:
+			res = '/'
+			break
 	}
-	const val2 = {
-		name: '暂停营业',
-		state: 2
-	}
-	if (state === 0) {
-		return [val1, val2]
-	} else if (state === 1) {
-		return [val, val2]
-	} else if (state === 2) {
-		return [val, val1]
-	}
+	return res
 })
 const regionChange = () => {
 	switch (activeKey.value) {

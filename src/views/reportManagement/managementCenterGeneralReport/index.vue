@@ -44,7 +44,7 @@
 	<div>
 		<a-spin size="large" :spinning="state.tableData.loading">
 			<!--  -->
-			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }" bordered>
+			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }">
 				<template #bodyCell="{ column, record }">
 					<!-- 结算规则 -->
 					<template v-if="column.key === 'ruleMap'"> {{ getRulePrice(record, column) }} </template>
@@ -313,4 +313,15 @@ const reset = () => {
 	initList();
 };
 </script>
-<style scoped lang="less"></style>
+<style scoped lang="less">
+::v-deep(.ant-table-thead > tr > th, .ant-table-tbody > tr > td, .ant-table tfoot > tr > th, .ant-table tfoot > tr > td) {
+	padding: 16px 0;
+}
+::v-deep(.ant-table-thead > tr > th) {
+	text-align: center;
+}
+::v-deep(.ant-table-thead > tr > th) {
+	border-right: 1px solid #f0f0f0;
+	border-bottom: 1px solid #f0f0f0 !important;
+}
+</style>

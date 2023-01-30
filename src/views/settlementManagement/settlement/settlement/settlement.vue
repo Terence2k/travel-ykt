@@ -10,11 +10,11 @@
 			<template #bodyCell="{ column, record }">
 				<!-- 行程费用 单位转成元-->
 				<template v-if="column.key === 'totalFee'">
-					{{ (record.totalFee / 100) > 0 ? (record.totalFee / 100).toFixed(2) : 0}}
+					{{ (record.totalFee / 100) > 0 ? (record.totalFee / 100) : 0}}
 				</template>
 				<!-- 结算金额 单位转成元-->
 				<template v-if="column.key === 'accountingFee'">
-					{{ (record.accountingFee / 100) > 0 ? (record.accountingFee / 100).toFixed(2) : 0}}
+					{{ (record.accountingFee / 100) > 0 ? (record.accountingFee / 100) : 0}}
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
