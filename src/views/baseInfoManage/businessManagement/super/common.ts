@@ -33,7 +33,7 @@ const keyNameList1 = {
 // 酒店
 const keyNameList2 = {
   ...keyNameList1,
-  unitStatus: '开业状态', //  1-开业 0-停业
+  companyState: '企业状态', //  0.停业  1.开业  2.暂停营业
   hotelStarCode: '星级',
   derate: '是否支持减免', // false-否 true-是
   reduceRules: '减免规则',
@@ -41,7 +41,7 @@ const keyNameList2 = {
 // 酒店
 const editKeyNameList2 = {
   ...keyNameList1,
-  unitStatus: '开业状态', //  1-开业 0-停业
+  companyState: '企业状态', //  0.停业  1.开业  2.暂停营业
   hotelStarId: '星级',
   derate: '是否支持减免', // false-否 true-是
   reduceRules: '减免规则',
@@ -49,7 +49,7 @@ const editKeyNameList2 = {
 // 景区
 const keyNameList3 = {
   ...keyNameList1,
-  unitStatus: '开业状态', //  1-开业 0-停业
+  companyState: '企业状态', //  0.停业  1.开业  2.暂停营业
   scenicLevel: '等级',
   derate: '是否支持减免', // false-否 true-是
   reduceRules: '减免规则',
@@ -57,7 +57,7 @@ const keyNameList3 = {
 // 餐厅
 const keyNameList4 = {
   ...keyNameList1,
-  unitStatus: '开业状态', //  0-开业 1-停业
+  companyState: '企业状态', //  0.停业  1.开业  2.暂停营业
   rangeTime: '营业时间',
   shopPhone: '店铺联系电话',
   cateringDesc: '其他'
@@ -65,7 +65,7 @@ const keyNameList4 = {
 // 餐厅
 const editKeyNameList4 = {
   ...keyNameList1,
-  unitStatus: '开业状态', //  0-开业 1-停业
+  companyState: '企业状态', //  0.停业  1.开业  2.暂停营业
   startTime: '开始营业时间', // '营业时间',
   endTime: '结束营业时间',
   shopPhone: '店铺联系电话',
@@ -173,7 +173,7 @@ const commonFormRules: Record<string, Rule[]> = {
 }
 const hotelCommonFormRules: Record<string, Rule[]> = {
   ...commonFormRules,
-  unitStatus: [{ required: true, trigger: 'blur', message: '请选择企业状态' }],
+  companyState: [{ required: true, trigger: 'blur', message: '请选择企业状态' }],
   hotelStarId: [{ required: true, trigger: 'blur', message: '请选择酒店星级' }],
   derate: [{ required: true, trigger: 'blur', message: '请选择是否支持减免' }],
   fullRule: [{ required: true, trigger: 'blur', message: '请输入减免规则' }],
@@ -181,14 +181,14 @@ const hotelCommonFormRules: Record<string, Rule[]> = {
 }
 const cateringCommonFormRules: Record<string, Rule[]> = {
   ...commonFormRules,
-  unitStatus: [{ required: true, trigger: 'blur', message: '请选择企业状态' }],
+  companyState: [{ required: true, trigger: 'blur', message: '请选择企业状态' }],
   /* startTime: [{ required: true, trigger: 'blur', message: '请选择开始营业时间' }],
   endTime: [{ required: true, trigger: 'blur', message: '请选择结束营业时间' }],
   shopPhone: [{ required: true, trigger: 'blur', message: '请输入店铺联系电话' }]'', */
 }
 const ticketCommonFormRules: Record<string, Rule[]> = {
   ...commonFormRules,
-  unitStatus: [{ required: true, trigger: 'blur', message: '请选择企业状态' }],
+  companyState: [{ required: true, trigger: 'blur', message: '请选择企业状态' }],
   scenicLevel: [{ required: true, trigger: 'blur', message: '请选择景区等级' }],
   derate: [{ required: true, trigger: 'blur', message: '请选择是否支持减免' }],
   fullRule: [{ required: true, trigger: 'blur', message: '请输入减免规则' }],

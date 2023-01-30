@@ -18,7 +18,7 @@
     <CommonTable :dataSource="tableData.data" :columns="columns">
       <template #button>
         <div class="tips">已同步 <span style="color:#de0025;">{{ tableData.total }}</span> 名一机管平台导游，最后一次同步时间：{{
-            tableData.total
+          tableData.total
         }}
         </div>
         <a-button type="primary" @click="synchronizationVisible = true" v-permission="'一键同步'">一键同步</a-button>
@@ -30,8 +30,10 @@
         <template v-if="column.key === 'action'">
           <div class="action-btns">
             <a @click="checkDetails(record)" v-permission="'查看'">查看</a>
-            <a @click="changGuideStatus(record.guideStatus, record)" v-permission="record.guideStatus === 1 ? '禁用' : '启用'">{{ record.guideStatus === 1 ? '禁用' : '启用'
-            }}</a>
+            <a @click="changGuideStatus(record.guideStatus, record)"
+              v-permission="record.guideStatus === 1 ? '禁用' : '启用'">{{
+                record.guideStatus === 1 ? '禁用' : '启用'
+              }}</a>
           </div>
         </template>
       </template>
@@ -290,29 +292,28 @@ const changGuideStatus = async (guideStatus: number, record: any) => {
     enableVisible.value = true
   }
 }
-const disableConform = async () => {
+const disableConform = () => {
   disableVisible.value = false
   const params = {
     oid: oid.value,
     status: 0
   }
-  let res = await api.editGuideStatus(params)
-  if (res === null) {
+  api.editGuideStatus(params).then(() => {
     disableResVisible.value = true
     onSearch();
-  }
+  })
 }
-const enableConform = async () => {
+const enableConform = () => {
   enableVisible.value = false
   const params = {
     oid: oid.value,
     status: 1
   }
-  let res = await api.editGuideStatus(params)
-  if (res === null) {
+  api.editGuideStatus(params).then(() => {
     enableResVisible.value = true
     onSearch();
-  }
+  })
+
 }
 const synchronizationConform = async () => {
   synchronizationWaitingVisible.value = true
