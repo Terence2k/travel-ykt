@@ -4,13 +4,13 @@ export const fixedColumn: Array<any> = [
 		title: '团单编号',
 		dataIndex: 'itineraryNo',
 		key: 'itineraryNo',
-		width: 100,
+		width: 150,
 	},
 	{
 		title: '自编团号',
 		dataIndex: 'privateNo',
 		key: 'privateNo',
-		width: 100,
+		width: 130,
 	},
 	{
 		title: '景区名称',
@@ -163,10 +163,10 @@ export const twoDecimalPlaces = (number: any): string => {
 	if (typeof number === 'string') {
 		if (number.includes('-')) {
 			number = number.slice(1);
-			return `-${Number(number / 100).toFixed(2)}`;
+			return `-${Number(number / 100)}`;
 		}
 	}
-	return Number(number / 100).toFixed(2);
+	return Number(number / 100);
 };
 export const getAllPrice = computed(() => (column: any, record: any): string => {
 	const priceArray = ['breaksPrice', 'ticketPrice', 'scenicPrice', 'unitPrice', 'ticketUnitPrice', 'orderPrice', 'unSettlementPrice'];

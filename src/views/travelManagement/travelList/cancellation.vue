@@ -38,6 +38,7 @@
 
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, GroupStatus } from '@/enum'
+	import { cloneDeep } from 'lodash';
 
 	const travelStore = useTravelStore();
 	const router = useRouter()
@@ -104,8 +105,13 @@
 		]
 	})
 	const onSearch = async () => {
+		let params: any = {};
 		travelStore.traveList.cancellation.params.status = GroupStatus.Cancellation
-		const res = await travelStore.getTravelList(travelStore.traveList.cancellation.params);
+		params = cloneDeep(travelStore.traveList.cancellation.params)
+		params.groupType = travelStore.traveList.cancellation.params.groupType === '0' ? '' : 
+		travelStore.traveList.cancellation.params.groupType;
+		
+		const res = await travelStore.getTravelList(params);
 		
 		travelStore.setTraveList(res, 'cancellation')
 	}

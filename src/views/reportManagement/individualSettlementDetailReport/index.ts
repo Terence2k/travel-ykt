@@ -5,7 +5,7 @@ export const fixedColumn: Array<any> = [
 		title: '团单编号',
 		dataIndex: 'itineraryNo',
 		key: 'itineraryNo',
-		width: 100,
+		width: 150,
 	},
 	{
 		title: '发团旅行社',
@@ -23,7 +23,7 @@ export const fixedColumn: Array<any> = [
 		title: '自编团号',
 		dataIndex: 'privateNo',
 		key: 'privateNo',
-		width: 100,
+		width: 130,
 	},
 	{
 		title: '团单类型',
@@ -305,7 +305,7 @@ export const getRulePrice = computed(() => (record: any, column: any) => {
 			}
 		}
 	}
-	return `暂无数据`;
+	return ``;
 });
 
 //获取所有父子级嵌套数据值
@@ -317,10 +317,10 @@ export const twoDecimalPlaces = (number: any): any => {
 	if (typeof number === 'string') {
 		if (number.includes('-')) {
 			number = number.slice(1);
-			return `-${Number(number / 100).toFixed(2)}`;
+			return `-${Number(number / 100)}`;
 		}
 	}
-	return Number(number / 100).toFixed(2);
+	return Number(number / 100);
 };
 // 需要/100的字段
 export const formatColumn = computed(() => (column: any) => {

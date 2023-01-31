@@ -87,6 +87,9 @@ const getComputedVal = computed(() => (key: string | number, val: any) => {
       case 2:
         res = '暂停营业'
         break
+      default:
+        res = '/'
+        break
     }
     return res
   } else if (key === 'derate') {

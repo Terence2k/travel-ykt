@@ -40,6 +40,7 @@
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, GroupStatus } from '@/enum'
 	import { message } from 'ant-design-vue';
+	import { cloneDeep } from 'lodash';
 
 
 	const travelStore = useTravelStore();
@@ -106,8 +107,13 @@
 		]
 	})
 	const onSearch = async () => {
+		let params: any = {};
 		travelStore.traveList.waitingTask.params.status = GroupStatus.WaitingTask
-		const res = await travelStore.getTravelList(travelStore.traveList.waitingTask.params);
+		params = cloneDeep(travelStore.traveList.waitingTask.params)
+		params.groupType = travelStore.traveList.waitingTask.params.groupType === '0' ? '' : 
+		travelStore.traveList.waitingTask.params.groupType;
+		
+		const res = await travelStore.getTravelList(params);
 		travelStore.setTraveList(res, 'waitingTask')
 	}
 	const onHandleCurrentChange = (e:any) => {

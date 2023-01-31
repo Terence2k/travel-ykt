@@ -66,23 +66,23 @@
 					</template> -->
 					<!-- 预订金额 单位转成元-->
 					<template v-if="column.key === 'scheduledAmount'">
-						{{ record.scheduledAmount / 100 > 0 ? (record.scheduledAmount / 100).toFixed(2) : 0 }}
+						{{ record.scheduledAmount / 100 > 0 ? (record.scheduledAmount / 100) : 0 }}
 					</template>
 					<!-- 未核销金额 单位转成元-->
 					<template v-if="column.key === 'noVerificationAmount'">
-						{{ record.noVerificationAmount / 100 > 0 ? (record.noVerificationAmount / 100).toFixed(2) : 0 }}
+						{{ record.noVerificationAmount / 100 > 0 ? (record.noVerificationAmount / 100) : 0 }}
 					</template>
 					<!-- 实际减免金额 单位转成元-->
 					<template v-if="column.key === 'actualFullAmount'">
-						{{ record.actualFullAmount / 100 > 0 ? (record.actualFullAmount / 100).toFixed(2) : 0 }}
+						{{ record.actualFullAmount / 100 > 0 ? (record.actualFullAmount / 100) : 0 }}
 					</template>
 					<!-- 实际金额 单位转成元-->
 					<template v-if="column.key === 'actualAmount'">
-						{{ record.actualAmount / 100 > 0 ? (record.actualAmount / 100).toFixed(2) : 0 }}
+						{{ record.actualAmount / 100 > 0 ? (record.actualAmount / 100) : 0 }}
 					</template>
 					<!-- 酒店实收 单位转成元-->
 					<template v-if="column.key === 'hotelPrice'">
-						{{ record.hotelPrice / 100 > 0 ? (record.hotelPrice / 100).toFixed(2) : 0 }}
+						{{ record.hotelPrice / 100 > 0 ? (record.hotelPrice / 100) : 0 }}
 					</template>
 					<!-- 结算规则 -->
 					<template v-if="column.key === 'settlementRuleName'">
@@ -188,19 +188,19 @@ const columns = computed(() => {
 			title: '订单号',
 			dataIndex: 'orderNo',
 			key: 'orderNo',
-			width: 100,
+			width: 150,
 		},
 		{
 			title: '团单编号',
 			dataIndex: 'itineraryNo',
 			key: 'itineraryNo',
-			width: 100,
+			width: 150,
 		},
 		{
 			title: '自编团号',
 			dataIndex: 'privateNo',
 			key: 'privateNo',
-			width: 100,
+			width: 130,
 		},
 		{
 			title: '旅行社',
@@ -212,7 +212,7 @@ const columns = computed(() => {
 			title: '结算时间',
 			dataIndex: 'settlementTime',
 			key: 'settlementTime',
-			width: 100,
+			width: 130,
 		},
 		{
 			title: '酒店名称',
@@ -224,7 +224,7 @@ const columns = computed(() => {
 			title: '核销时间',
 			dataIndex: 'verificationTime',
 			key: 'verificationTime',
-			width: 100,
+			width: 130,
 		},
 		{
 			title: '入住情况',
@@ -251,13 +251,13 @@ const columns = computed(() => {
 					title: '入住时间',
 					dataIndex: 'arrivalDate',
 					key: 'arrivalDate',
-					width: 100,
+					width: 130,
 				},
 				{
 					title: '离店时间',
 					dataIndex: 'departureDate',
 					key: 'departureDate',
-					width: 100,
+					width: 130,
 				},
 				{
 					title: '预订金额(元)',
@@ -397,7 +397,7 @@ const getSettlementRule = computed(() => (column: TableColumnsType, record: Data
 	for (const key in data) {
 		if (column.title === data[key].costName) {
 			let price: any = data[key].settlementCost;
-			return price / 100 > 0 ? (price / 100).toFixed(2) : 0;
+			return price / 100 > 0 ? (price / 100) : 0;
 		}
 	}
 	return '';
