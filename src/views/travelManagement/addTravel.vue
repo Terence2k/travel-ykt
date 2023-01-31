@@ -12,7 +12,10 @@
 		</div>
 		<div class="footer d-flex justify-content-between" v-if="travelStore.teamStatus">
 			<div class="footer-btn">
+				
+				<a-button v-show="activeKey < pages.length - 1" type="primary" @click="activeKey = activeKey + 1">下一步</a-button>
 				<a-button
+					class="save"
 					type="primary"
 					@click="
 						() => {
@@ -21,9 +24,8 @@
 							isSaveBtn = true;
 						}
 					"
-					>保存</a-button
+					>保存草稿</a-button
 				>
-				<a-button v-show="activeKey < pages.length - 1" type="primary" @click="activeKey = activeKey + 1">下一步</a-button>
 			</div>
 			<div
 				class="submit-btn"
@@ -446,5 +448,15 @@ travelStore.getItineraryStatus();
 	justify-content: end;
 	margin-right: 20px;
 	margin-top: 20px;
+}
+.footer-btn {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex: 1;
+	.save {
+		margin-right: 90px;
+		margin-top: -90px;
+	}
 }
 </style>
