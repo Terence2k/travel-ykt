@@ -1,4 +1,7 @@
 <template>
+	<div class="print-container">
+		<travelDetail :travelOid="state.travelOid" />
+	</div>
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
 			<template #bodyCell="{ column, text, index, record }">
@@ -32,9 +35,7 @@
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
 		/>
-		<div class="print-container">
-			<travelDetail :travelOid="state.travelOid" />
-		</div>
+		
 	</div>
 	
 </template>
