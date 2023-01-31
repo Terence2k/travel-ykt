@@ -121,11 +121,11 @@ const sendGroup = async (id: string) => {
 	const formData = new FormData();
 	formData.append('itineraryId', id);
 	try {
-		await api.travelManagement.sendGroup(formData);
+		const res = await api.travelManagement.sendGroup(formData);
 		Modal.success({
 			title: '发团成功',
 			content: h('div', {}, [
-				h('p', `已提交审核，请耐心等待。本次行程单号: ${travelStore.baseInfo.itineraryNo}，可复制后使用。`)
+				h('p', `已提交财务审核资金，预冻结费用：${accDiv(res, 100)}元，请耐心等待审核。本次行程单号: ${travelStore.baseInfo.itineraryNo}，可复制后使用。`)
 			]),
 			closable: true,
 			okText: '复制行程单号',
