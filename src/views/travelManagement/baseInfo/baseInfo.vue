@@ -99,8 +99,36 @@
 				</a-form-item>
 			</div>
 
-			<a-form-item label="游客人数" name="touristNum">
-				<a-input v-model:value="touristListCount" placeholder="添加游客名单后自动计算"  disabled/>
+			<a-form-item label="游客到丽方式" name="toLjWay">
+				<a-select 
+					v-model:value="formState.toLjWay" 
+					placeholder="请选择游客到丽方式" >
+					<a-select-option 
+						:value="item.codeValue" 
+						:name="item.name"
+						v-for="item in list.trafficWay" 
+						:key="item.oid">
+						{{item.name}}
+					</a-select-option>
+				</a-select>
+			</a-form-item>
+
+			<a-form-item label="游客离丽方式" name="leaveLjWay">
+				<a-select 
+					v-model:value="formState.leaveLjWay" 
+					placeholder="请选择游客离丽方式" >
+					<a-select-option 
+						:value="item.codeValue" 
+						:name="item.name"
+						v-for="item in list.trafficWay" 
+						:key="item.oid">
+						{{item.name}}
+					</a-select-option>
+				</a-select>
+			</a-form-item>
+
+			<a-form-item label="游客人数" name="touristCount">
+				<a-input v-model:value="formState.touristCount" placeholder="请输入游客人数，确保和游客名单中数量一致" />
 			</a-form-item>
 
 			<!-- <a-form-item label="线路类型" name="routeType">
@@ -207,7 +235,7 @@
 import { disabledRangeTime, generateGuid, getAmount, getUserInfo, disabledDateTime, disabledHours, disabledMinutes, disabledSeconds } from '@/utils/util';
 import { ConfirmDailyCharge, FeeModel, GroupMode, RouteType } from '@/enum';
 import api from '@/api/index';
-import { INSURANCE } from '@/constant';
+import { CODEVALUE, INSURANCE } from '@/constant';
 import BaseModal from '@/components/common/BaseModal.vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import dayjs, { Dayjs } from 'dayjs';
@@ -221,7 +249,8 @@ interface TeamType {
 	teamType: Array<any>;
 	subTravelList: Array<any>;
 	travelOperatorList: Array<any>;
-	templateList: Array<any>
+	templateList: Array<any>,
+	trafficWay: Array<any>
 }
 
 const travelStore = useTravelStore();
@@ -244,7 +273,8 @@ const list = reactive<TeamType>({
 	teamType: [],
 	subTravelList: [],
 	travelOperatorList: [],
-	templateList: []
+	templateList: [],
+	trafficWay: []
 })
 const formRef = ref();
 
@@ -396,6 +426,7 @@ const rulesRef = {
 	// startDate: [{ required: true, message: '请选择行程开始时间' }],
 	// endDate: [{ required: true, message: '请选择行程结束时间' }],
 	time: [{ required: true, message: '请选择行程时间' }],
+	touristCount: [{ required: true, message: '请输入游客人数' }],
 	subTravelOperatorOid: [{ required: true, message: '请选择计调' }],
 	subTravelOid: [{ required: true, message: '请选择地接旅行社'}]
 };
@@ -406,7 +437,9 @@ const formState = ref<{[k:string]: any}>(route.query.id ? computed(() => travelS
 // 开始时间限制
 const disabledDateStart = (current: Dayjs) => {
 	if (formState.value.endDate) {
-		return current && current > dayjs(formState.value.endDate).startOf('day');
+		return current && current > dayjs(formState.value.endDate).startOf('day') || current < dayjs().startOf('day');
+	} else {
+		return current && current < dayjs().startOf('day')
 	}
 	
 }
@@ -450,7 +483,12 @@ const handleChange = (event: any, option: any) => {
 	formState.value.subTravelOperatorName = option.name
 }
 
+const getTravelWay = async () => {
+	const codeValue = CODEVALUE.TRAVE_CODE.LJ_TRAVEL_WAY;
+	const res = await api.commonApi.getCodeValue({ codeValue });
+	list.trafficWay = res;
 
+}
 
 const handleChangeTime = (event: any) => {
 	let dis = null;
@@ -606,6 +644,7 @@ watch(() => [formState.value.startDate, formState.value.endDate], ([newStar, new
 getTeamTypeList();
 getSubtravelList();
 getTravelTemplateList();
+getTravelWay();
 </script>
 <style lang="less" scoped>
 	.base-info-container {

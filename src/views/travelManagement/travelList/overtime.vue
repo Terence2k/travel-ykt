@@ -1,4 +1,7 @@
 <template>
+	<div class="print-container">
+		<travelDetail ref="travelDetailRef" />
+	</div>
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
 			<template #bodyCell="{ column, text, index, record }">
@@ -17,6 +20,7 @@
 						<a @click="revokeGroupToDraft(record.oid)" v-permission="'已过期_置为草稿'">置为草稿</a>
 						<a @click="goToLog(record)" v-permission="'已过期_查看日志'">查看日志</a>
 						<a @click="goToPath(record)" v-permission="'已过期_查看行程'">查看行程</a>
+						<a @click="getPrint(record)" v-permission="'已过期_打印'">打印</a>
 					</div>
 				</template>
 			</template>
@@ -39,9 +43,11 @@
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, GroupStatus } from '@/enum'
 	import { message } from 'ant-design-vue';
-
+	import { cloneDeep } from 'lodash';
+	import travelDetail from '../travelDetail.vue';
 	const travelStore = useTravelStore();
 	const router = useRouter()
+	const travelDetailRef = ref();
 	const state = reactive({
 		total: computed(() => travelStore.traveList.overtime.total),
 		params: {
@@ -104,8 +110,13 @@
 		]
 	})
 	const onSearch = async () => {
+		let params: any = {};
 		travelStore.traveList.overtime.params.status = GroupStatus.Overtime
-		const res = await travelStore.getTravelList(travelStore.traveList.overtime.params);
+		params = cloneDeep(travelStore.traveList.overtime.params)
+		params.groupType = travelStore.traveList.overtime.params.groupType === '0' ? '' : 
+		travelStore.traveList.overtime.params.groupType;
+		
+		const res = await travelStore.getTravelList(params);
 		
 		travelStore.setTraveList(res, 'overtime')
 	}
@@ -114,20 +125,23 @@
 		onSearch()
 		message.success('操作成功')
 	}
-  const goToLog = (row: any) => {
-    router.push({
-      path: '/travel/travel_manage/travel_log',
-      query: { oid: encodeURIComponent(row.oid) },
-    });
-  }
-  const goToPath = (row: any) => {
-    router.push({
-      path: '/travel/travel_manage/travel_detail',
-      query: {
-        oid: row.oid
-      }
-    })
-  }
+	const goToLog = (row: any) => {
+		router.push({
+		path: '/travel/travel_manage/travel_log',
+		query: { oid: encodeURIComponent(row.oid) },
+		});
+	}
+	const goToPath = (row: any) => {
+		router.push({
+		path: '/travel/travel_manage/travel_detail',
+		query: {
+			oid: row.oid
+		}
+		})
+	}
+	const getPrint = (record: any) => {
+		travelDetailRef.value.getPrint(record.oid)
+	}
 	const onHandleCurrentChange = (e:any) => {
 		travelStore.traveList.overtime.params.pageNo = e
 		onSearch()
@@ -140,3 +154,9 @@
 	}
 	onSearch()
 </script>
+<style scoped>
+.print-container {
+	position: absolute;
+	width: 100%;
+}
+</style>

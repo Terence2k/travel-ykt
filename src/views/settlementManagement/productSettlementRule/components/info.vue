@@ -58,7 +58,7 @@
 			<a-form-item label="收费数量" name="charCount">
 				<div>
 					<span v-if="formState.chargeModel === 1">{{ formState.chargeCount }}</span>
-					<span v-else>{{ (formState.chargeCount / 100).toFixed(2) }}</span>
+					<span v-else>{{ formState.chargeCount / 100 }}</span>
 					<span v-if="formState.chargeModel === 1">%</span>
 					<span v-if="formState.chargeModel === 2">元/房间</span>
 					<span v-if="formState.chargeModel === 3">元</span>
@@ -101,7 +101,7 @@
 				</template>
 				<template v-if="column.key === 'splitCount'">
 					<span v-if="record.splitModel === 1">{{ record.splitCount }}%</span>
-					<span v-if="record.splitModel === 2">{{ (record.splitCount / 100).toFixed(2) }}元</span>
+					<span v-if="record.splitModel === 2">{{ record.splitCount / 100 }}元</span>
 				</template>
 			</template>
 		</CommonTable>
@@ -175,8 +175,9 @@ const productName = ref('');
 const query = route.currentRoute.value.query;
 // 缓存删除编辑数据
 const init = async () => {
-	navigatorBar.setNavigator(['查看']);
 	const id: any = route.currentRoute.value.query.oid;
+	const query = route.currentRoute.value.query;
+	navigatorBar.setNavigator(['结算管理', '产品结算规则', getProductKeyName(query), '查看']);
 	// await getTeamType();
 	await productRuleDetail(id);
 	const { productId, productType, productSonType } = route.currentRoute.value.query;
@@ -306,6 +307,18 @@ const getChargeProductSonName = computed(() => {
 		return;
 	}
 });
+const getProductKeyName = (query: { productType: any }): string => {
+	if (Number(query.productType) === 1) {
+		return '景区';
+	} else if (Number(query.productType) === 2) {
+		return '酒店';
+	} else if (Number(query.productType) === 3) {
+		return '餐饮';
+	} else if (Number(query.productType) === 4) {
+		return '综费产品';
+	}
+	return '';
+};
 </script>
 
 <style lang="less" scoped>

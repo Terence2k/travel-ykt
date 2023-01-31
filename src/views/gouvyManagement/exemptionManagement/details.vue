@@ -21,7 +21,7 @@
 				<span>{{ state.tableData.data.subTravelOperatorName }} {{ state.tableData.data.subTravelOperatorPhone }}</span>
 			</a-form-item>
 			<a-form-item label="行程人数">
-				<span>{{ state.tableData.data.touristNum }}</span>
+				<span>{{ state.tableData.data.touristNum }}人</span>
 			</a-form-item>
 			<a-form-item label="本次申请减免">
 				<span>{{ state.tableData.data.reduceNum }}人</span>

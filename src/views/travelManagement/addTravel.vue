@@ -12,7 +12,10 @@
 		</div>
 		<div class="footer d-flex justify-content-between" v-if="travelStore.teamStatus">
 			<div class="footer-btn">
+				
+				<a-button v-show="activeKey < pages.length - 1" type="primary" @click="activeKey = activeKey + 1">下一步</a-button>
 				<a-button
+					class="save"
 					type="primary"
 					@click="
 						() => {
@@ -21,9 +24,8 @@
 							isSaveBtn = true;
 						}
 					"
-					>保存</a-button
+					>保存草稿</a-button
 				>
-				<a-button v-show="activeKey < pages.length - 1" type="primary" @click="activeKey = activeKey + 1">下一步</a-button>
 			</div>
 			<div
 				class="submit-btn"
@@ -50,10 +52,10 @@ import fileInfo from './fileInfo/fileInfo.vue';
 import insurance from './insurance/insurance.vue';
 import { cloneDeep, debounce } from 'lodash';
 import api from '@/api';
-import { message } from 'ant-design-vue';
+import { message, Modal } from 'ant-design-vue';
 import { fileOne, fileThree, fileTwo, useTravelStore } from '@/stores/modules/travelManagement';
 import dayjs, { Dayjs } from 'dayjs';
-import { disabledRangeTime, getAmount, getDiffDay } from '@/utils';
+import { copy, disabledRangeTime, getAmount, getDiffDay } from '@/utils';
 import { accDiv,accMul} from '@/utils/compute';
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 const route = useRoute();
@@ -119,9 +121,20 @@ const sendGroup = async (id: string) => {
 	const formData = new FormData();
 	formData.append('itineraryId', id);
 	try {
-		await api.travelManagement.sendGroup(formData);
+		const res = await api.travelManagement.sendGroup(formData);
+		Modal.success({
+			title: '发团成功',
+			content: h('div', {}, [
+				h('p', `已提交财务审核资金，预冻结费用：${accDiv(res, 100)}元，请耐心等待审核。本次行程单号: ${travelStore.baseInfo.itineraryNo}，可复制后使用。`)
+			]),
+			closable: true,
+			okText: '复制行程单号',
+			onOk() {
+				copy(travelStore.baseInfo.itineraryNo)
+			}
+		});
 		router.push('/travel/travel_manage/travel_list');
-		message.success('发团成功');
+		// message.success('发团成功');
 		sendTeam.value = false;
 	} catch (error) {
 		sendTeam.value = false;
@@ -330,7 +343,7 @@ const getTraveDetail = () => {
 				...res.waitBuyItem.waitBuyHotel,
 				...res.hotelList.map((it: any) => {
 					it.orderFee = accDiv(it.orderFee, 100);
-					it.dayCount = getDiffDay(it.startDate, it.endDate);
+					it.dayCount = dayjs(dayjs(it.endDate).format('YYYY-MM-DD')).diff(dayjs(it.startDate).format('YYYY-MM-DD'), 'days');
 					it.roomName = it.roomTypeList.map((item: any) => `${item.roomTypeName} * ${item.roomCount}<br />`).join('')
 					return it;
 				}),
@@ -435,5 +448,15 @@ travelStore.getItineraryStatus();
 	justify-content: end;
 	margin-right: 20px;
 	margin-top: 20px;
+}
+.footer-btn {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex: 1;
+	.save {
+		margin-right: 90px;
+		margin-top: -90px;
+	}
 }
 </style>

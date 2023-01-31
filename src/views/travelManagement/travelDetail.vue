@@ -69,31 +69,31 @@
             <!-- 费用总计（元） -->
             <template v-if="column.key === 'orderFee'">
               <div>
-                {{ accDiv(record.orderFee, 100) || '' }}
+                {{ accDiv(record.orderFee, 100) || 0 }}
               </div>
             </template>
             <!-- 单价（元） -->
             <template v-if="column.key === 'unitPrice'">
               <div>
-                {{ accDiv(record.unitPrice, 100) || '' }}
+                {{ accDiv(record.unitPrice, 100) || 0 }}
               </div>
             </template>
             <!-- 费用（元） -->
             <template v-if="column.key === 'totalFee'">
               <div>
-                {{ accDiv(record.totalFee, 100) || '' }}
+                {{ accDiv(record.totalFee, 100) || 0 }}
               </div>
             </template>
             <!-- 费用（元） -->
             <template v-if="column.key === 'orderFee'">
               <div>
-                {{ accDiv(record.totalFee, 100) || '' }}
+                {{ accDiv(record.totalFee, 100) || 0 }}
               </div>
             </template>
             <!-- 应缴总金额 -->
             <template v-if="column.key === 'payablePrice'">
               <div>
-                {{ accDiv(record.payablePrice, 100) || '' }}
+                {{ accDiv(record.payablePrice, 100) || 0 }}
               </div>
             </template>
             <!-- 入住天数 -->
@@ -135,7 +135,7 @@
   import QrcodeVue from 'qrcode.vue'
   import { awsGetPreSignedUrl } from '@/utils/awsUpload';
   import dayjs from 'dayjs';
-
+  
   const codeUrl = ref();
 
   const state = reactive({
@@ -151,10 +151,10 @@
   });
   const printBtn = ref();
 
-  const getPrint = () => {
+  const getPrint = (id?: any) => {
     state.param.pageNo = 1;
     state.param.pageSize = 999999;
-    getItineraryDetail(route.currentRoute.value.query.oid, true);
+    getItineraryDetail(route.currentRoute.value.query.oid || id, true);
   }
 
   const print = ref({
@@ -200,6 +200,7 @@
 	}
 
   const getItineraryDetail = (orderId: any, isPrint?: any) => {
+    if (!orderId) return
     let queryData = {
       oid: orderId,
       ...state.param
@@ -224,11 +225,12 @@
         }
       })
       if ([1, 2, 3, 4, 5, 6, 7, 20].includes(state.basicData.status)) {
+        let res = await api.getBasicInfo();
         state.itineraryDetail.guWeiDetail = [{
           feeName: '古维管理费',
-          touristNum: state.basicData.touristCount,
-          payableNum: state.basicData.guWeiCount,
-          payablePrice: state.basicData.guWeiCount * 5000,
+          touristNum: state.itineraryDetail.touristList.total,
+          payableNum: state.itineraryDetail.touristList.total,
+          payablePrice: state.itineraryDetail.touristList.total * res.price,
           isInitiateReductionName: '否',
           isReductionPassedName: '否',
           feeStatus: '预计应缴费用',
@@ -279,6 +281,10 @@
   getItineraryDetail(route.currentRoute.value.query.oid);
   onMounted(() => {
     document.getElementsByClassName('ant-descriptions-view')[1].style.height = `${getStyles(document.getElementsByClassName('ant-descriptions-view')[0], 'height')}px`;
+  })
+
+  defineExpose({
+    getPrint
   })
 </script>
 <style lang="less" scoped>

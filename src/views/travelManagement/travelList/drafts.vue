@@ -23,7 +23,7 @@
 				<div class="action-btns">
 					<a @click="goToPath(record)" v-permission="'草稿_编辑'">编辑</a>
 					<!-- <a v-if="record.groupType == GroupMode.TeamGroup" v-permission="'草稿_邀请地接社编辑'">邀请地接社编辑</a> -->
-					<a @click="sendGroup(record.oid)" v-permission="'草稿_发团'">发团</a>
+					<a @click="sendGroup(record)" v-permission="'草稿_发团'">发团</a>
 					<a-popconfirm
 						title="确定删除该行程单？"
 						ok-text="是"
@@ -48,14 +48,16 @@
 </template>
 <script lang="ts" setup>
 	import CommonTable from '@/components/common/CommonTable.vue';
-  import CommonPagination from '@/components/common/CommonPagination.vue';
-  import { message } from 'ant-design-vue';
+	import CommonPagination from '@/components/common/CommonPagination.vue';
+	import { message, Modal } from 'ant-design-vue';
 
 	import api from '@/api/index';
 
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, GroupStatus } from '@/enum'
-
+	import { copy } from '@/utils';
+	import { cloneDeep } from 'lodash';
+	import { accDiv } from '@/utils/compute';
 	const travelStore = useTravelStore();
 	const router = useRouter()
 	const state = reactive({
@@ -127,8 +129,13 @@
 		]
 	})
 	const onSearch = async () => {
+		let params: any = {};
 		travelStore.traveList.drafts.params.status = GroupStatus.Drafts
-		const res = await travelStore.getTravelList(travelStore.traveList.drafts.params);
+		params = cloneDeep(travelStore.traveList.drafts.params)
+		params.groupType = travelStore.traveList.drafts.params.groupType === '0' ? '' : 
+		travelStore.traveList.drafts.params.groupType;
+		
+		const res = await travelStore.getTravelList(params);
 
 		travelStore.setTraveList(res, 'drafts')
 	}
@@ -155,12 +162,24 @@
 		})
 	}
 
-  const sendGroup = (id: string) => {
+  const sendGroup = (record: any) => {
     const formData = new FormData();
-    formData.append('itineraryId', id);
+    formData.append('itineraryId', record.oid);
     api.travelManagement.sendGroup(formData).then((res: any) => {
+		console.log(res)
+		Modal.success({
+			title: '发团成功',
+			content: h('div', {}, [
+				h('p', `已提交财务审核资金，预冻结费用：${accDiv(res, 100)}元，请耐心等待审核。本次行程单号: ${record.itineraryNo}，可复制后使用。`)
+			]),
+			closable: true,
+			okText: '复制行程单号',
+			onOk() {
+				copy(record.itineraryNo)
+			}
+		});
 		onSearch()
-      	message.success('发团成功');
+      	// message.success('发团成功');
     })
   }
 

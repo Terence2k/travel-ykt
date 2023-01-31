@@ -56,7 +56,7 @@
 import { ref, Ref, computed, watch, toRefs, reactive } from 'vue';
 import api from '@/api';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
-import { isIntegerNotMust } from '@/utils/validator';
+import { isIntegerNotMust, isTwoDecimalPlaces } from '@/utils/validator';
 import { message } from 'ant-design-vue';
 import { settlementOptions } from '@/stores/modules/settlement';
 const useOptions = settlementOptions();
@@ -72,7 +72,7 @@ const rulesRef = {
 	feeExplanation: [{ required: true, message: '请填写规则说明' }],
 	status: [{ required: true, message: '请选择状态' }],
 	feeModel: [{ required: true, message: '请选择收费模式' }],
-	feeNumber: [{ required: true, validator: isIntegerNotMust }],
+	feeNumber: [{ required: true, validator: isTwoDecimalPlaces }],
 	belongCompany: [{ required: true, message: '请选择费用归属', trigger: 'blur' }],
 };
 const formData: any = reactive({

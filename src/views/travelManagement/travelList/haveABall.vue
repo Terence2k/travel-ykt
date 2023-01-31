@@ -1,4 +1,7 @@
 <template>
+	<div class="print-container">
+		<travelDetail ref="travelDetailRef" />
+	</div>
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
 			<template #bodyCell="{ column, text, index, record }">
@@ -17,6 +20,8 @@
 						<a @click="goToPath(record)" v-permission="'已接团_行程详情'">行程详情</a>
 						<a @click="goToChange(record)" v-permission="'已接团_行程变更'">行程变更</a>
 						<a @click="goToLog(record)" v-permission="'已接团_查看日志'">查看日志</a>
+						<a @click="getPrint(record)" v-permission="'已接团_打印'">打印</a>
+						<!-- <button ref="printBtn" v-print="print" style="opacity: 0;"></button> -->
 					</div>
 				</template>
 			</template>
@@ -30,7 +35,9 @@
 			@change="onHandleCurrentChange"
 			@showSizeChange="pageSideChange"
 		/>
+		
 	</div>
+	
 </template>
 <script lang="ts" setup>
 import CommonTable from '@/components/common/CommonTable.vue';
@@ -39,11 +46,14 @@ import ChangeItems from '@/components/common/changeItems.vue';
 import api from '@/api/index';
 import BaseModal from '@/components/common/BaseModal.vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
+import travelDetail from '../travelDetail.vue';
 import { GroupMode, GroupStatus } from '@/enum';
 import { message } from 'ant-design-vue';
+import { cloneDeep } from 'lodash';
 const travelStore = useTravelStore();
 const router = useRouter();
 const modelValue = ref(false);
+const travelDetailRef = ref();
 const state = reactive({
 	total: computed(() => travelStore.traveList.haveABall.total),
 	params: {
@@ -52,7 +62,6 @@ const state = reactive({
 		status: 1,
 	},
 	changeParams: {} as any,
-
 	tableData: computed(() => travelStore.traveList.haveABall.list),
 	columns: [
 		{
@@ -113,11 +122,20 @@ const state = reactive({
 	],
 });
 const onSearch = async () => {
-	travelStore.traveList.haveABall.params.status = GroupStatus.HaveABall;
-	const res = await travelStore.getTravelList(travelStore.traveList.haveABall.params);
+	let params: any = {};
+	travelStore.traveList.haveABall.params.status = GroupStatus.HaveABall
+	params = cloneDeep(travelStore.traveList.haveABall.params)
+	params.groupType = travelStore.traveList.haveABall.params.groupType === '0' ? '' : 
+	travelStore.traveList.haveABall.params.groupType;
+	
+	const res = await travelStore.getTravelList(params);
 
 	travelStore.setTraveList(res, 'haveABall');
 };
+const getPrint = (record: any) => {
+	
+	travelDetailRef.value.getPrint(record.oid)
+}
 const goToPath = (row: any) => {
 	// router.push({
 	// 	path: '/travel/travel_manage/add_travel',
@@ -169,5 +187,9 @@ onSearch();
 .model-div > p {
 	color: rgb(225, 225, 225);
 	margin-top: 10px;
+}
+.print-container {
+	position: absolute;
+	width: 100%;
 }
 </style>

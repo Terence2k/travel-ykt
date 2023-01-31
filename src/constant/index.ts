@@ -17,6 +17,7 @@ export const CODEVALUE= {
         TRAFFICTYPE: 'TRANSPORT_TYPE',//交通类型
         TRAFFICCOLOR: 'LICENCE_PLATE_COLOR',//车牌颜色
         IDENTITY_CARD: 'IDENTITY_CARD', //身份证
+        LJ_TRAVEL_WAY: 'LJ_TRAVEL_WAY', //到达方式
         DRAFT: 'DRAFT', //草稿
         WAIT_COOPERATE: 'WAIT_COOPERATE', //待协作
         WAIT_MANAGE_AUDIT_SEND: 'WAIT_MANAGE_AUDIT_SEND', //待管理部门审核(发团)
