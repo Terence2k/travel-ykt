@@ -236,6 +236,7 @@
           feeStatus: '预计应缴费用',
           issueStatusName: '未出票',
         }]
+        state.basicData.guWeiCount = state.itineraryDetail.touristList.total;
       } else {
         state.itineraryDetail.guWeiDetail = await api.getManagementExpenses(orderId);
       }
