@@ -135,7 +135,12 @@
   import QrcodeVue from 'qrcode.vue'
   import { awsGetPreSignedUrl } from '@/utils/awsUpload';
   import dayjs from 'dayjs';
-
+  
+  const props = defineProps({
+    travelOid: {
+      type: String
+    }
+  })
   const codeUrl = ref();
 
   const state = reactive({
@@ -154,7 +159,7 @@
   const getPrint = () => {
     state.param.pageNo = 1;
     state.param.pageSize = 999999;
-    getItineraryDetail(route.currentRoute.value.query.oid, true);
+    getItineraryDetail(route.currentRoute.value.query.oid || props.travelOid, true);
   }
 
   const print = ref({
@@ -200,6 +205,7 @@
 	}
 
   const getItineraryDetail = (orderId: any, isPrint?: any) => {
+    if (!orderId) return
     let queryData = {
       oid: orderId,
       ...state.param
@@ -279,6 +285,14 @@
   getItineraryDetail(route.currentRoute.value.query.oid);
   onMounted(() => {
     document.getElementsByClassName('ant-descriptions-view')[1].style.height = `${getStyles(document.getElementsByClassName('ant-descriptions-view')[0], 'height')}px`;
+  })
+  watch(() => props.travelOid, (newval) => {
+    console.log(newval)
+    if (!route.currentRoute.value.query.oid) {
+      // getItineraryDetail(newval, true);
+      getPrint()
+    }
+    
   })
 </script>
 <style lang="less" scoped>
