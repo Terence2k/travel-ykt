@@ -70,12 +70,17 @@ const getTraveDetail = () => {
 		})
 		.then((res: any) => {
 			travelStore.setBaseInfo(res.basic);
+			res.guideList = res.guideList.map((it: any) => {
+				it.time = [it.startDate, it.endDate];
+				return it;
+			});
 			travelStore.setGuideList(res.guideList);
 			res.attachmentList.length && travelStore.setFileInfo(res.attachmentList);
 			res.transportList = res.transportList.map((it: any) => {
 				it.time = [it.startDate, it.endDate];
 				return it;
 			});
+			travelStore.teamTime = [res.basic.startDate, res.basic.endDate] as any;
 			travelStore.setTrafficList(res.transportList);
 			let dis = null;
 			if (res.basic) {
@@ -103,6 +108,11 @@ const saveOrder = () => {
 		guideList: guideData,
 		transportList: transportData
    	};
+	if(!travelStore.guideList.length)
+	{
+		message.error('请填写带团导游')
+		return false
+	}
 	api.travelManagement.changeItineraryBasic(queryData)
 		.then((res: any) => {
       console.log('保存修改：', res);
