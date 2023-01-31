@@ -1,6 +1,6 @@
 <template>
 	<div class="print-container">
-		<travelDetail :travelOid="state.travelOid" />
+		<travelDetail ref="travelDetailRef" />
 	</div>
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
@@ -46,6 +46,7 @@
 
 	const router = useRouter()
 	const travelStore = useTravelStore();
+	const travelDetailRef = ref();
 	const state = reactive({
 		total: computed(() => travelStore.traveList.waitingChange.total),
 		params: {
@@ -53,7 +54,6 @@
 				pageSize: 10,
 				status: 1
 		},
-		travelOid: '',
 		tableData: computed(() => travelStore.traveList.waitingChange.list),
 		columns: [
 			{
@@ -117,7 +117,7 @@
 		})
 	}
   	const getPrint = (record: any) => {
-		state.travelOid = record.oid;
+		travelDetailRef.value.getPrint(record.oid)
 	}
   const goToLog = (row: any) => {
     router.push({
