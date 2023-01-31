@@ -288,11 +288,11 @@ const init = async () => {
 
 	if (query && query.oid) {
 		oid.value = query.oid;
-		navigatorBar.setNavigator(['产品结算规则', getProductKeyName(query), '编辑']);
+		navigatorBar.setNavigator(['结算管理', '产品结算规则', getProductKeyName(query), '编辑']);
 		cacheData.value.edit = true;
 		productRuleDetail(Number(query.oid));
 	} else {
-		navigatorBar.setNavigator(['产品结算规则', getProductKeyName(query), '新增']);
+		navigatorBar.setNavigator(['结算管理', '产品结算规则', getProductKeyName(query), '新增']);
 		cacheData.value.edit = false;
 		formState.productId = Number(query.productId);
 		// 默认状态开启
