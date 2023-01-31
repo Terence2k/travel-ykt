@@ -19,6 +19,7 @@ const attrs = useAttrs();
 .user-pagination {
   display: flex;
   justify-content: end;
+  background-color: #fff;
   .total-info {
     display: flex;
 	  padding: 12px 10px 0 0;
