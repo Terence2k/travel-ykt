@@ -69,31 +69,31 @@
             <!-- 费用总计（元） -->
             <template v-if="column.key === 'orderFee'">
               <div>
-                {{ accDiv(record.orderFee, 100) || '' }}
+                {{ accDiv(record.orderFee, 100) || 0 }}
               </div>
             </template>
             <!-- 单价（元） -->
             <template v-if="column.key === 'unitPrice'">
               <div>
-                {{ accDiv(record.unitPrice, 100) || '' }}
+                {{ accDiv(record.unitPrice, 100) || 0 }}
               </div>
             </template>
             <!-- 费用（元） -->
             <template v-if="column.key === 'totalFee'">
               <div>
-                {{ accDiv(record.totalFee, 100) || '' }}
+                {{ accDiv(record.totalFee, 100) || 0 }}
               </div>
             </template>
             <!-- 费用（元） -->
             <template v-if="column.key === 'orderFee'">
               <div>
-                {{ accDiv(record.totalFee, 100) || '' }}
+                {{ accDiv(record.totalFee, 100) || 0 }}
               </div>
             </template>
             <!-- 应缴总金额 -->
             <template v-if="column.key === 'payablePrice'">
               <div>
-                {{ accDiv(record.payablePrice, 100) || '' }}
+                {{ accDiv(record.payablePrice, 100) || 0 }}
               </div>
             </template>
             <!-- 入住天数 -->
@@ -225,11 +225,12 @@
         }
       })
       if ([1, 2, 3, 4, 5, 6, 7, 20].includes(state.basicData.status)) {
+        let res = await api.getBasicInfo();
         state.itineraryDetail.guWeiDetail = [{
           feeName: '古维管理费',
-          touristNum: state.basicData.touristCount,
-          payableNum: state.basicData.guWeiCount,
-          payablePrice: state.basicData.guWeiCount * 5000,
+          touristNum: state.itineraryDetail.touristList.total,
+          payableNum: state.itineraryDetail.touristList.total,
+          payablePrice: state.itineraryDetail.touristList.total * res.price,
           isInitiateReductionName: '否',
           isReductionPassedName: '否',
           feeStatus: '预计应缴费用',
