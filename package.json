@@ -6,6 +6,7 @@
 		"build": "vite build --mode production",
 		"build:test": "vite build --mode test",
 		"build:dev": "vite build --mode production",
+		"build:pre": "vite build --mode pre",
 		"preview": "vite preview --port 5050",
 		"typecheck": "vue-tsc --noEmit",
 		"lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
