@@ -13,7 +13,8 @@
         <template v-if="column.key === 'action'">
           <div class="action-btns">
             <!-- <a v-permission="'待变更_催促审核'">催促审核</a> -->
-            <a @click="goToDetail(record)" v-permission="'待变更_查看行程'">查看行程</a>
+            <a @click="goToDetail(record)" v-permission="'待变更_行程详情'">行程详情</a>
+            <a @click="goToLog(record)" v-permission="'待变更_查看日志'">查看日志</a>
           </div>
         </template>
 			</template>
@@ -107,11 +108,17 @@
 	const pageSideChange = () => {
 
 	}
-  const goToDetail = (row: any) => {
-    router.push({
+	const goToDetail = (row: any) => {
+		router.push({
       path: '/travel/travel_manage/travel_detail',
       query: { oid: encodeURIComponent(row.oid) }
     });
-  }
+	}
+  const goToLog = (row: any) => {
+    router.push({
+      path: '/travel/travel_manage/travel_log',
+      query: { oid: encodeURIComponent(row.oid) },
+    });
+  };
 	onSearch()
 </script>
