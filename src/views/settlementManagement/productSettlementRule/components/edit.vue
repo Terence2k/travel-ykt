@@ -135,7 +135,7 @@
 					<template v-if="column.key === 'splitCount'">
 						<span v-if="record.splitModel === 1">{{ record.splitCount }}%</span>
 						<!-- 金额显示需要除以100 -->
-						<span v-if="record.splitModel === 2">{{ (record.splitCount / 100) }}元</span>
+						<span v-if="record.splitModel === 2">{{ record.splitCount / 100 }}元</span>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
@@ -288,11 +288,11 @@ const init = async () => {
 
 	if (query && query.oid) {
 		oid.value = query.oid;
-		navigatorBar.setNavigator(['编辑']);
+		navigatorBar.setNavigator(['结算管理', '产品结算规则', getProductKeyName(query), '编辑']);
 		cacheData.value.edit = true;
 		productRuleDetail(Number(query.oid));
 	} else {
-		navigatorBar.setNavigator(['新增']);
+		navigatorBar.setNavigator(['结算管理', '产品结算规则', getProductKeyName(query), '新增']);
 		cacheData.value.edit = false;
 		formState.productId = Number(query.productId);
 		// 默认状态开启
@@ -440,6 +440,18 @@ const getChargeModelList = computed(() => {
 	}
 	return [];
 });
+const getProductKeyName = (query: { productType: any }): string => {
+	if (Number(query.productType) === 1) {
+		return '景区';
+	} else if (Number(query.productType) === 2) {
+		return '酒店';
+	} else if (Number(query.productType) === 3) {
+		return '餐饮';
+	} else if (Number(query.productType) === 4) {
+		return '综费产品';
+	}
+	return '';
+};
 </script>
 
 <style lang="less" scoped>

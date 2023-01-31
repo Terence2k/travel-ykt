@@ -131,7 +131,7 @@
 					<template v-if="column.key === 'splitCount'">
 						<span v-if="record.splitModel === 1">{{ record.splitCount }}%</span>
 						<!-- 金额显示需要除以100 -->
-						<span v-if="record.splitModel === 2">{{ (record.splitCount / 100) }}元</span>
+						<span v-if="record.splitModel === 2">{{ record.splitCount / 100 }}元</span>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
@@ -260,11 +260,11 @@ const init = () => {
 	generaRulesOptions.getHotelRatedList();
 	if (query && query.oid) {
 		oid.value = query.oid;
-		navigatorBar.setNavigator(['编辑']);
+		navigatorBar.setNavigator(['结算管理', '通用结算规则', '编辑']);
 		cacheData.value.edit = true;
 		currencySettlementRuleDetail(query.oid);
 	} else {
-		navigatorBar.setNavigator(['新增']);
+		navigatorBar.setNavigator(['结算管理', '通用结算规则', '新增']);
 		cacheData.value.edit = false;
 		// 默认状态开启
 		formState.ruleStatus = 1;

@@ -1,4 +1,7 @@
 <template>
+	<div class="print-container">
+		<travelDetail :travelOid="state.travelOid" />
+	</div>
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
 			<template #bodyCell="{ column, text, index, record }">
@@ -17,6 +20,7 @@
 						<a @click="revokeGroupToDraft(record.oid)" v-permission="'已过期_置为草稿'">置为草稿</a>
 						<a @click="goToLog(record)" v-permission="'已过期_查看日志'">查看日志</a>
 						<a @click="goToPath(record)" v-permission="'已过期_查看行程'">查看行程</a>
+						<a @click="getPrint(record)" v-permission="'已过期_打印'">打印</a>
 					</div>
 				</template>
 			</template>
@@ -40,7 +44,7 @@
 	import { GroupMode, GroupStatus } from '@/enum'
 	import { message } from 'ant-design-vue';
 	import { cloneDeep } from 'lodash';
-
+	import travelDetail from '../travelDetail.vue';
 	const travelStore = useTravelStore();
 	const router = useRouter()
 	const state = reactive({
@@ -50,6 +54,7 @@
 				pageSize: 10,
 				status: 1
 		},
+		travelOid: '',
 		tableData: computed(() => travelStore.traveList.overtime.list),
 		columns: [
 			{
@@ -120,20 +125,23 @@
 		onSearch()
 		message.success('操作成功')
 	}
-  const goToLog = (row: any) => {
-    router.push({
-      path: '/travel/travel_manage/travel_log',
-      query: { oid: encodeURIComponent(row.oid) },
-    });
-  }
-  const goToPath = (row: any) => {
-    router.push({
-      path: '/travel/travel_manage/travel_detail',
-      query: {
-        oid: row.oid
-      }
-    })
-  }
+	const goToLog = (row: any) => {
+		router.push({
+		path: '/travel/travel_manage/travel_log',
+		query: { oid: encodeURIComponent(row.oid) },
+		});
+	}
+	const goToPath = (row: any) => {
+		router.push({
+		path: '/travel/travel_manage/travel_detail',
+		query: {
+			oid: row.oid
+		}
+		})
+	}
+	const getPrint = (record: any) => {
+		state.travelOid = record.oid;
+	}
 	const onHandleCurrentChange = (e:any) => {
 		travelStore.traveList.overtime.params.pageNo = e
 		onSearch()
@@ -146,3 +154,9 @@
 	}
 	onSearch()
 </script>
+<style scoped>
+.print-container {
+	position: absolute;
+	width: 100%;
+}
+</style>

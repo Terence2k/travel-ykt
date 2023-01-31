@@ -111,11 +111,12 @@
         </template>
         <!-- 酒店特殊字段 -->
         <template v-if="userInfo.sysCompany.businessType == 'HOTEL'">
-          <a-form-item name="unitStatus" label="开业状态">
+          <a-form-item name="companyState" label="企业状态">
             <div class="flex">
-              <a-radio-group v-model:value="form.unitStatus">
-                <a-radio :value="0">开业</a-radio>
-                <a-radio :value="1">停业</a-radio>
+              <a-radio-group v-model:value="form.companyState">
+                <a-radio :value="0">停业</a-radio>
+                <a-radio :value="1">开业</a-radio>
+                <a-radio :value="2">暂停营业</a-radio>
               </a-radio-group>
             </div>
           </a-form-item>
@@ -139,11 +140,12 @@
         </template>
         <!-- 景区特殊字段 -->
         <template v-if="userInfo.sysCompany.businessType == 'TICKET'">
-          <a-form-item name="unitStatus" label="开业状态">
+          <a-form-item name="companyState" label="企业状态">
             <div class="flex">
-              <a-radio-group v-model:value="form.unitStatus">
-                <a-radio :value="true">开业</a-radio>
-                <a-radio :value="false">停业</a-radio>
+              <a-radio-group v-model:value="form.companyState">
+                <a-radio :value="0">停业</a-radio>
+                <a-radio :value="1">开业</a-radio>
+                <a-radio :value="2">暂停营业</a-radio>
               </a-radio-group>
             </div>
           </a-form-item>
@@ -167,11 +169,12 @@
         </template>
         <!-- 餐饮特殊字段 -->
         <template v-if="userInfo.sysCompany.businessType == 'CATERING'">
-          <a-form-item name="unitStatus" label="开业状态">
+          <a-form-item name="companyState" label="企业状态">
             <div class="flex">
-              <a-radio-group v-model:value="form.unitStatus">
-                <a-radio :value="1">开业</a-radio>
+              <a-radio-group v-model:value="form.companyState">
                 <a-radio :value="0">停业</a-radio>
+                <a-radio :value="1">开业</a-radio>
+                <a-radio :value="2">暂停营业</a-radio>
               </a-radio-group>
             </div>
           </a-form-item>
@@ -404,7 +407,7 @@ const formRules: Record<string, Rule[]> = {
   contactEmail: [{ required: true, trigger: 'blur', message: '请输入联系人邮箱' }],
   postalCode: [{ required: true, trigger: 'blur', message: '请输入注册所在地邮政编码' }],
   bankAccount: [{ required: true, trigger: 'blur', message: '请输入结算银行卡号' }],
-  unitStatus: [{ required: true, trigger: 'change', message: '请选择开业状态' }],
+  companyState: [{ required: true, trigger: 'change', message: '请选择企业状态' }],
   hotelStarId: [{ required: true, trigger: 'change', message: '请选择酒店星级' }],
   scenicLevel: [{ required: true, trigger: 'change', message: '请选择景区等级' }],
   derate: [{ required: true, trigger: 'change', message: '请选择是否支持减免' }],

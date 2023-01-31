@@ -13,8 +13,8 @@
 
         <template v-if="column.key === 'action'">
           <div class="action-btns">
-            <a @click="goToPath(record)" v-permission="'已过期_查看行程单'">查看行程单</a>
-            <a @click="goToDetail(record)" v-permission="'已过期_查看详情'">查看详情</a>
+            <a @click="goToDetail(record)" v-permission="'已过期_行程详情'">行程详情</a>
+            <a @click="goToLog(record)" v-permission="'已过期_查看日志'">查看日志</a>
           </div>
         </template>
 			</template>
@@ -108,20 +108,17 @@
 	const pageSideChange = () => {
 
 	}
-	const goToPath = (row: any) => {
-		router.push({
-			path: '/travel/travel_manage/add_travel',
-			query: {
-				id: row.oid,
-				itineraryNo: row.itineraryNo
-			}
-		})
-	}
 	const goToDetail = (row: any) => {
 		router.push({
       path: '/travel/travel_manage/travel_detail',
       query: { oid: encodeURIComponent(row.oid) }
     });
 	}
+  const goToLog = (row: any) => {
+    router.push({
+      path: '/travel/travel_manage/travel_log',
+      query: { oid: encodeURIComponent(row.oid) },
+    });
+  };
 	onSearch()
 </script>
