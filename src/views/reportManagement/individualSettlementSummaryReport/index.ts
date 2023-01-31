@@ -289,7 +289,7 @@ export const getRulePrice = computed(() => (record: any, column: any): string =>
 			}
 		}
 	}
-	return `暂无数据`;
+	return ``;
 });
 // 获取实收
 export const getActualPrice = computed(() => (record: any, column: any): string => {
@@ -323,10 +323,10 @@ export const twoDecimalPlaces = (number: any): string => {
 	if (typeof number === 'string') {
 		if (number.includes('-')) {
 			number = number.slice(1);
-			return `-${Number(number / 100).toFixed(2)}`;
+			return `-${Number(number / 100)}`;
 		}
 	}
-	return Number(number / 100).toFixed(2);
+	return Number(number / 100);
 };
 // 需要/100的字段
 export const formatColumn = computed(() => (column: any): boolean => {

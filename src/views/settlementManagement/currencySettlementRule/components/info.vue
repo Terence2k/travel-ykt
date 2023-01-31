@@ -70,7 +70,7 @@
 			<a-form-item label="收费数量" name="chargeCount">
 				<div>
 					<span v-if="formState.chargeModel === 1">{{ formState.chargeCount }}</span>
-					<span v-else>{{ (formState.chargeCount / 100).toFixed(2) }}</span>
+					<span v-else>{{ (formState.chargeCount / 100) }}</span>
 					<span v-if="formState.chargeModel === 1">%</span>
 					<span v-if="formState.chargeModel === 2">元/房间</span>
 					<span v-if="formState.chargeModel === 3">元</span>
@@ -104,7 +104,7 @@
 				</template>
 				<template v-if="column.key === 'splitCount'">
 					<span v-if="record.splitModel === 1">{{ record.splitCount }}%</span>
-					<span v-if="record.splitModel === 2">{{ (record.splitCount / 100).toFixed(2) }}元</span>
+					<span v-if="record.splitModel === 2">{{ (record.splitCount / 100) }}元</span>
 				</template>
 			</template>
 		</CommonTable>

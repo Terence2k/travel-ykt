@@ -35,7 +35,7 @@
 	<div>
 		<a-spin size="large" :spinning="state.tableData.loading">
 			<!--  -->
-			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }" bordered>
+			<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }">
 				<template #bodyCell="{ column, record }">
 					<!-- 结算规则 -->
 					<template v-if="column.key === 'ruleMap'"> {{ getRulePrice(record, column) }} </template>

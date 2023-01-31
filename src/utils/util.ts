@@ -564,3 +564,13 @@ export const getDiffDay = (startDate: any, endDate: any) => {
   // 向上取整
   return Math.ceil(diffDay);
 }
+
+// 复制文本
+export function copy(text: string) {
+  let oInput = document.createElement('input');
+  oInput.value = text;
+  document.body.appendChild(oInput);
+  oInput.select();
+  document.execCommand('Copy');
+  oInput.remove();
+}

@@ -38,6 +38,7 @@
 
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, GroupStatus } from '@/enum'
+	import { cloneDeep } from 'lodash';
 
 	const router = useRouter()
 	const travelStore = useTravelStore();
@@ -117,8 +118,13 @@
     });
   };
 	const onSearch = async () => {
+		let params: any = {};
 		travelStore.traveList.waitingChange.params.status = GroupStatus.WaitingChange
-		const res = await travelStore.getTravelList(travelStore.traveList.waitingChange.params);
+		params = cloneDeep(travelStore.traveList.waitingChange.params)
+		params.groupType = travelStore.traveList.waitingChange.params.groupType === '0' ? '' : 
+		travelStore.traveList.waitingChange.params.groupType;
+		
+		const res = await travelStore.getTravelList(params);
 		
 		travelStore.setTraveList(res, 'waitingChange')
 	}

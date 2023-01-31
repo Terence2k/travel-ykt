@@ -406,7 +406,9 @@ const formState = ref<{[k:string]: any}>(route.query.id ? computed(() => travelS
 // 开始时间限制
 const disabledDateStart = (current: Dayjs) => {
 	if (formState.value.endDate) {
-		return current && current > dayjs(formState.value.endDate).startOf('day');
+		return current && current > dayjs(formState.value.endDate).startOf('day') || current < dayjs().startOf('day');
+	} else {
+		return current && current < dayjs().startOf('day')
 	}
 	
 }

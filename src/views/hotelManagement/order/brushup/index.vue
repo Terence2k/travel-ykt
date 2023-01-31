@@ -414,7 +414,7 @@ const processfalse = () => {
 
 const visibleTrueSub = () => {
 	api.getAuditButton({ uuid: state.auditUuid }).then((res: any) => {
-		// if (res) {
+		if (res) {
 			const data = {
 				auditTypeCode: 4, //审核类code（详情参考CompanyAuditStatusEnum）
 				auditRemark: '',
@@ -423,22 +423,24 @@ const visibleTrueSub = () => {
 				businessType: res.auditBusinessType,
 				auditStatus: 2, //审核类型
 			};
+			console.log(data,'tatda');
+			
 			api.orderhandle(data).then((Res: any) => {
 				message.success('操作成功');
 				state.VisibleTrue = false;
 				router.go(-1);
 			});
-		// } else {
-		// 	message.error('您当前账号没有权限审核');
-		// 	return;
-		// }
+		} else {
+			message.error('您当前账号没有权限审核');
+			return;
+		}
 	});
 };
 
 const VisibleFalseSub = () => {
 	VisibleFalseRef.value.validate().then(() => {
 		api.getAuditButton({ uuid: state.auditUuid }).then((res: any) => {
-			// if (res) {
+			if (res) {
 				const data = {
 					auditTypeCode: 4, //审核类code（详情参考CompanyAuditStatusEnum）
 					auditRemark: state.VisibleFalseData.cause,
@@ -452,10 +454,10 @@ const VisibleFalseSub = () => {
 					state.VisibleFalse = false;
 					router.go(-1);
 				});
-			// } else {
-			// 	message.error('您当前账号没有权限审核');
-			// 	return;
-			// }
+			} else {
+				message.error('您当前账号没有权限审核');
+				return;
+			}
 		});
 	});
 };
