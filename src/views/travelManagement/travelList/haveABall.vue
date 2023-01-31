@@ -1,6 +1,6 @@
 <template>
 	<div class="print-container">
-		<travelDetail :travelOid="state.travelOid" />
+		<travelDetail ref="travelDetailRef" />
 	</div>
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
@@ -53,6 +53,7 @@ import { cloneDeep } from 'lodash';
 const travelStore = useTravelStore();
 const router = useRouter();
 const modelValue = ref(false);
+const travelDetailRef = ref();
 const state = reactive({
 	total: computed(() => travelStore.traveList.haveABall.total),
 	params: {
@@ -61,7 +62,6 @@ const state = reactive({
 		status: 1,
 	},
 	changeParams: {} as any,
-	travelOid: '',
 	tableData: computed(() => travelStore.traveList.haveABall.list),
 	columns: [
 		{
@@ -133,7 +133,8 @@ const onSearch = async () => {
 	travelStore.setTraveList(res, 'haveABall');
 };
 const getPrint = (record: any) => {
-	state.travelOid = record.oid;
+	
+	travelDetailRef.value.getPrint(record.oid)
 }
 const goToPath = (row: any) => {
 	// router.push({

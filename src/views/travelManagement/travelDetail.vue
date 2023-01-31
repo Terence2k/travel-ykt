@@ -136,11 +136,6 @@
   import { awsGetPreSignedUrl } from '@/utils/awsUpload';
   import dayjs from 'dayjs';
   
-  const props = defineProps({
-    travelOid: {
-      type: String
-    }
-  })
   const codeUrl = ref();
 
   const state = reactive({
@@ -156,10 +151,10 @@
   });
   const printBtn = ref();
 
-  const getPrint = () => {
+  const getPrint = (id?: any) => {
     state.param.pageNo = 1;
     state.param.pageSize = 999999;
-    getItineraryDetail(route.currentRoute.value.query.oid || props.travelOid, true);
+    getItineraryDetail(route.currentRoute.value.query.oid || id, true);
   }
 
   const print = ref({
@@ -286,13 +281,9 @@
   onMounted(() => {
     document.getElementsByClassName('ant-descriptions-view')[1].style.height = `${getStyles(document.getElementsByClassName('ant-descriptions-view')[0], 'height')}px`;
   })
-  watch(() => props.travelOid, (newval) => {
-    console.log(newval)
-    if (!route.currentRoute.value.query.oid) {
-      // getItineraryDetail(newval, true);
-      getPrint()
-    }
-    
+
+  defineExpose({
+    getPrint
   })
 </script>
 <style lang="less" scoped>
