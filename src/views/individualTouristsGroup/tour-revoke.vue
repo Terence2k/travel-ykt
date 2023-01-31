@@ -230,9 +230,11 @@
 
 	<BaseModal title="第三方门票退订提醒" v-model="reRecokeAuditCheckVisible">
 		<p>{{ reRecokeAuditCheckText }}</p>
-		<p>请等待退订完成</p>
+		<!-- <p>请等待退订完成</p> -->
 		<template v-slot:footer>
-			<a-button @click="reRecokeAuditCheckVisible = false">确定</a-button>
+			<!-- <a-button @click="reRecokeAuditCheckVisible = false">确定</a-button> -->
+			<a-button type="primary" @click="recokeHandle">确定</a-button>
+			<a-button @click="reRecokeAuditCheckVisible = false">取消</a-button>
 			<!-- <a-button @click="toSureRecoke">确定</a-button> -->
 		</template>
 	</BaseModal>
@@ -751,6 +753,11 @@ const toSureRecoke = async () => {
 	reRecokeAuditCheckVisible.value = false;
 };
 
+const recokeHandle = () => {
+	reRecokeAuditCheckVisible.value = false;
+	reRecokeAuditAllsVisible.value = true;
+};
+
 const check = async (status: string) => {
 	let valid, validTikcer;
 	btnStatus.value = status;
@@ -766,7 +773,7 @@ const check = async (status: string) => {
 		// reRecokeAuditCheckText.value = error
 		console.log(error, 'error');
 
-		reRecokeAuditCheckText.value = error?.msg || error;
+		reRecokeAuditCheckText.value = error;
 		reRecokeAuditCheckVisible.value = true;
 	}
 };
