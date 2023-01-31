@@ -260,11 +260,11 @@ const init = () => {
 	generaRulesOptions.getHotelRatedList();
 	if (query && query.oid) {
 		oid.value = query.oid;
-		navigatorBar.setNavigator(['通用结算规则', '编辑']);
+		navigatorBar.setNavigator(['结算管理', '通用结算规则', '编辑']);
 		cacheData.value.edit = true;
 		currencySettlementRuleDetail(query.oid);
 	} else {
-		navigatorBar.setNavigator(['通用结算规则', '新增']);
+		navigatorBar.setNavigator(['结算管理', '通用结算规则', '新增']);
 		cacheData.value.edit = false;
 		// 默认状态开启
 		formState.ruleStatus = 1;

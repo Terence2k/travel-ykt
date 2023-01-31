@@ -175,7 +175,7 @@ const columns = ref([
 const route = useRouter();
 // 缓存删除编辑数据
 const init = async () => {
-	navigatorBar.setNavigator(['通用结算规则', '查看']);
+	navigatorBar.setNavigator(['结算管理', '通用结算规则', '查看']);
 	const id: any = route.currentRoute.value.query.oid;
 	// await getTeamType();
 	await currencySettlementRuleDetail(id);

@@ -177,7 +177,7 @@ const query = route.currentRoute.value.query;
 const init = async () => {
 	const id: any = route.currentRoute.value.query.oid;
 	const query = route.currentRoute.value.query;
-	navigatorBar.setNavigator(['产品结算规则', getProductKeyName(query), '查看']);
+	navigatorBar.setNavigator(['结算管理', '产品结算规则', getProductKeyName(query), '查看']);
 	// await getTeamType();
 	await productRuleDetail(id);
 	const { productId, productType, productSonType } = route.currentRoute.value.query;
