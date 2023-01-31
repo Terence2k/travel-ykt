@@ -110,6 +110,18 @@ export const useTravelStore = defineStore({
 				}
 			}
 		},
+		setDisabledTime() {
+			return (current: Dayjs) => {
+				if (this.teamTime && this.teamTime[0]) {
+					return (
+						(dayjs(this.teamTime[0]) && dayjs(this.teamTime[0]).startOf('day') > current && current) ||
+						(dayjs(this.teamTime[1]) && dayjs(this.teamTime[1]).endOf('day') < current && current)
+					);
+				} else {
+					return (current && current < dayjs().endOf('day')) || current > dayjs().startOf('day');
+				}
+			};
+		},
 		async getTraveCode(codeValue: string, type: string) {
 			if (type === 'IDCard' && this.IDCard.length) return;
 			const res = await api.commonApi.getCodeValue({ codeValue });

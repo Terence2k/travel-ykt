@@ -165,6 +165,7 @@ const roomList = {
 	roomCount: '', //订房数量
 	roomTypeName: '', //房型名称
 	orderAmount: 0,
+	increaseAmount: '',
 };
 const travelStore = useTravelStore();
 const formRef = ref();
@@ -223,13 +224,12 @@ const handleHotel = (e: any, option: any) => {
 };
 
 const handelChangeStart = (id: any, option: any) => {
-	formState.hotelId = ''
+	formState.hotelId = '';
 	for (let i = 0; i < formState.roomTypeList.length; i++) {
-		formState.roomTypeList[i].hotelRoomTypeId = ''
+		formState.roomTypeList[i].hotelRoomTypeId = '';
 	}
-	handleChange(id, option)
-}
-
+	handleChange(id, option);
+};
 
 const handleChangCheckIn = () => {
 	const isAfter = dayjs(dayjs(formState.arrivalDate)).isAfter(dayjs(formState.departureDate).subtract(1, 'day'));
@@ -306,15 +306,16 @@ const getOrderAmount = (data: Array<{ [k: string]: any }>, startDate: string, en
 const submit = async () => {
 	try {
 		formState.roomTypeList = formState.roomTypeList.map((it: any) => {
-			it.unitPrice = it.unitPrice * 100;
-			it.orderAmount = it.orderAmount * 100;
+			it.increaseAmount = accMul(it.unitPrice, 100);
+			it.unitPrice = accMul(it.unitPrice, 100);
+			it.orderAmount = accMul(it.orderAmount, 100);
 			it.reserveNumber = it.roomCount;
 			return it;
 		});
 		formState.scheduledNumber = formState.roomTypeList.map((it: any) => Number(it.checkInNumber)).reduce((prev: any, current: any) => prev + current);
 		formState.scheduledRooms = formState.roomTypeList.map((it: any) => Number(it.roomCount)).reduce((prev: any, current: any) => prev + current);
 		formState.tripNumber = travelStore.touristList.length;
-		formState.itineraryId = route.query.oid
+		formState.itineraryId = route.query.oid;
 		formState.startDate = formState.arrivalDate;
 		formState.endDate = formState.departureDate;
 		formState.orderAmount = getOrderAmount(formState.roomTypeList, formState.arrivalDate, formState.departureDate);
@@ -333,7 +334,7 @@ const submit = async () => {
 		) {
 			formState.edit = true;
 		}
-		formState.roomName = formState.roomTypeList.map((item: any) => `${item.roomTypeName} * ${item.roomCount}<br />`).join('');		
+		formState.roomName = formState.roomTypeList.map((item: any) => `${item.roomTypeName} * ${item.roomCount}<br />`).join('');
 		formState.limitPeopleCount = formState.roomTypeList.map((item: any) => item.limitPeople * item.roomCount)[0];
 		const newFormState = cloneDeep(formState);
 		newFormState.hotelStar = newFormState.hotelStarCode;
@@ -343,9 +344,8 @@ const submit = async () => {
 			.map((it: any) => Number(it.checkInNumber))
 			.reduce((prev: number, next: number) => prev + next);
 		newFormState.roomCount = newFormState.roomTypeList.map((it: any) => Number(it.roomCount)).reduce((prev: number, next: number) => prev + next);
-		console.log('newFormState.roomTypeList:', newFormState.roomTypeList);
-
 		travelStore.SetHotels(newFormState, formState.oid || null, props.productRow.key);
+		console.log(newFormState, 'newFormState');
 	} catch (errorInfo) {}
 };
 
@@ -400,14 +400,19 @@ watch(dialogVisible, (newVal) => {
 			handleChange(data.hotelStarId, { name: data.hotelStar, price: price });
 		}
 		if (formState.roomTypeList.length) {
-			formState.roomTypeList = formState?.roomTypeList?.map((it: any) => {
-				it.roomCount = it.roomCount;
-				it.roomTypeLimitPeople = it.limitPeople;
-				it.roomTypeName = it.roomTypeName;
-				it.hotelRoomTypeId = it.roomTypeId;
-				it.unitPrice = it.unitPrice / 100;
-				return it;
-			});
+			formState.roomTypeList = cloneDeep(
+				formState?.roomTypeList?.map((it: any) => {
+					it.roomCount = it.roomCount;
+					it.roomTypeLimitPeople = it.limitPeople;
+					it.roomTypeName = it.roomTypeName;
+					it.hotelRoomTypeId = it.roomTypeId;
+
+					it.orderAmount = accDiv(it.unitPrice, 100);
+					it.unitPrice = accDiv(it.increaseAmount, 100);
+
+					return it;
+				})
+			);
 		}
 
 		getRoomType(props.productRow.hotelId, formState.endData, formState.startData);
