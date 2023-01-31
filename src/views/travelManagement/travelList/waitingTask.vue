@@ -1,4 +1,7 @@
 <template>
+	<div class="print-container">
+		<travelDetail :travelOid="state.travelOid" />
+	</div>
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
 			<template #bodyCell="{ column, text, index, record }">
@@ -17,6 +20,7 @@
 						<a @click="goToPath(record)" v-permission="'待处理_行程详情'">行程详情</a>
 						<a @click="openAllReapply(record)" v-permission="'待处理_申请撤销'">申请撤销</a>
 						<a @click="goToLog(record)" v-permission="'待处理_查看日志'">查看日志</a>
+						<a @click="getPrint(record)" v-permission="'待处理_打印'">打印</a>
 					</div>
 				</template>
 			</template>
@@ -36,7 +40,7 @@
 	import CommonPagination from '@/components/common/CommonPagination.vue';
 	import allRevoke from '@/views/travelManagement/travelTakeGroupList/revoke/components/allRevoke.vue';
 	import api from '@/api/index';
-
+	import travelDetail from '../travelDetail.vue';
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, GroupStatus } from '@/enum'
 	import { message } from 'ant-design-vue';
@@ -47,6 +51,7 @@
 	const router = useRouter()
 	const state = reactive({
 		total: computed(() => travelStore.traveList.waitingTask.total),
+		travelOid: '',
 		params: {
 				pageNo: 1,
 				pageSize: 10,
@@ -120,6 +125,9 @@
 		travelStore.traveList.waitingTask.params.pageNo = e
 		onSearch()
 	}
+	const getPrint = (record: any) => {
+		state.travelOid = record.oid;
+	}
 	const pageSideChange = () => {
 
 	}
@@ -176,3 +184,11 @@
 
 	};
 </script>
+
+<style scoped>
+
+.print-container {
+	position: absolute;
+	width: 100%;
+}
+</style>

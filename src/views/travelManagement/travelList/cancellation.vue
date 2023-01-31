@@ -1,4 +1,7 @@
 <template>
+	<div class="print-container">
+		<travelDetail :travelOid="state.travelOid" />
+	</div>
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
 		
@@ -17,6 +20,7 @@
 					<div class="action-btns">
 						<a @click="goToPath(record)" v-permission="'已散团_行程详情'">行程详情</a>
 						<a @click="goToLog(record)" v-permission="'已散团_查看日志'">查看日志</a>
+						<a @click="getPrint(record)" v-permission="'已散团_打印'">打印</a>
 					</div>
 				</template>
 			</template>
@@ -39,7 +43,7 @@
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, GroupStatus } from '@/enum'
 	import { cloneDeep } from 'lodash';
-
+	import travelDetail from '../travelDetail.vue';
 	const travelStore = useTravelStore();
 	const router = useRouter()
 	const state = reactive({
@@ -49,6 +53,7 @@
 				pageSize: 10,
 				status: 1
 		},
+		travelOid: '',
 		tableData: computed(() => travelStore.traveList.cancellation.list),
 		columns: [
 			{
@@ -115,6 +120,9 @@
 		
 		travelStore.setTraveList(res, 'cancellation')
 	}
+	const getPrint = (record: any) => {
+		state.travelOid = record.oid;
+	}
 	const onHandleCurrentChange = (e:any) => {
 		travelStore.traveList.cancellation.params.pageNo = e
 		onSearch()
@@ -148,3 +156,10 @@
   };
 	onSearch()
 </script>
+
+<style scoped>
+.print-container {
+	position: absolute;
+	width: 100%;
+}
+</style>
