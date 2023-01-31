@@ -1,9 +1,7 @@
 <template>
 	<div class="warp">
 		<div class="header_top">
-			<div class="title" v-if="state.DeatilAudits == true">
-				你的变更申请已于{{ state.lastUpdateTime }} 被驳回 ( <span style="color: red">{{ state.descriHtm }}</span> ) 您可以重新修改再提交。
-			</div>
+			<div class="title" v-if="state.DeatilAudits == true">你的变更申请已于{{state.lastUpdateTime}} 被驳回 ( <span style="color:red">{{state.descriHtm}}</span> ) 您可以重新修改再提交。</div>
 			<div class="title" v-else>请根据实际需要，调整行程时间，或已预订的产品，重新提交变更。</div>
 			<a-button @click="openEdit" type="primary">进入修改</a-button>
 		</div>
@@ -23,28 +21,28 @@
 						</div>
 					</template>
 					<template v-if="column.key === 'roomTypeList'">
-						<span v-for="(item, index) in record.roomTypeList" key="index">
-							<span style="padding: 0 3px">{{ item.roomTypeName }} </span>
+						<span  v-for="(item,index) in record.roomTypeList" key="index">
+							<span style="padding: 0 3px;">{{item.roomTypeName}} </span>
 						</span>
 					</template>
 					<template v-if="column.key === 'totalFee'">
-						<span>
-							{{ accDiv(record.unitPrice * record.reservePeopleCount, 100) }}
+						<span >
+							{{accDiv(record.unitPrice * record.reservePeopleCount,100)}}
 						</span>
 					</template>
 					<template v-if="column.key === 'unitPrice'">
-						<span>
-							{{ accDiv(record.unitPrice, 100) }}
+						<span >
+							{{accDiv(record.unitPrice,100)}}
 						</span>
 					</template>
 					<template v-if="column.key === 'orderFee'">
-						<span>
-							{{ accDiv(record.orderFee, 100) }}
+						<span >
+							{{accDiv(record.orderFee,100)}}
 						</span>
 					</template>
 					<!-- 时段 -->
 					<template v-if="column.key === 'time'">
-						<div>{{ dayjs(dayjs(record.endDate).format('YYYY-MM-DD')).diff(dayjs(record.startDate).format('YYYY-MM-DD'), 'day') }}</div>
+						<div>{{ dayjs(dayjs(record.endDate).format('YYYY-MM-DD')).diff(dayjs(record.startDate).format('YYYY-MM-DD'), 'day') }} </div>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
@@ -67,7 +65,7 @@ import api from '@/api';
 import { useTravelStore } from '@/stores/modules/travelManagementDetail';
 import { getOptions } from './deatli';
 import dayjs, { Dayjs } from 'dayjs';
-import { accDiv, accMul } from '@/utils/compute';
+import { accDiv,accMul} from '@/utils/compute';
 
 const travelStore = useTravelStore();
 const route = useRoute();
@@ -81,9 +79,9 @@ const state = reactive({
 	startDate: {},
 	endDate: {},
 	descriHtm: '',
-	DeatilAudits: false,
-	lastUpdateTime: '',
-	remark: '0',
+	DeatilAudits:false,
+	lastUpdateTime:'',
+	remark:'0'
 });
 
 const opendetail = (record: any) => {
@@ -95,7 +93,7 @@ const openScenicdetail = (record: any) => {
 const openEdit = (data: any) => {
 	router.push({
 		path: '/travel/take_group/modify_product_edit',
-		query: { oid: route.query.oid, remark: state.remark },
+		query: { oid: route.query.oid , remark:state.remark },
 	});
 };
 const install = () => {
@@ -103,32 +101,12 @@ const install = () => {
 		.getProductChangeAudit(route.query.oid)
 		.then((res: any) => {
 			if (res.auditRemark) {
-				state.descriHtm = res.auditRemark;
-				state.lastUpdateTime = dayjs(res.lastUpdateTime).format('YYYY-MM-DD HH:mm:ss');
-				state.DeatilAudits = true;
-				state.remark = '1';
-				api.travelManagement.getProductChangeAuditDetail(route.query.oid).then((res: any) => {
-					state.Data = res;
-					state.startDate = res.startDate;
-					state.endDate = res.endDate;
-					travelStore.hotelList = res.newHotelList;
-					travelStore.ticketsList = res.newTicketList;
-					let dis = null;
-					if (res) {
-						dis = (current: Dayjs) => {
-							return (
-								(dayjs(res.startDate) && dayjs(res.startDate) > current && current) ||
-								(dayjs(res.endDate) && dayjs(res.endDate).add(0, 'day') < current && current)
-							);
-						};
-					}
-					travelStore.setDisabled = dis as any;
-					const time: any = [];
-					time.push(res.startDate, res.endDate);
-					travelStore.teamTime = time;
-				});
-			} else {
-				api.travelManagement
+				state.descriHtm = res.auditRemark
+				state.lastUpdateTime = dayjs(res.lastUpdateTime).format('YYYY-MM-DD HH:mm:ss')
+				state.DeatilAudits = true
+				state.remark = '1'
+			}
+			api.travelManagement
 					.changDetail({
 						oid: route.query.oid,
 						pageNo: 1,
@@ -153,8 +131,8 @@ const install = () => {
 						const time: any = [];
 						time.push(res.basic.startDate, res.basic.endDate);
 						travelStore.teamTime = time;
-					});
-			}
+					});	
+			
 		})
 		.catch((error: any) => {});
 };
