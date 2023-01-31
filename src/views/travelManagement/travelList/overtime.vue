@@ -1,6 +1,6 @@
 <template>
 	<div class="print-container">
-		<travelDetail :travelOid="state.travelOid" />
+		<travelDetail ref="travelDetailRef" />
 	</div>
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
@@ -47,6 +47,7 @@
 	import travelDetail from '../travelDetail.vue';
 	const travelStore = useTravelStore();
 	const router = useRouter()
+	const travelDetailRef = ref();
 	const state = reactive({
 		total: computed(() => travelStore.traveList.overtime.total),
 		params: {
@@ -54,7 +55,6 @@
 				pageSize: 10,
 				status: 1
 		},
-		travelOid: '',
 		tableData: computed(() => travelStore.traveList.overtime.list),
 		columns: [
 			{
@@ -140,7 +140,7 @@
 		})
 	}
 	const getPrint = (record: any) => {
-		state.travelOid = record.oid;
+		travelDetailRef.value.getPrint(record.oid)
 	}
 	const onHandleCurrentChange = (e:any) => {
 		travelStore.traveList.overtime.params.pageNo = e
