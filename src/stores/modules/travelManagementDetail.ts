@@ -98,13 +98,10 @@ export const useTravelStore = defineStore({
 		setDisabledDate() {			
 			return (current: Dayjs) => {
 				if (this.teamTime && this.teamTime[0]) {
-					console.log('上面');
-					
 					console.log(this.teamTime[0],'this.teamTime[0]');
 					return (dayjs(this.teamTime[0]) && dayjs(this.teamTime[0]).startOf('day') > current && current) ||
 							(dayjs(this.teamTime[1]) && dayjs(this.teamTime[1]).endOf('day') < current && current)
 				} else {
-					console.log('下面');
 					return current && current < dayjs().endOf('day') || 
 					current > dayjs().startOf('day');
 				}
