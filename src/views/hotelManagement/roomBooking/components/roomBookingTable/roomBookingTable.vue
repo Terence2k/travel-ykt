@@ -462,6 +462,18 @@ const getCurrentTimeDetailText = () => {
 
 const dataSource = computed(() => {
 	if (Array.isArray(tableState.tableData.data)) {
+		//当月无库存数据，则显示为长度=天数的空数组
+		if (tableState.tableData.data.length === 0) {
+			columns.value.forEach((item, index) => {
+				if (index > 0) {
+					columns.value[index] = {
+						...item,
+						title: '',
+						appointedTime: ' ',
+					};
+				}
+			});
+		}
 		return tableState.tableData.data.map((item, index) => {
 			const result = {};
 			result.roomType = item?.roomTypeName || '';
