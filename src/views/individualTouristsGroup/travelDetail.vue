@@ -37,8 +37,6 @@
           <a-descriptions-item label="游客总人数">{{ state.basicData.touristCount }}</a-descriptions-item>
           <a-descriptions-item label="古维减免人数" :span="2">{{ state.basicData.guWeiReduceCount }}</a-descriptions-item>
           <a-descriptions-item label="行程冻结金额（元）">{{ accDiv(state.basicData.totalFee, 100) }}元</a-descriptions-item>
-          <a-descriptions-item label="游客到丽方式" :span="2">{{state.basicData.toLjWay}}</a-descriptions-item>
-          <a-descriptions-item label="游客离丽方式">{{state.basicData.leaveLjWay}}</a-descriptions-item>
           <a-descriptions-item label="联系人" :span="2">{{ state.basicData.travelOperatorName }}</a-descriptions-item>
           <a-descriptions-item label="联系人电话">{{ state.basicData.travelOperatorPhone }}</a-descriptions-item>
           <a-descriptions-item label="用车车牌号" :span="2">{{
