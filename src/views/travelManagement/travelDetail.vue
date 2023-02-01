@@ -219,8 +219,7 @@
         item.attachmentUrl = await Promise.all(result);
       })
       codeUrl.value = JSON.stringify({
-        itineraryNo: state.basicData.itineraryNo,
-        oid: state.basicData.oid
+        yktNo: state.basicData.yktNo
       })
       nextTick(() => {
         if (isPrint) {
