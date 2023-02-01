@@ -72,31 +72,31 @@
             <!-- 费用总计（元） -->
             <template v-if="column.key === 'orderFee'">
               <div>
-                {{ accDiv(record.orderFee, 100) || 0 }}
+                {{ accDiv(record.orderFee, 100) || '' }}
               </div>
             </template>
             <!-- 单价（元） -->
             <template v-if="column.key === 'unitPrice'">
               <div>
-                {{ accDiv(record.unitPrice, 100) || 0 }}
+                {{ accDiv(record.unitPrice, 100) || '' }}
               </div>
             </template>
             <!-- 费用（元） -->
             <template v-if="column.key === 'totalFee'">
               <div>
-                {{ accDiv(record.totalFee, 100) || 0 }}
+                {{ accDiv(record.totalFee, 100) || '' }}
               </div>
             </template>
             <!-- 费用（元） -->
             <template v-if="column.key === 'orderFee'">
               <div>
-                {{ accDiv(record.totalFee, 100) || 0 }}
+                {{ accDiv(record.totalFee, 100) || '' }}
               </div>
             </template>
             <!-- 应缴总金额 -->
             <template v-if="column.key === 'payablePrice'">
               <div>
-                {{ accDiv(record.payablePrice, 100) || 0 }}
+                {{ accDiv(record.payablePrice, 100) || '' }}
               </div>
             </template>
             <!-- 入住天数 -->
