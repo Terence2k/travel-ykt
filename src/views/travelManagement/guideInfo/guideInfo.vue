@@ -157,4 +157,7 @@ const {
 		justify-content: flex-end;
 		margin: 16px 20px;
 	}
+	.ant-form-item{
+		margin-top: 24px;
+	}
 </style>
