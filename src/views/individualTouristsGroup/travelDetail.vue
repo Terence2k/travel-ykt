@@ -37,6 +37,8 @@
           <a-descriptions-item label="游客总人数">{{ state.basicData.touristCount }}</a-descriptions-item>
           <a-descriptions-item label="古维减免人数" :span="2">{{ state.basicData.guWeiReduceCount }}</a-descriptions-item>
           <a-descriptions-item label="行程冻结金额（元）">{{ accDiv(state.basicData.totalFee, 100) }}元</a-descriptions-item>
+          <a-descriptions-item label="游客到丽方式" :span="2">{{state.basicData.toLjWay}}</a-descriptions-item>
+          <a-descriptions-item label="游客离丽方式">{{state.basicData.leaveLjWay}}</a-descriptions-item>
           <a-descriptions-item label="联系人" :span="2">{{ state.basicData.travelOperatorName }}</a-descriptions-item>
           <a-descriptions-item label="联系人电话">{{ state.basicData.travelOperatorPhone }}</a-descriptions-item>
           <a-descriptions-item label="用车车牌号" :span="2">{{
@@ -127,6 +129,12 @@
           <!-- 合同行程日期 -->
           <template v-if="column.key === 'tripDate'">
             {{ record.tripStartTime + ' - ' + record.tripEndTime }}
+          </template>
+          <!-- 应缴总金额 -->
+          <template v-if="column.key === 'payablePrice'">
+            <div>
+              {{ accDiv(record.payablePrice, 100) || '' }}
+            </div>
           </template>
           <template v-if="column.key === 'action'">
             <div class="action-btns">
@@ -387,7 +395,22 @@ const getItineraryDetail = (orderId: any, isPrint?: any) => {
         printBtn.value.click();
       }
     })
-    state.itineraryDetail.guWeiDetail = await api.getManagementExpenses(orderId);
+    if ([1, 5].includes(state.basicData.status)) {
+      let res = await api.getBasicInfo();
+      state.itineraryDetail.guWeiDetail = [{
+        feeName: '古维管理费',
+        touristNum: state.itineraryDetail.touristList.total,
+        payableNum: state.itineraryDetail.touristList.total,
+        payablePrice: state.itineraryDetail.touristList.total * res.price,
+        isInitiateReductionName: '否',
+        isReductionPassedName: '否',
+        feeStatus: '预计应缴费用',
+        issueStatusName: '未出票',
+      }]
+      state.basicData.guWeiCount = state.itineraryDetail.touristList.total;
+    } else {
+      state.itineraryDetail.guWeiDetail = await api.getManagementExpenses(orderId);
+    }
     if (route.query.isAudit === '1') {
       state.itineraryDetail.isAudit = 'inline-block'
     } else {
