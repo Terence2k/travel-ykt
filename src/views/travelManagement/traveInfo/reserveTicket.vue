@@ -177,7 +177,7 @@ import CommonImg from '@/components/common/CommonImg.vue';
 
     const reserveTicket = (callback: Function) => {
 		reserveParams.oid = props.ticketId
-        reserveParams.reservePeopleList = reserveParams.reservePeopleList.filter((it: any) => !it.isReserved);
+        reserveParams.reservePeopleList = reserveParams.reservePeopleList?.filter((it: any) => !it.isReserved);
         if (!reserveParams.reservePeopleList || !reserveParams.reservePeopleList.length) {
             callback(false)
             return message.error('请选择订票人员')

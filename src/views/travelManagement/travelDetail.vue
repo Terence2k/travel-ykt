@@ -25,8 +25,8 @@
           <a-descriptions-item label="地接社计调">{{state.basicData.subTravelOperatorName}} {{state.basicData.subTravelOperatorPhone}}</a-descriptions-item>
           <a-descriptions-item label="游客人数">{{state.basicData.touristCount}}</a-descriptions-item>
           <a-descriptions-item label="古维费应缴人数">{{state.basicData.guWeiCount}}</a-descriptions-item>
-          <a-descriptions-item label="游客到丽方式">{{state.basicData.toLjWay}}</a-descriptions-item>
-          <a-descriptions-item label="游客离丽方式">{{state.basicData.leaveLjWay}}</a-descriptions-item>
+          <a-descriptions-item label="游客到丽方式">{{state.basicData.toLjWay || '暂未填写'}}</a-descriptions-item>
+          <a-descriptions-item label="游客离丽方式">{{state.basicData.leaveLjWay || '暂未填写'}}</a-descriptions-item>
           <a-descriptions-item label="行程时间">{{state.basicData.startDate}} - {{ state.basicData.endDate }}</a-descriptions-item>
           <a-descriptions-item label="综费应缴人数">{{state.basicData.productPeopleCount }}</a-descriptions-item>
           <a-descriptions-item label="已添加景区">{{state.basicData.ticketCount}}</a-descriptions-item>
@@ -219,8 +219,7 @@
         item.attachmentUrl = await Promise.all(result);
       })
       codeUrl.value = JSON.stringify({
-        itineraryNo: state.basicData.itineraryNo,
-        oid: state.basicData.oid
+        yktNo: state.basicData.yktNo
       })
       nextTick(() => {
         if (isPrint) {
