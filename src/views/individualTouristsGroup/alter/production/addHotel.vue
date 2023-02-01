@@ -166,6 +166,7 @@ const roomList = {
 	roomCount: '', //订房数量
 	roomTypeName: '', //房型名称
 	orderAmount: 0,
+	increaseAmount: '',
 };
 const travelStore = useTravelStore();
 const formRef = ref();
@@ -224,13 +225,12 @@ const handleHotel = (e: any, option: any) => {
 };
 
 const handelChangeStart = (id: any, option: any) => {
-	formState.hotelId = ''
+	formState.hotelId = '';
 	for (let i = 0; i < formState.roomTypeList.length; i++) {
-		formState.roomTypeList[i].hotelRoomTypeId = ''
+		formState.roomTypeList[i].hotelRoomTypeId = '';
 	}
-	handleChange(id, option)
-}
-
+	handleChange(id, option);
+};
 
 const handleChangCheckIn = () => {
 	// disLeave.value = (current: Dayjs): any =>
@@ -312,8 +312,9 @@ const getOrderAmount = (data: Array<{ [k: string]: any }>, startDate: string, en
 const submit = async () => {
 	try {
 		formState.roomTypeList = formState.roomTypeList.map((it: any) => {
-			it.unitPrice = it.unitPrice * 100;
-			it.orderAmount = it.orderAmount * 100;
+			it.increaseAmount = accMul(it.unitPrice, 100);
+			it.unitPrice = accMul(it.unitPrice, 100);
+			it.orderAmount = accMul(it.orderAmount, 100);
 			it.reserveNumber = it.roomCount;
 			return it;
 		});
@@ -339,7 +340,7 @@ const submit = async () => {
 		) {
 			formState.edit = true;
 		}
-		formState.roomName = formState.roomTypeList.map((item: any) => `${item.roomTypeName} * ${item.roomCount}<br />`).join('');		
+		formState.roomName = formState.roomTypeList.map((item: any) => `${item.roomTypeName} * ${item.roomCount}<br />`).join('');
 		formState.limitPeopleCount = formState.roomTypeList.map((item: any) => item.limitPeople * item.roomCount)[0];
 		const newFormState = cloneDeep(formState);
 		newFormState.hotelStar = newFormState.hotelStarCode;
@@ -404,14 +405,19 @@ watch(dialogVisible, (newVal) => {
 			handleChange(data.hotelStarId, { name: data.hotelStar, price: price });
 		}
 		if (formState.roomTypeList.length) {
-			formState.roomTypeList = formState?.roomTypeList?.map((it: any) => {
-				it.roomCount = it.roomCount;
-				it.roomTypeLimitPeople = it.limitPeople;
-				it.roomTypeName = it.roomTypeName;
-				it.hotelRoomTypeId = it.roomTypeId;
-				it.unitPrice = it.unitPrice / 100;
-				return it;
-			});
+			formState.roomTypeList = cloneDeep(
+				formState?.roomTypeList?.map((it: any) => {
+					it.roomCount = it.roomCount;
+					it.roomTypeLimitPeople = it.limitPeople;
+					it.roomTypeName = it.roomTypeName;
+					it.hotelRoomTypeId = it.roomTypeId;
+
+					it.orderAmount = accDiv(it.unitPrice, 100);
+					it.unitPrice = accDiv(it.increaseAmount, 100);
+
+					return it;
+				})
+			);
 		}
 
 		getRoomType(props.productRow.hotelId, formState.endData, formState.startData);

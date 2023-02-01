@@ -128,6 +128,12 @@
           <template v-if="column.key === 'tripDate'">
             {{ record.tripStartTime + ' - ' + record.tripEndTime }}
           </template>
+          <!-- 应缴总金额 -->
+          <template v-if="column.key === 'payablePrice'">
+            <div>
+              {{ accDiv(record.payablePrice, 100) || '' }}
+            </div>
+          </template>
           <template v-if="column.key === 'action'">
             <div class="action-btns">
               <a @click="toOrderDetail(record, item.title)">查看订单</a>
@@ -379,15 +385,29 @@ const getItineraryDetail = (orderId: any, isPrint?: any) => {
     res.contractList = content ? content : []
     state.itineraryDetail = res;
     codeUrl.value = JSON.stringify({
-      itineraryNo: state.basicData.itineraryNo,
-      oid: state.basicData.oid
+      yktNo: state.basicData.yktNo
     })
     nextTick(() => {
       if (isPrint) {
         printBtn.value.click();
       }
     })
-    state.itineraryDetail.guWeiDetail = await api.getManagementExpenses(orderId);
+    if ([1, 5].includes(state.basicData.status)) {
+      let res = await api.getBasicInfo();
+      state.itineraryDetail.guWeiDetail = [{
+        feeName: '古维管理费',
+        touristNum: state.itineraryDetail.touristList.total,
+        payableNum: state.itineraryDetail.touristList.total,
+        payablePrice: state.itineraryDetail.touristList.total * res.price,
+        isInitiateReductionName: '否',
+        isReductionPassedName: '否',
+        feeStatus: '预计应缴费用',
+        issueStatusName: '未出票',
+      }]
+      state.basicData.guWeiCount = state.itineraryDetail.touristList.total;
+    } else {
+      state.itineraryDetail.guWeiDetail = await api.getManagementExpenses(orderId);
+    }
     if (route.query.isAudit === '1') {
       state.itineraryDetail.isAudit = 'inline-block'
     } else {

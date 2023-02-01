@@ -57,7 +57,7 @@
 	import { GroupMode, GroupStatus } from '@/enum'
 	import { copy } from '@/utils';
 	import { cloneDeep } from 'lodash';
-
+	import { accDiv } from '@/utils/compute';
 	const travelStore = useTravelStore();
 	const router = useRouter()
 	const state = reactive({
@@ -166,10 +166,11 @@
     const formData = new FormData();
     formData.append('itineraryId', record.oid);
     api.travelManagement.sendGroup(formData).then((res: any) => {
+		console.log(res)
 		Modal.success({
 			title: '发团成功',
 			content: h('div', {}, [
-				h('p', `已提交审核，请耐心等待。本次行程单号: ${record.itineraryNo}，可复制后使用。`)
+				h('p', `已提交财务审核资金，预冻结费用：${accDiv(res, 100)}元，请耐心等待审核。本次行程单号: ${record.itineraryNo}，可复制后使用。`)
 			]),
 			closable: true,
 			okText: '复制行程单号',

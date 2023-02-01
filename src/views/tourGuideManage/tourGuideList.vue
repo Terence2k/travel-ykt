@@ -78,7 +78,7 @@
           委派来源：
         </div>
         <div>
-          {{ state.detailsData.signSource }}
+          {{ state.detailsData.signSourceName }}
         </div>
       </div>
       <div class="row_info">

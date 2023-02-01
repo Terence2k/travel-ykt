@@ -10,11 +10,11 @@
 			<template #bodyCell="{ column, record }">
 				<!-- 行程费用 单位转成元-->
 				<template v-if="column.key === 'totalFee'">
-					{{ (record.totalFee / 100) > 0 ? (record.totalFee / 100) : 0}}
+					{{ twoDecimalPlaces(record.totalFee) }}
 				</template>
 				<!-- 结算金额 单位转成元-->
 				<template v-if="column.key === 'accountingFee'">
-					{{ (record.accountingFee / 100) > 0 ? (record.accountingFee / 100) : 0}}
+					{{ twoDecimalPlaces(record.accountingFee) }}
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
@@ -47,7 +47,7 @@ import DelModal from '@/components/common/DelModal.vue';
 import TransferModal from '@/views/settlementManagement/settlement/settlement/transferModal.vue';
 import { downloadFile } from '@/utils/util';
 import { StateType } from '../index';
-import { number } from 'vue-types';
+import { twoDecimalPlaces } from '../index'
 
 const props = defineProps({
 	params: Object,
