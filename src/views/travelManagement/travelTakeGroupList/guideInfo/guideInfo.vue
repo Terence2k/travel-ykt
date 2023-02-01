@@ -16,7 +16,7 @@
 						</div>
 					</template>
 					<template v-if="column.key === 'time'">
-						<div>
+						<div class="aa">
 							<a-form-item 
 							v-if="editableData[record.key ? record.key : record.oid]" 
 							:name="[record.key ? record.key : record.oid, column.key]">
@@ -149,5 +149,8 @@ getGuideList();
 	display: flex;
 	justify-content: center;
 	margin: 16px 20px;
+}
+.ant-form-item{
+	margin-top: 24px;
 }
 </style>

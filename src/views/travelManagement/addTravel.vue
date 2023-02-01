@@ -14,6 +14,7 @@
 			<div class="footer-btn">
 				
 				<a-button v-show="activeKey < pages.length - 1" type="primary" @click="activeKey = activeKey + 1">下一步</a-button>
+				<div v-show="activeKey >= pages.length - 1"></div>
 				<a-button
 					class="save"
 					type="primary"

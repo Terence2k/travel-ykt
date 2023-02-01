@@ -45,7 +45,8 @@
 							{{ record.gender ? '男' : '女' }}
 						</template>
 						<template v-if="column.key === 'specialPic'">
-							<a-image v-if="record.specialPic" :width="100" :height="70" :src="record.specialPic" :fallback="error" />
+							<CommonImg v-if="record.specialPic" :key="url" :width="100" :src="record.specialPic"></CommonImg>
+							<!-- <CommonImg :key="url" :width="100" src="travelPic/16752385871006426.png"></CommonImg> -->
 						</template>
 						<template v-if="column.key === 'verificationStatus'"> {{ record.verificationStatus ? '已核销' : '未核销' }} </template>
 						<template v-if="column.key === 'action'">
@@ -77,6 +78,7 @@ import { message } from 'ant-design-vue';
 import Pic from '@/components/common/imageWrapper.vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import { shijianc, shijiancTOYMD } from '@/utils/formatTimes';
+import CommonImg from '@/components/common/CommonImg.vue';
 
 // import { useTravelStore } from '@/stores/modules/travelManagement';
 // const travelStore = useTravelStore();
