@@ -200,7 +200,8 @@ const init = async (id: number) => {
 	state.data.ticketId = id;
 	state.data.start = shijianYMD(new Date());
 	state.data.end = nextYear(state.data.start);
-	let res = await api.getInevntoryDetail(state.data);
+
+	let res = await api.getInevntoryDetail({ ticketId: id });
 	setDayPriceList.value = res;
 };
 
