@@ -36,7 +36,7 @@
 									<a href="javascript:;">退出</a>
 								</a-menu-item>
 								<a-menu-divider />
-								<a-menu-item key="3" disabled>系统版本：{{ packageJson.version }}</a-menu-item>
+								<!-- <a-menu-item key="3" disabled>系统版本：{{ packageJson.version }}</a-menu-item> -->
 							</a-menu>
 						</template>
 					</a-dropdown>
@@ -110,7 +110,7 @@ const goBack = () => {
 const handleMenuTree = (menuList: any) => {
 	menuList = menuList.map((item: any) => {
 		return {
-			children: item.menuTypeName == '菜单夹' ? item.childMenuList : [],
+			children: item.menuType === 0 ? item.childMenuList : [],
 			keys: item.url,
 			path: item.url,
 			title: item.menuName,

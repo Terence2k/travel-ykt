@@ -165,6 +165,9 @@
 				</template>
 			</CommonTable>
 		</a-form>
+		<!-- <div>
+			<a-button @click="add" class="button-add" v-permission="'添加'">添加</a-button>
+		</div> -->
 		<div class="footer">
 			<!-- <a-button @click="saveRoomInfo" class="button-save button">保存</a-button> -->
 			<a-button

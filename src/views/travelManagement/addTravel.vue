@@ -14,6 +14,7 @@
 			<div class="footer-btn">
 				
 				<a-button v-show="activeKey < pages.length - 1" type="primary" @click="activeKey = activeKey + 1">下一步</a-button>
+				<div v-show="activeKey >= pages.length - 1"></div>
 				<a-button
 					class="save"
 					type="primary"
@@ -267,7 +268,7 @@ const getTraveDetail = () => {
 		travelStore.setGuideList([]);
 		travelStore.setTouristList([]);
 		travelStore.setTrafficList([]);
-		travelStore.setFileInfo([fileOne, fileTwo, fileThree]);
+		travelStore.setFileInfo([cloneDeep(fileOne), cloneDeep(fileTwo), cloneDeep(fileThree)]);
 		return;
 	}
 	api.travelManagement

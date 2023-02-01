@@ -20,13 +20,13 @@
 			</picker>
 		</search-item>
 		<template #button>
-			<a-button @click="reset" style="margin-right: 30px" v-permission="`重置`">重置</a-button>
-			<a-button @click="initList" v-permission="`查询`">查询</a-button>
+			<a-button @click="reset" style="margin-right: 30px" v-permission="`散客结算汇总报表_重置`">重置</a-button>
+			<a-button @click="initList" v-permission="`散客结算汇总报表_查询`">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
 		<div class="list-btn">
-			<a-button type="primary" class="success" v-permission="`导出`">导出</a-button>
+			<a-button type="primary" class="success" v-permission="`散客结算汇总报表_导出`">导出</a-button>
 		</div>
 	</div>
 	<div>
