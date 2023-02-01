@@ -61,7 +61,7 @@
 			<a-form-item label="" v-if="formState.ticketType === TicketType.SHOW || formState.ticketType === TicketType.UNITE"> </a-form-item>
 
 			<a-form-item label="订单金额">
-				<a-input v-model:value="formState.price" disabled placeholder="无需填写，勾选人员名单后自动计算" />
+				<a-input v-model:value="countMoney" disabled placeholder="无需填写，勾选人员名单后自动计算" />
 			</a-form-item>
 
 			<a-form-item label="订单编号">
@@ -157,9 +157,8 @@ const columns: any = [
 	// },
 ];
 let contrastdata = reactive({} as any);
-const ticketPrice = computed(() => {
-	return ticketData.ticketList.filter((it: any) => it.oid === formState.ticketId)[0]?.price;
-});
+const countMoney = computed(()=> (accMul(accDiv(ticketPrice.value, 100), travelStore.touristList.length)) || 0)
+const ticketPrice = ref()
 
 const getScenicList = async () => {
 	ticketData.scenicList = await api.travelManagement.getScenicList();
@@ -299,6 +298,8 @@ watch(dialogVisible, (newVal) => {
 		for (let k in formState) {
 			formState[k] = '';
 		}
+		ticketPrice.value = 0
+
 	} else {
 		const data = props.productRow;
 		if (props.productRow) {
@@ -319,12 +320,13 @@ watch(dialogVisible, (newVal) => {
 	emits('update:modelValue', newVal);
 });
 
-const getStock = (ticketId: number | string, endTime: string, startTime: string) => {
-	api.travelManagement.getStock({
-		ticketId,
-		endTime,
-		startTime,
-	});
+const getStock = async(ticketId: number | string, endTime: string, startTime: string) => {
+	const res = await api.travelManagement.getStock({
+			ticketId,
+			endTime,
+			startTime
+		});
+		ticketPrice.value = res[0].ticketPrice
 };
 const debounceFun = debounce((ticketId: number | string, endTime: string, startTime: string) => {
 	getStock(ticketId, endTime, startTime);

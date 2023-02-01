@@ -4,7 +4,7 @@
 			<a-descriptions :column="1" title="基本信息" bordered>
 				<a-descriptions-item label="订单编号">{{ verificationRecordInfo?.orderNo || '' }}</a-descriptions-item>
 				<a-descriptions-item label="核销项目">{{ verificationRecordInfo?.verificationItemName || '' }}</a-descriptions-item>
-				<a-descriptions-item label="核销时间">{{ verificationRecordInfo?.verificationTime || '' }}</a-descriptions-item>
+				<a-descriptions-item label="核销时间">{{ verificationRecordInfo?.verificationTime || '暂无' }}</a-descriptions-item>
 				<a-descriptions-item label="归属景区">{{ verificationRecordInfo?.scenicName || '' }}</a-descriptions-item>
 				<a-descriptions-item label="旅行社名称">
 					{{ verificationRecordInfo?.sendTravelName || '' }}

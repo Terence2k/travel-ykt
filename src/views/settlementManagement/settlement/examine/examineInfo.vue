@@ -44,7 +44,7 @@
 					</template>
 					<!-- 结算费用 单位转成元-->
 					<template v-if="column.key === 'settlementCost'">
-						<span> {{ record.settlementCost / 100 > 0 ? (record.settlementCost / 100) : 0 }} </span>
+						<span> {{ twoDecimalPlaces(record.settlementCost) }} </span>
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
@@ -75,6 +75,7 @@ import DelModal from '@/components/common/DelModal.vue';
 import AdjustModal from '@/views/settlementManagement/settlement/examine/adjustModal.vue';
 import DetailModal from '@/views/settlementManagement/settlement/examine/detailModal.vue';
 import { settlementOptions } from '@/stores/modules/settlement';
+import { twoDecimalPlaces } from '../index'
 // import lodash from 'lodash';
 export interface StateType {
 	data: TableDataType;
@@ -241,6 +242,7 @@ onMounted(() => {
 // 	formData.settlementInformationVOList[adjustData.value.editIndex].settlementCost = e.form.settlementCost;
 //     //
 // })
+
 </script>
 
 <style lang="less" scoped>

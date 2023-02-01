@@ -25,6 +25,8 @@
           <a-descriptions-item label="地接社计调">{{state.basicData.subTravelOperatorName}} {{state.basicData.subTravelOperatorPhone}}</a-descriptions-item>
           <a-descriptions-item label="游客人数">{{state.basicData.touristCount}}</a-descriptions-item>
           <a-descriptions-item label="古维费应缴人数">{{state.basicData.guWeiCount}}</a-descriptions-item>
+          <a-descriptions-item label="游客到丽方式">{{state.basicData.toLjWay}}</a-descriptions-item>
+          <a-descriptions-item label="游客离丽方式">{{state.basicData.leaveLjWay}}</a-descriptions-item>
           <a-descriptions-item label="行程时间">{{state.basicData.startDate}} - {{ state.basicData.endDate }}</a-descriptions-item>
           <a-descriptions-item label="综费应缴人数">{{state.basicData.productPeopleCount }}</a-descriptions-item>
           <a-descriptions-item label="已添加景区">{{state.basicData.ticketCount}}</a-descriptions-item>
@@ -33,6 +35,7 @@
           <a-descriptions-item label="预估应缴费（元）">{{accDiv(state.basicData.totalFee, 100)}}元</a-descriptions-item>
           <a-descriptions-item label="关联行程单">{{state.basicData.relatedItineraryNo}}</a-descriptions-item>
           <a-descriptions-item label="保险购买方">{{state.basicData.insuranceStatusName}}</a-descriptions-item>
+          <a-descriptions-item label="自编团号" :span="2">{{state.basicData.selfTeamNo}}</a-descriptions-item>
         </a-descriptions>
       </a-col>
       <a-col :span="7">
@@ -69,31 +72,31 @@
             <!-- 费用总计（元） -->
             <template v-if="column.key === 'orderFee'">
               <div>
-                {{ accDiv(record.orderFee, 100) || 0 }}
+                {{ accDiv(record.orderFee, 100) || '' }}
               </div>
             </template>
             <!-- 单价（元） -->
             <template v-if="column.key === 'unitPrice'">
               <div>
-                {{ accDiv(record.unitPrice, 100) || 0 }}
+                {{ accDiv(record.unitPrice, 100) || '' }}
               </div>
             </template>
             <!-- 费用（元） -->
             <template v-if="column.key === 'totalFee'">
               <div>
-                {{ accDiv(record.totalFee, 100) || 0 }}
+                {{ accDiv(record.totalFee, 100) || '' }}
               </div>
             </template>
             <!-- 费用（元） -->
             <template v-if="column.key === 'orderFee'">
               <div>
-                {{ accDiv(record.totalFee, 100) || 0 }}
+                {{ accDiv(record.totalFee, 100) || '' }}
               </div>
             </template>
             <!-- 应缴总金额 -->
             <template v-if="column.key === 'payablePrice'">
               <div>
-                {{ accDiv(record.payablePrice, 100) || 0 }}
+                {{ accDiv(record.payablePrice, 100) || '' }}
               </div>
             </template>
             <!-- 入住天数 -->

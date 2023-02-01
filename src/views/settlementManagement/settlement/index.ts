@@ -98,3 +98,12 @@ export const dealData = (params: [any]) => {
 	});
 	return params;
 };
+export const twoDecimalPlaces = (number: any): any => {
+	if (typeof number === 'string') {
+		if (number.includes('-')) {
+			number = number.slice(1);
+			return `-${Number(number / 100)}`;
+		}
+	}
+	return Number(number / 100);
+};

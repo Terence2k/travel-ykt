@@ -61,28 +61,28 @@
 			<CommonTable :dataSource="state.tableData.data" :columns="columns">
 				<template #bodyCell="{ column, record }">
 					<!-- 团队类型 -->
-					<template v-if="column.key === 'teamType'">
+					<!-- <template v-if="column.key === 'teamType'">
 						<span>{{ getTeamTypesName(record.teamType) }}</span>
-					</template>
+					</template> -->
 					<!-- 预订金额 单位转成元-->
 					<template v-if="column.key === 'scheduledAmount'">
-						{{ record.scheduledAmount / 100 > 0 ? (record.scheduledAmount / 100) : 0 }}
+						{{ twoDecimalPlaces(record.scheduledAmount) }}
 					</template>
 					<!-- 未核销金额 单位转成元-->
 					<template v-if="column.key === 'noVerificationAmount'">
-						{{ record.noVerificationAmount / 100 > 0 ? (record.noVerificationAmount / 100) : 0 }}
+						{{ twoDecimalPlaces(record.noVerificationAmount) }}
 					</template>
 					<!-- 实际减免金额 单位转成元-->
 					<template v-if="column.key === 'actualFullAmount'">
-						{{ record.actualFullAmount / 100 > 0 ? (record.actualFullAmount / 100) : 0 }}
+						{{ twoDecimalPlaces(record.actualFullAmount) }}
 					</template>
 					<!-- 实际金额 单位转成元-->
 					<template v-if="column.key === 'actualAmount'">
-						{{ record.actualAmount / 100 > 0 ? (record.actualAmount / 100) : 0 }}
+						{{ twoDecimalPlaces(record.actualAmount) }}
 					</template>
 					<!-- 酒店实收 单位转成元-->
 					<template v-if="column.key === 'hotelPrice'">
-						{{ record.hotelPrice / 100 > 0 ? (record.hotelPrice / 100) : 0 }}
+						{{ twoDecimalPlaces(record.hotelPrice) }}
 					</template>
 					<!-- 结算规则 -->
 					<template v-if="column.key === 'settlementRuleName'">
@@ -128,19 +128,20 @@ interface ParamType {
 	hotelName?: number | string; //酒店名称
 	teamType?: number | string | null; //团队类型id
 	subTravelOid?: number | string | null; //地接社id
-	verificationStartTime: ''; //核销开始时间
-	verificationEndTime: ''; //核销结束时间
+	verificationStartTime: number | string | null; //核销开始时间
+	verificationEndTime: number | string | null; //核销结束时间
 	settlementStartTime: number | string | null; //结算开始时间
 	settlementEndTime: number | string | null; //结算结束时间
 	pageSize?: number; //页大小
 	pageNo?: number; //页号
 }
 interface DataType {
-	hotelOrderId?: string | number;
-	orderNo?: string | number; //订单编号
+	privateNo?: string | number; //自编团号
+	hotelOrderId?: string | number; //酒店主订单id
+	orderNo?: string | number; //订单号
 	itineraryNo?: string | number; //团单编号
-	teamType?: string | number; //团队类型
-	subTravelOid?: string | number; //地接社id
+	teamType?: string | number; //团队类型id
+	subTravelOid?: string | number; //旅行社id
 	subTravelName?: string | number; //地接社名称
 	settlementTime?: string | number; //结算时间
 	hotelName?: string | number; //酒店名称
@@ -152,13 +153,11 @@ interface DataType {
 	departureDate?: string | number; //离店日期
 	scheduledAmount?: string | number; //预定金额
 	noVerificationAmount?: string | number; //未核销金额
-	fullRule?: string | number; //满减规则-满
-	reduceRule?: string | number; //满减规则-减
 	reduceAfterAmount?: string | number; //减免后金额
 	actualFullNumber?: string | number; //实际减免数量
 	actualFullAmount?: string | number; //实际减满金额
 	actualAmount?: string | number; //实际金额
-	hotelPrice?: string | number; //酒店实收
+	hotelPrice?: string | number; //酒店冻结
 	settlementRuleList: Array<SettlementRuleListType>; //结算规则信息
 }
 interface SettlementRuleListType {
@@ -173,16 +172,16 @@ const initOption = async () => {
 	await options.getEarthContactAgencyList();
 };
 // 计算属性 匹配团队类型
-const getTeamTypesName = computed(() => (value: any) => {
-	if (options.teamTypesLists) {
-		const idx = options.teamTypesLists.findIndex((item) => item.oid === value);
-		if (idx !== -1) {
-			return options.teamTypesLists[idx]['name'];
-		}
-		return '';
-	}
-	return '';
-});
+// const getTeamTypesName = computed(() => (value: any) => {
+// 	if (options.teamTypesLists) {
+// 		const idx = options.teamTypesLists.findIndex((item) => item.oid === value);
+// 		if (idx !== -1) {
+// 			return options.teamTypesLists[idx]['name'];
+// 		}
+// 		return '';
+// 	}
+// 	return '';
+// });
 const columns = computed(() => {
 	const column: TableColumnsType = [
 		{
@@ -198,23 +197,17 @@ const columns = computed(() => {
 			width: 150,
 		},
 		{
-			title: '团队类型',
-			dataIndex: 'teamType',
-			key: 'teamType',
-			width: 100,
+			title: '自编团号',
+			dataIndex: 'privateNo',
+			key: 'privateNo',
+			width: 130,
 		},
 		{
-			title: '地接社',
+			title: '旅行社',
 			dataIndex: 'subTravelName',
 			key: 'subTravelName',
 			width: 100,
 		},
-		// {
-		// 	title: '作团人',
-		// 	dataIndex: 'feeText',
-		// 	key: 'feeText',
-		// 	width: 80
-		// },
 		{
 			title: '结算时间',
 			dataIndex: 'settlementTime',
@@ -222,10 +215,10 @@ const columns = computed(() => {
 			width: 130,
 		},
 		{
-			title: '酒店',
+			title: '酒店名称',
 			dataIndex: 'hotelName',
 			key: 'hotelName',
-			width: 100,
+			width: 80,
 		},
 		{
 			title: '核销时间',
@@ -266,18 +259,6 @@ const columns = computed(() => {
 					key: 'departureDate',
 					width: 130,
 				},
-				// {
-				// 	title: '单价(元)',
-				// 	dataIndex: 'companyAddress',
-				// 	key: 'companyAddress',
-				// 	width: 80
-				// },
-				// {
-				// 	title: '加价(元)',
-				// 	dataIndex: 'companyAddress',
-				// 	key: 'companyAddress',
-				// 	width: 80
-				// },
 				{
 					title: '预订金额(元)',
 					dataIndex: 'scheduledAmount',
@@ -371,7 +352,7 @@ const state = reactive<StateType>({
 // 查询
 const initList = async () => {
 	state.tableData.loading = true;
-	let res = await api.hotelAccountList(state.tableData.param);
+	let res = await api.travelAgencyAndHotelReportStatement(state.tableData.param);
 	const { total, content } = res;
 	state.tableData.total = total;
 	state.tableData.data = content;
@@ -391,8 +372,8 @@ const pageSideChange = (current: number, size: number) => {
 };
 const settlementTimeChange = (arr: any) => {
 	if (arr && arr.length > 0) {
-		state.tableData.param.settlementStartTime = Date.parse(arr[0]);
-		state.tableData.param.settlementEndTime = Date.parse(arr[1]);
+		state.tableData.param.settlementStartTime = arr[0];
+		state.tableData.param.settlementEndTime = arr[1];
 	} else {
 		state.tableData.param.settlementStartTime = '';
 		state.tableData.param.settlementEndTime = '';
@@ -400,8 +381,8 @@ const settlementTimeChange = (arr: any) => {
 };
 const verificationTimeChange = (arr: any) => {
 	if (arr && arr.length > 0) {
-		state.tableData.param.verificationStartTime = Date.parse(arr[0]);
-		state.tableData.param.verificationEndTime = Date.parse(arr[1]);
+		state.tableData.param.verificationStartTime = arr[0];
+		state.tableData.param.verificationEndTime = arr[1];
 	} else {
 		state.tableData.param.verificationStartTime = '';
 		state.tableData.param.verificationEndTime = '';
@@ -416,7 +397,7 @@ const getSettlementRule = computed(() => (column: TableColumnsType, record: Data
 	for (const key in data) {
 		if (column.title === data[key].costName) {
 			let price: any = data[key].settlementCost;
-			return price / 100 > 0 ? (price / 100) : 0;
+			return twoDecimalPlaces(price);
 		}
 	}
 	return '';
@@ -438,6 +419,15 @@ const reset = () => {
 	state.settlementTimeList = [];
 	state.verificationTimeList = [];
 	initList();
+};
+const twoDecimalPlaces = (number: any): any => {
+	if (typeof number === 'string') {
+		if (number.includes('-')) {
+			number = number.slice(1);
+			return `-${Number(number / 100)}`;
+		}
+	}
+	return Number(number / 100);
 };
 </script>
 <style scoped lang="less">
