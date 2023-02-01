@@ -364,20 +364,30 @@ export const getSettlementRuleGuide = computed(() => (column, record) => {
 });
 // 金额单位处理 分--元
 export const amountHandle = computed(() => (num: any) => {
-	let str = num / 100 > 0 ? num / 100 : 0;
-	return str.toString();
+	if (typeof num === 'string') {
+		if (num.includes('-')) {
+			num = num.slice(1);
+			return `-${Number(num / 100)}`;
+		}
+	}
+	return Number(num / 100);
 });
-const amountHandleFun = (num: any) => {
-	let str = num / 100 > 0 ? num / 100 : 0;
-	return str.toString();
-};
 // 金额单位处理 分--元
 export const amountYuanHandle = computed(() => (num: any) => {
-	let str = num / 100 > 0 ? num / 100 : 0;
-	return str.toString();
+	if (typeof num === 'string') {
+		if (num.includes('-')) {
+			num = num.slice(1);
+			return `-${Number(num / 100)}`;
+		}
+	}
+	return Number(num / 100);
 });
 const amountYuanHandleFun = (num: any) => {
-	let str = num / 100 > 0 ? num / 100 : 0;
-	return str.toString();
+	if (typeof num === 'string') {
+		if (num.includes('-')) {
+			num = num.slice(1);
+			return `-${Number(num / 100)}`;
+		}
+	}
+	return Number(num / 100);
 };
-
