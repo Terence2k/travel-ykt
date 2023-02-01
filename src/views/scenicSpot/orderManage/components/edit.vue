@@ -11,10 +11,10 @@
 					<a-form-item label="入园日期"> {{ formData.data.orderInfo.schoolDate || '-' }} </a-form-item>
 					<a-form-item label="预定时间"> {{ formData.data.orderInfo.bookDate || '-' }}</a-form-item>
 					<a-form-item label="核销时间"> {{ formData.data.orderInfo.verificationTime || '-' }} </a-form-item>
-					<a-form-item label="行程人数"> {{ formData.data.orderInfo.itineraryCount }} </a-form-item>
-					<a-form-item label="订票人数"> {{ formData.data.orderInfo.bookCount }} </a-form-item>
-					<a-form-item label="核销人数"> {{ formData.data.orderInfo.verificationCount }} </a-form-item>
-					<a-form-item label="订单金额"> {{ formData.data.orderInfo.orderCountAmount / 100 }} </a-form-item>
+					<a-form-item label="行程人数"> {{ formData.data.orderInfo.itineraryCount }} 人</a-form-item>
+					<a-form-item label="订票人数"> {{ formData.data.orderInfo.bookCount }} 人</a-form-item>
+					<a-form-item label="核销人数"> {{ formData.data.orderInfo.verificationCount }} 人</a-form-item>
+					<a-form-item label="订单金额"> {{ formData.data.orderInfo.orderCountAmount / 100 }} 元 </a-form-item>
 					<a-form-item label="订单编号"> {{ formData.data.orderInfo.orderNo }} </a-form-item>
 					<a-form-item label="门票"> {{ formData.data.orderInfo.ticketName }} </a-form-item>
 					<!-- <a-form-item label="门票分类"> {{ formData.data.orderInfo.ticketType }} </a-form-item> -->
@@ -296,13 +296,13 @@ const save = async (params: object) => {
 
 // 自定义面包屑
 onMounted(async () => {
-	// navigatorBar.setNavigator(['景区信息管理', '编辑']);
+	navigatorBar.setNavigator(['景区管理', '订单管理']);
 	await initPage();
 	// await initOpeion();
 });
 
 onBeforeUnmount(() => {
-	// navigatorBar.clearNavigator();
+	navigatorBar.clearNavigator();
 });
 </script>
 
