@@ -65,17 +65,17 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 				dataIndex: 'guideCertificateNo',
 				key: 'guideCertificateNo',
 			},
-			{
-				title: '导游类型',
-				dataIndex: 'guideType',
-				key: 'guideType',
-				data: travelStore.guideType
-			},
-			{
-				title: '签约旅行社',
-				dataIndex: 'belongTravelAgencyName',
-				key: 'belongTravelAgencyName',
-			},
+			// {
+			// 	title: '导游类型',
+			// 	dataIndex: 'guideType',
+			// 	key: 'guideType',
+			// 	data: travelStore.guideType
+			// },
+			// {
+			// 	title: '签约旅行社',
+			// 	dataIndex: 'belongTravelAgencyName',
+			// 	key: 'belongTravelAgencyName',
+			// },
 			{
 				title: '操作',
 				key: 'action',
@@ -108,9 +108,9 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 			const cur = cloneDeep(
 				state.tableData.filter((item:any) => key == (item.key ? item.key : item.oid))[0]
 			);
-			cur.time = cur.startDate && 
-						cur.endDate && 
-						[cur.startDate, cur.endDate] || [];
+			// cur.time = cur.startDate && 
+			// 			cur.endDate && 
+			// 			[cur.startDate, cur.endDate] || [];
 			// 标记该数据是否编辑
 			cur.edit = true;
 			state.editableData[key] = cur;
@@ -121,7 +121,16 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 			travelStore.setdelGuideList(list)
 			// state.tableData = state.tableData.filter((item: any) => key !== (item.key ? item.key : item.oid));
 		},
-
+		handleTime(event: any, key: string) {
+			if (event) {
+				state.editableData[key].startDate = event[0];
+				state.editableData[key].endDate = event[1];
+			} else {
+				state.editableData[key].startDate = '';
+				state.editableData[key].endDate = '';
+			}
+			
+		},
 		save: async (key?: string) => {
 			state.rulesRef = {}
 			const rule = await validateRules(rules, state.editableData, key)
@@ -132,14 +141,14 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 			
 			if (!res) return emits('onSuccess', {guideList: {valid: res, message: '请填写完整导游信息', index: 1}});
 			if (key) {
-				state.editableData[key].startDate = state.editableData[key].time[0]
-				state.editableData[key].endDate = state.editableData[key].time[1]
+				// state.editableData[key].startDate = state.editableData[key].time[0]
+				// state.editableData[key].endDate = state.editableData[key].time[1]
 				methods.copyData(key)
 				delete state.editableData[key];
 			} else {
 				for (let k in state.editableData) {
-					state.editableData[k].startDate = state.editableData[k].time[0]
-					state.editableData[k].endDate = state.editableData[k].time[1]
+					// state.editableData[k].startDate = state.editableData[k].time[0]
+					// state.editableData[k].endDate = state.editableData[k].time[1]
 					methods.copyData(k)
 					delete state.editableData[k];
 				}
@@ -150,9 +159,10 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 
 		add: () => {
 			let key = generateGuid();
-			state.tableData.push({key, edit: true, oid: null});
+			state.tableData.push({key, edit: true, oid: null, time: cloneDeep(travelStore.teamTime)});
 			methods.edit(key);
-			console.log(state.tableData)
+			state.editableData[key].startDate = travelStore.teamTime[0];
+			state.editableData[key].endDate = travelStore.teamTime[1];
 		},
 
 		async getGuideList() {
@@ -161,15 +171,12 @@ export function useGuideInfo(props: any, emits: any): Record<string, any> {
 			const res = await api.travelManagement.getGuideList();
 			state.guideData = res;
 		},
-		aa:()=>{
-			console.log(state.tableData,'12313')
-		},
 		guideChange(value:any, { item }: any, key:any) {
 			state.editableData[key] = {
 				...state.editableData[key],
 				guidePhone: item.phone,
 				belongTravelOid: item.belongTravelAgencyId,
-				guideType: item.guideType || 2,	
+				// guideType: item.guideType || 2,	
 				guideCertificateNo: item.guideCertificateNo,
 				guideOid: item.oid,	
 				belongTravelAgencyName: item.belongTravelAgencyName,

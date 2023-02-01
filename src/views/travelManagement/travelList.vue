@@ -23,6 +23,7 @@
 					type="datetimerange"
 					popper-class="hidden-date-picker"
 					start-placeholder="开始日期"
+					:default-time="[new Date(2022, 12, 1, 0, 0, 0), new Date(2022, 12, 1, 23, 59, 59)]"
 					end-placeholder="结束日期"
 					value-format="YYYY-MM-DD HH:mm:ss"
 				/>
@@ -45,7 +46,10 @@
 					<a-button @click="goToPath(GroupType.Cooperation)" type="primary" style="margin-right: 20px" v-permission="'协作填报'">+协作填报</a-button>
 					<a-button @click="goToPath(GroupType.NonCooperation)" type="primary" style="margin-right: 20px" v-permission="'非协作填报'">+非协作填报</a-button>
 				</div>
-				<component :onCheck="check" :is="item.name"></component>
+				<div v-if="activeKey === item.value">
+					<component :onCheck="check" :is="item.name"></component>
+				</div>
+				
 			</a-tab-pane>
 		</a-tabs>
 	</div>
@@ -148,7 +152,7 @@ const pages = [
 ];
 const filterPages = pages.filter((item: any) => getTabPermission(item.label));
 activeKey.value = filterPages.length ? filterPages[0].value : pages[0].value;
-
+travelStore.insuranceStatus = '3'
 const goToPath = (type: number) => {
 	router.push({
 		path: '/travel/travel_manage/add_travel',

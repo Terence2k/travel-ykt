@@ -6,7 +6,7 @@
 				<template v-if="column.key === 'settlementCost'">
 					<span>
 						{{ record.costType == 0 ? '-' : '+' }}
-						{{ record.settlementCost / 100 > 0 ? (record.settlementCost / 100).toFixed(2) : 0 }}
+						{{ record.settlementCost / 100 > 0 ? (record.settlementCost / 100) : 0 }}
 					</span>
 				</template>
 			</template>

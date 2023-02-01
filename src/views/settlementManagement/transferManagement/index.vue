@@ -16,8 +16,10 @@
 			<a-input v-model:value="state.tableData.param.createName" placeholder="请输入费用名称" allowClear style="width: 180px" />
 		</search-item>
 		<template #button>
-			<a-button @click="reset" style="margin-right: 30px">重置</a-button>
-			<a-button @click="initList">查询</a-button>
+			<a-button @click="reset" style="margin-right: 30px" v-permission="`重置`">重置</a-button>
+			<a-button @click="initList" v-permission="`查询`">查询</a-button>
+			<!-- <a-button @click="reset" style="margin-right: 30px">重置</a-button>
+			<a-button @click="initList">查询</a-button> -->
 		</template>
 	</CommonSearch>
 	<div class="table-area">
@@ -36,12 +38,12 @@
 			>
 				<template #button>
 					<div class="btn" v-if="state.tableData.param.status === 1">
-						<a-button type="primary" class="success" @click="toBatchTransfer">处理</a-button>
+						<a-button type="primary" class="success" @click="toBatchTransfer" v-permission="`处理`">处理</a-button>
 					</div>
 				</template>
 				<template #bodyCell="{ column, record }">
 					<template v-if="column.key === 'settlementCost'">
-						<span>{{ (record.settlementCost / 100).toFixed(2) }}元</span>
+						<span>{{ record.settlementCost / 100 }}元</span>
 					</template>
 					<template v-if="column.key === 'status'">
 						<span v-if="record.status === 1" style="color: red">待审核</span>
@@ -51,9 +53,15 @@
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
-							<a href="javascript:;" @click="toHandle(record)" v-if="state.tableData.param.status === 1 || record.status === 4">
-								{{ record.status === 1 ? '处理' : '详情' }}
+							<a
+								href="javascript:;"
+								@click="toHandle(record)"
+								v-if="state.tableData.param.status === 1 || record.status === 1"
+								v-permission="`待审核_详情`"
+							>
+								详情
 							</a>
+							<a href="javascript:;" @click="toHandle(record)" v-if="record.status === 4" v-permission="`已转账_处理`"> 处理 </a>
 							<!-- <a href="javascript:;" @click="toDetails(record)">详情</a> -->
 						</div>
 					</template>
@@ -222,6 +230,7 @@ const reset = () => {
 		pageNo: 1, //页号
 		pageSize: 10, //页大小
 	};
+	state.times = [];
 	initList();
 };
 const timeChange = (arr: any) => {
@@ -243,8 +252,11 @@ const toBatchTransfer = () => {
 		message.error(`请选择数据后再进行操作`);
 		return;
 	}
+	const array = Array.from(cacheData.value.selectedRowKeys);
+	const id = array.join(',');
 	route.push({
 		path: '/settlementManagement/transferManagement/batchTransfer',
+		query: { id },
 	});
 };
 onMounted(() => {

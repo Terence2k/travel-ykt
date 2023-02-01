@@ -8,7 +8,7 @@
 				</div>
 			</div>
 			<div class="header-total">
-				<span>费用合计：</span>
+				<span>费用合计：{{ allMoney }}</span>
 			</div>
 		</div>
 		<CommonTable :dataSource="state.tableData.data" :columns="columns" :scroll="{ x: '100%', y: '100%' }" bordered>
@@ -19,8 +19,12 @@
 					<span v-if="record.status === 3" style="color: red">审核不通过</span>
 					<span v-if="record.status === 4" style="color: red">部分完成</span>
 				</template>
-				<template v-if="column.dataIndex === 'ykt'"> {{ getYKT(record, column) }} </template>
-				<template v-if="column.dataIndex === 'bank'"> {{ getBank(record, column) }} </template>
+				<!-- 行程费用 / 100 -->
+				<template v-if="column.key === 'settlementCost'"> {{ twoDecimalPlaces(record.settlementCost) }} </template>
+				<!-- 动态表头的数据 -->
+				<template v-if="column.parentKey === 'collectionCompany'">
+					{{ getCollectionCompany(column, record) }}
+				</template>
 			</template>
 		</CommonTable>
 		<Modal :params="state.modalParams" v-model="state.modalShow" @submit="tipSubmit" @cancel="tipCancel" />
@@ -46,12 +50,7 @@ interface DataType {
 	name: string;
 }
 interface ParamType {
-	teamTypeId?: null | number; //团队类型id(对应ljykt_travel_agency数据库sys_team_type表oid)
-	productType?: null | number; //产品类型 1-景区 2-酒店 3-餐饮 6开始为综费产品id
-	costName?: string; //费用名称
-	ruleStatus?: null | number; //规则状态 1-启用 0-禁用
-	pageNo?: number; //页号
-	pageSize?: number; //页大小
+	ids?: null | Array<number>; // ID数组
 }
 interface ModalParamsType {
 	title: string;
@@ -62,109 +61,33 @@ const state = reactive<StateType>({
 		data: [],
 		total: 400,
 		loading: false,
-		// param: {
-		// 	teamTypeId: null, //团队类型id(对应ljykt_travel_agency数据库sys_team_type表oid)
-		// 	productType: null, //产品类型 1-景区 2-酒店 3-餐饮 6开始为综费产品id
-		// 	costName: '', //费用名称
-		// 	ruleStatus: null, //规则状态 1-启用 0-禁用
-		// 	pageNo: 1, //页号
-		// 	pageSize: 10, //页大小
-		// },
 		param: {
-			transferAccountsId: 1,
-			itineraryNo: 'aaaaaa',
-			pageNo: 1,
-			pageSize: 10,
+			ids: [],
 		},
 	},
 	modalShow: false,
 	modalParams: { title: '审核通过', content: '是否确认对勾选的六条数据进行转账？' },
 });
 const columns = computed(() => {
-	const column = [
+	const startColumns = [
 		{
 			title: '行程单号',
 			dataIndex: 'itineraryNo',
 			key: 'itineraryNo',
-			width: 100,
 		},
 		{
 			title: '地接社',
-			dataIndex: 'subTravelName',
-			key: 'subTravelName',
+			dataIndex: 'travelName',
+			key: 'travelName',
 			width: 100,
 		},
+	];
+	const endColumns = [
 		{
-			title: '监理公司',
-			key: 'superviseVo',
-			children: [
-				{
-					title: '一卡通',
-					dataIndex: 'ykt',
-					key: 'superviseVo',
-					width: 100,
-				},
-				{
-					title: '银行',
-					dataIndex: 'bank',
-					key: 'superviseVo',
-					width: 100,
-				},
-			],
-		},
-		{
-			title: '协会',
-			key: 'associationVo',
-			children: [
-				{
-					title: '一卡通',
-					dataIndex: 'ykt',
-					key: 'associationVo',
-					width: 100,
-				},
-				{
-					title: '银行',
-					dataIndex: 'bank',
-					key: 'associationVo',
-					width: 100,
-				},
-			],
-		},
-		{
-			title: '启明旅行社',
-			key: 'qmTravelAgencyVo',
-			children: [
-				{
-					title: '一卡通',
-					dataIndex: 'ykt',
-					key: 'qmTravelAgencyVo',
-					width: 100,
-				},
-				{
-					title: '银行',
-					dataIndex: 'bank',
-					key: 'qmTravelAgencyVo',
-					width: 100,
-				},
-			],
-		},
-		{
-			title: '丽江旅行社',
-			key: 'ljTravelAgencyVo',
-			children: [
-				{
-					title: '一卡通',
-					dataIndex: 'ykt',
-					key: 'ljTravelAgencyVo',
-					width: 100,
-				},
-				{
-					title: '银行',
-					dataIndex: 'bank',
-					key: 'ljTravelAgencyVo',
-					width: 100,
-				},
-			],
+			title: '行程费用',
+			dataIndex: 'settlementCost',
+			key: 'settlementCost',
+			width: 100,
 		},
 		{
 			title: '状态',
@@ -172,14 +95,45 @@ const columns = computed(() => {
 			key: 'state',
 			width: 100,
 		},
-		{
-			title: '行程费用',
-			dataIndex: 'totalFee',
-			key: 'totalFee',
-			width: 100,
-		},
 	];
-	return column;
+	const activeColumns = [];
+	const activeData = state.tableData.data;
+	for (let index = 0; index < activeData.length; index++) {
+		const dataItem: { list: Array<any> } = activeData[index];
+		if (dataItem.list && dataItem.list.length) {
+			const dataList = dataItem.list;
+			for (let subIndex = 0; subIndex < dataList.length; subIndex++) {
+				const listItem = dataList[subIndex];
+				// 判断是否已经存在该信息
+				const idx = activeColumns.findIndex((item: { key: number }) => item.key === listItem.collectionCompanyId);
+				if (idx === -1) {
+					const item = {
+						title: listItem.collectionCompanyName,
+						dataIndex: listItem.collectionCompanyId,
+						key: listItem.collectionCompanyId,
+						children: [
+							{
+								title: '一卡通',
+								key: 'yktMoney',
+								collectionCompanyId: listItem.collectionCompanyId,
+								parentKey: 'collectionCompany',
+							},
+							{
+								title: '银行',
+								key: 'bankMoney',
+								collectionCompanyId: listItem.collectionCompanyId,
+								parentKey: 'collectionCompany',
+							},
+						],
+					};
+					activeColumns.push(item);
+				}
+			}
+		}
+	}
+	console.log(activeColumns, 'activeColumns');
+
+	return [...startColumns, ...activeColumns, ...endColumns];
 });
 const examineType = ref(0);
 const examine = (type: number) => {
@@ -189,46 +143,161 @@ const examine = (type: number) => {
 		state.modalShow = true;
 	} else {
 		examineType.value = 1;
-		state.modalParams = { title: '审核通过', content: '是否确认对勾选的六条数据进行转账？' };
+		state.modalParams = { title: '审核通过', content: '是否确认进行转账？' };
 		state.modalShow = true;
 	}
 };
-const tipSubmit = () => {
+const tipSubmit = async () => {
 	if (examineType.value === 1) {
 		// 调用接口
+		// 审核通过
+		await api.auditTransferAccounts({
+			status: 2,
+			transferAccountsOidList: state.tableData.param.ids,
+		});
+		state.modalShow = false;
+		router.push('/settlementManagement/transferManagement/list');
 	} else if (examineType.value === 0) {
 		// 调用接口
+		await api.auditTransferAccounts({
+			status: 3,
+			transferAccountsOidList: state.tableData.param.ids,
+		});
+		state.modalShow = false;
+		router.push('/settlementManagement/transferManagement/list');
 	}
 };
-const initList = async (query: any) => {
+const router = useRouter();
+const initList = async () => {
+	const id: string = router.currentRoute.value.query.id as string;
+	state.tableData.param.ids = id.split(',') as Array<any>;
 	state.tableData.loading = true;
-	let res = await api.currencySettlementRuleList(state.tableData.param);
-	const { total, content } = res;
-	state.tableData.total = total;
-	// const list: [any] = dealData(content);
-	state.tableData.data = content;
+	let data = await api.transferAccountList(state.tableData.param.ids);
+	state.tableData.data = data;
+	// state.tableData.data = [
+	// 	{
+	// 		oid: 17, //oid
+	// 		travelId: 73, //旅行社id
+	// 		travelName: '丽江a旅行社', //旅行社名称
+	// 		status: null, //状态
+	// 		settlementCost: 8000, //结算总额
+	// 		itineraryNo: 'f0da8dfb-2130-4d81-be71-e1fde8246fe2', //行程单号
+	// 		list: [
+	// 			{
+	// 				collectionCompanyId: 73, //收款企业id
+	// 				collectionCompanyName: '第1个单位', //收款单位
+	// 				yktMoney: 8000, //一卡通金额
+	// 				bankMoney: 123, //银行金额
+	// 			},
+	// 			{
+	// 				collectionCompanyId: 95, //收款企业id
+	// 				collectionCompanyName: '第2个单位', //收款单位
+	// 				yktMoney: 555, //一卡通金额
+	// 				bankMoney: 456, //银行金额
+	// 			},
+	// 			{
+	// 				collectionCompanyId: 106, //收款企业id
+	// 				collectionCompanyName: '第3个单位', //收款单位
+	// 				yktMoney: 666, //一卡通金额
+	// 				bankMoney: 789, //银行金额
+	// 			},
+	// 		], //结算信息
+	// 	},
+	// 	{
+	// 		oid: 18, //oid
+	// 		travelId: 90, //旅行社id
+	// 		travelName: 'g旅行社', //旅行社名称
+	// 		status: null, //状态
+	// 		settlementCost: 30121, //结算总额
+	// 		itineraryNo: '8880ec2f-65ae-4a69-896b-e04e1ab34ed2', //行程单号
+	// 		list: [
+	// 			{
+	// 				collectionCompanyId: 90, //收款企业id
+	// 				collectionCompanyName: '第4个单位', //收款单位
+	// 				yktMoney: 25010, //一卡通金额
+	// 				bankMoney: 777, //银行金额
+	// 			},
+	// 			{
+	// 				collectionCompanyId: 101, //收款企业id
+	// 				collectionCompanyName: '第5个单位', //收款单位
+	// 				yktMoney: 111, //一卡通金额
+	// 				bankMoney: 888, //银行金额
+	// 			},
+	// 			{
+	// 				collectionCompanyId: 95, //收款企业id
+	// 				collectionCompanyName: '第6个单位', //收款单位
+	// 				yktMoney: 5000, //一卡通金额
+	// 				bankMoney: 999, //银行金额
+	// 			},
+	// 			{
+	// 				collectionCompanyId: 107, //收款企业id
+	// 				collectionCompanyName: '第7个单位', //收款单位
+	// 				yktMoney: 0, //一卡通金额
+	// 				bankMoney: 1111, //银行金额
+	// 			},
+	// 			{
+	// 				collectionCompanyId: 2, //收款企业id
+	// 				collectionCompanyName: '第8个单位', //收款单位
+	// 				yktMoney: 0, //一卡通金额
+	// 				bankMoney: 2222, //银行金额
+	// 			},
+	// 		], //结算信息
+	// 	},
+	// ];
 	state.tableData.loading = false;
-	// state.tableData.data = [];
 };
 const tipCancel = () => {
 	state.modalShow = false;
 };
-const router = useRouter();
+const twoDecimalPlaces = computed(() => (number: any): any => {
+	if (typeof number === 'string') {
+		if (number.includes('-')) {
+			number = number.slice(1);
+			return `-${Number(number / 100)}`;
+		}
+	}
+	return Number(number / 100);
+});
+const twoDecimalPlacesFunc = (number: any): any => {
+	if (typeof number === 'string') {
+		if (number.includes('-')) {
+			number = number.slice(1);
+			return `-${Number(number / 100)}`;
+		}
+	}
+	return Number(number / 100);
+};
+const getCollectionCompany = computed(() => (column: any, record: any) => {
+	const list = record.list;
+	// 银行
+	if (column.key === 'bankMoney') {
+		const idx = list.findIndex((item: any) => item.collectionCompanyId === column.collectionCompanyId);
+		if (idx !== -1) {
+			return twoDecimalPlacesFunc(list[idx]['bankMoney']);
+		}
+		return '';
+	}
+	// 一卡通
+	if (column.key === 'yktMoney') {
+		const idx = list.findIndex((item: any) => item.collectionCompanyId === column.collectionCompanyId);
+		if (idx !== -1) {
+			return twoDecimalPlacesFunc(list[idx]['yktMoney']);
+		}
+		return '';
+	}
+});
+// 所有的数据的费用合计
+const allMoney = computed(() => {
+	const data = state.tableData.data;
+	let count = 0;
+	for (let index = 0; index < data.length; index++) {
+		const money = data[index].settlementCost;
+		count += money;
+	}
+	return twoDecimalPlacesFunc(count);
+});
 onMounted(() => {
-	const query = router.currentRoute.value.query;
-	initList(query);
-});
-const getYKT = computed(() => (record, column) => {
-	if (record[column.key] && record[column.key]['ykt']) {
-		return record[column.key]['ykt'];
-	}
-	return '';
-});
-const getBank = computed(() => (record, column) => {
-	if (record[column.key] && record[column.key]['bank']) {
-		return record[column.key]['bank'];
-	}
-	return '';
+	initList();
 });
 </script>
 <style scoped lang="scss">

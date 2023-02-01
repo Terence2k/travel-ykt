@@ -326,6 +326,10 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			state.fileUrl[key] = state.editableData[key].specialCertificatePicture?.join(',')
 			state.editableData[key].edit = true
 		},
+		close() {
+			state.checkHighRish = false;
+			state.checkCode = false;
+		},
 		async del(record: any, index: number) {
 			let key = record.key ? record.key : record.oid;
 			record.oid && await api.travelManagement.deleteTourist([record.oid]);
@@ -420,10 +424,10 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 						state.editableData[key].sourceAddressName += `/${res.cityName}`
 						state.editableData[key].cityId = res.cityId;
 					}
-					if (res.areaName) {
-						state.editableData[key].sourceAddressName += `/${res.areaName}`
-						state.editableData[key].sourceAddress = res.areaId;
-					}
+					// if (res.areaName) {
+					// 	state.editableData[key].sourceAddressName += `/${res.areaName}`
+					// 	state.editableData[key].sourceAddress = res.areaId;
+					// }
 					
 					
 					
@@ -461,7 +465,8 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			state.checkCode = true;
 			const res = await travelStore.getHealthCode(state.tableData)
 			state.isWarring = res.some(item => item.healthCode === HealthCode.Red || item.healthCode === HealthCode.Yellow)
-			console.log(state.isWarring)
+			// console.log(state.isWarring)
+			setTimeout(() => state.checkCode = false, 3000);
 		}
 	}
 	watch(onCheck, (newVal) => {

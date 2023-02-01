@@ -57,7 +57,12 @@
 			</template>
 		</BaseModal>
 		<div class="footer">
-			<a-button type="primary" v-if="state.data.auditStatus == 1" @click="auditing()">审核</a-button>
+			<a-button
+				type="primary"
+				v-if="state.data.auditStatus == 1 && !roleCode.includes('TRAVEL_OPERATOR')"
+				@click="auditing()"
+				>审核</a-button
+			>
 			<a-button @click="notAuditing()">返回</a-button>
 		</div>
 	</div>
@@ -72,14 +77,16 @@ import type { Rule } from 'ant-design-vue/es/form';
 import { message } from 'ant-design-vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import { accDiv, accMul } from '@/utils/compute';
+import { getUserInfo } from '@/utils/util';
 
 const router = useRouter();
 const navigatorBar = useNavigatorBar();
-
+const userInfo = getUserInfo();
 const route = useRoute();
 const visible = ref(false);
 const activeKey = ref('1');
 const formRef = ref();
+const roleCode = ref()
 const columns = [
 	{
 		title: '序号',
@@ -147,11 +154,15 @@ const success = () => {
 };
 
 const notAuditing = () => {
-	router.go(-1)
+	router.go(-1);
 };
 
 const initPage = async (): Promise<void> => {
-	console.log(route?.query?.orderNo);
+	 roleCode.value = userInfo.sysRoles.map((item: any) => {
+		if (['TRAVEL_OPERATOR'].includes(item.roleCode)) {
+			return item.roleCode;
+		}
+	});
 	api.HotelOrderInfo(route?.query?.orderNo).then((res: any) => {
 		state.data = res;
 	});
@@ -159,13 +170,12 @@ const initPage = async (): Promise<void> => {
 
 onMounted(() => {
 	initPage();
-	navigatorBar.setNavigator(['酒店管理','订单管理', '查看']);
+	navigatorBar.setNavigator(['酒店管理', '订单管理', '查看']);
 });
 
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
 });
-
 </script>
 <style lang="less" scoped>
 .warp {

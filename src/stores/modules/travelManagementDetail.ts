@@ -68,11 +68,12 @@ export const useTravelStore = defineStore({
 			[GuideType.UnderGuide]: '直属导游',
 			[GuideType.AppointGuide]: '可委派导游',
 		},
-		defaultStartTime: new Date(2022, 12, 1, 0, 0, 0),
-		defaultEndTime: new Date(2022, 12, 1, 0, 0, 0),
 		setDisabled: (current: Dayjs) => {
 			return (current && current < dayjs().subtract(1, 'day')) || current > dayjs().startOf('day');
 		},
+		defaultStartTime: new Date(2022, 12, 1, 0, 0, 0),
+		defaultEndTime: new Date(2022, 12, 1, 0, 0, 0),
+		setDisabledTime: () => {},
 		baseInfo: [] as any,
 		guideList: [],
 		delGuideList:[],
@@ -81,7 +82,7 @@ export const useTravelStore = defineStore({
 		delTrafficList: [],
 		delAttachmentList:[],
 		touristList: [],
-		teamTime: [] as any,
+		teamTime: [],
 		IDCard: [],
 		specialId: [],
 		trafficType: [],
@@ -94,6 +95,30 @@ export const useTravelStore = defineStore({
 	}),
 	getters: {},
 	actions: {
+		setDisabledDate() {			
+			return (current: Dayjs) => {
+				if (this.teamTime && this.teamTime[0]) {
+					console.log(this.teamTime[0],'this.teamTime[0]');
+					return (dayjs(this.teamTime[0]) && dayjs(this.teamTime[0]).startOf('day') > current && current) ||
+							(dayjs(this.teamTime[1]) && dayjs(this.teamTime[1]).endOf('day') < current && current)
+				} else {
+					return current && current < dayjs().endOf('day') || 
+					current > dayjs().startOf('day');
+				}
+			}
+		},
+		setDisabledTime() {
+			return (current: Dayjs) => {
+				if (this.teamTime && this.teamTime[0]) {
+					return (
+						(dayjs(this.teamTime[0]) && dayjs(this.teamTime[0]).startOf('day') > current && current) ||
+						(dayjs(this.teamTime[1]) && dayjs(this.teamTime[1]).endOf('day') < current && current)
+					);
+				} else {
+					return (current && current < dayjs().endOf('day')) || current > dayjs().startOf('day');
+				}
+			};
+		},
 		async getTraveCode(codeValue: string, type: string) {
 			if (type === 'IDCard' && this.IDCard.length) return;
 			const res = await api.commonApi.getCodeValue({ codeValue });
@@ -111,18 +136,6 @@ export const useTravelStore = defineStore({
 					this.trafficColor = res;
 					break;
 			}
-		},
-		setDisabledTime() {
-			return (current: Dayjs) => {
-				if (this.teamTime && this.teamTime[0]) {
-					return (
-						(dayjs(this.teamTime[0]) && dayjs(this.teamTime[0]).startOf('day') > current && current) ||
-						(dayjs(this.teamTime[1]) && dayjs(this.teamTime[1]).endOf('day') < current && current)
-					);
-				} else {
-					return (current && current < dayjs().endOf('day')) || current > dayjs().startOf('day');
-				}
-			};
 		},
 		setdisbledDate() {
 			console.log(this.disbledDate, 'this.disbledDate');
@@ -149,7 +162,6 @@ export const useTravelStore = defineStore({
 			this.attachmentList = data;
 		},
 		setdelFileInfo(list: any) {
-			console.log('附件大菠萝',list);
 			this.delAttachmentList = list;
 		},
 		SetHotels(data: any, oid: any, key: string) {

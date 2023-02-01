@@ -5,7 +5,7 @@
 				<template v-if="column.dataIndex === 'actions'">
 					<div class="action-btns">
 						<!-- <a @click="visible = true" >查看</a> -->
-						<a v-if="record.auditStatus == 1" @click="openInfoPage(record.orderNo)" v-permission="'待审核_审核'">审核</a>
+						<a v-if="record.auditStatus == 1 && record.unitStatus == 0" @click="openInfoPage(record.orderNo)" v-permission="'待审核_审核'">审核</a>
 						<a v-permission="'待审核_打印票据'">打印票据</a>
 					</div>
 				</template>

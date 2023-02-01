@@ -49,8 +49,8 @@
 				<a-form-item label=" 减免折扣" name="discount">
 					<a-input
 						v-model:value="formValidate.discount"
-						placeholder="请输入折扣信息(1~99)的整数"
-						oninput="value=value.replace(/^(0+)|[^\d]+/g,'')"
+						placeholder="请输入折扣信息(0~99)的整数"
+						oninput="value=value.replace(^([0-9]\d|\d)$)"
 						@change="check"
 					/>
 				</a-form-item>
@@ -78,8 +78,6 @@ import BaseModal from '@/components/common/BaseModal.vue';
 import { message } from 'ant-design-vue';
 import type { FormInstance } from 'ant-design-vue';
 import api from '@/api';
-import { accDiv, accMul } from '@/utils/compute';
-import { isOnedecimalpoint } from '@/utils/validator';
 const route = useRouter();
 const dialogVisible = ref(false);
 const navigatorBar = useNavigatorBar();
@@ -100,7 +98,7 @@ const rules: any = {
 	age1: [{ required: true, trigger: 'blur', message: '请填写年龄' }],
 	age2: [{ required: true, trigger: 'blur', message: '请填写年龄' }],
 	discountConditionName: [{ required: true, trigger: 'blur', message: '请填写减免模式内容' }],
-	discount: [{ required: true, trigger: 'blur', message: '请输入1-99之间的整数' }],
+	discount: [{ required: true, trigger: 'blur', message: '请输入0-99之间的整数' }],
 	discountRuleStatus: [{ required: true, trigger: 'blur', message: '请选择状态' }],
 };
 const state = reactive({
@@ -118,6 +116,7 @@ const state = reactive({
 		age2: '',
 	},
 	title: '',
+	discountConditionName:'',
 	operationModal: {
 		isApplydate: false,
 		isExaminedate: false,
@@ -132,6 +131,8 @@ const init = async () => {
 			state.tableData.age = formValidate.value.discountCondition.split('~');
 			formValidate.value.age1 = state.tableData.age[0];
 			formValidate.value.age2 = state.tableData.age[1];
+		}else{
+			state.discountConditionName=formValidate.value.discountConditionName
 		}
 		formValidate.value.discount = formValidate.value.discount;
 		console.log(formValidate.value, 'formValidate.value');
@@ -170,7 +171,12 @@ const updateRule = () => {
 				}
 				data.discountCondition = formValidate.value.age1 + '~' + formValidate.value.age2;
 			} else {
-				data.discountCondition = formValidate.value.discountConditionName;
+				if(state.discountConditionName==formValidate.value.discountConditionName)
+				{
+					data.discountCondition = formValidate.value.discountCondition;
+				}else{
+					data.discountCondition = formValidate.value.discountConditionName;
+				}
 			}
 			api.update(data).then(() => {
 				message.success('编辑成功');

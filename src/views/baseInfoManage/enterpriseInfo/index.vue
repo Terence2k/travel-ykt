@@ -111,11 +111,12 @@
         </template>
         <!-- 酒店特殊字段 -->
         <template v-if="userInfo.sysCompany.businessType == 'HOTEL'">
-          <a-form-item name="unitStatus" label="开业状态">
+          <a-form-item name="companyState" label="企业状态">
             <div class="flex">
-              <a-radio-group v-model:value="form.unitStatus">
-                <a-radio :value="0">开业</a-radio>
-                <a-radio :value="1">停业</a-radio>
+              <a-radio-group v-model:value="form.companyState">
+                <a-radio :value="0">停业</a-radio>
+                <a-radio :value="1">开业</a-radio>
+                <a-radio :value="2">暂停营业</a-radio>
               </a-radio-group>
             </div>
           </a-form-item>
@@ -139,11 +140,12 @@
         </template>
         <!-- 景区特殊字段 -->
         <template v-if="userInfo.sysCompany.businessType == 'TICKET'">
-          <a-form-item name="unitStatus" label="开业状态">
+          <a-form-item name="companyState" label="企业状态">
             <div class="flex">
-              <a-radio-group v-model:value="form.unitStatus">
-                <a-radio :value="true">开业</a-radio>
-                <a-radio :value="false">停业</a-radio>
+              <a-radio-group v-model:value="form.companyState">
+                <a-radio :value="0">停业</a-radio>
+                <a-radio :value="1">开业</a-radio>
+                <a-radio :value="2">暂停营业</a-radio>
               </a-radio-group>
             </div>
           </a-form-item>
@@ -167,11 +169,12 @@
         </template>
         <!-- 餐饮特殊字段 -->
         <template v-if="userInfo.sysCompany.businessType == 'CATERING'">
-          <a-form-item name="unitStatus" label="开业状态">
+          <a-form-item name="companyState" label="企业状态">
             <div class="flex">
-              <a-radio-group v-model:value="form.unitStatus">
-                <a-radio :value="1">开业</a-radio>
+              <a-radio-group v-model:value="form.companyState">
                 <a-radio :value="0">停业</a-radio>
+                <a-radio :value="1">开业</a-radio>
+                <a-radio :value="2">暂停营业</a-radio>
               </a-radio-group>
             </div>
           </a-form-item>
@@ -192,7 +195,7 @@
           </a-form-item>
         </template>
         <!-- 景区、酒店减免规则字段 -->
-        <template v-if="['HOTEL', 'TICKET'].includes(userInfo.sysCompany.businessType)">
+        <template v-if="['HOTEL', 'TICKET'].includes(userInfo.sysCompany.businessType) && form.derate">
           <a-form-item label="减免规则">
             <div style="display: flex;align-items: start;">
               <a-form-item name="fullRule">
@@ -404,7 +407,7 @@ const formRules: Record<string, Rule[]> = {
   contactEmail: [{ required: true, trigger: 'blur', message: '请输入联系人邮箱' }],
   postalCode: [{ required: true, trigger: 'blur', message: '请输入注册所在地邮政编码' }],
   bankAccount: [{ required: true, trigger: 'blur', message: '请输入结算银行卡号' }],
-  unitStatus: [{ required: true, trigger: 'change', message: '请选择开业状态' }],
+  companyState: [{ required: true, trigger: 'change', message: '请选择企业状态' }],
   hotelStarId: [{ required: true, trigger: 'change', message: '请选择酒店星级' }],
   scenicLevel: [{ required: true, trigger: 'change', message: '请选择景区等级' }],
   derate: [{ required: true, trigger: 'change', message: '请选择是否支持减免' }],
@@ -473,7 +476,11 @@ const initOpeion = async () => {
   if (state.form?.areaId) state.form.addressIds = [state.form.provinceId, state.form.cityId, state.form.areaId];
   if (state.form?.bankAccountProvince && state.form?.bankAccountCity) state.form.bankAddressIds = [Number(state.form.bankAccountProvince), Number(state.form.bankAccountCity)];
   state.form.rangeTime = [state.form.startTime, state.form.endTime];
-  console.log('state.form:', state.form);
+  
+  if (state.form.derate && !form.value.fullRule && !form.value.reduceRule && userInfo.sysCompany.businessType == 'HOTEL') {
+    form.value.fullRule = 16;
+    form.value.reduceRule = 1;
+  }
   
   // submitFunc:提交编辑审核函数名
   if (Object.keys(travelStore.businessTypeOptions).includes(userInfo.sysCompany.businessType)) {
@@ -513,6 +520,10 @@ const uploadData = () => {
   let queryData = form.value;
   if (userInfo.sysCompany.businessType == 'HOTEL') {
     queryData.hotelName = queryData.name;
+    if (!queryData.derate) {
+      queryData.fullRule = '';
+      queryData.reduceRule = '';
+    }
   }
   if (queryData.addressIds?.length) {
     queryData.provinceId = queryData.addressIds[0];

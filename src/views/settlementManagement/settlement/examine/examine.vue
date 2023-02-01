@@ -26,7 +26,7 @@
 				</template>
 				<!-- 行程费用 单位转成元-->
 				<template v-if="column.key === 'totalFee'">
-					{{ record.totalFee / 100 > 0 ? (record.totalFee / 100).toFixed(2) : 0 }}
+					{{ twoDecimalPlaces(record.totalFee) }}
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
@@ -58,6 +58,7 @@ import api from '@/api';
 import { message } from 'ant-design-vue';
 import DelModal from '@/components/common/DelModal.vue';
 import { StateType } from '../index';
+import { twoDecimalPlaces } from '../index'
 
 const props = defineProps({
 	params: Object,

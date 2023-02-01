@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash';
 import dayjs from 'dayjs';
-import { validateRules, validateFields, generateGuid } from '@/utils';
+import { validateRules, validateFields, generateGuid,validPhone, isPositiveInteger } from '@/utils';
 import { defineProps } from 'vue';
 import type { UnwrapRef } from 'vue';
 import { useTravelStore } from '@/stores/modules/travelManagementDetail';
@@ -23,10 +23,10 @@ const rules = {
 	licencePlateNumber: [{ required: true, message: '请输入车牌号' }],
 	licencePlateColor: [{ required: true, message: '请选择车牌颜色' }],
 	companyName: [{ required: true, message: '请输入车企名称' }],
-	approvedLoad: [{ required: true, message: '请输入核载人数（人）' }],
+	approvedLoad: [{ required: true,  validator: isPositiveInteger }],
 	time: [{ required: true, message: '请选择用车时间段' }],
 	driver: [{ required: true, message: '请输入驾驶员' }],
-	driverPhone: [{ required: true, message: '请输入驾驶员手机号' }]
+	driverPhone: [{ required: true, validator: validPhone }]
 }
 
 export function useTrafficInfo(props: any, emits: any): Record<string, any> {
@@ -88,6 +88,7 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 				title: '用车时段',
 				dataIndex: 'time',
 				key: 'time',
+				width: 320
 			},
 			{
 				title: '驾驶员',
@@ -154,13 +155,20 @@ export function useTrafficInfo(props: any, emits: any): Record<string, any> {
 		},
 		add: () => {
 			let key = generateGuid();
-			state.tableData.push({key, edit: true, oid: null});
+			state.tableData.push({key, edit: true, oid: null, time: cloneDeep(travelStore.teamTime)});
 			methods.edit(key);
+			state.editableData[key].startDate = travelStore.teamTime[0];
+			state.editableData[key].endDate = travelStore.teamTime[1];
 			console.log(state.tableData)
 		},
 		handleTime(event: any, key: string) {
-			state.editableData[key].startDate = event[0];
-			state.editableData[key].endDate = event[1];
+			if (event) {
+				state.editableData[key].startDate = event[0];
+				state.editableData[key].endDate = event[1];
+			} else {
+				state.editableData[key].startDate = '';
+				state.editableData[key].endDate = '';
+			}
 		}
 	}
 	travelStore.getTraveCode(CODEVALUE.TRAVE_CODE.TRAFFICTYPE, 'trafficType');

@@ -1,4 +1,7 @@
 <template>
+	<div class="print-container">
+		<travelDetail ref="travelDetailRef" />
+	</div>
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
 			<template #bodyCell="{ column, text, index, record }">
@@ -17,6 +20,7 @@
 						<a @click="goToPath(record)" v-permission="'待处理_行程详情'">行程详情</a>
 						<a @click="openAllReapply(record)" v-permission="'待处理_申请撤销'">申请撤销</a>
 						<a @click="goToLog(record)" v-permission="'待处理_查看日志'">查看日志</a>
+						<a @click="getPrint(record)" v-permission="'待处理_打印'">打印</a>
 					</div>
 				</template>
 			</template>
@@ -36,14 +40,16 @@
 	import CommonPagination from '@/components/common/CommonPagination.vue';
 	import allRevoke from '@/views/travelManagement/travelTakeGroupList/revoke/components/allRevoke.vue';
 	import api from '@/api/index';
-
+	import travelDetail from '../travelDetail.vue';
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, GroupStatus } from '@/enum'
 	import { message } from 'ant-design-vue';
+	import { cloneDeep } from 'lodash';
 
 
 	const travelStore = useTravelStore();
 	const router = useRouter()
+	const travelDetailRef = ref()
 	const state = reactive({
 		total: computed(() => travelStore.traveList.waitingTask.total),
 		params: {
@@ -106,13 +112,21 @@
 		]
 	})
 	const onSearch = async () => {
+		let params: any = {};
 		travelStore.traveList.waitingTask.params.status = GroupStatus.WaitingTask
-		const res = await travelStore.getTravelList(travelStore.traveList.waitingTask.params);
+		params = cloneDeep(travelStore.traveList.waitingTask.params)
+		params.groupType = travelStore.traveList.waitingTask.params.groupType === '0' ? '' : 
+		travelStore.traveList.waitingTask.params.groupType;
+		
+		const res = await travelStore.getTravelList(params);
 		travelStore.setTraveList(res, 'waitingTask')
 	}
 	const onHandleCurrentChange = (e:any) => {
 		travelStore.traveList.waitingTask.params.pageNo = e
 		onSearch()
+	}
+	const getPrint = (record: any) => {
+		travelDetailRef.value.getPrint(record.oid)
 	}
 	const pageSideChange = () => {
 
@@ -170,3 +184,11 @@
 
 	};
 </script>
+
+<style scoped>
+
+.print-container {
+	position: absolute;
+	width: 100%;
+}
+</style>

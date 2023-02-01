@@ -37,6 +37,7 @@
 
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, GroupStatus } from '@/enum'
+	import { cloneDeep } from 'lodash';
 
 
 	const travelStore = useTravelStore();
@@ -103,8 +104,13 @@
 		]
 	})
 	const onSearch = async () => {
+		let params: any = {};
 		travelStore.traveList.waitingGroup.params.status = GroupStatus.WaitingGroup
-		const res = await travelStore.getTravelList(travelStore.traveList.waitingGroup.params);
+		params = cloneDeep(travelStore.traveList.waitingGroup.params)
+		params.groupType = travelStore.traveList.waitingGroup.params.groupType === '0' ? '' : 
+		travelStore.traveList.waitingGroup.params.groupType;
+		
+		const res = await travelStore.getTravelList(params);
 		travelStore.setTraveList(res, 'waitingGroup')
 	}
 	const onHandleCurrentChange = (e:any) => {

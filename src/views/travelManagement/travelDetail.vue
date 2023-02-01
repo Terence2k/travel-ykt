@@ -25,6 +25,8 @@
           <a-descriptions-item label="地接社计调">{{state.basicData.subTravelOperatorName}} {{state.basicData.subTravelOperatorPhone}}</a-descriptions-item>
           <a-descriptions-item label="游客人数">{{state.basicData.touristCount}}</a-descriptions-item>
           <a-descriptions-item label="古维费应缴人数">{{state.basicData.guWeiCount}}</a-descriptions-item>
+          <a-descriptions-item label="游客到丽方式">{{state.basicData.toLjWay}}</a-descriptions-item>
+          <a-descriptions-item label="游客离丽方式">{{state.basicData.leaveLjWay}}</a-descriptions-item>
           <a-descriptions-item label="行程时间">{{state.basicData.startDate}} - {{ state.basicData.endDate }}</a-descriptions-item>
           <a-descriptions-item label="综费应缴人数">{{state.basicData.productPeopleCount }}</a-descriptions-item>
           <a-descriptions-item label="已添加景区">{{state.basicData.ticketCount}}</a-descriptions-item>
@@ -33,6 +35,7 @@
           <a-descriptions-item label="预估应缴费（元）">{{accDiv(state.basicData.totalFee, 100)}}元</a-descriptions-item>
           <a-descriptions-item label="关联行程单">{{state.basicData.relatedItineraryNo}}</a-descriptions-item>
           <a-descriptions-item label="保险购买方">{{state.basicData.insuranceStatusName}}</a-descriptions-item>
+          <a-descriptions-item label="自编团号" :span="2">{{state.basicData.selfTeamNo}}</a-descriptions-item>
         </a-descriptions>
       </a-col>
       <a-col :span="7">
@@ -131,10 +134,11 @@
   import CommonPagination from '@/components/common/CommonPagination.vue';
   import { getOptions } from './travelDetail/travelDetail';
   import { accDiv } from '@/utils/compute';
-  import { getStyles, getDiffDay } from '@/utils/util';
+  import { getStyles } from '@/utils/util';
   import QrcodeVue from 'qrcode.vue'
   import { awsGetPreSignedUrl } from '@/utils/awsUpload';
-
+  import dayjs from 'dayjs';
+  
   const codeUrl = ref();
 
   const state = reactive({
@@ -150,10 +154,10 @@
   });
   const printBtn = ref();
 
-  const getPrint = () => {
+  const getPrint = (id?: any) => {
     state.param.pageNo = 1;
     state.param.pageSize = 999999;
-    getItineraryDetail(route.currentRoute.value.query.oid, true);
+    getItineraryDetail(route.currentRoute.value.query.oid || id, true);
   }
 
   const print = ref({
@@ -199,6 +203,7 @@
 	}
 
   const getItineraryDetail = (orderId: any, isPrint?: any) => {
+    if (!orderId) return
     let queryData = {
       oid: orderId,
       ...state.param
@@ -223,16 +228,18 @@
         }
       })
       if ([1, 2, 3, 4, 5, 6, 7, 20].includes(state.basicData.status)) {
+        let res = await api.getBasicInfo();
         state.itineraryDetail.guWeiDetail = [{
           feeName: '古维管理费',
-          touristNum: state.basicData.touristCount,
-          payableNum: state.basicData.guWeiCount,
-          payablePrice: state.basicData.guWeiCount * 5000,
+          touristNum: state.itineraryDetail.touristList.total,
+          payableNum: state.itineraryDetail.touristList.total,
+          payablePrice: state.itineraryDetail.touristList.total * res.price,
           isInitiateReductionName: '否',
           isReductionPassedName: '否',
           feeStatus: '预计应缴费用',
           issueStatusName: '未出票',
         }]
+        state.basicData.guWeiCount = state.itineraryDetail.touristList.total;
       } else {
         state.itineraryDetail.guWeiDetail = await api.getManagementExpenses(orderId);
       }
@@ -240,6 +247,10 @@
 		.catch((err: any) => {
 			console.log(err);
 		});
+  }
+
+  const getDiffDay = (startDate: string, endDate: string) => {
+    return dayjs(dayjs(endDate).format('YYYY-MM-DD')).diff(dayjs(startDate).format('YYYY-MM-DD'), 'days')
   }
 
   const toOrderDetail = (row: any, title: any) => {
@@ -274,6 +285,10 @@
   getItineraryDetail(route.currentRoute.value.query.oid);
   onMounted(() => {
     document.getElementsByClassName('ant-descriptions-view')[1].style.height = `${getStyles(document.getElementsByClassName('ant-descriptions-view')[0], 'height')}px`;
+  })
+
+  defineExpose({
+    getPrint
   })
 </script>
 <style lang="less" scoped>

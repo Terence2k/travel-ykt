@@ -44,7 +44,7 @@
 			</a-form-item>
 
 			<a-form-item label="门票价格" name="travelName">
-				<span>{{ accDiv(ticketPrice, 100) || '' }}元</span>
+				<span>{{ accDiv(ticketPrice,100) || '' }}元</span>
 			</a-form-item>
 
 			<div v-if="formState.ticketType === TicketType.SHOW || formState.ticketType === TicketType.UNITE">
@@ -59,8 +59,9 @@
 				<selectTicket v-if="formState.ticketType === TicketType.SHOW"></selectTicket>
 			</div>
 			<a-form-item label="" v-if="formState.ticketType === TicketType.SHOW || formState.ticketType === TicketType.UNITE"> </a-form-item>
+
 			<a-form-item label="订单金额">
-				<a-input v-model:value="formState.price" disabled placeholder="无需填写，勾选人员名单后自动计算" />
+				<a-input v-model:value="countMoney" disabled placeholder="无需填写，勾选人员名单后自动计算" />
 			</a-form-item>
 
 			<a-form-item label="订单编号">
@@ -81,10 +82,9 @@ import selectTicket from './selectTicket.vue';
 import api from '@/api';
 import { cloneDeep, debounce } from 'lodash';
 import { validateRules, validateFields, generateGuid } from '@/utils';
-import { accDiv, accMul } from '@/utils/compute';
-import picker from '@/components/common/datePicker.vue';
+import { accDiv,accMul} from '@/utils/compute';
+import picker from '@/components/common/datePicker.vue'
 import { TicketType } from '@/enum';
-
 import { Modal } from 'ant-design-vue';
 import { createVNode } from 'vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
@@ -107,8 +107,8 @@ const props = defineProps({
 		default: {},
 	},
 });
-const dialogVisibleTicket = ref(false);
 
+const dialogVisibleTicket = ref(false);
 const tableData = ref([]);
 const ticketData = reactive<{ [k: string]: any }>({
 	scenicList: [],
@@ -123,6 +123,7 @@ const formState = reactive<{ [k: string]: any }>({
 	count: '',
 	orderFee:''
 });
+
 const columns: any = [
 	{
 		title: '子票名称',
@@ -156,9 +157,8 @@ const columns: any = [
 	// },
 ];
 let contrastdata = reactive({} as any);
-const ticketPrice = computed(() => {
-	return ticketData.ticketList.filter((it: any) => it.oid === formState.ticketId)[0]?.price;
-});
+const countMoney = computed(()=> (accMul(accDiv(ticketPrice.value, 100), travelStore.touristList.length)) || 0)
+const ticketPrice = ref()
 
 const getScenicList = async () => {
 	ticketData.scenicList = await api.travelManagement.getScenicList();
@@ -193,6 +193,7 @@ const handelChangeType = async (e: any) => {
 	}
 };
 
+
 const handleOk = async (callback: Function) => {
 	try {
 		await formRef.value.validateFields();
@@ -210,9 +211,9 @@ const handleOk = async (callback: Function) => {
 			formState.key = key;
 		}
 		if (
-			(formState.oid && contrastdata.ticketId != formState.ticketId) ||
+			(formState.oid && (contrastdata.ticketId != formState.ticketId) ||
 			contrastdata.scenicId != formState.scenicId ||
-			contrastdata.startDate != formState.startDate
+			contrastdata.startDate != formState.startDate)
 		) {
 			formState.edit = true;
 		}
@@ -297,6 +298,8 @@ watch(dialogVisible, (newVal) => {
 		for (let k in formState) {
 			formState[k] = '';
 		}
+		ticketPrice.value = 0
+
 	} else {
 		const data = props.productRow;
 		if (props.productRow) {
@@ -317,12 +320,13 @@ watch(dialogVisible, (newVal) => {
 	emits('update:modelValue', newVal);
 });
 
-const getStock = (ticketId: number | string, endTime: string, startTime: string) => {
-	api.travelManagement.getStock({
-		ticketId,
-		endTime,
-		startTime,
-	});
+const getStock = async(ticketId: number | string, endTime: string, startTime: string) => {
+	const res = await api.travelManagement.getStock({
+			ticketId,
+			endTime,
+			startTime
+		});
+		ticketPrice.value = res[0].ticketPrice
 };
 const debounceFun = debounce((ticketId: number | string, endTime: string, startTime: string) => {
 	getStock(ticketId, endTime, startTime);
@@ -337,8 +341,8 @@ watch(
 		}
 	}
 );
-getScenicList();
 getTicketType();
+getScenicList();
 </script>
 
 <style lang="less" scoped>

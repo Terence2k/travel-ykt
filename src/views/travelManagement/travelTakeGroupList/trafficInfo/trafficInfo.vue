@@ -49,6 +49,7 @@
 									@change="(event) => handleTime(event, record.key ? record.key : record.oid)"
 								/> -->
 								<datePicker
+										style="width: 300px"
 										v-model="editableData[record.key ? record.key : record.oid][column.key]"
 										type="datetimerange"
 										popper-class="hidden-date-picker"
@@ -61,7 +62,7 @@
 										:disabled-hours="(type: string) => disabledRangeHours(currentDate, type)"
 										:disabled-minutes="(_: any, type: string) => disabledRangeMinutes(currentDate, type)"
 										:disabled-seconds="(_: any, m: any , type: string) => disabledRangeSeconds(currentDate, type)"
-										:disabled-date="travelStore.setDisabled"
+										:disabled-date="travelStore.setDisabledDate()"
 									/>
 							</a-form-item>
 

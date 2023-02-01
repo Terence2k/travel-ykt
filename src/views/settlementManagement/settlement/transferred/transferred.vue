@@ -4,11 +4,11 @@
 			<template #bodyCell="{ column, record }">
 				<!-- 行程费用 单位转成元-->
 				<template v-if="column.key === 'totalFee'">
-					{{ (record.totalFee / 100) > 0 ? (record.totalFee / 100).toFixed(2) : 0}}
+					{{ twoDecimalPlaces(record.totalFee) }}
 				</template>
 				<!-- 结算金额 单位转成元-->
 				<template v-if="column.key === 'accountingFee'">
-					{{ (record.accountingFee / 100) > 0 ? (record.accountingFee / 100).toFixed(2) : 0}}
+					{{ twoDecimalPlaces(record.accountingFee) }}
 				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
@@ -33,6 +33,7 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import { reactive, onMounted } from 'vue';
 import api from '@/api';
 import { StateType } from '../index';
+import { twoDecimalPlaces } from '../index'
 
 const props = defineProps({
 	params: Object,

@@ -15,6 +15,11 @@
 						{{accDiv(record.totalFee,100)}}
 					</div>
 				</template>
+				<template v-if="column.key === 'revokedTotalFee'">
+					<div>
+						{{accDiv(record.revokedTotalFee,100)}}
+					</div>
+				</template>
 				<template v-if="column.key === 'action'">
 					<div class="action-btns">
 						<a @click="auditStatus(record)" v-permission="'撤销重提审核_去审核'" v-if="record.financeAuditStatus==1">去审核</a>
@@ -188,8 +193,8 @@ const state = reactive({
 		},
 		{
 			title: '撤销前冻结金额',
-			dataIndex: 'touristCount',
-			key: 'touristCount',
+			dataIndex: 'revokedTotalFee',
+			key: 'revokedTotalFee',
 		},
 		{
 			title: '变更后金额',

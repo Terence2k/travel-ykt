@@ -142,6 +142,7 @@
 				</a-row>
 			</div>
 		</div>
+		<div v-if="checkCode || checkHighRish" class="close"><a-button type="link" @click="close">关闭</a-button></div>
 	</div>
 </template>
 <script lang="ts" setup>
@@ -187,7 +188,8 @@ const {
 	highRish,
 	mustFillIn,
 	downloadTouristTemplate,
-	readExcel
+	readExcel,
+	close
 } = useTouristInfo(props, emits);
 </script>
 <style lang="less" scoped>
@@ -199,7 +201,9 @@ const {
 		margin-left: 16px;
 	}
 }
-
+.img-container{
+	margin-top: -22px !important;
+}
 .upload-img,::v-deep(.ant-upload-drag) {
 	width: 64px !important;
 	height: 34px !important;
@@ -251,5 +255,8 @@ const {
 	height: 40px;
 	line-height: 40px;
 	box-shadow: 2px 3px 10px rgba(1, 5, 22, 0.16);
+}
+.close {
+	text-align: center;
 }
 </style>
