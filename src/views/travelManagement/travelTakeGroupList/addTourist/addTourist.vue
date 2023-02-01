@@ -16,6 +16,9 @@
 					<span v-else-if="record.healthCodeStatus == '01'">黄码</span>
 					<span v-else-if="record.healthCodeStatus == '10'">红码</span>
 				</template>
+				<template v-if="column.key === 'specialCertificatePicture'">
+					<Upload v-model="record.specialCertificatePicture" :maxCount="state.num" v-if="record.specialCertificatePicture != null" disabled />
+				</template>
 			</template>
 		</CommonTable>
 		<div class="add-div">
@@ -38,6 +41,7 @@ import BaseModal from '@/components/common/BaseModal.vue';
 import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import { message } from 'ant-design-vue';
+import Upload from '@/components/common/imageWrapper.vue';
 import api from '@/api';
 import { any, object, string } from 'vue-types';
 const route = useRoute();
@@ -78,11 +82,11 @@ const columns = [
 		dataIndex: 'phone',
 		key: 'phone',
 	},
-	{
-		title: '中高风险地区判断',
-		dataIndex: 'specialCertificateTypeName',
-		key: 'specialCertificateTypeName',
-	},
+	// {
+	// 	title: '中高风险地区判断',
+	// 	dataIndex: 'specialCertificateTypeName',
+	// 	key: 'specialCertificateTypeName',
+	// },
 	{
 		title: '健康码状态',
 		dataIndex: 'healthCodeStatus',
@@ -104,11 +108,19 @@ const state = reactive({
 		data: [],
 	},
 	newItineraryId: '',
+	num: 0,
 });
 const auditRef = ref();
 const onSearch = () => {
 	console.log(route.query.id, '1231313');
 	api.travelManagement.listByItinerary(route.query.id).then((res: any) => {
+		// 处理显示照片个数
+		res.map((i: any, index: number) => {
+			if (i.specialCertificatePicture) {
+				i.specialCertificatePicture = i.specialCertificatePicture.toString();
+				state.num = i.specialCertificatePicture.split(',').length;
+			}
+		});
 		let data = res.map((i: any) => {
 			return {
 				name: i.name,
