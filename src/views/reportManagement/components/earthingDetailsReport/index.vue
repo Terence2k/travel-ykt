@@ -23,11 +23,11 @@
 			</a-select>
 		</search-item>
 		<search-item label="结算时间" style="width: 350px">
-			<!-- <a-range-picker v-model:value="state.times" @change="timeChange" /> -->
+			<!-- <a-range-picker v-model:value="state.times" @change="timeChange"/> -->
 			<picker
 				v-model="state.times"
-				@change="timeChange"
 				style="width: 180px"
+				@change="timeChange"
 				type="daterange"
 				start-placeholder="开始日期"
 				end-placeholder="结束日期"
@@ -35,13 +35,13 @@
 			</picker>
 		</search-item>
 		<template #button>
-			<a-button @click="reset" v-permission="'重置'" style="margin-right: 30px">重置</a-button>
-			<a-button @click="initList" v-permission="'查询'">查询</a-button>
+			<a-button @click="reset" v-permission="'地接明细账报表_重置'" style="margin-right: 30px">重置</a-button>
+			<a-button @click="initList" v-permission="'地接明细账报表_查询'">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
 		<div class="list-btn">
-			<a-button type="primary" class="success" v-permission="'导出'">导出</a-button>
+			<a-button type="primary" class="success" v-permission="'地接明细账报表_导出'">导出</a-button>
 		</div>
 	</div>
 	<div>
@@ -114,19 +114,19 @@ import {
 	DataType,
 	notConsumed,
 	subTravel,
-	fixedColumn,
+	detailFixedColumn,
 	getRulePrice,
 	getActualPrice,
 	getSubTravelVoUnSettlementPrice,
 	getSettlementRule,
 	getSettlementRuleGuide,
 	amountYuanHandle,
-} from './index';
+} from '../earthingGeneralReport/index';
 
 const options = settlementOptions();
 const columns = computed(() => {
 	const column = ref<TableColumnsType>([]);
-	column.value = lodash.cloneDeep(fixedColumn);
+	column.value = lodash.cloneDeep(detailFixedColumn);
 	const data: Array<DataType> = state.tableData.data;
 	// 拼接遍历综费冻结费用
 	let nameList: Array<string> = [];
@@ -365,7 +365,7 @@ const state = reactive<StateType>({
 // 查询
 const initList = async () => {
 	state.tableData.loading = true;
-	let res = await api.statementByTravel(state.tableData.param);
+	let res = await api.statementBySubTravelDetail(state.tableData.param);
 	const { total, content } = res;
 	state.tableData.total = total;
 	state.tableData.data = content;
@@ -410,7 +410,7 @@ const reset = () => {
 		pageSize: 10, //页大小
 		pageNo: 1, //页号
 	};
-	state.times = '';
+	state.times = [];
 	initList();
 };
 </script>

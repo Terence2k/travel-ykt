@@ -1,4 +1,7 @@
 <template>
+	<div class="print-container">
+		<travelDetail ref="travelDetailRef" />
+	</div>
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
 			<template #button> </template>
@@ -14,6 +17,7 @@
 						<a @click="goToDetail(record)" v-permission="'已出团_查看'">查看</a>
 						<a @click="goToChange(record)" v-permission="'已出团_行程变更'">行程变更</a>
 						<a @click="goToPath(record, 4)" v-permission="'已出团_进入预订'">进入预订</a>
+						<a @click="getPrint(record)" v-permission="'已出团_打印'">打印</a>
 					</div>
 				</template>
 			</template>
@@ -36,10 +40,12 @@ import ChangeItems from '@/components/common/changeItems.vue';
 import api from '@/api/index';
 import BaseModal from '@/components/common/BaseModal.vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
+import travelDetail from '../travelDetail.vue';
 import { GroupMode, TakeGroupStatus } from '@/enum';
 const travelStore = useTravelStore();
 const router = useRouter();
 const modelValue = ref(false);
+const travelDetailRef = ref();
 const state = reactive({
 	total: computed(() => travelStore.takeGroupList.dispatched.total),
 	params: {
@@ -107,7 +113,10 @@ const onHandleCurrentChange = (e: any) => {
 	onSearch();
 };
 const pageSideChange = () => {};
-
+const getPrint = (record: any) => {
+	
+	travelDetailRef.value.getPrint(record.oid)
+}
 const goToPath = (row: any, tab?: any) => {
 	router.push({
 		path: '/travel/travel_manage/add_travel',
@@ -145,5 +154,10 @@ onSearch();
 .model-div > p {
 	color: rgb(225, 225, 225);
 	margin-top: 10px;
+}
+.print-container {
+	position: absolute;
+	top: 100px;
+	width: 100%;
 }
 </style>

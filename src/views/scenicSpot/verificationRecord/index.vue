@@ -4,7 +4,7 @@
 			<div class="search-bar">
 				<div class="item">
 					<span class="field-input item">输入搜索</span>
-					<a-input class="input-search-keywords item" v-model:value="tableState.tableData.param.sendTravelName" placeholder="旅行社名称/关键词" />
+					<a-input class="input-search-keywords item" v-model:value="tableState.tableData.param.sendTravelName" placeholder="旅行社名称" />
 				</div>
 
 				<div class="item">
@@ -38,7 +38,7 @@
 				</div>
 
 				<div class="item button-search-wrapper">
-					<a-button @click="clearFilter" class="button-clear item">重置</a-button>
+					<a-button @click="clearFilter" class="button-clear item" v-permission="'重置'">重置</a-button>
 					<a-button @click="searchByFilter" class="button-search item" v-permission="'查询'">查询</a-button>
 				</div>
 			</div>

@@ -13,7 +13,7 @@
 			</a-select>
 		</search-item>
 		<search-item label="地接社">
-			<a-select allowClear ref="select" v-model:value="state.tableData.param.subTravelId" placeholder="请选择旅行社名称" style="width: 200px">
+			<a-select allowClear ref="select" v-model:value="state.tableData.param.subTravelId" style="width: 200px" placeholder="请选择旅行社名称">
 				<a-select-option v-for="(item, index) in options.earthContactAgencyList" :value="item.travelAgencyId" :key="index"
 					>{{ item.travelAgencyName }}
 				</a-select-option>
@@ -32,13 +32,13 @@
 			</picker>
 		</search-item>
 		<template #button>
-			<a-button @click="reset" style="margin-right: 30px" v-permission="`重置`">重置</a-button>
-			<a-button @click="initList" v-permission="`查询`">查询</a-button>
+			<a-button @click="reset" style="margin-right: 30px" v-permission="`管理中心明细账报表_重置`">重置</a-button>
+			<a-button @click="initList" v-permission="`管理中心明细账报表_查询`">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
 		<div class="list-btn">
-			<a-button type="primary" class="success" v-permission="`导出`">导出</a-button>
+			<a-button type="primary" class="success" v-permission="`管理中心明细账报表_导出`">导出</a-button>
 		</div>
 	</div>
 	<div>
@@ -56,8 +56,6 @@
 					</template>
 					<template v-if="formatColumn(column)">
 						{{ formatData(record, column) }}
-						<!-- frozenPrice: '888', //冻结金额
-					settlementPrice: '888', //已核销金额 -->
 					</template>
 				</template>
 			</CommonTable>
@@ -74,16 +72,27 @@
 
 <script setup lang="ts">
 import CommonSearch from '@/components/common/CommonSearch.vue';
-import picker from '@/components/common/datePicker.vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import CommonPagination from '@/components/common/CommonPagination.vue';
 import type { TableColumnsType } from 'ant-design-vue';
-import lodash from 'lodash';
 import api from '@/api';
+import lodash from 'lodash';
 import { settlementOptions } from '@/stores/modules/settlement';
-import { StateType, DataType, fixedColumn, getRulePrice, getActualPrice, getSubTravelVoUnSettlementPrice, formatColumn, formatData } from '.';
+import picker from '@/components/common/datePicker.vue';
+import {
+	StateType,
+	DataType,
+	fixedColumn,
+	getRulePrice,
+	getActualPrice,
+	getSubTravelVoUnSettlementPrice,
+	formatColumn,
+	formatData,
+} from '../managementCenterGeneralReport/index';
 const options = settlementOptions();
+const comprehensiveGuideVoListIds = ref([]);
+const comprehensiveVoListIds = ref([]);
 const columns = computed(() => {
 	const column = ref<TableColumnsType>([]);
 	column.value = lodash.cloneDeep(fixedColumn);
@@ -213,7 +222,7 @@ const columns = computed(() => {
 			}
 		}
 	}
-	// 将结算规则配置到表头
+	// // 将结算规则配置到表头
 	for (const key in ruleMap) {
 		// ruleMap[key]['column'] 表头 ruleMap[key]['data'] 配置规则数据
 		for (const subKey in ruleMap[key]['data']) {
@@ -243,8 +252,6 @@ const columns = computed(() => {
 	}
 	return column.value;
 });
-const comprehensiveGuideVoListIds = ref([]);
-const comprehensiveVoListIds = ref([]);
 const state = reactive<StateType>({
 	tableData: {
 		param: {
@@ -266,12 +273,14 @@ const state = reactive<StateType>({
 // 查询
 const initList = async () => {
 	state.tableData.loading = true;
-	let res = await api.statementList(state.tableData.param);
+	// 调用接口
+	let res = await api.statementByItinerary(state.tableData.param);
 	const { total, content } = res;
 	state.tableData.total = total;
 	state.tableData.data = content;
 	state.tableData.loading = false;
 };
+
 //搜索
 const onHandleCurrentChange = (val: number) => {
 	console.log('change:', val);
@@ -285,18 +294,29 @@ const pageSideChange = (current: number, size: number) => {
 	initList();
 };
 onMounted(() => {
+	options.getTeamTypeList();
+	options.getGroupSocietyList();
+	options.getEarthContactAgencyList();
 	initList();
-	console.log(fixedColumn, `fixedColumn`);
 });
-
+// const timeChange = (arr: any) => {
+// 	if (arr && arr.length > 0) {
+// 		state.tableData.param.settlementTimeStart = arr[0]['$d'];
+// 		state.tableData.param.settlementTimeEnd = arr[1]['$d'];
+// 	} else {
+// 		state.tableData.param.settlementTimeStart = null;
+// 		state.tableData.param.settlementTimeEnd = null;
+// 	}
+// };
 const timeChange = (arr: any) => {
 	console.log(arr);
 	if (arr && arr.length > 0) {
-		state.tableData.param.settlementEndTime = Date.parse(arr[0]);
-		state.tableData.param.settlementStartTime = Date.parse(arr[1]);
+		// const timeList: any = [arr[0], arr[1]];
+		state.tableData.param.settlementTimeStart = Date.parse(arr[0]);
+		state.tableData.param.settlementTimeEnd = Date.parse(arr[1]);
 	} else {
-		state.tableData.param.settlementEndTime = null;
-		state.tableData.param.settlementStartTime = null;
+		state.tableData.param.settlementTimeStart = null;
+		state.tableData.param.settlementTimeEnd = null;
 	}
 };
 const reset = () => {

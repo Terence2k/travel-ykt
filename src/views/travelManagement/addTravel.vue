@@ -267,7 +267,7 @@ const getTraveDetail = () => {
 		travelStore.setGuideList([]);
 		travelStore.setTouristList([]);
 		travelStore.setTrafficList([]);
-		travelStore.setFileInfo([fileOne, fileTwo, fileThree]);
+		travelStore.setFileInfo([cloneDeep(fileOne), cloneDeep(fileTwo), cloneDeep(fileThree)]);
 		return;
 	}
 	api.travelManagement
@@ -282,7 +282,9 @@ const getTraveDetail = () => {
 		.then((res: any) => {
 			res.basic.teamId = res.basic.itineraryNo;
 			res.basic.time = [res.basic.startDate, res.basic.endDate];
-			res.basic.touristNum = res.basic.touristCount || 0;
+			// res.basic.touristNum = res.basic.touristCount || 0;
+			res.basic.touristCount = res.basic.touristCount ? res.basic.touristCount : res.touristList.total
+
 			travelStore.setBaseInfo(res.basic);
 			const fileList = res.attachmentList.map(it => it.attachmentType)
 			let allFIleList = []
@@ -359,8 +361,10 @@ const getTraveDetail = () => {
 				}),
 				...travelStore.templateTicket,
 			] as any;
-			travelStore.insuranceStatus = res.insuranceStatus?.toString();
-			travelStore.checkInsurance = res.insuranceStatus ? true : false;
+			travelStore.insuranceStatus = res.insuranceStatus ? res.insuranceStatus?.toString() : '3';
+			// travelStore.insuranceStatus = res.insuranceStatus?.toString();
+			// travelStore.checkInsurance = res.insuranceStatus ? true : false;
+			travelStore.checkInsurance = true;
 			travelStore.teamTime = [res.basic.startDate, res.basic.endDate] as any;
 			travelStore.setDisabled = disDate(res);
 			const dateTime = disTime(res);

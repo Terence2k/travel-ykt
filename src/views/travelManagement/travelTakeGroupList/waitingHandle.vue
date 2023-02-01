@@ -1,4 +1,7 @@
 <template>
+	<div class="print-container">
+		<travelDetail ref="travelDetailRef" />
+	</div>
 	<div>
 		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
 			<template #button> </template>
@@ -14,6 +17,7 @@
 						<a @click="goToDetail(record)" v-permission="'待处理_行程详情'">行程详情</a>
 						<a @click="revoke(record)" v-permission="'待处理_申请撤销'">申请撤销</a>
 						<a @click="goToLog(record)" v-permission="'待处理_查看日志'">查看日志</a>
+						<a @click="getPrint(record)" v-permission="'待处理_打印'">打印</a>
 					</div>
 				</template>
 			</template>
@@ -51,6 +55,7 @@ import { message } from 'ant-design-vue';
 import ChangeItems from '@/components/common/changeItems.vue';
 import api from '@/api/index';
 import BaseModal from '@/components/common/BaseModal.vue';
+import travelDetail from '../travelDetail.vue';
 import { useTravelStore } from '@/stores/modules/travelManagement';
 import { GroupMode, TakeGroupStatus } from '@/enum';
 import AllRevoke from './revoke/components/allRevoke.vue';
@@ -58,6 +63,7 @@ import AllRevoke from './revoke/components/allRevoke.vue';
 const travelStore = useTravelStore();
 const router = useRouter();
 const modelValue = ref(false);
+const travelDetailRef = ref();
 const reRecokeAuditAllsVisible = ref(false);
 const reRecokeAuditCheckVisible = ref(false);
 const reRecokeAuditCheckText = ref('');
@@ -128,7 +134,10 @@ const onHandleCurrentChange = (e: any) => {
 	onSearch();
 };
 const pageSideChange = () => {};
-
+const getPrint = (record: any) => {
+	
+	travelDetailRef.value.getPrint(record.oid)
+}
 const checkPower = async (id: any) => {
 	let pW = new FormData();
 
@@ -193,5 +202,10 @@ onSearch();
 .model-div > p {
 	color: rgb(225, 225, 225);
 	margin-top: 10px;
+}
+.print-container {
+	position: absolute;
+	top: 100px;
+	width: 100%;
 }
 </style>

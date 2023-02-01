@@ -273,7 +273,7 @@ export const getAmount = (a:any, price: number, model: any) => {
 			countPrice = getPrice(model, price)
 			break;
 		case ConfirmDailyCharge.IsDay :
-			const dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day');
+			const dayCount = getDiffDay(travelStore.teamTime[0], travelStore.teamTime[1]);
 			countPrice = accMul(getPrice(model, price), dayCount);
 			break;
 	}
