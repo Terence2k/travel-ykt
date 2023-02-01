@@ -267,7 +267,7 @@ const getTraveDetail = () => {
 		travelStore.setGuideList([]);
 		travelStore.setTouristList([]);
 		travelStore.setTrafficList([]);
-		travelStore.setFileInfo([fileOne, fileTwo, fileThree]);
+		travelStore.setFileInfo([cloneDeep(fileOne), cloneDeep(fileTwo), cloneDeep(fileThree)]);
 		return;
 	}
 	api.travelManagement
