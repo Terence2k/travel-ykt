@@ -1,22 +1,26 @@
 <template>
-  <div>
-	
+	<div class="print-container">
+		<travelDetail ref="travelDetailRef" />
+	</div>
+	<div>
+		
 		<CommonTable :dataSource="state.tableData" :columns="state.columns" rowKey="oid">
-      <template #button>
-      </template>
-      <template #bodyCell="{ column, text, index,record }">
-        <template v-if="column.key === 'index'">
+			<template #button>
+			</template>
+			<template #bodyCell="{ column, text, index,record }">
+				<template v-if="column.key === 'index'">
 					<div>
 						{{(travelStore.takeGroupList.overtime.params.pageNo - 1) * (travelStore.takeGroupList.overtime.params.pageSize) + (index + 1)}}
 					</div>
 				</template>
 
-        <template v-if="column.key === 'action'">
-          <div class="action-btns">
-            <a @click="goToDetail(record)" v-permission="'已过期_行程详情'">行程详情</a>
-            <a @click="goToLog(record)" v-permission="'已过期_查看日志'">查看日志</a>
-          </div>
-        </template>
+				<template v-if="column.key === 'action'">
+					<div class="action-btns">
+						<a @click="goToDetail(record)" v-permission="'已过期_行程详情'">行程详情</a>
+						<a @click="goToLog(record)" v-permission="'已过期_查看日志'">查看日志</a>
+						<a @click="getPrint(record)" v-permission="'已过期_打印'">打印</a>
+					</div>
+				</template>
 			</template>
 		</CommonTable>
 		<CommonPagination
@@ -31,15 +35,16 @@
 <script lang="ts" setup>
 	import CommonTable from '@/components/common/CommonTable.vue';
   import CommonPagination from '@/components/common/CommonPagination.vue';
-  import { message } from 'ant-design-vue';
+  	import { message } from 'ant-design-vue';
 
 	import api from '@/api/index';
-
+	import travelDetail from '../travelDetail.vue';
 	import { useTravelStore } from '@/stores/modules/travelManagement';
 	import { GroupMode, TakeGroupStatus } from '@/enum'
 
 	const travelStore = useTravelStore();
 	const router = useRouter()
+	const travelDetailRef = ref();
 	const state = reactive({
 		total:  computed(() => travelStore.takeGroupList.overtime.total),
 		params: {
@@ -105,6 +110,10 @@
 		travelStore.takeGroupList.overtime.params.pageNo = e
 		onSearch()
 	}
+	const getPrint = (record: any) => {
+	
+		travelDetailRef.value.getPrint(record.oid)
+	}
 	const pageSideChange = () => {
 
 	}
@@ -122,3 +131,10 @@
   };
 	onSearch()
 </script>
+<style scoped>
+.print-container {
+	position: absolute;
+	top: 100px;
+	width: 100%;
+}
+</style>
