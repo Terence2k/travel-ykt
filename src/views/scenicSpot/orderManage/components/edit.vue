@@ -10,8 +10,8 @@
 					<a-form-item label="联系电话"> {{ formData.data.orderInfo.sendTravelPhone }} </a-form-item>
 					<a-form-item label="入园日期"> {{ formData.data.orderInfo.schoolDate || '-' }} </a-form-item>
 					<a-form-item label="预定时间"> {{ formData.data.orderInfo.bookDate || '-' }}</a-form-item>
-					<!-- 两边环境的时间格式不一致，先以甲方的显示格式 -->
-					<a-form-item label="核销时间"> {{ shijianc(formData.data.orderInfo.verificationTime) || '-' }} </a-form-item>
+					<a-form-item label="核销时间"> {{ formData.data.orderInfo.verificationTime || '-' }} </a-form-item>
+					<!-- 两边环境的时间格式不一致，先以甲方为准 ⬆ -->
 					<!-- <a-form-item label="核销时间"> {{ shijianc('2023-02-01T02:33:11.000+00:00') || '-' }} </a-form-item> -->
 					<a-form-item label="行程人数"> {{ formData.data.orderInfo.itineraryCount }} 人</a-form-item>
 					<a-form-item label="订票人数"> {{ formData.data.orderInfo.bookCount }} 人</a-form-item>
