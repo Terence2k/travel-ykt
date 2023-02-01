@@ -2,8 +2,8 @@
     <CommonSearch>
 		<search-item label="报表名称">
 			<a-select allowClear ref="select" v-model:value="state.reportId" style="width: 200px" placeholder="请选择报表名称">
-				<a-select-option v-for="(item, index) in optionsList" :value="item.lable" :key="index"
-					>{{ item.lable }}
+				<a-select-option v-for="(item, index) in filterPages" :value="item.label" :key="index"
+					>{{ item.label }}
 				</a-select-option>
 			</a-select>
 		</search-item>
@@ -15,7 +15,7 @@
     <div v-for="(item, index) in optionsList" :key="index">
         <component
             :is="item.name"
-            v-if="item.lable == state.reportId"
+            v-if="item.label == state.reportId"
         ></component>
     </div>
 </template>
@@ -34,37 +34,41 @@ import { watch } from 'vue';
 import {
 	StateType,
 } from '.';
+import { getTabPermission } from '@/utils';
+
 const navigatorBar = useNavigatorBar();
 const optionsList:any = [
     {
         name: managementCenterGeneralReport,
-        lable: '管理中心总账报表',
+        label: '管理中心总账报表',
     },
     {
         name: managementCenterDetailsReport,
-        lable: '管理中心明细账报表',
+        label: '管理中心明细账报表',
     },
     {
         name: earthingGeneralReport,
-        lable: '地接总账报表',
+        label: '地接总账报表',
     },
     {
         name: earthingDetailsReport,
-        lable: '地接明细账报表',
+        label: '地接明细账报表',
     },
     {
         name: scenicSpotAccountReport,
-        lable: '景点账目报表',
+        label: '景区账目报表',
     },
     {
         name: scenicSpotSummaryReport,
-        lable: '景点汇总报表',
+        label: '景区汇总报表',
     },
     {
         name: scenicSpotHotelReport,
-        lable: '酒店账目报表',
+        label: '酒店账目报表',
     }
 ]
+const filterPages = optionsList.filter((item: any) => getTabPermission(item.label));
+
 const state = reactive<StateType>({
 	reportId: null
 });
