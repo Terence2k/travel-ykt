@@ -187,6 +187,7 @@ const handelChangeType = async (e: any) => {
 		e && (ticketData.ticketList = await api.travelManagement.getTicketList(formState.scenicId, { ticketType: getTicketInitEnum(e) }));
 	} catch (error) {
 		ticketData.ticketList = [];
+		ticketPrice.value = ''		
 	}
 	if (e === TicketType.UNITE) {
 		formState.ticketId && formState.startDate && getChildTicket(formState.ticketId, formState.startDate);
