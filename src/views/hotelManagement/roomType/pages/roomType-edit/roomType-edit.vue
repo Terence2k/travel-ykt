@@ -165,7 +165,7 @@
 				</template>
 			</CommonTable>
 		</a-form>
-		<!-- <div>
+		<!-- <div class="btn-add-wrapper">
 			<a-button @click="add" class="button-add" v-permission="'添加'">添加</a-button>
 		</div> -->
 		<div class="footer">
@@ -230,7 +230,7 @@ const columns = [
 		title: '房间数量',
 		dataIndex: 'roomNum',
 		key: 'roomNum',
-		width: '13%',
+		width: '17%',
 	},
 	{
 		title: '审核状态',
@@ -242,14 +242,14 @@ const columns = [
 		title: '房间可入住人数',
 		dataIndex: 'roomOccupancyNum',
 		key: 'roomOccupancyNum',
-		width: '28%',
+		width: '26%',
 	},
 	{
 		title: '操作',
 		dataIndex: 'actions',
 		key: 'actions',
 		fixed: 'right',
-		width: '16%',
+		width: '13%',
 	},
 ];
 interface DataSourceItem {
@@ -487,7 +487,8 @@ const saveRoomInfo = () => {
 			}
 		})
 		.catch((err: any) => {
-			message.error(err?.message || err);
+			console.log(err);
+			//message.error(err?.message || err);
 		});
 };
 
