@@ -144,6 +144,7 @@ const handleFinish = async (values: any) => {
   let loginFunc = state.activeKey == 1 ? 'login' : 'smsLogin';
   api[loginFunc](formModel).then((res: any) => {
     console.log(res);
+    res.sysMenuVos = res.sysMenuVos.filter((item: any) => item.available);
     window.localStorage.setItem('authorization', `${res.authorization}`);
     window.localStorage.setItem('userInfo', JSON.stringify(res));
     getTabMenuList(res.sysMenuVos);

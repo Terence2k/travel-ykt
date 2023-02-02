@@ -1,5 +1,5 @@
 <template>
-	<a-menu-item :key="item.keys" v-if="!item.children || item.children.length == 0" class="">
+	<a-menu-item :key="item.keys" v-if="!item.childMenuList || item.childMenuList.length == 0" class="">
 		<span :class="openKeys?.includes(item.path) ? 'bold' : ''"> {{ item.title }}</span>
 	</a-menu-item>
 	<a-sub-menu :key="item.keys" v-else>
@@ -9,7 +9,7 @@
 		<template #expandIcon>
 			<img :class="openKeys?.includes(item.path) ? 'menu-open' : 'menu-close'" src="@/assets/svg/menu-open.svg" alt="" />
 		</template>
-		<template v-for="elm in item.children" :key="elm.path">
+		<template v-for="elm in item.childMenuList" :key="elm.path">
 			<SliderItem :item="elm" :openKeys="openKeys" v-if="elm.available"/>
 		</template>
 	</a-sub-menu>

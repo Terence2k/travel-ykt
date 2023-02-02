@@ -56,7 +56,7 @@ import api from '@/api';
 import { message, Modal } from 'ant-design-vue';
 import { fileOne, fileThree, fileTwo, useTravelStore } from '@/stores/modules/travelManagement';
 import dayjs, { Dayjs } from 'dayjs';
-import { copy, disabledRangeTime, getAmount, getDiffDay } from '@/utils';
+import { copy, disabledRangeTime, generateGuid, getAmount, getDiffDay } from '@/utils';
 import { accDiv,accMul} from '@/utils/compute';
 const traveListData = JSON.parse(sessionStorage.getItem('traveList') as any) || {};
 const route = useRoute();
@@ -315,6 +315,7 @@ const getTraveDetail = () => {
 			travelStore.setGuideList(res.guideList);
 			travelStore.setTouristList(
 				res.touristList.content.map((it: any) => {
+					it.key = generateGuid()
 					if (it.specialCertificatePicture instanceof String) {
 						it.specialCertificatePicture = it.specialCertificatePicture?.split(',');
 					}
