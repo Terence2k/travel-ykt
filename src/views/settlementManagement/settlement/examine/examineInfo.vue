@@ -58,7 +58,7 @@
 		<div class="footer">
 			<div class="tooter-btn">
 				<a-button type="primary" @click.prevent="toPass" v-if="formData.showExamineBtn">审核通过</a-button>
-				<a-button @click.prevent="onCancel">取消</a-button>
+				<a-button @click.prevent="onCancel">返回</a-button>
 			</div>
 		</div>
 	</div>

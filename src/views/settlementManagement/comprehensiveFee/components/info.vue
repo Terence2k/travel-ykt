@@ -3,7 +3,7 @@
 		<!-- <header>基本信息</header> -->
 		<div class="title">基本信息</div>
 
-		<a-form labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 6 }">
+		<a-form labelAlign="left" :label-col="{ span: 3 }" :wrapper-col="{ span: 20 }">
 			<a-form-item label="综费产品">
 				<span>{{ formData.data.comprehensiveFeeProductName }}</span>
 			</a-form-item>
@@ -29,7 +29,7 @@
 		</a-form>
 		<div class="footer">
 			<div class="tooter-btn">
-				<a-button type="primary" @click.prevent="toEdit">返回</a-button>
+				<a-button @click.prevent="toEdit">返回</a-button>
 			</div>
 		</div>
 	</div>
@@ -122,13 +122,13 @@ onMounted(() => {
 	color: #1e2226;
 	margin-top: 6px;
 	margin-bottom: 0;
-	height: 32px;
+	// height: 32px;
 }
 .ant-form-item:first-child {
 	margin-top: 13px;
 }
 ::v-deep(.ant-form-item-control-input) {
-	height: 18px;
+	height: auto;
 }
 ::v-deep(.ant-form-item-label > label) {
 	position: relative;
