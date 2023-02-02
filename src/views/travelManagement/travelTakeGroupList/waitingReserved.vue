@@ -109,7 +109,7 @@ const onHandleCurrentChange = (e: any) => {
 const pageSideChange = () => {};
 const goToPath = (row: any) => {
 	router.push({
-		path: '/travel/travel_manage/add_travel',
+		path: '/travel/take_group/take_group_add_travel',
 		query: {
 			id: row.oid,
 			itineraryNo: row.itineraryNo,
@@ -119,7 +119,7 @@ const goToPath = (row: any) => {
 };
 const goToDetail = (row: any) => {
   router.push({
-    path: '/travel/travel_manage/travel_detail',
+    path: '/travel/take_group/take_group_travel_detail',
     query: { oid: encodeURIComponent(row.oid) }
   });
 }

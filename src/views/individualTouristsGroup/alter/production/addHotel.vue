@@ -281,18 +281,18 @@ const validateCheckNum = async (_rule: Rule, value: string, index: number) => {
 	}
 };
 
-// 入住总人数校验
-const validateCheckIn = async (_rule: Rule, value: string, index: number) => {
-	if (value === '') {
-		return Promise.reject('请输入入住总人数');
-	} else if (Number(value) < formState.roomTypeList[index].roomCount) {
-		return Promise.reject('入住人数不能低于房间数量');
-	} else if (Number(value) > formState.roomTypeList[index].roomCount * formState.roomTypeList[index].roomOccupancyNum) {
-		return Promise.reject('入住人数不能大于预定房间可住人数');
-	} else {
-		return Promise.resolve();
-	}
-};
+// // 入住总人数校验
+// const validateCheckIn = async (_rule: Rule, value: string, index: number) => {
+// 	if (value === '') {
+// 		return Promise.reject('请输入入住总人数');
+// 	} else if (Number(value) < formState.roomTypeList[index].roomCount) {
+// 		return Promise.reject('入住人数不能低于房间数量');
+// 	} else if (Number(value) > formState.roomTypeList[index].roomCount * formState.roomTypeList[index].roomOccupancyNum) {
+// 		return Promise.reject('入住人数不能大于预定房间可住人数');
+// 	} else {
+// 		return Promise.resolve();
+// 	}
+// };
 /**
  *
  * @param data 数据源
