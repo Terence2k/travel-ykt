@@ -146,7 +146,7 @@
 					<template v-else-if="column.dataIndex === 'actions'">
 						<div class="cell-actions">
 							<span class="item" @click="edit(record.key)" v-permission="'编辑'">{{ editableData[record.key] ? '取消' : '编辑' }}</span>
-							<span class="item" @click="remove(record.key)" v-permission="'删除'">删除</span>
+							<span class="item" @click="cacheRemoveKey(record.key)" v-permission="'删除'">删除</span>
 						</div>
 					</template>
 				</template>
@@ -181,6 +181,7 @@
 			>
 			<span v-if="state.isAuditStatus" class="tip_not_submit">房型信息正在审核中，暂时不可继续提交</span>
 		</div>
+		<DelModal :params="{ title: '删除', content: '是否确定删除该房型' }" v-model="delShow" @submit="delSubmit" @cancel="delCancel" />
 		<!-- <CommonPagination
 			class="pagination-custom"
 			:current="tableState.tableData.param.pageNo"
@@ -199,6 +200,7 @@ import { cloneDeep } from 'lodash';
 import { message } from 'ant-design-vue';
 import api from '@/api';
 import CommonTable from '@/components/common/CommonTable.vue';
+import DelModal from '@/components/common/DelModal.vue';
 import { accDiv } from '@/utils/compute';
 import { isPositiveInteger } from '@/utils/validator';
 // import CommonPagination from '@/components/common/CommonPagination.vue';
@@ -266,6 +268,10 @@ interface DataSourceItem {
 
 const formRef = ref();
 
+const delShow = ref();
+
+const removeKey = ref();
+
 const userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
 
 let minusNumOptions = ref<SelectProps['options']>(
@@ -320,6 +326,20 @@ const edit = (key: string) => {
 		editableData[key] = cloneDeep(dataSource.value.filter((item) => key === item.key)[0]);
 		editableData[key].operationType = 1;
 	}
+};
+
+const cacheRemoveKey = (key: string) => {
+	removeKey.value = key;
+	delShow.value = true;
+};
+
+const delCancel = () => {
+	delShow.value = false;
+};
+
+const delSubmit = () => {
+	remove(removeKey.value);
+	delShow.value = false;
 };
 
 const remove = (key: string) => {
