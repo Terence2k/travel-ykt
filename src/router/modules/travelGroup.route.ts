@@ -491,6 +491,18 @@ export default [
 							isDetail: true, // 在左侧的导航栏不会展示
 						},
 					},
+					{
+						path: 'take_group_travel_detail',
+						component: () => import('@/views/travelManagement/travelDetail.vue'),
+						activeMeun: 'take_group_list',
+						name: 'take_group_travel_detail',
+						meta: {
+							title: '行程详情',
+							// icon: 'liulanqi',
+							// auth: ["admin"],
+							isDetail: true, // 在左侧的导航栏不会展示
+						},
+					},
 				],
 			},
 			{

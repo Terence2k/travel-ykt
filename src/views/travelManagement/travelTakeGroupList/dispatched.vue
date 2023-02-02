@@ -129,7 +129,7 @@ const goToPath = (row: any, tab?: any) => {
 };
 const goToDetail = (row: any) => {
 	router.push({
-		path: '/travel/travel_manage/travel_detail',
+		path: '/travel/take_group/take_group_travel_detail',
 		query: { oid: encodeURIComponent(row.oid) },
 	});
 };
