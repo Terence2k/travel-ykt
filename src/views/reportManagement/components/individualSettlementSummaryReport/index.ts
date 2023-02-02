@@ -1,4 +1,5 @@
 import type { TableColumnsType } from 'ant-design-vue';
+import { accDiv } from '@/utils/compute';
 // 固定表头
 export const fixedColumn: Array<any> = [
 	{
@@ -323,10 +324,10 @@ export const twoDecimalPlaces = (number: any): string => {
 	if (typeof number === 'string') {
 		if (number.includes('-')) {
 			number = number.slice(1);
-			return `-${Number(number / 100)}`;
+			return `-${accDiv(number, 100)}`;
 		}
 	}
-	return Number(number / 100);
+	return accDiv(number, 100);
 };
 // 需要/100的字段
 export const formatColumn = computed(() => (column: any): boolean => {

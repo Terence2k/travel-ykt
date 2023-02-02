@@ -217,11 +217,14 @@ import dayjs, { Dayjs } from 'dayjs';
 import { disabledRangeTime, getAmount, getDiffDay } from '@/utils';
 import { accDiv, accMul } from '@/utils/compute';
 import type { Rule } from 'ant-design-vue/es/form';
+import { useNavigatorBar } from '@/stores/modules/navigatorBar';
+const navigatorBar = useNavigatorBar();
 const travelStore = useTravelStore();
 const router = useRouter();
 const route = useRoute();
 const isRefresh = ref('0')
 const back = () => {
+	navigatorBar.clearNavigator();
 	router.push({
 		name: 'tourists',
 		params: {
@@ -1020,13 +1023,22 @@ const resetFormFields = () => {
 watch(
 	() => route.query.id,
 	async (newVal) => {
-		if (newVal) {
-			form.value.oid = newVal as string
-			isAdd.value = false
-			await getTraveDetail()
-			findByIdTeamType()
-			getGuideList()
-			getContractDetails()
+		if (route.name === 'newGroup') {
+			if (newVal) {
+				if (route.query.tab) {
+					navigatorBar.setNavigator(['旅行社管理', '散客拼团', '预定']);
+				} else {
+					navigatorBar.setNavigator(['旅行社管理', '散客拼团', '编辑']);
+				}
+				form.value.oid = newVal as string
+				isAdd.value = false
+				await getTraveDetail()
+				findByIdTeamType()
+				getGuideList()
+				getContractDetails()
+			} else {
+				navigatorBar.setNavigator(['旅行社管理', '散客拼团', '新增拼团']);
+			}
 		}
 	},
 	{ immediate: true }

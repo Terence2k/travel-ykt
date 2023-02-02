@@ -543,6 +543,7 @@ const isRefresh = ref('0')
 const imgUploadRef = ref()
 const pdfUploadRef = ref()
 const back = () => {
+  navigatorBar.clearNavigator();
   imgUploadRef.value?.clearFileList()
   pdfUploadRef.value?.clearFileList()
   router.push({

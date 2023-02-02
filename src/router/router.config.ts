@@ -8,6 +8,7 @@ import settlementRoute from './modules/settlement.route';
 import cateringManageRoute from './modules/catering.route';
 import scenicSpot from './modules/scenicSpot.route';
 import reportManagement from './modules/reportManagement.route';
+import systemManagement from './modules/systemManagement.route';
 export const basicRouter = [
 	// {
 	// 	path: '/',
@@ -45,6 +46,7 @@ export const accessRoutes: RouteRecordRaw[] = [
 	...gouvyRoute,
 	...settlementRoute,
 	...reportManagement,
+	...systemManagement
 ];
 
 export const constantRoutes: RouteRecordRaw[] = [
