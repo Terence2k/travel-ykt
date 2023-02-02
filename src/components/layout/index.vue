@@ -109,11 +109,14 @@ const goBack = () => {
 
 const handleMenuTree = (menuList: any) => {
 	menuList = menuList.map((item: any) => {
+    if (item.menuType === 0 && item.childMenuList?.length) {
+      item.childMenuList = handleMenuTree(item.childMenuList);
+    }
 		return {
-			children: item.menuType === 0 ? item.childMenuList : [],
-			keys: item.url,
-			path: item.url,
-			title: item.menuName,
+			childMenuList: item.menuType === 0 ? item.childMenuList : [],
+			keys: item.url || item.keys,
+			path: item.url || item.path,
+			title: item.menuName || item.title,
 			available: item.available
 		};
 	});
