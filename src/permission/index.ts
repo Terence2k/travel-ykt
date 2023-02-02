@@ -1,5 +1,4 @@
 
-import router from "@/router/index";
 // btnValue: 按钮名字,tabValue: tab页名
 const treeForeach = (btnValue: any, tabValue?: any) => {
   const tabArr = JSON.parse(<string>localStorage.getItem('tabArr') || '[]');

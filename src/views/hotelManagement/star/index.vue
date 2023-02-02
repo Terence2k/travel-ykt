@@ -141,7 +141,8 @@ const onSearch = () => {
 			tableState.tableData.total = res?.total || 0;
 		})
 		.catch((err: any) => {
-			message.error(err?.message || err || '获取酒店星级表格信息失败');
+			//message.error(err?.message || err || '获取酒店星级表格信息失败');
+			console.log(err?.message);
 		});
 };
 

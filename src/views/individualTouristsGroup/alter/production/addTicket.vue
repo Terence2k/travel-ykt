@@ -44,7 +44,7 @@
 			</a-form-item>
 
 			<a-form-item label="门票价格" name="travelName">
-				<span>{{ accDiv(ticketPrice,100) || '' }}元</span>
+				<span>{{ accDiv(ticketPrice, 100) || '' }}元</span>
 			</a-form-item>
 
 			<div v-if="formState.ticketType === TicketType.SHOW || formState.ticketType === TicketType.UNITE">
@@ -52,7 +52,7 @@
 				<CommonTable v-if="formState.ticketType === TicketType.UNITE" :columns="columns" :dataSource="ticketData.childTicket" :scrollY="false">
 					<template #bodyCell="{ column, text, index, record }">
 						<template v-if="column.key === 'action'">
-							<a @click="(dialogVisibleTicket = true)">选择座位分区</a>
+							<a @click="dialogVisibleTicket = true">选择座位分区</a>
 						</template>
 					</template>
 				</CommonTable>
@@ -82,8 +82,8 @@ import selectTicket from './selectTicket.vue';
 import api from '@/api';
 import { cloneDeep, debounce } from 'lodash';
 import { validateRules, validateFields, generateGuid } from '@/utils';
-import { accDiv,accMul} from '@/utils/compute';
-import picker from '@/components/common/datePicker.vue'
+import { accDiv, accMul } from '@/utils/compute';
+import picker from '@/components/common/datePicker.vue';
 import { TicketType } from '@/enum';
 import { Modal } from 'ant-design-vue';
 import { createVNode } from 'vue';
@@ -121,7 +121,7 @@ const formState = reactive<{ [k: string]: any }>({
 	startDate: '',
 	endData: '',
 	count: '',
-	orderFee:''
+	orderFee: '',
 });
 
 const columns: any = [
@@ -157,8 +157,8 @@ const columns: any = [
 	// },
 ];
 let contrastdata = reactive({} as any);
-const countMoney = computed(()=> (accMul(accDiv(ticketPrice.value, 100), travelStore.touristList.length)) || 0)
-const ticketPrice = ref()
+const countMoney = computed(() => accMul(accDiv(ticketPrice.value, 100), travelStore.touristList.length) || 0);
+const ticketPrice = ref();
 
 const getScenicList = async () => {
 	ticketData.scenicList = await api.travelManagement.getScenicList();
@@ -187,12 +187,12 @@ const handelChangeType = async (e: any) => {
 		e && (ticketData.ticketList = await api.travelManagement.getTicketList(formState.scenicId, { ticketType: getTicketInitEnum(e) }));
 	} catch (error) {
 		ticketData.ticketList = [];
+		ticketPrice.value = '';
 	}
 	if (e === TicketType.UNITE) {
 		formState.ticketId && formState.startDate && getChildTicket(formState.ticketId, formState.startDate);
 	}
 };
-
 
 const handleOk = async (callback: Function) => {
 	try {
@@ -200,7 +200,7 @@ const handleOk = async (callback: Function) => {
 		formState.unitPrice = ticketPrice.value;
 		formState.itineraryId = route.query.oid;
 		formState.reservePeopleCount = travelStore.touristList.length;
-		formState.orderFee = formState.reservePeopleCount * formState.unitPrice
+		formState.orderFee = formState.reservePeopleCount * formState.unitPrice;
 		if (formState.ticketType === TicketType.UNITE) {
 			formState.childTicketIds = ticketData.childTicket.map((it: any) => it.subTicketId);
 		} else {
@@ -211,9 +211,9 @@ const handleOk = async (callback: Function) => {
 			formState.key = key;
 		}
 		if (
-			(formState.oid && (contrastdata.ticketId != formState.ticketId) ||
+			(formState.oid && contrastdata.ticketId != formState.ticketId) ||
 			contrastdata.scenicId != formState.scenicId ||
-			contrastdata.startDate != formState.startDate)
+			contrastdata.startDate != formState.startDate
 		) {
 			formState.edit = true;
 		}
@@ -298,8 +298,7 @@ watch(dialogVisible, (newVal) => {
 		for (let k in formState) {
 			formState[k] = '';
 		}
-		ticketPrice.value = 0
-
+		ticketPrice.value = 0;
 	} else {
 		const data = props.productRow;
 		if (props.productRow) {
@@ -320,13 +319,13 @@ watch(dialogVisible, (newVal) => {
 	emits('update:modelValue', newVal);
 });
 
-const getStock = async(ticketId: number | string, endTime: string, startTime: string) => {
+const getStock = async (ticketId: number | string, endTime: string, startTime: string) => {
 	const res = await api.travelManagement.getStock({
-			ticketId,
-			endTime,
-			startTime
-		});
-		ticketPrice.value = res[0].ticketPrice
+		ticketId,
+		endTime,
+		startTime,
+	});
+	ticketPrice.value = res[0].ticketPrice;
 };
 const debounceFun = debounce((ticketId: number | string, endTime: string, startTime: string) => {
 	getStock(ticketId, endTime, startTime);
