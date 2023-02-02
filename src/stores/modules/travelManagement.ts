@@ -160,7 +160,7 @@ export const useTravelStore = defineStore({
 		traveInfo: {},
 		sendTabList: [], //发团tab
 		takeTabList: [], //接团tab
-		attachmentList: [fileOne, fileTwo, fileThree],
+		attachmentList: [],
 		compositeProducts: [],
 		curentProduct: [] as any,
 		hotels: [],
@@ -391,7 +391,7 @@ export const useTravelStore = defineStore({
 			this.traveInfo = data;
 		},
 		setFileInfo(data: any) {
-			this.attachmentList = data;
+			this.attachmentList = cloneDeep(data);
 		},
 		setCompositeProducts(data: any) {
 			this.compositeProducts = data;

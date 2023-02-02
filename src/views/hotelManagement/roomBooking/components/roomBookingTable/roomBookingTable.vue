@@ -25,22 +25,24 @@
 			<template #bodyCell="{ column, record, text }">
 				<div
 					class="cell-body"
-					:class="{ audit: record[column.dataIndex]?.auditStatus === 0 }"
+					:class="{ audit: record[column.dataIndex]?.auditStatus === 0, mdisabled: isHistoryDate(column?.appointedTime) }"
 					v-if="column.dataIndex !== 'roomType' && column?.appointedTime"
 				>
-					<div class="item">
-						<span class="icon-status" :class="{ close: record[column.dataIndex]?.roomStatus === 0 }"></span>
-						<span>{{ record[column.dataIndex]?.roomStatusName || '' }}</span>
-					</div>
-					<div @dblclick="openRoomStatusDetailsModal(record[column.dataIndex])" class="item cursor-point">
-						<div>
-							<span>
-								剩下
-								<span class="color-stock" :class="{ empty: record[column.dataIndex]?.stockNum === 0 }">
-									{{ `${record[column.dataIndex]?.stockNum}` }}
+					<div class="item-wrapper">
+						<div class="item">
+							<span class="icon-status" :class="{ close: record[column.dataIndex]?.roomStatus === 0 }"></span>
+							<span>{{ record[column.dataIndex]?.roomStatusName || '' }}</span>
+						</div>
+						<div @dblclick="openRoomStatusDetailsModal(record[column.dataIndex], column?.appointedTime)" class="item item2 cursor-point">
+							<div>
+								<span>
+									剩下
+									<span class="color-stock" :class="{ empty: record[column.dataIndex]?.stockNum === 0 }">
+										{{ `${record[column.dataIndex]?.stockNum}` }}
+									</span>
+									间
 								</span>
-								间
-							</span>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -135,193 +137,193 @@ const originalColumns = [
 		title: '房间',
 		dataIndex: 'roomType',
 		key: 'roomType',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date1',
 		key: '1',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date2',
 		key: '2',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date3',
 		key: '3',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date4',
 		key: '4',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date5',
 		key: '5',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date6',
 		key: '6',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date7',
 		key: '7',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date8',
 		key: '8',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date9',
 		key: '9',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date10',
 		key: '10',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date11',
 		key: '11',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date12',
 		key: '12',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date13',
 		key: '13',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date14',
 		key: '14',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date15',
 		key: '15',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date16',
 		key: '16',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date17',
 		key: '17',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date18',
 		key: '18',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date19',
 		key: '19',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date20',
 		key: '20',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date21',
 		key: '21',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date22',
 		key: '22',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date23',
 		key: '23',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date24',
 		key: '24',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date25',
 		key: '25',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date26',
 		key: '26',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date27',
 		key: '27',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date28',
 		key: '28',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date29',
 		key: '29',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date30',
 		key: '30',
-		width: '200px',
+		width: '205px',
 	},
 	{
 		title: '',
 		dataIndex: 'date31',
 		key: '31',
-		width: '200px',
+		width: '205px',
 	},
 ];
 
@@ -435,6 +437,10 @@ const modalState = reactive({
 	cacheInfo: {},
 });
 
+const isHistoryDate = (date: any) => {
+	return date && dayjs(dayjs().format('YYYY-MM-DD')).isAfter(dayjs(date));
+};
+
 const getCurrentHourAndMinuteText = () => {
 	const section = dayjs().format('A');
 	const time = dayjs().format('h:mm');
@@ -462,6 +468,18 @@ const getCurrentTimeDetailText = () => {
 
 const dataSource = computed(() => {
 	if (Array.isArray(tableState.tableData.data)) {
+		//当月无库存数据，则显示为长度=天数的空数组
+		if (tableState.tableData.data.length === 0) {
+			columns.value.forEach((item, index) => {
+				if (index > 0) {
+					columns.value[index] = {
+						...item,
+						title: '',
+						appointedTime: ' ',
+					};
+				}
+			});
+		}
 		return tableState.tableData.data.map((item, index) => {
 			const result = {};
 			result.roomType = item?.roomTypeName || '';
@@ -489,9 +507,9 @@ const dataSource = computed(() => {
 				if (columns.value.length < 7 && columns.value.length > 1) {
 					columns.value[0] = {
 						...columns.value[0],
-						width: `${parseInt((200 * (columns.value.length - 1)) / 6)}px`,
+						width: `${parseInt((205 * (columns.value.length - 1)) / 6)}px`,
 					};
-					console.log('第一列宽度应为：', parseInt((200 * (columns.value.length - 1)) / 6));
+					console.log('第一列宽度应为：', parseInt((205 * (columns.value.length - 1)) / 6));
 				}
 			}
 
@@ -581,8 +599,14 @@ watch(
 	}
 );
 
-const openRoomStatusDetailsModal = (data: any) => {
+const openRoomStatusDetailsModal = (data: any, date: any) => {
 	console.log('当前单元格数据：', data);
+
+	if (date && isHistoryDate(date)) {
+		message.warn('历史库存数据不可编辑');
+		return;
+	}
+
 	tableState.roleId = undefined;
 	tableState.auditBusinessType = '';
 	if (data?.auditStatus === 0 && data?.uuid) {

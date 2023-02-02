@@ -585,7 +585,8 @@ const findByIdTeamType = async () => {
 					result.unPrice = result.feeNumber;
 					result.isDaily = result.confirmDailyCharge ? true : false;
 					result.productName = result.comprehensiveFeeProductName;
-					result.dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day')
+					// result.dayCount = dayjs(travelStore.baseInfo.endDate).diff(travelStore.baseInfo.startDate, 'day')
+					
 					result.totalMoney = getAmount(
 						result.confirmDailyCharge,
 						result.feeNumber,
@@ -632,7 +633,8 @@ watch(
 	(newVal) => {
 		findByIdTeamType();
 		
-	}
+	},
+	{immediate: true}
 );
 
 watch(() => [formState.value.startDate, formState.value.endDate], ([newStar, newEnd]) => {

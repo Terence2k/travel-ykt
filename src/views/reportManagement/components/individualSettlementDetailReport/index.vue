@@ -23,13 +23,13 @@
 			</picker>
 		</search-item>
 		<template #button>
-			<a-button @click="reset" v-permission="'重置'" style="margin-right: 30px">重置</a-button>
-			<a-button @click="initList" v-permission="'查询'">查询</a-button>
+			<a-button @click="reset" v-permission="'散客结算明细报表_重置'" style="margin-right: 30px">重置</a-button>
+			<a-button @click="initList" v-permission="'散客结算明细报表_查询'">查询</a-button>
 		</template>
 	</CommonSearch>
 	<div class="table-area">
 		<div class="list-btn">
-			<a-button type="primary" class="success" v-permission="'导出'">导出</a-button>
+			<a-button type="primary" class="success" v-permission="'散客结算明细报表_导出'">导出</a-button>
 		</div>
 	</div>
 	<div>
@@ -170,7 +170,7 @@ const columns = computed(() => {
 				const idx = column.value.findIndex((item) => {
 					return item.title === vo.comprehensiveFeeProductName;
 				});
-				ruleMap[title]['column'] = column.value[idx].children;
+				ruleMap[title]['column'] = column.value[idx]?.children;
 				ruleMap[title]['data'].push(vo['ruleList']);
 				ruleMap[title]['columnParent'] = column.value[idx];
 			}

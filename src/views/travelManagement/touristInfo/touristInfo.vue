@@ -12,7 +12,7 @@
 			<a-button type="primary" @click="getHealthCode">健康码一键检查</a-button>
 		</div>
 		<a-form ref="formRef" :rules="rulesRef" :model="editableData" autocomplete="off" labelAlign="left">
-			<CommonTable :row-selection="{ onSelect }" :columns="columns" :dataSource="tableData" :scrollY="false">
+			<CommonTable row-key="key" :row-selection="{ onSelect }" :columns="columns" :dataSource="tableData" :scrollY="false">
 				
 				<template #headerCell="{ column }">
 					<template v-if="mustFillIn.includes(column.key)">

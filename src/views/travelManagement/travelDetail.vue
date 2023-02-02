@@ -25,8 +25,8 @@
           <a-descriptions-item label="地接社计调">{{state.basicData.subTravelOperatorName}} {{state.basicData.subTravelOperatorPhone}}</a-descriptions-item>
           <a-descriptions-item label="游客人数">{{state.basicData.touristCount}}</a-descriptions-item>
           <a-descriptions-item label="古维费应缴人数">{{state.basicData.guWeiCount}}</a-descriptions-item>
-          <a-descriptions-item label="游客到丽方式">{{state.basicData.toLjWay}}</a-descriptions-item>
-          <a-descriptions-item label="游客离丽方式">{{state.basicData.leaveLjWay}}</a-descriptions-item>
+          <a-descriptions-item label="游客到丽方式">{{state.basicData.toLjWay || '暂未填写'}}</a-descriptions-item>
+          <a-descriptions-item label="游客离丽方式">{{state.basicData.leaveLjWay || '暂未填写'}}</a-descriptions-item>
           <a-descriptions-item label="行程时间">{{state.basicData.startDate}} - {{ state.basicData.endDate }}</a-descriptions-item>
           <a-descriptions-item label="综费应缴人数">{{state.basicData.productPeopleCount }}</a-descriptions-item>
           <a-descriptions-item label="已添加景区">{{state.basicData.ticketCount}}</a-descriptions-item>
@@ -72,31 +72,31 @@
             <!-- 费用总计（元） -->
             <template v-if="column.key === 'orderFee'">
               <div>
-                {{ accDiv(record.orderFee, 100) || 0 }}
+                {{ accDiv(record.orderFee, 100) || '' }}
               </div>
             </template>
             <!-- 单价（元） -->
             <template v-if="column.key === 'unitPrice'">
               <div>
-                {{ accDiv(record.unitPrice, 100) || 0 }}
+                {{ accDiv(record.unitPrice, 100) || '' }}
               </div>
             </template>
             <!-- 费用（元） -->
             <template v-if="column.key === 'totalFee'">
               <div>
-                {{ accDiv(record.totalFee, 100) || 0 }}
+                {{ accDiv(record.totalFee, 100) || '' }}
               </div>
             </template>
             <!-- 费用（元） -->
             <template v-if="column.key === 'orderFee'">
               <div>
-                {{ accDiv(record.totalFee, 100) || 0 }}
+                {{ accDiv(record.totalFee, 100) || '' }}
               </div>
             </template>
             <!-- 应缴总金额 -->
             <template v-if="column.key === 'payablePrice'">
               <div>
-                {{ accDiv(record.payablePrice, 100) || 0 }}
+                {{ accDiv(record.payablePrice, 100) || '' }}
               </div>
             </template>
             <!-- 入住天数 -->
@@ -219,13 +219,7 @@
         item.attachmentUrl = await Promise.all(result);
       })
       codeUrl.value = JSON.stringify({
-        itineraryNo: state.basicData.itineraryNo,
-        oid: state.basicData.oid
-      })
-      nextTick(() => {
-        if (isPrint) {
-          printBtn.value.click();
-        }
+        yktNo: state.basicData.yktNo
       })
       if ([1, 2, 3, 4, 5, 6, 7, 20].includes(state.basicData.status)) {
         let res = await api.getBasicInfo();
@@ -243,6 +237,11 @@
       } else {
         state.itineraryDetail.guWeiDetail = await api.getManagementExpenses(orderId);
       }
+      nextTick(() => {
+        if (isPrint) {
+          printBtn.value.click();
+        }
+      })
 		})
 		.catch((err: any) => {
 			console.log(err);

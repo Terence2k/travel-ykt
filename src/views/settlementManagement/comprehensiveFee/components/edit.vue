@@ -12,7 +12,7 @@
 				</a-select>
 			</a-form-item>
 			<a-form-item label="费用说明" name="feeExplanation">
-				<a-input v-model:value="formData.data.feeExplanation" placeholder="请填写规则说明" />
+				<a-textarea v-model:value="formData.data.feeExplanation" placeholder="请填写费用说明" autoSize/>
 			</a-form-item>
 			<a-form-item label="状态" name="status">
 				<a-radio-group v-model:value="formData.data.status">
@@ -69,7 +69,7 @@ import { accDiv } from '@/utils/compute';
 const rulesRef = {
 	comprehensiveFeeProductName: [{ required: true, message: '请填写产品名称' }],
 	confirmDailyCharge: [{ required: true, message: '请选择是否必收费用' }],
-	feeExplanation: [{ required: true, message: '请填写规则说明' }],
+	feeExplanation: [{ required: true, message: '请填写费用说明' }],
 	status: [{ required: true, message: '请选择状态' }],
 	feeModel: [{ required: true, message: '请选择收费模式' }],
 	feeNumber: [{ required: true, validator: isTwoDecimalPlaces }],
