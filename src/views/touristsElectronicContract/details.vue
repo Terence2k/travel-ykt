@@ -163,7 +163,7 @@
       </p>
     </div>
   </div>
-  <CommonModal title="散客合同签署确认" v-model:visible="modalVisible" @close="(modalVisible = false)"
+  <CommonModal title="附件详情" v-model:visible="modalVisible" @close="(modalVisible = false)"
     @cancel="(modalVisible = false)" @conform="(modalVisible = false)" :conform-text="'关闭'" :is-cancel="false">
     <p>已上传{{ imageCount }}张图片，{{ pdfCount }}个pdf，{{ docCount }}个doc：</p>
     <div v-for="(item, index) in form.contractFileUrlList" :key="index" class="file">

@@ -15,6 +15,9 @@
 	<div class="tabs_box">
 		<a-tabs v-model:activeKey="activeKey" @change="tabsChange">
 			<a-tab-pane key="1" tab="草稿" v-if="getTabPermission('草稿')">
+				<div class="print-container">
+					<travelDetail ref="travelDetailRef" />
+				</div>
 				<CommonTable :dataSource="tableData1.data" :columns="columns">
 					<template #bodyCell="{ column, record, index }">
 						<template v-if="column.key === 'index'">
@@ -54,6 +57,7 @@
 								<!-- <a @click="revokeGroupToDraft(record.oid)" v-permission="'待审核_撤回任务'">撤回任务</a>
 								<a v-permission="'待审核_催办'">催办</a> -->
 								<a @click="goToDetail(record, '1')" v-permission="'待审核_查看行程'">查看行程</a>
+								<a @click="getPrint(record)" v-permission="'待审核_打印'">打印</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -81,6 +85,7 @@
 								<a @click="toRevoke(record)" v-permission="'待出团_撤销'">撤销</a>
 								<a v-if="dateTime > dayjs(record.startDate).unix()" @click="outGroup(record)"
 									v-permission="'待出团_手动出团'">手动出团</a>
+								<a @click="getPrint(record)" v-permission="'待出团_打印'">打印</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -105,6 +110,7 @@
 								<a @click="goToDetail(record)" v-permission="'已出团_查看行程'">查看行程</a>
 								<a @click="change(record)" v-permission="'已出团_变更'">变更</a>
 								<a @click="toRevoke(record)" v-permission="'已出团_撤销'">撤销</a>
+								<a @click="getPrint(record)" v-permission="'已出团_打印'">打印</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -127,6 +133,7 @@
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
 								<a @click="goToDetail(record)" v-permission="'已散团_查看行程'">查看行程</a>
+								<a @click="getPrint(record)" v-permission="'已散团_打印'">打印</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -149,6 +156,7 @@
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
 								<a @click="goToDetail(record)" v-permission="'待变更_查看行程'">查看行程</a>
+								<a @click="getPrint(record)" v-permission="'待变更_打印'">打印</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -171,6 +179,7 @@
 						<template v-if="column.key === 'action'">
 							<div class="action-btns">
 								<a @click="goToDetail(record)" v-permission="'已过期_查看行程'">查看行程</a>
+								<a @click="getPrint(record)" v-permission="'已过期_打印'">打印</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -194,6 +203,7 @@
 							<div class="action-btns">
 								<a @click="goToDetail(record)" v-permission="'待处理_查看行程'">查看行程</a>
 								<a @click="revoke(record)" v-permission="'待处理_撤销'">撤销</a>
+								<a @click="getPrint(record)" v-permission="'待处理_打印'">打印</a>
 							</div>
 						</template>
 						<template v-if="column.key === 'tripDate'">
@@ -225,6 +235,7 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
+import travelDetail from '@/views/travelManagement/travelDetail.vue';
 import api from '@/api';
 import { useRouter, useRoute } from 'vue-router';
 import { useBusinessManageOption } from '@/stores/modules/businessManage';
@@ -778,6 +789,10 @@ const sendGroup = (id: string) => {
 		message.success('提交审核成功！');
 	});
 };
+const travelDetailRef = ref()
+const getPrint = (record: any) => {
+	travelDetailRef.value.getPrint(record.oid)
+}
 watch(
 	() => route.params.isRefresh,
 	(newVal) => {
@@ -801,5 +816,10 @@ onMounted(() => {
 
 .table-area {
 	padding: unset;
+}
+
+.print-container {
+	position: absolute;
+	width: 100%;
 }
 </style>
