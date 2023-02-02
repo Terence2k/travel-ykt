@@ -235,7 +235,7 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import CommonSearch from '@/components/common/CommonSearch.vue';
 import SearchItem from '@/components/common/CommonSearchItem.vue';
 import CommonModal from '@/views/baseInfoManage/dictionary/components/CommonModal.vue';
-import travelDetail from '@/views/travelManagement/travelDetail.vue';
+import travelDetail from '@/views/individualTouristsGroup/travelDetail.vue';
 import api from '@/api';
 import { useRouter, useRoute } from 'vue-router';
 import { useBusinessManageOption } from '@/stores/modules/businessManage';

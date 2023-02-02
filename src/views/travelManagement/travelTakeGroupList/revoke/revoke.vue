@@ -604,7 +604,7 @@ const enclosure = [
 
 const gotoDetails = (itineraryId: any) => {
 	route.push({
-		path: '/travel/travel_manage/travel_detail',
+		path: '/travel/take_group/take_group_travel_detail',
 		query: {
 			oid: itineraryId,
 		},

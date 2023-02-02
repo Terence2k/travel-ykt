@@ -143,7 +143,7 @@ const newTravel = () => {
 	pW.append('itineraryId', route.query.id);
 	api.travelManagement.changeTouristFillNewItinerary(pW).then((res: any) => {
 		router.push({
-			path: '/travel/travel_manage/add_travel',
+			path: '/travel/take_group/take_group_add_travel',
 			query: {
 				id: res.newItineraryId,
 			},

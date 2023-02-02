@@ -143,7 +143,8 @@ const onSearch = () => {
 			tableState.tableData.total = res?.total || 0;
 		})
 		.catch((err: any) => {
-			message.error(err?.message || err || '获取系统房型表格数据失败');
+			//message.error(err?.message || err || '获取系统房型表格数据失败');
+			console.log(err?.message);
 		});
 };
 

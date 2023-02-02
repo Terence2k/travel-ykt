@@ -60,7 +60,7 @@
 					>
 					</CommonPagination>
 					<DelModal
-						:params="{ title: '删除', content: '是否确定该条数据' }"
+						:params="{ title: '删除', content: '是否确定删除该条数据' }"
 						v-model="tableState.delShow"
 						@submit="deleteWriteOffItem"
 						@cancel="delCancel"

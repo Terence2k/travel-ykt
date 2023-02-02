@@ -92,7 +92,7 @@ const revoke = async () => {
 	const { newItineraryId } = oParams;
 
 	route.push({
-		path: '/travel/travel_manage/add_travel',
+		path: '/travel/take_group/take_group_add_travel',
 		query: { id: newItineraryId, itineraryNo: route.currentRoute.value?.query?.itineraryNo, isRevoke: 1 },
 	});
 
