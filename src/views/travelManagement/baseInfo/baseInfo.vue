@@ -633,7 +633,8 @@ watch(
 	(newVal) => {
 		findByIdTeamType();
 		
-	}
+	},
+	{immediate: true}
 );
 
 watch(() => [formState.value.startDate, formState.value.endDate], ([newStar, newEnd]) => {
