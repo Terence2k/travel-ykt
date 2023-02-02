@@ -89,4 +89,10 @@ watch(() => state.reportId,
 onBeforeUnmount(() => {
 	navigatorBar.clearNavigator();
 });
+onMounted(() => {
+    // 渲染列表第一个表格
+    if(filterPages.length > 0) {
+        state.reportId = filterPages[0].label
+    }
+})
 </script>
