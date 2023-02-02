@@ -144,7 +144,7 @@
 
 			<a-form-item label="订单金额">
 				<a-input v-model:value="orderFeeCount" disabled placeholder="无需填写，填写房间数量后自动计算" />
-				<span class="gary">如果符合满16减1标准，则自动优惠减扣。</span>
+				<!-- <span class="gary">如果符合满16减1标准，则自动优惠减扣。</span> -->
 			</a-form-item>
 
 			<a-form-item label="订单编号">
@@ -315,6 +315,10 @@ const handleChange = async (id: number, option: any) => {
 	formState.honestyGuidePrice = option.price;
 	formState.hotelStarCode = option.name;
 	id && (hotelData.hotel = await api.getHotelInfoByRated(id));
+	
+	if (props.productRow.productId) {
+		formState.hotelId = hotelData.hotel.filter((it: any) => it.companyId === props.productRow.productId)[0]?.oid
+	}
 	for (let i = 0; i < formState.roomTypeList.length; i++) {
 		formState.roomTypeList[i].orderAmount = accAdd(honestyGuidePrice.value,
 		parseFloat(formState.roomTypeList[i].unitPrice));
