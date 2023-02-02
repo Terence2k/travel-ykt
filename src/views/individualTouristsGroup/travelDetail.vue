@@ -235,14 +235,14 @@ const state = reactive({
 });
 const printBtn = ref();
 
-const getPrint = () => {
+const getPrint = (id?: any) => {
   state.param.pageNo = 1;
   state.param.pageSize = 999999;
-  getItineraryDetail(router.currentRoute.value.query.oid, true);
+  getItineraryDetail(router.currentRoute.value.query.oid || id, true);
 }
 
 const print = ref({
-  id: 'printBox',//这里的id就是上面我们的打印区域id，实现指哪打哪
+  id: 'printBox',//这里的id就是上面我们的打印区域id
   popTitle: '', // 打印配置页上方的标题
   extraHead: '', // 最上方的头部文字，附加在head标签上的额外标签，使用逗号分割
   preview: false, // 是否启动预览模式，默认是false
@@ -256,7 +256,9 @@ const print = ref({
   closeCallback() {
     state.param.pageNo = 1;
     state.param.pageSize = 10;
-    getItineraryDetail(router.currentRoute.value.query.oid);
+    if (router.currentRoute.value.query.oid) {
+      getItineraryDetail(router.currentRoute.value.query.oid);
+    }
   }, // 关闭打印的callback(无法区分确认or取消)
   clickMounted() { },
 
@@ -381,16 +383,11 @@ const getItineraryDetail = (orderId: any, isPrint?: any) => {
      // 将健康码和游客列表数据关联
      configCodeName(certificateCodes, res.touristList.content) */
     // 获取合同信息
-    const content = await api.getContractListByItineraryId(route.query.oid)
+    const content = await api.getContractListByItineraryId(route.query.oid || orderId)
     res.contractList = content ? content : []
     state.itineraryDetail = res;
     codeUrl.value = JSON.stringify({
       yktNo: state.basicData.yktNo
-    })
-    nextTick(() => {
-      if (isPrint) {
-        printBtn.value.click();
-      }
     })
     if ([1, 5].includes(state.basicData.status)) {
       let res = await api.getBasicInfo();
@@ -413,6 +410,11 @@ const getItineraryDetail = (orderId: any, isPrint?: any) => {
     } else {
       state.itineraryDetail.isAudit = 'none'
     }
+    nextTick(() => {
+      if (isPrint) {
+        printBtn.value.click();
+      }
+    })
   }).catch((err: any) => {
     console.log(err);
   });
@@ -464,6 +466,10 @@ watch(
     }
   },
   { immediate: true, deep: true })
+
+defineExpose({
+  getPrint
+})
 </script>
 <style lang="less" scoped>
 .container {

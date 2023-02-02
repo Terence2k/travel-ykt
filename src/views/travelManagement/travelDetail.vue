@@ -221,11 +221,6 @@
       codeUrl.value = JSON.stringify({
         yktNo: state.basicData.yktNo
       })
-      nextTick(() => {
-        if (isPrint) {
-          printBtn.value.click();
-        }
-      })
       if ([1, 2, 3, 4, 5, 6, 7, 20].includes(state.basicData.status)) {
         let res = await api.getBasicInfo();
         state.itineraryDetail.guWeiDetail = [{
@@ -242,6 +237,11 @@
       } else {
         state.itineraryDetail.guWeiDetail = await api.getManagementExpenses(orderId);
       }
+      nextTick(() => {
+        if (isPrint) {
+          printBtn.value.click();
+        }
+      })
 		})
 		.catch((err: any) => {
 			console.log(err);

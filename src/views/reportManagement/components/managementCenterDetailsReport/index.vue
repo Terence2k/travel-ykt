@@ -154,7 +154,7 @@ const columns = computed(() => {
 				const idx = column.value.findIndex((item) => {
 					return item.title === vo.comprehensiveFeeProductName;
 				});
-				ruleMap[title]['column'] = column.value[idx].children;
+				ruleMap[title]['column'] = column.value[idx]?.children;
 				ruleMap[title]['data'].push(vo['ruleList']);
 				ruleMap[title]['columnParent'] = column.value[idx];
 			}
@@ -199,7 +199,7 @@ const columns = computed(() => {
 				const idx = column.value.findIndex((item) => {
 					return item.title === vo.comprehensiveFeeProductName;
 				});
-				ruleMap[title]['column'] = column.value[idx].children;
+				ruleMap[title]['column'] = column.value[idx]?.children;
 				ruleMap[title]['data'].push(vo['ruleList']);
 				ruleMap[title]['columnParent'] = column.value[idx];
 			}
