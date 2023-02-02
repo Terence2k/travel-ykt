@@ -110,6 +110,7 @@ import CommonPagination from '@/components/common/CommonPagination.vue';
 import { settlementOptions } from '@/stores/modules/settlement';
 import type { TableColumnsType } from 'ant-design-vue';
 import picker from '@/components/common/datePicker.vue';
+import { accDiv } from '@/utils/compute';
 import api from '@/api';
 interface StateType {
 	tableData: TableDataType;
@@ -443,10 +444,10 @@ const twoDecimalPlaces = (number: any): any => {
 	if (typeof number === 'string') {
 		if (number.includes('-')) {
 			number = number.slice(1);
-			return `-${Number(number / 100)}`;
+			return `-${accDiv(number, 100)}`;
 		}
 	}
-	return Number(number / 100);
+	return accDiv(number, 100);
 };
 </script>
 <style scoped lang="less">
