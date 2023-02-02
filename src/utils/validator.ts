@@ -1,3 +1,4 @@
+import { CODEVALUE } from '@/constant';
 import type { FormInstance } from 'ant-design-vue';
 import { Rule } from 'ant-design-vue/es/form';
 export const phoneReg = /^1[3456789]\d{9}$/;
@@ -47,6 +48,15 @@ export function isPositiveInteger(rule: any, value: any, callback: any) {
 			// callback();
 			return Promise.resolve();
 		}
+	}
+}
+export function isCardReg (rule: any, value: any, callback: any) {
+	if (!value) {
+		return Promise.reject('请输入证件号码');
+	} else if (value.length < 18) {
+		return Promise.reject('请输入正确的证件号码');
+	} else {
+		return Promise.resolve();
 	}
 }
 // 验证是否是[0-100]的整数
@@ -118,13 +128,23 @@ export function isOnedecimalpoint(rule: any, value: string, callback: (error?: E
 		}
 	}
 }
+function getRules(data: any, rules: any) {
+	let r: any = {}
+	if (data.certificateType === CODEVALUE.TRAVE_CODE.IDENTITY_CARD) {
+		r = {...rules, certificateNo: [{ required: true, validator: isCardReg }]}
+	} else {
+		r = {...rules, certificateNo: [{ required: true, message: '请输入证件号' }]}
+	}
+	return r
+}
 export function validateRules(rules: any, data: any, key?: string) {
 	let rulesRef: any = {};
 	if (key) {
-		rulesRef[key] = rules;
+		rulesRef[key] = getRules(data[key], rules);
+		
 	} else {
 		for (let k in data) {
-			rulesRef[k] = rules;
+			rulesRef[k] = getRules(data[k], rules);
 		}
 	}
 	return rulesRef;
