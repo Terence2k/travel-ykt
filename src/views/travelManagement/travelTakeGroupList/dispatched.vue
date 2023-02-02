@@ -119,7 +119,7 @@ const getPrint = (record: any) => {
 }
 const goToPath = (row: any, tab?: any) => {
 	router.push({
-		path: '/travel/travel_manage/add_travel',
+		path: '/travel/take_group/take_group_add_travel',
 		query: {
 			id: row.oid,
 			itineraryNo: row.itineraryNo,
