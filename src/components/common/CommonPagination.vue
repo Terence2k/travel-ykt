@@ -1,12 +1,16 @@
 <template>
   <div class="user-pagination">
     <div class="total-info" v-if="attrs.total">共{{attrs.total}}条</div>
-    <a-pagination v-bind="$attrs" show-quick-jumper />
+    <a-pagination v-bind="$attrs" show-quick-jumper @change="onHandleCurrentChange"/>
   </div>
 </template>
 
 <script setup lang="ts">
 const attrs = useAttrs();
+const emit = defineEmits(['change']);
+const onHandleCurrentChange = (e: number) => {
+  emit('change', e)
+}
 </script>
 
 <style lang="scss" scoped>
