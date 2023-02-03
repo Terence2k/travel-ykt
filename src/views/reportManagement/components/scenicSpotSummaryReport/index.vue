@@ -49,28 +49,35 @@
 			<CommonTable :dataSource="state.tableData.data" :columns="columns">
 				<template #bodyCell="{ column, record }">
 					<!-- 单价（元） 单位转成元-->
-					<template v-if="column.key === 'unitPrice'">
+					<!-- <template v-if="column.key === 'unitPrice'">
+						{{ record.unitPrice }}
+						{{ accDiv(record.unitPrice, 100) }}
 						{{ record.unitPrice / 100 > 0 ? (record.unitPrice / 100) : 0 }}
-					</template>
+					</template> -->
 					<!-- 预定金额 单位转成元-->
 					<template v-if="column.key === 'orderPrice'">
-						{{ record.orderPrice / 100 > 0 ? (record.orderPrice / 100) : 0 }}
+						{{ accDiv(record.orderPrice, 100) }}
+						<!-- {{ record.orderPrice / 100 > 0 ? (record.orderPrice / 100) : 0 }} -->
 					</template>
 					<!-- 减免金额 单位转成元-->
 					<template v-if="column.key === 'breaksPrice'">
-						{{ record.breaksPrice / 100 > 0 ? (record.breaksPrice / 100) : 0 }}
+						{{ accDiv(record.breaksPrice, 100) }}
+						<!-- {{ record.breaksPrice / 100 > 0 ? (record.breaksPrice / 100) : 0 }} -->
 					</template>
 					<!-- 未核销金额金额（元） 单位转成元-->
 					<template v-if="column.key === 'unSettlementPrice'">
-						{{ record.unSettlementPrice / 100 > 0 ? (record.unSettlementPrice / 100) : 0 }}
+						{{ accDiv(record.unSettlementPrice, 100) }}
+						<!-- {{ record.unSettlementPrice / 100 > 0 ? (record.unSettlementPrice / 100) : 0 }} -->
 					</template>
 					<!-- 票款金额（元） 单位转成元-->
 					<template v-if="column.key === 'ticketPrice'">
-						{{ record.orderPrice / 100 > 0 ? (record.ticketPrice / 100) : 0 }}
+						{{ accDiv(record.ticketPrice, 100) }}
+						<!-- {{ record.orderPrice / 100 > 0 ? (record.ticketPrice / 100) : 0 }} -->
 					</template>
 					<!-- 景点实收（元） 单位转成元-->
 					<template v-if="column.key === 'scenicPrice'">
-						{{ record.orderPrice / 100 > 0 ? (record.scenicPrice / 100) : 0 }}
+						{{ accDiv(record.scenicPrice, 100) }}
+						<!-- {{ record.orderPrice / 100 > 0 ? (record.scenicPrice / 100) : 0 }} -->
 					</template>
 					<template v-if="column.key === 'settlementRuleName'">
 						<span>{{ getSettlementRule(column, record) }}</span>
@@ -98,6 +105,7 @@ import { settlementOptions } from '@/stores/modules/settlement';
 import type { TableColumnsType } from 'ant-design-vue';
 import picker from '@/components/common/datePicker.vue';
 import api from '@/api';
+import { accDiv } from '@/utils/compute';
 const options = settlementOptions();
 interface StateType {
 	tableData: TableDataType;
@@ -183,11 +191,11 @@ const columns = computed(() => {
 		// 	dataIndex: 'settlementTime',
 		// 	key: 'settlementTime',
 		// },
-		{
-			title: '单价（元）',
-			dataIndex: 'unitPrice',
-			key: 'unitPrice',
-		},
+		// {
+		// 	title: '单价（元）',
+		// 	dataIndex: 'unitPrice',
+		// 	key: 'unitPrice',
+		// },
 		{
 			title: '预定数',
 			dataIndex: 'reservationNum',
@@ -303,7 +311,7 @@ const getSettlementRule = computed(() => (column: TableColumnsType, record: Data
 	const data = record.settlementRuleList;
 	for (const key in data) {
 		if (column.title === data[key].ruleName) {
-			return data[key].rulePrice ? (data[key].rulePrice / 100) : 0;
+			return data[key].rulePrice ? data[key].rulePrice / 100 : 0;
 		}
 	}
 	return '';

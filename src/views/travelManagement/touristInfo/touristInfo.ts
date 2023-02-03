@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import type { UnwrapRef } from 'vue';
 
 import { useTravelStore } from '@/stores/modules/travelManagement';
-import { validateRules, validateFields, generateGuid, getAge, phoneReg, isPositiveInteger, getGenderByIdNumber, downloadFile } from '@/utils';
+import { validateRules, validateFields, generateGuid, getAge, phoneReg, isPositiveInteger, getGenderByIdNumber, downloadFile, isCardReg } from '@/utils';
 import api from '@/api/index';
 import { CODEVALUE } from '@/constant'
 import { message } from 'ant-design-vue';
@@ -33,7 +33,7 @@ interface DataItem {
 
 const rules:{[k:string]: any} = {
 	certificateType: [{ required: true, message: '请选择行证件类型' }],
-	certificateNo: [{ required: true, message: '请输入证件号码' }],
+	// certificateNo: [{ required: true, validator: isCardReg }],
 	name: [{ required: true, message: '请输入姓名' }],
 	gender: [{ required: true, message: '请选择性别' }],
 	sourceAddressName: [{ required: true, message: '请选择客源地' }],
@@ -160,15 +160,19 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			const formData = new FormData();
 			formData.append('file', file)
 			api.travelManagement.importTourist(formData).then((res: any) => {
-				state.tableData.push(...res.map((item: any) => {
+				const resultTourist = res.map((item: any) => {
 					const key = generateGuid();
 					item.key = key
 					item.edit = true;
 					state.editableData[key] = item;
 					return item;
-				}))
+				})
+				state.tableData.push(...resultTourist)
 				
-				
+				// state.editableData = {
+				// 	...state.editableData,
+				// 	...resultTourist
+				// }
 				
 			});
 		},
@@ -178,7 +182,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 				return {
 					value: item.oid,
 					label: item.name,
-					isLeaf: length >=3 ? true : false
+					isLeaf: length >=2 ? true : false
 				}
 			})
 		},
@@ -187,12 +191,13 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			let msg: any = ''
 			// if (key) {
 			const cur = state.tableData.filter((it: any) => {
-				let id = it.oid ? it.oid : it.key
-				console.log(id, key)
-				return it.certificateNo === sourceData.certificateNo && id !== key
-			})[0];
+				// let id = it.oid ? it.oid : it.key
+				// console.log(id, key)
+				// && id !== key
+				return it.certificateNo === sourceData.certificateNo
+			});
 			console.log(cur)
-			if (cur) {
+			if (cur && cur.length > 1) {
 				msg = `游客${sourceData.name}证件号重复`
 			}
 			// }
@@ -354,12 +359,12 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			const res = await validateFields(state.formRef);
 			if (!res) return emits('onSuccess', {touristList: {valid: res, message: '请填写完整游客信息', index: 2}});
 			if (key) {
-				const result = methods.isOld(key)
+				// const result = methods.isOld(key)
 				const isUpload = methods.isUpload(key)
 				const isPhone = methods.isPhone(key)
 				const repetition = methods.getRepetition(key);
 				if (repetition) return message.error(repetition)
-				if (!result.flag) return message.error(result.text);
+				// if (!result.flag) return message.error(result.text);
 				if (!isUpload.flag) return message.error(isUpload.text);
 				if (!isPhone.flag) return message.error(isPhone.text);
 				methods.copyData(key);
@@ -367,11 +372,11 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			} else {
 				for (let k in state.editableData) {
 					const repetition = methods.getRepetition(k);
-					const result = methods.isOld(k);
+					// const result = methods.isOld(k);
 					const isUpload = methods.isUpload(k);
 					const isPhone = methods.isPhone(k);
 					if (repetition) return emits('onSuccess', {touristList: {valid: false, message: repetition, index: 2}});
-					if (!result.flag) return emits('onSuccess', {touristList: {valid: false, message: result.text, index: 2}});
+					// if (!result.flag) return emits('onSuccess', {touristList: {valid: false, message: result.text, index: 2}});
 					if (!isUpload.flag) return emits('onSuccess', {touristList: {valid: false, message: isUpload.text, index: 2}});
 					if (!isPhone.flag) return emits('onSuccess', {touristList: {valid: false, message: isPhone.text, index: 2}});
 					methods.copyData(k);
@@ -387,12 +392,12 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 		},
 		add: () => {
 			let key = generateGuid();
-			state.tableData.push({key, edit: true, oid: null});
+			state.tableData.push({key, edit: true, oid: null, certificateType: CODEVALUE.TRAVE_CODE.IDENTITY_CARD});
 			methods.edit(key);
 			console.log(state.tableData)
 		},
 		handleChange(val: any, option: any, key: string) {
-			// console.log(val, option)
+			console.log(val, option)
 			if (val) {
 				state.editableData[key].provinceId = val[0]
 				state.editableData[key].cityId = val[1]

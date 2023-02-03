@@ -200,9 +200,11 @@ watch(
 	}
 );
 
-travelStore.setAllHotel([])
-travelStore.setAllTicket([])
-
+travelStore.hotels = [];
+travelStore.setAllTicket([]);
+travelStore.scenicTickets = [];
+travelStore.setTeamType('');
+travelStore.setCompositeProducts([]);
 const showAddBtn = computed(() => {
 	return userInfo.sysRoles.some((it: any) => it.roleCode === ROLE.TRAVE_CODE);
 });

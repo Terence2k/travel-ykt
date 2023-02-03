@@ -489,6 +489,7 @@ const getParams = () => {
       endTime,
       shopPhone,
       cateringDesc,
+      unitStatus: true
     }
     return {
       ...toRaw(form),
@@ -501,6 +502,7 @@ const getParams = () => {
     } = form
     const scenicCompanyBo = {
       scenicLevel,
+      unitStatus: true
     }
     return {
       ...toRaw(form),
@@ -513,6 +515,7 @@ const getParams = () => {
     } = form
     const hotelInfoBO = {
       hotelStarId,
+      unitStatus: 0
     }
     return {
       ...toRaw(form),

@@ -42,8 +42,10 @@
 					<!-- 收费名称 -->
 					<template v-if="column.key === 'chargeCount'">
 						<span v-if="record.chargeModel === 1">{{ record.chargeCount }}%</span>
-						<span v-if="record.chargeModel === 2">{{ (record.chargeCount / 100) }}元/房间</span>
-						<span v-if="record.chargeModel === 3">{{ (record.chargeCount / 100) }}元</span>
+						<span v-if="record.chargeModel === 2">{{ accDiv(record.chargeCount, 100) }}元/房间</span>
+						<span v-if="record.chargeModel === 3">{{ accDiv(record.chargeCount, 100) }}元</span>
+						<!-- <span v-if="record.chargeModel === 2">{{ record.chargeCount / 100 }}元/房间</span>
+						<span v-if="record.chargeModel === 3">{{ record.chargeCount / 100 }}元</span> -->
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
@@ -99,6 +101,7 @@ import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import api from '@/api';
 import { useGeneraRules } from '@/stores/modules/generaRules';
 import { message } from 'ant-design-vue/es';
+import { accDiv } from '@/utils/compute';
 const navigatorBar = useNavigatorBar();
 const generaRulesOptions = useGeneraRules();
 // import { userList } from '@/api';

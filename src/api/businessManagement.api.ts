@@ -206,3 +206,11 @@ export function updateCompanyState(data: any) {
 		showLoading: true
 	});
 }
+// 查询可见企业下拉（公告配置）
+export function getNoticeCompany() {
+	return request({
+		url: `${commonPart}getNoticeCompany`,
+		method: 'post',
+		showLoading: true
+	});
+}
