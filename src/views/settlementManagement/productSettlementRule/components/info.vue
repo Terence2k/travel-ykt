@@ -58,7 +58,8 @@
 			<a-form-item label="收费数量" name="charCount">
 				<div>
 					<span v-if="formState.chargeModel === 1">{{ formState.chargeCount }}</span>
-					<span v-else>{{ formState.chargeCount / 100 }}</span>
+					<span v-else>{{ accDiv(formState.chargeCount, 100) }}</span>
+					<!-- <span v-else>{{ formState.chargeCount / 100 }}</span> -->
 					<span v-if="formState.chargeModel === 1">%</span>
 					<span v-if="formState.chargeModel === 2">元/房间</span>
 					<span v-if="formState.chargeModel === 3">元</span>
@@ -101,7 +102,8 @@
 				</template>
 				<template v-if="column.key === 'splitCount'">
 					<span v-if="record.splitModel === 1">{{ record.splitCount }}%</span>
-					<span v-if="record.splitModel === 2">{{ record.splitCount / 100 }}元</span>
+					<span v-if="record.splitModel === 2">{{ accDiv(record.splitCount, 100) }}元</span>
+					<!-- <span v-if="record.splitModel === 2">{{ record.splitCount / 100 }}元</span> -->
 				</template>
 			</template>
 		</CommonTable>
@@ -121,6 +123,7 @@ import { useNavigatorBar } from '@/stores/modules/navigatorBar';
 import api from '@/api';
 import { FormState } from './type';
 import { useGeneraRules } from '@/stores/modules/generaRules';
+import { accDiv } from '@/utils/compute';
 const navigatorBar = useNavigatorBar();
 const generaRulesOptions = useGeneraRules();
 const formRef = ref();
@@ -172,7 +175,7 @@ const columns = ref([
 const route = useRouter();
 const productSonList = ref([]);
 const productName = ref('');
-const query = route.currentRoute.value.query;
+const query = route.currentRoute.value.query || { productType: null };
 // 缓存删除编辑数据
 const init = async () => {
 	const id: any = route.currentRoute.value.query.oid;
