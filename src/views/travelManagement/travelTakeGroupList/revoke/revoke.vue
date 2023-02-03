@@ -722,7 +722,7 @@ const initInfo = () => {
 	};
 	api.travelManagement
 		.getItineraryDetail(queryData)
-		.then((res: any) => {
+		.then(async (res: any) => {
 			state.basicData = res.basic;
 			state.hotelList = res.hotelList;
 			state.guideList = res.guideList;
@@ -733,30 +733,29 @@ const initInfo = () => {
 			// state.guWeiDetail = res.guWeiDetail;
 
 			let arr = [{ 1: [], 2: [], 3: [], 4: [] }];
-// 
+			//
 			res.attachmentList.map((item) => {
 				arr[0][item.attachmentType].push(item);
 			});
 
 			state.attachmentList = arr;
 
-			let promiseList = <any>[];
+			// let promiseList = <any>[];
 
-			state.touristList.map((item: any) => {
+			let applyApiList = <any>[];
+
+			state.touristList.map(async (item: any) => {
 				// let res = await api.travelManagement.getHealthCode([{ name: item.name, certificateId: item.certificateNo }]);
-				let p = api.travelManagement.getHealthCode([{ name: item.name, certificateId: item.certificateNo }]);
-
-				promiseList.push(p);
+				// let p = api.travelManagement.getHealthCode([{ name: item.name, certificateId: item.certificateNo }]);
+				applyApiList.push({ name: item.name, certificateId: item.certificateNo });
+				// promiseList.push(p);
 				return item;
 			});
+			let newCodeList = await api.travelManagement.getHealthCode(applyApiList);
 
-			let codeList = Promise.all(promiseList);
-			codeList.then((res) => {
-				console.log(res, 'codeList');
-				state.touristList.map((item, index) => {
-					let o = Object.assign(item, res[index][0]);
-					return o;
-				});
+			state.touristList.map((item, index) => {
+				let o = Object.assign(item, newCodeList[index]);
+				return o;
 			});
 			// state.itineraryDetail = res;
 		})
