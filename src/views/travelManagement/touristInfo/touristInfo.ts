@@ -182,7 +182,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 				return {
 					value: item.oid,
 					label: item.name,
-					isLeaf: length >=3 ? true : false
+					isLeaf: length >=2 ? true : false
 				}
 			})
 		},
@@ -397,7 +397,7 @@ export function useTouristInfo(props: any, emits: any): Record<string, any> {
 			console.log(state.tableData)
 		},
 		handleChange(val: any, option: any, key: string) {
-			// console.log(val, option)
+			console.log(val, option)
 			if (val) {
 				state.editableData[key].provinceId = val[0]
 				state.editableData[key].cityId = val[1]

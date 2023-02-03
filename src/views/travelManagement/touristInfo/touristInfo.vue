@@ -64,6 +64,7 @@
 					<template v-if="column.key === 'sourceAddressName'">
 						<a-form-item v-if="editableData[record.key ? record.key : record.oid]" :name="[record.key ? record.key : record.oid, column.key]">
 							<a-cascader
+								:allowClear="false"
 								v-if="editableData[record.key ? record.key : record.oid]"
 								:load-data="loadData"
 								class="cascader-container"
