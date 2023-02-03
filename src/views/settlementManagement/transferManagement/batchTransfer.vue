@@ -35,6 +35,7 @@
 import api from '@/api';
 import Modal from '@/components/common/DelModal.vue';
 import CommonTable from '@/components/common/CommonTable.vue';
+import { accDiv } from '@/utils/compute';
 interface StateType {
 	tableData: TableDataType;
 	modalShow: boolean;
@@ -253,19 +254,19 @@ const twoDecimalPlaces = computed(() => (number: any): any => {
 	if (typeof number === 'string') {
 		if (number.includes('-')) {
 			number = number.slice(1);
-			return `-${Number(number / 100)}`;
+			return `-${accDiv(number, 100)}`;
 		}
 	}
-	return Number(number / 100);
+	return accDiv(number, 100);
 });
 const twoDecimalPlacesFunc = (number: any): any => {
 	if (typeof number === 'string') {
 		if (number.includes('-')) {
 			number = number.slice(1);
-			return `-${Number(number / 100)}`;
+			return `-${accDiv(number, 100)}`;
 		}
 	}
-	return Number(number / 100);
+	return accDiv(number, 100);
 };
 const getCollectionCompany = computed(() => (column: any, record: any) => {
 	const list = record.list;

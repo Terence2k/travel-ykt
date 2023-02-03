@@ -518,6 +518,7 @@ const getParams = () => {
       endTime,
       shopPhone,
       cateringDesc,
+      unitStatus: true
     }
     return {
       ...form.value,
@@ -534,6 +535,7 @@ const getParams = () => {
       yjgScenicId,
       yjgScenicName,
       scenicLevel,
+      unitStatus: true
     }
     return {
       ...form.value,
@@ -546,6 +548,7 @@ const getParams = () => {
     } = form.value
     const hotelInfoBO = {
       hotelStarId,
+      unitStatus: 0
     }
     return {
       ...form.value,

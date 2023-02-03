@@ -722,14 +722,18 @@ const failPageSideChange = (current: number, size: number) => {
 	onFailSearch();
 }
 const getData = (res: any): [] => {
-	return res.map(async (item: any) => {
-		if (item.businessLicenseUrl) {
-			if (item.businessLicenseUrl.indexOf('http:') === -1) {
-				item.businessLicenseUrl = await awsGetPreSignedUrl(item.businessLicenseUrl)
+	if (res?.length) {
+		return res.map(async (item: any) => {
+			if (item.businessLicenseUrl) {
+				if (item.businessLicenseUrl.indexOf('http:') === -1) {
+					item.businessLicenseUrl = await awsGetPreSignedUrl(item.businessLicenseUrl)
+				}
 			}
-		}
-		return item
-	})
+			return item
+		})
+	} else {
+		return []
+	}
 }
 const onSearch = async () => {
 	let { content, total } = await api.findCompanyList(state.tableData.param)

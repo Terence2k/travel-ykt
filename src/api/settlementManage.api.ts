@@ -133,7 +133,7 @@ export async function productRuleUpdateStatus(data: any) {
 // 产品结算规则 ---- 团队类型枚举值
 export async function productRuleTeamType(data: any) {
 	return request({
-		url: `${commonPath}/travel-agency-service/public/api/team/downTeamType`,
+		url: `${commonPath}/travel-agency-service/public/api/team/downTeamTypeAll`,
 		method: 'post',
 		data,
 		showLoading: true,

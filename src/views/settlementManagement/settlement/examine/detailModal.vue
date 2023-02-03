@@ -6,7 +6,7 @@
 				<template v-if="column.key === 'settlementCost'">
 					<span>
 						{{ record.costType == 0 ? '-' : '+' }}
-						{{ record.settlementCost / 100 > 0 ? (record.settlementCost / 100) : 0 }}
+						{{ accDiv(record.settlementCost , 100) }}
 					</span>
 				</template>
 			</template>
@@ -23,6 +23,7 @@ import BaseModal from '@/components/common/BaseModal.vue';
 import CommonTable from '@/components/common/CommonTable.vue';
 import { isIntegerNotMust, isBtnZeroToHundred } from '@/utils/validator';
 import { Ref } from 'vue';
+import { accDiv } from '@/utils/compute';
 const dialogVisible = ref(false);
 const props = defineProps({
 	modelValue: {
@@ -86,7 +87,6 @@ const init = async () => {
 			formData.list = res
 		})
 };
-
 watch(
 	() => props.modelValue,
 	async (nVal) => {
