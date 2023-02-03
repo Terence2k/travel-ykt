@@ -222,7 +222,7 @@ const columns = computed(() => {
 			key: 'breaksPrice',
 		},
 		{
-			title: '未核销金额金额（元）',
+			title: '未核销金额（元）',
 			dataIndex: 'unSettlementPrice',
 			key: 'unSettlementPrice',
 		},
