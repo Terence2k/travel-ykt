@@ -49,10 +49,11 @@
 			<CommonTable :dataSource="state.tableData.data" :columns="columns">
 				<template #bodyCell="{ column, record }">
 					<!-- 单价（元） 单位转成元-->
-					<template v-if="column.key === 'unitPrice'">
+					<!-- <template v-if="column.key === 'unitPrice'">
+						{{ record.unitPrice }}
 						{{ accDiv(record.unitPrice, 100) }}
-						<!-- {{ record.unitPrice / 100 > 0 ? (record.unitPrice / 100) : 0 }} -->
-					</template>
+						{{ record.unitPrice / 100 > 0 ? (record.unitPrice / 100) : 0 }}
+					</template> -->
 					<!-- 预定金额 单位转成元-->
 					<template v-if="column.key === 'orderPrice'">
 						{{ accDiv(record.orderPrice, 100) }}
@@ -190,11 +191,11 @@ const columns = computed(() => {
 		// 	dataIndex: 'settlementTime',
 		// 	key: 'settlementTime',
 		// },
-		{
-			title: '单价（元）',
-			dataIndex: 'unitPrice',
-			key: 'unitPrice',
-		},
+		// {
+		// 	title: '单价（元）',
+		// 	dataIndex: 'unitPrice',
+		// 	key: 'unitPrice',
+		// },
 		{
 			title: '预定数',
 			dataIndex: 'reservationNum',
