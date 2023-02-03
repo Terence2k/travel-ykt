@@ -733,18 +733,30 @@ const initInfo = () => {
 			// state.guWeiDetail = res.guWeiDetail;
 
 			let arr = [{ 1: [], 2: [], 3: [], 4: [] }];
-
+// 
 			res.attachmentList.map((item) => {
 				arr[0][item.attachmentType].push(item);
 			});
 
 			state.attachmentList = arr;
 
-			state.touristList.map(async (item) => {
-				let res = await api.travelManagement.getHealthCode([{ name: item.name, certificateId: item.certificateNo }]);
-				console.log(res[0], 'asdasd', Object.assign(item, res[0]), item);
-				let o = Object.assign(item, res[0]);
-				return o;
+			let promiseList = <any>[];
+
+			state.touristList.map((item: any) => {
+				// let res = await api.travelManagement.getHealthCode([{ name: item.name, certificateId: item.certificateNo }]);
+				let p = api.travelManagement.getHealthCode([{ name: item.name, certificateId: item.certificateNo }]);
+
+				promiseList.push(p);
+				return item;
+			});
+
+			let codeList = Promise.all(promiseList);
+			codeList.then((res) => {
+				console.log(res, 'codeList');
+				state.touristList.map((item, index) => {
+					let o = Object.assign(item, res[index][0]);
+					return o;
+				});
 			});
 			// state.itineraryDetail = res;
 		})
