@@ -135,7 +135,8 @@
 					<template v-if="column.key === 'splitCount'">
 						<span v-if="record.splitModel === 1">{{ record.splitCount }}%</span>
 						<!-- 金额显示需要除以100 -->
-						<span v-if="record.splitModel === 2">{{ record.splitCount / 100 }}元</span>
+						<span v-if="record.splitModel === 2">{{ accDiv(record.splitCount, 100) }}元</span>
+						<!-- <span v-if="record.splitModel === 2">{{ record.splitCount / 100 }}元</span> -->
 					</template>
 					<template v-if="column.key === 'action'">
 						<div class="action-btns">
@@ -171,6 +172,7 @@ import api from '@/api';
 import { updateProductRule } from '@/api/settlementManage.api';
 import { FormState } from './type';
 import { useGeneraRules } from '@/stores/modules/generaRules';
+import { accDiv } from '@/utils/compute';
 const navigatorBar = useNavigatorBar();
 const generaRulesOptions = useGeneraRules();
 const formRef = ref();
